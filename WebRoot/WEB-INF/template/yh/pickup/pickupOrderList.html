@@ -45,16 +45,18 @@
 	                                </div>
 	                                <div class="col-lg-4">
 	                                    <div class="form-group">
-	                                        <label class="search-label">调车类型</label>
-	                                        <input type="text" class="form-control search-control orderNo_filter" id="shuntType_filter" value="">
-	                                    </div>
+                                            <label class="search-label">客户名称</label>
+                                            <input type="hidden" id="customer_id"> 
+                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择客户">
+                                        	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll"></ul>
+                                        </div>
 	                                    <div class="form-group">
 	                                        <label class="search-label">车牌号</label>
 	                                        <input type="text" class="form-control search-control orderNo_filter" id="carNo_filter" value="">
 	                                    </div>
 	                                    <div class="form-group">                                        
 	                                        <div id="datetimepicker" class="input-append date "> 
-	                                            <label class="search-label">开始时间</label> 
+	                                            <label class="search-label">开始调车时间</label> 
 	                                            <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
 	                                            <span class="add-on">  
 	                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
@@ -89,7 +91,7 @@
 	                                    </div>
 	                                    <div class="form-group">                                                    
 	                                        <span id="datetimepicker2" class="input-append date search-control "> 
-	                                            <label class="search-label">结束时间</label> 
+	                                            <label class="search-label">结束调车时间</label> 
 	                                            <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
 	                                            <span class="add-on">  
 	                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
@@ -104,11 +106,11 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="dataTables-example"  style="width: 1600px;">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example"  style="width: 1500px;">
                                     <thead>
                                         <tr>
                                             <th>调车单号</th>
-                                            <th>运输单</th>
+                                            <th>运输单号</th>
                                             <th>调车网点</th>
                                             <th>状态</th>
                                             <th>提货方式</th>
@@ -119,6 +121,7 @@
                                             <th>调车时间</th>
                                             <th>体积</th>
                                             <th>重量</th>
+                                            <th>客户</th>
                                             <th>调车人</th>
                                             <th>备注</th>
                                         </tr>

@@ -105,10 +105,10 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		//atm、补货订单、不是直送运输单
             		if(obj.aData.CARGO_NATURE == "ATM" || (obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailYes")){
-            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" value="'+obj.aData.ID+'">选择单品</button>';
+            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择单品</button>';
             			return obj.aData.ORDER_NO + str1;
             		}else if(obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailNo"){
-            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" value="'+obj.aData.ID+'">选择货品</button>';
+            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择货品</button>';
             			return obj.aData.ORDER_NO + str1;
             		}else{
             			return obj.aData.ORDER_NO;
@@ -166,7 +166,7 @@ $(document).ready(function() {
             		}else{
             			return "";
             }}},
-            {"mDataProp":"CARGO_NATURE",
+            {"mDataProp":null,
             	"sWidth": "60px",
             	"sClass": "cargo_nature",
             	"fnRender": function(obj) {
@@ -709,7 +709,7 @@ $(document).ready(function() {
     //点击按钮 - 弹出模态窗
     $('#eeda-table').on('click', 'button', function(e){      
     	var transferId = $(this).val();
-    	var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;
+    	var cargo_nature = $(this).attr("cargoNature");
     	//判断为修改运输单单品的时候，取出原有的单品id集合、单品序列号
     	if($(this).parent().parent().find("td").find("input[type='checkbox'][class='checkedOrUnchecked']").prop('checked') == true){
     		$("#ckeckedTransferOrderList tr").each(function (){
