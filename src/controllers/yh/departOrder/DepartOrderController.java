@@ -1271,8 +1271,12 @@ public class DepartOrderController extends Controller {
     // priceType 不分大小写在mysql会有问题
     private void calcCost(DepartOrder departOrder, List<Record> transferOrderItemList) {
         Long spId=departOrder.getLong("sp_id");
+        
+        
+        
         if ( spId== null)
             return;
+        getFinNoContractCost(departOrder);
         String orderCreateDate = departOrder.getDate("create_stamp").toString();
         //先获取有效期内的sp合同, 如有多个，默认取第一个
         Contract spContract= Contract.dao.findFirst("select c.* from contract c left join contract_item ci on ci.contract_id = c.id where c.type='SERVICE_PROVIDER' " +
@@ -1310,7 +1314,7 @@ public class DepartOrderController extends Controller {
     		
 		}
     	//TransferOrder transfer= TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
-    	getFinNoContractCost(departOrder);
+    	/*getFinNoContractCost(departOrder);*/
     	if(isFinContract){
     		Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
@@ -1356,7 +1360,7 @@ public class DepartOrderController extends Controller {
             String chargeType) {
     	
     	//TransferOrder transfer = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",transferOrderItemList.get(0).get("order_id"));
-    	getFinNoContractCost(departOrder);
+    	
     	for (Record tOrderItemRecord : transferOrderItemList) {
         	//TODO:获取到运输单，并且判断是否要计算合同
         	TransferOrder transferOrder = TransferOrder.dao.findFirst("select * from transfer_order where id = ?",tOrderItemRecord.get("order_id"));
