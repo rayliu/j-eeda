@@ -6,10 +6,9 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var dataTable= $('#eeda-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
-    	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -95,7 +94,6 @@ $(document).ready(function() {
       	var ADDRESS = $("#ADDRESS").val();
       	var LOCATION = $("#LOCATION").val();
       	dataTable.fnSettings().sAjaxSource = "/serviceProvider/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
-
       	dataTable.fnDraw();
       });
 	

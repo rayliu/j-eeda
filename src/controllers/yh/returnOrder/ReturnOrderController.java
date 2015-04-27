@@ -25,6 +25,7 @@ import models.OrderAttachmentFile;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
+import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
@@ -833,7 +834,7 @@ public class ReturnOrderController extends Controller {
 		if("perCar".equals(chargeType)){
 			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount"));        		
     	}else{
-    		if(tOrderItemRecord != null){
+    		if(tOrderItemRecord.get("amount") != null){
     			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
     		}
     	}
@@ -1350,6 +1351,36 @@ public class ReturnOrderController extends Controller {
 			}
 		}
     }
+    
+    //把运输单的应收带到回单中
+  	public void tansferIncomeFinItemToReturnFinItem(ReturnOrder returnOrder,long deliveryId, long transferOrderId) {
+  		if(transferOrderId > 0){
+  			List<TransferOrderFinItem> finTiems = TransferOrderFinItem.dao.find("select d.* from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = '" + transferOrderId + "' and f.type = '应收'");
+  	  		for (TransferOrderFinItem transferOrderFinItem : finTiems) {
+  	  			//ReturnOrderFinItem returnOrderFinItems = ReturnOrderFinItem.dao.findFirst("select * from return_order_fin_item where return_order_id = '" + returnOrder.get("id") + "' and fin_item_id = '" + transferOrderFinItem.get("fin_item_id") + "'");
+  	  			//if(returnOrderFinItems == null){
+  	  				ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
+  	  				returnOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"))
+  	  				.set("amount", transferOrderFinItem.get("amount"))
+  	  				.set("return_order_id", returnOrder.get("id"))
+  	  				.set("status", transferOrderFinItem.get("status"))
+  	  				.set("fin_type", "charge")// 类型是应收
+  	  				.set("creator", LoginUserController.getLoginUserId(this))
+  	  				.set("create_date", transferOrderFinItem.get("create_date"))
+  	  				.set("create_name", transferOrderFinItem.get("create_name"))
+  	  				.set("remark", transferOrderFinItem.get("remark"));
+  	  				if(deliveryId != 0)
+  	  					returnOrderFinItem.set("delivery_order_id", deliveryId);
+  	  				if(transferOrderId != 0)
+  	  					returnOrderFinItem.set("transfer_order_id", transferOrderId);
+  	  				returnOrderFinItem.save();
+  	  			//}else{
+  	  				//returnOrderFinItems.set("amount", transferOrderFinItem.getDouble("amount") + returnOrderFinItems.getDouble("amount")).update();
+  	  			//}
+  	  		}
+  		}
+  	}
+    
     
     public void saveFile(){
     	String id = getPara("return_id");

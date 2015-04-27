@@ -355,7 +355,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
     public void receipt() {
-        Long delivery_id = Long.parseLong(getPara("delivery_id"));
+        long delivery_id = getParaToLong("delivery_id");
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "已签收");
         deliveryOrder.update();
@@ -387,14 +387,15 @@ public class DeliveryOrderMilestoneController extends Controller {
         if(!"ATM".equals(deliveryOrder.get("cargo_nature"))){
         	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
         	DeliveryOrderItem item = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where delivery_id = '" + delivery_id + "';");
+        	long transferOrderId = item.get("transfer_order_id");
         	//运输单货品总数
-			Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + item.get("transfer_order_id") + "';");
+			Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + transferOrderId + "';");
 			double SumTranferItem = tranferTotal.getDouble("amount");
 			//已配送总数
-			Record deliveryTotal = Db.findFirst("select sum(ifnull(doi.product_number,0)) product_number from delivery_order_item doi where doi.transfer_order_id = '" + item.get("transfer_order_id") + "';");
+			Record deliveryTotal = Db.findFirst("select sum(ifnull(doi.product_number,0)) product_number from delivery_order_item doi where doi.transfer_order_id = '" + transferOrderId + "';");
 			double SumDelivery = deliveryTotal.getDouble("product_number");
 			if(SumTranferItem == SumDelivery){
-				Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + item.get("transfer_order_id") + "';");
+				Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + transferOrderId + "';");
 				double deliveryNumber = rec.getLong("total");
 				if(deliveryNumber == 0){
 					//当运输单配送完成时生成回单
@@ -402,41 +403,22 @@ public class DeliveryOrderMilestoneController extends Controller {
 		            returnOrder.set("delivery_order_id", delivery_id);
 		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
 		            returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
-		            returnOrder.set("transfer_order_id", item.get("transfer_order_id"));
+		            returnOrder.set("transfer_order_id", transferOrderId);
 		            returnOrder.set("order_type", "应收");
 		            returnOrder.set("transaction_status", "新建");
 		            returnOrder.set("creator", users.get(0).get("id"));
 		            returnOrder.set("create_date", createDate);
 		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
 		            returnOrder.save();
-		            //把运输单的应收带到回单中
-		            List<TransferOrderFinItem> finTiems = TransferOrderFinItem.dao.find("select d.* from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = '" + item.get("transfer_order_id") + "' and f.type = '应收'");
-		            for (TransferOrderFinItem transferOrderFinItem : finTiems) {
-		            	ReturnOrderFinItem returnOrderFinItems = ReturnOrderFinItem.dao.findFirst("select * from return_order_fin_item where return_order_id = '" + returnOrder.get("id") + "' and fin_item_id = '" + transferOrderFinItem.get("fin_item_id") + "'");
-		            	if(returnOrderFinItems == null){
-		            		ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
-				    		returnOrderFinItem.set("fin_item_id", transferOrderFinItem.get("fin_item_id"));
-		        			returnOrderFinItem.set("amount", transferOrderFinItem.get("amount"));
-				    		returnOrderFinItem.set("delivery_order_id", delivery_id);
-				    		returnOrderFinItem.set("return_order_id", returnOrder.get("id"));
-				    		returnOrderFinItem.set("status", transferOrderFinItem.get("status"));
-				    		returnOrderFinItem.set("fin_type", "charge");// 类型是应收
-				    		returnOrderFinItem.set("creator", LoginUserController.getLoginUserId(this));
-				    		returnOrderFinItem.set("create_date", transferOrderFinItem.get("create_date"));
-				    		returnOrderFinItem.set("create_name", transferOrderFinItem.get("create_name"));
-				    		returnOrderFinItem.set("remark", transferOrderFinItem.get("remark"));
-				    		returnOrderFinItem.save();
-		            	}else{
-		            		returnOrderFinItems.set("amount", transferOrderFinItem.getDouble("amount") + returnOrderFinItems.getDouble("amount")).update();
-		            	}
-					}
 		            
+		            ReturnOrderController roController = new ReturnOrderController(); 
+		            //把运输单的应收带到回单中
+		            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, delivery_id, transferOrderId);
 		            //计算普货合同应收，算没单品的，有单品暂时没做
-		            TransferOrder order = TransferOrder.dao.findById(item.get("transfer_order_id"));
+		            TransferOrder order = TransferOrder.dao.findById(transferOrderId);
 		            if(!order.getBoolean("no_contract_revenue")){
-		            	List<Record> transferOrderItemList = Db.
-		    					find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
-		            	new ReturnOrderController().calculateChargeGeneral(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
+		            	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
+		            	roController.calculateChargeGeneral(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
 		            }
 				}
 			}
@@ -457,9 +439,7 @@ public class DeliveryOrderMilestoneController extends Controller {
             //ATM
             //if("ATM".equals(deliveryOrder.get("cargo_nature"))){
     	        ReturnOrderController roController= new ReturnOrderController();
-    	        List<Record> transferOrderItemDetailList = Db.
-    					find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
-
+    	        List<Record> transferOrderItemDetailList = Db.find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
     	        roController.calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
     	        
             //}

@@ -9,9 +9,11 @@ import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.ReturnOrder;
 import models.TransferOrder;
+import models.TransferOrderFinItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -23,6 +25,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.departOrder.DepartOrderController;
 import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoGenerator;
@@ -265,7 +268,8 @@ public class TransferOrderMilestoneController extends Controller {
         //修改运输单信息
         List<Record> departOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
         for (Record record : departOrderIds) {
-        	TransferOrder transferOrder = TransferOrder.dao.findById(record.get("order_id"));
+        	long transerOrderId = record.get("order_id");
+        	TransferOrder transferOrder = TransferOrder.dao.findById(transerOrderId);
 			transferOrder.set("status", "已收货").update();
 			//设置回单客户信息，必须是同一个客户
             returnOrder.set("customer_id", transferOrder.get("customer_id")).update();
@@ -289,6 +293,8 @@ public class TransferOrderMilestoneController extends Controller {
             .save();
             
             ReturnOrderController roController= new ReturnOrderController(); 
+            //把运输单的应收带到回单中
+            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, Long.parseLong("0"), transerOrderId);
             //直送时把保险单费用带到回单
             roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
             //TODO:根据合同生成费用
