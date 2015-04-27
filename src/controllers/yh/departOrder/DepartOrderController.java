@@ -368,15 +368,15 @@ public class DepartOrderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void add() {
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
         render("/yh/departOrder/allTransferOrderList.html");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
     public void addForRouteSp() {
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
     	render("/yh/departOrder/allTransferOrderListForRouteSp.html");
     }
@@ -1671,8 +1671,7 @@ public class DepartOrderController extends Controller {
 
     // 在途运输单管理
     public void transferMilestoneIndex() {
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
         render("/yh/departOrder/TransferOrderStatus.html");
     }
@@ -1766,8 +1765,7 @@ public class DepartOrderController extends Controller {
 
     // 外包运输单更新
     public void transferonTrip() {
-	    	getCustomFile get = new getCustomFile();
-	    	Map<String, String> customizeField = get.getCustomizeFile(this);
+	    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 	    	setAttr("customizeField", customizeField);
             render("/yh/departOrder/transferOrderOnTripList.html");
     }

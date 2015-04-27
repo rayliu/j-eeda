@@ -57,8 +57,8 @@ public class PickupOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void index() {
     	
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
 
         render("/yh/pickup/pickupOrderList.html");
@@ -66,8 +66,8 @@ public class PickupOrderController extends Controller {
 
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void add() {
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
        render("/yh/pickup/pickupOrderSearchTransfer.html");
     }
@@ -122,8 +122,7 @@ public class PickupOrderController extends Controller {
         List<Record> incomeItemList = Collections.EMPTY_LIST;
         incomeItemList = Db.find("select * from fin_item where type='应收'");
         setAttr("incomeItemList", incomeItemList);
-        getCustomFile get = new getCustomFile();
-        Map<String, String> customizeField = get.getCustomizeFile(this);
+        Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
         setAttr("customizeField", customizeField);
         render("/yh/pickup/editPickupOrder.html");
     }
@@ -1081,8 +1080,7 @@ public class PickupOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_UPDATE})
     public void edit() {
     	pickupOrderEdit();
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
         render("/yh/pickup/editPickupOrder.html");
     }
@@ -1090,8 +1088,7 @@ public class PickupOrderController extends Controller {
     // 修改拼车单页面
     public void carManageEdit() {
     	pickupOrderEdit();
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
     	render("/yh/pickup/carManageEditPickupOrder.html");
     }

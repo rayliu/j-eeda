@@ -49,8 +49,7 @@ public class InsuranceOrderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_CREATE})
     public void add() {
-    	getCustomFile get = new getCustomFile();
-    	Map<String, String> customizeField = get.getCustomizeFile(this);
+    	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
     	render("/yh/insuranceOrder/insuranceOrderSearchTransfer.html");
     }

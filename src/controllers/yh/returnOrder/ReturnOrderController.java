@@ -336,8 +336,8 @@ public class ReturnOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		
-		getCustomFile get = new getCustomFile();
-		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
+		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
 		render("/yh/returnOrder/returnOrder.html");
 	}

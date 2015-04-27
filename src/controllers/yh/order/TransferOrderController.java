@@ -68,8 +68,8 @@ public class TransferOrderController extends Controller {
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST })
 	public void index() {
-		getCustomFile get = new getCustomFile();
-		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
+		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
 		render("/yh/transferOrder/transferOrderList.html");
 	}
@@ -254,8 +254,8 @@ public class TransferOrderController extends Controller {
 		
 		
 		setAttr("transferOrder",transferOrder);
-		getCustomFile get = new getCustomFile();
-		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
+		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		
 		setAttr("customizeField", customizeField);
 		
@@ -349,8 +349,7 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		
-		getCustomFile get = new getCustomFile();
-		Map<String, String> customizeField = get.getCustomizeFile(this);
+		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		
 		
 		setAttr("customizeField", customizeField);

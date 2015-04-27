@@ -317,8 +317,8 @@ public class DeliveryController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE})
 	public void add() {
 		setAttr("saveOK", false);
-		getCustomFile get = new getCustomFile();
-		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
+		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
 		render("/yh/delivery/deliveryOrderSearchTransfer.html");
 	}
@@ -468,8 +468,8 @@ public class DeliveryController extends Controller {
 			setAttr("paymentItemList", paymentItemList);
 		}
 		
-		getCustomFile get = new getCustomFile();
-		Map<String, String> customizeField = get.getCustomizeFile(this);
+		
+		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		
 		setAttr("customizeField", customizeField);
 		render("/yh/delivery/deliveryOrderEdit.html");
