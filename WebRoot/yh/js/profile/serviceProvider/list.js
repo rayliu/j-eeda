@@ -16,7 +16,12 @@ $(document).ready(function() {
         "aoColumns": [ 
             {"mDataProp":"COMPANY_NAME",
             	"fnRender":function(obj){
-            		return "<a href='/serviceProvider/edit/"+obj.aData.PID+"' target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
+            		if(Provider.isUpdate){
+            			return "<a href='/serviceProvider/edit/"+obj.aData.PID+"' target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
+            		}else{
+            			return obj.aData.COMPANY_NAME;
+            		}
+            		
             	}},
             {"mDataProp":"ABBR"},
             {"mDataProp":"SP_TYPE",
