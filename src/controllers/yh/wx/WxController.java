@@ -67,6 +67,11 @@ public class WxController extends ApiController {
 		setPageAttr("http://tms.eeda123.com/wx/demo");		
 		render("/yh/wx/demo.html");
 	}
+	//汇报位置
+	public void myLocation() {
+		setPageAttr("http://tms.eeda123.com/wx/myLocation");		
+		render("/yh/wx/location.html");
+	}
 	//回单上传附件页面
 	public void ro_filing() {
 		setAttr("type", "default");
