@@ -91,12 +91,15 @@
 		   	         "fnRender": function(obj) {  
 		   	        	
 		   	        	  if(obj.aData.ROLE_CODE != "admin"){
-		   	        		 return '<% if(updatePermission){%><nobr><a class="btn  btn-sm btn-primary" href="/userRole/edit?username=' + obj.aData.USER_NAME + '">'+
+		   	        		  
+		   	        		 return '<% if(updatePermission){%><nobr><a class="btn  btn-sm btn-primary" href="/userRole/edit?username=' + obj.aData.USER_NAME + '" target="_blank">'+
 		                          '<i class="fa fa-edit fa-fw"></i>编辑</a><%}%> '+
-		                      	  '<% if(selectPermission){%><a class="btn  btn-sm btn-primary" href="/userRole/userPermissionRender?username='+obj.aData.USER_NAME+'">'+
+		                      	  '<% if(selectPermission){%><a class="btn  btn-sm btn-primary" href="/userRole/userPermissionRender?username='+obj.aData.USER_NAME+'" target="_blank">'+
 		                          '<i class="fa fa-search fa-fw"></i>查看</a></nobr><%}%>';
+		                          
 			   	        	 }else{
-			   	        		return '<% if(selectPermission){%><a class="btn  btn-sm btn-primary" href="/userRole/userPermissionRender?username='+obj.aData.USER_NAME+'"> '+
+			   	        		 
+			   	        		return '<% if(selectPermission){%><a class="btn  btn-sm btn-primary" href="/userRole/userPermissionRender?username='+obj.aData.USER_NAME+'" target="_blank"> '+
 			                            '<i class="fa fa-search fa-fw"></i>查看</a><%}%>';
 			   	        	 } 
 		   	         }

@@ -31,7 +31,7 @@ $(document).ready(function() {
                 "fnRender": function(obj) {  
                 	var str="<nobr>";
                 	if(Warehouser.isUpdate){
-                		str += "<a class='btn  btn-primary btn-sm' href='/warehouse/edit/"+obj.aData.ID+"'>"+
+                		str += "<a class='btn  btn-primary btn-sm' href='/warehouse/edit/"+obj.aData.ID+"' target='_blank'>"+
 	                        "<i class='fa fa-edit fa-fw'></i>"+
 	                        "编辑"+
 	                        "</a> ";

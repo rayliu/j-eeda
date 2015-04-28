@@ -87,7 +87,7 @@ $(document).ready(function() {
 	                "fnRender": function(obj) { 
 	                	console.log(obj.aData.IS_STOP);
 	                	if(obj.aData.IS_STOP != true){
-	                		 return "<nobr><% if(shiro.hasPermission('Driver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/driverinfo/driveredit/"+obj.aData.PID+"'>"+
+	                		 return "<nobr><% if(shiro.hasPermission('Driver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/driverinfo/driveredit/"+obj.aData.PID+"' target='_blank'>"+
 			                             "<i class='fa fa-edit'> </i> "+
 			                             "编辑"+
 				                         "</a> <%}%>"+
@@ -96,7 +96,7 @@ $(document).ready(function() {
 			                             "停用"+
 			                         "</a><%}%></nobr>";
 	                	}else{
-	                		return "<nobr><% if(shiro.hasPermission('Driver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/driverinfo/driveredit/"+obj.aData.PID+"'>"+
+	                		return "<nobr><% if(shiro.hasPermission('Driver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/driverinfo/driveredit/"+obj.aData.PID+"' target='_blank'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
 			                         "</a> <%}%>"+

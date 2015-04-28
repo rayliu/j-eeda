@@ -62,7 +62,7 @@ $(document).ready(function() {
                 "fnRender": function(obj) {  
                 	var str ="<nobr>";
                 	if(Provider.isUpdate){
-                		str += "<a class='btn  btn-primary btn-sm' href='/serviceProvider/edit/"+obj.aData.PID+"'>"+
+                		str += "<a class='btn  btn-primary btn-sm' href='/serviceProvider/edit/"+obj.aData.PID+"' target='_blank'>"+
                         "<i class='fa fa-edit fa-fw'></i>"+
                         "编辑"+"</a> ";
                 	}

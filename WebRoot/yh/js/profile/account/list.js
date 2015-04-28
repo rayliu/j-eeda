@@ -45,7 +45,7 @@ $(document).ready(function() {
 	                "fnRender": function(obj) { 
 	                	var str = "<nobr>";
 	                	if(Account.isUpdate){
-	                		str += "<a class='btn   btn-primary btn-sm' href='/account/edit/"+obj.aData.ID+"'><i class='fa fa-edit fa-fw'></i>"+
+	                		str += "<a class='btn  btn-primary btn-sm' href='/account/edit/"+obj.aData.ID+"' target='_blank' ><i class='fa fa-edit fa-fw'></i>"+
 		                            "编辑"+
 			                        "</a> ";
 	                	}

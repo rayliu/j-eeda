@@ -128,7 +128,7 @@ var datatable=$('#example').dataTable( {
 	                "sWidth": "11%",
 	                "fnRender": function(obj) { 
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"'>"+
+	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"' target='_blank'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
 			                        "</a> <%}%>"+
@@ -137,7 +137,7 @@ var datatable=$('#example').dataTable( {
 			                            "停用"+
 			                        "</a><%}%></nobr>";
 	                	}else{
-	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"'>"+
+	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"' target='_blank'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
 			                        "</a> <%}%>"+

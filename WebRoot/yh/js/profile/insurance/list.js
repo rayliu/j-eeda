@@ -24,7 +24,7 @@ $(document).ready(function() {
 	                "sWidth": "11%",
 	                "fnRender": function(obj) { 
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<nobr><a class='btn  btn-primary btn-sm' href='/insurance/edit/"+ obj.aData.PID +"'>"+
+	                		return "<nobr><a class='btn  btn-primary btn-sm' href='/insurance/edit/"+ obj.aData.PID +"' target='_blank'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
 			                        "</a> "+
@@ -33,7 +33,7 @@ $(document).ready(function() {
 			                            "停用"+
 			                        "</a></nobr>";
 	                	}else{
-	                		return "<nobr><a class='btn  btn-primary btn-sm' href='/insurance/edit/"+  obj.aData.PID +"'>"+
+	                		return "<nobr><a class='btn  btn-primary btn-sm' href='/insurance/edit/"+  obj.aData.PID +"' target='_blank'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            "编辑"+
 			                        "</a> "+

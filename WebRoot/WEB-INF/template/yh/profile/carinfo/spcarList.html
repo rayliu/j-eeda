@@ -91,7 +91,7 @@ $(document).ready(function() {
 	                "fnRender": function(obj) { 
 	                	
 	                	if(obj.aData.IS_STOP != true){
-	                		return "<nobr><% if(shiro.hasPermission('ProviderCar.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"'>"+
+	                		return "<nobr><% if(shiro.hasPermission('ProviderCar.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"' target='_blank'>"+
 		                            "<i class='fa fa-edit'> </i> "+
 		                            	"编辑"+
 			                        "</a> <%}%>"+
@@ -100,7 +100,7 @@ $(document).ready(function() {
 			                            "停用"+
 			                        "</a><%}%></nobr>";
 	                	}else{
-	                		return "<nobr><% if(shiro.hasPermission('ProviderCar.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"'>"+
+	                		return "<nobr><% if(shiro.hasPermission('ProviderCar.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/carinfo/editSpCarInfo/"+obj.aData.ID+"' target='_blank'>"+
 			                            "<i class='fa fa-edit'> </i> "+
 			                            "编辑"+
 			                        "</a> <%}%>"+

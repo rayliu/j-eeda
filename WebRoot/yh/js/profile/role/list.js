@@ -33,7 +33,7 @@ $(document).ready(function() {
 								var str="";
 											
 								if(role_update_permission){
-									str += "<nobr><a class='btn  btn-primary btn-sm' href='/role/ClickRole?id="+obj.aData.ID+"'>"
+									str += "<nobr><a class='btn  btn-primary btn-sm' href='/role/ClickRole?id="+obj.aData.ID+"' target='_blank'>"
 										+ "<i class='fa fa-edit fa-fw'></i> "
 										+ "编辑"
 										+ "</a> ";

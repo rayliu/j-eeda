@@ -21,7 +21,7 @@ $(document).ready(function() {
 	            "mDataProp": null, 
 	            "sWidth": "8%",                
 	            "fnRender": function(obj) {                    
-	         	   return "<a class='btn btn-success eidtAcountItem' code = '"+obj.aData.FID+"'>"+
+	         	   return "<a class='btn btn-success eidtAcountItem' code = '"+obj.aData.FID+"' target='_blank'>"+
 			                       "<i class='fa fa-edit fa-fw'></i>"+
 			                       "编辑"+
 			                   "</a>"+
