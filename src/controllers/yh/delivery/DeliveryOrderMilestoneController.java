@@ -387,7 +387,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         if(!"ATM".equals(deliveryOrder.get("cargo_nature"))){
         	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
         	DeliveryOrderItem item = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where delivery_id = '" + delivery_id + "';");
-        	long transferOrderId = item.get("transfer_order_id");
+        	long transferOrderId = item.getLong("transfer_order_id");
         	//运输单货品总数
 			Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + transferOrderId + "';");
 			double SumTranferItem = tranferTotal.getDouble("amount");
