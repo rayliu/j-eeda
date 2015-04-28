@@ -17,7 +17,12 @@ $(document).ready(function() {
             
             {"mDataProp":"WAREHOUSE_NAME",
             	"fnRender":function(obj){
-            		return "<a  href='/warehouse/edit/"+obj.aData.ID+"' target='_blank'>" + obj.aData.WAREHOUSE_NAME + "</a>";
+            		if(Warehouser.isUpdate){
+            			return "<a  href='/warehouse/edit/"+obj.aData.ID+"' target='_blank'>" + obj.aData.WAREHOUSE_NAME + "</a>";
+            		}else{
+            			return obj.aData.WAREHOUSE_NAME;
+            		}
+            		
             	}}, 
             {"mDataProp":"NOTIFY_NAME"},        	
             {"mDataProp":"NOTIFY_MOBILE"},
