@@ -24,14 +24,8 @@
                                         <tr>
                                             <th>用户名称</th>
                                             <th>用户角色</th>
-                                            <th>备注</th>  
-                                            <% 
-                                            	var ur_isUpdate = shiro.hasPermission("UserRole.update");
-                                            	var ur_isSelect = shiro.hasPermission("UserRole.permission_list");
-                                            	if(ur_isUpdate || ur_isSelect){
-                                            %>                                         
-                                            	<th></th>
-                                            <%}%>
+                                            <th>备注</th>                                      
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -62,6 +56,14 @@
     <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>
+	    <% 
+		   	var updatePermission = shiro.hasPermission("UserRole.update");
+		   	var selectPermission = shiro.hasPermission("UserRole.permission_list");
+		  
+	   %>
+	   var userRole ={};
+	   userRole.update = ${updatePermission};
+	   userRole.query = ${selectPermission};
     $(document).ready(function() {
       $('#menu_profile').addClass('active').find('ul').addClass('in');
    	
@@ -75,36 +77,36 @@
    	        },
    	        "sAjaxSource": "/userRole/list",
    			"aoColumns": [
-   	            { "mDataProp":"USER_NAME",
+   	            { "mDataProp":null,
    	            	"fnRender":function(obj){
-   	            		return "<a  href='/userRole/edit?username="+ obj.aData.USER_NAME +"' target='_blank'>" + obj.aData.USER_NAME + "</a>";
+   	            		 if(userRole.update){
+   	            			 return "<a href ='/userRole/edit?username=" + obj.aData.USER_NAME + "' target='_blank'>" + obj.aData.USER_NAME + "</a>";
+   	            		
+   	            		}else{ 
+   	            			return obj.aData.USER_NAME;
+   	            		 } 
+   	            		
    	            	}},
    	            { "mDataProp":"NAME"},
-   	            { "mDataProp":"REMARK"}
-   	            <% 
-   	            	var updatePermission = shiro.hasPermission("UserRole.update");
-   	            	var selectPermission = shiro.hasPermission("UserRole.permission_list");
-   	            	if(updatePermission || selectPermission){
-   	            %>
-   	            ,{ "mDataProp":null,
-   	         		"sWidth": "8%", 
+   	            { "mDataProp":"REMARK"},
+   	            { "mDataProp":null,
+   	         		"sWidth": "8%",
+   	         		"bVisible":(userRole.update || userRole.query),
 		   	         "fnRender": function(obj) {  
-		   	        	
-		   	        	  if(obj.aData.ROLE_CODE != "admin"){
-		   	        		  
-		   	        		 return '<% if(updatePermission){%><nobr><a class="btn  btn-sm btn-primary" href="/userRole/edit?username=' + obj.aData.USER_NAME + '" target="_blank">'+
-		                          '<i class="fa fa-edit fa-fw"></i>编辑</a><%}%> '+
-		                      	  '<% if(selectPermission){%><a class="btn  btn-sm btn-primary" href="/userRole/userPermissionRender?username='+obj.aData.USER_NAME+'" target="_blank">'+
-		                          '<i class="fa fa-search fa-fw"></i>查看</a></nobr><%}%>';
-		                          
-			   	        	 }else{
-			   	        		 
-			   	        		return '<% if(selectPermission){%><a class="btn  btn-sm btn-primary" href="/userRole/userPermissionRender?username='+obj.aData.USER_NAME+'" target="_blank"> '+
-			                            '<i class="fa fa-search fa-fw"></i>查看</a><%}%>';
-			   	        	 } 
+		   	        	 var str = "<nobr>";
+		   	        	 if(obj.aData.ROLE_CODE != "admin"){
+		   	        		  if(userRole.update){
+		   	        			  str = str + "<a target='_blank' class='btn  btn-sm btn-primary' href='/userRole/edit?username=" + obj.aData.USER_NAME + "' >"+
+		                          			"<i class='fa fa-edit fa-fw'></i>编辑</a> ";
+		   	        		  }  
+			   	         }
+		   	        	 if(userRole.query){
+		   	        		 str = str + "<a target='_blank' class='btn  btn-sm btn-primary' href='/userRole/userPermissionRender?username="+obj.aData.USER_NAME+"' > "+
+	                           			 "<i class='fa fa-search fa-fw'></i>查看</a>";
+		   	        	 }
+		   	        	return str + "</nobr>" ;
 		   	         }
 		   	 	}
-             <%}%>
    	      	]
    		});
    		

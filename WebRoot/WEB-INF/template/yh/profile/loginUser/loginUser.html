@@ -59,6 +59,13 @@
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 
 <script>
+	<% 
+		var updatePermission = shiro.hasPermission("User.update");
+		var delPermission = shiro.hasPermission("User.delete");
+	%>
+	var User ={};
+	User.update = ${updatePermission};
+    User.del = ${delPermission};
 $(document).ready(function() {
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 
@@ -68,6 +75,7 @@ $(document).ready(function() {
 	 $("#query").click(function(){
 	    	alert("123");
 	    }); */
+	 
 	 $('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
@@ -79,47 +87,41 @@ $(document).ready(function() {
 			"aoColumns": [
 				{ "mDataProp": "USER_NAME",
 					"fnRender":function(obj){
-						return "<a  href='/loginUser/edit/"+obj.aData.ID+"' target='_blank' >" + obj.aData.USER_NAME + "</a>";
+						if(User.update){
+							return "<a  href='/loginUser/edit/"+obj.aData.ID+"' target='_blank' >" + obj.aData.USER_NAME + "</a>";
+						}else{
+							return obj.aData.USER_NAME;
+						}
+						
 					}},
 				{ "mDataProp": "C_NAME" },
-	            { "mDataProp": "PASSWORD_HINT" }
-	            <% if(shiro.hasPermission("User.update") || shiro.hasPermission("User.delete")){%>
-	            ,{ 
+	            { "mDataProp": "PASSWORD_HINT" },
+	            { 
 	                "mDataProp": null, 
 	                "sWidth": "8%",
+	                "bVisible":(User.update || User.del),
 	                "fnRender": function(obj) {
+	                	var str = "<nobr>";
+	                	if(User.update){
+                			str = str + "<a class='btn  btn-primary btn-sm editbutton' href='/loginUser/edit/"+obj.aData.ID+"' target='_blank'>"+
+                            		 "<i class='fa fa-edit'> </i>编辑</a> ";
+                		}
+	                	if(User.del){
 	                		if(obj.aData.IS_STOP != true){
-		                		
-		                		 return "<% if(shiro.hasPermission('User.update')){%><nobr><a class='btn  btn-primary btn-sm editbutton' href='/loginUser/edit/"+obj.aData.ID+"' target='_blank'>"+
-			                             "<i class='fa fa-edit'> </i> "+
-			                             "编辑"+
-				                         "</a> <%}%>"+
-				                         "<% if(shiro.hasPermission('User.delete')){%><a class='btn  btn-danger btn-sm ' href='/loginUser/del/"+obj.aData.ID+"'>"+
-				                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
-				                             "停用"+
-				                         "</a></nobr><%}%>";
+	                			str = str +"<a class='btn  btn-danger btn-sm ' href='/loginUser/del/"+obj.aData.ID+"'>"+
+				                             "<i class='fa fa-trash-o fa-edit'></i>停用</a>";       
 		                	}else{
-		                		 return "<% if(shiro.hasPermission('User.update')){%><nobr><a class='btn  btn-primary btn-sm editbutton' href='/loginUser/edit/"+obj.aData.ID+"' target='_blank'>"+
-			                             "<i class='fa fa-edit'> </i> "+
-			                             "编辑"+
-				                         "</a> <%}%>"+
-				                         "<% if(shiro.hasPermission('User.delete')){%><a class='btn  btn-success btn-sm dropdown-toggle' href='/loginUser/del/"+obj.aData.ID+"'>"+
-				                             "<i class='fa fa-trash-o fa-edit'></i>"+ 
-				                             "启用"+
-				                         "</a></nobr><%}%>";
+		                		str = str + "<a class='btn  btn-success btn-sm dropdown-toggle' href='/loginUser/del/"+obj.aData.ID+"'>"+
+				                             "<i class='fa fa-trash-o fa-edit'></i>启用 </a>";
 		                	}
 	                	}
-	                }
-	             
-	            <%}%>
-	            ]
+	                	return str+"</nobr>"
+               	}
+               }
+           ]
 	} );
 	 
-	/* $("#example").on('click', '.editbutton', function(){
-		    //console.log(this);
-		  // alert(123);
-	}); */
-		
+
 
 });
 </script>
