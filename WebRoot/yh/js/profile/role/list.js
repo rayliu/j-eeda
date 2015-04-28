@@ -13,7 +13,13 @@ $(document).ready(function() {
 					{
 						"mDataProp" : "CODE",
 						"fnRender":function(obj){
-							return "<a href='/role/ClickRole?id="+ obj.aData.ID +"' target='_blank'>" + obj.aData.CODE + "</a>";
+							var role_update_permission = Role.UpdatePermission;
+							if(role_update_permission){
+								return "<a href='/role/ClickRole?id="+ obj.aData.ID +"' target='_blank'>" + obj.aData.CODE + "</a>";	
+							}else{
+								return obj.aData.CODE;
+							}
+							
 						}
 					},
 					{
@@ -30,6 +36,7 @@ $(document).ready(function() {
 							if(obj.aData.CODE != "admin" && obj.aData.CODE != "outuser"){
 								var role_update_permission = Role.UpdatePermission;
 								var role_del_permission = Role.DelPermission;
+								
 								var str="";
 											
 								if(role_update_permission){
