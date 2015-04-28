@@ -12,7 +12,10 @@ $(document).ready(function() {
 	        },
 	        "sAjaxSource": "/insurance/list",
 			"aoColumns": [
-	            { "mDataProp":"COMPANY_NAME"},
+	            { "mDataProp":"COMPANY_NAME",
+	            	"fnRender":function(obj){
+	            		return "<a target='_blank' href='/insurance/edit/"+ obj.aData.PID +"'>" + obj.aData.COMPANY_NAME + "</a>";
+	            	}},
 	            { "mDataProp":"CONTACT_PERSON"},
 	            { "mDataProp":"CONTACT_PHONE" },
 	            { "mDataProp":"ADDRESS" },

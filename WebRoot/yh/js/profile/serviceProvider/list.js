@@ -14,7 +14,10 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/serviceProvider/list",
         "aoColumns": [ 
-            {"mDataProp":"COMPANY_NAME"},
+            {"mDataProp":"COMPANY_NAME",
+            	"fnRender":function(obj){
+            		return "<a href='/serviceProvider/edit/"+obj.aData.PID+"' target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
+            	}},
             {"mDataProp":"ABBR"},
             {"mDataProp":"SP_TYPE",
             	"fnRender": function(obj) {

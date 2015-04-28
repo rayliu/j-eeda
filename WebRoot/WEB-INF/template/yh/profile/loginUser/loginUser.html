@@ -77,7 +77,10 @@ $(document).ready(function() {
 	        },
 	        "sAjaxSource": "/loginUser/listUser",
 			"aoColumns": [
-				{ "mDataProp": "USER_NAME" },
+				{ "mDataProp": "USER_NAME",
+					"fnRender":function(obj){
+						return "<a  href='/loginUser/edit/"+obj.aData.ID+"' target='_blank' >" + obj.aData.USER_NAME + "</a>";
+					}},
 				{ "mDataProp": "C_NAME" },
 	            { "mDataProp": "PASSWORD_HINT" }
 	            <% if(shiro.hasPermission("User.update") || shiro.hasPermission("User.delete")){%>

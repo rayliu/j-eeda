@@ -70,7 +70,10 @@ $(document).ready(function() {
 	        "bRetrieve": true,
 	        "sAjaxSource": "/carinfo/spCarInfoList",
 			"aoColumns": [
-				{ "mDataProp": "CAR_NO" },
+				{ "mDataProp": "CAR_NO",
+					"fnRender":function(obj){
+						return "<a href='/carinfo/editSpCarInfo/"+obj.aData.ID+"' target='_blank'>" + obj.aData.CAR_NO + "</a>";
+					}},
 				{ "mDataProp": "DRIVER" },
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "CARTYPE" },

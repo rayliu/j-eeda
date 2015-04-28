@@ -69,7 +69,10 @@ $(document).ready(function() {
 	        "bFilter": true,
 	        "sAjaxSource": "/spdriverinfo/spDriverList",
 			"aoColumns": [
-				{ "mDataProp": "CONTACT_PERSON" },
+				{ "mDataProp": "CONTACT_PERSON",
+					"fnRender":function(obj){
+						return "<a href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"' target='_blank'>" + obj.aData.CONTACT_PERSON + "</a>";
+					}},
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "LICENSE" },
 				{ "mDataProp": "IDENTIFICATION"}

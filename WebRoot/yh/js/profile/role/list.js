@@ -11,7 +11,10 @@ $(document).ready(function() {
 			"sAjaxSource" : "/role/list",
 			"aoColumns" : [
 					{
-						"mDataProp" : "CODE"
+						"mDataProp" : "CODE",
+						"fnRender":function(obj){
+							return "<a href='/role/ClickRole?id="+ obj.aData.ID +"' target='_blank'>" + obj.aData.CODE + "</a>";
+						}
 					},
 					{
 						"mDataProp" : "NAME"

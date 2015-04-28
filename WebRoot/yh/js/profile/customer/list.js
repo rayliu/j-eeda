@@ -17,7 +17,10 @@ $(document).ready(function() {
         "bServerSide": true,
         "sAjaxSource": "/customer/list",
         "aoColumns": [   
-            {"mDataProp":"COMPANY_NAME"},
+            {"mDataProp":"COMPANY_NAME",
+            	"fnRender":function(obj){
+            		return "<a href='/customer/edit/"+obj.aData.PID+"'target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
+            	}},
             {"mDataProp":"ABBR"},
             {"mDataProp":"CONTACT_PERSON"},        	
             {"mDataProp":"PHONE"},

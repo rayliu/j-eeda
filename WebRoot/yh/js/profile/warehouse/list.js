@@ -15,7 +15,10 @@ $(document).ready(function() {
         "sAjaxSource": "/warehouse/list",
         "aoColumns": [   
             
-            {"mDataProp":"WAREHOUSE_NAME"}, 
+            {"mDataProp":"WAREHOUSE_NAME",
+            	"fnRender":function(obj){
+            		return "<a  href='/warehouse/edit/"+obj.aData.ID+"' target='_blank'>" + obj.aData.WAREHOUSE_NAME + "</a>";
+            	}}, 
             {"mDataProp":"NOTIFY_NAME"},        	
             {"mDataProp":"NOTIFY_MOBILE"},
             {"mDataProp":"DNAME"},       	

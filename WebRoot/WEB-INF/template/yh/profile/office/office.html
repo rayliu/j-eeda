@@ -107,8 +107,11 @@ var datatable=$('#example').dataTable( {
 	        },
 	        "sAjaxSource": "/office/listOffice",
 			"aoColumns": [
-				{ "mDataProp": "OFFICE_CODE","sWidth": "10%" },
-	            { "mDataProp": "OFFICE_NAME" },
+				{ "mDataProp": "OFFICE_CODE","sWidth": "10%","bVisible":false },
+	            { "mDataProp": "OFFICE_NAME",
+					"fnRender":function(obj){
+						return "<a  href='/office/edit/"+ obj.aData.ID + "' target='_blank'>" + obj.aData.OFFICE_NAME+ "</a>";
+					}},
 	            { "mDataProp": "OFFICE_PERSON" },
 	            { "mDataProp": "PHONE" },
 	            { "mDataProp": "ADDRESS","sWidth": "15%"},
