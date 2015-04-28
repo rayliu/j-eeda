@@ -59,13 +59,7 @@
 								<th>邮箱</th>
 								<th>类型</th>
 								<th>公司简介</th>
-								 <%
-					            	var updatePermission = shiro.hasPermission("Office.update");
-					            	var delPermission = shiro.hasPermission("Office.delete");
-					            	if(updatePermission || delPermission){
-					            %>
-									<th></th>
-								<%}%>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -94,6 +88,13 @@
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 
 <script>
+<%
+	var updatePermission = shiro.hasPermission("Office.update");
+	var delPermission = shiro.hasPermission("Office.delete");
+%>
+var Office = {};
+Office.update = ${updatePermission};
+Office.del = ${delPermission};
 $(document).ready(function() {
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 var datatable=$('#example').dataTable( {
@@ -110,47 +111,44 @@ var datatable=$('#example').dataTable( {
 				{ "mDataProp": "OFFICE_CODE","sWidth": "10%","bVisible":false },
 	            { "mDataProp": "OFFICE_NAME",
 					"fnRender":function(obj){
-						return "<a  href='/office/edit/"+ obj.aData.ID + "' target='_blank'>" + obj.aData.OFFICE_NAME+ "</a>";
+						if(Office.update){
+							return "<a  href='/office/edit/"+ obj.aData.ID + "' target='_blank'>" + obj.aData.OFFICE_NAME+ "</a>";
+						}else{
+							return obj.aData.OFFICE_NAME;
+						}
+						
 					}},
 	            { "mDataProp": "OFFICE_PERSON" },
 	            { "mDataProp": "PHONE" },
 	            { "mDataProp": "ADDRESS","sWidth": "15%"},
 	            { "mDataProp": "EMAIL" },
 	            { "mDataProp": "TYPE" },
-	            { "mDataProp": "COMPANY_INTRO" }
-	            <%
-	            	var updatePermission = shiro.hasPermission("Office.update");
-	            	var delPermission = shiro.hasPermission("Office.delete");
-	            	if(updatePermission || delPermission){
-	            %>
-	            ,{ 
+	            { "mDataProp": "COMPANY_INTRO" },
+	            { 
 	                "mDataProp": null, 
 	                "sWidth": "11%",
+	                "bVisible":(Office.update || Office.del),
 	                "fnRender": function(obj) { 
-	                	if(obj.aData.IS_STOP != true){
-	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"' target='_blank'>"+
-		                            "<i class='fa fa-edit'> </i> "+
-		                            "编辑"+
-			                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('Office.delete')){%><a class='btn btn-danger  btn-sm ' href='/office/del/"+obj.aData.ID+"'>"+
-			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
-			                            "停用"+
-			                        "</a><%}%></nobr>";
-	                	}else{
-	                		return "<nobr><% if(shiro.hasPermission('Office.update')){%><a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"' target='_blank'>"+
-		                            "<i class='fa fa-edit'> </i> "+
-		                            "编辑"+
-			                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('Office.delete')){%><a class='btn btn-success  btn-sm' href='/office/del/"+obj.aData.ID+"'>"+
-			                            "<i class='fa fa-trash-o fa-fw'></i>"+ 
-			                            "启用"+
-			                        "</a><%}%></nobr>";
+	                	var str = "<nobr>";
+	                	if(Office.update){
+	                		str += "<a class='btn  btn-primary btn-sm' href='/office/edit/"+obj.aData.ID+"' target='_blank'>"+
+                            		"<i class='fa fa-edit'> </i>编辑</a> ";
 	                	}
-	                    
+	                	if(Office.del){
+	                		if(obj.aData.TYPE != "总公司"){
+			                	if(obj.aData.IS_STOP != true){
+			                		str +=  "<a class='btn btn-danger  btn-sm ' href='/office/del/"+obj.aData.ID+"'>"+
+					                            "<i class='fa fa-trash-o fa-fw'></i>停用</a>";
+			                	}else{
+			                		str += "<a class='btn btn-success  btn-sm' href='/office/del/"+obj.aData.ID+"'>"+
+					                            "<i class='fa fa-trash-o fa-fw'></i>启用</a>";
+			                	}
+	                		}
+	                	}
+	                	return str + "</nobr>";
 	                }
-	            } 
-	            <%}%>
-	            ]
+	            }
+	       ]
 	} );
 		
 	 $("#name_filter ,#address_filter ,#person_filter ,#type_filter").on( 'keyup click', function () {    	 	
