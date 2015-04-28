@@ -23,13 +23,7 @@
 								<th>联系电话</th>
 								<th>驾驶证类型</th>
 								<th>身份证</th>
-								<% 
-					            	var updatePermission = shiro.hasPermission('ProviderDriver.update');
-					            	var delPermission = shiro.hasPermission('ProviderDriver.delete');
-					            	if(updatePermission || delPermission){
-					            %>
 								<th></th>
-								<%}%>
 							</tr>
 						</thead>
 						<tbody>
@@ -55,6 +49,14 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script>
+<% 
+	var updatePermission = shiro.hasPermission('ProviderDriver.update');
+	var delPermission = shiro.hasPermission('ProviderDriver.delete');
+	
+%>
+var spDriver ={};
+spDriver.update = ${updatePermission};
+spDriver.del = ${delPermission};
 $(document).ready(function() {
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 	var dataTable= $('#example').dataTable( {
@@ -71,44 +73,42 @@ $(document).ready(function() {
 			"aoColumns": [
 				{ "mDataProp": "CONTACT_PERSON",
 					"fnRender":function(obj){
-						return "<a href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"' target='_blank'>" + obj.aData.CONTACT_PERSON + "</a>";
+						if(spDriver.update){
+							return "<a href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"' target='_blank'>" + obj.aData.CONTACT_PERSON + "</a>";
+						}else{
+							return obj.aData.CONTACT_PERSON;
+						}
+						
 					}},
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "LICENSE" },
-				{ "mDataProp": "IDENTIFICATION"}
-	            <% 
-	            	var updatePermission = shiro.hasPermission('ProviderDriver.update');
-	            	var delPermission = shiro.hasPermission('ProviderDriver.delete');
-	            	if(updatePermission || delPermission){
-	            %>
-				,{ 
+				{ "mDataProp": "IDENTIFICATION"},
+				{ 
 	                "mDataProp": null, 
 	                "sWidth": "15%",
+	                "bVisible":(spDriver.update || spDriver.del),
 	                "fnRender": function(obj) { 
-	                	if(obj.aData.IS_STOP != true){
-	                		return "<nobr><% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"' target='_blank'>"+
-		                            "<i class='fa fa-edit'> </i> "+
-		                            "编辑"+
-			                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-danger  btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
-			                            "<i class='fa fa-edit'> </i> "+
-			                            "停用"+
-			                        "</a><%}%></nobr>";
-	                	}else{
-	                		return "<nobr><% if(shiro.hasPermission('ProviderDriver.update')){%><a class='btn  btn-primary btn-sm editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"' target='_blank'>"+
-			                            "<i class='fa fa-edit'> </i> "+
-			                            "编辑"+
-				                        "</a> <%}%>"+
-			                        "<% if(shiro.hasPermission('ProviderDriver.delete')){%><a class='btn btn-success  btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
-			                            "<i class='fa fa-edit'> </i> "+
-			                            "启用"+
-			                        "</a><%}%></nobr>";
+	                	var str = "<nobr>";
+	                	if(spDriver.update){
+	                		str = str + "<a class='btn  btn-primary btn-sm editbutton' href='/spdriverinfo/editSpDriver/"+obj.aData.PID+"' target='_blank'>"+
+			                            "<i class='fa fa-edit'> </i>编辑</a> ";
 	                	}
-	                    
+	                	if(spDriver.del){
+	                	
+		                	if(obj.aData.IS_STOP != true){
+		                		str = str +  "<a class='btn btn-danger  btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+				                            "<i class='fa fa-edit'> </i>停用</a>";
+		                	}else{
+		                		str = str +  "<a class='btn btn-success  btn-sm editbutton' href='/spdriverinfo/deleteSpDriver/"+obj.aData.PID+"'>"+
+				                            "<i class='fa fa-edit'> </i>启用</a>";
+		                	}
+		                	
+	                	}
+	                	return str + "</nobr>";
 	                }
 	            } 
-				<%}%>
-	            ]
+				
+	         ]
 	} );
 });
 </script>
