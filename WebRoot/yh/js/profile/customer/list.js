@@ -19,7 +19,12 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"COMPANY_NAME",
             	"fnRender":function(obj){
-            		return "<a href='/customer/edit/"+obj.aData.PID+"'target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
+            		if(Customer.updatePermission){
+            			return "<a href='/customer/edit/"+obj.aData.PID+"'target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
+            		}else{
+            			return obj.aData.COMPANY_NAME;
+            		}
+            		
             	}},
             {"mDataProp":"ABBR"},
             {"mDataProp":"CONTACT_PERSON"},        	
@@ -54,20 +59,16 @@ $(document).ready(function() {
 	                            "<i class='fa fa-edit fa-fw'></i>"+
 	                            "编辑"+"</a> ";
             		}
-                	if(obj.aData.IS_STOP != true){
-                		if(Customer.delPermission){
-                			str += "<a class='btn btn-danger  btn-sm' href='/customer/delete/"+obj.aData.PID+"'>"+
-		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
-		                         "停用"+
-		                         "</a>";
-                		}
-                	}else{
-                		if(Customer.delPermission){
-                			str +="<a class='btn btn-success' href='/customer/delete/"+obj.aData.PID+"'>"+
-	                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
-	                         "启用"+
-	                     "</a>";
-                		}
+                	if(Customer.delPermission){
+	                	if(obj.aData.IS_STOP != true){
+	                			str += "<a class='btn btn-danger  btn-sm' href='/customer/delete/"+obj.aData.PID+"'>"+
+			                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+			                         "停用"+
+			                         "</a>";
+	                	}else{
+	                		str +="<a class='btn btn-success' href='/customer/delete/"+obj.aData.PID+"'>"+
+		                         "<i class='fa fa-trash-o fa-fw'></i>启用</a>";
+	                	}
                 	}
                 	str +="</nobr>";
                    return str;
