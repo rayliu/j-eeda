@@ -268,7 +268,7 @@ public class TransferOrderMilestoneController extends Controller {
         //修改运输单信息
         List<Record> departOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
         for (Record record : departOrderIds) {
-        	long transerOrderId = record.get("order_id");
+        	long transerOrderId = record.getLong("order_id");
         	TransferOrder transferOrder = TransferOrder.dao.findById(transerOrderId);
 			transferOrder.set("status", "已收货").update();
 			//设置回单客户信息，必须是同一个客户
