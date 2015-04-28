@@ -95,23 +95,22 @@ $(document).ready(function() {
  		var car_summary_id = $("#car_summary_id").val();
  		var pickupIds = $("#pickupIds").val();
  		tableName.fnSettings().oFeatures.bServerSide = true;
- 		if(clickTabId == "carmanageLine"){//线路
+ 		if(clickTabId == "carmanageLine")//线路
  			tableName.fnSettings().sAjaxSource = "/carsummary/findAllAddress?pickupIds="+pickupIds;   
-		}else if(clickTabId == "transferOrderList"){//运输单
+		else if(clickTabId == "transferOrderList")//运输单
 			tableName.fnSettings().sAjaxSource = "/carsummary/findTransferOrder?pickupIds="+pickupIds;   
-		}else if(clickTabId == "carmanageItemList"){//货品信息
+		else if(clickTabId == "carmanageItemList")//货品信息
 			tableName.fnSettings().sAjaxSource = "/carsummary/findPickupOrderItems?pickupIds="+pickupIds; 
-		}else if(clickTabId == "carmanageMilestoneList"){//里程碑
+		else if(clickTabId == "carmanageMilestoneList")//里程碑
  			tableName.fnSettings().sAjaxSource = "/carsummary/transferOrderMilestoneList?car_summary_id="+car_summary_id;
-		}else if(clickTabId == "carmanageRoadBridge"){//路桥费明细
+		else if(clickTabId == "carmanageRoadBridge")//路桥费明细
 			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryRouteFee?car_summary_id="+car_summary_id;
-		}else if(clickTabId == "carmanageRefuel"){//加油记录
+		else if(clickTabId == "carmanageRefuel")//加油记录
 			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOilFee?car_summary_id="+car_summary_id;
-		}else if(clickTabId == "carmanageSalary"){//送货员工资明细
+		else if(clickTabId == "carmanageSalary")//送货员工资明细
 			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailSalary?car_summary_id="+car_summary_id;
-		}else if(clickTabId == "carmanageCostSummation"){//费用合计
+		else if(clickTabId == "carmanageCostSummation")//费用合计
 			tableName.fnSettings().sAjaxSource = "/carsummary/findCarSummaryDetailOtherFee?car_summary_id="+car_summary_id;
-		}
  		tableName.fnDraw();
  	};
 	
@@ -125,7 +124,8 @@ $(document).ready(function() {
  		if(!$("#saveCarSummaryBtn").prop("disabled")){
  			$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
  	 			if(data != null){
- 	 				$("#car_summary_id").val(data);
+ 	 				$("#car_summary_id").val(data.ID);
+ 	 				$("#car_summary_no").val(data.ORDER_NO);
  	 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  	 				findTableDataService(tableName);
  	 			}else{
@@ -141,7 +141,8 @@ $(document).ready(function() {
 		$("#saveCarSummaryBtn").prop("disabled",true);
 		$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
  			if(data != null){
- 				$("#car_summary_id").val(data);
+ 				$("#car_summary_id").val(data.ID);
+ 				$("#car_summary_no").val(data.ORDER_NO);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  			}else{
  				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);

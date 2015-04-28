@@ -34,11 +34,11 @@ $(document).ready(function() {
     	},
     	"sAjaxSource": "/carreimbursement/carSummaryOrderList",
     	"aoColumns": [ 
-			    {"mDataProp":null, "sWidth":"10px", 
+	          {"mDataProp":null, "sWidth":"10px", 
 				  "fnRender": function(obj) {
 					  unDisposePickuoIds.push(obj.aData.ID);
 					  return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
-			    }}, 
+			  }}, 
 	          {"mDataProp":null, "sWidth":"120px",
 				    "fnRender": function(obj) {
 					  return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -157,7 +157,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": "ORDER_NO", "sWidth":"120px",
             	"fnRender": function(obj) {
-					return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+					return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
           	  	}
         	},
             { "mDataProp": "STATUS", "sWidth":"50px",

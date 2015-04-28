@@ -358,8 +358,9 @@ public class CarSummaryController extends Controller {
         String deductApportionAmount = getPara("deduct_apportion_amount").equals("") ?"0":getPara("deduct_apportion_amount");
         String actualPaymentAmount = getPara("actual_payment_amount").equals("") ?"0":getPara("actual_payment_amount");
         String orderNo = null;
+        CarSummaryOrder carSummaryOrder = null;
         if(carSummaryId.equals("") || carSummaryId == null){ //新建时
-        	CarSummaryOrder carSummaryOrder = new CarSummaryOrder();
+        	carSummaryOrder = new CarSummaryOrder();
         	java.util.Date utilDate = new java.util.Date();
         	java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         	//调车单号
@@ -430,13 +431,10 @@ public class CarSummaryController extends Controller {
 				transferOrder.set("car_summary_order_share_ratio", rate);
 				transferOrder.update();
 			}
-    		
-    		carSummaryId = Long.toString(id);
-    		
         }else{//修改时
-        	CarSummaryOrder carSummary = CarSummaryOrder.dao.findById(carSummaryId);
-        	if(carSummary != null){
-        		carSummary.set("main_driver_name", mainDriverName)
+        	carSummaryOrder = CarSummaryOrder.dao.findById(carSummaryId);
+        	if(carSummaryOrder != null){
+        		carSummaryOrder.set("main_driver_name", mainDriverName)
 	    		.set("main_driver_amount", mainDriverAmount).set("minor_driver_name", minorDriverName)
 	    		.set("minor_driver_amount", minorDriverAmount).set("start_car_mileage", startCarMileage)
 	    		.set("finish_car_mileage", finishCarMileage).set("month_start_car_next", monthStartCarNext)
@@ -455,7 +453,7 @@ public class CarSummaryController extends Controller {
 		if(!"0".equals(monthCarRunMileage)){
 			updateNextFuelStandard(carSummaryId);
 		}
-        renderJson(carSummaryId);
+        renderJson(carSummaryOrder);
 	}
 	
 	//查询所有自营副司机

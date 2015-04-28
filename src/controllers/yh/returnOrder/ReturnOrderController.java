@@ -73,62 +73,31 @@ public class ReturnOrderController extends Controller {
 		String time_one = getPara("time_one");
 		String time_two = getPara("time_two");
 		String customer = getPara("customer");
-		String sLimit = "";
 		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-				&& getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-					+ getPara("iDisplayLength");
-		}
+		String sLimit = "";
+		String sqlTotal = "";
+		String sql = "";
 		Map orderMap = new HashMap();
-		if (order_no == null && tr_order_no == null && de_order_no == null
-				&& stator == null && status == null && time_one == null
-				&& time_two == null && customer == null) {
+		
+		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+		}
+		if (order_no == null && tr_order_no == null && de_order_no == null && stator == null 
+				&& status == null && time_one == null && time_two == null && customer == null) {
 			// 获取总条数
-			String totalWhere = "";
-			String sql = "select count(1) total from return_order r_o "
+			sqlTotal = "select count(1) total from return_order r_o "
 					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
 					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
 					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
 					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
-			Record rec = Db.findFirst(sql + totalWhere);
-			logger.debug("total records:" + rec.getLong("total"));
-
 			// 获取当前页的数据
-			List<Record> orders = Db
-					.find("select distinct r_o.*, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-							+ " from return_order r_o "
-							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
-							+ " left join party p on p.id = tor.customer_id "
-							+ " left join contact c on c.id = p.contact_id  "
-							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
-							+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
-							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
-							+ " left join party p2 on p2.id = tor2.customer_id "
-							+ " left join contact c2 on c2.id = p2.contact_id  "
-							+ " left join user_login  usl on usl.id=r_o.creator "
-							+ " left join warehouse w on d_o.from_warehouse_id = w.id "
-							+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-							+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-							+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit);
-
-			orderMap.put("sEcho", pageIndex);
-			orderMap.put("iTotalRecords", rec.getLong("total"));
-			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-			orderMap.put("aaData", orders);
-
-		} else {
-			if (time_one == null || "".equals(time_one)) {
-				time_one = "1-1-1";
-			}
-			if (time_two == null || "".equals(time_two)) {
-				time_two = "9999-12-31";
-			}
-
-			// 获取总条数
-			String totalWhere = "";
-			String sql = "select count(distinct r_o.id) total from return_order r_o "
+			sql = "select distinct r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
+					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
+					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
+					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+					+ " from return_order r_o "
 					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
 					+ " left join party p on p.id = tor.customer_id "
 					+ " left join contact c on c.id = p.contact_id  "
@@ -139,76 +108,74 @@ public class ReturnOrderController extends Controller {
 					+ " left join contact c2 on c2.id = p2.contact_id  "
 					+ " left join user_login  usl on usl.id=r_o.creator "
 					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
-					+ " where ifnull(r_o.order_no,'')  like'%"
-					+ order_no
-					+ "%' and  "
-					+ "ifnull(tor.order_no,tor2.order_no)  like'%"
-					+ tr_order_no
-					+ "%'  and  "
-					+ "ifnull(d_o.order_no,'')  like'%"
-					+ de_order_no
-					+ "%'  and "
-					+ "ifnull(r_o.transaction_status ,'')  like'%"
-					+ status
-					+ "%' and "
-					+ "ifnull(usl.user_name ,'')  like'%"
-					+ stator
-					+ "%'"
-					+ " and ifnull(c.abbr,c2.abbr) like '%"
-					+ customer
-					+ "%' and "
-					+ "r_o.create_date between '"
-					+ time_one + "' and '" + time_two + "' "
+					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit;
+		} else {
+			if (time_one == null || "".equals(time_one)) {
+				time_one = "1-1-1";
+			}
+			if (time_two == null || "".equals(time_two)) {
+				time_two = "9999-12-31";
+			}
+
+			// 获取总条数
+			sqlTotal = "select count(distinct r_o.id) total from return_order r_o "
+					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
+					+ " left join party p on p.id = tor.customer_id "
+					+ " left join contact c on c.id = p.contact_id  "
+					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
+					+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
+					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
+					+ " left join party p2 on p2.id = tor2.customer_id "
+					+ " left join contact c2 on c2.id = p2.contact_id  "
+					+ " left join user_login  usl on usl.id=r_o.creator "
+					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
+					+ " where ifnull(r_o.order_no,'')  like'%" + order_no + "%' "
+					+ " and ifnull(tor.order_no,tor2.order_no)  like'%" + tr_order_no + "%'"
+					+ " and ifnull(d_o.order_no,'')  like'%" + de_order_no + "%'"
+					+ " and ifnull(r_o.transaction_status ,'')  like'%" + status + "%'"
+					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
+					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
+					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
-			Record rec = Db.findFirst(sql + totalWhere);
-			logger.debug("total records:" + rec.getLong("total"));
 
 			// 获取当前页的数据
-			List<Record> orders = Db
-					.find("select distinct r_o.*, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-							+ " from return_order r_o "
-							+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
-							+ " left join party p on p.id = tor.customer_id "
-							+ " left join contact c on c.id = p.contact_id  "
-							+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
-							+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
-							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
-							+ " left join party p2 on p2.id = tor2.customer_id "
-							+ " left join contact c2 on c2.id = p2.contact_id  "
-							+ " left join user_login  usl on usl.id=r_o.creator "
-							+ " left join warehouse w on d_o.from_warehouse_id = w.id "
-							+ " where ifnull(r_o.order_no,'')  like'%"
-							+ order_no
-							+ "%' and  "
-							+ "ifnull(tor.order_no,tor2.order_no)  like'%"
-							+ tr_order_no
-							+ "%'  and  "
-							+ "ifnull(d_o.order_no,'')  like'%"
-							+ de_order_no
-							+ "%'  and "
-							+ "ifnull(r_o.transaction_status ,'')  like'%"
-							+ status
-							+ "%' and "
-							+ "ifnull(usl.user_name ,'')  like'%"
-							+ stator
-							+ "%' and ifnull(c.abbr,c2.abbr) like '%"
-							+ customer
-							+ "%' and "
-							+ "r_o.create_date between '"
-							+ time_one
-							+ "' and '"
-							+ time_two
-							+ "' and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-							+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-							+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit);
-
-			orderMap.put("sEcho", pageIndex);
-			orderMap.put("iTotalRecords", rec.getLong("total"));
-			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-			orderMap.put("aaData", orders);
+			sql = "select distinct r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
+					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
+					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
+					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+					+ " from return_order r_o "
+					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
+					+ " left join party p on p.id = tor.customer_id "
+					+ " left join contact c on c.id = p.contact_id  "
+					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
+					+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
+					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
+					+ " left join party p2 on p2.id = tor2.customer_id "
+					+ " left join contact c2 on c2.id = p2.contact_id  "
+					+ " left join user_login  usl on usl.id=r_o.creator "
+					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
+					+ " where ifnull(r_o.order_no,'')  like'%" + order_no + "%' "
+					+ " and ifnull(tor.order_no,tor2.order_no)  like'%" + tr_order_no + "%'"
+					+ " and ifnull(d_o.order_no,'')  like'%" + de_order_no + "%'"
+					+ " and ifnull(r_o.transaction_status ,'')  like'%" + status + "%'"
+					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
+					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
+					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
+					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 " + sLimit;
 		}
-
+		Record rec = Db.findFirst(sqlTotal);
+		List<Record> orders = Db.find(sql);
+		logger.debug("total records:" + rec.getLong("total"));
+		
+		orderMap.put("sEcho", pageIndex);
+		orderMap.put("iTotalRecords", rec.getLong("total"));
+		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+		orderMap.put("aaData", orders);
 		renderJson(orderMap);
 	}
 
