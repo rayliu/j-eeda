@@ -227,14 +227,21 @@ $(document).ready(function() {
     	var id = $(this).parent().parent()[0].id;
     	var fieldName=$(this).attr("name");
 		var value= $(this).val();
+		console.log(value);
+		if(value != null && value != "" ){
+			$.post('/product/updateProductById',{id:id,fieldName:fieldName,value:value},function(data){
+				$.scojs_message('数据保存成功', $.scojs_message.TYPE_OK);
+				
+			},'json');
+		}
 		
-		$.post('/product/updateProductById',{id:id,fieldName:fieldName,value:value},function(data){
-			productDataTable.fnDraw();	
-			
-		},'json');
 	});
    
-  
+  /*  var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
+			    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+			    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+			    '</div>';
+    $('body').append(alerMsg);*/
     // 计算体积
 	var sumVolume = function(currentEle){
 		$(currentEle).parent().children('.volume')[0].innerHTML = parseFloat($(currentEle).parent().children('.size')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.width')[0].innerHTML)/1000 * parseFloat($(currentEle).parent().children('.height')[0].innerHTML)/1000;
@@ -248,137 +255,7 @@ $(document).ready(function() {
 		productDataTable.fnDraw();
 	};
 	
-    /*productDataTable.makeEditable({
-    	sUpdateURL: '/product/saveProductByField',    	
-    	oEditableSettings: {event: 'click'},
-    	"aoColumns": [  			            
-            {            
-            	style: "inherit",
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"item_no",
-            	placeholder: "", 
-            	callback: function () {
-            		refreshProductTable();
-            		if(this.textContent == 'repetition'){
-            			alert("该产品型号已存在,请更换!");
-            		}
-            	}
-        	},
-        	{            
-            	style: "inherit",
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"serial_no",
-            	placeholder: "", 
-            	callback: function () {
-            		refreshProductTable();
-            	}
-        	},
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"item_name",
-            	placeholder: "",
-            	callback: function () {
-            		//refreshDetailTable();
-            	} 
-            },
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"size",
-            	placeholder: "",
-            	callback: function () {
-            		sumVolume(this);
-            		refreshProductTable();
-            	} 
-            },
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"width",
-            	placeholder: "",
-            	callback: function () {
-            		sumVolume(this);
-            		refreshProductTable();
-            	} 
-            },
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"height",
-            	placeholder: "",
-            	callback: function () {
-            		sumVolume(this);
-            		refreshProductTable();
-            	} 
-            },
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"insurance_amount",
-            	placeholder: "",
-            	callback: function () {
-            		sumVolume(this);
-            		refreshProductTable();
-            	} 
-            },
-            null,
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"unit",
-            	type: 'select',
-            	data: "{'':'', '台':'台','件':'件','套':'套','只':'只','个':'个','盒':'盒','箱':'箱','包':'包'}",
-            	placeholder: "",
-            	callback: function () {} 
-            },
-            null,  
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"weight",
-            	placeholder: "",
-            	callback: function () {} 
-            },
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"item_desc",
-            	type: 'textarea',
-            	placeholder: "",
-            	callback: function () {} 
-            },
-            null                        
-        ]      
-    }).click(function(){
-    	var inputBox = $(this).find('input');
-        inputBox.autocomplete({
-	        source: function( request, response ) {
-	        },
-        	select: function( event, ui ) {
-        		//将选择的产品id先保存到数据库
-        		var itemId = $(this).parent().parent().parent()[0].id;
-        		var productId = ui.item.id;
-        		$.post('/transferOrderItem/saveTransferOrderItem', 
-        			{transferOrderItemId:itemId,productId:productId},
-        			function(){ itemDataTable.fnDraw();  });        		
-                
-            },
-        	minLength: 2
-        });
-    });               */                                                       
+                                                      
         
     var nodePlusClickHandler= function(e){
     	//e.preventDefault();
