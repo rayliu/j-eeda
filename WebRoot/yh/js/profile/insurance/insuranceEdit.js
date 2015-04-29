@@ -81,6 +81,7 @@ $(document).ready(function(){
     	$("#remark1").val("");
     	$("#beginTime").val("");
     	$("#endTime").val("");
+    	$("#rateItemId").val("");
     });
 	
 	//保险费率表单验证
@@ -112,6 +113,8 @@ $(document).ready(function(){
 	       	return false;
         }
         $.post('/insurance/saveInsuranceItem', $("#rateFrom").serialize(), function(order){
+        	var id = $("#insuranceId").val();
+        	dataTable.fnSettings().sAjaxSource = "/insurance/findAllInsuranceItem?insuranceId="+id;
         	dataTable.fnDraw(); 
             $('#insuranceRateItem').modal('hide');
     	});
@@ -127,11 +130,12 @@ $(document).ready(function(){
     	$("#beginTime").val("");
     	$("#endTime").val("");  
 		var id = $(this).attr('code');
+		
 		$.post('/insurance/rateEdit/'+id,null,function(data){
 			//保存成功后，刷新列表
             if(data !=null){
 	           	$('#insuranceRateItem').modal('show');
-	           	$('#rateInsuranceId').val(insuranceId);
+	           //	$('#rateInsuranceId').val(insuranceId);
 	           	$('#rateItemId').val(data.ID);
 	           	$('#customer_id').val(data.CUSTOMER_ID);
 	        	$('#customer_name').val(data.COMPANY_NAME);
@@ -139,6 +143,7 @@ $(document).ready(function(){
 	           	$('#remark1').val(data.REMARK);
 	           	$('#beginTime').val(data.BEGINTIME);
 	           	$('#endTime').val(data.ENDTIME);
+	           	
             }else{
                 alert('编辑失败');
             }
