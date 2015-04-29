@@ -607,6 +607,7 @@
         progressall: function (e, data) {//设置上传进度事件的回调函数  
         	var progress = parseInt(data.loaded / data.total * 100, 10);
             $('#progress .bar').css('width',progress + '%');
+            $('#imgProgress').text("上传过程可能有点慢，请耐心等待：" + progress + "%");
         	$('#myModal').modal('show');
         	$("#footer").hide();
         } 
