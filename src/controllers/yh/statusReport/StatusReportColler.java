@@ -65,8 +65,11 @@ public class StatusReportColler extends Controller{
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 		
-		if(serial_no != null && !"".equals(serial_no) || 
-				(beginTime != null && !"".equals(beginTime) && endTime != null && !"".equals(endTime))){
+		if((serial_no != null && !"".equals(serial_no)) || (beginTime != null && !"".equals(beginTime)) || (endTime != null && !"".equals(endTime))){
+			if (beginTime == null || "".equals(beginTime)) 
+				beginTime = "1-1-1";
+			if (endTime == null || "".equals(endTime)) 
+				endTime = "9999-12-31";
 			// 获取总条数
 			String totalSql = "select count(0) total from transfer_order_item_detail toid"
 						+ " left join transfer_order tor on tor.id = toid.order_id"

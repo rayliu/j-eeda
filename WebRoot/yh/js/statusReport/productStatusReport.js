@@ -8,7 +8,8 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
     	"bServerSide": false,
-    	"bLengthChange":false,
+    	"bLengthChange":true,
+    	"bProcessing": true,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -20,7 +21,7 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"80px",
             	"fnRender": function(obj) {  
             		/*	
-            		 	新建运输
+            		 	新建运输	
 						在货场
 						运输在途
 						在中转仓
@@ -49,7 +50,7 @@ $(document).ready(function() {
             		}else if(obj.aData.PICK_STATUS == "新建"){
             			status = "新建运输";
             		}
-            		return status;
+            		return "<b>"+status+"</b>";
                 }
             },       	
             {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
@@ -68,7 +69,7 @@ $(document).ready(function() {
     	var beginTime=$("#beginTime").val();
     	var endTime=$("#endTime").val();
     	var serial_no = $("#serial_no").val();
-    	if((beginTime != "" && endTime != "") || serial_no != ""){
+    	if(beginTime != "" || endTime != "" || serial_no != ""){
     		$("#queryBtn").prop("disabled",false);
     	}else{
     		$("#queryBtn").prop("disabled",true);
@@ -83,8 +84,9 @@ $(document).ready(function() {
     	var customer_id = $("#customer_id").val();
     	var customer_order_no = $("#customer_order_no").val();
     	var item_no = $("#item_no").val();
-    	if((beginTime != "" && endTime != "") || serial_no != ""){
+    	if(beginTime != "" || endTime != "" || serial_no != ""){
     		statusTable.fnSettings().oFeatures.bServerSide = true;
+    		statusTable.fnSettings()._iDisplayStart = 0;
 	    	statusTable.fnSettings().sAjaxSource = "/statusReport/productStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no;
 	    	statusTable.fnDraw(); 
@@ -99,8 +101,7 @@ $(document).ready(function() {
 			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
-			for(var i = 0; i < data.length; i++)
-			{
+			for(var i = 0; i < data.length; i++){
 				var company_name = data[i].COMPANY_NAME;
 				if(company_name == null){
 					company_name = '';
@@ -136,6 +137,7 @@ $(document).ready(function() {
 	$('#customerList').on('mousedown', function(){
 		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
+	
 	// 选中客户
 	$('#customerList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
@@ -160,6 +162,7 @@ $(document).ready(function() {
 	    pickerPosition: "bottom-left"
 	}).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime').focus();
 	    $('#endTime').trigger('keyup');
 	});
     

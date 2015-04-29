@@ -8,7 +8,8 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
     	"bServerSide": false,
-    	"bLengthChange":false,
+    	"bLengthChange":true,
+    	"bProcessing": true,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -72,6 +73,7 @@ $(document).ready(function() {
     	var endTime = $("#endTime").val();
     	if(beginTime != "" && endTime != ""){
 			statusTable.fnSettings().oFeatures.bServerSide = true;
+			statusTable.fnSettings()._iDisplayStart = 0;
 	    	statusTable.fnSettings().sAjaxSource = "/statusReport/orderStatusReport?beginTime="+beginTime+"&endTime="+endTime+"&setOutTime="+setOutTime
 	    		+"&order_no_type="+order_no_type+"&order_no="+order_no+"&order_status_type="+order_status_type+"&transferOrder_status="+transferOrder_status
 	    		+"&delivery_status="+delivery_status+"&customer_id="+customer_id+"&routeFrom="+routeFrom+"&sp_id="+sp_id+"&routeTo="+routeTo;
@@ -221,7 +223,6 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
 	    $('#setOutTime').trigger('keyup');
 	});
-    
 	
 	//select控制
 	$("#order_no_type").change(function(){
