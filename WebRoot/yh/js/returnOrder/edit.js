@@ -575,6 +575,9 @@
 	 $('#fileupload').fileupload({
         dataType: 'json',
         url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),//上传地址
+        validation: {
+        	allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']
+    	},
         done: function (e, data) {
         	$('#myModal').modal('hide');
         	if(data.result.result == "true"){
@@ -602,6 +605,8 @@
         	}
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
+        	var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .bar').css('width',progress + '%');
         	$('#myModal').modal('show');
         	$("#footer").hide();
         } 
