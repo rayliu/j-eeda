@@ -148,7 +148,7 @@ public class DepartOrderController extends Controller {
 					+ " and combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by deo.id,o.office_name "
-					+ " order by deo.create_stamp desc " + sLimit;
+					+ " order by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -193,7 +193,7 @@ public class DepartOrderController extends Controller {
 					+ " left join office o on o.id = tor.office_id"
 					+ " left join location l1 on l1.code = deo.route_from"
 					+ " left join location l2 on l2.code = deo.route_to " + whereSql
-                    + " group by deo.id,o.office_name order by deo.create_stamp desc " + sLimit;
+                    + " group by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " + sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
