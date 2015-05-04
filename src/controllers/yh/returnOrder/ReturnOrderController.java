@@ -1352,18 +1352,24 @@ public class ReturnOrderController extends Controller {
     public void saveFile(){
     	String id = getPara("return_id");
     	String permission = getPara("permission");
-    	List<UploadFile> uploadFiles = getFiles("fileupload");
+    	//List<UploadFile> uploadFiles = getFiles("fileupload");
+    	//List<UploadFile> returnImg = getFiles("return_img");
+    	List<UploadFile> returnImg = getFiles();
     	Map<String,Object> resultMap = new HashMap<String,Object>();
     	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
     	boolean result = true;
+    	
 		if(returnOrder != null){
-	    	for (int i = 0; i < uploadFiles.size(); i++) {
-	    		File file = uploadFiles.get(i).getFile();
+	    	//for (int i = 0; i < uploadFiles.size(); i++) {
+				//File file = uploadFiles.get(i).getFile();
+			for (int i = 0; i < returnImg.size(); i++) {
+	    		File file = returnImg.get(i).getFile();
 	    		String fileName = file.getName();
 	    		String suffix = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
 	    		if("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)){
         			OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
-        			orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", uploadFiles.get(0).getFileName()).save();
+        			//orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", uploadFiles.get(0).getFileName()).save();
+        			orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", returnImg.get(0).getFileName()).save();
 	    		}else{
 	    			result = false;
 	    			break;

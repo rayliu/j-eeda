@@ -39,6 +39,7 @@
             <arg value="/"/>
             <arg value="5"/>
             <classpath path="${project.classpath}"></classpath>
+        	<arg value="org.eclipse.jetty.server.Request.maxFormContentSize=-1"/>
         </java>
     </target>
 	

@@ -571,19 +571,20 @@
     //保存图片
     $("#savefile").click(function(e){
     	$("#fileupload").click();
-	 });
-	 $('#fileupload').fileupload({
+	});
+    
+	$('#fileupload').fileupload({
         dataType: 'json',
-        url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),//上传地址
+        url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val()+'&return_img='+$("#return_img").attr("src"),//上传地址
         validation: {
         	allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']
     	},
+    	//data: { imgPath: $("#uploadFile").val() },  
         done: function (e, data) {
-        	$('#myModal').modal('hide');
         	if(data.result.result == "true"){
         		//$("#centerBody").empty().append("<h4>上传成功！</h4>");
-        		$.scojs_message('上传成功,审核通过后显示图像', $.scojs_message.TYPE_OK);
-        		console.log("data.result.cause:"+data.result.cause);
+        		$.scojs_message('上传成功,审核通过后将显示图像', $.scojs_message.TYPE_OK);
+        		//console.log("data.result.cause:"+data.result.cause);
         		var showPictures = $("#showPictures");
         		var permission = $("#permission").val();
         		if(permission == "permissionYes"){
@@ -601,8 +602,11 @@
                     });
         		}
         	}else{
-        		$.scojs_message('上传失败，'+data.result.cause, $.scojs_message.TYPE_ERROR);
+        		$.scojs_message(data.result.cause, $.scojs_message.TYPE_ERROR);
         	}
+    		$('#myModal').modal('hide');
+    		$('#cancel').click();
+    		//$(".modal-backdrop").remove();
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
         	var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -611,7 +615,7 @@
         	$('#myModal').modal('show');
         	$("#footer").hide();
         } 
-     });
+    });
 	 
 	// 删除图片
 	$("#showPictures").on('click', '.picture_del', function(e){
@@ -679,5 +683,221 @@
 		}
 		$('#myModal_img').modal('show');
 	});	
+	
+	var jic = {
+	        /**
+	         * Receives an Image Object (can be JPG OR PNG) and returns a new Image Object compressed
+	         * @param {Image} source_img_obj The source Image Object
+	         * @param {Integer} quality The output quality of Image Object
+	         * @return {Image} result_image_obj The compressed Image Object
+	         */
+	        compress: function(source_img_obj, quality, output_format){
+	             var mime_type = "image/jpeg";
+	             if(output_format!=undefined && output_format=="png"){
+	                mime_type = "image/png";
+	             }
+	             var divWidth = $('#imgContent').width() - 40;
+	             var cvs = document.createElement('canvas');
+	             //naturalWidth真实图片的宽度
+	             if (source_img_obj.naturalWidth > divWidth) {
+	            	 cvs.width = divWidth;
+	            	 cvs.height = source_img_obj.naturalHeight * (divWidth / source_img_obj.naturalWidth);
+		         }else{
+		        	 cvs.width = source_img_obj.naturalWidth;
+		             cvs.height = source_img_obj.naturalHeight;
+		         }
+	             var ctx = cvs.getContext("2d").drawImage(source_img_obj, 0, 0);
+	             var newImageData = cvs.toDataURL(mime_type, quality/100);
+	             var result_image_obj = new Image();
+	             result_image_obj.src = newImageData;
+	             return result_image_obj;
+	        }
+	};
+	
+	function handleFileSelect (evt) {
+		var files = evt.target.files;
+		for (var i = 0, f; f = files[i]; i++) {
+	      // Only process image files.
+	      if (!f.type.match('image.*')) {
+	        continue;
+	      }
+	      var reader = new FileReader();
+	      // Closure to capture the file information.
+	      reader.onload = (function(theFile) {
+	        return function(e) {
+		          var i = document.getElementById("return_img");
+		          var divWidth = $('#imgContent').width() - 40;
+		          i.src = e.target.result;
+		          console.log("原图宽："+$(i).width()+",原图高："+$(i).height());
+		          if ($(i).width() > divWidth) {
+		          		$(i).css('width',divWidth+'px');
+		          }
+		          //$(i).css('width',$(i).width()/10+'px');
+		          //$(i).css('height',$(i).height()/10+'px');
+		          console.log("修改后图宽："+$(i).width()+",修改后图高："+$(i).height());
+		          var quality =  50;
+		          i.src = jic.compress(i,quality).src;
+		          //console.log(i.src);
+		          //i.style.display = "block";
+		          console.log("jic返回图宽："+i.width+",jic返回图高："+i.height);
+		          //evt.target.files = i.src;
+	    	  };
+	      })(f);
+	      // Read in the image file as a data URL.
+	      reader.readAsDataURL(f);
+	    }
+		
+		dropZone;
+		
+	}
+	
+	//图片压缩上传
+	//document.getElementById('fileupload').addEventListener('change', handleFileSelect, false);
+	
+	
+	
+	
+	
+	var imgTypeArr = new Array();  
+	var imgArr = new Array();  
+	var isHand = 0;//1正在处理图片  
+	var nowImgType = "image/jpeg";  
+	var jic = {  
+	        compress: function(source_img_obj,imgType){  
+	            //alert("处理图片");  
+	            source_img_obj.onload = function() {  
+	                var cvs = document.createElement('canvas');  
+	                //naturalWidth真实图片的宽度  
+	                console.log("原图--"+this.width+":"+this.height);  
+	                
+	                var scale = 1;  
+	                if(this.width > 1600 || this.height > 1600){  
+	                    if(this.width > this.height){  
+	                        scale = 1600 / this.width;  
+	                    }else{  
+	                        scale = 1600 / this.height;  
+	                    }  
+	                }  
+	                cvs.width = this.width*scale;  
+	                cvs.height = this.height*scale;  
+	  
+	                var ctx=cvs.getContext("2d");  
+	                ctx.drawImage(this, 0, 0, cvs.width, cvs.height);  
+	                var newImageData = cvs.toDataURL(imgType, 0.8);  
+	                base64Img = newImageData;  
+	                imgArr.push(newImageData);  
+	  
+	               // $("#canvasDiv").append(cvs);  
+	                var img = new Image();  
+	                img.src = newImageData;  
+	                $(img).css('width',100+'px');  
+	                $(img).css('height',100+'px');  
+	                //$("#canvasDiv").append(img);  
+	                isHand = 0;  
+	              
+	            }  
+	          
+	        }  
+	};
+	      
+    function handleFileSelect (evt) {  
+        isHand = 1;  
+        imgArr = [];  
+        imgTypeArr = [];  
+        $("#canvasDiv").html("");  
+        var files = evt.target.files;  
+        for (var i = 0, f; f = files[i]; i++) {  
+	        // Only process image files.  
+	        if (!f.type.match('image.*')) {  
+	        	continue;  
+	        }  
+	        imgTypeArr.push(f.type);  
+	        nowImgType = f.type;  
+	        var reader = new FileReader();  
+	        // Read in the image file as a data URL.  
+	        reader.readAsDataURL(f);  
+	        // Closure to capture the file information.  
+	        reader.onload = (function(theFile) {  
+	            return function(e) {  
+	                var i = new Image();  
+	                i.src = e.target.result;  
+	                jic.compress(i,nowImgType);  
+	                  
+	            };  
+	        })(f);  
+          
+        }  
+          
+    }  
+	
+    //绑定上传事件
+    document.getElementById('fileToUpload').addEventListener('change', handleFileSelect, false);  
+      
+    //消息提示  
+    function show_msg(msg){  
+        //消息显示时间  
+        var time = arguments[1] ? arguments[1] : 1500;  
+        $('#info_pop p').text(msg);  
+        $("#info_pop").popup("open");  
+        setTimeout('$("#info_pop").popup("close");',time);  
+    }  
+	
     
+    //保存图片
+    function catUpload(){  
+        
+    }  
+    
+    
+    $("#imgUploadBtn").click(function(){
+    	
+    	if(base64Img == ""){  
+            show_msg("请选择图片！");  
+            return;  
+        }  
+        if(isHand == 1){  
+            show_msg("请等待图片处理完毕！");  
+            return;  
+        }  
+        $('.ui-loader').show();  
+        /*$.ajax({  
+            type : "POST",  
+            url : "/returnOrder/saveFile",  
+            cache: true,
+            contentType: 'multipart/form-data',
+            processData: true,
+            data : $("#fileForm").serialize(),{  
+                'img' : imgArr,  
+                'type' : imgTypeArr  
+                
+            },  
+            success : function(data) {  
+                $('.ui-loader').hide();  
+                show_msg(data.info);  
+            }  
+        });*/  
+    	
+        $.post("/returnOrder/saveFile",{img: imgArr,type:imgTypeArr},function(res){
+            var res = eval('(' + res + ')');
+            if(res.status == 1){
+                o.error(res.msg);
+            }else{
+                o.success(res.imgurl);
+            }
+            console.log(res);
+        });
+    	
+    	
+    });
+    	
+    	
+    	
+    	
+    
+    
+    
+	
 });
+/*function catUpload(){  
+    
+} */
