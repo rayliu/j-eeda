@@ -575,7 +575,7 @@
     
 	$('#fileupload').fileupload({
         dataType: 'json',
-        url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val()+'&return_img='+$("#return_img").attr("src"),//上传地址
+        url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),//上传地址
         validation: {
         	allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']
     	},
@@ -792,7 +792,7 @@
 	                img.src = newImageData;  
 	                $(img).css('width',100+'px');  
 	                $(img).css('height',100+'px');  
-	                //$("#canvasDiv").append(img);  
+	                $("#canvasDiv").append(img).find("img").attr("id","upload_img").hide(); 
 	                isHand = 0;  
 	              
 	            }  
@@ -831,7 +831,7 @@
     }  
 	
     //绑定上传事件
-    document.getElementById('fileToUpload').addEventListener('change', handleFileSelect, false);  
+    //document.getElementById('fileToUpload').addEventListener('change', handleFileSelect, false);  
       
     //消息提示  
     function show_msg(msg){  
@@ -841,13 +841,6 @@
         $("#info_pop").popup("open");  
         setTimeout('$("#info_pop").popup("close");',time);  
     }  
-	
-    
-    //保存图片
-    function catUpload(){  
-        
-    }  
-    
     
     $("#imgUploadBtn").click(function(){
     	
@@ -860,24 +853,22 @@
             return;  
         }  
         $('.ui-loader').show();  
-        /*$.ajax({  
-            type : "POST",  
-            url : "/returnOrder/saveFile",  
-            cache: true,
-            contentType: 'multipart/form-data',
-            processData: true,
-            data : $("#fileForm").serialize(),{  
-                'img' : imgArr,  
-                'type' : imgTypeArr  
-                
-            },  
-            success : function(data) {  
-                $('.ui-loader').hide();  
-                show_msg(data.info);  
-            }  
-        });*/  
+        
+        /*var data = new FormData();
+        data.append('return_img', imgArr);
+        $.ajax({
+            url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),
+            data: data,
+            cache: false,
+            //contentType: 'multipart/form-data',
+            processData: false,
+            type: 'POST',
+            success: function(data){
+                alert(data);
+            }
+        });*/
     	
-        $.post("/returnOrder/saveFile",{img: imgArr,type:imgTypeArr},function(res){
+        /*$.post("/returnOrder/saveFile",{img: imgArr,type:imgTypeArr},function(res){
             var res = eval('(' + res + ')');
             if(res.status == 1){
                 o.error(res.msg);
@@ -885,8 +876,20 @@
                 o.success(res.imgurl);
             }
             console.log(res);
-        });
-    	
+        });*/
+        
+       /*$.ajaxFileUpload({
+            url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(), //用于文件上传的服务器端请求地址
+            secureuri: false, //是否需要安全协议，一般设置为false
+            fileElementId: 'upload_img', //文件上传域的ID
+            dataType: 'json', //返回值类型 一般设置为json
+            success: function (data, status){  //服务器成功响应处理函数
+                alert("成功上传");
+            },
+            error: function (data, status, e){//服务器响应失败处理函数
+                alert(e);
+            }
+        });*/
     	
     });
     	

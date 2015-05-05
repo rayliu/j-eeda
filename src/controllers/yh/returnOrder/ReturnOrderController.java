@@ -1199,17 +1199,17 @@ public class ReturnOrderController extends Controller {
     	String sLimit = "";
         String pageIndex = getPara("sEcho");
         String orderNo = getPara("pointInTime");
-		Date today = new Date();
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
 	    Calendar pastDay = Calendar.getInstance(); 
 	    if("pastOneDay".equals(orderNo))
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
-	    else if("pastOneDay".equals(orderNo))
+	    else if("pastSevenDay".equals(orderNo))
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
 	    else
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
 	    String beginTime = df.format(pastDay.getTime());
-	    String endTime = df.format(today);
+	    String endTime = simpleDate.format(Calendar.getInstance().getTime());
         
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
@@ -1282,7 +1282,6 @@ public class ReturnOrderController extends Controller {
 			returnOrderFinItem.set("create_date", now);
 			returnOrderFinItem.set("create_name", "insurance");
 			//returnOrderFinItem.set("contract_id", contract.get("id"));
-			
 			returnOrderFinItem.save();
 		}
 		
@@ -1352,9 +1351,9 @@ public class ReturnOrderController extends Controller {
     public void saveFile(){
     	String id = getPara("return_id");
     	String permission = getPara("permission");
-    	//List<UploadFile> uploadFiles = getFiles("fileupload");
+    	List<UploadFile> returnImg = getFiles("fileupload");
     	//List<UploadFile> returnImg = getFiles("return_img");
-    	List<UploadFile> returnImg = getFiles();
+    	//List<UploadFile> returnImg = getFiles();
     	Map<String,Object> resultMap = new HashMap<String,Object>();
     	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
     	boolean result = true;

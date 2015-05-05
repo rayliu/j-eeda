@@ -262,24 +262,23 @@
                                         	<input type="hidden" id="files" name="files" value="${files!''}">
 									  		<div class="col-lg-12" style="clear:both;">
 									  			<div class="form-group"> 
-										  			<!-- <input id="savefile" type="button" class="btn  btn-primary" value="上传图片" aria-describedby="helpBlock">
-										  			<span id="helpBlock" class="help-block">(图片格式为：gif,jpeg,png,jpg)</span> -->
-		                                        	<form method="post" id="fileForm" enctype="multipart/form-data">
+										  			<input id="savefile" type="button" class="btn  btn-primary" value="上传图片" aria-describedby="helpBlock">
+										  			<span id="helpBlock" class="help-block">(图片格式为：gif,jpeg,png,jpg)</span>
+		                                        	<form method="POST" id="fileForm" enctype="multipart/form-data">
 		                                        		<!-- <img src="" id="return_img" name="return_img" alt="" style="display: none;"> -->
 		                                            	<input type="hidden" id="return_id" name="return_id" value="${returnOrder.id!''}">
-		                                                <!-- <input type="file" id="fileupload" name="fileupload" accept="image/*" style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px;"> -->
-		                                                <div id="canvasDiv">  
-      													</div> 
+		                                                <input type="file" id="fileupload" name="fileupload" accept="image/*" style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px;">
+		                                                <!-- <div id="canvasDiv">  
+      													</div> --> 
 		                                            </form >
-	                                            	<input id="fileToUpload" type="file" name="fileToUpload" accept="image/*" multiple> 
-	                                            	<button class="ui-btn ui-icon-add ui-corner-all" id="imgUploadBtn">压缩上传</button>
+	                                            	<!-- <input id="fileToUpload" type="file" name="fileToUpload" accept="image/*" multiple> 
+	                                            	<button class="ui-btn ui-icon-add ui-corner-all" id="imgUploadBtn">压缩上传</button> -->
 	                                            </div>
 	                                    	</div>
 		                                    <div class="col-lg-12" style="clear:both;" id="showPictures">
-		                                    	
-      											<div data-role="popup" id="info_pop" class="ui-content" data-theme="d" style='font-weight:bold;font-size:14px; z-index: 999; background-color: white;'>  
+      											<!-- <div data-role="popup" id="info_pop" class="ui-content" data-theme="d" style='font-weight:bold;font-size:14px; z-index: 999; background-color: white;'>  
 											        <p>未知错误</p>  
-											    </div>  
+											    </div> -->  
 		                                    	<% if(shiro.hasPermission("ReturnOrder.imgoperation")){%>
 		                                    		<input type="hidden" id="permission" value="permissionYes">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
@@ -371,6 +370,7 @@
 <script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.ui.widget.js"></script>
 <script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.iframe-transport.js"></script> 
 <script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.fileupload.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/ajaxfileupload.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/jquery.validate.min.js"></script>

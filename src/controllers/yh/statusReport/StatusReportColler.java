@@ -2,6 +2,7 @@ package controllers.yh.statusReport;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -726,8 +727,8 @@ public class StatusReportColler extends Controller{
 	
 	public void searchOrderCount(){
 		String pointInTime = getPara("pointInTime");
-		Date today = new Date();
-	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
+		SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    SimpleDateFormat dayDate =new SimpleDateFormat("yyyy-MM-dd");  
 	    Calendar pastDay = Calendar.getInstance(); 
 	    if("pastOneDay".equals(pointInTime))
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
@@ -735,8 +736,8 @@ public class StatusReportColler extends Controller{
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
 	    else
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
-	    String beginTime = df.format(pastDay.getTime());
-	    String endTime = df.format(today);
+	    String beginTime = dayDate.format(pastDay.getTime());
+	    String endTime = simpleDate.format(Calendar.getInstance().getTime());
 	    
 	    String name = (String) currentUser.getPrincipal();
 		UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
@@ -780,7 +781,15 @@ public class StatusReportColler extends Controller{
 				+ " and ifnull(dor.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				+ " and ro.create_date between '" + beginTime + "' and '" + endTime + "'";
 		Record returnCound = Db.findFirst(returnTotal);
-		renderJson("{\"transferOrderTotal\":"+transferOrderCound.getLong("total")+",\"deliveryTotal\":"+deliveryCound.getLong("total")+",\"pickupTotal\":"+pickupCound.getLong("total")+",\"departTotal\":"+departCound.getLong("total")+"}");
+		
+		String insuranceTotal = "select count(distinct ior.id) total from insurance_order ior "
+        		+ " left join transfer_order tor on tor.insurance_id = ior.id "
+        		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+        		+ " and ior.create_stamp between '" + beginTime + "' and '" + endTime + "'";
+		Record insuranceCound = Db.findFirst(insuranceTotal);
+		
+		renderJson("{\"transferOrderTotal\":"+transferOrderCound.getLong("total")+",\"deliveryTotal\":"+deliveryCound.getLong("total")+",\"pickupTotal\":"+pickupCound.getLong("total")+",\"departTotal\":"+departCound.getLong("total")+",\"returnTotal\":"+returnCound.getLong("total")+",\"insuranceTotal\":"+insuranceCound.getLong("total")+"}");
 	}
 	
 	

@@ -94,6 +94,8 @@ $(document).ready(function() {
 			$("#pickupTotal").empty().text(data.pickupTotal);
 			$("#departTotal").empty().text(data.departTotal);
 			$("#deliveryTotal").empty().text(data.deliveryTotal);
+			$("#returnTotal").empty().text(data.returnTotal);
+			$("#insuranceTotal").empty().text(data.insuranceTotal);
 		});
 	};
 	findAllCount($("input[name='optionsRadiosInline'][checked]").val());

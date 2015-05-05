@@ -1369,7 +1369,7 @@ public class DeliveryController extends Controller {
     	String sLimit = "";
         String pageIndex = getPara("sEcho");
         String orderNo = getPara("pointInTime");
-		Date today = new Date();
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
 	    Calendar pastDay = Calendar.getInstance(); 
 	    if("pastOneDay".equals(orderNo))
@@ -1379,7 +1379,7 @@ public class DeliveryController extends Controller {
 	    else
 	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
 	    String beginTime = df.format(pastDay.getTime());
-	    String endTime = df.format(today);
+	    String endTime = simpleDate.format(Calendar.getInstance().getTime());
 	    
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
