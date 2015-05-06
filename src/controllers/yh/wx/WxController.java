@@ -90,6 +90,10 @@ public class WxController extends ApiController {
 		setPageAttr("http://tms.eeda123.com/wx/distribution");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}
+	//客户查询
+	public void searchOrder() {
+		render("/yh/wx/searchOrder.html");
+	}
 	
 	//获取回单数据
 	public void getRo() {

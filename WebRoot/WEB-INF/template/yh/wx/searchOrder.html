@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>我要查询</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+  <link rel="stylesheet" href="/yh/css/plugins/wx/style.css">
+</head>
+<body ontouchstart="">
+<div class="wxapi_container">
+    
+    <div class="lbox_close wxapi_form">
+      <div id="distributionDiv" class="form-group">
+        <label class="control-label">请输入单据号（运输单，配送单）：</label>
+        <input type="text" class="form-control" id="serialNo" name='serialNo' value="" />
+        <h3 id="menu-image1"></h3>
+        <input type="hidden" class="form-control" id="returnId" name='returnId' value="" />
+        <button class="btn btn_primary" id="searchNo">查询</button>
+        <!--h3 id="menu-scan">或 微信扫一扫</h3>
+        <button class="btn btn_primary" id="scanQRCode0">scanQRCode(微信处理结果)</button>
+        <button class="btn btn_primary" id="scanQRCode1">scanQRCode(直接返回结果)</button-->
+        <span id='orderDesc' class="desc" style='display:none;'></span>
+      </div>
+      <h3 id="menu-basic">单据信息</h3>
+      <span class="label">单据号码：</span><span class="content">12331434</span>
+      <span class="label">单据类型：</span><span class="content">运输单</span>
+      <span class="label">状态：</span><span class="content">运输单</span>
+      <h3 id="menu-image1"></h3>
+      <span class="label">客户信息：</span><span class="content">广电运通</span>
+      <span class="label">供应商：</span><span class="content">广西桂华</span>
+      <span class="label">始发城市：</span><span class="content">广东省广州市</span>
+      <span class="label">目的城市：</span><span class="content">广西南宁市</span>
+      
+    </div>
+  </div>
+</body>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+  /*
+   * 注意：
+   * 1. 所有的JS接口只能在公众号绑定的域名下调用，公众号开发者需要先登录微信公众平台进入“公众号设置”的“功能设置”里填写“JS接口安全域名”。
+   * 2. 如果发现在 Android 不能分享自定义内容，请到官网下载最新的包覆盖安装，Android 自定义分享接口需升级至 6.0.2.58 版本及以上。
+   * 3. 常见问题及完整 JS-SDK 文档地址：http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
+   *
+   * 开发中遇到问题详见文档“附录5-常见错误及解决办法”解决，如仍未能解决可通过以下渠道反馈：
+   * 邮箱地址：weixin-open@qq.com
+   * 邮件主题：【微信JS-SDK反馈】具体问题
+   * 邮件内容说明：用简明的语言描述问题所在，并交代清楚遇到该问题的场景，可附上截屏图片，微信团队会尽快处理你的反馈。
+   */
+  wx.config({
+      debug: true,
+      appId: '${appId}',
+      timestamp: ${timestamp},
+      nonceStr: '${nonceStr}',
+      signature: '${signature}',
+      jsApiList: [
+        'checkJsApi',
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage',
+        'onMenuShareQQ',
+        'onMenuShareWeibo',
+        'hideMenuItems',
+        'showMenuItems',
+        'hideAllNonBaseMenuItem',
+        'showAllNonBaseMenuItem',
+        'translateVoice',
+        'startRecord',
+        'stopRecord',
+        'onRecordEnd',
+        'playVoice',
+        'pauseVoice',
+        'stopVoice',
+        'uploadVoice',
+        'downloadVoice',
+        'chooseImage',
+        'previewImage',
+        'uploadImage',
+        'downloadImage',
+        'getNetworkType',
+        'openLocation',
+        'getLocation',
+        'hideOptionMenu',
+        'showOptionMenu',
+        'closeWindow',
+        'scanQRCode',
+        'chooseWXPay',
+        'openProductSpecificView',
+        'addCard',
+        'chooseCard',
+        'openCard'
+      ]
+  });
+</script>
+<script src="/yh/js/wx/demo.js"> </script>
+</html>
