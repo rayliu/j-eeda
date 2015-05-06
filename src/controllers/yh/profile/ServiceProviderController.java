@@ -2,6 +2,7 @@ package controllers.yh.profile;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -13,6 +14,7 @@ import models.Location;
 import models.ParentOfficeModel;
 import models.Party;
 import models.yh.profile.Contact;
+import models.yh.profile.ProviderChargeType;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -166,7 +168,7 @@ public class ServiceProviderController extends Controller {
         Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
                 + id);
         setAttr("contact", contact);
-            render("/yh/profile/serviceProvider/serviceProviderEdit.html");
+        render("/yh/profile/serviceProvider/serviceProviderEdit.html");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_DELETE})
     public void delete() {
@@ -186,7 +188,6 @@ public class ServiceProviderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_CREATE, PermissionConstant.PERMSSION_P_UPDATE}, logical=Logical.OR)
     public void save() {
-
         String id = getPara("party_id");
         Party party = null;
         Contact contact = null;
@@ -200,7 +201,6 @@ public class ServiceProviderController extends Controller {
             party.update();
 
             contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id=" + id);
-            ;
             setContact(contact);
             contact.update();
         } else {
@@ -224,9 +224,10 @@ public class ServiceProviderController extends Controller {
             party.save();
 
         }
-
+     
         setAttr("saveOK", true);
-            redirect("/serviceProvider");
+        //redirect("/serviceProvider");
+        renderJson(party);
     }
 
     private void setContact(Contact contact) {
@@ -330,4 +331,84 @@ public class ServiceProviderController extends Controller {
 		}
 		renderJson(locationList);
 	}
+    public void chargeTypeList(){
+    	String id = getPara("typeId");
+    	
+    	String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        Map chargeTypeMap = new HashMap();
+    	if(id == null || "".equals(id)){
+    		chargeTypeMap.put("sEcho", 0);
+    		chargeTypeMap.put("iTotalRecords", 0);
+    		chargeTypeMap.put("iTotalDisplayRecords", 0);
+    		chargeTypeMap.put("aaData", null);
+    	}else{
+    		String totalSql = "select count(*) as total from charge_type ct left join party p on p.id = ct.customer_id left join contact c on c.id = p.contact_id where ct.sp_id = " + id;
+    		Record rec = Db.findFirst(totalSql);
+    		
+    		List<ProviderChargeType> list = ProviderChargeType.dao.find("select ct.id,ct.charge_type,ifnull(c.abbr,c.company_name) as customer_name,ct.remark from charge_type ct left join party p on p.id = ct.customer_id left join contact c on c.id = p.contact_id where ct.sp_id = ? " + sLimit,id);
+    		chargeTypeMap.put("sEcho", pageIndex);
+    		chargeTypeMap.put("iTotalRecords", rec.get("total"));
+    		chargeTypeMap.put("iTotalDisplayRecords", rec.get("total"));
+    		chargeTypeMap.put("aaData", list);
+    	}
+    	renderJson(chargeTypeMap);
+    	
+    }
+    public void saveChargeType(){
+    	String sp_id = getPara("sp_id");
+    	String item_id = getPara("chargeTypeItemId");
+    	String customer_id = getPara("customer_id");
+    	String type = getPara("c_type");
+    	String remark = getPara("chargeTypeRemark");
+    	if(sp_id == null || "".equals(sp_id)){
+    		renderJson();
+    	}
+    	ProviderChargeType p = ProviderChargeType.dao.findFirst("select * from charge_type where sp_id = ? and customer_id = ? ",sp_id,customer_id);
+    	if(p != null){
+    		p.set("remark", remark);
+    		p.set("charge_type", type);
+    		p.update();
+    		renderJson(p);
+    	}else{
+    		ProviderChargeType pct = null;
+        	if(item_id == null || "".equals(item_id)){
+        		//保存数据
+        		pct = new ProviderChargeType();
+        		
+        		pct.set("sp_id", sp_id);
+        		pct.set("customer_id",customer_id);
+        		pct.set("remark", remark);
+        		pct.set("charge_type",type);
+        		pct.save();
+        	}else{
+        		//更新数据
+        		pct = ProviderChargeType.dao.findById(item_id);
+        		//pct.set("customer_id", customer_id);
+        		pct.set("remark", remark);
+        		pct.set("charge_type", type);
+        		pct.update();
+        	}
+        	renderJson(pct);
+    	}
+    	
+    }
+    public void delChargeType(){
+    	String id = getPara("id");
+    	if(id != null && !"".equals(id)){
+    		ProviderChargeType.dao.deleteById(id);
+    		renderJson("{\"success\":true}");
+    	}else{
+    		renderJson("{\"success\":false}");
+    	}
+    	
+    }
+    public void editChargeType(){
+    	String id = getPara("id");
+    	ProviderChargeType pct = ProviderChargeType.dao.findFirst("select ct.*,ifnull(c.abbr,c.company_name) as customer_name from charge_type ct left join party p on p.id = ct.customer_id left join contact c on c.id = p.contact_id where ct.id = ?",id);
+    	renderJson(pct);
+    }
 }

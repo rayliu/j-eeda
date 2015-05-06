@@ -1,16 +1,17 @@
 <%layout("/yh/layout.html"){%>
- 
-
+ <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">  
+ <link rel="stylesheet" href="/yh/css/ui/jquery-ui.css">
  <div id="page-wrapper">
     
     <div class="row">
         <div class="col-lg-12 panel-body">
-            <% if(saveOK!''==true){%>
+        	<!-- 不清楚有何用 -->
+           <!--  <% if(saveOK!''==true){%>
             <div class="alert alert-success alert-dismissable">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                保存成功。
+               		 保存成功。
             </div>
-            <%}%>
+            <%}%> -->
             <div class="btn-header"style="font-size: 32px">创建新供应商</div>
            
         </div>
@@ -25,12 +26,50 @@
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <form id="customerForm" role="form" action="/serviceProvider/save" method="post">
+                                <form id="customerForm" role="form"  method="post">
                                     <input id="partyId" name="party_id" type="hidden" value="${party.id!''}">
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
-									<div class="col-lg-7">
-                                        <fieldset>
-                                         <label>供应商所在地</label>
+									<div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label>公司名称(必填)</label>
+                                                <input placeholder="" class="form-control" id="company_name" name="company_name" type="text" value="${contact.company_name!''}">
+                                            </div> 
+
+                                            <div class="form-group">
+                                                <label>简称(必填)</label>
+                                                <input class="form-control" id="abbr" type="text" name="abbr" value="${contact.abbr!''}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>供应商类型</label>
+                                            	<select class="form-control" id="sp_type" name="sp_type">
+	                                            	<option value="line">干线运输供应商</option>
+	                                            	<option value="delivery">配送供应商</option>
+	                                            	<option value="pickup">提货供应商</option>
+	                                            	<option value="personal">个体供应商</option>
+                                            	</select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>付款方式</label>
+	                                           	<select class="form-control" id="payment" name="payment">
+	                                           		<option value="monthlyStatement">月结</option>
+	                                           		<option value="freightCollect">到付</option>
+	                                           		<option value="cashPayment">现付</option>
+	                                           	</select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>计费方式</label>
+	                                         	<input type="hidden" value="${party.charge_type!''}" id="chargeTypeSelect">
+	                                           	<select class="form-control" id="chargeType" name="chargeType">
+	                                           		<option value="perUnit">计件</option>
+	                                           		<option value="perCar">整车</option>
+	                                           		<option value="perCargo">零担</option>
+	                                           	</select>
+                                            </div>
+                                            <div class="form-group">
+                                         	<label>供应商所在地</label>
                                                 <input id="location" type="hidden" name="location" value="${contact.location!''}">
 		                                            <div class="form-group">
 		                                                <label>省</label>
@@ -43,328 +82,145 @@
 		                                                <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
 		                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
 		                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>公司名称(必填)</label>
-                                                <input placeholder="" class="form-control" id="company_name" name="company_name" type="text" value="${contact.company_name!''}">
-                                            </div>                                     
-                                        </fieldset>
-                                    </div>
-									<div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>简称(必填)</label>
-                                                <input class="form-control" id="abbr" type="text" name="abbr" value="${contact.abbr!''}">
+                                       </div>
+  											<div class="form-group">
+                                                <label>备注</label>
+												<textarea class="form-control" rows="3" name="remark">${party.remark!''}</textarea>
                                             </div>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>供应商类型</label>
-                                            	<select class="form-control" id="sp_type" name="sp_type">
-	                                            	<option value="line">干线运输供应商</option>
-	                                            	<option value="delivery">配送供应商</option>
-	                                            	<option value="pickup">提货供应商</option>
-	                                            	<option value="personal">个体供应商</option>
-                                            	</select>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>付款方式</label>
-	                                           	<select class="form-control" id="payment" name="payment">
-	                                           		<option value="monthlyStatement">月结</option>
-	                                           		<option value="freightCollect">到付</option>
-	                                           		<option value="cashPayment">现付</option>
-	                                           	</select>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>计费方式</label>
-	                                         	<input type="hidden" value="${party.charge_type!''}" id="chargeTypeSelect">
-	                                           	<select class="form-control" id="chargeType" name="chargeType">
-	                                           		<option value="perUnit">计件</option>
-	                                           		<option value="perCar">整车</option>
-	                                           		<option value="perCargo">零担</option>
-	                                           	</select>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    
-                                    <!-- /.col-lg-6 (even) 偶数列-->                                    
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
+                                            
+                                        </div>
+										<div class="col-lg-6">
+											<div class="form-group">
                                                 <label>联系人(必填)</label>
                                                 <input placeholder="" class="form-control" id="contact_person" type="text" name="contact_person" value="${contact.contact_person!''}">
                                             </div>
-                                        </fieldset>
-                                    </div>
-
-                                    <!-- /.col-lg-6 (odd) 奇数列 -->
-                                     <div class="col-lg-6">
-                                        <fieldset>
                                             <div class="form-group">
                                                 <label>联系地址</label>
                                                 <input placeholder="" class="form-control" id="address" type="text" name="address" value="${contact.address!''}">
-                                            </div>                                     
-                                        </fieldset>
-                                    </div>                                    
-                                    
-                                    <!-- /.col-lg-6 (even) 偶数列 -->
-                                    <div class="col-lg-6">
-                                        <fieldset>
+                                            </div> 
+
                                             <div class="form-group">
                                                 <label>联系人电话</label>
                                                 <input placeholder="" class="form-control" id="disabledInput" type="text" name="phone" value="${contact.phone!''}">
                                             </div>
-                                        </fieldset>
-                                    </div>
-                                    
-                                    <!-- /.col-lg-6 (odd) 奇数列 -->
-                                    <div class="col-lg-6">
-                                        <fieldset>
+
                                             <div class="form-group">
                                                 <label>email</label>
                                                 <input placeholder="" class="form-control" id="email" type="text" name="email" value="${contact.email!''}">
-                                            </div>                                     
-                                        </fieldset>
-                                    </div>
+                                            </div>
 
-                                    <!-- /.col-lg-6 (even) 偶数列 -->
-                                    <div class="col-lg-6">
-                                        <fieldset>
                                             <div class="form-group">
                                                 <label>邮政编码</label>
                                                 <input placeholder="" class="form-control" id="postal_code" type="text" name="postal_code" value="${contact.postal_code!''}">
                                             </div>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-lg-6">
-	                                    <div class="form-group">
-	                                    	<fieldset>
+
                                             <div class="form-group">
                                                 <label>付款单位</label>
                                                 <input class="form-control" id="receipt" type="text" name="receipt" value="${party.receipt!''}">
                                             </div>
-                                        </fieldset>
-	                                    </div> 
-                                    </div>
-                                    
-									<div class="col-lg-6">
-                                        <fieldset>
+
                                             <div class="form-group">
                                                 <label>公司简介</label>
 												<textarea class="form-control" rows="3" name="introduction">${contact.introduction!''}</textarea>
                                             </div>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <fieldset>
-                                            <div class="form-group">
-                                                <label>备注</label>
-												<textarea class="form-control" rows="3" name="remark">${party.remark!''}</textarea>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    <!-- /.col-lg-6 (odd) 奇数列 -->
+                                       </div>
+									</form>
                                     <div class="col-lg-6" style="clear:both;">
-                                        <button type="submit" class="btn  btn-primary">保存</button>
+                                        <button id="save" type="button" class="btn  btn-primary">保存</button>
                                         <a class="btn  btn-primary" href="/serviceProvider">返回</a>
                                     </div>
 
-                                   
-                                <form role="form">
-
                             </div>
                             <!-- /.row (nested) -->
+                            <hr>
+							<div class="tab-content">
+			            	 	<div class="tab-pane fade active in" id="basic">
+                             	 	<div class="table-responsive">
+                             	 		<button type="button" id = "addChargeType" class="btn btn-primary" data-toggle="modal" data-target="#chargeTypeItemModel" data-whatever="@fat" disabled = 'true'>添加客户计费</button>
+								 		<div class="form-group"></div>
+	                           	 		<table class="table table-striped table-bordered table-hover" id="item_table" style="width: 1208spx;">
+		                                    <thead>
+		                                        <tr>
+		                                        	<th>客户名称</th>
+	                                                <th>计费方式</th>
+		                                            <th>备注</th>
+		                                            <th></th>
+		                                        </tr>
+		                                    </thead>
+		                                    <tbody>
+		                                        <tr>
+		                                            
+		                                        </tr>
+		                                    </tbody>
+	                               		 </table>
+	                            	</div>
+			            	 	</div>
+			            	</div>
+			            	<div class="modal fade" id="chargeTypeItemModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">客户计费</h4>
+							      </div>
+							      <div class="modal-body">
+							        <form id="itemFrom"  action="" method="post">
+   								      	<input id="chargeTypeItemId" type="hidden" name="chargeTypeItemId"/>
+   								      	<input id="sp_id" name="sp_id" type="hidden" value="${party.id!''}">
+   								      	<div class="form-group ">
+	 										<label class="control-label">客户名称</label> 
+	 										<input id="customer_id" type="hidden" name="customer_id" />
+	 										<input id="customer_name" name="customer_name" class="form-control" name="customerMessage" placeholder="请选择客户">
+						                  	<ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;"></ul> 
+	   									</div>
+										<div class="form-group ">
+											<label class="control-label" for="inputSuccess">计费方式</label> 
+											<select class="form-control" id="c_type" name="c_type">
+                                           		<option value="perUnit">计件</option>
+                                           		<option value="perCar">整车</option>
+                                           		<option value="perCargo">零担</option>
+                                          	</select>
+										</div>
+										<div class="form-group ">
+											<label class="control-label" for="inputSuccess">备注</label> 
+											<textarea class="form-control" id='chargeTypeRemark' rows="3" name="chargeTypeRemark"></textarea>
+										</div>
+										
+									</form>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+							        <button type="button" id="chargeTypeItemBtn" class="btn btn-primary">保存</button>
+							      </div>
+							    </div>
+							  </div>
+							</div>
                         </div>
-                        <!-- /.panel-body -->
                     </div>
-                    <!-- /.panel -->
+                    <div>
+                	<p>操作提示：</p>
+                	<p>添加客户计费的时候，如果客户计费已经存在 ，则直接更新已存在客户计费</p>
                 </div>
-                <!-- /.col-lg-12 -->
+                </div>
+                
             </div>
-            <!-- /.row -->      
 </div>
 			
-	<!--/span-->
-
-
-<!--/row-->
-
-<!-- content ends -->
 <%}%>
 <!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.editable.js" type="text/javascript"></script>
+<script src="/yh/js/plugins/dataTables/jquery.jeditable.js" type="text/javascript"></script>
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+<script src="/yh/css/ui/jquery-ui.js"></script>
 <script>
-    $(document).ready(function() {
-    	var province = '${location.province!''}';
-    	var city = '${location.city!''}';
-    	var district = '${location.district!''}';
-    	if(district.indexOf("省")>0){
-    		province = district;
-      	}
-    	
-    	var spType = '${contact.sp_type!''}';
-    	$("#sp_type").val(spType);
-    	
-    	var payment = '${party.payment!''}';
-    	if(payment == "monthlyStatement"){
-    		$("#payment").find("option[value='monthlyStatement']").attr("selected",true);
-		}else if(payment == "freightCollect"){
-			$("#payment").find("option[value='freightCollect']").attr("selected",true);
-		}else{
-			$("#payment").find("option[value='cashPayment']").attr("selected",true);
-		}
-    	
-    	$("#hideProvince").val(province);
-    	
-        $('#menu_profile').addClass('active').find('ul').addClass('in');
-        $('#customerForm').validate({
-            rules: {
-              company_name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
-                required: true
-              },
-              abbr:{//form 中 abbr为必填
-                  required: true
-                },
-              contact_person:{//form 中 name为必填
-                required: true
-              },
-              location:{
-                required: true
-              },
-           	  email:{
-                email: true
-              }
-            },
-            highlight: function(element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            success: function(element) {
-                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
-            }
-        });
-        //获取全国省份
-       	var select_province = $("#mbProvince");
-       	$.post('/serviceProvider/province',function(data){
-       		select_province.append("<option>--请选择省份--</option>");
-       		for(var i = 0; i < data.length; i++)
-			{	
-				if(data[i].NAME == province){
-					select_province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-				}else{  
-					select_province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-				}
-			}
-       	},'json');
-       	
-         //获取省份的城市
-         $('#mbProvince').on('change', function(){
-         	//var inputStr = $(this).parent("option").attr('id'); 
- 			var inputStr = $(this).val();
- 			$.get('/serviceProvider/city', {id:inputStr}, function(data){
- 				var cmbCity =$("#cmbCity");
- 				var cmbArea =$("#cmbArea");
- 				cmbCity.empty();
- 				cmbCity.append("<option>--请选择城市--</option>");
- 				cmbArea.empty();
- 				for(var i = 0; i < data.length; i++)
- 				{	
- 					if(data[i].CODE == city){
- 	       				cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
- 					}else{  
- 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 					}
- 				}
- 			},'json');
- 		});
-         //获取城市的区县
-         $('#cmbCity').on('change', function(){
-         	//var inputStr = $(this).parent("option").attr('id'); 
- 			var inputStr = $(this).val();
- 			var code = $("#location").val(inputStr);
- 			$.get('/serviceProvider/area', {id:inputStr}, function(data){
- 				var cmbArea =$("#cmbArea");
- 				cmbArea.empty();
- 				cmbArea.append("<option>--请选择区(县)--</option>");
- 				for(var i = 0; i < data.length; i++)
- 				{
- 					if(data[i].CODE == district){
- 						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
- 					}else{  
- 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 					}
- 				}
- 			},'json');
- 		});
-         
-         $('#cmbArea').on('change', function(){
-         	//var inputStr = $(this).parent("option").attr('id'); 
- 			var inputStr = $(this).val();
- 			var code = $("#location").val(inputStr);
- 		});         
-
-         // 回显城市
- 		var hideProvince = $("#hideProvince").val();
-        $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
- 			if(data.length > 0){
- 				var cmbCity =$("#cmbCity");
- 				cmbCity.empty();
- 				cmbCity.append("<option>--请选择城市--</option>");
- 				var hideCity = $("#hideCity").val();
- 				for(var i = 0; i < data.length; i++)
- 				{
- 					if(data[i].NAME == hideCity){
- 						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
- 					}else{
- 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 					}
- 				}
- 			}
- 		},'json');
-
-         // 回显区
-         var hideCity = $("#hideCity").val();
-         $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
- 			if(data.length > 0){
- 				var cmbArea =$("#cmbArea");
- 				cmbArea.empty();
- 				cmbArea.append("<option>--请选择区(县)--</option>");
- 				var hideDistrict = $("#hideDistrict").val();
- 				for(var i = 0; i < data.length; i++)
- 				{
- 					if(data[i].NAME == hideDistrict){
- 						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
- 					}else{
- 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
- 					}
- 				}
- 			}
- 		},'json');
-        
-         
-      // 回显计费方式
-      var chargeTypeOption=$("#chargeType>option");
-      var chargeTypeVal=$("#chargeTypeSelect").val();
-      for(var i=0;i<chargeTypeOption.length;i++){
-         var svalue=chargeTypeOption[i].value;
-         if(chargeTypeVal==svalue){
-      	   $("#chargeType option[value='"+svalue+"']").attr("selected","selected");
-         }
-      }
-         
-    }); 
+	var province = '${location.province!''}';
+	var city = '${location.city!''}';
+	var district = '${location.district!''}';
+	var spType = '${contact.sp_type!''}';
+	var payment = '${party.payment!''}';
 </script>
+<script src="/yh/js/profile/serviceProvider/edit.js"></script>
