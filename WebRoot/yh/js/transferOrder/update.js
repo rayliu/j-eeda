@@ -2263,7 +2263,7 @@ $(document).ready(function() {
 			    	 }
 			 }},  
 			{"mDataProp":"TRANSFERORDERNO","sClass": "remark"},
-			{"mDataProp":"TRANSFERORDERNO","sClass": "remark"},
+			{"mDataProp":"DELIVERYORDERNO","sClass": "remark"},
 			{"mDataProp":"REMARK",
                 "fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
