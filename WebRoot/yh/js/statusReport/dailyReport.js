@@ -16,7 +16,7 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [   
-            {"mDataProp":"ABBR", "sWidth":"100px", "sVisible":false},
+            {"mDataProp":"ABBR", "sWidth":"100px", "bVisible":true},
             {"mDataProp":"DELIVERYNO", "sWidth":"100px","sClass": "delivery_no"},
             {"mDataProp":"TRANSFERNO", "sWidth":"100px"},
             {"mDataProp":"SERIAL_NO", "sWidth":"120px","sClass": "serial_no"},
@@ -40,27 +40,111 @@ $(document).ready(function() {
             		}
                 }
             },
-            {"mDataProp":"PAYTIHUO", "sWidth":"70px"},
-            {"mDataProp":"PAYGANXIAN", "sWidth":"70px"},
-            {"mDataProp":"PAYPEISONG", "sWidth":"70px"},
-            {"mDataProp":"PAYBAOXIAN", "sWidth":"70px"},
-            {"mDataProp":"PAYANZHUANG", "sWidth":"70px"},
-            {"mDataProp":"PAYTAIJIE", "sWidth":"70px"},
-            {"mDataProp":"PAYDENGDAI", "sWidth":"70px"},
-            {"mDataProp":"PAYZANCUN", "sWidth":"70px"},
-            {"mDataProp":null, "sWidth":"100px"},
-            {"mDataProp":"PAYQITA", "sWidth":"100px"},
-            {"mDataProp":"INCOMETIHUO", "sWidth":"70px"},
-            {"mDataProp":"INCOMEYUNSHU", "sWidth":"70px"},
-            {"mDataProp":"INCOMESONGHUO", "sWidth":"70px"},
-            {"mDataProp":"INCOMEBAOXIAN", "sWidth":"70px"},
-            {"mDataProp":"INCOMETAIJIE", "sWidth":"70px"},
-            {"mDataProp":"INCOMEANZHUANG", "sWidth":"70px"},
-            {"mDataProp":"INCOMEZANCUN", "sWidth":"70px"},
-            {"mDataProp":null, "sWidth":"100px"},
-            {"mDataProp":"INCOMEQITA", "sWidth":"100px"}
+            {"mDataProp":"PAYTIHUO", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"PAYGANXIAN", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"PAYPEISONG", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"PAYBAOXIAN", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"PAYANZHUANG", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"PAYTAIJIE", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"PAYDENGDAI", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"PAYZANCUN", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":null, "sWidth":"100px", "bVisible":false},
+            {"mDataProp":"PAYQITA", "sWidth":"100px", "bVisible":false},
+            {"mDataProp":null, "sWidth":"80px",
+            	"fnRender": function(obj) {  
+        			return (obj.aData.PAYTIHUO + obj.aData.PAYGANXIAN + obj.aData.PAYPEISONG + obj.aData.PAYBAOXIAN + obj.aData.PAYANZHUANG + obj.aData.PAYTAIJIE + obj.aData.PAYDENGDAI + obj.aData.PAYZANCUN + obj.aData.PAYQITA) * 1;
+                }
+            },
+            {"mDataProp":"INCOMETIHUO", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"INCOMEYUNSHU", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"INCOMESONGHUO", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"INCOMEBAOXIAN", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"INCOMETAIJIE", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"INCOMEANZHUANG", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"INCOMEZANCUN", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":null, "sWidth":"100px", "bVisible":false},
+            {"mDataProp":"INCOMEQITA", "sWidth":"100px", "bVisible":false},
+            {"mDataProp":"ZONGSHOURU", "sWidth":"80px"}
         ]
     });	
+    
+    //单品与普货查询
+    $("input[name='cargoType']").change(function(){
+    	if($(this).val() == "ATM"){
+    		statusTable.fnSetColumnVis(1, true);
+    		statusTable.fnSetColumnVis(3, true);
+    		statusTable.fnSetColumnVis(9, true);
+    		statusTable.fnSetColumnVis(10, true);
+    	}else{
+    		statusTable.fnSetColumnVis(1, false);
+    		statusTable.fnSetColumnVis(3, false);
+    		statusTable.fnSetColumnVis(9, false);
+    		statusTable.fnSetColumnVis(10, false);
+    	}
+    });
+    
+    
+    
+    //成本隐藏与展开
+    $("#payHandle").click(function(){
+    	var type = $(this).attr("alt");
+    	//0代表隐藏
+    	if(type == 1){
+    		statusTable.fnSetColumnVis(15, false);
+    		statusTable.fnSetColumnVis(16, false);
+    		statusTable.fnSetColumnVis(17, false);
+    		statusTable.fnSetColumnVis(18, false);
+    		statusTable.fnSetColumnVis(19, false);
+    		statusTable.fnSetColumnVis(20, false);
+    		statusTable.fnSetColumnVis(21, false);
+    		statusTable.fnSetColumnVis(22, false);
+    		statusTable.fnSetColumnVis(23, false);
+    		statusTable.fnSetColumnVis(24, false);
+    		$(this).attr("alt",0).text(">>");
+    	}else{
+    		statusTable.fnSetColumnVis(15, true);
+    		statusTable.fnSetColumnVis(16, true);
+    		statusTable.fnSetColumnVis(17, true);
+    		statusTable.fnSetColumnVis(18, true);
+    		statusTable.fnSetColumnVis(19, true);
+    		statusTable.fnSetColumnVis(20, true);
+    		statusTable.fnSetColumnVis(21, true);
+    		statusTable.fnSetColumnVis(22, true);
+    		statusTable.fnSetColumnVis(23, true);
+    		statusTable.fnSetColumnVis(24, true);
+    		$(this).attr("alt",1).text("<<");
+    	}
+    });
+    
+    //收入隐藏与展开
+    $("#incomeHandle").click(function(){
+    	var type = $(this).attr("alt");
+    	//0代表隐藏
+    	if(type == 1){
+    		statusTable.fnSetColumnVis(26, false);
+    		statusTable.fnSetColumnVis(27, false);
+    		statusTable.fnSetColumnVis(28, false);
+    		statusTable.fnSetColumnVis(29, false);
+    		statusTable.fnSetColumnVis(30, false);
+    		statusTable.fnSetColumnVis(31, false);
+    		statusTable.fnSetColumnVis(32, false);
+    		statusTable.fnSetColumnVis(33, false)
+    		statusTable.fnSetColumnVis(34, false);
+    		$(this).attr("alt",0).text(">>");
+    	}else{
+    		statusTable.fnSetColumnVis(26, true);
+    		statusTable.fnSetColumnVis(27, true);
+    		statusTable.fnSetColumnVis(28, true);
+    		statusTable.fnSetColumnVis(29, true);
+    		statusTable.fnSetColumnVis(30, true);
+    		statusTable.fnSetColumnVis(31, true);
+    		statusTable.fnSetColumnVis(32, true);
+    		statusTable.fnSetColumnVis(33, true);
+    		statusTable.fnSetColumnVis(34, true);
+    		$(this).attr("alt",1).text("<<");
+    	}
+    });
+    
     
     $("#beginTime,#endTime").on('keyup click', function () {
     	var beginTime=$("#beginTime").val();
