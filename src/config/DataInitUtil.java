@@ -308,6 +308,8 @@ public class DataInitUtil {
             
             //基础数据保险单从表
             stmt.execute("create table if not exists party_insurance_item (id bigint auto_increment primary key,party_id bigint,customer_id bigint,insurance_rate double,remark varchar(255),beginTime date,endTime date,is_stop tinyint(4));");
+            //客户计费方式表格
+            stmt.execute("create table if not exists charge_type (id bigint auto_increment primary key,sp_id bigint,customer_id bigint,charge_type varchar(200),remark varchar(200));");
             
             stmt.close();
             // conn.commit();
