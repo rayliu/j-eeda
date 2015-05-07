@@ -153,6 +153,7 @@ $(document).ready(function() {
 
  	// 没选中客户，焦点离开，隐藏列表
 	$('#customerMessage').on('blur', function(){
+		//自动填充数据
 		var inputStr = $('#customerMessage').val();
 		$("label[name = 'errorMessage']").empty().remove();
 		if(inputStr == "" && inputStr == null){
@@ -222,6 +223,10 @@ $(document).ready(function() {
 			},'json');
 		}
 		
+		
+		getChargetype();
+		
+		
  		$('#customerList').hide();
  	});
 
@@ -247,7 +252,7 @@ $(document).ready(function() {
     var searchAllLocation = function(){
     	var locationFrom = $('#hideLocationFrom').val();
     	$.get('/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
-    		console.log(data);			
+    					
     		var provinceVal = data.PROVINCE;
     		var cityVal = data.CITY;
     		var districtVal = data.DISTRICT;
@@ -430,7 +435,7 @@ $(document).ready(function() {
 
 	// 选中供应商
 	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-		console.log($('#spList').is(":focus"))
+		
 		var message = $(this).text();
 		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('partyId'));
@@ -458,13 +463,15 @@ $(document).ready(function() {
         $('#spList').hide();
         
         //回显供应商付款方式
-        var chargeType = $(this).attr('chargeType');
+        /*var chargeType = $(this).attr('chargeType');
 		$("input[name='chargeType2']").each(function(){
 			if(chargeType == $(this).val()){
 				$(this).prop('checked', true);
 			}
-		});
-        
+		});*/
+        /*if($("#chargeTypeRadio2").val() == null || $("#chargeTypeRadio2").val() == ""){*/
+			getChargetype();
+		/*}*/
     });
 	
 	 //回显供应商计费方式
@@ -1870,8 +1877,6 @@ $(document).ready(function() {
 		},'json');
     
 	 $('#deliveryOfficeSelect').on('change', function(){ 
-		 console.log($(this).val());
-		 console.log($("#officeSelect").val());
 		 if($(this).val() != ""){
 			 // 获取所有仓库
 			 findWarehouseForOffice($(this).val());
@@ -2418,7 +2423,7 @@ $(document).ready(function() {
 				paymenttable.fnSettings().sAjaxSource = "/transferOrder/accountPayable/"+order_id;
 				paymenttable.fnDraw(); 
 			}else{
-				alert("修改失败!");
+				$.scojs_message('修改失败!', $.scojs_message.TYPE_ERROR);
 			}
     	},'json');
 	});
@@ -2432,7 +2437,7 @@ $(document).ready(function() {
 				paymenttable.fnSettings().sAjaxSource = "/transferOrder/accountPayable/"+order_id;
 				paymenttable.fnDraw(); 
 			}else{
-				alert("修改失败!");
+				$.scojs_message('修改失败!', $.scojs_message.TYPE_ERROR);
 			}
     	},'json');
 	});
@@ -2441,12 +2446,10 @@ $(document).ready(function() {
 		e.preventDefault();
 	    var order_id =$("#order_id").val();
 		$.post('/transferOrder/addNewRow2/'+order_id,function(data){
-			//console.log(data);
 			if(data[0] != null){
 				receipttable.fnSettings().sAjaxSource = "/transferOrder/accountReceivable/"+order_id;
             	receipttable.fnDraw();  
-				//$('#fin_item2').modal('hide');
-				//$('#resetbutton2').click();
+				
 			}else{
 				alert("请到基础模块维护应收条目！");
 			}
@@ -2472,49 +2475,22 @@ $(document).ready(function() {
 		var value = $(this).val();
 		$.post('/transferOrder/updateTransferOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 			if(data.ID > 0){
+				$.scojs_message('更新成功!', $.scojs_message.TYPE_OK);
 			}else{
-				alert("修改失败!");
+				//alert("修改失败!");
+				$.scojs_message('修改失败!', $.scojs_message.TYPE_ERROR);
 			}
     	},'json');
 	});
-	/*if(($("#transferOrderStatus").val() == '已发车' || $("#transferOrderStatus").val() == '在途') && $("#transferOrderArrivalMode").val() == 'delivery'){
-		$("#receiptBtn").attr("disabled", false);
-	}
-	
-	// 收货确认
-	$("#receiptBtn").click(function(e){
-    	$(this).attr("disabled",true);
-    	var orderId = $("#order_id").val();
-    	$.post('/transferOrderMilestone/receipt', {orderId:orderId}, function(){    	
-    	});
-    });*/
-	
+
 	// 选中仓库触发事件
 	$("#gateInSelect").change(function(){
     	$.post('/transferOrder/selectWarehouse', {warehouseId:$(this).val()}, function(data){  
-		   /* var officeOption=$("#deliveryOfficeSelect>option");
-		    var officeVal=data.warehouse.OFFICE_ID;
-		    for(var i=0;i<officeOption.length;i++){
-		    	var svalue=officeOption[i].value;
-		    	if(officeVal==svalue){
-		    		$("#deliveryOfficeSelect option[value='"+svalue+"']").attr("selected","selected");
-		    	}
-		    }*/
-			
+		   
 			var hideProvince = data.location.PROVINCE;
 			var hideCity = data.location.CITY;
 			var hideDistrict = data.location.DISTRICT;
-			/*if(hideProvince != undefined){
-				if(hideCity != undefined){
-					if(hideDistrict != undefined){
-	    				$("#locationTo").val(data.DISTRICTCODE);
-	    			}else{    	    				
-	    				$("#locationTo").val(data.CITYCODE);
-	    			}
-    			}else{
-    				$("#locationTo").val(data.PROVINCECODE);        				
-    			}    				
-			}*/
+			
 			$("#locationTo").val(data.warehouse.LOCATION);
 		    //获取全国省份
 		    $(function(){
@@ -2636,3 +2612,28 @@ $(document).ready(function() {
     
     
 });
+function getChargetype(){
+	//判断修改后相应的计费方式修改
+	var customer_id = $("#customer_id").val();
+	var sp_id = $("#sp_id").val();
+	if(customer_id != null && customer_id !="" && sp_id != null && sp_id !=""){
+		//获取当前供应商客户的计费方式
+		$.post("/serviceProvider/seachChargeType",{sp_id:sp_id,customer_id:customer_id},function(data){
+			if(data.CHARGE_TYPE == null){
+				//这里是当前客户和供应商没有数据维护的情况
+				$("input[name='chargeType2']").each(function(){
+					if($(this).val() == 'perUnit'){
+						$(this).prop('checked', true);
+					}
+				});
+			}else{
+				 //var chargeTypeRadio2 = $("#chargeTypeRadio2").val();
+				$("input[name='chargeType2']").each(function(){
+					if($(this).val() == data.CHARGE_TYPE){
+						$(this).prop('checked', true);
+					}
+				});
+			}
+		},'json');
+	}
+}

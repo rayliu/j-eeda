@@ -222,9 +222,10 @@
                                             	<h5 id="pageCustomerName">${customerContact.contact_person!''} ${customerContact.phone!''}</h5><h5 id="pageCustomerAddress">${customerContact.address!''}</h5>     
                                             </div>
                                             <div class="form-group">
-                                                <label class="label-margin">客户计费方式</label>
+                                                <label class="label-margin">应收计费方式</label>
                                                 <input id="chargeTypeRadio" type="hidden" value="${transferOrder.charge_type!''}"/>
                                                 <input id="hibLtlUnitType" type="hidden" value="${transferOrder.ltl_unit_type!''}"/>
+                                                
                                                 <input id="hiddenOrderCarType" type="hidden" value="${transferOrder.car_type!''}"/>
                                                 
                                                 <label class="radio-inline">
@@ -327,7 +328,7 @@
                                            	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
                                            </div>                                                
                                            <div class="form-group">
-                                                <label class="label-margin">供应商计费方式</label>
+                                                <label class="label-margin">应付计费方式</label>
                                                 <input id="chargeTypeRadio2" type="hidden" value="${transferOrder.charge_type2!''}"/>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="chargeType2" id="chargeType4" value="perUnit" checked="">计件

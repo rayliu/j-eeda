@@ -411,4 +411,24 @@ public class ServiceProviderController extends Controller {
     	ProviderChargeType pct = ProviderChargeType.dao.findFirst("select ct.*,ifnull(c.abbr,c.company_name) as customer_name from charge_type ct left join party p on p.id = ct.customer_id left join contact c on c.id = p.contact_id where ct.id = ?",id);
     	renderJson(pct);
     }
+    public void seachChargeType(){
+    	String sp_id = getPara("sp_id");
+    	String customer_id = getPara("customer_id");
+    	ProviderChargeType pct = null;
+    	if(sp_id != null && !"".equals(sp_id) && customer_id != null && !"".equals(customer_id)){
+    		pct = ProviderChargeType.dao.findFirst("select charge_type from charge_type where sp_id = ? and customer_id = ?",sp_id,customer_id);
+    		if(pct != null){
+    			renderJson(pct);
+    		}else{
+    			Party p = Party.dao.findById(sp_id);
+    			
+    			renderJson("{\"charge_type\":" + p.getStr("charge_typ") + "}");
+    		}
+    	}else{
+    		renderJson("{\"charge_type\":error}");
+    	}
+    	
+    }
+    
+    
 }
