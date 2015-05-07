@@ -1,5 +1,8 @@
 ﻿
 $(document).ready(function() {
+	if(deliverOrder.orderNo){
+		document.title = deliverOrder.orderNo +' | '+document.title;
+	}
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 
 	$('#resetbutton').hide();

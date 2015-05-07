@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '配送单查询 | '+document.title;
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 	var dataTable =$('#eeda-table3').dataTable({
 		 "bFilter": false, //不需要默认的搜索框
