@@ -1,9 +1,16 @@
 package controllers.yh;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
+
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.SimpleEmail;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -13,6 +20,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import config.DataInitUtil;
+import config.EedaConfig;
 
 public class RegisterUserController  extends Controller{
 	//这个是记录操作日志的类
@@ -69,9 +77,38 @@ public class RegisterUserController  extends Controller{
         	uo.save();
         	
         	
-        	//保存成功后登录
-        	forwardAction("/login");
-
+        	
+        	//注册成功
+        	 Email emailTo = new SimpleEmail();
+        	 emailTo.setHostName("smtp.exmail.qq.com");
+        	 emailTo.setSmtpPort(465);
+             
+             /*输入公司的邮箱和密码*/
+             /*EedaConfig.mailUser, EedaConfig.mailPwd*/
+        	 emailTo.setAuthenticator(new DefaultAuthenticator(EedaConfig.mailUser, EedaConfig.mailPwd));        
+        	 emailTo.setSSLOnConnect(true);
+             
+        	 try{
+        		/*EedaConfig.mailUser*/
+	        	emailTo.setFrom(EedaConfig.mailUser);//设置发信人
+	        	emailTo.setSubject("新公司注册");
+	            Date date = new Date();
+	            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+	            String newDate = sf.format(date);
+	            String basePath =newDate + "  " + userName + "用户在平台上注册" + officeName + "的一个总公司";
+	
+	            emailTo.setMsg(basePath);
+	            /**/
+	            emailTo.addTo("ray_liu@eeda123.com");//设置收件人
+            	emailTo.send();
+             	
+             }catch(Exception e){
+             	e.printStackTrace();
+             	
+             }finally{
+            	//保存成功后登录
+             	forwardAction("/login");
+             }
 		
 	}
 	
