@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '库存查询 | '+document.title;
 	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	//库存list
 	var tab =$('#example2').dataTable( {
