@@ -1,6 +1,6 @@
 ﻿
 $(document).ready(function() {
-
+	document.title = '运输在途查询 | '+document.title;
     $('#menu_status').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
