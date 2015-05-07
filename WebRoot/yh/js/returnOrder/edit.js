@@ -1,4 +1,7 @@
 ﻿$(document).ready(function() {
+	if(returnOrder.orderNo){
+		document.title = returnOrder.orderNo +' | '+document.title;
+	}
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 		
 	var returnOrderId = $("#returnId").val();

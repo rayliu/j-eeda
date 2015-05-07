@@ -1,4 +1,5 @@
  $(document).ready(function() {
+	 document.title = '回单查询 | '+document.title;
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 	var clickTabId = "createTab";
 	
