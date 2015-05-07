@@ -1,5 +1,12 @@
  $(document).ready(function() {
-    //from表单验证
+    if(departOrder.orderNo){
+    	document.title = departOrder.orderNo +' | '+document.title;
+    }else if(departOrder.departNo){
+    	document.title = departOrder.departNo +' | '+document.title;
+    }
+	 
+	 
+	 //from表单验证
 	var validate = $('#orderForm').validate({
         rules: {
         	departure_time: {required: true},

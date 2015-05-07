@@ -1,4 +1,5 @@
  $(document).ready(function() {
+	 document.title = '发车单查询 | '+document.title;
 	$('#menu_assign').addClass('active').find('ul').addClass('in');
 var dataTable =$('#dataTables-example').dataTable({
 		"bFilter": false, //不需要默认的搜索框
