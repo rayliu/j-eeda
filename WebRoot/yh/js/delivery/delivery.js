@@ -14,51 +14,6 @@ $(document).ready(function() {
 		$("#saveBtn").attr("disabled",false);
 	}
 
-		  /*// 获取供应商的list，选中信息在下方展示其他信息
-			$('#spMessage').on('keyup click', function(){
-				var inputStr = $('#spMessage').val();
-				$.get('/delivery/searchSp', {input:inputStr}, function(data){
-					console.log(data);
-					var spList =$("#spList");
-					spList.empty();
-					for(var i = 0; i < data.length; i++)
-					{
-						var abbr = data[i].ABBR;
-						if(abbr == null){
-							abbr = '';
-						}
-						var company_name = data[i].COMPANY_NAME;
-						if(company_name == null){
-							company_name = '';
-						}
-						var contact_person = data[i].CONTACT_PERSON;
-						if(contact_person == null){
-							contact_person = '';
-						}
-						var phone = data[i].PHONE;
-						if(phone == null){
-							phone = '';
-						}
-						spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
-					}
-				},'json');
-				$("#spList").css({ 
-		        	left:$(this).position().left+"px", 
-		        	top:$(this).position().top+32+"px" 
-		        }); 
-		        $('#spList').show();
-			});
-			$('#spMessage').on('blur', function(){
-				$("#spList").hide();
-			});
-			
-			$('#spList').on('blur', function(){
-		 		$('#spList').hide();
-		 	});
-
-			$('#spList').on('mousedown', function(){
-				return false;// 阻止事件回流，不触发 $('#spMessage').on('blur'
-			});*/
 	$('#spMessage').on('keyup click', function(){
 		var inputStr = $('#spMessage').val();
 		if(inputStr == ""){
@@ -123,6 +78,7 @@ $(document).ready(function() {
 		$('#a3').html($(this).attr('address'));
 		$('#a4').html($(this).attr('mobile'));
 		
+		getChargetype();
         $('#spList').hide();
     }); 
 			
@@ -1031,4 +987,28 @@ $(document).ready(function() {
     });*/
     
 });
-
+function getChargetype(){
+	//判断修改后相应的计费方式修改
+	var customer_id = $("#customer_id").val();
+	var sp_id = $("#sp_id").val();
+	if(customer_id != null && customer_id !="" && sp_id != null && sp_id !=""){
+		//获取当前供应商客户的计费方式
+		$.post("/serviceProvider/seachChargeType",{sp_id:sp_id,customer_id:customer_id},function(data){
+			if(data.CHARGE_TYPE == null){
+				//这里是当前客户和供应商没有数据维护的情况
+				$("input[name='chargeType']").each(function(){
+					if($(this).val() == 'perUnit'){
+						$(this).prop('checked', true);
+					}
+				});
+			}else{
+				 
+				$("input[name='chargeType']").each(function(){
+					if($(this).val() == data.CHARGE_TYPE){
+						$(this).prop('checked', true);
+					}
+				});
+			}
+		},'json');
+	}
+}
