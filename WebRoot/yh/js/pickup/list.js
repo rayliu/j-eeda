@@ -1,4 +1,5 @@
  $(document).ready(function() {
+	document.title = '调车单查询 | '+document.title;
 	$('#menu_assign').addClass('active').find('ul').addClass('in');
     	
 	var pickupOrder = $('#dataTables-example').dataTable({

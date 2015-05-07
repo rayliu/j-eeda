@@ -1,4 +1,11 @@
 ﻿$(document).ready(function() {
+	if(pickupOrder.order_no){
+		document.title = pickupOrder.order_no +' | '+document.title;
+	}else if(pickupOrder.depart_no){
+		document.title = pickupOrder.depart_no +' | '+document.title;
+	}
+	
+	
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 var pickupOrderId = $("#pickupOrderId").val();
 	 var parentId = "chargeCheckOrderbasic";

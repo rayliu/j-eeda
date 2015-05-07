@@ -602,6 +602,8 @@
 <script>
  	var pickupOrder = {};
  	pickupOrder.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
+ 	pickupOrder.order_no = "${order_no!''}" ;
+ 	pickupOrder.depart_no = "${pickupOrder.depart_no!''}";
 </script>
 <script src="/yh/js/pickup/edit.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
