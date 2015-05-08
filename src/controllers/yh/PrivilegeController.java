@@ -139,6 +139,9 @@ public class PrivilegeController extends Controller {
 			r.set("role_code", role.get("code"));
 			r.set("permission_code", str);
 			r.set("office_id",parentID);
+			Permission per = Permission.dao.findFirst("select * from permission where code = ?",str);
+			//判断当前用户是否收费了
+			r.set("is_authorize", per.get("is_authorize"));
 			r.save();
 		}
 		renderJson();
@@ -179,6 +182,9 @@ public class PrivilegeController extends Controller {
 			r.set("role_code", role.get("code"));
 			r.set("permission_code", object);
 			r.set("office_id", parentID);
+			Permission per = Permission.dao.findFirst("select * from permission where code = ?",object);
+			//判断当前用户是否收费了
+			r.set("is_authorize", per.get("is_authorize"));
 			r.save();
 			
         }
