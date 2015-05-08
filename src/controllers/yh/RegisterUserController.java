@@ -99,7 +99,7 @@ public class RegisterUserController  extends Controller{
 	
 	            emailTo.setMsg(basePath);
 	            /**/
-	            emailTo.addTo("ray_liu@eeda123.com");//设置收件人
+	            emailTo.addTo("ray_liu@eeda123.com;kate.lin@eeda123.com;");//设置收件人
             	emailTo.send();
              	
              }catch(Exception e){
