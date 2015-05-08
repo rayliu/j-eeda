@@ -269,7 +269,7 @@ public class InsuranceOrderController extends Controller {
         		+ " left join transfer_order tor on tor.insurance_id = ior.id "
         		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-        sql = "select distinct ior.*,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior "
+        sql = "select distinct ior.*,(select c.abbr from party p LEFT JOIN contact c ON p.contact_id = c.id where p.id=tor.customer_id) as customer,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior "
         		+ " left join transfer_order tor on tor.insurance_id = ior.id "
         		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";

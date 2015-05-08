@@ -38,10 +38,9 @@
 	                	}else{
 	                		return "";
 	                	}
-	                	
-	                    
 	                }
-	            } 
+	            },
+	            {"mDataProp":"CUSTOMER"}
 	        ]      
 	    });	
 
