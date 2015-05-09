@@ -681,7 +681,7 @@
 	});	
 	
 	//图片放大
-	$("#showPictures").on('click', '.imgSign', function(e){
+	$("#showPictures").on('click', '.img-thumbnail', function(e){
 		var imgAdd = $(this).attr("src");
 		$("#lgImgDiv").empty().append("<img id='focusphoto' src='"+imgAdd+"' />"); 
 		var temp = new Image();

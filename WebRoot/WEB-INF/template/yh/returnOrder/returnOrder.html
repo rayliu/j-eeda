@@ -312,9 +312,9 @@
 		                                    	<% if(shiro.hasPermission("ReturnOrder.imgoperation")){%>
 		                                    		<input type="hidden" id="permission" value="permissionYes">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
-		                                    		<div style="width:200px;height:210px;float:left;" >
+		                                    		<div style="margin-right: 10px;float:left;" >
 			                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
-			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;">
+			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;width:135px;">
 			                                    		<p>
 			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
 			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" > 删除 </a>
@@ -327,7 +327,7 @@
 				                               			<%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true){%>
 			                                    		<div style="width:200px;height:210px;float:left;" >
 				                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
-				                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;">
+				                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="width:180px;height:180px;">
 			                                    		</div>
 			                                    		<%}%>
    													<%}%>
