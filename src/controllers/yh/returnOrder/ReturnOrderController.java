@@ -1351,7 +1351,7 @@ public class ReturnOrderController extends Controller {
     public void saveFile(){
     	String id = getPara("return_id");
     	String permission = getPara("permission");
-    	List<UploadFile> returnImg = getFiles("fileupload");
+    	List<UploadFile> returnImg = getFiles("img");
     	//List<UploadFile> returnImg = getFiles("return_img");
     	//List<UploadFile> returnImg = getFiles();
     	Map<String,Object> resultMap = new HashMap<String,Object>();
@@ -1388,6 +1388,7 @@ public class ReturnOrderController extends Controller {
 	    	resultMap.put("cause", "上传失败，请选择正确的图片文件");
 		}
     	renderJson(resultMap);
+		//renderJson("OK");
     }
     //删除图片
     public void delPictureById(){

@@ -7,6 +7,8 @@
 	}
 </style>
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
+<!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="/yh/js/plugins/jQuery-File-Upload-9.9.3/css/jquery.fileupload.css">
         <div id="page-wrapper">
             <div class="row">
            
@@ -262,17 +264,45 @@
                                         	<input type="hidden" id="files" name="files" value="${files!''}">
 									  		<div class="col-lg-12" style="clear:both;">
 									  			<div class="form-group"> 
-										  			<input id="savefile" type="button" class="btn  btn-primary" value="上传图片" aria-describedby="helpBlock">
+										  			<!-- <input id="savefile" type="button" class="btn  btn-primary" value="上传图片" aria-describedby="helpBlock">
 										  			<span id="helpBlock" class="help-block">(图片格式为：gif,jpeg,png,jpg)</span>
 		                                        	<form method="POST" id="fileForm" enctype="multipart/form-data">
-		                                        		<!-- <img src="" id="return_img" name="return_img" alt="" style="display: none;"> -->
+		                                        		<img src="" id="return_img" name="return_img" alt="" style="display: none;">
 		                                            	<input type="hidden" id="return_id" name="return_id" value="${returnOrder.id!''}">
 		                                                <input type="file" id="fileupload" name="fileupload" accept="image/*" style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px;">
-		                                                <!-- <div id="canvasDiv">  
-      													</div> --> 
+		                                                <div id="canvasDiv">  
+      													</div> 
 		                                            </form >
-	                                            	<!-- <input id="fileToUpload" type="file" name="fileToUpload" accept="image/*" multiple> 
+	                                            	<input id="fileToUpload" type="file" name="fileToUpload" accept="image/*" multiple> 
 	                                            	<button class="ui-btn ui-icon-add ui-corner-all" id="imgUploadBtn">压缩上传</button> -->
+												    <!-- The file upload form used as target for the file upload widget -->
+												    <form id="file_upload_form" action="//jquery-file-upload.appspot.com/" method="POST" enctype="multipart/form-data">
+												        <!-- Redirect browsers with JavaScript disabled to the origin page -->
+												        <noscript><input type="hidden" name="redirect" value="https://blueimp.github.io/jQuery-File-Upload/"></noscript>
+												        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+												        <div class="row fileupload-buttonbar">
+												            <div class="col-lg-7">
+												                <!-- The fileinput-button span is used to style the file input field as button -->
+												                <span class="btn btn-success fileinput-button">
+												                    <i class="glyphicon glyphicon-plus"></i>
+												                    <span>选择图片</span>
+												                    <input type="file" name="img" accept="image/*" id='file_upload' multiple>
+												                </span>
+												            </div>
+												            <!-- The global progress state -->
+												            <div class="col-lg-5 fileupload-progress fade">
+												                <!-- The global progress bar -->
+												                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+												                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+												                </div>
+												                <!-- The extended global progress state -->
+												                <div class="progress-extended">&nbsp;</div>
+												            </div>
+												        </div>
+												        <!-- The table listing the files available for upload/download -->
+												        <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
+												    </form>
+												    <br>
 	                                            </div>
 	                                    	</div>
 		                                    <div class="col-lg-12" style="clear:both;" id="showPictures">
@@ -283,7 +313,8 @@
 		                                    		<input type="hidden" id="permission" value="permissionYes">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
 		                                    		<div style="width:200px;height:210px;float:left;" >
-			                                    		<img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;">
+			                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
+			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;">
 			                                    		<p>
 			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
 			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" > 删除 </a>
@@ -295,7 +326,8 @@
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
 				                               			<%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true){%>
 			                                    		<div style="width:200px;height:210px;float:left;" >
-				                                    		<img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;">
+				                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
+				                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;">
 			                                    		</div>
 			                                    		<%}%>
    													<%}%>
@@ -367,19 +399,108 @@
 <%
 	var title=SYS_CONFIG.system_title!'';
 %>
-<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.ui.widget.js"></script>
-<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.iframe-transport.js"></script> 
-<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/jquery.fileupload.js"></script>
-<script src="/yh/js/plugins/jQuery-File-Upload-9.5.7/ajaxfileupload.js"></script>
-<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
-<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
-<script src="/yh/js/jquery.validate.min.js"></script>
-<script src="/yh/js/jvalidate.messages_cn.js"></script>
+<!-- The template to display files available for upload -->
+<script id="template-upload" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+        <td>
+            <span class="preview"></span>
+        </td>
+        <td>
+            <p class="name">{%=file.name%}</p>
+            <strong class="error text-danger"></strong>
+        </td>
+        <td>
+            <p class="size">Processing...</p>
+            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+        </td>
+        <td>
+            {% if (!i && !o.options.autoUpload) { %}
+                <button class="btn btn-primary start" disabled>
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>上传</span>
+                </button>
+            {% } %}
+            {% if (!i) { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>取消</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-download fade">
+        <td>
+            <span class="preview">
+                {% if (file.thumbnailUrl) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.thumbnailUrl%}"></a>
+                {% } %}
+            </span>
+        </td>
+        <td>
+            <p class="name">
+                {% if (file.url) { %}
+                    <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
+                {% } else { %}
+                    <span>{%=file.name%}</span>
+                {% } %}
+            </p>
+            {% if (file.error) { %}
+                <div><span class="label label-danger">Error</span> {%=file.error%}</div>
+            {% } %}
+        </td>
+        <td>
+            <span class="size">{%=o.formatFileSize(file.size)%}</span>
+        </td>
+        <td>
+            {% if (file.deleteUrl) { %}
+                <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                    <i class="glyphicon glyphicon-trash"></i>
+                    <span>Delete</span>
+                </button>
+                <input type="checkbox" name="delete" value="1" class="toggle">
+            {% } else { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+</script>
 <script>
 	var returnOrder = {};
 	returnOrder.ex_cargo = "${customizeField.EX_CARGO!'贵重物品'}";
 	returnOrder.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
 	returnOrder.orderNo = "${returnOrder.order_no!''}";
 </script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/vendor/jquery.ui.widget.js"></script>
+<script src="/yh/js/plugins/JavaScript-Load-Image-1.13.0/tmpl.min.js"></script>
+<script src="/yh/js/plugins/JavaScript-Load-Image-1.13.0/js/load-image.all.min.js"></script>
+<script src="/yh/js/plugins/JavaScript-Canvas-to-Blob-2.0.5/js/canvas-to-blob.min.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.iframe-transport.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-process.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-image.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-audio.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-video.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-validate.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-ui.js"></script>
+
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+
+
+
+
 <script src="/yh/js/returnOrder/edit.js"></script>
+<script src="/yh/js/returnOrder/edit_file_upload.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

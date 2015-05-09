@@ -571,7 +571,7 @@
 		}
 	},'json');
     
-    //保存图片
+    /*//保存图片
     $("#savefile").click(function(e){
     	$("#fileupload").click();
 	});
@@ -618,8 +618,21 @@
         	$('#myModal').modal('show');
         	$("#footer").hide();
         } 
+    });*/
+    
+    //'use strict';
+    $('#file_upload_form').fileupload({
+        // Uncomment the following to send cross-domain cookies:
+        //xhrFields: {withCredentials: true},
+        disableImageResize: false,
+        validation: {allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']},
+        url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),
+        //imageMaxWidth: 800,
+        //imageMaxHeight: 800,
+        imageCrop: true // Force cropped images
     });
-	 
+    
+    
 	// 删除图片
 	$("#showPictures").on('click', '.picture_del', function(e){
 		if(confirm("确定删除吗？")){
@@ -635,12 +648,12 @@
                     	var aText = "待审核";
         				if(value.AUDIT == 1 || value.AUDIT == true)
         					aText = "已审核";
-                        showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
+                        showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
                     });
         		}else{
         			showPictures.empty().append('<input type="hidden" id="permission" value="permissionNo">');
         			$.each(data,function(name,value) {
-        				showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"></div>');
+        				showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"></div>');
                     });
         		}
 			},'json');
@@ -675,7 +688,7 @@
 		temp.src = imgAdd;
 		var divWidth = $('#imgContent').width() - 40;
 		var imgWidth = temp.width;
-		console.log("弹出框宽度:"+divWidth+",图片宽度："+imgWidth);
+		console.log("弹出框宽度:"+divWidth+",图片宽度："+imgWidth+",图片高度："+temp.height);
 		if(imgWidth > divWidth){
 			var imgHeight = temp.height;
 			var width = divWidth;
@@ -687,13 +700,13 @@
 		$('#myModal_img').modal('show');
 	});	
 	
-	var jic = {
-	        /**
+	/*var jic = {
+	        *//**
 	         * Receives an Image Object (can be JPG OR PNG) and returns a new Image Object compressed
 	         * @param {Image} source_img_obj The source Image Object
 	         * @param {Integer} quality The output quality of Image Object
 	         * @return {Image} result_image_obj The compressed Image Object
-	         */
+	         *//*
 	        compress: function(source_img_obj, quality, output_format){
 	             var mime_type = "image/jpeg";
 	             if(output_format!=undefined && output_format=="png"){
@@ -857,7 +870,7 @@
         }  
         $('.ui-loader').show();  
         
-        /*var data = new FormData();
+        var data = new FormData();
         data.append('return_img', imgArr);
         $.ajax({
             url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),
@@ -869,9 +882,9 @@
             success: function(data){
                 alert(data);
             }
-        });*/
+        });
     	
-        /*$.post("/returnOrder/saveFile",{img: imgArr,type:imgTypeArr},function(res){
+        $.post("/returnOrder/saveFile",{img: imgArr,type:imgTypeArr},function(res){
             var res = eval('(' + res + ')');
             if(res.status == 1){
                 o.error(res.msg);
@@ -879,9 +892,9 @@
                 o.success(res.imgurl);
             }
             console.log(res);
-        });*/
+        });
         
-       /*$.ajaxFileUpload({
+       $.ajaxFileUpload({
             url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(), //用于文件上传的服务器端请求地址
             secureuri: false, //是否需要安全协议，一般设置为false
             fileElementId: 'upload_img', //文件上传域的ID
@@ -892,9 +905,9 @@
             error: function (data, status, e){//服务器响应失败处理函数
                 alert(e);
             }
-        });*/
+        });
     	
-    });
+    });*/
     	
     	
     	
@@ -904,6 +917,4 @@
     
 	
 });
-/*function catUpload(){  
-    
-} */
+
