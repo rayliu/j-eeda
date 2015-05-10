@@ -15,7 +15,7 @@ $(document).ready(function() {
 	$('#qrcodeCanvas').qrcode({
 		width: 120,
 		height: 120,
-		text	: 'http://'+window.location.host+'/wx/ro_filing/'+returnOrder.orderNo
+		text	: 'http://56.eeda123.com/wx/ro_filing/'+returnOrder.orderNo //'http://'+window.location.host+'
 	});	
 	var returnOrderId = $("#returnId").val();
 	var transferOrderId =$("#transferOrderId").val();
