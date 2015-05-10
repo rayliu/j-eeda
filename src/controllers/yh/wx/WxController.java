@@ -75,6 +75,7 @@ public class WxController extends ApiController {
 	//回单上传附件页面
 	public void ro_filing() {
 		setAttr("type", "default");
+		setAttr("orderNo", getPara());
 		setPageAttr("http://tms.eeda123.com/wx/ro_filing");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}

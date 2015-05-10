@@ -19,19 +19,19 @@
 	    	if(typeOrder == "default"){%>
 	      	<div id="defaultDiv" class="form-group">
 	        	<label class="control-label">请输入回单号码</label>
-	        	<input type="text" class="form-control" id="orderNo" name='orderNo' value="" />
+	        	<input type="text" class="form-control" id="orderNo" name='orderNo' value="${orderNo!''}" />
 	        </div>
 	        <%}else if(typeOrder == "directSend"){%>
 	        <div id="directSendDiv" class="form-group">
 	        	<label class="control-label">请输入运输单号</label>
-	        	<input type="text" class="form-control" id="transferOrderNo" name='transferOrderNo' value="" />
+	        	<input type="text" class="form-control" id="transferOrderNo" name='transferOrderNo' value="${orderNo!''}" />
 	        	<label class="control-label">请输入客户订单号</label>
 	        	<input type="text" class="form-control" id="customerOrderNo" name='customerOrderNo' value="" />
 	        </div>
 	        <%}else if(typeOrder == "distribution"){%>
 	        <div id="distributionDiv" class="form-group">
 	        	<label class="control-label">请输入货品序列号</label>
-	        	<input type="text" class="form-control" id="serialNo" name='serialNo' value="" />
+	        	<input type="text" class="form-control" id="serialNo" name='serialNo' value="${orderNo!''}" />
 	        	<label class="control-label">请选择客户</label>
 	        	<input id="customerId" name="customerId" type="hidden">
 	            <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage">
@@ -66,6 +66,9 @@
 </body>
 <script src="/yh/js/jquery-1.10.2.js" type="text/javascript"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+  var orderNo = "${orderNo!''}";
+</script>
 <script>
   // wx.config({
   //     debug: true,

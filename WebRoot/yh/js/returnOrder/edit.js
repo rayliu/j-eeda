@@ -4,6 +4,19 @@ $(document).ready(function() {
 	}
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 		
+	
+	$('#checkQrCode').hover(
+		function(){//in
+		$('#qrcodeCanvas').show();
+		},function(){//out
+		$('#qrcodeCanvas').hide();
+	});
+		
+	$('#qrcodeCanvas').qrcode({
+		width: 120,
+		height: 120,
+		text	: 'http://'+window.location.host+'/wx/ro_filing/'+returnOrder.orderNo
+	});	
 	var returnOrderId = $("#returnId").val();
 	var transferOrderId =$("#transferOrderId").val();
 	//datatable, 动态处理

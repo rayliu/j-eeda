@@ -58,6 +58,9 @@
                                    		  <div class="form-group">
                                              <label>回单号</label>
                                              <label class="radio-inline"></label><strong>${returnOrder.order_no!''}</strong>
+                                             <span id='checkQrCode' style="margin-left:20px;">手机签收二维码</span>
+                                             <div id="qrcodeCanvas" class="popover fade right in" style="display:none; padding:20px;left:330px;"></div>
+                                             
                                           </div>
                                           <div class="form-group" id="status">
                                              <label>状态</label>
@@ -97,7 +100,7 @@
     	                                        <h2>收货人信息</h2>
     	                                        <div class="form-group">
     	                                            <label>收货人公司名称</label>
-    	                                            <input name="company_name" value="${transferOrder.receiving_unit!''}" class="form-control" placeholder="请输入收货地址">
+    	                                            <input name="company_name" value="${transferOrder.receiving_unit!''}" class="form-control" placeholder="请输入公司名称">
     	                                        </div>
     	                                        <div class="form-group">
     	                                            <label>收货地址</label>
@@ -473,7 +476,7 @@
 <script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-video.js"></script>
 <script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-validate.js"></script>
 <script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-ui.js"></script>
-
+<script src="/yh/js/plugins/jquery-qrcode/jquery.qrcode.min.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/jquery.validate.min.js"></script>
