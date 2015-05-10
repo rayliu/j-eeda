@@ -1,4 +1,4 @@
-﻿$(document).ready(function() {
+$(document).ready(function() {
 	if(returnOrder.orderNo){
 		document.title = returnOrder.orderNo +' | '+document.title;
 	}
@@ -648,12 +648,12 @@
                     	var aText = "待审核";
         				if(value.AUDIT == 1 || value.AUDIT == true)
         					aText = "已审核";
-                        showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
+                        showPictures.append('<div style="margin-right: 10px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="img-thumbnail" style="height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
                     });
         		}else{
         			showPictures.empty().append('<input type="hidden" id="permission" value="permissionNo">');
         			$.each(data,function(name,value) {
-        				showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"></div>');
+        				showPictures.append('<div style="margin-right: 10px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="img-thumbnail" style="height:180px;"></div>');
                     });
         		}
 			},'json');
@@ -663,7 +663,7 @@
 	// 审核图片
 	$("#showPictures").on('click', '.picture_audit', function(e){
 		var auditVar = $(this);
-		var aText = auditVar.text();
+		var aText = $.trim(auditVar.text());
 		if(aText == "待审核")
 			aText = "审核通过";
 		else

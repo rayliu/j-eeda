@@ -275,33 +275,14 @@
 		                                            </form >
 	                                            	<input id="fileToUpload" type="file" name="fileToUpload" accept="image/*" multiple> 
 	                                            	<button class="ui-btn ui-icon-add ui-corner-all" id="imgUploadBtn">压缩上传</button> -->
-												    <!-- The file upload form used as target for the file upload widget -->
-												    <form id="file_upload_form" action="//jquery-file-upload.appspot.com/" method="POST" enctype="multipart/form-data">
-												        <!-- Redirect browsers with JavaScript disabled to the origin page -->
-												        <noscript><input type="hidden" name="redirect" value="https://blueimp.github.io/jQuery-File-Upload/"></noscript>
-												        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-												        <div class="row fileupload-buttonbar">
-												            <div class="col-lg-7">
-												                <!-- The fileinput-button span is used to style the file input field as button -->
-												                <span class="btn btn-success fileinput-button">
-												                    <i class="glyphicon glyphicon-plus"></i>
-												                    <span>选择图片</span>
-												                    <input type="file" name="img" accept="image/*" id='file_upload' multiple>
-												                </span>
-												            </div>
-												            <!-- The global progress state -->
-												            <div class="col-lg-5 fileupload-progress fade">
-												                <!-- The global progress bar -->
-												                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-												                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
-												                </div>
-												                <!-- The extended global progress state -->
-												                <div class="progress-extended">&nbsp;</div>
-												            </div>
-												        </div>
-												        <!-- The table listing the files available for upload/download -->
-												        <table role="presentation" class="table table-striped"><tbody class="files"></tbody></table>
-												    </form>
+
+                            <span class="btn btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>选择图片</span>
+                                <!-- The file input field used as target for the file upload widget -->
+                                <input id="fileupload" type="file" name="files[]" multiple="">
+                            </span>                                                
+												    
 												    <br>
 	                                            </div>
 	                                    	</div>
@@ -313,8 +294,8 @@
 		                                    		<input type="hidden" id="permission" value="permissionYes">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
 		                                    		<div style="margin-right: 10px;float:left;" >
-			                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
-			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;width:135px;">
+			                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:135px;height:180px;"> -->
+			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;">
 			                                    		<p>
 			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
 			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" > 删除 </a>
@@ -325,9 +306,9 @@
 				                               		<input type="hidden" id="permission" value="permissionNo">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
 				                               			<%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true){%>
-			                                    		<div style="width:200px;height:210px;float:left;" >
+			                                    		<div style="margin-right: 10px;float:left;" >
 				                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
-				                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="width:180px;height:180px;">
+				                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;">
 			                                    		</div>
 			                                    		<%}%>
    													<%}%>
@@ -365,7 +346,7 @@
 	                                    <div class="modal-content">
 	                                    	<div class="modal-header">
 											     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-											     <h4 class="modal-title" id="myModalLabel">&nbsp;</h4>
+											     <h4 class="modal-title" id="myModalLabel">照片预览&nbsp;</h4>
 										    </div>
 	                                        <div class="modal-body" align="center" id="lgImgDiv">
 	                                        	<img src="" />
