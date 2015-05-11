@@ -1,6 +1,5 @@
 $(document).ready(function() {
 	
-
 	var type = $("#type").val();
 	if(type == "directSend"){
 		$("#titleName").text("创诚易达物流系统-直送签收");
@@ -9,13 +8,12 @@ $(document).ready(function() {
 	}
  
 	$("#searchNo").click(function(){  
-		var orderNo = $("#orderNo").val();
 		$.post('/wx/getRo',$("#returnFrom").serialize(),function(data){
 			var returnId = data.ID;
 			if(returnId > 0){
 				$('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
 				$('#returnId').val(returnId);
-				
+				//初始化上传控件
 				$('#fileupload').fileupload({
 			    	autoUpload: true, //自选择后自动上传图片
 			    	disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
@@ -26,26 +24,20 @@ $(document).ready(function() {
 			    	imageMaxHeight: 900,
 			    	imageCrop: false, // 自动高宽比缩放
 			        done: function (e, data) {
-			          if(data.result.result = "true"){
-			        	  $("#uploadBtn").text("上传图片");
-			        	  $("#uploadBtn").prop("disabled",false);
-			        	  $('#uploadDesc').append("<p>文件名："+data.result.cause+"  上传成功！</p>").show();
-			        	  console.log("data.result.cause:"+data.result.cause);
-			          }else{
-			            $("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
-			          }
+			        	if(data.result.result = "true"){
+			        		$("#uploadBtn").text("上传图片");
+			        		$("#uploadBtn").prop("disabled",false);
+			        		$('#uploadDesc').append("<p>文件名："+data.result.cause+"  上传成功！</p>").show();
+			        		console.log("data.result.cause:"+data.result.cause);
+			        	}else{
+			        		$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+			        	}
 			        },  
 			        progressall: function (e, data) {//设置上传进度事件的回调函数
 			        	$("#uploadBtn").prop("disabled",true);
 			        	$("#uploadBtn").text("上传中.....");
-			          //$.scojs_message('上传中', $.scojs_message.TYPE_OK);
-			          //$('#myModal').modal('show');
-			          //$("#footer").hide();
 			        } 
-			     });
-				
-				
-				
+				});
 			}else{
 				$('#orderDesc').text('回单不存在，请重新查询');
 				$('#returnId').val("");
@@ -53,7 +45,6 @@ $(document).ready(function() {
 			$('#orderDesc').show();
 	    },'json');
 	});
-
 
 	//保存图片
     $("#uploadBtn").click(function(e){
@@ -65,11 +56,6 @@ $(document).ready(function() {
     	$("#fileupload").click();
     });
 
-    var initFileupload= function(){
-	    
-    };
-   
-	
 	//获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
 		var inputStr = $('#customerMessage').val();
