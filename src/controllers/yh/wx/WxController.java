@@ -79,6 +79,7 @@ public class WxController extends ApiController {
 	//回单上传附件页面 - 直送
 	public void directSend() {
 		setAttr("type", "directSend");
+		setAttr("transferOrderNo", getPara());
 		setPageAttr("http://tms.eeda123.com/wx/directSend");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}

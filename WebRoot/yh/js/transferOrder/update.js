@@ -3,7 +3,20 @@ $(document).ready(function() {
 	if(Transfer.orderNo){
         document.title = Transfer.orderNo +' | '+document.title;
     }
-
+	
+	$('#checkQrCode').hover(
+		function(){//in
+		$('#qrcodeCanvas').show();
+		},function(){//out
+		$('#qrcodeCanvas').hide();
+	});
+		
+	$('#qrcodeCanvas').qrcode({
+		width: 120,
+		height: 120,
+		text	: 'http://56.eeda123.com/wx/directSend/'+Transfer.orderNo //'http://'+window.location.host+'
+	});	
+	
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
 
 	$("input[name='chargeType']").click(function(){
