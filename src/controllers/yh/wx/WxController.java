@@ -2,18 +2,15 @@ package controllers.yh.wx;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Office;
 import models.OrderAttachmentFile;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
-import models.UserOffice;
 
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.Db;
@@ -141,14 +138,16 @@ public class WxController extends ApiController {
 	
 	public void saveFile(){
     	String id = getPara("return_id");
-    	List<UploadFile> uploadFiles = getFiles("fileupload");
+    	List<UploadFile> uploadFiles = getFiles("img");
     	Map<String,Object> resultMap = new HashMap<String,Object>();
+    	List<String> fileNames = new ArrayList<String>();
     	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
     	boolean result = true;
 		if(returnOrder != null){
 	    	for (int i = 0; i < uploadFiles.size(); i++) {
 	    		File file = uploadFiles.get(i).getFile();
 	    		String fileName = file.getName();
+	    		fileNames.add(fileName);
 	    		String suffix = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
 	    		if("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)){
         			OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
@@ -158,14 +157,15 @@ public class WxController extends ApiController {
 	    			break;
 	    		}
 			}
+		}else{
+			result = false;
 		}
 		if(result){
 			resultMap.put("result", "true");
-			List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "';");
-	    	resultMap.put("cause", OrderAttachmentFileList);
+	    	resultMap.put("cause", fileNames);
 		}else{
 			resultMap.put("result", "false");
-	    	resultMap.put("cause", "上传失败，请选择正确的图片文件");
+	    	resultMap.put("cause", "上传失败!");
 		}
     	renderJson(resultMap);
     }

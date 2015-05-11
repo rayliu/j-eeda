@@ -40,7 +40,6 @@ $(document).ready(function() {
 				$('#cancel').click();
         },
         progressall: function (e, data) {
-        	debugger;
             var progress = parseInt(data.loaded / data.total * 100, 10);
             $('#progress .progress-bar').css(
                 'width',

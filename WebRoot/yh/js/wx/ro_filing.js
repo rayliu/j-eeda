@@ -1,39 +1,5 @@
 $(document).ready(function() {
-	$('#fileupload').fileupload({
-    	autoUpload: true, //自选择后自动上传图片
-    	disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
-        dataType: 'json',
-        url: '/wx/saveFile?return_id='+$("#returnId").val(),//上传地址
-        validation: {allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']},
-        imageMaxWidth: 1200,
-    	imageMaxHeight: 900,
-    	imageCrop: false, // 自动高宽比缩放
-        done: function (e, data) {
-          if(data.result.result = "true"){
-        	  $("#uploadBtn").text("上传图片");
-        	  $('#uploadDesc').text('上传成功！').show();
-        	  $("#uploadBtn").prop("disabled",false);
-        	  //alert("上传成功！");
-        	  console.log("data.result.cause:"+data.result.cause);
-        	  //console.log("data.result.cause:"+data.result.cause+",parseJSON:"+$.parseJSON(data.result.cause));
-        	  var files = $.parseJSON(data.result.cause);
-        	  var showPictures = $("#showPictures");
-        	  showPictures.empty();
-        	  $.each(data.result.cause,function(name,value) {
-        		  showPictures.append('<div style="width:200px;height:210px;float:left;" ><img src="/upload/fileupload/'+value.FILE_PATH+'" alt="" class="imgSign" style="width:180px;height:180px;"><p><a class="picturedel" picture_id="'+value.ID+'" >删除</a></p></div>');
-        	  });
-          }else{
-            $("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
-          }
-        },  
-        progressall: function (e, data) {//设置上传进度事件的回调函数
-        	$("#uploadBtn").prop("disabled",true);
-        	$("#uploadBtn").text("上传中.....");
-          //$.scojs_message('上传中', $.scojs_message.TYPE_OK);
-          //$('#myModal').modal('show');
-          //$("#footer").hide();
-        } 
-     });
+	
 
 	var type = $("#type").val();
 	if(type == "directSend"){
@@ -45,14 +11,46 @@ $(document).ready(function() {
 	$("#searchNo").click(function(){  
 		var orderNo = $("#orderNo").val();
 		$.post('/wx/getRo',$("#returnFrom").serialize(),function(data){
-	       if(data.ORDER_NO){
-	          $('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
-	          $('#returnId').val(data.ID);
-	       }else{
-	          $('#orderDesc').text('回单不存在，请重新查询');
-	          $('#returnId').val("");
-	       }
-	       $('#orderDesc').show();
+			var returnId = data.ID;
+			if(returnId > 0){
+				$('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
+				$('#returnId').val(returnId);
+				
+				$('#fileupload').fileupload({
+			    	autoUpload: true, //自选择后自动上传图片
+			    	disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
+			        dataType: 'json',
+			        url: '/wx/saveFile?return_id='+$("#returnId").val(),//上传地址
+			        validation: {allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']},
+			        imageMaxWidth: 1200,
+			    	imageMaxHeight: 900,
+			    	imageCrop: false, // 自动高宽比缩放
+			        done: function (e, data) {
+			          if(data.result.result = "true"){
+			        	  $("#uploadBtn").text("上传图片");
+			        	  $("#uploadBtn").prop("disabled",false);
+			        	  $('#uploadDesc').append("<p>文件名："+data.result.cause+"  上传成功！</p>").show();
+			        	  console.log("data.result.cause:"+data.result.cause);
+			          }else{
+			            $("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+			          }
+			        },  
+			        progressall: function (e, data) {//设置上传进度事件的回调函数
+			        	$("#uploadBtn").prop("disabled",true);
+			        	$("#uploadBtn").text("上传中.....");
+			          //$.scojs_message('上传中', $.scojs_message.TYPE_OK);
+			          //$('#myModal').modal('show');
+			          //$("#footer").hide();
+			        } 
+			     });
+				
+				
+				
+			}else{
+				$('#orderDesc').text('回单不存在，请重新查询');
+				$('#returnId').val("");
+			}
+			$('#orderDesc').show();
 	    },'json');
 	});
 
