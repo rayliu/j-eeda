@@ -125,7 +125,7 @@ public class AccountController extends Controller {
         Long parentID = pom.getBelongOffice();
         if(parentID == null || "".equals(parentID)){
         	sql = "select count(1) total from fin_account f left join office o on f.office_id = o.id where o.id = "+ pom.getParentOfficeId() +" or o.belong_office = "+ pom.getParentOfficeId() ;
-        	querySql= "select * from fin_account f left join office o on f.office_id = o.id where o.id = "+ pom.getParentOfficeId() +" or o.belong_office = "+ pom.getParentOfficeId() ;
+        	querySql= "select f.* from fin_account f left join office o on f.office_id = o.id where o.id = "+ pom.getParentOfficeId() +" or o.belong_office = "+ pom.getParentOfficeId() ;
         }else{
         	sql = "select count(1) total from fin_account where office_id = "+ pom.getCurrentOfficeId();
         	querySql= "select * from fin_account where office_id = "+ pom.getCurrentOfficeId();
