@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '手工成本单查询 | '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 

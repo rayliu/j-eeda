@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '应收明细确认 | '+document.title;
     $('#menu_charge').addClass('active').find('ul').addClass('in');
    
 	  //datatable, 动态处理

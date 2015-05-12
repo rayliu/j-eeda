@@ -62,6 +62,7 @@
 
 <script>
 $(document).ready(function() {
+	document.title = '车辆信息查询 | '+document.title;
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	var dataTable= $('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -74,7 +75,10 @@ $(document).ready(function() {
 	        "bRetrieve": true,
 	        "sAjaxSource": "/carinfo/list",
 			"aoColumns": [
-				{ "mDataProp": "CAR_NO" },
+				{ "mDataProp": "CAR_NO",
+					"fnRender": function(obj) {					
+						return "<a href='/carinfo/edit/"+obj.aData.ID+"'target='_blank'>"+obj.aData.CAR_NO+"</a>";     			
+				}},
 				{ "mDataProp": "DRIVER" },
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "CARTYPE" },

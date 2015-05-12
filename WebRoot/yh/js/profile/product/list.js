@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '产品查询 | '+document.title;
     $('#menu_profile').addClass('active').find('ul').addClass('in');
     
     // 显示所有的客户

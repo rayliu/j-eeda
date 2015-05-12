@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '付款申请 | '+document.title;
 
     $('#menu_cost').addClass('active').find('ul').addClass('in');
 

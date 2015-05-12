@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '角色查询 | '+document.title;
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 	$('#example').dataTable({
 			"bFilter" : false,

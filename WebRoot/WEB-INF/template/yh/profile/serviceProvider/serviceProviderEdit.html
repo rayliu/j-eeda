@@ -223,4 +223,10 @@
 	var spType = '${contact.sp_type!''}';
 	var payment = '${party.payment!''}';
 </script>
+<script>
+	var company_name = '${contact.company_name!''}';
+	$(document).ready(function(){
+		document.title = company_name+' | '+document.title;
+	})
+</script>
 <script src="/yh/js/profile/serviceProvider/edit.js"></script>

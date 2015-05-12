@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '网点查询 | '+document.title;
   $('#menu_profile').addClass('active').find('ul').addClass('in');
   /*var name =$("#user_filter").val();*/
   var refreshDatable=$('#eeda-table').dataTable({

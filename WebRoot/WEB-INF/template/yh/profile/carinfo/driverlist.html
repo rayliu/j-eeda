@@ -60,6 +60,7 @@
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script>
 $(document).ready(function() {
+	document.title = '司机信息查询 | '+document.title;
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	var dataTable= $('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -72,7 +73,10 @@ $(document).ready(function() {
 	        "bRetrieve": true, 
 	        "sAjaxSource": "/driverinfo/driverlist",
 			"aoColumns": [
-				{ "mDataProp": "CONTACT_PERSON" },
+				{ "mDataProp": "CONTACT_PERSON" ,
+					"fnRender": function(obj) {					
+						return "<a href='/driverinfo/driveredit/"+obj.aData.PID+"'target='_blank'>"+obj.aData.CONTACT_PERSON+"</a>";     			
+				}},
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "LICENSE" },
 				{ "mDataProp": "IDENTIFICATION"}

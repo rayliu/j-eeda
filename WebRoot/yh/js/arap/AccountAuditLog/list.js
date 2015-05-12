@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '出纳日记账查询 | '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 	//datatable, 动态处理

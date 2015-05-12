@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '合同查询 | '+document.title;
 	$('#menu_contract').addClass('active').find('ul').addClass('in');
 	var isUpdate = false;
 	var isDel = false;

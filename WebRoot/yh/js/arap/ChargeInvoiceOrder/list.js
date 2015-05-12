@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '应收开票记录 | '+document.title;
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
     var chargeInvoiceOrderListTable = $('#chargeInvoiceOrderList-table').dataTable({

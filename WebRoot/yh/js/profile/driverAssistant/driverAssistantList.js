@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '跟车人员信息查询 | '+document.title;
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	var dataTable= $('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -11,7 +12,10 @@ $(document).ready(function() {
 	        "bRetrieve": true, 
 	        "sAjaxSource": "/driverAssistant/list",
 			"aoColumns": [
-				{ "mDataProp": "NAME" },
+				{ "mDataProp": "NAME" ,
+					"fnRender": function(obj) {					
+						return "<a href='/driverAssistant/edit/"+obj.aData.ID+"'target='_blank'>"+obj.aData.NAME+"</a>";     			
+				}},
 				{ "mDataProp": "PHONE" },
 				{ "mDataProp": "DATE_OF_ENTRY" },
 				{ "mDataProp": "IDENTITY_NUMBER"},

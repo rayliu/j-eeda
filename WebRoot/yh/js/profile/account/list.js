@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '金融账户查询 | '+document.title;
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 	$('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",

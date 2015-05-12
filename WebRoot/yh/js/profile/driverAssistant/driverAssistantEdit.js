@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	
+	document.title =$("#name").val() +' | '+document.title;
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	
 	var academic_qualifications = $("#hid_academic_qualifications").val();

@@ -1,5 +1,7 @@
 
 $(document).ready(function() {
+	
+	document.title = '配送排车单查询 | '+document.title;
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 	
 	var pickupOrder = $('#dataTables-example').dataTable({

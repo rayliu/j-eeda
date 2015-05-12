@@ -422,3 +422,10 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
             });
             
 </script>
+
+<script>
+	var company_name = '${contact.company_name!''}';
+	$(document).ready(function(){
+		document.title = company_name+' | '+document.title;
+	})
+</script>

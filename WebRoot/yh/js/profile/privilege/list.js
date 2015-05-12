@@ -1,4 +1,5 @@
 var queryRole = function(){
+	document.title = '角色权限查询 | '+document.title;
 	$.get('/privilege/roleList', function(data){
 		var roleList =$("#role_filter");
 		roleList.empty();

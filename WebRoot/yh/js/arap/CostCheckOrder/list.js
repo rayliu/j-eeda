@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '应付对账单查询 | '+document.title;
 
     $('#menu_cost').addClass('active').find('ul').addClass('in');
     var datatable=$('#costCheckList-table').dataTable({

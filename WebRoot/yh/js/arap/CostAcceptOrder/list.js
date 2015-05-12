@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '付款确认| '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
    

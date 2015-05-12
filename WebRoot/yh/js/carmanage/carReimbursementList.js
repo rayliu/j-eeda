@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '行车报销单查询 | '+document.title;
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 
 	function DateDiff(d1,d2){ 

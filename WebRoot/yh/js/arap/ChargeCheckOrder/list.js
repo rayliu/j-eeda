@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '应收对账单查询 | '+document.title;
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
 

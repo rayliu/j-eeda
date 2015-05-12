@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '单品状态查询 | '+document.title;
     $('#menu_report').addClass('active').find('ul').addClass('in');
     $("#queryBtn").prop("disabled",true);
 	//datatable, 动态处理

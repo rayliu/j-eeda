@@ -1,4 +1,6 @@
  $(document).ready(function() {
+	 
+	    document.title = '保险单查询 | '+document.title;
 		$('#menu_damage').addClass('active').find('ul').addClass('in');
     	
 		var insuranceOrder = $('#dataTables-example').dataTable({

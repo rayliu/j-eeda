@@ -222,3 +222,9 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/js/profile/warehouse/edit.js"></script> 
+<script>
+	var warehouse_name = '${warehouse.warehouse_name!''}';
+	$(document).ready(function(){
+		document.title = warehouse_name+' | '+document.title;
+	})
+</script>

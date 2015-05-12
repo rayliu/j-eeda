@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	 document.title = '报销单查询 | '+document.title;
 	 $('#menu_finance').addClass('active').find('ul').addClass('in');
     
     //datatable, 动态处理

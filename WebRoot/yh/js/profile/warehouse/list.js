@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = '仓库查询 | '+document.title;
     $('#menu_profile').addClass('active').find('ul').addClass('in');
 	//datatable, 动态处理
     var warehouseTab = $('#eeda-table').dataTable({

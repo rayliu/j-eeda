@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	document.title = '保险公司查询 | '+document.title;
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 	var datatable=$('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
