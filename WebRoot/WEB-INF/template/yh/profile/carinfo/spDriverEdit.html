@@ -66,6 +66,7 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script>
+	document.title = '${lu2.contact_person!''}'+' | '+document.title;
 	var license ='${lu2.license!''}'
 		$("#license").val(license);
 	
@@ -98,10 +99,4 @@
             }
         });
     });
-</script>
-<script>
-	var contact_person = '${lu2.contact_person!''}';
-	$(document).ready(function(){
-		document.title = contact_person+' | '+document.title;
-	})
 </script>

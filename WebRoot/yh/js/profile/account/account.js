@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = bank_name +' | '+document.title;
 	$('#menu_profile').addClass('active').find('ul').addClass('in');
 	var accountId = $("#accountId2").val();
 	var dataTable= $('#dataTables-example').dataTable({

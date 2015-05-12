@@ -138,6 +138,7 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script>
+	document.title = '${lu.car_number!''}'+' | '+document.title;
 	var length ='${lu.length!''}'
 	$("#length").val(length);
 	
@@ -198,12 +199,4 @@
 			 }
 		 }
 	 },'json');
-	
-	
-</script>
-<script>
-	var car_number = '${lu.car_number!''}';
-	$(document).ready(function(){
-		document.title = car_number+' | '+document.title;
-	})
 </script>

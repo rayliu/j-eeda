@@ -1,4 +1,5 @@
 ﻿$(document).ready(function() {
+	document.title = order_no+' | '+document.title;
 	 $('#menu_damage').addClass('active').find('ul').addClass('in');
 	 
 	 var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+

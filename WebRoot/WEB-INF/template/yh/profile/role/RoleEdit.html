@@ -52,6 +52,7 @@
 		<script src="/yh/js/jquery.validate.min.js"></script>
 		<script src="/yh/js/jvalidate.messages_cn.js"></script>
 		<script type="text/javascript">
+			document.title = '${hh.code!''}'+' | '+document.title;
 			$('#editForm').validate({
 				rules : {
 					rolename : {
@@ -85,10 +86,5 @@
 			});
 		
 		</script>
-<script>
-	var code = '${hh.code!''}';
-	$(document).ready(function(){
-		document.title = code+' | '+document.title;
-	})
-</script>
+
 		<!-- validate.min.js 1.11.1 -->

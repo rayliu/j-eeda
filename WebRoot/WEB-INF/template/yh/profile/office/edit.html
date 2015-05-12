@@ -127,6 +127,7 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script>
+	document.title = '${ul.office_name!''}'+' | '+document.title;
 	$(document).ready(function() {
 		var type = '${ul.type!''}';
 		var officeName = '${ul.office_name!''}';
@@ -325,10 +326,4 @@
  	 },'json');
 
     }); 
-</script>
-<script>
-	var office_name = '${ul.office_name!''}';
-	$(document).ready(function(){
-		document.title = office_name+' | '+document.title;
-	})
 </script>

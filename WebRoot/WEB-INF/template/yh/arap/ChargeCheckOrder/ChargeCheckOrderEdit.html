@@ -60,9 +60,9 @@
                                                 <label>电话</label>
                                                 <label class="radio-inline" id="company">${customer.phone!''}</label>
                                             </div>
-                                            <div><label>应收总金额:</label><label class="radio-inline">${totalAmount!''}${arapAuditOrder.total_amount!''}</label></div>
-                                            <div><label>扣款金额</label><label class="radio-inline" id="debitAmount">${arapAuditOrder.debit_amount!''}</label></div>
-                                            <div><label>实收金额</label><label class="radio-inline" id="chargeAmount">${totalAmount!''}${arapAuditOrder.charge_amount!''}</label></div>
+                                            <div><label>应收总金额:</label><label class="radio-inline" style="font-weight:bold;">${totalAmount!''}${arapAuditOrder.total_amount!''}</label></div>
+                                            <div><label>扣款金额</label><label class="radio-inline" id="debitAmount" style="font-weight:bold;">${arapAuditOrder.debit_amount!''}</label></div>
+                                            <div><label>实收金额</label><label class="radio-inline" id="chargeAmount" style="font-weight:bold;">${totalAmount!''}${arapAuditOrder.charge_amount!''}</label></div>
                                             
                                             <div class="form-group">
                                                 <label>备注</label>
@@ -320,11 +320,6 @@
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script>
 	var order_no = '${arapAuditOrder.order_no!''}';
-	$(document).ready(function(){
-		document.title = order_no+' | '+document.title;
-	})
-</script>
-<script>
 	<%
 		var returnOrderUpdate = shiro.hasPermission("ReturnOrder.update");
 		var returnOrderComplete = shiro.hasPermission("ReturnOrder.completed");
@@ -332,7 +327,6 @@
 	var Return = {};
 	Return.isUpdate = ${returnOrderUpdate};
 	Return.isComplete = ${returnOrderComplete};
-	
 </script>
 <script src="/yh/js/arap/ChargeCheckOrder/edit.js"></script>
 

@@ -204,6 +204,7 @@
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 
 <script>
+document.title = '${contact.company_name!''}'+' | '+document.title;
 $('#menu_profile').addClass('active').find('ul').addClass('in');
     $(document).ready(function() {
     	var province = '${location.province!''}';
@@ -419,13 +420,5 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     	   $("#chargeType option[value='"+svalue+"']").attr("selected","selected");
        }
     }
-            });
-            
-</script>
-
-<script>
-	var company_name = '${contact.company_name!''}';
-	$(document).ready(function(){
-		document.title = company_name+' | '+document.title;
-	})
+            });         
 </script>

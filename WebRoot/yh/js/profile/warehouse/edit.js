@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	document.title = warehouse_name+' | '+document.title;
     $('#menu_profile').addClass('active').find('ul').addClass('in');
     
     $('#warehouseForm').validate({
