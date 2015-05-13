@@ -55,7 +55,7 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":"CHARGE_AMOUNT"},
             {"mDataProp":"REMARK"},
-            {"mDataProp":"CREATOR_NAME"},        	
+            {"mDataProp":"C_NAME"},        	
             {"mDataProp":"CREATE_STAMP"},
             { 
                 "mDataProp": null, 

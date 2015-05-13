@@ -43,28 +43,28 @@
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}"/>
 		                                    <h2>申请信息</h2>
 		                                    <div class="form-group">
-		                                        <label>付款申请单号</label> <span id ="order_no"><strong>${order_no!''}${arapAuditInvoiceApplication.order_no!''}</strong></span>
+		                                        <label>付款申请单号</label>	<span id ="order_no"><strong>${order_no!''}${arapAuditInvoiceApplication.order_no!''}</strong></span>
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>状态</label>   <span  id="costPreInvoiceOrderStatus">${status!''}${arapAuditInvoiceApplication.status!''}</span>
+		                                        <label>状态</label>	<span  id="costPreInvoiceOrderStatus">${status!''}${arapAuditInvoiceApplication.status!''}</span>
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>创建人</label> <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                       
+		                                        <label>创建人</label>	<%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>创建时间</label>                                        
+		                                        <label>创建时间</label>	<span>${create_stamp!''}</span>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审核人</label>                                         
+		                                        <label>审核人</label>	<span>${audit_name!''}</span>                                      
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审核时间</label>                                          
+		                                        <label>审核时间</label>	<span>${audit_stamp!''}</span>                                         
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审批人</label>                                       
+		                                        <label>审批人</label>	<span>${approver_name!''}</span>                                
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审批时间</label>                                          
+		                                        <label>审批时间</label>	<span>${approval_stamp!''}</span>                                          
 		                                    </div>                                            
                                             <div class="form-group">
                                                 <label>备注</label>
@@ -78,7 +78,7 @@
                                             <label>供应商</label>
                                             <label class="radio-inline" id="company">${customer.company_name!''}</label>
                                         </div>
-                                        <div><label>应付总金额:</label><label class="radio-inline">${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</label></div>
+                                        <div><label>应付总金额:</label><label class="radio-inline"><strong>${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</strong></label></div>
                                         <!-- <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">收款方式</label>
                                             	<input id="paymentMethodRadio" type="hidden" value="${arapAuditInvoiceApplication.payment_method!''}"/>

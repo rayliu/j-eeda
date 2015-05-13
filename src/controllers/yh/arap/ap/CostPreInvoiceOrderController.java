@@ -31,7 +31,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -209,7 +208,7 @@ public class CostPreInvoiceOrderController extends Controller {
 				arapAuditOrder.update();
 			}
 		}
-		renderJson(arapAuditInvoiceApplication);;
+		renderJson(arapAuditInvoiceApplication);
 	}
 	
 	// 审核
@@ -249,6 +248,9 @@ public class CostPreInvoiceOrderController extends Controller {
 		String id = getPara("id");
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(id);
 		Long customerId = arapAuditInvoiceApplication.get("payee_id");
+		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
+		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
+		setAttr("approval_stamp", arapAuditInvoiceApplication.get("approval_stamp"));
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);
@@ -266,7 +268,12 @@ public class CostPreInvoiceOrderController extends Controller {
 		}
 		costCheckOrderIds = costCheckOrderIds.substring(0, costCheckOrderIds.length() - 1);
 		setAttr("costCheckOrderIds", costCheckOrderIds);
-			render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
+		userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication.get("approver_by"));
+		setAttr("approver_name", userLogin.get("c_name"));
+		userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication.get("audit_by"));
+		setAttr("audit_name", userLogin.get("c_name"));
+			
+		render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
 	
     // 添加发票

@@ -15,9 +15,7 @@ import models.ArapMiscChargeOrder;
 import models.Party;
 import models.ReturnOrder;
 import models.UserLogin;
-import models.yh.arap.ArapMiscCostOrder;
 import models.yh.profile.Contact;
-import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -33,7 +31,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -453,7 +450,7 @@ public class ChargeCheckOrderController extends Controller {
 		String sqlTotal = "";
 		String sql = "select distinct aao.*, "
 				+ " usl.user_name as creator_name,"
-				+ " c.abbr cname,"
+				+ " c.abbr cname,usl.c_name,"
 				+ " (select case "
 				+ "	when aci.status = '已收款确认' then aci.status "
 				+ " when aci.status ='已审批' then '已记录'"
