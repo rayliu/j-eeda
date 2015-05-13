@@ -3,6 +3,19 @@ $(document).ready(function() {
 	if(deliverOrder.orderNo){
 		document.title = deliverOrder.orderNo +' | '+document.title;
 	}
+	$('#checkQrC').hover(
+			function(){//in
+			$('#qrcodeCanv').show();
+			},function(){//out
+			$('#qrcodeCanv').hide();
+		});
+			
+		$('#qrcodeCanv').qrcode({
+			width: 120,
+			height: 120,
+			text	: 'http://56.eeda123.com/wx/distribution/'+deliverOrder.orderNo //'http://'+window.location.host+'
+		});	
+	
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 
 	$('#resetbutton').hide();

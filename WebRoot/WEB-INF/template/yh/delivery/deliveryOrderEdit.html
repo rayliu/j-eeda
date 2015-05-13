@@ -231,6 +231,8 @@
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>配送单号:</label>&nbsp;&nbsp;<span id='order_no'>${deliveryOrder.order_no!''}</span>
+		                                            <span id='checkQrC' style="margin-left:20px;">手机签收二维码</span>
+                                             		<div id="qrcodeCanv" class="popover fade right in" style="display:none; padding:20px;left:330px;"></div>
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>配送状态:</label>&nbsp;&nbsp;<span id ='deliveryOrder_status'>${deliveryOrder.status!'新建'}</span>
@@ -574,3 +576,5 @@
 
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<!-- 二维码图像 -->
+<script src="/yh/js/plugins/jquery-qrcode/jquery.qrcode.min.js"></script>
