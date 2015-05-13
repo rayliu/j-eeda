@@ -564,7 +564,7 @@ $(document).ready(function() {
                      }
                  }
              },
-             { "mDataProp": "REFUEL_TYPE","sWidth":"80px",
+             { "mDataProp": "REFUEL_TYPE","sWidth":"100px",
             	 "fnRender": function(obj) {
                      /*if(obj.aData.REFUEL_TYPE!='' && obj.aData.REFUEL_TYPE != null){
                     	 if($("#saveCarSummaryBtn").prop("disabled"))
@@ -586,9 +586,9 @@ $(document).ready(function() {
                  		}
                  	 });
                      if($("#saveCarSummaryBtn").prop("disabled"))
-                    	 return "<select name='refuel_type' disabled='true'>"+str+"</select>";
+                    	 return "<select name='refuel_type' disabled='true' class='form-control search-control'>"+str+"</select>";
                      else
-                    	 return "<select name='refuel_type'>"+str+"</select>";
+                    	 return "<select name='refuel_type' class='form-control search-control'>"+str+"</select>";
                  }
              },
              { "mDataProp": "REFUEL_UNIT_COST","sWidth":"120px",
@@ -637,7 +637,7 @@ $(document).ready(function() {
                      }
                  }
              },
-             { "mDataProp": "PAYMENT_TYPE","sWidth":"60px",
+             { "mDataProp": "PAYMENT_TYPE","sWidth":"80px",
             	 "fnRender": function(obj) {
             		 var str="";
                      $("#paymentTypeList").children().each(function(){
@@ -648,9 +648,9 @@ $(document).ready(function() {
                  		}
                  	 });
                      if($("#saveCarSummaryBtn").prop("disabled"))
-                    	 return "<select name='payment_type' disabled='true'>"+str+"</select>";
+                    	 return "<select name='payment_type' disabled='true' class='form-control search-control'>"+str+"</select>";
                      else
-                    	 return "<select name='payment_type'>"+str+"</select>";
+                    	 return "<select name='payment_type' class='form-control search-control'>"+str+"</select>";
                  }
              },
              { "mDataProp": "LOAD_AMOUNT","sWidth":"120px",

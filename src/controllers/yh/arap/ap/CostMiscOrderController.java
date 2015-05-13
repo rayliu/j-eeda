@@ -2,6 +2,7 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.Map;
 import models.Account;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
+import models.DepartOrder;
+import models.ParentOfficeModel;
 import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapMiscCostOrder;
@@ -30,7 +33,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -226,7 +229,8 @@ public class CostMiscOrderController extends Controller {
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select amcoi.*,amco.order_no cost_order_no,c.abbr cname,fi.name name from arap_misc_cost_order_item amcoi"
+				.find("select amcoi.id,amcoi.amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amcoi.remark,amco.order_no cost_order_no,c.abbr cname,fi.name name "
+					+ " from arap_misc_cost_order_item amcoi"
 					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
 					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
 					+ " left join party p on p.id = aco.payee_id"
@@ -370,4 +374,59 @@ public class CostMiscOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
 	}
+	
+	
+	public void saveMiscPartyInfo(){
+		String miscId = getPara("miscId");
+		String partyId = getPara("partyId");
+		String partyType = getPara("partyType");
+		ArapMiscCostOrder misc = ArapMiscCostOrder.dao.findById(miscId);
+		if(Party.PARTY_TYPE_SERVICE_PROVIDER.equals(partyType))
+			misc.set("payee_id", partyId).update();
+		else
+			misc.set("customer_id", partyId).update();
+		renderJson("{\"success\":true}");
+	}
+	
+	//根据单据类型按日期条件查找相应单号
+	public void findOrderNoByOrderType(){
+		String input = getPara("input");
+		String orderType = getPara("orderType");
+		String orderStamp = getPara("orderStamp");
+		List<Record> recordList = new ArrayList<Record>();
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
+		if("transferOrder".equals(orderType))
+			recordList = Db.find("select tor.id,tor.order_no from transfer_order tor "
+					+ " left join office o on o.id = tor.office_id "
+					+ " where to_days(create_stamp) = to_days('" + orderStamp + "') "
+					+ " and tor.order_no like '%" + input + "%' "
+					+ " and (o.id = " + parentID + " or o.belong_office = " + parentID + ");");
+		else if("pickupOrder".equals(orderType))
+			recordList = Db.find("select dor.id,dor.depart_no  as order_no from depart_order dor"
+					+ " left join user_login u on u.id = dor.create_by"
+					+ " left join office o on o.id = u.office_id"
+					+ " where dor.combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "'"
+					+ " and	to_days(create_stamp) = to_days('" + orderStamp + "')"
+					+ " and dor.depart_no like '%" + input + "%'"
+					+ " and (o.id = " + parentID + " or o.belong_office = " + parentID + ");");
+		else if("departOrder".equals(orderType))
+			recordList = Db.find("select dor.id,dor.depart_no  as order_no from depart_order dor"
+					+ " left join user_login u on u.id = dor.create_by"
+					+ " left join office o on o.id = u.office_id"
+					+ " where dor.combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART + "'"
+					+ " and	to_days(create_stamp) = to_days('" + orderStamp + "')"
+					+ " and dor.depart_no like '%" + input + "%'"
+					+ " and (o.id = " + parentID + " or o.belong_office = " + parentID + ");");
+		else if("deliveryOrder".equals(orderType))
+			recordList = Db.find("select dor.id,dor.order_no from delivery_order dor"
+					+ " left join user_login u on u.id = dor.create_by"
+					+ " left join office o on o.id = u.office_id"
+					+ " where to_days(create_stamp) = to_days('" + orderStamp + "')"
+					+ " and dor.order_no like '%" + input + "%'"
+					+ " and (o.id = " + parentID + " or o.belong_office = " + parentID + ");");	
+		renderJson(recordList);
+	}
+	
+	
 }
