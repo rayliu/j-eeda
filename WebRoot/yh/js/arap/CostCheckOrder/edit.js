@@ -39,7 +39,7 @@ $(document).ready(function() {
     if($("#costCheckOrderStatus").text() == 'new'){
     	$("#costCheckOrderStatus").text('新建');
 	}else{
-		$("#printBtn").show();
+		$("#printBtn").attr("disabled",true);
 	}
     
 	// 审核

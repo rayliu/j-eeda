@@ -54,3 +54,4 @@ WebRoot/.DS_Store
 WebRoot/WEB-INF/template/yh/arap/ChargeAdjustOrder/ChargeAdjustOrderEdit.html.orig
 *.orig
 *.jasper
+*.jrxml
