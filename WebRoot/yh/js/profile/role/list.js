@@ -62,6 +62,7 @@ $(document).ready(function() {
 			]
 		});
 	$("#createBtn").click(function(){
+		document.title=document.title.substring(6, 11);
 		$("#roleList").hide();
 		$("#addRole").show();
 	

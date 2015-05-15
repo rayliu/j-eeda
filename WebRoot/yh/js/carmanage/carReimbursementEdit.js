@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	if(order_no){
+		document.title = order_no +' | '+document.title;
+	}
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 
 	var DateDiff = function(d1,d2){ 

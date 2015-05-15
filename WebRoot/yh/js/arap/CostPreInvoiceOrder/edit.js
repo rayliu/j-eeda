@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	if(order_no){
+		document.title = order_no +' | '+document.title;
+	}
 	$('#menu_cost').addClass('active').find('ul').addClass('in');
 	var invoiceNoArr=[];
 	var saveCostPreInvoiceOrder = function(e){

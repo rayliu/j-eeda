@@ -1,5 +1,7 @@
 $(document).ready(function() {
-	document.title = user_name+' | '+document.title;
+	if(user_name){
+		document.title = user_name+' | '+document.title;
+	}
 	$('#menu_profile').addClass('active').find('ul').addClass('in');	
 	
 	//datatable, 动态处理

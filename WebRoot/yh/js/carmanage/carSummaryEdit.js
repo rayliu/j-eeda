@@ -1,5 +1,7 @@
 $(document).ready(function() {
-	document.title = $("#car_summary_no").val() +' | '+document.title;
+	if($("#car_summary_no").val()){
+		document.title = $("#car_summary_no").val() +' | '+document.title;
+	}
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
     '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+

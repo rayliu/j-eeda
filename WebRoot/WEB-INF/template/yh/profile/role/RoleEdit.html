@@ -52,7 +52,9 @@
 		<script src="/yh/js/jquery.validate.min.js"></script>
 		<script src="/yh/js/jvalidate.messages_cn.js"></script>
 		<script type="text/javascript">
-			document.title = '${hh.code!''}'+' | '+document.title;
+			if('${hh.code!''}'){
+				document.title = '${hh.code!''}'+' | '+document.title;
+			}	
 			$('#editForm').validate({
 				rules : {
 					rolename : {

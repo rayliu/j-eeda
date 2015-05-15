@@ -1,5 +1,7 @@
 $(document).ready(function() {
-	document.title = order_no+' | '+document.title;
+	if(order_no){
+		document.title = order_no+' | '+document.title;
+	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
 	var saveChargeMiscOrder = function(e){

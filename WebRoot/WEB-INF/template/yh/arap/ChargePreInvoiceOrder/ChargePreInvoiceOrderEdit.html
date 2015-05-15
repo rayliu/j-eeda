@@ -239,6 +239,7 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script>
+	var order_no='${order_no!''}${arapAuditInvoiceApplication.order_no!''}';
 	<%
 		var chargeOrderUpdate = shiro.hasPermission("ChargeCheckOrder.update");
 		var chargeOrderAffirm = shiro.hasPermission("ChargeCheckOrder.affirm");

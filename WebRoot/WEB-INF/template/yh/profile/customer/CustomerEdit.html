@@ -204,7 +204,9 @@
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 
 <script>
-document.title = '${contact.company_name!''}'+' | '+document.title;
+if('${contact.company_name!''}'){
+	document.title = '${contact.company_name!''}'+' | '+document.title;
+}
 $('#menu_profile').addClass('active').find('ul').addClass('in');
     $(document).ready(function() {
     	var province = '${location.province!''}';

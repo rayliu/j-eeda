@@ -138,7 +138,9 @@
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script>
-	document.title = '${lu.car_number!''}'+' | '+document.title;
+	if('${lu.car_number!''}'){
+		document.title = '${lu.car_number!''}'+' | '+document.title;
+	}
 	var length ='${lu.length!''}'
 	$("#length").val(length);
 	

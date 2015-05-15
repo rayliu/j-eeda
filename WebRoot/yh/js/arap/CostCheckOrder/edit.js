@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	if(order_no){
+		document.title = order_no +' | '+document.title;
+	}
 	$('#menu_cost').addClass('active').find('ul').addClass('in');
 
 	//设置一个变量值，用来保存当前的ID
