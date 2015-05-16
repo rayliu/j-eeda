@@ -289,7 +289,7 @@ public class ReturnOrderController extends Controller {
 			setAttr("locationTo", locationTo);
 		}
 		
-		List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "';");
+		List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "';");
 		setAttr("OrderAttachmentFileList", OrderAttachmentFileList);
 		setAttr("returnOrder", returnOrder);
 		UserLogin userLogin = UserLogin.dao

@@ -14,7 +14,7 @@ $(document).ready(function() {
 	$('#qrcodeCanvas').qrcode({
 		width: 120,
 		height: 120,
-		text	: 'http://56.eeda123.com/wx/fileUpload/'+Transfer.orderNo //'http://'+window.location.host+'
+		text	: 'http://'+window.location.host+'/wx/fileUpload/'+Transfer.orderNo //'http://'+window.location.host+'
 	});	
 	
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
