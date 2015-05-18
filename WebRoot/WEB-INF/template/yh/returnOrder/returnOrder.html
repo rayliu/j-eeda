@@ -279,13 +279,12 @@
 	                                            	<input id="fileToUpload" type="file" name="fileToUpload" accept="image/*" multiple> 
 	                                            	<button class="ui-btn ui-icon-add ui-corner-all" id="imgUploadBtn">压缩上传</button> -->
 
-                            <span class="btn btn-success fileinput-button">
-                                <i class="glyphicon glyphicon-plus"></i>
-                                <span>选择图片</span>
-                                <!-- The file input field used as target for the file upload widget -->
-                                <input id="fileupload" type="file" name="files[]" multiple="">
-                            </span>                                                
-												    
+						                            <span class="btn btn-success fileinput-button">
+						                                <i class="glyphicon glyphicon-plus"></i>
+						                                <span>选择图片</span>
+						                                <!-- The file input field used as target for the file upload widget -->
+						                                <input id="fileupload" type="file" name="files[]" multiple="">
+						                            </span>                                                
 												    <br>
 	                                            </div>
 	                                    	</div>
@@ -293,6 +292,7 @@
       											<!-- <div data-role="popup" id="info_pop" class="ui-content" data-theme="d" style='font-weight:bold;font-size:14px; z-index: 999; background-color: white;'>  
 											        <p>未知错误</p>  
 											    </div> -->  
+											    <!-- 显示图片必须保证此权限点已存在 -->
 		                                    	<% if(shiro.hasPermission("ReturnOrder.imgoperation")){%>
 		                                    		<input type="hidden" id="permission" value="permissionYes">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>

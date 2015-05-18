@@ -15,8 +15,9 @@ $(document).ready(function() {
 		$.post('/costMiscOrder/save', $("#costMiscOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costMiscOrderId").val(data.ID);
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
-				alert('数据保存失败。');
+				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
 		},'json');
 	};
@@ -44,55 +45,28 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveCostMiscOrderBtn").click(function(e){
- 		
  		saveCostMiscOrder(e);
-
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-	});
-	
-	$("#costMiscOrderItem").click(function(e){
-		//阻止a 的默认响应行为，不需要跳转
-		e.preventDefault();
-		//提交前，校验数据
-        if(!$("#costMiscOrderForm").valid()){
-	       	return;
-        }
-		//异步向后台提交数据
-		$.post('/costMiscOrder/save', $("#costMiscOrderForm").serialize(), function(data){
-			if(data.ID>0){
-				$("#costMiscOrderId").val(data.ID);
-			  	//$("#style").show();
-			  	$("#departureConfirmationBtn").attr("disabled", false);
-			  	if("costMiscOrderbasic" == parentId){
-			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			  	}
-			}else{
-				alert('数据保存失败。');
-			}
-		},'json');
-		parentId = e.target.getAttribute("id");
 	});
 	
     if($("#costMiscOrderStatus").text() == 'new'){
     	$("#costMiscOrderStatus").text('新建');
 	}
-
+    
     var feeTable = $('#feeItemList-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 10,
-        "bServerSide": true,
-    	  "oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	"iDisplayLength": 20,
+    	"bServerSide": false,
+    	"oLanguage": {
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+        "fnRowCallback": function(nRow, aData) {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/costMiscOrder/costMiscOrderItemList",
         "aoColumns": [   
-          	/*{"mDataProp":"COST_ORDER_NO","sWidth": "80px"},*/
+          	/*{"mDataProp":"ORDER_STAMP","sWidth": "100px"},*/
           	{"mDataProp":null,"sWidth": "100px",
 			    "fnRender": function(obj) {
 			        if(obj.aData.ORDER_TYPE!='' && obj.aData.ORDER_TYPE != null){
@@ -266,8 +240,8 @@ $(document).ready(function() {
 				var str = "";
 	            for(var i = 0; i < data.length; i++)
 	            	str += "<li><a tabindex='-1' class='fromLocationItem' order_no='"+data[i].ORDER_NO+"' orderid='"+data[i].ID+"'>"+data[i].ORDER_NO+"</a></li>";
-	            name.after('<ul class="pull-right dropdown-menu default dropdown-scroll driverAssistantList" tabindex="-1">'+str+'</ul>');
-	            name.next().css({left:name.position().left+"px", top:name.position().top+32+"px"}).show();
+	            name.after('<ul class="pull-right dropdown-menu default dropdown-scroll driverAssistantList" tabindex="-1" style="l">'+str+'</ul>');
+	            name.next().css({left:name.position().left+"px", top:name.position().top+32+"px",width: "100px"}).show();
 	        },'json');
 		}
 	});
@@ -290,9 +264,25 @@ $(document).ready(function() {
     });
 	
 	
-	$("#costMiscOrderItem").click(function(){
-		feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val();
-		feeTable.fnDraw();  
+	$("#costMiscOrderItem").click(function(e){
+		//阻止a 的默认响应行为，不需要跳转
+		e.preventDefault();
+		//提交前，校验数据
+        if(!$("#costMiscOrderForm").valid()){
+	       	return;
+        }
+        if(parentId == "costMiscOrderbasic"){
+        	saveCostMiscOrder(e);
+        }
+		
+		var costMiscOrderId =$("#costMiscOrderId").val();
+		if(costMiscOrderId != "" && costMiscOrderId != null){
+			feeTable.fnSettings().oFeatures.bServerSide = true;
+			feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
+			feeTable.fnDraw();
+		}
+		
+		parentId = e.target.getAttribute("id");
 	});
 	
 	//异步删除应付
@@ -318,11 +308,10 @@ $(document).ready(function() {
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-        "bServerSide": true,
+        "bServerSide": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costMiscOrder/costCheckorderListById",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
@@ -364,9 +353,17 @@ $(document).ready(function() {
     });	
 	
 	//tab-对账单明细
-    $("#costCheckList").click(function(){
-    	costCheckListTab.fnSettings().sAjaxSource = "/costMiscOrder/costCheckorderListById?costCheckOrderIds="+$("#costCheckOrderIds").val();
-    	costCheckListTab.fnDraw();  
+    $("#costCheckList").click(function(e){
+    	if(parentId == "costMiscOrderbasic"){
+        	saveCostMiscOrder(e);
+        }
+    	var costCheckOrderIds =$("#costCheckOrderIds").val();
+		if(costCheckOrderIds != "" && costCheckOrderIds != null){
+			costCheckListTab.fnSettings().oFeatures.bServerSide = true;
+			costCheckListTab.fnSettings().sAjaxSource = "/costMiscOrder/costCheckorderListById?costCheckOrderIds="+costCheckOrderIds;
+			costCheckListTab.fnDraw();
+		}
+		parentId = e.target.getAttribute("id");
     });
     
     //保存费用明细客户与供应商的方法
@@ -385,22 +382,25 @@ $(document).ready(function() {
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
         var companyList =$("#companyList");
-        $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
+        $.get("/transferOrder/searchPartCustomer", {input:inputStr}, function(data){
             companyList.empty();
-            for(var i = 0; i < data.length; i++)
-                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+            for(var i = 0; i < data.length; i++){
+                var abbr = data[i].ABBR;
+				var company_name = data[i].COMPANY_NAME;
+				if(abbr == null) 
+					abbr = '';
+				if(company_name == null)
+					company_name = '';
+				companyList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
+            }
         },'json');
-        companyList.css({ 
-	    	left:$(this).position().left+"px", 
-	    	top:$(this).position().top+32+"px" 
-	    });
-        companyList.show();
+        companyList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
     });
     $('#companyList').on('click', '.fromLocationItem', function(e){        
-        $('#customer_filter').val($(this).text());
+        $('#customer_filter').val($(this).attr("company_name"));
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
-        $('#customerId').val(companyId);
+        $('#customer_id').val(companyId);
         savePartyInfo(companyId,"CUSTOMER");
     });
     // 没选中客户，焦点离开，隐藏列表
@@ -422,27 +422,19 @@ $(document).ready(function() {
     $('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
-		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
+		$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
 			spList.empty();
 			for(var i = 0; i < data.length; i++){
 				var abbr = data[i].ABBR;
 				var company_name = data[i].COMPANY_NAME;
-				
 				if(abbr == null) 
 					abbr = '';
 				if(company_name == null)
 					company_name = '';
-				
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' abbr='"+abbr+"' >"+abbr+" "+company_name+"</a></li>");
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
 			}
 		},'json');
-		
-		spList.css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+32+"px" 
-        }); 
-		
-		spList.show();
+		spList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
     });
     
     // 没选中供应商，焦点离开，隐藏列表
@@ -461,7 +453,7 @@ $(document).ready(function() {
 
 	// 选中供应商
 	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-		$('#sp_filter').val($(this).attr('abbr'));
+		$('#sp_filter').val($(this).attr('company_name'));
 		var provider = $(this).attr('partyId');
 		$('#sp_id').val(provider);
         $('#spList').hide();

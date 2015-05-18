@@ -819,11 +819,10 @@ public class TransferOrderController extends Controller {
 
 	// 查找供应商
 	public void searchSp() {
-		
-		 ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		String input = getPara("input");
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
 		
-		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
@@ -845,11 +844,11 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or postal_code like '%"
 							+ input
-							+ "%') and o.id = p.office_id and (o.id =? or o.belong_office =?) limit 0,10",parentID,pom.getCurrentOfficeId());
+							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?) limit 0,10",parentID,pom.getCurrentOfficeId());
 		} else {
 			locationList = Db
 					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "' and o.id = p.office_id and (o.id =? or o.belong_office =?)",parentID,parentID);
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",parentID,parentID);
 		}
 		renderJson(locationList);
 	}

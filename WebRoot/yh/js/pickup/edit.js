@@ -1334,7 +1334,7 @@
 		$.get("/pickupOrder/findDriverAssistant", {input:inputStr}, function(data){
 			var str = "";
             for(var i = 0; i < data.length; i++)
-            	str += "<li><a tabindex='-1' class='fromLocationItem' name='"+data[i].NAME+"' phone='"+data[i].PHONE+"' assistantid='"+data[i].ID+"'>"+data[i].NAME+"</a></li>";
+            	str += "<li><a tabindex='-1' class='fromLocationItem' name='"+data[i].NAME+"' phone='"+data[i].PHONE+"' assistantid='"+data[i].ID+"'>"+data[i].NAME+" "+data[i].PHONE+"</a></li>";
             name.after('<ul class="pull-right dropdown-menu default dropdown-scroll driverAssistantList" tabindex="-1" style="top: 35%; left: 2%;">'+str+'</ul>');
             name.next().css({left:name.position().left+"px", top:name.position().top+32+"px"}).show();
         },'json');

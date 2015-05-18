@@ -196,10 +196,19 @@ public class CostMiscOrderController extends Controller {
 		Long spId = arapMiscCostOrder.get("payee_id");
 		if (!"".equals(spId) && spId != null) {
 			Party party = Party.dao.findById(spId);
-			setAttr("party", party);
+			setAttr("spParty", party);
 			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-			setAttr("sp", contact); 
+			setAttr("spContact", contact); 
 		}
+		
+		Long customerId = arapMiscCostOrder.get("customer_id");
+		if (!"".equals(customerId) && customerId != null) {
+			Party party = Party.dao.findById(customerId);
+			setAttr("customerparty", party);
+			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+			setAttr("customerContact", contact); 
+		}
+		
 		UserLogin userLogin = UserLogin.dao.findById(arapMiscCostOrder.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapMiscCostOrder", arapMiscCostOrder);
@@ -209,9 +218,6 @@ public class CostMiscOrderController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void costMiscOrderItemList() {
 		String costMiscOrderId = getPara("costMiscOrderId");
-		if(costMiscOrderId == null || "".equals(costMiscOrderId)){
-			costMiscOrderId = "-1";
-		}
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -242,12 +248,6 @@ public class CostMiscOrderController extends Controller {
 		orderMap.put("iTotalRecords", rec.getLong("total"));
 		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 		orderMap.put("aaData", orders);
-
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-		orderMap.put("aaData", orders);
-
 		renderJson(orderMap);
 	}
 	
