@@ -725,7 +725,7 @@
 		// 处理入库运输单
 		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val()}, function(data){
 			//保存成功后，刷新列表
-            console.log(data);
+            //console.log(data);
             if(data.success){
             	var pickupOrderId = $("#pickupOrderId").val();
             	var priceType = $("input[name='priceType']:checked").val();
