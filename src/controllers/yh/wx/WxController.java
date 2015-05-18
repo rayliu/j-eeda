@@ -234,4 +234,36 @@ public class WxController extends ApiController {
 		renderJson(returnOrder);
 	}
 	
+	
+	
+	public void findWXNo(){
+		String serialNo = getPara("serialNo").trim();
+		String sql = "";
+		String orderHead = serialNo.substring(0, 2);
+		if(orderHead.equals("PS")){
+			sql ="select de.order_no, (select '配送单') as order_type, de.status, loc.name as beginCity, loc2.name as endCity, con.company_name as sp_name, con2.company_name as customer_name from delivery_order de"
+					+ " left join location loc on loc.code = de.route_from"
+					+ " left join location loc2 on loc2.code = de.route_to"
+					+ " left join party p on p.id = de.sp_id"
+					+ " left join contact con on con.id = p.contact_id"
+					+ " left join party pa on pa.id = de.customer_id"
+					+ " left join contact con2 on con2.id = pa.contact_id"
+					+ " where de.order_no = '"+serialNo+"'";
+		}else{
+			sql="select tr.order_no,tr.order_type, tr.status, loc.name as beginCity ,loc2.name as endCity ,con.company_name as sp_name ,con2.company_name as customer_name from transfer_order tr"
+					+ " left join location loc on loc.code = tr.route_from"
+					+ " left join location loc2 on loc2.code = tr.route_to"
+					+ " left join party p on p.id = tr.sp_id"
+					+ " left join contact con on con.id = p.contact_id"
+					+ " left join party pa on pa.id = tr.customer_id"
+					+ " left join contact con2 on con2.id=pa.contact_id"
+					+ " where tr.order_no='"+serialNo+"'";
+		}
+		Record transferOrder = Db.findFirst(sql);
+		if(transferOrder == null)
+			transferOrder = new Record();
+		renderJson(transferOrder);
+	}
+	
+	
 }
