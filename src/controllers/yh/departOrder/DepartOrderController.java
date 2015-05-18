@@ -2347,4 +2347,30 @@ public class DepartOrderController extends Controller {
     	}
         	
     }
+    
+    
+    
+    
+    /**
+     * 整车发车时减少库存
+     */
+    public void  SubtractInventory(DepartTransferOrder departTransferOrder){
+    	TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+    	if("arrangementOrder".equals(transferOrder.get("order_type"))){
+    		List<TransferOrderItem> list =  TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ? ",transferOrder.get("id"));
+    		for (TransferOrderItem transferOrderItem : list) {
+    			if(transferOrderItem.getLong("product_id") != null && transferOrderItem.getLong("product_id") != 0 ){
+    				InventoryItem ii = InventoryItem.dao.findFirst("select * from inventory_item where party_id =? and warehouse_id = ? and product_id = ?",transferOrder.get("customer_id"),transferOrder.get("from_warehouse_id"),transferOrderItem.get("product_id"));
+        			TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select count(*) as amount from transfer_order_item_detail where item_id = ? and depart_id = ? and pickup_id is null ",transferOrderItem.get("id"),departTransferOrder.get("depart_id"));
+        			Double total_quantity = ii.getDouble("total_quantity") ;
+        			if(total_quantity - toid.getLong("amount") >= 0 ){
+        				ii.set("total_quantity", total_quantity - toid.getLong("amount"));
+        				ii.update();
+        			}
+    			}
+    			
+    		}
+    	}
+    }
+    
 }

@@ -9,11 +9,9 @@ import models.DepartOrder;
 import models.DepartTransferOrder;
 import models.ReturnOrder;
 import models.TransferOrder;
-import models.TransferOrderFinItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
-import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -25,11 +23,9 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.LoginUserController;
 import controllers.yh.departOrder.DepartOrderController;
 import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -494,7 +490,13 @@ public class TransferOrderMilestoneController extends Controller {
 	        	detail.set("status", "已发车");
 	        	detail.update();
 	        }	
+	        /*if("arrangementOrder".equals(transferOrder.get("order_type"))){*/
+	        DepartOrderController dor = new DepartOrderController();
+	        dor.SubtractInventory(departTransferOrder);
+	    	/*}*/
+	       
         }
+        
         renderJson("{\"success\":true}");        
     }
     
