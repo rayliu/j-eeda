@@ -128,7 +128,7 @@ public class TransferOrderController extends Controller {
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " where t.status !='取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-					+ " order by t.status='新建',t.status='已发车',t.status='在途',t.status='已入货场',t.status='已入库',t.status='已签收',t.planning_time desc"
+					+ " order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收',t.planning_time desc"
 					+ sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
@@ -210,7 +210,7 @@ public class TransferOrderController extends Controller {
 					+ "%' and create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' "
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status='新建',t.status='已发车',t.status='在途',t.status='已入货场',t.status='已入库',t.status='已签收', t.planning_time desc" + sLimit;
+					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收', t.planning_time desc" + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
@@ -337,8 +337,12 @@ public class TransferOrderController extends Controller {
 			setAttr("locationTo", locationTo);
 		}
 		Office office = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.get("warehouse_id"));
-		setAttr("office", office);		
-
+		setAttr("office", office);	
+		
+		Office outOffice = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.get("from_warehouse_id"));
+		setAttr("outOffice", outOffice);
+		
+		
 		UserLogin userLogin = UserLogin.dao.findById(transferOrder
 				.get("create_by"));
 		setAttr("userLogin2", userLogin);
@@ -456,6 +460,7 @@ public class TransferOrderController extends Controller {
 		String officeId = getPara("officeSelect");
 		String customerId = getPara("customer_id");
 		String spId = getPara("sp_id");
+		String from_warehouse_id = getPara("gateOutSelect");
 		boolean costCheckBox ="on".equals(getPara("costCheckBox"));
 		boolean revenueCheckBox ="on".equals(getPara("revenueCheckBox"));
 		
@@ -483,6 +488,9 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("route_from", getPara("route_from"));
 			transferOrder.set("route_to", getPara("route_to"));
 			transferOrder.set("order_type", getPara("orderType"));
+			if("arrangementOrder".equalsIgnoreCase(getPara("orderType"))){
+				transferOrder.set("from_warehouse_id", from_warehouse_id);
+			}
 			transferOrder.set("customer_province", getPara("customerProvince"));
 			transferOrder.set("pickup_assign_status",
 					TransferOrder.ASSIGN_STATUS_NEW);
@@ -538,6 +546,9 @@ public class TransferOrderController extends Controller {
 			transferOrder = TransferOrder.dao.findById(order_id);
 			if (!"".equals(spId) && spId != null) {
 				transferOrder.set("sp_id", spId);
+			}
+			if("arrangementOrder".equalsIgnoreCase(getPara("orderType"))){
+				transferOrder.set("from_warehouse_id", from_warehouse_id);
 			}
 			transferOrder.set("customer_id", customerId);
 			if ("cargo".equals(cargoNature)) {
@@ -857,21 +868,39 @@ public class TransferOrderController extends Controller {
 	public void searchItemNo() {
 		String input = getPara("input");
 		String customerId = getPara("customerId");
+		String warehouseId = getPara("warehouseId");
+		String orderType = getPara("orderType");
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			input = input.toUpperCase();
-			locationList = Db
-					.find("select * from product where category_id in (select id from category where customer_id = "
-							+ customerId
-							+ ") and ( upper(item_no) like '%"
-							+ input
-							+ "%' or upper(item_name) like '%"
-							+ input
-							+ "%') and (is_stop is null or is_stop =0) limit 0,10");
+			if("arrangementOrder".equalsIgnoreCase(orderType)){
+				locationList = Db.find("select ii.total_quantity,p.* from inventory_item ii "
+						+ "left join product p on p.id = ii.product_id where warehouse_id = " + warehouseId + " and party_id = " + customerId 
+								+ "  and ( upper(p.item_no) like '%"
+								+ input
+								+ "%' or upper(p.item_name) like '%"
+								+ input
+								+ "%') limit 0,10");
+			}else{
+				locationList = Db
+						.find("select * from product where category_id in (select id from category where customer_id = "
+								+ customerId
+								+ ") and ( upper(item_no) like '%"
+								+ input
+								+ "%' or upper(item_name) like '%"
+								+ input
+								+ "%') and (is_stop is null or is_stop =0) limit 0,10");
+			}
+			
 		} else {
-			locationList = Db
-					.find("select * from product where category_id in (select id from category where customer_id = "
-							+ customerId + ") and (is_stop is null or is_stop =0)");
+			if("arrangementOrder".equalsIgnoreCase(orderType)){
+				locationList = Db.find("select ii.total_quantity,p.* from inventory_item ii left join product p on p.id = ii.product_id where warehouse_id = ? and party_id = ?",warehouseId,customerId);
+			}else{
+				locationList = Db
+						.find("select * from product where category_id in (select id from category where customer_id = "
+								+ customerId + ") and (is_stop is null or is_stop =0)");
+			}
+			
 		}
 		renderJson(locationList);
 	}

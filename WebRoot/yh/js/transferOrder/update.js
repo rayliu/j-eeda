@@ -942,6 +942,8 @@ $(document).ready(function() {
 	                dataType: "json",
 	                data: {
 	                    customerId: $('#customerId').val(),
+	                    warehouseId:$("#gateOutSelect").val(),
+	                    orderType:$("input[name='orderType']:checked").val(),
 	                    input: request.term
 	                },
 	                success: function( data ) {
@@ -1888,7 +1890,7 @@ $(document).ready(function() {
 				}
 			}
 		},'json');
-    
+    //RDC仓库操作
 	 $('#deliveryOfficeSelect').on('change', function(){ 
 		 if($(this).val() != ""){
 			 // 获取所有仓库
@@ -1967,13 +1969,85 @@ $(document).ready(function() {
 			 };
 		 };
 	 },'json');
+	 
+	//R出库仓库操作
+	 $('#outOfficeSelect').on('change', function(){ 
+		 if($(this).val() != ""){
+			 // 获取所有仓库
+			 findOutWarehouseForOffice($(this).val());
+		 }else{
+			 $("#gateOutSelect").empty();
+		 }
+	 });
+	 
+	 var findOutWarehouseForOffice = function(officeId){
+		 $.post('/transferOrder/searchAllWarehouse', {officeId: officeId},function(data){
+			 if(data.length > 0){
+				 var gateOutSelect = $("#gateOutSelect");
+				 gateOutSelect.empty();
+				 var hideWarehouseId = $("#hideOutWarehouseId").val();
+				 for(var i=0; i<data.length; i++){
+					 if(data[i].ID == hideWarehouseId){
+						 gateOutSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");
+						 //$("#gateInSelect").val(data[i].ID);
+					 }else{
+						 gateOutSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+					 }
+				 }
+				 
+				 if($("#gateOutSelect").val() != "" && $("#gateOutSelect").val() != null)
+					 $("#gateOutSelect").change();
+				 
+			 }else{
+				 $("#gateOutSelect").empty();
+			 }
+		 },'json');	
+	 };
+	 
+	 var hideOutOfficeSelect = $("#hideOutOfficeSelect").val();
+	 if(hideOutOfficeSelect != null && hideOutOfficeSelect != ""){
+		 findOutWarehouseForOffice(hideOutOfficeSelect);
+	 }
+	 $.post('/transferOrder/searchPartOffice',function(data){
+		 if(data.length > 0){
+			 var outOfficeSelect = $("#outOfficeSelect");
+			 outOfficeSelect.empty();
+			 var hideOfficeId = $("#hideOutOfficeSelect").val();
+			 outOfficeSelect.append("<option ></option>");	
+			 for(var i=0; i<data.length; i++){
+				 if(data[i].ID == hideOfficeId){
+					 outOfficeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");					 
+				 }else{
+					 if(data[i].IS_STOP != true){
+						 outOfficeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
+					 };
+					 
+				 };
+			 };
+		 };
+	 },'json');
+	 
 	 // 回显订单类型
 	 $("input[name='orderType']").each(function(){
 		if($("#orderTypeRadio").val() == $(this).val()){
 			$(this).attr('checked', true);
+			if($(this).val() == "arrangementOrder"){
+				 $("#gateOutDiv").show();
+				 $("#direct_model").hide();
+			 }
 		}
+		
 	 });
-	 
+	 $("input[name='orderType']").click(function(){
+		 if($(this).val() == "arrangementOrder"){
+			 $("#gateOutDiv").show();
+			 $("#direct_model").hide();
+		 }else{
+			 $("#gateOutDiv").hide();
+			 $("#direct_model").show();
+		 }
+		 
+	});
 	 // 回显付款方式
 	 $("input[name='payment']").each(function(){
 		 if($("#paymentRadio").val() == $(this).val()){
