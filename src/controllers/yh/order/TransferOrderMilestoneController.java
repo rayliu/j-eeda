@@ -492,7 +492,7 @@ public class TransferOrderMilestoneController extends Controller {
 	        }	
 	        /*if("arrangementOrder".equals(transferOrder.get("order_type"))){*/
 	        DepartOrderController dor = new DepartOrderController();
-	        dor.SubtractInventory(departTransferOrder);
+	        dor.SubtractInventory(departTransferOrder,departOrderId);
 	    	/*}*/
 	       
         }

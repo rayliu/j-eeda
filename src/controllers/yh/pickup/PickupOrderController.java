@@ -1188,7 +1188,7 @@ public class PickupOrderController extends Controller {
         //调车单业务处理
         TransferOrder transferOrderType = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
-        if (transferOrderType.get("order_type").equals("salesOrder")) {
+        if (transferOrderType.get("order_type").equals("salesOrder") || transferOrderType.get("order_type").equals("arrangementOrder")) {
             pickupOrder.set("status", "已入货场");
             pickupMilestone.set("status", "已入货场");
         } else if (transferOrderType.get("order_type").equals("replenishmentOrder")) {
