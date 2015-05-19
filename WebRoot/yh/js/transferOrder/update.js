@@ -534,7 +534,7 @@ $(document).ready(function() {
 					$("#saveTransferOrderBtn").attr("disabled", false);
 					$("#showOrderNo").text(transferOrder.ORDER_NO);
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				  	
+				  	$("#printBtn").attr('disabled',false);
 				  	
 	            	var order_id = $("#order_id").val();
 				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
@@ -563,7 +563,7 @@ $(document).ready(function() {
 				  	//$("#style").show();	
 					$("#saveTransferOrderBtn").attr("disabled", false);
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				  	
+				  	$("#printBtn").attr('disabled',false);
 	            	var order_id = $("#order_id").val();
 				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw();
@@ -2230,10 +2230,16 @@ $(document).ready(function() {
     // 只有是新建状态才能编辑
     if($("#transferOrderStatus").val() == '新建' || $("#transferOrderStatus").val() == ''){
     	$("#saveTransferOrderBtn").attr('disabled', false);
+    	
     }else{
-    	$("#saveTransferOrderBtn").attr('disabled', true);    	
+    	$("#saveTransferOrderBtn").attr('disabled', true); 
+    	
     }
-    
+    if($("#order_id").val() != '' && $("#order_id").val() != null){
+    	$("#printBtn").attr('disabled', false);
+    }else{
+    	$("#printBtn").attr('disabled', true);
+    }
     if($("#arrivalMode2").prop('checked') == true){
     	$("#contactInformation").hide();
     	//$("#gateInSelect").show();    	
@@ -2647,13 +2653,23 @@ $(document).ready(function() {
         $('#arrival_time').trigger('keyup');
     });
     $("#printBtn").on('click',function(){
-    	var customer = $("#customerMessage").val();
-    	if(customer=="江苏国光信息产业股份有限公司"){
+    	var cargoNature = $("input[name='cargoNature']:checked").val();
+    	if(cargoNature == 'cargo'){
     		$("#muban").show();
+    		$("#putong").show();
+    		$("#biaozhun").hide();
     	}else{
-    		$("#printBtn").removeAttr('data-target');
-    		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
+    		var customer = $("#customerMessage").val();
+        	if(customer=="江苏国光信息产业股份有限公司"){
+        		$("#muban").show();
+        		$("#putong").hide();
+        		$("#biaozhun").show();
+        	}else{
+        		$("#printBtn").removeAttr('data-target');
+        		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
+        	}
     	}
+    	
     });
     $("#btnOK").on('click',function(){
     	var signNO = $("input[name='sign']:checked").val();

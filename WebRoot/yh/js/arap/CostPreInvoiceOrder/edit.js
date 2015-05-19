@@ -41,7 +41,7 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
-			/*$("#printBtn").show();*/
+			$("#printBtn").attr("disabled",false);
 			$("#costPreInvoiceOrderStatus").text("已审批");
 		},'json');
 		
@@ -57,7 +57,7 @@ $(document).ready(function() {
 	}else{
 		$("#auditBtn").attr("disabled",false);
 		$("#approvalBtn").attr("disabled",false);
-		/*$("#printBtn").show();*/
+		$("#printBtn").attr("disabled",false);
 		if($("#costPreInvoiceOrderStatus").text()=="已付款确认"){
 			$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
 			$("#auditBtn").attr("disabled",true);
@@ -359,7 +359,15 @@ $(document).ready(function() {
     $("#printBtn").on('click',function(){
     	var order_no = $("#order_no").text();
     	$.post('/report/printPayMent', {order_no:order_no}, function(data){
-    		window.open(data);
+    		if(data.indexOf(",")>=0){
+				var file = data.substr(0,data.length-1);
+    			var str = file.split(",");
+    			for(var i = 0 ;i<str.length;i++){
+    				window.open(str[i]);
+    			}
+			}else{
+				window.open(data);
+			}
     	});
 
     });

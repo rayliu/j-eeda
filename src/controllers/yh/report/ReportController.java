@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import models.ArapCostInvoiceApplication;
+import models.ArapCostOrder;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
 import net.sf.jasperreports.engine.JRException;
@@ -38,14 +40,33 @@ public class ReportController extends Controller {
     	String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
     	renderText(file.substring(7));
     }
+    public String pritCheckOrderByPay(String order_no){
+    	String fileName ="report/checkOrder.jasper";
+    	String outFileName = "WebRoot/download/供应商对账单";
+    	HashMap<String, Object> hm = new HashMap<String, Object>();
+    	hm.put("order_no", order_no);
+    	String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
+    	return file;
+    }
    public void printPayMent(){
 	   String order_no = getPara("order_no");
-	   String fileName ="report/checkOrder.jasper";
+	   ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findFirst("select * from arap_cost_invoice_application_order where order_no = ?",order_no);
+	   List<ArapCostOrder> list = ArapCostOrder.dao.find("select * FROM arap_cost_order where application_order_id = ?",arapAuditInvoiceApplication.get("id"));
+	   String checkOrderFile ="";
+	   StringBuffer buffer = new StringBuffer();
+	   for (ArapCostOrder arapCostOrder : list) {
+		   checkOrderFile += pritCheckOrderByPay(arapCostOrder.getStr("order_no"));
+		   buffer.append(checkOrderFile.substring(7));
+		   buffer.append(",");
+	   }
+	   String fileName ="report/payment.jasper";
 	   String outFileName = "WebRoot/download/付款申请单";
 	   HashMap<String, Object> hm = new HashMap<String, Object>();
 	   hm.put("order_no", order_no);
 	   String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
-	   renderText(file.substring(7));
+	   buffer.append(file.substring(7));
+	   buffer.append(",");
+	   renderText(buffer.toString());
    }
    public void printSign(){
 	   String type = getPara("sign");
