@@ -1,20 +1,29 @@
+		
 
+  var clearViewData = function(){
+	 $("#order_no").text("");
+	 $("#order_status").text("");
+	 $("#order_type").text("");
+	 $("#customer_name").text("");
+	 $("#sp_name").text("");
+	 $("#beginCity").text("");
+	 $("#endCity").text("");
+  };
 	
-	  //微信运输单，配送单查询
-	  $("#searchNo").click(function(e){
-	  	e.preventDefault();
-	  	var serialNo = $("#serialNo").val();
-	  //异步向后台提交数据
+  $("#value").hide();
+  //微信运输单，配送单查询
+  $("#searchNo").click(function(e){
+  	e.preventDefault();
+  	var serialNo = $("#serialNo").val();
+  	if(serialNo.trim() != ''){
+  		//异步向后台提交数据
 		$.post('/wx/findWXNo', {serialNo:serialNo}, function(data){
 			 if(data.ORDER_NO == null || data.ORDER_NO == ''){
-				 $("#order_no").text("");
-				 $("#order_status").text(" ");
-				 $("#order_type").text(" ");
-				 $("#customer_name").text(" ");
-				 $("#sp_name").text(" ");
-				 $("#beginCity").text(" ");
-				 $("#endCity").text(" ");
+				 clearViewData();
+				 $("#value").hide();
+				 $("#error").text("查无此单号信息，请确认单号是否存在再查询！");
 			 }else{
+				 $("#value").show();
 				 $("#order_no").text(data.ORDER_NO);
 					if(data.ORDER_TYPE != null && data.ORDER_TYPE != ''){
 						if(data.ORDER_TYPE  == "salesOrder")
@@ -41,5 +50,11 @@
 					$("#endCity").text(data.ENDCITY);
 			 }
 		},'json');
-	  });
+  	}else{
+  		clearViewData();
+  		$("#error").text("请输入单号！");
+  		$("#value").hide();
+  	}
+    
+  });
 	
