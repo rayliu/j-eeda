@@ -7,7 +7,9 @@ wx.ready(function () {
       var latLng = new soso.maps.LatLng(latlng.latitude, latlng.longitude);
       geocoder.geocode({'location': latLng}, function(results, status) {
             if (status == soso.maps.GeocoderStatus.OK) {
+            	alert("调用保存方法前,当前位置:"+results.address);
                 callback(latlng, results.address);
+                alert("调用保存方法结束");
             } else {
                 alert("检索没有结果，原因: " + status);
             }
@@ -44,28 +46,16 @@ wx.ready(function () {
   document.querySelector('#getLocation').onclick = function () {
     wx.getLocation({
       success: function (res) {
-        //alert(JSON.stringify(res));
+        alert(JSON.stringify(res));
         var saveLoction = function(latlng, address){
-        	/*$.post("/wx/saveLocationInfo",{longitude: latlng.longitude,latitude: latlng.latitude,address:address},function(data){
+        	alert("当前开始ajax保存位置信息");
+        	$.post("/wx/saveLocationInfo",{longitude: latlng.longitude,latitude: latlng.latitude,address:address},function(data){
         		if(data.ID != "" && data.ID != null)
         			alert("汇报成功");
         		else
         			alert("汇报失败");
-            });*/
-        	
-        	$.ajax({
-                url: '/wx/saveLocationInfo',
-                data: {longitude: latlng.longitude,latitude: latlng.latitude,address:address},
-                cache: false,
-                type: 'POST',
-                success: function(data){
-                	alert(JSON.stringify(data));
-                	if(data.ID != "" && data.ID != null)
-            			alert("汇报成功");
-            		else
-            			alert("汇报失败");
-                }
             });
+        	alert("当前结束ajax保存位置信息");
         };
         getLocationInfo(res, saveLoction);
       },
