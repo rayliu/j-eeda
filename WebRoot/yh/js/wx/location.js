@@ -1,8 +1,7 @@
-
 wx.ready(function () {
   var geocoder,map, marker = null;
   geocoder = new soso.maps.Geocoder();
-
+  
   var getLocationInfo= function(latlng, callback){
       var res = null;
       var latLng = new soso.maps.LatLng(latlng.latitude, latlng.longitude);
@@ -22,7 +21,6 @@ wx.ready(function () {
      wx.getLocation({
       success: function (res) {
         //alert(JSON.stringify(res));
-        
         var openLoc=function(res, address){
           wx.openLocation({
             latitude: res.latitude,
@@ -33,8 +31,7 @@ wx.ready(function () {
             infoUrl: 'http://weixin.qq.com'
           });
         };
-
-        getLocationInfo(res, openLoc)
+        getLocationInfo(res, openLoc);
       },
       cancel: function (res) {
         alert('用户拒绝授权获取地理位置');
@@ -47,8 +44,16 @@ wx.ready(function () {
   document.querySelector('#getLocation').onclick = function () {
     wx.getLocation({
       success: function (res) {
-        alert(JSON.stringify(res));
-        getLocationInfo(res);
+        //alert(JSON.stringify(res));
+        var saveLoction = function(latlng, address){
+        	$.post("/wx/saveLocationInfo",{longitude: latlng.longitude,latitude: latlng.latitude,address:address},function(data){
+        		if(data.ID != "" && data.ID != null)
+        			alert("汇报成功");
+        		else
+        			alert("汇报失败");
+            });
+        };
+        getLocationInfo(res, saveLoction);
       },
       cancel: function (res) {
         alert('用户拒绝授权获取地理位置');

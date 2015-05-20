@@ -92,6 +92,7 @@ import models.yh.profile.PartyInsuranceItem;
 import models.yh.profile.ProviderChargeType;
 import models.yh.profile.Route;
 import models.yh.returnOrder.ReturnOrderFinItem;
+import models.yh.wx.WechatLacation;
 
 import org.apache.log4j.Logger;
 import org.bee.tl.ext.jfinal.BeetlRenderFactory;
@@ -430,6 +431,9 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("party_insurance_item", PartyInsuranceItem.class);
         //供应商客户计费方式
         arp.addMapping("charge_type", ProviderChargeType.class);
+        //微信位置信息
+        arp.addMapping("wechat_lacation", WechatLacation.class);
+        
         
     }
 

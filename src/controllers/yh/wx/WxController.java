@@ -2,6 +2,7 @@ package controllers.yh.wx;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
+import models.yh.wx.WechatLacation;
 
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.Db;
@@ -265,5 +267,13 @@ public class WxController extends ApiController {
 		renderJson(transferOrder);
 	}
 	
+	public void saveLocationInfo(){
+		String longitude = getPara("longitude");
+		String latitude = getPara("latitude");
+		String address = getPara("address");
+		WechatLacation  wechatLacation = new WechatLacation();
+		wechatLacation.set("longitude", longitude).set("latitude", latitude).set("address", address).set("update_stamp", new Date()).save();
+		renderJson(wechatLacation);
+	}
 	
 }
