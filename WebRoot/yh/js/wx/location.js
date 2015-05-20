@@ -46,11 +46,25 @@ wx.ready(function () {
       success: function (res) {
         //alert(JSON.stringify(res));
         var saveLoction = function(latlng, address){
-        	$.post("/wx/saveLocationInfo",{longitude: latlng.longitude,latitude: latlng.latitude,address:address},function(data){
+        	/*$.post("/wx/saveLocationInfo",{longitude: latlng.longitude,latitude: latlng.latitude,address:address},function(data){
         		if(data.ID != "" && data.ID != null)
         			alert("汇报成功");
         		else
         			alert("汇报失败");
+            });*/
+        	
+        	$.ajax({
+                url: '/wx/saveLocationInfo',
+                data: {longitude: latlng.longitude,latitude: latlng.latitude,address:address},
+                cache: false,
+                type: 'POST',
+                success: function(data){
+                	alert(JSON.stringify(data));
+                	if(data.ID != "" && data.ID != null)
+            			alert("汇报成功");
+            		else
+            			alert("汇报失败");
+                }
             });
         };
         getLocationInfo(res, saveLoction);
