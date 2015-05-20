@@ -7,7 +7,7 @@ wx.ready(function () {
       var latLng = new soso.maps.LatLng(latlng.latitude, latlng.longitude);
       geocoder.geocode({'location': latLng}, function(results, status) {
             if (status == soso.maps.GeocoderStatus.OK) {
-            	$('#orderDesc').text('定位成功,准备上传....');
+            	$('#orderDesc').text('定位成功,准备上传.....');
                 callback(latlng, results.address);
             } else {
                 alert("检索没有结果，原因: " + status);
@@ -43,17 +43,19 @@ wx.ready(function () {
 
   // 7.2 获取当前地理位置
   document.querySelector('#getLocation').onclick = function () {
+	 $('#getLocation').prop("disabled",true);
 	 wx.getLocation({
 	     success: function (res) {
 	       //alert(JSON.stringify(res));
-	    	 $('#orderDesc').text('已获取经纬度信息,正在定位....');
+	    	 $('#orderDesc').text('已获取经纬度信息,正在定位.....');
 	       var saveLoction = function(latlng, address){
-	        	$('#orderDesc').text('定位成功,正在上传....');
+	        	$('#orderDesc').text('定位成功,正在上传.....');
 	        	$.post("/wx/saveLocationInfo",{longitude: latlng.longitude,latitude: latlng.latitude,address:address},function(data){
 	        		if(data.ID != "" && data.ID != null)
-	        			$('#orderDesc').text('上传成功!....');
+	        			$('#orderDesc').text('我的位置:'+data.ADDRESS+',上传成功!');
 	        		else
-	        			$('#orderDesc').text('上传失败!....');
+	        			$('#orderDesc').text('上传失败!');
+	        		$('#getLocation').prop("disabled",false);
 	            });
 	        };
 	        getLocationInfo(res, saveLoction);
