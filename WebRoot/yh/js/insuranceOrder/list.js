@@ -24,8 +24,11 @@
 	            		}
 	            			
 	            }},
+	            {"mDataProp":"COMPANY_NAME"},
+	            {"mDataProp":"CUSTOMER"},
 			    {"mDataProp":"STATUS"},    
-			    {"mDataProp":"CREATE_STAMP"},     
+			    {"mDataProp":"CREATE_STAMP"},
+			    {"mDataProp":"DEPARTURE_TIME"},
 			    {"mDataProp":"TRANSFER_ORDER_NO"},
 	            { 
 	                "mDataProp": null, 
@@ -42,10 +45,9 @@
 	                	}
 	                }
 	            },
-	            {"mDataProp":"CUSTOMER"}
+	    		{"mDataProp":"INSURANCE_NO"},
 	        ]      
 	    });	
-
         $("#dataTables-example").on('click', '.cancelbutton', function(e){
     		e.preventDefault();
            //异步向后台提交数据

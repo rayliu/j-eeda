@@ -269,9 +269,17 @@ public class InsuranceOrderController extends Controller {
         		+ " left join transfer_order tor on tor.insurance_id = ior.id "
         		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-        sql = "select distinct ior.*,(select c.abbr from party p LEFT JOIN contact c ON p.contact_id = c.id where p.id=tor.customer_id) as customer,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no from insurance_order ior "
+        sql = "select distinct ior.*, con.company_name, (select c.abbr from party p left join contact c on p.contact_id = c.id where p.id=tor.customer_id) as customer,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no,"
+        		+ " (select group_concat(cast(deo.departure_time as char) separator '<br>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id left join depart_order deo on deo.id = dt.depart_id where	tor.insurance_id = ior.id ) departure_time ,"
+        		+ " (SELECT group_concat( insfi.insurance_no SEPARATOR '<br>' ) FROM insurance_order ior"
+        		+ " left JOIN insurance_fin_item insfi on insfi.insurance_order_id=ior.id"
+        		+ " WHERE tor.insurance_id = ior.id) insurance_no"
+        		+ " from insurance_order ior "
         		+ " left join transfer_order tor on tor.insurance_id = ior.id "
-        		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        		+ " left join office o on o.id = tor .office_id "
+        		+ " left join party p on p.id = ior.insurance_id "
+        		+ " left join contact con on con.id = p.contact_id"
+        		+ " where  o.id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
         
         String orderBysql = " order by ior.create_stamp desc ";
