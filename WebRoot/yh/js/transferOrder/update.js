@@ -930,7 +930,6 @@ $(document).ready(function() {
 
 	//item_no
 	$('#itemTable').on('click', 'input[name=item_no]', function(){
-		//console.log(this);
 		var inputBox=$(this);
 		inputBox.autocomplete({
 	        source: function( request, response ) {
@@ -947,7 +946,6 @@ $(document).ready(function() {
 	                    input: request.term
 	                },
 	                success: function( data ) {
-	                	
 						var columnName = inputBox.parent().parent()[0].className;
 						var itemNos =[];
 		        		$("input[name=item_no]").each(function(){
@@ -955,35 +953,62 @@ $(document).ready(function() {
 		       					itemNos.push($(this).val());
 		       				}
 		    	   		});
-	                    response($.map( data, function( data ) {
-	                    	var complete="";
-	                    	for(var i=0;i<itemNos.length;i++){
-	                    		if(data.ITEM_NO == itemNos[i]){
-	                    			complete = data.ITEM_NO;
-	                    		}
-	                    	}
-	                    	if(complete != data.ITEM_NO){
-	                    		return {
-	 	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
-	 	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
-	 	                            id: data.ID,
-	 	                            item_no: data.ITEM_NO,
-	 	                            item_name: data.ITEM_NAME
+		        		if(data.length>0){
+		        			response($.map( data, function( data ) {
+		                    	var complete="";
+		                    	for(var i=0;i<itemNos.length;i++){
+		                    		if(data.ITEM_NO == itemNos[i]){
+		                    			complete = data.ITEM_NO;
+		                    		}
+		                    	}
+		                    	if(complete != data.ITEM_NO){
+		                    		return {
+		 	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
+		 	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
+		 	                            id: data.ID,
+		 	                            item_no: data.ITEM_NO,
+		 	                            item_name: data.ITEM_NAME
+		 	                       }
+		                    	}
+		                    	
+		                			
+		                    }));
+		        		}else{
+		        			var d = new Array(1);
+		        			if($("input[name='orderType']:checked").val() == "arrangementOrder"){
+		        				d[0] = "当前仓库内客户没有此类产品库存";
+		        			}else{
+		        				d[0] = "当前客户没有维护此类产品";
+		        			}
+		        			
+		        			response($.map(d, function( i ) {
+		        				return {
+	 	                            value:'警告:'+i,
+	 	                            id: '',
+	 	                            item_no: '',
+	 	                            item_name: '',
+	 	                            label: ''
 	 	                       }
-	                    	}
-	                    	
-	                			
-	                    }));
+		                    }));
+		        			
+		        		}
+	                    
 	                }
 	            });
 	        },
-        	select: function( event, ui ) {        		
+        	select: function( event, ui ) {   
+        		
         		//将选择的产品id先保存到数据库
-        		var itemId = $(this).parent().parent()[0].id;
-        		var productId = ui.item.id;
-        		$.post('/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){   					
-					refreshItemTable();					
-    			}, 'json');    
+        		ui.item.value='';
+        		if(ui.item.id != ''){
+        			var itemId = $(this).parent().parent()[0].id;
+            		var productId = ui.item.id;
+            		$.post('/transferOrderItem/saveTransferOrderItem', {transferOrderItemId:itemId,productId:productId},	function(data){   					
+    					refreshItemTable();					
+        			}, 'json');
+            		
+        		}
+        		    
             },
         	minLength: 2
         });
@@ -996,16 +1021,33 @@ $(document).ready(function() {
 		var value= $(this).val();
 		var weight;
 		var volume;
-		$.ajax({  
-            type : "post",  
-            url : "/transferOrderItem/updateTransferOrderItem",  
-            data : {order_id: $("#order_id").val(), id: itemId, fieldName: fieldName, value: value},  
-            async : false,  
-            success : function(data){  
-            	weight = data.SUM_WEIGHT;
-            	volume = data.VOLUME;
-            }  
-        });
+		/*if(filedName == 'amount'){
+			if(/^\d+$/.test(value)){
+				if($("input[name='orderType']:checked").val() == "arrangementOrder"){
+					$.post('',{itemId:itemId},function(){
+						
+					},'json');
+				}
+			}else{
+				$.scojs_message('数量只能是整数', $.scojs_message.TYPE_ERROR);
+				return false;
+			}
+			
+		}*/
+		
+		if(value != ''){
+			$.ajax({  
+	            type : "post",  
+	            url : "/transferOrderItem/updateTransferOrderItem",  
+	            data : {order_id: $("#order_id").val(), id: itemId, fieldName: fieldName, value: value},  
+	            async : false,  
+	            success : function(data){  
+	            	weight = data.SUM_WEIGHT;
+	            	volume = data.VOLUME;
+	            }  
+	        });
+		}
+		
 		var amount = $(this).parent().parent().children('.amount').children().val();
 		if(amount == ""){
 			amount = 0;
@@ -1019,7 +1061,7 @@ $(document).ready(function() {
     	$.post('/transferOrderItem/saveTransferOrderItem', $("#transferOrderItemForm").serialize(), function(data){
 			if(data.ID > 0){
 				//保存成功后，刷新列表
-                console.log(data);
+                
                 if(data.ORDER_ID>0){
                 	$("#transferOrderItemForm")[0].reset();
                 	var order_id = $("#order_id").val();
@@ -1036,7 +1078,7 @@ $(document).ready(function() {
     
     // 当cargoNature2为为普通货品是需要知道是否需要单品
     $("#cargoNatures").on('click', 'input', function(){
-  	  console.log(this);
+  	  
   	  var inputId  = $(this).attr('id');
 	  if(inputId=='cargoNature2'){
 		 $("#cargoNatureDetailSpan").show();
@@ -1510,65 +1552,7 @@ $(document).ready(function() {
 		}
 	});	
 	
-    /*detailDataTable.makeEditable({
-    	sUpdateURL: '/transferOrderItemDetail/saveTransferOrderItemDetailByField',    	
-    	oEditableSettings: {event: 'click'},
-    	"aoColumns": [  			            
-            {            
-            	style: "inherit",
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"serial_no",
-            	placeholder: "", 
-            	callback: function () {}
-        	},
-            null,
-            null,
-            null,
-            null,
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"contact_person",
-            	placeholder: "",
-            	callback: function () {} 
-            },
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"phone",
-            	placeholder: "",
-            	callback: function () {} 
-            },  
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"address",
-            	placeholder: "",
-            	callback: function () {} 
-            },
-            {
-            	indicator: '正在保存...',
-            	onblur: 'submit',
-            	tooltip: '点击可以编辑',
-            	name:"remark",
-            	type: 'textarea',
-            	placeholder: "",
-            	callback: function () {} 
-            }                       
-        ]      
-    }).click(function(){
-    	var inputBox = $(this).find('input');
-        inputBox.autocomplete({
-	        source: function( request, response ) {
-	        },
-        });
-    }); */                                                                     
-        
+    
 	// 编辑单品
 	$("#itemTable").on('click', '.dateilEdit', function(e){
 		e.preventDefault();
@@ -1594,7 +1578,6 @@ $(document).ready(function() {
 		var itemId = code.substring(code.indexOf('=')+1);
 		$("#item_id").val(itemId);
 		
-  	    $("#transfer_order_item_id").val(itemId);
   	    $.post('/transferOrderItem/getTransferOrderItem', 'transfer_order_item_id='+itemId, function(data){
   	    	// 编辑时回显数据
   	    	$("#transfer_order_id").val(data.transferOrderItem.ORDER_ID);
@@ -2056,7 +2039,7 @@ $(document).ready(function() {
 	 });
 
   	//获取货品的序列号list，选中信息在下方展示其他信息
- 	$('#itemNoMessage').on('keyup click', function(){
+ 	$('#itemNoMessage').on('keyup click', function(){		
  		var inputStr = $('#itemNoMessage').val();
  		var customerId = $('#customerId').val();
  		$.get('/transferOrder/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
@@ -2081,7 +2064,12 @@ $(document).ready(function() {
  	
  	// 选中序列号
  	$('#itemNoList').on('mousedown', '.fromLocationItem', function(e){
- 		$("#itemNoMessage").val($(this).text());
+ 		if($(this).text().indexOf("当前") >0){
+ 			$("#itemNoMessage").val('');
+ 		}else{
+ 			$("#itemNoMessage").val($(this).text());
+ 		}
+ 		
  		if($(this).attr('item_name') == 'null'){
  			$("#item_name").val('');
  		}else{
