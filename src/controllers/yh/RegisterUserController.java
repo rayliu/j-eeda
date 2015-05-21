@@ -98,8 +98,9 @@ public class RegisterUserController  extends Controller{
 	            String basePath =newDate + "  " + userName + "用户在平台上注册" + officeName + "的一个总公司";
 	
 	            emailTo.setMsg(basePath);
-	            /**/
-	            emailTo.addTo("ray_liu@eeda123.com;kate.lin@eeda123.com;");//设置收件人
+	            /*添加邮件收件人*/
+	            emailTo.addTo("ray_liu@eeda123.com");//设置收件人
+	            emailTo.addTo("kate.lin@eeda123.com");
             	emailTo.send();
              	
              }catch(Exception e){
