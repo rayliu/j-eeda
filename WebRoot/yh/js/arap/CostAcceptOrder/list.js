@@ -1,9 +1,10 @@
 
 $(document).ready(function() {
 	document.title = '付款确认| '+document.title;
-
     $('#menu_finance').addClass('active').find('ul').addClass('in');
    
+    var paymentMethod = "";
+    
 	//datatable, 动态处理
     var costAcceptOrderTab = $('#costAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -32,8 +33,19 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-        		}},
+        		}
+            },
             {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
+            {"mDataProp":"PAYMENT_METHOD","sClass": "payment_method",
+                "fnRender": function(obj) {
+                    if(obj.aData.PAYMENT_METHOD == 'cash')
+                        return '现金';
+                    else if(obj.aData.PAYMENT_METHOD == 'transfers')
+                        return '转账';
+                    else
+                    	return '';
+                }
+            },
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -120,7 +132,45 @@ $(document).ready(function() {
 	$("#status_filter").on('change',function(){
 		var status = $("#status_filter").val();
 		costAcceptOrderTab.fnSettings().sAjaxSource = "/costAcceptOrder/list?status="+status;
-					
 		costAcceptOrderTab.fnDraw(); 
 	});
+	
+	//点击确认
+	$("#auditBtn").click(function(){
+		if(paymentMethod == '现金'){
+			$("#paymentMethod1").attr("checked","checked");
+			$("#cashLabel").show();
+			$("#transfersLabel").hide();
+			$("#accountTypeDiv").hide();
+		}else if(paymentMethod == '转账'){
+			$("#paymentMethod2").attr("checked","checked");
+			$("#cashLabel").hide();
+			$("#transfersLabel").show();
+			$("#accountTypeDiv").show();
+		}
+	});
+	
+	//选择单据
+	$("#costAccept-table").on('click', '.checkedOrUnchecked', function(){
+		if($(this).prop('checked') == true){
+			if(paymentMethod != ""){
+				if(paymentMethod != $(this).parent().siblings('.payment_method')[0].innerHTML){
+					alert("请选择相同的付款方式!");
+					return false;
+				}
+			}else
+				paymentMethod = $(this).parent().siblings('.payment_method')[0].innerHTML;
+		}else{
+			var checkedNumber = 0;
+			$("#costAccept-table tr").each(function (){
+				if($(this).find("td").find("input[type='checkbox']").prop('checked') == true)
+					checkedNumber+=1;
+			});
+			if(checkedNumber == 0)
+				paymentMethod = "";
+		}
+		console.log("付款方式:"+paymentMethod);
+	});
+	
+	
 } );
