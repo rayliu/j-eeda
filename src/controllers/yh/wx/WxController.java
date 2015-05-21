@@ -1,10 +1,6 @@
 package controllers.yh.wx;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -162,16 +158,7 @@ public class WxController extends ApiController {
 	    	for (int i = 0; i < uploadFiles.size(); i++) {
 	    		File file = uploadFiles.get(i).getFile();
 	    		String fileName = file.getName();
-	    		long fileSize = 0;
-                try {
-                	FileInputStream fis = new FileInputStream(file);
-                	fileSize = fis.available();
-				} catch (FileNotFoundException e) {
-					System.out.println("读取文件大小,文件没有找到");
-				} catch (IOException e) {
-					System.out.println("读取文件大小,读取出错");
-				}
-                fileNames.add(fileName+"("+new BigDecimal(fileSize/1024).setScale(0, BigDecimal.ROUND_HALF_UP)+"KB)");
+	    		fileNames.add(fileName);
 	    		String suffix = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
 	    		if("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)){
         			OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();

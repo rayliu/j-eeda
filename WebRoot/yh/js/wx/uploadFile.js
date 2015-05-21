@@ -1,32 +1,12 @@
 $(document).ready(function() {
 	
-	var initUploadBtn = function(returnId){
-		$('#fileupload').fileupload({
-	    	autoUpload: true, //自选择后自动上传图片
-	    	disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
-	        dataType: 'json',
-	        url: '/wx/saveFile?return_id='+returnId,//上传地址
-	        validation: {allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']},
-	        imageMaxWidth: 1200,
-	    	imageMaxHeight: 900,
-	    	imageCrop: false, // 自动高宽比缩放
-	        done: function (e, data) {
-	        	if(data.result.result = "true"){
-	        		$("#uploadBtn").text("上传图片");
-	        		$("#uploadBtn").prop("disabled",false);
-	        		$('#uploadDesc').append("<p>文件名："+data.result.cause+"  上传成功！</p>").show();
-	        		console.log("data.result.cause:"+data.result.cause);
-	        	}else{
-	        		$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
-	        	}
-	        },  
-	        progressall: function (e, data) {//设置上传进度事件的回调函数
-	        	$("#uploadBtn").prop("disabled",true);
-	        	$("#uploadBtn").text("上传中.....");
-	        } 
-		});
-	};
-	
+	var type = $("#type").val();
+	if(type == "directSend"){
+		$("#titleName").text("创诚易达物流系统-直送签收");
+	}else if(type == "distribution"){
+		$("#titleName").text("创诚易达物流系统-配送签收");
+	}
+ 
 	$("#searchNo").click(function(){  
 		$.post('/wx/findReturnOrder',$("#returnFrom").serialize(),function(data){
 			var returnId = data.ID;
@@ -34,7 +14,31 @@ $(document).ready(function() {
 				$('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
 				$("#uploadDesc").text("");
 				$('#returnId').val(returnId);
-				initUploadBtn(returnId);
+				//初始化上传控件
+				$('#fileupload').fileupload({
+			    	autoUpload: true, //自选择后自动上传图片
+			    	disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
+			        dataType: 'json',
+			        url: '/wx/saveFile?return_id='+$("#returnId").val(),//上传地址
+			        validation: {allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']},
+			        imageMaxWidth: 1200,
+			    	imageMaxHeight: 900,
+			    	imageCrop: false, // 自动高宽比缩放
+			        done: function (e, data) {
+			        	if(data.result.result = "true"){
+			        		$("#uploadBtn").text("上传图片");
+			        		$("#uploadBtn").prop("disabled",false);
+			        		$('#uploadDesc').append("<p>文件名："+data.result.cause+"  上传成功！</p>").show();
+			        		console.log("data.result.cause:"+data.result.cause);
+			        	}else{
+			        		$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+			        	}
+			        },  
+			        progressall: function (e, data) {//设置上传进度事件的回调函数
+			        	$("#uploadBtn").prop("disabled",true);
+			        	$("#uploadBtn").text("上传中.....");
+			        } 
+				});
 			}else{
 				$('#orderDesc').text('请先查询有效的回单号码');
 				$('#returnId').val("");
@@ -108,7 +112,7 @@ $(document).ready(function() {
         $('#customerList').hide();
     }); 
 	
-	//更多选项
+	//保存图片
     $("#helpBlock").click(function(e){
     	if($("#distributionDiv").is(":hidden"))
     		$("#distributionDiv").show();
