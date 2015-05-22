@@ -165,6 +165,13 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("last_modified_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
+			String noInvoice=getPara("noInvoice");
+			if("on".equals(noInvoice)){
+				noInvoice="true";
+			}else{
+				noInvoice="false";
+			}
+			arapAuditInvoiceApplication.set("noInvoice",noInvoice );
 			if("transfers".equals(paymentMethod)){
 				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
 					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
@@ -251,6 +258,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
 		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
 		setAttr("approval_stamp", arapAuditInvoiceApplication.get("approval_stamp"));
+		setAttr("noInvoice", arapAuditInvoiceApplication.get("noInvoice"));
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);
