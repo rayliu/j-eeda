@@ -2,7 +2,6 @@ package controllers.yh.profile;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -201,6 +200,9 @@ public class ServiceProviderController extends Controller {
             party.update();
 
             contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id=" + id);
+            contact.set("receiver", getPara("receiver"));
+            contact.set("bank_no", getPara("bank_no"));
+            contact.set("bank_name", getPara("bank_name"));
             setContact(contact);
             contact.update();
         } else {

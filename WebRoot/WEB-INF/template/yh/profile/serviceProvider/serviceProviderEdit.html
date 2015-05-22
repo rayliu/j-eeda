@@ -58,6 +58,21 @@
 	                                           		<option value="cashPayment">现付</option>
 	                                           	</select>
                                             </div>
+                                            
+                                            <div class="form-group">
+                                                <label>收款人</label>
+                                                <input class="form-control" id="receiver" type="text" name="receiver" value="${contact.receiver!''}">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>银行账号</label>
+                                                <input class="form-control" id="bank_no" type="text" name="bank_no" value="${contact.bank_no!''}">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>开户行</label>
+                                                <input class="form-control" id="bank_name" type="text" name="bank_name" value="${contact.bank_name!''}">
+                                            </div>
 
                                             <div class="form-group">
                                                 <label>计费方式</label>
@@ -83,6 +98,7 @@
 		                                                <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
 		                                            </div>
                                        </div>
+                                            
   											<div class="form-group">
                                                 <label>备注</label>
 												<textarea class="form-control" rows="3" name="remark">${party.remark!''}</textarea>
@@ -118,6 +134,7 @@
                                                 <label>付款单位</label>
                                                 <input class="form-control" id="receipt" type="text" name="receipt" value="${party.receipt!''}">
                                             </div>
+                                            
 
                                             <div class="form-group">
                                                 <label>公司简介</label>
