@@ -173,7 +173,7 @@ public class WxController extends ApiController {
 				}
                 fileNames.add(fileName+"("+new BigDecimal(fileSize/1024).setScale(0, BigDecimal.ROUND_HALF_UP)+"KB)");
 	    		String suffix = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
-	    		if("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)){
+	    		if(("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)) && fileSize > 0){
         			OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
         			orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", uploadFiles.get(0).getFileName()).save();
 	    		}else{
