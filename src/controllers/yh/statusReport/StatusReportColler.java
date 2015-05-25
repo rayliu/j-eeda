@@ -763,14 +763,15 @@ public class StatusReportColler extends Controller{
         		+ " and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
 		Record pickupCound = Db.findFirst(pickupTotal);
 		
-		String departTotal = "select count(distinct dor.id) total from depart_order dor "
-                + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
-                + " left join transfer_order t_o on t_o.id = dtf.order_id "
-                + " left join office o on o.id = t_o.office_id "
-                + " where dor.status!='取消' and combine_type = '"
-        		+ DepartOrder.COMBINE_TYPE_DEPART + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-        		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-        		+ " and dor.create_stamp between '" + beginTime + "' and '" + endTime + "'";
+		String departTotal = "select count(1) total from depart_order deo "
+                    + "left join carinfo  car on deo.driver_id=car.id"
+                    + " left join depart_transfer dtf on dtf.depart_id = deo.id"
+					+ " left join transfer_order tor on tor .id = dtf.order_id"
+					+ " left join user_login u on u.id = tor .create_by"
+					+ " left join office o on o.id = tor.office_id"
+            		+ " where combine_type = '" + DepartOrder.COMBINE_TYPE_DEPART + "'and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+        			+ " and deo.create_stamp between '" + beginTime + "' and '" + endTime + "'";
 		Record departCound = Db.findFirst(departTotal);
 		
 		String returnTotal = "select count(0) total from return_order ro"
