@@ -792,12 +792,13 @@
     	    	//发车之前保存发车单
                 if(!$("#orderForm").valid()){
     	    		$.scojs_message('操作失败，请确认基本信息是否输入完整', $.scojs_message.TYPE_ERROR);
-     		        return false;
      	        }else if($("#departure_time").val() == "" || $("#arrival_time").val() == ""){
      	        	$.scojs_message('操作失败，请确认基本信息是否输入完整', $.scojs_message.TYPE_ERROR);
      	        	var str = '<label for="departure_time" class="error">必选字段</label>';
      	        	$("#departure_time").after(str);
      	        	$("#arrival_time").after(str);
+     	        }else if($("#sp_id").val() == ""){
+     	        	$.scojs_message('操作失败，请选择供应商', $.scojs_message.TYPE_ERROR);
      	        }else{
 	                $("#departureConfirmationBtn").attr("disabled",true);
 	    	    	var priceType = $("input[name='priceType']:checked").val();
@@ -854,7 +855,7 @@
     				pageSpName.empty();
     				var pageSpAddress = $("#pageSpAddress");
     				pageSpAddress.empty();
-    				$('#sp_id').val($(this).attr(''));
+    				$('#sp_id').val("");
     			}
     			$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
     				console.log(data);
