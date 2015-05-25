@@ -134,5 +134,21 @@ public class ReportController extends Controller {
 	   }
 	    
    }
+   public void printSignCargo(){
+	   String type = getPara("sign");
+	   String order_no = getPara("order_no");
+	   String muban = type + ".jasper";
+	  
+	   String fileName ="report/" + muban;
+	   String outFileName = "WebRoot/download/";
+	   HashMap<String, Object> hm = new HashMap<String, Object>();
+	   hm.put("order_no", order_no);
+	   StringBuffer buffer = new StringBuffer();
+	   String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
+	   buffer.append(file.substring(7));
+	   buffer.append(",");
+	   renderText(buffer.toString());
+	   
+   }
   
 }

@@ -2646,12 +2646,14 @@ $(document).ready(function() {
     		$("#muban").show();
     		$("#putong").show();
     		$("#biaozhun").hide();
+    		$("#pdfSign_n").hide();
     	}else{
     		var customer = $("#customerMessage").val();
         	if(customer=="江苏国光信息产业股份有限公司"){
         		$("#muban").show();
         		$("#putong").hide();
         		$("#biaozhun").show();
+        		$("#pdfSign_n").show();
         	}else{
         		$("#printBtn").removeAttr('data-target');
         		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
@@ -2667,22 +2669,22 @@ $(document).ready(function() {
     	var order_no = $("#showOrderNo").text();
     	var pdf_sign = $("input[name='pdfSign']:checked").val();
     	var pdf_muban = signNO + "_" + pdf_sign;
-    	if(customer=="江苏国光信息产业股份有限公司"){
-    		$.post('/report/printSign', {order_no:order_no,sign:pdf_muban}, function(data){
-    			if(data.indexOf(",")>=0){
-    				var file = data.substr(0,data.length-1);
-        			var str = file.split(",");
-        			for(var i = 0 ;i<str.length;i++){
-        				window.open(str[i]);
-        			}
-    			}else{
-    				window.open(data);
-    			}
-    			
+    	var cargoNature = $("input[name='cargoNature']:checked").val();
+    	if(cargoNature == 'cargo'){
+    		$.post('/report/printSignCargo', {order_no:order_no,sign:pdf_muban}, function(data){
+    			openData(data);
         	});   		
         	$("#close").click();
+    	}else{
+    		if(customer=="江苏国光信息产业股份有限公司"){
+        		$.post('/report/printSign', {order_no:order_no,sign:pdf_muban}, function(data){
+        			openData(data);
+            	});   		
+            	$("#close").click();
+        	}else{
+        		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
+        	}
     	}
-    	
     });
     
     //应收,应付checkbox
@@ -2703,6 +2705,17 @@ $(document).ready(function() {
     
     
 });
+function openData(data){
+	if(data.indexOf(",")>=0){
+		var file = data.substr(0,data.length-1);
+		var str = file.split(",");
+		for(var i = 0 ;i<str.length;i++){
+			window.open(str[i]);
+		}
+	}else{
+		window.open(data);
+	}
+}
 function getChargetype(){
 	//判断修改后相应的计费方式修改
 	var customer_id = $("#customer_id").val();

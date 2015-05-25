@@ -29,92 +29,117 @@
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
-     arap_cost_invoice_application_order.`id` AS arap_cost_invoice_application_order_id,
-     arap_cost_invoice_application_order.`order_no` AS arap_cost_invoice_application_order_order_no,
-     arap_cost_invoice_application_order.`create_by` AS arap_cost_invoice_application_order_create_by,
-     arap_cost_invoice_application_order.`create_stamp` AS arap_cost_invoice_application_order_create_stamp
+     aciao.id AS id,
+     aciao.order_no AS order_no,
+     aciao.create_stamp AS create_stamp,
+     ifnull(o.abbr,o.office_name) as company_name,
+     ifnull(cr.c_name,cr.user_name) as create_name,
+     ifnull(cm.c_name,cm.user_name) as confirm_name,
+     ifnull(al.c_name,al.user_name) as approval_name
 FROM
-     `arap_cost_invoice_application_order` arap_cost_invoice_application_order
-WHERE
-     arap_cost_invoice_application_order.`order_no` = $P{order_no}]]>
+     arap_cost_invoice_application_order aciao
+     left join user_login cr on cr.id = aciao.create_by
+     left join user_login cm on cm.id = aciao.create_by
+     left join user_login al on al.id = aciao.create_by
+     left join office o on o.id = cr.office_id
+WHERE aciao.order_no = $P{order_no}]]>
 	</queryString>
-	<field name="arap_cost_invoice_application_order_id" class="java.lang.Long"/>
-	<field name="arap_cost_invoice_application_order_order_no" class="java.lang.String"/>
-	<field name="arap_cost_invoice_application_order_create_by" class="java.lang.Long"/>
-	<field name="arap_cost_invoice_application_order_create_stamp" class="java.sql.Timestamp"/>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="order_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="create_stamp" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="company_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="create_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="confirm_name" class="java.lang.String"/>
+	<field name="approval_name" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="71" splitType="Stretch">
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="58" splitType="Stretch">
+			<line>
+				<reportElement x="18" y="53" width="506" height="1" uuid="02de44d3-7e94-497e-b387-1f39c8ee3330"/>
+			</line>
 			<staticText>
-				<reportElement x="372" y="17" width="67" height="17" uuid="5cb6366f-8f56-4c96-8c96-f726baa7adc3"/>
+				<reportElement x="364" y="17" width="67" height="17" uuid="5cb6366f-8f56-4c96-8c96-f726baa7adc3"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[打印日期：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="372" y="34" width="67" height="17" uuid="a125a084-519e-4003-8efb-d8cdf4ca865c"/>
+				<reportElement x="364" y="34" width="67" height="17" uuid="a125a084-519e-4003-8efb-d8cdf4ca865c"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[打印次数：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="439" y="0" width="86" height="17" uuid="99a7d58e-6db8-4568-92ef-cdc4fcf2d802"/>
+				<reportElement x="431" y="0" width="86" height="17" uuid="99a7d58e-6db8-4568-92ef-cdc4fcf2d802"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{arap_cost_invoice_application_order_order_no}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{order_no}]]></textFieldExpression>
 			</textField>
-			<textField pattern="yyyy/MM/dd" isBlankWhenNull="false">
-				<reportElement x="439" y="17" width="86" height="17" uuid="f0d178b7-8b1f-4081-919f-89a29cf2ce93"/>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="false">
+				<reportElement x="431" y="17" width="86" height="17" uuid="f0d178b7-8b1f-4081-919f-89a29cf2ce93"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[java.util.Calendar.getInstance().getTime()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="439" y="34" width="86" height="17" uuid="9f30dc5c-1875-4418-86da-e670ccff36d2"/>
+				<reportElement x="431" y="34" width="86" height="17" uuid="9f30dc5c-1875-4418-86da-e670ccff36d2"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[null]]></textFieldExpression>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="197" y="0" width="129" height="71" uuid="c036f7f5-965b-47d3-9415-8881f9f7781f"/>
+				<reportElement x="189" y="0" width="129" height="51" uuid="c036f7f5-965b-47d3-9415-8881f9f7781f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="24" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[付款申请单]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="45" y="1" width="123" height="22" uuid="d4f6bbb7-4b5f-4005-bca3-da363dd1b665"/>
+				<reportElement x="37" y="1" width="123" height="22" uuid="d4f6bbb7-4b5f-4005-bca3-da363dd1b665"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["广州源鸿物流有限公司"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="372" y="0" width="67" height="17" uuid="bd0f76e8-ee73-4afe-ba09-bf8a072d13ed"/>
+				<reportElement x="364" y="0" width="67" height="17" uuid="bd0f76e8-ee73-4afe-ba09-bf8a072d13ed"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[NO：]]></text>
 			</staticText>
-		</band>
-	</title>
-	<pageHeader>
-		<band height="84" splitType="Stretch">
 			<line>
-				<reportElement mode="Transparent" x="15" y="0" width="509" height="1" uuid="4dfd17c4-da61-461f-a295-66fc5c32cf1d"/>
+				<reportElement mode="Transparent" x="18" y="55" width="506" height="1" uuid="4dfd17c4-da61-461f-a295-66fc5c32cf1d"/>
 				<graphicElement>
-					<pen lineStyle="Double"/>
+					<pen lineStyle="Solid"/>
 				</graphicElement>
 			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="81" splitType="Stretch">
 			<frame>
-				<reportElement x="16" y="4" width="506" height="80" uuid="00e761f7-6582-44ac-a566-48de2310dd81"/>
+				<reportElement x="18" y="0" width="507" height="80" uuid="00e761f7-6582-44ac-a566-48de2310dd81"/>
 				<staticText>
 					<reportElement x="260" y="0" width="74" height="20" uuid="1f0a2680-7085-4ed5-8afb-26f2e5a51c82"/>
 					<textElement>
@@ -123,34 +148,24 @@ WHERE
 					</textElement>
 					<text><![CDATA[开票单位:]]></text>
 				</staticText>
-				<textField pattern="yyyy/MM/dd" isBlankWhenNull="true">
+				<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
 					<reportElement x="82" y="0" width="178" height="20" uuid="5dc570a4-904e-4cdb-8f82-67a57589deee"/>
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{create_stamp}]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="0" y="0" width="82" height="20" uuid="8d9a36fc-44a3-46e6-a963-e454d089a782"/>
-					<textElement>
-						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-						<paragraph leftIndent="4"/>
-					</textElement>
-					<text><![CDATA[申请日期：]]></text>
-				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="334" y="0" width="172" height="20" uuid="802249b9-ccda-48e8-9f73-86cd2693d27b"/>
+					<reportElement x="334" y="0" width="173" height="20" uuid="802249b9-ccda-48e8-9f73-86cd2693d27b"/>
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="334" y="20" width="172" height="20" uuid="b495b2f8-f906-4a2d-9af5-e430842345a5"/>
+					<reportElement x="334" y="20" width="173" height="20" uuid="b495b2f8-f906-4a2d-9af5-e430842345a5"/>
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="260" y="20" width="74" height="20" uuid="2ab07400-74fb-43ed-9ae1-d211586d5f31"/>
@@ -165,22 +180,13 @@ WHERE
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{company_name}]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="0" y="20" width="82" height="20" uuid="42b095c2-458d-4cd1-9d2e-468fa1579384"/>
-					<textElement>
-						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-						<paragraph leftIndent="4"/>
-					</textElement>
-					<text><![CDATA[付款网点:]]></text>
-				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="334" y="40" width="172" height="20" uuid="5a154172-02c9-491e-8e0d-659f529bf821"/>
+					<reportElement x="334" y="40" width="173" height="20" uuid="5a154172-02c9-491e-8e0d-659f529bf821"/>
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="260" y="40" width="74" height="20" uuid="fb89adae-ecd7-4549-a062-fde7ad81e855"/>
@@ -195,22 +201,12 @@ WHERE
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement x="0" y="40" width="82" height="20" uuid="c11589ad-8f7b-480b-a445-96b5d43138b1"/>
-					<textElement>
-						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-						<paragraph leftIndent="4"/>
-					</textElement>
-					<text><![CDATA[付款方式:]]></text>
-				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="334" y="60" width="172" height="20" uuid="773139fc-9989-4d30-8b07-9672fb1b2b1b"/>
+					<reportElement x="334" y="60" width="173" height="20" uuid="773139fc-9989-4d30-8b07-9672fb1b2b1b"/>
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="260" y="60" width="74" height="20" uuid="1e08a36a-1a48-48db-b439-84fd3baa99b9"/>
@@ -225,8 +221,31 @@ WHERE
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="82" height="20" uuid="8d9a36fc-44a3-46e6-a963-e454d089a782"/>
+					<textElement>
+						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[申请日期：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="20" width="82" height="20" uuid="42b095c2-458d-4cd1-9d2e-468fa1579384"/>
+					<textElement>
+						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[付款网点:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="40" width="82" height="20" uuid="c11589ad-8f7b-480b-a445-96b5d43138b1"/>
+					<textElement>
+						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[付款方式:]]></text>
+				</staticText>
 				<staticText>
 					<reportElement x="0" y="60" width="82" height="20" uuid="c8892969-7863-40d1-8774-0730d1b84c94"/>
 					<textElement>
@@ -237,43 +256,32 @@ WHERE
 				</staticText>
 			</frame>
 		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="133" splitType="Stretch">
+	</columnHeader>
+	<detail>
+		<band height="101">
 			<subreport>
-				<reportElement x="15" y="1" width="507" height="100" uuid="9eaf7fea-ed53-46f6-8b84-8521776237de"/>
-				<subreportParameter name="order_no">
-					<subreportParameterExpression><![CDATA[$F{arap_cost_invoice_application_order_order_no}]]></subreportParameterExpression>
+				<reportElement x="18" y="1" width="506" height="100" uuid="9eaf7fea-ed53-46f6-8b84-8521776237de"/>
+				<subreportParameter name="approval_name">
+					<subreportParameterExpression><![CDATA[$F{approval_name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="create_name">
+					<subreportParameterExpression><![CDATA[$F{create_name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="order_id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="confirm_name">
+					<subreportParameterExpression><![CDATA[$F{confirm_name}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "payment_subreport_item.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
-	</columnHeader>
-	<detail>
-		<band height="157">
-			<subreport>
-				<reportElement x="16" y="24" width="507" height="84" uuid="438b7591-d040-456e-992b-70be06cab0e2"/>
-				<subreportParameter name="order_no">
-					<subreportParameterExpression><![CDATA[$F{arap_cost_invoice_application_order_order_no}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "payment_subreport_item2.jasper"]]></subreportExpression>
-			</subreport>
-			<staticText>
-				<reportElement x="15" y="4" width="507" height="20" uuid="5f5b82a6-f3d3-45d6-86d2-5fe345dc7b28"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-					<paragraph leftIndent="4"/>
-				</textElement>
-				<text><![CDATA[历史付款记录：]]></text>
-			</staticText>
-		</band>
 	</detail>
 	<pageFooter>
-		<band height="126" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="64" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</summary>
 </jasperReport>

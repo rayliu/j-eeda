@@ -44,7 +44,7 @@ WHERE
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="1" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
