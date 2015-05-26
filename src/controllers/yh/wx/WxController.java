@@ -64,6 +64,7 @@ public class WxController extends ApiController {
 		setAttr("nonceStr", m.get("nonceStr"));
 		setAttr("signature", m.get("signature"));
 		setAttr("ticket", m.get("jsapi_ticket"));
+		setAttr("token", PropKit.get("token"));
 	}
 	
 	//微信JS demo页面，方便参考
