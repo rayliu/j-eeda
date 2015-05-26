@@ -55,7 +55,7 @@ public class ReportController extends Controller {
 	   String checkOrderFile ="";
 	   StringBuffer buffer = new StringBuffer();
 	   for (ArapCostOrder arapCostOrder : list) {
-		   checkOrderFile += pritCheckOrderByPay(arapCostOrder.getStr("order_no"));
+		   checkOrderFile = pritCheckOrderByPay(arapCostOrder.getStr("order_no"));
 		   buffer.append(checkOrderFile.substring(7));
 		   buffer.append(",");
 	   }
