@@ -141,6 +141,7 @@ public class ReportController extends Controller {
 	  
 	   String fileName ="report/" + muban;
 	   String outFileName = "WebRoot/download/";
+	   outFileName += "普通签收单";
 	   HashMap<String, Object> hm = new HashMap<String, Object>();
 	   hm.put("order_no", order_no);
 	   StringBuffer buffer = new StringBuffer();
