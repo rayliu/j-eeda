@@ -48,7 +48,7 @@ wx.ready(function () {
 	     success: function (res) {
 	       //alert(JSON.stringify(res));
 	    	 $('#orderDesc').text('已获取经纬度信息,正在定位.....');
-	       var saveLoction = function(latlng, address){
+	    	 var saveLoction = function(latlng, address){
 	        	$('#orderDesc').text('定位成功,正在上传.....');
 	        	$.post("/wx/saveLocationInfo",{longitude: latlng.longitude,latitude: latlng.latitude,address:address},function(data){
 	        		if(data.ID != "" && data.ID != null)
@@ -57,8 +57,8 @@ wx.ready(function () {
 	        			$('#orderDesc').text('上传失败!');
 	        		$('#getLocation').prop("disabled",false);
 	            });
-	        };
-	        getLocationInfo(res, saveLoction);
+	    	 };
+	    	 getLocationInfo(res, saveLoction);
 	     },
 	     cancel: function (res) {
 	       alert('用户拒绝授权获取地理位置');

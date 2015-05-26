@@ -19,7 +19,8 @@ public class SignKit {
         String jsapi_ticket = "jsapi_ticket";
 
         // 注意 URL 一定要动态获取，不能 hardcode
-        String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx04d6e8e83464b0b4&secret=f67d4c549da09ab818f11f9e862b77e7";
+        //String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx04d6e8e83464b0b4&secret=f67d4c549da09ab818f11f9e862b77e7";
+        String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx1a63f107b6b0815c&secret=7d5db66c2eabfd11d6bd555380e529bb";
         Map<String, String> ret = sign(jsapi_ticket, url);
         for (Map.Entry entry : ret.entrySet()) {
             System.out.println(entry.getKey() + ", " + entry.getValue());

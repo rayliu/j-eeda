@@ -18,6 +18,9 @@
     </div>
   </div>
 </body>
+<script src="/yh/js/jquery-1.10.2.js" type="text/javascript"></script>
+<script src="/yh/js/plugins/wx/jweixin-1.0.0.js"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=1"></script>
 <script>
   /*
    * 注意：
@@ -36,6 +39,7 @@
       timestamp: ${timestamp},
       nonceStr: '${nonceStr}',
       signature: '${signature}',
+      ticket: '${ticket}',
       jsApiList: [
         'checkJsApi',
         'onMenuShareTimeline',
@@ -71,22 +75,6 @@
         'addCard',
         'chooseCard',
         'openCard'
-      ]
-  });
-</script>
-<script src="/yh/js/jquery-1.10.2.js" type="text/javascript"></script>
-<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-<script charset="utf-8" src="http://map.qq.com/api/js?v=1"></script>
-<script>
-  wx.config({
-      debug: false,
-      appId: '${appId}',
-      timestamp: ${timestamp},
-      nonceStr: '${nonceStr}',
-      signature: '${signature}',
-      jsApiList: [
-        'openLocation',
-        'getLocation'
       ]
   });
 </script>
