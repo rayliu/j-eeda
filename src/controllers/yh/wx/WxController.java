@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import models.OrderAttachmentFile;
 import models.Party;
 import models.ReturnOrder;
@@ -19,6 +21,7 @@ import models.TransferOrderItemDetail;
 import models.yh.wx.WechatLacation;
 
 import com.jfinal.kit.PropKit;
+import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
@@ -28,8 +31,10 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.JsTicketApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 
+import controllers.yh.contract.ContractController;
+
 public class WxController extends ApiController {
-	
+	private Logger logger = Logger.getLogger(WxController.class);
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
 	 * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
@@ -52,10 +57,17 @@ public class WxController extends ApiController {
 		return ac;
 	}
 	
-	private void setPageAttr(String url) {
+	private void setPageAttr(String contextPath) {
+		//这里动态处理URL
+		HttpServletRequest request = this.getRequest();
+		String path = request.getContextPath();
+	    String basePath = request.getScheme()+"://"+request.getServerName();
+	    String url = basePath+contextPath+"?"+request.getQueryString();
+	    logger.debug("url = "+url);
+	    
 		String jsapi_ticket = JsTicketApi.getJsTicket().getJsTicket();
 		
-		Map<String, String> m = SignKit.sign(jsapi_ticket, url);//这里需要动态处理
+		Map<String, String> m = SignKit.sign(jsapi_ticket, url);
 		
 		String appId = ApiConfigKit.getApiConfig().getAppId();
 		
@@ -69,39 +81,39 @@ public class WxController extends ApiController {
 	
 	//微信JS demo页面，方便参考
 	public void demo() {
-		setPageAttr("http://tms.eeda123.com/wx/demo");		
+		setPageAttr("/wx/demo");		
 		render("/yh/wx/demo.html");
 	}
 	//汇报位置
 	public void myLocation() {
-		setPageAttr("http://tms.eeda123.com/wx/myLocation");		
+		setPageAttr("/wx/myLocation");		
 		render("/yh/wx/location.html");
 	}
 	//回单上传附件页面
 	public void ro_filing() {
 		setAttr("type", "default");
 		setAttr("orderNo", getPara());
-		setPageAttr("http://tms.eeda123.com/wx/ro_filing");
+		setPageAttr("/wx/ro_filing");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}
 	//回单上传附件页面 - 直送
 	public void directSend() {
 		setAttr("type", "directSend");
 		setAttr("transferOrderNo", getPara());
-		setPageAttr("http://tms.eeda123.com/wx/directSend");
+		setPageAttr("/wx/directSend");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}
 	//回单上传附件页面 - 配送
 	public void distribution() {
 		setAttr("type", "distribution");
-		setPageAttr("http://tms.eeda123.com/wx/distribution");
+		setPageAttr("/wx/distribution");
 		render("/yh/returnOrder/returnOrderFiling.html");
 	}
 	
 	//回单上传附件页面 - 统一单号
 	public void fileUpload() {
 		setAttr("orderNo", getPara());
-		setPageAttr("http://tms.eeda123.com/wx/fileUpload");
+		setPageAttr("/wx/fileUpload");
 		render("/yh/returnOrder/returnOrderUploadFile.html");
 	}
 	
