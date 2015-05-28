@@ -48,6 +48,7 @@ public class RegisterUserController  extends Controller{
         	office.set("phone", phone);
         	office.set("email", email);
         	office.set("type", "总公司");
+        	office.set("create_stamp", new Date());
         	Db.save("office", office);
         	//将当前公司名称注册
         	Record office_config = new Record();
@@ -78,7 +79,7 @@ public class RegisterUserController  extends Controller{
         	
         	
         	
-        	//注册成功
+    		 //注册成功
         	 Email emailTo = new SimpleEmail();
         	 emailTo.setHostName("smtp.exmail.qq.com");
         	 emailTo.setSmtpPort(465);
