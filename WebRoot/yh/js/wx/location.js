@@ -1,4 +1,18 @@
+
 wx.ready(function () {
+	var getUrlParameter=function(sParam){
+	    var sPageURL = window.location.search.substring(1);
+	    var sURLVariables = sPageURL.split('&');
+	    for (var i = 0; i < sURLVariables.length; i++) 
+	    {
+	        var sParameterName = sURLVariables[i].split('=');
+	        if (sParameterName[0] == sParam) 
+	        {
+	            return sParameterName[1];
+	        }
+	    }
+	};
+
   var geocoder,map, marker = null;
   geocoder = new soso.maps.Geocoder();
   
@@ -43,6 +57,14 @@ wx.ready(function () {
 
   // 7.2 获取当前地理位置
   document.querySelector('#getLocation').onclick = function () {
+  	 var code=getUrlParameter('code');
+  	 var access_token_url='https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appId+'&secret='+appSecret+'&code='+code+'&grant_type=authorization_code';
+     
+  	 $.post(access_token_url, function(data, textStatus, xhr) {
+     	alert(JSON.stringify(data));
+     });
+     
+     var url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='+token+'&openid='+openid+'&lang=zh_CN';
 	 $('#getLocation').prop("disabled",true);
 	 wx.getLocation({
 	     success: function (res) {

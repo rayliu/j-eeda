@@ -72,6 +72,7 @@ public class WxController extends ApiController {
 		String appId = ApiConfigKit.getApiConfig().getAppId();
 		
 		setAttr("appId", appId);
+		setAttr("appSecret", PropKit.get("appSecret"));
 		setAttr("timestamp", m.get("timestamp"));
 		setAttr("nonceStr", m.get("nonceStr"));
 		setAttr("signature", m.get("signature"));
