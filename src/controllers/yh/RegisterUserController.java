@@ -1,6 +1,7 @@
 package controllers.yh;
 
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,6 +11,9 @@ import models.UserRole;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 
 import com.jfinal.aop.Before;
@@ -92,17 +96,21 @@ public class RegisterUserController  extends Controller{
         	 try{
         		/*EedaConfig.mailUser*/
 	        	emailTo.setFrom(EedaConfig.mailUser);//设置发信人
-	        	emailTo.setSubject("新公司注册");
+	        	emailTo.setSubject("新公司注册信息");
 	            Date date = new Date();
 	            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 	            String newDate = sf.format(date);
 	            String basePath =newDate + "  " + userName + "用户在平台上注册" + officeName + "的一个总公司";
 	
 	            emailTo.setMsg(basePath);
+	            
+	            
 	            /*添加邮件收件人*/
 	            emailTo.addTo("ray_liu@eeda123.com");//设置收件人
 	            emailTo.addTo("kate.lin@eeda123.com");
             	emailTo.send();
+            	
+            	sendToUser(email);
              	
              }catch(Exception e){
              	e.printStackTrace();
@@ -112,6 +120,35 @@ public class RegisterUserController  extends Controller{
              	forwardAction("/login");
              }
 		
+	}
+	private void sendToUser(String email) throws EmailException {
+		MultiPartEmail emailToUser = new MultiPartEmail();
+		emailToUser.setHostName("smtp.exmail.qq.com");
+		emailToUser.setSmtpPort(465);
+		
+		// 输入公司的邮箱和密码
+		emailToUser.setAuthenticator(new DefaultAuthenticator(EedaConfig.mailUser, EedaConfig.mailPwd));        
+		emailToUser.setSSLOnConnect(true);
+		
+		// 设置发信人
+		emailToUser.setFrom(EedaConfig.mailUser);
+		// 设置主题
+		emailToUser.setSubject("快速掌握易达物流系统");		// 要发送的附件    
+		String basePath ="尊敬的" + email +"用户：\r \n \r \n \r \n \t \t\t \t\t \t感谢您注册易达TMS，您的账号已激活。为了使你快速的了解我们的系统，请您参考3 minutes to know Eeda-TMS.pdf文档。\r \n \r \n如果有问题，请联系我们创诚易达团队\r \n";
+		emailToUser.setMsg(basePath);
+		EmailAttachment attachment = new EmailAttachment();    
+		File file = new File(System.getProperty("user.dir")+"\\WebRoot\\download\\3 minutes to know Eeda-TMS.pdf");    
+		attachment.setPath(file.getPath());    
+		attachment.setName(file.getName());    
+		// 设置附件描述    
+		attachment.setDescription("三分钟了解系统");    
+		// 设置附件类型    
+		attachment.setDisposition(EmailAttachment.ATTACHMENT);  
+		// 添加邮件附件   
+		emailToUser.attach(attachment);
+		// 添加邮件收件人
+		emailToUser.addTo(email);
+		emailToUser.send();
 	}
 	
 	public void checkUserNameExist(){
