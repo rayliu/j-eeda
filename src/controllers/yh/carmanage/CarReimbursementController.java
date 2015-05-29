@@ -59,7 +59,10 @@ public class CarReimbursementController extends Controller {
         String sqlTotal = "";
         String sql = "";
         if(carReimbursementNo == null && carReimbursementStatus == null && acditorName == null){
-        	sqlTotal = "select count(0) total from reimbursement_order ro";
+        	sqlTotal = "select count(0) total from reimbursement_order ro "
+        			+ " left join user_login l1 on l1.id = ro.create_id"
+        			+ " left join office o on o.id = l1.office_id"
+        			+ " where o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')";
         	sql = "select ro.id, ro.order_no,ro.status,ro.create_stamp,ro.audit_stamp,l1.c_name creator, l2.c_name auditor, "
         			+ " (select group_concat(order_no separator '<br>' ) from car_summary_order cso where cso.reimbursement_order_id = ro.id) cso_order_no,"
         			+ " (select sum(cso.next_start_car_amount + cso.month_refuel_amount) from car_summary_order cso where cso.id in "
@@ -71,6 +74,8 @@ public class CarReimbursementController extends Controller {
         			+ " from reimbursement_order ro "
         			+ " left join user_login l1 on l1.id = ro.create_id"
         			+ " left join user_login l2 on l2.id = ro.audit_id"
+        			+ " left join office o on o.id = l1.office_id"
+        			+ " where o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')"
         			+ " order by ro.create_stamp desc " + sLimit;
         }else{
         	sqlTotal = "select count(0) total from reimbursement_order ro"
@@ -90,9 +95,11 @@ public class CarReimbursementController extends Controller {
         			+ " from reimbursement_order ro "
         			+ " left join user_login l1 on l1.id = ro.create_id"
         			+ " left join user_login l2 on l2.id = ro.audit_id"
+        			+ " left join office o on o.id = l1.office_id"
         			+ " where ifnull(ro.order_no, '') like '%" + carReimbursementNo + "%'"
         			+ " and ifnull(ro.status, '') like '%" + carReimbursementStatus + "%'"
         			+ " and ifnull(l2.c_name, '') like '%" + acditorName + "%'"
+        			+ " and o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')"
         			+ " order by ro.create_stamp desc " + sLimit;
         }
         
@@ -117,51 +124,57 @@ public class CarReimbursementController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        
-		String sqlTotal = "select count(distinct cso.id) total from car_summary_order cso"
-				+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
-				+ " left join depart_order dod on dod.id = csd.pickup_order_id "
-				+ "	where cso.id in ("+carSummaryOrderIds+")";
-		
-		String sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
-				+ " cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
-				+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
-				+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
-				+ " (select group_concat(pickup_order_no SEPARATOR '\r\n' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
-				+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
-				+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
-				+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
-				+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"
-				+ " (select sum(ifnull(toi.volume, p.volume) * toi.amount ) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id IN "
-				+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as volume,"
-				+ " (select sum( ifnull(nullif(toi.weight, 0),p.weight) * toi.amount) from transfer_order_item toi left join product p on p.id = toi.product_id where toi.order_id IN "
-				+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as weight,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 2) refuel_consume,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) subsidy,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) driver_salary,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) toll_charge,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) handling_charges,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) fine,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) deliveryman_salary,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) parking_charge,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) quarterage,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) weighing_charge,"
-				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) other_charges"
-				+ " from car_summary_order cso"
-				+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
-				+ " left join depart_order dod on dod.id = csd.pickup_order_id "
-				+ "	where cso.id in ("+carSummaryOrderIds+") "
-				//+ " and ifnull(dor.start_data, '') like '%"+transferOrderNo+"%'"
-				+ " order by cso.create_data desc " + sLimit;
-		Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
-		List<Record> orders = Db.find(sql);
-		
-	 	orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        orderMap.put("aaData", orders);
+        if(carSummaryOrderIds != null && !"".equals(carSummaryOrderIds)){
+			String sqlTotal = "select count(distinct cso.id) total from car_summary_order cso"
+					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
+					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ "	where cso.id in ("+carSummaryOrderIds+")";
+			
+			String sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+					+ " cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
+					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
+					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
+					+ " (select group_concat(pickup_order_no SEPARATOR '\r\n' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
+					+ " (select group_concat( dt.transfer_order_no SEPARATOR '\r\n' ) from depart_transfer dt"
+					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
+					+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as turnout_time,"
+					+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id)) as return_time,"
+					+ " (select sum(ifnull(toi.volume, p.volume) * toi.amount ) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id IN "
+					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as volume,"
+					+ " (select sum( ifnull(nullif(toi.weight, 0),p.weight) * toi.amount) from transfer_order_item toi left join product p on p.id = toi.product_id where toi.order_id IN "
+					+ " (select order_id from depart_transfer where pickup_id IN ( select pickup_order_id from car_summary_detail where car_summary_id = cso.id ))) as weight,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 2) refuel_consume,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 3) subsidy,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 4) driver_salary,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 5) toll_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 6) handling_charges,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 7) fine,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 8) deliveryman_salary,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 9) parking_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) quarterage,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) weighing_charge,"
+					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) other_charges"
+					+ " from car_summary_order cso"
+					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
+					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ "	where cso.id in ("+carSummaryOrderIds+") "
+					//+ " and ifnull(dor.start_data, '') like '%"+transferOrderNo+"%'"
+					+ " order by cso.create_data desc " + sLimit;
+			Record rec = Db.findFirst(sqlTotal);
+	        logger.debug("total records:" + rec.getLong("total"));
+			List<Record> orders = Db.find(sql);
+			orderMap = new HashMap();
+	        orderMap.put("sEcho", pageIndex);
+	        orderMap.put("iTotalRecords", rec.getLong("total"));
+	        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+	        orderMap.put("aaData", orders);
+        }else{
+        	orderMap = new HashMap();
+            orderMap.put("sEcho", pageIndex);
+            orderMap.put("iTotalRecords", 0);
+            orderMap.put("iTotalDisplayRecords", 0);
+            orderMap.put("aaData", null);
+        }
         renderJson(orderMap);
 	}
 	
@@ -285,7 +298,7 @@ public class CarReimbursementController extends Controller {
         setAttr("create_by", LoginUserController.getUserNameById(order.get("create_id").toString()));
         setAttr("audit_name", LoginUserController.getUserNameById(order.get("create_id").toString()));
 		setAttr("order", order);
-		setAttr("car_summary_order_ids", order.get("car_summary_order_ids"));
+		setAttr("car_summary_order_ids", order.get("car_summary_order_ids") == null?"":order.get("car_summary_order_ids"));
 		render("/yh/carmanage/carReimbursementEdit.html");
 	}
 	
