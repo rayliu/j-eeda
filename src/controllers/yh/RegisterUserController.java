@@ -112,7 +112,7 @@ public class RegisterUserController  extends Controller{
 	            /*添加邮件收件人*/
 	            emailTo.addTo("ray_liu@eeda123.com");//设置收件人
 	            emailTo.addTo("kate.lin@eeda123.com");
-            	//emailTo.send();
+            	emailTo.send();
             	
             	sendToUser(email);
              	
@@ -138,7 +138,7 @@ public class RegisterUserController  extends Controller{
 		emailToUser.setFrom(EedaConfig.mailUser);
 		// 设置主题
 		emailToUser.setSubject("快速掌握易达物流系统");		// 要发送的附件    
-		String basePath ="尊敬的" + email +"用户：\r\n \t\t\t\t\t\t感谢您注册易达TMS，您的账号已激活。为了使你快速的了解我们的系统，请您参考3分钟认识易达TMS.pdf文档。如果有问题，请联系我们创诚易达团队</p>";
+		String basePath ="尊敬的" + email +"用户：\r \n \r \n \t\t\t\t\t\t感谢您注册易达TMS，您的账号已激活。为了使你快速的了解我们的系统，请您参考3分钟认识易达TMS.pdf文档。如果有问题，请联系我们创诚易达团队</p>";
 		emailToUser.setContent(basePath,"text/html;charset=gbk");
 		
 		EmailAttachment attachment = new EmailAttachment();    
