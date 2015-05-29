@@ -174,7 +174,7 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'  "
+					+ "%' and t.create_stamp between '" + beginTime + "' and '" + endTime + "'  "
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			Record rec = Db.findFirst(sqlTotal);
@@ -207,7 +207,7 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and create_stamp between '" + beginTime
+					+ "%' and t.create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' "
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收', t.planning_time desc" + sLimit;
@@ -249,8 +249,9 @@ public class TransferOrderController extends Controller {
 		if(uo != null){
 			transferOrder.set("office_id", uo.get("office_id"));
 		}/*else{
-			transferOrder.set("office_id", null);
+		    transferOrder.set("office_id", null);
 		}*/
+
 		
 		
 		setAttr("transferOrder",transferOrder);
@@ -488,9 +489,7 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("route_from", getPara("route_from"));
 			transferOrder.set("route_to", getPara("route_to"));
 			transferOrder.set("order_type", getPara("orderType"));
-			if("arrangementOrder".equalsIgnoreCase(getPara("orderType"))){
-				transferOrder.set("from_warehouse_id", from_warehouse_id);
-			}
+			transferOrder.set("from_warehouse_id", from_warehouse_id);
 			transferOrder.set("customer_province", getPara("customerProvince"));
 			transferOrder.set("pickup_assign_status",
 					TransferOrder.ASSIGN_STATUS_NEW);
@@ -525,31 +524,21 @@ public class TransferOrderController extends Controller {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
 				}
-				/*if (notifyPartyId == null || "".equals(notifyPartyId)) {
-					party = saveContact();
-				} else {
-					party = updateContact(notifyPartyId);
-				}
-				transferOrder.set("notify_party_id", party.get("id"));*/
+				
 			}
 			if (officeId != null && !"".equals(officeId)) {
 				transferOrder.set("office_id", officeId);
 			}
 			transferOrder.save();
-			/*
-			 * // 如果是货品直送,则需生成一张发车单 if
-			 * (transferOrder.get("arrival_mode").equals("delivery")) {
-			 * createDepartOrder(transferOrder); }
-			 */
+			
 			saveTransferOrderMilestone(transferOrder);
 		} else {
 			transferOrder = TransferOrder.dao.findById(order_id);
 			if (!"".equals(spId) && spId != null) {
 				transferOrder.set("sp_id", spId);
 			}
-			if("arrangementOrder".equalsIgnoreCase(getPara("orderType"))){
-				transferOrder.set("from_warehouse_id", from_warehouse_id);
-			}
+			transferOrder.set("from_warehouse_id", from_warehouse_id);
+			
 			transferOrder.set("customer_id", customerId);
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
@@ -598,28 +587,13 @@ public class TransferOrderController extends Controller {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
 				}
-				/*if (notifyPartyId == null || "".equals(notifyPartyId)) {
-					party = saveContact();
-				} else {
-					party = updateContact(notifyPartyId);
-				}
-				transferOrder.set("notify_party_id", party.get("id"));*/
+				
 			}
 			if (officeId != null && !"".equals(officeId)) {
 				transferOrder.set("office_id", officeId);
 			}
 			transferOrder.update();
-			/*
-			 * // 如果是货品直送,则需判断是否新建一张发车单 if
-			 * (transferOrder.get("arrival_mode").equals("delivery")) {
-			 * DepartTransferOrder departTransferOrder =
-			 * DepartTransferOrder.dao.findFirst(
-			 * "select * from depart_transfer where order_id = ?",
-			 * transferOrder.get("id")); if (departTransferOrder == null) {
-			 * createDepartOrder(transferOrder); } else {
-			 * updateDepartOrder(transferOrder, departTransferOrder); } } else {
-			 * deleteDepartOrder(transferOrder); }
-			 */
+			
 		}
 		renderJson(transferOrder);
 	}
