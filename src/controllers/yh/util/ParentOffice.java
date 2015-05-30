@@ -5,6 +5,7 @@ import java.util.Map;
 
 import models.Office;
 import models.ParentOfficeModel;
+import models.UserLogin;
 import models.UserOffice;
 
 import org.apache.shiro.SecurityUtils;
@@ -26,11 +27,11 @@ public class ParentOffice{
 	public ParentOfficeModel getOfficeId(Controller controller) {
 		Subject currentUser = SecurityUtils.getSubject();
 		String userName;
-		UserOffice currentOffice = new UserOffice();
-		Office parentOffice = new Office();;
+		UserLogin currentOffice = new UserLogin();
+		Office parentOffice = new Office();
 		try{
 			userName = currentUser.getPrincipal().toString();
-			currentOffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
+			currentOffice = UserLogin.dao.findFirst("select * from user_login where user_name = ?",userName);
 		    parentOffice = Office.dao.findFirst("select * from office where id = ?",currentOffice.get("office_id"));
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
@@ -51,4 +52,5 @@ public class ParentOffice{
 	    pom.setParentOfficeId(parentID);
 		return pom;
 	}
+	
 }

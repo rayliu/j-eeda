@@ -27,6 +27,7 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
 			}
 			ai.getController().setAttr("user_login_id", currentUser.getPrincipal());
 			setSysTitle(ai.getController());
+			ai.getController().setAttr("permissionMap", ai.getController().getSessionAttr("permissionMap"));
 		}
 		ai.invoke();
 	}

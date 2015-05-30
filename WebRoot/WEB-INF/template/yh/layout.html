@@ -94,7 +94,9 @@
 	                   </li>
                     <%}%>
                     <%  
-                        if(shiro.hasPermission("TransferOrder.list",user_login_id)){
+                    	var map = permissionMap;
+                    	
+                        if(map.TransferOrder_list != ""){
                     %>
                         <li id="menu_transfer">
                             <a href="#"><i class="fa fa-file-text fa-fw"></i> 运输订单管理<span class="fa arrow"></span></a>
@@ -112,20 +114,43 @@
                             <!-- /.nav-second-level -->
                         </li>
                     <%}%>
+                     <% if(true){%>
+	                    <li id="menu_returnTransfer">
+	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 质量管理(货损/退货)<span class="fa arrow"></span></a>
+	                        <ul class="nav nav-second-level">
+	                        	<li>
+	                                <a href="/returnTransfer">退货单</a>
+	                            </li>
+	                            <!-- <li>
+	                                <a href="">理赔单</a>
+	                            </li>
+	                            <li>
+	                                <a href="">运输单</a>
+	                            </li>
+	                            <li>
+	                                <a href="">提货调车单</a>
+	                            </li>
+	                             <li>
+	                                <a href="">干线发车</a>
+	                            </li> -->
+	                        </ul>
+	                        <!-- /.nav-second-level -->
+	                    </li>
+	                 <%}%>
                     <%  
-                        var isPickupOrder = shiro.hasPermission("PickupOrder.list",user_login_id);
-                        var isDepartOrder = shiro.hasPermission("DepartOrder.list",user_login_id);
-                        if(isPickupOrder||isDepartOrder){
+                        var isPickupOrder = map.PickupOrder_list;
+                        var isDepartOrder = map.DepartOrder_list;
+                        if(isPickupOrder != "" || isDepartOrder != ""){
                     %>
                         <li id="menu_assign">
                             <a href="#"><i class="fa fa-truck fa-fw"></i>调度管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <% if(isPickupOrder){%>
+                                <% if(isPickupOrder != ''){%>
                                 <li>
                                     <a href="/pickupOrder">提货调车单</a>
                                 </li>
                                 <%}%>
-                                <% if(isDepartOrder){%>
+                                <% if(isDepartOrder != ''){%>
                                 <li>
                                     <a href="/departOrder">干线发车单</a>
                                 </li>
@@ -135,20 +160,20 @@
                         </li>
                     <%}%>
                     <%
-                    	var carInfoPermission = shiro.hasPermission("CarInfo.list",user_login_id);
-                    	var driverInfoPermission = shiro.hasPermission("Driver.list",user_login_id);
-                    	var carSummaryPermission = shiro.hasPermission("CarSummary.list",user_login_id);
-                    	if(carInfoPermission || driverInfoPermission || carSummaryPermission){
+                    	var carInfoPermission = map.CarInfo_list;
+                    	var driverInfoPermission = map.Driver_list;
+                    	var carSummaryPermission = map.CarSummary_list;
+                    	if(carInfoPermission != '' || driverInfoPermission != '' || carSummaryPermission != ''){
                     %>
 	                    <li id="menu_carmanage">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i>自营车辆管理<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
-	                            <% if(carInfoPermission){ %>
+	                            <% if(carInfoPermission != ''){ %>
 		                            <li>
 		                                <a  href="/carinfo">车辆信息</a>
 		                            </li>
 	                            <%}%>
-	                            <% if(driverInfoPermission){%>
+	                            <% if(driverInfoPermission != ''){%>
 		                            <li>
 		                                <a  href="/driverinfo/driverinfoIndex">司机信息</a>
 		                            </li>
@@ -158,7 +183,7 @@
 	                                <a  href="/driverAssistant">跟车人员信息</a>
 	                            </li>
 	                            <%}%>
-	                            <% if(carSummaryPermission){%>
+	                            <% if(carSummaryPermission != ''){%>
 		                            <li>
 		                                <a href="/carsummary">行车单</a>
 		                            </li>
@@ -177,7 +202,7 @@
 	                        <!-- /.nav-second-level -->
 	                    </li>
                     <%}%>
-                    <% if(shiro.hasPermission("InsuranceOrder.list",user_login_id)){%>
+                    <% if(map.InsuranceOrder_list != ''){%>
 	                    <li id="menu_damage">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 保险购买<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
@@ -188,27 +213,8 @@
 	                        <!-- /.nav-second-level -->
 	                    </li>
                     <%}%>
-                    <% if(false){%>
-	                    <li id="menu_damage">
-	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 质量管理(货损/退货)<span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level">
-	                            <li>
-	                                <a href="/accountReload">理赔单</a>
-	                            </li>
-	                            <li>
-	                                <a href="">运输单</a>
-	                            </li>
-	                            <li>
-	                                <a href="/pickupOrder">提货调车单</a>
-	                            </li>
-	                             <li>
-	                                <a href="/departOrder">干线发车</a>
-	                            </li>
-	                        </ul>
-	                        <!-- /.nav-second-level -->
-	                    </li>
-	                 <%}%>
-	                 <% if(shiro.hasPermission("Ontrip.list",user_login_id)){%>
+                   
+	                 <% if(map.Ontrip_list != ''){%>
 	                    <li id="menu_status">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 运输在途管理<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
@@ -226,14 +232,14 @@
 	                    </li>
                     <%}%>
                     <%
-                    	var deliveryListPermission = shiro.hasPermission("DeliveryOder.list",user_login_id);
-                    	var deliveryOnTripPermission = shiro.hasPermission("DeliveryOderMilestone.list",user_login_id);
-                    	if(deliveryListPermission || deliveryOnTripPermission){
+                    	var deliveryListPermission = map.DeliveryOder_list;
+                    	var deliveryOnTripPermission = map.DeliveryOderMilestone_list;
+                    	if(deliveryListPermission != '' || deliveryOnTripPermission != ''){
                     %>
 	                    <li id="menu_deliver">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 配送管理<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
-	                        	<% if(deliveryListPermission){%>
+	                        	<% if(deliveryListPermission != ''){%>
 		                            <li>
 		                                <a href="/delivery">配送单</a>
 		                            </li>
@@ -243,7 +249,7 @@
 		                                <a href="/deliveryPlanOrder">配送排车单</a>
 		                            </li>
 	                            <%}%>
-	                            <% if(deliveryOnTripPermission){%>
+	                            <% if(deliveryOnTripPermission != ''){%>
 		                            <li>
 		                                <a href="/deliveryMilestone/deliverOnTrip">配送在途管理</a>
 		                            </li>
@@ -253,25 +259,25 @@
 	                    </li>
                  <%}%>
                   <%
-                  	var gateInPermission = shiro.hasPermission("WarehouseOrder.inList",user_login_id);
-                  	var gateOutPermission = shiro.hasPermission("WarehouseOrder.outList",user_login_id);
-                  	var InventoryListPermission = shiro.hasPermission("InventoryItem.list",user_login_id);
-                  	if(gateInPermission || gateOutPermission || InventoryListPermission && !shiro.hasRole("outuser")){
+                  	var gateInPermission = map.WarehouseOrder_inList;
+                  	var gateOutPermission = map.WarehouseOrder_outList;
+                  	var InventoryListPermission = map.InventoryItem_list;
+                  	if(gateInPermission != '' || gateOutPermission != '' || InventoryListPermission != '' && !shiro.hasRole("outuser")){
                   %>
                     <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 仓储管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                        	<% if(gateInPermission){%>
+                        	<% if(gateInPermission != ''){%>
 	                            <li>
 	                                <a href="/gateIn">入库单</a>
 	                            </li>
                             <%}%>
-                            <% if(gateOutPermission){%>
+                            <% if(gateOutPermission != ''){%>
 	                            <li>
 	                                <a href="/gateOut/outIndex">出库单</a>
 	                            </li>
 	                        <%}%>
-	                        <% if(InventoryListPermission){%>
+	                        <% if(InventoryListPermission != ''){%>
 	                            <li>
 	                                <a href="/stock/stockIndex">库存</a>
 	                            </li>
@@ -280,7 +286,7 @@
                         <!-- /.nav-second-level -->
                     </li>
                  <%}%>
-                 <% if(shiro.hasPermission("ReturnOrder.list",user_login_id)){%>
+                 <% if(map.ReturnOrder_list != ''){%>
                     <li id="menu_return">
                         <a href="#"><i class="fa fa-file-text fa-fw"></i> 回单管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -292,33 +298,31 @@
                     </li>
                  <%}%>
                  <%
-                 	var chargeItemPermission = shiro.hasPermission("ChargeItem.affirm",user_login_id);
-                 	var chargeCheckOrderList = shiro.hasPermission("ChargeCheckOrder.list",user_login_id);
-                 	var chargePreInvoiceOrder = shiro.hasPermission("ChargePreInvoiceOrder.list",user_login_id);
-                 	var ChargeInvoiceOrderPermission = shiro.hasPermission("ChargeInvoiceOrder.list",user_login_id);
-                 	
-                 	
-                 	if(chargeItemPermission || chargeCheckOrderList || chargePreInvoiceOrder ||ChargeInvoiceOrderPermission){
+                 	var chargeItemPermission = map.ChargeItem_affirm;
+                 	var chargeCheckOrderList = map.ChargeCheckOrder_list;
+                 	var chargePreInvoiceOrder = map.ChargePreInvoiceOrder_list;
+                 	var ChargeInvoiceOrderPermission = map.ChargeInvoiceOrder_list;
+                 	if(chargeItemPermission != '' || chargeCheckOrderList != '' || chargePreInvoiceOrder != '' ||ChargeInvoiceOrderPermission != ''){
                  %>
                     <li id="menu_charge">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应收管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                        	<% if(chargeItemPermission){%>
+                        	<% if(chargeItemPermission != ''){%>
 	                            <li>
 	                                <a href="/chargeConfiremList">应收明细确认</a>
 	                            </li>
                             <%}%>
-                            <% if(chargeCheckOrderList){%>
+                            <% if(chargeCheckOrderList != ''){%>
 	                            <li>
 	                                <a href="/chargeCheckOrder">应收对账单</a>
 	                            </li>
                             <%}%>
-                            <% if(chargePreInvoiceOrder){%>
+                            <% if(chargePreInvoiceOrder != ''){%>
 	                            <li>
 	                                <a href="/chargePreInvoiceOrder">应收开票申请</a>
 	                            </li>
                             <%}%>
-                            <% if(ChargeInvoiceOrderPermission){%>
+                            <% if(ChargeInvoiceOrderPermission != ''){%>
 	                            <li>
 	                                <a href="/chargeInvoiceOrder">应收开票记录</a>
 	                            </li>
@@ -333,27 +337,27 @@
                     </li>
                 <%}%>
                 <%
-                	var costConfirmListPermission = shiro.hasPermission("CostItemConfirm.affirm",user_login_id);
-                	var costCheckListPermission = shiro.hasPermission("CostCheckOrder.list",user_login_id);
-                	var costPreInvoiceListPermission = shiro.hasPermission("CostPreInvoiceOrder.list",user_login_id);
+                	var costConfirmListPermission = map.CostItemConfirm_affirm;
+                	var costCheckListPermission = map.CostCheckOrder_list;
+                	var costPreInvoiceListPermission = map.CostPreInvoiceOrder_list;
                 	
                 	
-               		if(costConfirmListPermission || costCheckListPermission || costPreInvoiceListPermission){
+               		if(costConfirmListPermission != '' || costCheckListPermission != '' || costPreInvoiceListPermission != ''){
                 %>
                     <li id="menu_cost">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应付管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <% if(costConfirmListPermission){%>
+                            <% if(costConfirmListPermission != ''){%>
 	                            <li>
 	                                <a href="/costConfirmList">应付明细确认</a>
 	                            </li>
                             <%}%>
-                            <% if(costCheckListPermission){%>
+                            <% if(costCheckListPermission != ''){%>
 	                            <li>
 	                                <a href="/costCheckOrder">应付对账单</a>
 	                            </li>
 	                        <%}%>
-                            <% if(costPreInvoiceListPermission){%>
+                            <% if(costPreInvoiceListPermission != ''){%>
 	                            <li>
 	                                <a href="/costPreInvoiceOrder">付款申请</a>
 	                            </li>
@@ -368,30 +372,30 @@
                     </li>
                	<%}%>
                	<%
-               		var payListPermission = shiro.hasPermission("ChargeItem.affirm",user_login_id);
-               		var costListPermission = shiro.hasPermission("CostItemConfirm.affirm",user_login_id);
-               		var chargePermission = shiro.hasPermission("chargeAcceptOrder_list",user_login_id);
-               		var costConfirmPermission = shiro.hasPermission("costAcceptOrder_list",user_login_id);
-               		var reimbureementPermission = shiro.hasPermission("costReimbureement_list",user_login_id);
-               		var chunarijiPermission = shiro.hasPermission("PaymentCheckOrder.list",user_login_id);
-               		if(payListPermission || costListPermission || chargePermission || costConfirmPermission
-               			|| reimbureementPermission || chunarijiPermission) {
+               		var payListPermission = map.ChargeItem_affirm;
+               		var costListPermission = map.CostItemConfirm_affirm;
+               		var chargePermission = map.chargeAcceptOrder_list;
+               		var costConfirmPermission = map.costAcceptOrder_list;
+               		var reimbureementPermission = map.costReimbureement_list;
+               		var chunarijiPermission = map.PaymentCheckOrder_list;
+               		if(payListPermission != '' || costListPermission != '' || chargePermission != '' || costConfirmPermission != ''
+               			|| reimbureementPermission != '' || chunarijiPermission != '') {
                		
                	%>
                     <li id="menu_finance">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 财务管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                        	<% if(chargePermission){%>
+                        	<% if(chargePermission != ''){%>
 	                            <li>
 	                                <a href="/chargeAcceptOrder">收款确认</a>
 	                            </li>
 	                        <%}%>
-	                        <% if(costConfirmPermission){%>
+	                        <% if(costConfirmPermission != ''){%>
 	                            <li>
 	                                <a href="/costAcceptOrder">付款确认</a>
 	                            </li>
                             <%}%>
-                            <% if(chunarijiPermission){%>
+                            <% if(chunarijiPermission != ''){%>
 	                        	<li>
 	                                <a href="/accountAuditLog">出纳日记帐</a>
 	                            </li>
@@ -401,17 +405,17 @@
 	                                <a href="/accountTransferOrder">账户转账单</a>
 	                            </li>
                             <%}%>
-                            <% if(payListPermission){%>
+                            <% if(payListPermission != ''){%>
 	                            <li>
 	                                <a href="/chargeMiscOrder">手工收入单</a>
 	                            </li>
                             <%}%>
-                            <% if(costListPermission){%>
+                            <% if(costListPermission != ''){%>
 	                            <li>
 	                                <a href="/costMiscOrder">手工成本单</a>
 	                            </li>
                             <%}%>
-                            <% if(reimbureementPermission){%>
+                            <% if(reimbureementPermission != ''){%>
 	                            <li>
 	                                <a href="/costReimbursement">报销单</a>
 	                            </li>
@@ -421,25 +425,25 @@
                         <!-- /.nav-second-level --> 
                     <%}%>
                     <%
-                    	var customerContractListPermission = shiro.hasPermission("ContractCustomer.list",user_login_id);
-                    	var providerContractListPermission = shiro.hasPermission("ContractProvider.list",user_login_id);
-                    	var deliveryContractListPermission = shiro.hasPermission("ContractDelivery.list",user_login_id);
-                   		if(customerContractListPermission || providerContractListPermission || deliveryContractListPermission){
+                    	var customerContractListPermission = map.ContractCustomer_list;
+                    	var providerContractListPermission = map.ContractProvider_list;
+                    	var deliveryContractListPermission = map.ContractDelivery_list;
+                   		if(customerContractListPermission != '' || providerContractListPermission != '' || deliveryContractListPermission != ''){
                     %>
                     <li id="menu_contract">
                         <a href="#"><i class="fa fa-book fa-fw"></i> 合同管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <% if(customerContractListPermission){%>
+                            <% if(customerContractListPermission != ''){%>
 	                            <li>
 	                                <a href="/customerContract">客户合同</a>
 	                            </li>
 	                         <%}%>
-	                         <% if(providerContractListPermission){%>
+	                         <% if(providerContractListPermission != ''){%>
 	                            <li>
 	                                <a href="/spContract/spIndex">干线供应商合同</a>
 	                            </li>
                             <%}%>
-                            <% if(deliveryContractListPermission){%>
+                            <% if(deliveryContractListPermission != ''){%>
 	                            <li>
 	                                <a href="/deliverySpContract/deliverySpIndex">提货/配送供应商合同</a>
 	                            </li>
@@ -492,58 +496,58 @@
                     </li>
                     <%}%>
                     <%
-                    	var userLoginListPermission = shiro.hasPermission("User.list",user_login_id);
-                    	var roleListPermission = shiro.hasPermission("Role.list",user_login_id);
-                    	var userRoleListPermission = shiro.hasPermission("UserRole.list",user_login_id);
-                    	var rolePrivilegeListPermission = shiro.hasPermission("RolePermission.list",user_login_id);
-                    	var customerPermission = shiro.hasPermission("Customer.list",user_login_id);
-                    	var spListPermission = shiro.hasPermission("Provider.list",user_login_id);
-                    	var spCarListPermission = shiro.hasPermission("ProviderCar.list",user_login_id);
-                    	var spDriverListPermission = shiro.hasPermission("ProviderDriver.list",user_login_id);
-                    	var officeListPermission = shiro.hasPermission("Office.list",user_login_id);
-                    	var productListPermission = shiro.hasPermission("Product.list",user_login_id);
-                    	var warehouseListPermission = shiro.hasPermission("Warehouse.list",user_login_id);
-                    	var tollpayListPermission = shiro.hasPermission("Toll.list",user_login_id);
-                    	var tollcostListPermission = shiro.hasPermission("Pay.list",user_login_id);
-                    	var accountListPermission = shiro.hasPermission("Account.list",user_login_id);
+                    	var userLoginListPermission = map.User_list;
+                    	var roleListPermission = map.Role_list;
+                    	var userRoleListPermission = map.UserRole_list;
+                    	var rolePrivilegeListPermission = map.RolePermission_list;
+                    	var customerPermission = map.Customer_list;
+                    	var spListPermission = map.Provider_list;
+                    	var spCarListPermission = map.ProviderCar_list;
+                    	var spDriverListPermission = map.ProviderDriver_list;
+                    	var officeListPermission = map.Office_list;
+                    	var productListPermission = map.Product_list;
+                    	var warehouseListPermission = map.Warehouse_list;
+                    	var tollpayListPermission = map.Toll_list;
+                    	var tollcostListPermission = map.Pay_list;
+                    	var accountListPermission = map.Account_list;
                     	
-                    	if(userLoginListPermission || roleListPermission || userRoleListPermission
-                    		|| rolePrivilegeListPermission || customerPermission || spListPermission || spCarListPermission
-                    		|| spDriverListPermission || officeListPermission || productListPermission || warehouseListPermission
-                    		|| tollpayListPermission || tollcostListPermission || accountListPermission){
+                    	if(userLoginListPermission != '' || roleListPermission != '' || userRoleListPermission != ''
+                    		|| rolePrivilegeListPermission != '' || customerPermission != '' || spListPermission != '' || spCarListPermission != ''
+                    		|| spDriverListPermission != '' || officeListPermission != '' || productListPermission != '' || warehouseListPermission != ''
+                    		|| tollpayListPermission != '' || tollcostListPermission != '' || accountListPermission != ''){
                     %>
                     
 	                    <li id="menu_profile">
 	                        <a href="#"><i class="fa fa-cog fa-fw"></i> 基础数据设置<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
-	                            <% if(roleListPermission){%>
+	                            <% if(roleListPermission != ''){%>
 		                            <li>
 		                                <a href="/role">角色</a>
 		                            </li>
 		                        <%}%>
-	                            <% if(rolePrivilegeListPermission){%>
+	                            <% if(rolePrivilegeListPermission != ''){%>
 		                            <li>
 		                                <a href="/privilege">角色权限</a>
 		                            </li>
 	                             <%}%>
-	                            <% if(userLoginListPermission){%>
+	                            <% if(userLoginListPermission != ''){%>
 		                            <li>
 		                                <a href="/loginUser">登录用户</a>
 		                            </li>
 		                         <%}%>
 		                         
-		                         <% if(userRoleListPermission){%>
+		                         <% if(userRoleListPermission != ''){%>
 		                            <li>
 		                                <a href="/userRole">用户角色</a>
 		                            </li>
 	                             <%}%>
 		                         
-		                         <% if(customerPermission){%>
+		                         <% if(customerPermission != ''){%>
 		                            <li>
 		                                <a href="/customer">客户</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(spListPermission){%>
+		                         <% if(spListPermission != ''){%>
 		                            <li>
 		                                <a href="/serviceProvider">供应商</a>
 		                            </li>
@@ -551,27 +555,27 @@
 	                             <li>
 		                                <a href="/insurance">保险公司</a>
 		                         </li>
-		                         <% if(spCarListPermission){%>
+		                         <% if(spCarListPermission != ''){%>
 		                            <li>
 		                                <a href="/spcarinfo/spcarinfoIndex">供应商车辆信息</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(spDriverListPermission){%>
+		                         <% if(spDriverListPermission != ''){%>
 		                            <li>
 		                                <a href="/spdriverinfo/spdriverinfoIndex">供应商司机信息</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(officeListPermission){%>
+		                         <% if(officeListPermission != ''){%>
 		                            <li>
 		                                <a href="/office">网点[分公司]</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(productListPermission){%>
+		                         <% if(productListPermission != ''){%>
 		                            <li>
 		                                <a href="/product">产品</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(warehouseListPermission){%>
+		                         <% if(warehouseListPermission != ''){%>
 		                            <li>
 		                                <a href="/warehouse">仓库</a>
 		                            </li>
@@ -585,17 +589,17 @@
 	                            <li>
 	                                <a href="/orderStatus">里程碑</a>
 	                            </li> -->
-		                         <% if(tollpayListPermission){%>
+		                         <% if(tollpayListPermission != ''){%>
 		                            <li>
 		                                <a  href="/toll?page=收费">收费条目定义</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(tollcostListPermission){%>
+		                         <% if(tollcostListPermission != ''){%>
 		                            <li>
 		                                <a  href="/pay?page=付款">付费条目定义</a>
 		                            </li>
 	                             <%}%>
-		                         <% if(accountListPermission){%>
+		                         <% if(accountListPermission != ''){%>
 		                            <li>
 		                                <a  href="/account">金融账户</a>
 		                            </li>
