@@ -1,38 +1,156 @@
 <%layout("/yh/layout.html"){%>
 
-	<div id="page-wrapper">
+<link rel="stylesheet" href="/yh/js/plugins/jQuery-File-Upload-9.9.3/css/jquery.fileupload.css">
+<link rel="stylesheet" href="/yh/js/plugins/jQuery-File-Upload-9.9.3/css/jquery.fileupload.css">
+
+	<div id="page-wrapper" >
 		<div class="row">
-			<div class="btn-header"></div>
-			<div class="alert alert-warning alert-dismissible fade in" role="alert">
-		      <strong>系统设置为收费功能!</strong> 
-		      您可以定制系统的显示名，背景，logo，域名，并使用您自己的公司邮箱，如有需要请与我们<a href='http://www.eeda123.com' target="_blank">联系</a>。
-		    </div>
-            <!--ul id="myTab" class="nav nav-tabs" role="tablist">
-		      <li role="presentation" class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">系统信息</a></li>
-		      <li role="presentation" class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="false">邮箱</a></li>
-		    </ul>
-		    <form role="form" id="officeConfigForm" novalidate="novalidate">
-		    <div id="myTabContent" class="tab-content">
-		    	
-			        <div role="tabpanel" class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
+			<div class="panel panel-default">
+				<div class="btn-header"></div>
+				<div class="alert alert-warning alert-dismissible fade in" role="alert" id="money" >
+			      <strong>系统设置为收费功能!</strong> 
+			      您可以定制系统的显示名，背景，logo，域名，并使用您自己的公司邮箱，如有需要请与我们<a href='http://www.eeda123.com' target="_blank">联系</a>。
+			    </div>
+			    <div class="panel-body" id="total">
+		           <ul id="myTab" class="nav nav-tabs" role="tablist">
+			      <li role="presentation" class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">公司信息</a></li>
+			      <li role="presentation" class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="false">邮箱</a></li>
+			    </ul>
+			   
+			    <div id="myTabContent" class="tab-content" >
+			        <div  class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
 				        <div class="row">
-				        	<div class="col-lg-12">
-				        		<p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.</p>
+							<form  id="officeConfigForm" enctype="multipart/form-data" action="/officeConfig/updateOfficeConfig" method="post">
+				        	<div class="col-lg-6"><br>
+				        		<input type="hidden" class="form-control" id="office_id" name="office_id" value="${lu.id!''}" />
+				        		<div class="form-group">
+                                	<label class="search-label">公司名称</label>
+                                    <input type="text" class="form-control" id="office_name" name="office_name" value="${lu.office_name!''}" placeholder="请输入公司名称"  >                           
+    							</div><br>
+    							<div class="form-group ">
+						            <label class="search-label">公司简称</label>
+						            <input type="text" class="form-control" id="abbr" name="abbr" value="${lu.abbr!''}" placeholder="请输入公司简称"  />
+						        </div><br>
+    							<div class="form-group">
+						        	<label class="search-label">二级域名</label>
+						        	<input type="text" class="form-control" id="secondDomain" name="secondDomain" value="${officeConfig.secondDomain!''}" placeholder="请输入二级域名">
+						      	</div><br>
+								<div class="form-group"><br>
+							  		<label class="control-label">L O G O </label> 										  	
+				                	<span class="btn btn-success fileinput-button">
+				                	<span>选择图片</span>
+				                	<input id="logofile" type="file" name="logofile" />
+				                	</span>                                               
+								    <br>
+                               	</div>	
+								<div class="form-group" ><br>
+							  		<label class="control-label">背景图片</label> 										  	
+				                	<span class="btn btn-success fileinput-button">
+				                	<span>选择背景</span>
+				                	<input id="bgfile" type="file" name="bgfile">
+				                	</span><br>                                                           
+								    <br>
+                               	</div>  		       
 				        	</div>
+					        	
+				        	<div class="col-lg-6"><br>
+			        			<div id="logoyl"><br>
+			        				<label class="control-label">LOGO图片预览</label><br> 
+					        		<div id="logoDiv" align="center" >
+					        			<img alt="" style='height:200px; width:200px;' src="${officeConfig.logo!''}">
+                            		</div>
+                            	</div>
+					        	<div id="bgyl"><br>
+					        		<label class="control-label">背景图片预览</label><br>
+					        		
+					        		<div id="bgDiv" align="center">
+					        			<% if(officeConfig.login_bg!''==''){ %>
+					        			<div id="bgD"></div>
+					        			<% }%>
+					        			<img alt="" style='height:200px;' src="${officeConfig.login_bg!''}">
+					        			
+                            	 	</div> 
+                            	 	
+					          </div> 
+				           </div >
 				        </div>
-			        </div>
-			      	<div role="tabpanel" class="tab-pane fade" id="profile" aria-labelledby="profile-tab">
-			        	<p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.</p>
+				    </div>
+				        
+				    <div role="tabpanel" class="tab-pane fade" id="profile" aria-labelledby="profile-tab">
+				      	<div class="row">
+				      		<div class="col-lg-6"><br>
+				        		<div class="form-group">
+							    	<label class="search-label">Email</label>
+							    	<input type="text" class="form-control" id="email" name="email" value="${officeConfig.email!''}" placeholder="请输入email" />
+							    	<br>
+							    </div>
+							    
+							    <div class="form-group ">
+							     	<label class="search-label">密 码</label>
+							     	<input type="text" class="form-control" id="password" name="password" value="${officeConfig.password!''}" placeholder="请输入密 码" />
+							    	<br>
+							    </div>
+							    
+							     <div class="form-group ">
+							     	<label class="search-label">域名</label>
+							     	<input type="text" class="form-control" id="domain" name="domain" value="${officeConfig.domain!''}" placeholder="请输入域名" />
+							    	<br>
+							    </div>					   		    
+							</div>
+							
+							<div class="col-lg-6"><br>
+							   <div class="form-group ">
+							     	<label class="search-label">SMTP服务器</label>
+							     	<input type="text" class="form-control" id="serverType" name="serverType" value="${officeConfig.serverType!''}" placeholder="请输入密 码" />
+							    	<br>
+							    </div>
+							    
+							    <div class="form-group ">
+							     	<label class="search-label">端口号</label>
+							     	<input type="text" class="form-control" id="portNo" name="portNo" value="${officeConfig.portNo!''}" placeholder="请输入端口号" />
+							    	<br>
+							    </div><br><br>
+							     
+							    <div class="form-group">                                            
+	                            	<input type="checkbox" name="sslayer" id="sslayer" <% if(officeConfig.sslayer!''=='true'){ %>checked='checked'<%}%>/>
+									<strong>SSL</strong>
+	                           	</div><br><br>
+	                           	<div>
+	                           		<a class="btn  btn-primary" href="" id="ceshibtn">测试</a>
+	                           	</div>
+							</div>
+				        </div> 
 			      	</div>
-		        
-		      
-		    </div><!-- tab content>    
-		    </form-->
+		      	</form>
+		    </div>
+		    <div class="col-lg-12">
+		    	<hr/>
+		    	<button id="saveBtn" type="button" class="btn  btn-primary">保存</button>
+		    	<a class="btn  btn-primary" href='/'>返回</a>
+		   </div>
+		   </div>
+		   </div>
 		</div>
 	</div>
 <%}%>
 <!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/vendor/jquery.ui.widget.js"></script>
+<script src="/yh/js/plugins/JavaScript-Load-Image-1.13.0/tmpl.min.js"></script>
+<script src="/yh/js/plugins/JavaScript-Load-Image-1.13.0/js/load-image.all.min.js"></script>
+<script src="/yh/js/plugins/JavaScript-Canvas-to-Blob-2.0.5/js/canvas-to-blob.min.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.iframe-transport.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-process.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-image.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-audio.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-video.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-validate.js"></script>
+<script src="/yh/js/plugins/jQuery-File-Upload-9.9.3/js/jquery.fileupload-ui.js"></script>
+<script src="/yh/js/plugins/jquery-qrcode/jquery.qrcode.min.js"></script>
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/profile/officeConfig/edit.js"></script>
 
 

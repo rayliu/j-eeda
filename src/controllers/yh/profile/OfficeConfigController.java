@@ -2,12 +2,19 @@ package controllers.yh.profile;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import models.Office;
 import models.ParentOfficeModel;
 import models.Warehouse;
+import models.yh.profile.OfficeCofig;
 
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.SimpleEmail;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -17,8 +24,10 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
+import config.EedaConfig;
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
@@ -33,6 +42,10 @@ public class OfficeConfigController extends Controller{
     
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_LIST})
 	public void index() {
+		Office office = Office.dao.findById(pom.getParentOfficeId());
+		OfficeCofig officeConfig = OfficeCofig.dao.findFirst("select * from office_config where office_id = ?",pom.getParentOfficeId());
+		setAttr("lu", office);
+		setAttr("officeConfig", officeConfig);
 		render("/yh/profile/officeConfig/edit.html");
 	}
 		
@@ -121,6 +134,141 @@ public class OfficeConfigController extends Controller{
 		}
 		setAttr("saveOK", true);
 		redirect("/warehouse");
+	}
+	
+	//更改系统配置信息
+	public void updateOfficeConfig() {
+		String logofileName=null;
+		String bgfileName=null;
+		UploadFile logofileImg = getFile("logofile");
+		UploadFile bgfileimg = getFile("bgfile");
+		if(getFile("logofile")!=null&&!"".equals(getFile("logofile"))){
+	    	File file = logofileImg.getFile();
+	    	logofileName = file.getPath().substring(17);
+		}
+        
+		if(getFile("bgfile")!=null&&!"".equals(getFile("bgfile"))){
+	    	File bg = bgfileimg.getFile();
+	    	bgfileName = bg.getPath().substring(17);
+		}
+
+    	
+    	String office_id = getPara("office_id");
+    	String office_name = getPara("office_name");
+    	String abbr = getPara("abbr");
+    	
+    	String secondDomain = getPara("secondDomain");
+    	String email = getPara("email");
+    	String domain = getPara("domain");
+    	String serverType = getPara("serverType");
+    	String portNo = getPara("portNo");
+    	String password = getPara("password");
+    	String sslayer = getPara("sslayer");
+    	if(sslayer==null||sslayer==""){
+    		sslayer="false";
+    	}
+    	if(sslayer.equals("on")){
+    		sslayer="true";
+    	}
+		Office office = Office.dao.findById(office_id);
+		office.set("office_name", office_name);
+		office.set("abbr",abbr);
+		office.update();
+		
+		OfficeCofig officeConfig = OfficeCofig.dao.findFirst("select * from office_config where office_id = ?",office_id);
+		if(logofileName != null && !"".equals(logofileName)){
+			officeConfig.set("logo", logofileName);
+		}
+		if(bgfileName != null && !"".equals(bgfileName)){
+			officeConfig.set("login_bg",bgfileName );
+		}
+		//String aa=officeConfig.get("secondDomain");
+		//二级域名改变的时候自动发送邮件
+		if(!secondDomain.equals(officeConfig.get("secondDomain"))){
+	        Email emailTo = new SimpleEmail();
+	        emailTo.setHostName("smtp.exmail.qq.com");
+	        emailTo.setSmtpPort(465);
+	        
+	        /*输入公司的邮箱和密码*/
+	        /*EedaConfig.mailUser, EedaConfig.mailPwd*/
+	        emailTo.setAuthenticator(new DefaultAuthenticator(EedaConfig.mailUser, EedaConfig.mailPwd));        
+	        emailTo.setSSLOnConnect(true);
+	        try{
+	            /*EedaConfig.mailUser*/
+	            emailTo.setFrom(EedaConfig.mailUser);//设置发信人
+	            emailTo.setSubject("域名更新");
+	            emailTo.setSubject("域名更新信息");
+	            Date date = new Date();
+	            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+	            String newDate = sf.format(date);
+	            String basePath=null;
+	            if(secondDomain==null||"".equals(secondDomain)){
+	            	basePath =newDate + "  " + office_name + "已经删除掉了二级域名.";
+	            }else{
+	            	 basePath =newDate + "  " + office_name + "的二级域名已经更改为：" + secondDomain + "。";
+	            }  
+	            emailTo.setMsg(basePath);
+	            /*添加邮件收件人*/
+	            emailTo.addTo("1063203104@qq.com");//设置收件人
+	            //emailTo.addTo("kate.lin@eeda123.com");
+	            emailTo.send();
+	         }catch(Exception e){
+	             e.printStackTrace();
+	         }finally{
+	         }
+		}
+		
+		officeConfig.set("secondDomain",secondDomain );
+		officeConfig.set("email",email );
+		officeConfig.set("domain",domain );
+		officeConfig.set("serverType",serverType );
+		officeConfig.set("portNo",portNo );
+		officeConfig.set("password",password );
+		officeConfig.set("sslayer",sslayer );
+		officeConfig.update();
+
+		setAttr("officeConfig", officeConfig);
+        setAttr("lu", office);
+        render("/yh/profile/officeConfig/edit.html");
+    }
+	
+	//邮箱发送测试
+	public void test(){
+			String valid="";
+		    String email = getPara("email");
+    	    String password = getPara("password");
+    	    String portNo = getPara("portNo");
+    	    String serverType = getPara("serverType");
+	        Email emailTo = new SimpleEmail();
+	        emailTo.setHostName(serverType);
+	        emailTo.setSmtpPort(Integer.parseInt(portNo));
+	        /*输入公司的邮箱和密码*/
+	        /*EedaConfig.mailUser, EedaConfig.mailPwd*/
+	        emailTo.setAuthenticator(new DefaultAuthenticator(email, password));        
+	        emailTo.setSSLOnConnect(true);
+	        try{
+	            /*EedaConfig.mailUser*/
+	            emailTo.setFrom(email);//设置发信人
+	            emailTo.setSubject("发送测试");
+	            emailTo.setSubject("发送测试信息");
+	            Date date = new Date();
+	            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+	            String newDate = sf.format(date);
+	            String basePath=null;
+	            basePath =newDate + "  " + email + "测试成功。";
+	            emailTo.setMsg(basePath);
+	            /*添加邮件收件人*/
+	            emailTo.addTo("992827305@qq.com");//设置收件人
+	            //emailTo.addTo("ray_liuyu@qq.com");
+	            emailTo.send();
+	            valid="success";
+	         }catch(Exception e){
+	        	valid="fail";
+	            e.printStackTrace();
+	         }
+	        Record c=new Record();
+	        c.set("aa", valid);
+	        renderJson(c);
 	}
 
 }

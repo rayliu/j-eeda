@@ -34,3 +34,20 @@
     height: 100%;
   }
 }
+
+#bgD{
+height:202px;
+width:auto;
+border: 1px solid;
+}
+#bgDiv  {
+text-align:left;
+ padding:0px;
+ margin:0px;
+ height:202px;
+}
+#logoDiv{
+height:202px;
+width:202px;
+border: 1px solid;
+}
