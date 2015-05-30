@@ -797,7 +797,7 @@
      	        	var str = '<label for="departure_time" class="error">必选字段</label>';
      	        	$("#departure_time").after(str);
      	        	$("#arrival_time").after(str);
-     	        }else if($("#sp_id").val() == ""){
+     	        }else if($("#sp_id").val() == "" && $("#partySpId").val() == ""){
      	        	$.scojs_message('操作失败，请选择供应商', $.scojs_message.TYPE_ERROR);
      	        }else{
 	                $("#departureConfirmationBtn").attr("disabled",true);
