@@ -13,6 +13,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
 import models.OrderAttachmentFile;
 import models.Party;
 import models.ReturnOrder;
@@ -78,6 +86,43 @@ public class WxController extends ApiController {
 		setAttr("signature", m.get("signature"));
 		setAttr("ticket", m.get("jsapi_ticket"));
 		setAttr("token", PropKit.get("token"));
+	}
+	
+	public void getWechatUserName() throws IOException{
+		String code = getPara("code");
+		String openIdUrl="http://api.weixin.qq.com/sns/oauth2/access_token?appid="+ApiConfigKit.getApiConfig().getAppId()
+				+"&secret="+PropKit.get("appSecret")+"&code="+code+"&grant_type=authorization_code";
+		
+		
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {            
+        	HttpGet httpGet = new HttpGet(openIdUrl);
+            CloseableHttpResponse response1 = httpclient.execute(httpGet);
+            try {
+                HttpEntity entity = response1.getEntity();
+                JSONObject json = new JSONObject(EntityUtils.toString(entity));  
+                String accessToken = json.getString("access_token");
+                String openid = json.getString("openid");
+                String unionid = json.getString("unionid");
+                System.out.println("accessToken:"+accessToken+", openid:"+openid+", unionid:"+unionid);
+                
+                String userInfoUrl="https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
+                httpGet = new HttpGet(userInfoUrl);
+                response1 = httpclient.execute(httpGet);
+                entity = response1.getEntity();
+                json = new JSONObject(EntityUtils.toString(entity));  
+                String nickname = json.getString("nickname");
+                System.out.println("nickname:"+nickname);
+                renderJson("{\"nickname\":\""+nickname+"\", \"openid\":\""+openid+"\"}");
+            }catch(Exception e){
+            	e.printStackTrace();
+            } finally {
+                response1.close();
+            }
+        } finally {
+            httpclient.close();
+            renderJson("{\"status\":\"ok\"}");
+        }
 	}
 	
 	//微信JS demo页面，方便参考
