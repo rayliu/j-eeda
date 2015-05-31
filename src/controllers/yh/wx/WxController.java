@@ -93,7 +93,7 @@ public class WxController extends ApiController {
 		String openIdUrl="http://api.weixin.qq.com/sns/oauth2/access_token?appid="+ApiConfigKit.getApiConfig().getAppId()
 				+"&secret="+PropKit.get("appSecret")+"&code="+code+"&grant_type=authorization_code";
 		
-		
+		String status="ok";
 		CloseableHttpClient httpclient = HttpClients.createDefault();
         try {            
         	HttpGet httpGet = new HttpGet(openIdUrl);
@@ -115,13 +115,17 @@ public class WxController extends ApiController {
                 logger.debug("nickname:"+nickname);
                 renderJson("{\"nickname\":\""+nickname+"\", \"openid\":\""+openid+"\"}");
             }catch(Exception e){
+            	status="error";
             	e.printStackTrace();
             } finally {
                 response1.close();
             }
+        }catch(Exception e){
+        	status="error";
+        	e.printStackTrace();
         } finally {
             httpclient.close();
-            renderJson("{\"status\":\"ok\"}");
+            renderJson("{\"status\":\""+status+"\"}");
         }
 	}
 	
