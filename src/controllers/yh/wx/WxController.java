@@ -104,7 +104,7 @@ public class WxController extends ApiController {
                 String accessToken = json.getString("access_token");
                 String openid = json.getString("openid");
                 String unionid = json.getString("unionid");
-                System.out.println("accessToken:"+accessToken+", openid:"+openid+", unionid:"+unionid);
+                logger.debug("accessToken:"+accessToken+", openid:"+openid+", unionid:"+unionid);
                 
                 String userInfoUrl="https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
                 httpGet = new HttpGet(userInfoUrl);
@@ -112,7 +112,7 @@ public class WxController extends ApiController {
                 entity = response1.getEntity();
                 json = new JSONObject(EntityUtils.toString(entity));  
                 String nickname = json.getString("nickname");
-                System.out.println("nickname:"+nickname);
+                logger.debug("nickname:"+nickname);
                 renderJson("{\"nickname\":\""+nickname+"\", \"openid\":\""+openid+"\"}");
             }catch(Exception e){
             	e.printStackTrace();
