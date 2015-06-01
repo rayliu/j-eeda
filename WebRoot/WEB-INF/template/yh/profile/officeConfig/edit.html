@@ -13,12 +13,12 @@
 			    </div>
 			    <div class="panel-body" id="total">
 		           <ul id="myTab" class="nav nav-tabs" role="tablist">
-			      <li role="presentation" class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">公司信息</a></li>
+			       <li role="presentation" class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">公司信息</a></li>
 			      <li role="presentation" class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="false">邮箱</a></li>
 			    </ul>
 			   
 			    <div id="myTabContent" class="tab-content" >
-			        <div  class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
+			         <div  class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
 				        <div class="row">
 							<form  id="officeConfigForm" enctype="multipart/form-data" action="/officeConfig/updateOfficeConfig" method="post">
 				        	<div class="col-lg-6"><br>
@@ -87,7 +87,7 @@
 							    
 							    <div class="form-group ">
 							     	<label class="search-label">密 码</label>
-							     	<input type="text" class="form-control" id="password" name="password" value="${officeConfig.password!''}" placeholder="请输入密 码" />
+							     	<input type="password" class="form-control" id="password" name="password" value="${officeConfig.password!''}" placeholder="请输入密 码" />
 							    	<br>
 							    </div>
 							    
@@ -116,7 +116,7 @@
 									<strong>SSL</strong>
 	                           	</div><br><br>
 	                           	<div>
-	                           		<a class="btn  btn-primary" href="" id="ceshibtn">测试</a>
+	                           		<a class="btn  btn-primary" href="" id="ceshibtn">发送邮箱测试</a><span id="check"></span>
 	                           	</div>
 							</div>
 				        </div> 

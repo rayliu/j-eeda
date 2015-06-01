@@ -48,7 +48,7 @@ public class OfficeConfigController extends Controller{
 		setAttr("officeConfig", officeConfig);
 		render("/yh/profile/officeConfig/edit.html");
 	}
-		
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_W_CREATE, PermissionConstant.PERMSSION_W_UPDATE}, logical=Logical.OR)
 	public void save() {
 		UploadFile uploadFile = getFile("fileupload");
@@ -177,14 +177,26 @@ public class OfficeConfigController extends Controller{
 		
 		OfficeCofig officeConfig = OfficeCofig.dao.findFirst("select * from office_config where office_id = ?",office_id);
 		if(logofileName != null && !"".equals(logofileName)){
+			logofileName=logofileName.replace(logofileName.substring(0,1), "/");
 			officeConfig.set("logo", logofileName);
 		}
 		if(bgfileName != null && !"".equals(bgfileName)){
+			bgfileName = bgfileName.replace(bgfileName.substring(0,1), "/");
 			officeConfig.set("login_bg",bgfileName );
 		}
-		//String aa=officeConfig.get("secondDomain");
+		String secondDomain2=officeConfig.get("secondDomain");
+		
+		officeConfig.set("secondDomain",secondDomain );
+		officeConfig.set("email",email );
+		officeConfig.set("domain",domain );
+		officeConfig.set("serverType",serverType );
+		officeConfig.set("portNo",portNo );
+		officeConfig.set("password",password );
+		officeConfig.set("sslayer",sslayer );
+		officeConfig.update();
+		
 		//二级域名改变的时候自动发送邮件
-		if(!secondDomain.equals(officeConfig.get("secondDomain"))){
+		if(!secondDomain2.equals(officeConfig.get("secondDomain"))){
 	        Email emailTo = new SimpleEmail();
 	        emailTo.setHostName("smtp.exmail.qq.com");
 	        emailTo.setSmtpPort(465);
@@ -218,15 +230,6 @@ public class OfficeConfigController extends Controller{
 	         }
 		}
 		
-		officeConfig.set("secondDomain",secondDomain );
-		officeConfig.set("email",email );
-		officeConfig.set("domain",domain );
-		officeConfig.set("serverType",serverType );
-		officeConfig.set("portNo",portNo );
-		officeConfig.set("password",password );
-		officeConfig.set("sslayer",sslayer );
-		officeConfig.update();
-
 		setAttr("officeConfig", officeConfig);
         setAttr("lu", office);
         render("/yh/profile/officeConfig/edit.html");
@@ -234,41 +237,42 @@ public class OfficeConfigController extends Controller{
 	
 	//邮箱发送测试
 	public void test(){
-			String valid="";
+			boolean valid=false;
 		    String email = getPara("email");
     	    String password = getPara("password");
     	    String portNo = getPara("portNo");
     	    String serverType = getPara("serverType");
+    	    String sslayer = getPara("sslayer");
+    	    
 	        Email emailTo = new SimpleEmail();
 	        emailTo.setHostName(serverType);
 	        emailTo.setSmtpPort(Integer.parseInt(portNo));
-	        /*输入公司的邮箱和密码*/
-	        /*EedaConfig.mailUser, EedaConfig.mailPwd*/
+	        //输入公司的邮箱和密码
+	        //EedaConfig.mailUser, EedaConfig.mailPwd
 	        emailTo.setAuthenticator(new DefaultAuthenticator(email, password));        
-	        emailTo.setSSLOnConnect(true);
+	        emailTo.setSSLOnConnect(Boolean.parseBoolean(sslayer));
 	        try{
-	            /*EedaConfig.mailUser*/
+	            //EedaConfig.mailUser
 	            emailTo.setFrom(email);//设置发信人
 	            emailTo.setSubject("发送测试");
-	            emailTo.setSubject("发送测试信息");
 	            Date date = new Date();
 	            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
 	            String newDate = sf.format(date);
 	            String basePath=null;
-	            basePath =newDate + "  " + email + "测试成功。";
+	            basePath =newDate + "邮箱" + email + "测试成功。";
 	            emailTo.setMsg(basePath);
-	            /*添加邮件收件人*/
+	            //添加邮件收件人
 	            emailTo.addTo("992827305@qq.com");//设置收件人
 	            //emailTo.addTo("ray_liuyu@qq.com");
 	            emailTo.send();
-	            valid="success";
+	            valid=true;
 	         }catch(Exception e){
-	        	valid="fail";
-	            e.printStackTrace();
+	        	 System.out.println(e.getMessage());
+	            //e.printStackTrace();
 	         }
-	        Record c=new Record();
-	        c.set("aa", valid);
-	        renderJson(c);
+	        Record check  = new Record();
+	        check.set("valid", valid);
+	        renderJson(check);
 	}
 
 }
