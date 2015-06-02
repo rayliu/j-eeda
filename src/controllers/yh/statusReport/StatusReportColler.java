@@ -18,6 +18,7 @@ import models.UserLogin;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
@@ -26,6 +27,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.order.TransferOrderController;
+import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class StatusReportColler extends Controller{
@@ -49,7 +51,7 @@ public class StatusReportColler extends Controller{
 	public void dailyReport() {		
 		render("/yh/statusReport/dailyReport.html");
 	}
-	
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_PRODUCTINDEX_LIST})
 	public void productStatus() {
 		String order_no = getPara("order_no");
 		String customer_id = getPara("customer_id");
@@ -83,7 +85,8 @@ public class StatusReportColler extends Controller{
 						+ " left join delivery_order dor on dor.id = toid.delivery_id"
 						+ " left join return_order ro on ro.delivery_order_id = dor.id"
 						+ " left join warehouse w on w.id = tor.warehouse_id"
-						+ " where tor.cargo_nature_detail = 'cargoNatureDetailYes'";
+						+ " where tor.cargo_nature_detail = 'cargoNatureDetailYes' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+						+ " and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
 			String sql = "select toid.serial_no,item_no,c.abbr customer,toid.notify_party_company,tor.status transfer_status,pkdo.status pick_status,dedo.status depart_status,ro.transaction_status,"
 						+ " dor.status delivery_status,tor.planning_time,tor.customer_order_no,tor.order_no transfer_no,w.warehouse_name,dor.order_no delivery_no,ro.create_date return_stamp, "
@@ -100,7 +103,8 @@ public class StatusReportColler extends Controller{
 						+ " left join delivery_order dor on dor.id = toid.delivery_id"
 						+ " left join return_order ro on ro.delivery_order_id = dor.id"
 						+ " left join warehouse w on w.id = tor.warehouse_id"
-						+ " where tor.cargo_nature_detail = 'cargoNatureDetailYes'";
+						+ " where tor.cargo_nature_detail = 'cargoNatureDetailYes' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+						+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 							
 			//有序列号时
 			if(!"".equals(serial_no) && serial_no != null){
@@ -168,7 +172,7 @@ public class StatusReportColler extends Controller{
         }
         renderJson(locationList);
 	}
-	
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_ORDERINDEX_LIST})
 	public void orderStatusReport() {
 		String orderNoType = getPara("order_no_type");
 		String orderNo = getPara("order_no");
@@ -207,7 +211,8 @@ public class StatusReportColler extends Controller{
 					+ " left join office o on o.id = tor.office_id"
 					+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " and p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
-					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
 			String sql = "select tor.order_no,'运输单' as order_category,dor.depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,dor.departure_time,l1.name route_from,l2.name route_to,"
 					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
@@ -229,7 +234,8 @@ public class StatusReportColler extends Controller{
 					+ " left join office o on o.id = tor.office_id"
 					+ " where dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " and p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
-					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+						+ " and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			//有外发日期
 			if(!"".equals(setOutTime) && setOutTime != null){
 				totalSql = totalSql + " and dor.departure_time = '" + setOutTime + "'";
@@ -316,8 +322,10 @@ public class StatusReportColler extends Controller{
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to = l2.code"
 					+ " left join office o on o.id = tor.office_id"
+					+ " left join warehouse w on deo.from_warehouse_id = w.id "
 					+ " where p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
-					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and deo.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
 				
 			String sql = "select distinct deo.order_no,'配送单' as order_category,'' as depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,l1.name route_from,l2.name route_to,"
 					+ " (select create_stamp from delivery_order_milestone where delivery_id = deo.id and status = '已发车') as departure_time,"
@@ -337,8 +345,10 @@ public class StatusReportColler extends Controller{
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to = l2.code"
 					+ " left join office o on o.id = tor.office_id"
+					+ " left join warehouse w on deo.from_warehouse_id = w.id "
 					+ " where p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
-					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
+					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+							+ " and deo.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
 			//有外发日期
 			if(!"".equals(setOutTime) && setOutTime != null){
 				totalSql = totalSql + " and and (dom.status != '新建' and to_days(dom.create_stamp) = to_days('" + setOutTime + "'))";
@@ -416,7 +426,7 @@ public class StatusReportColler extends Controller{
 		}
 		renderJson(orderMap);
 	}
-	
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DAILYREPORT_LIST})
 	public void dailyReportStatus() {
 		String orderNo = getPara("order_no");
 		String customerId = getPara("customer_id");
@@ -446,7 +456,8 @@ public class StatusReportColler extends Controller{
 						+ " left join contact c on c.id = p.contact_id"
 						+ " left join location l1 on tor.route_from = l1.code "
 						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
+						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+								+ "  and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 						//+ " group by toid.id "
 						
 					
@@ -567,7 +578,8 @@ public class StatusReportColler extends Controller{
 						+ " left join contact c on c.id = p.contact_id"
 						+ " left join location l1 on tor.route_from = l1.code "
 						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
+						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+								+ "  and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 						//+ " group by toid.id "
 						
 				
@@ -617,7 +629,8 @@ public class StatusReportColler extends Controller{
 						+ " left join location l2 on tor.route_to = l2.code"
 						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'"
 						+ " and tor.cargo_nature_detail = 'cargoNatureDetailNo'"
-						+ " and tor.cargo_nature = 'cargo'";
+						+ " and tor.cargo_nature = 'cargo'  and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+								+ "  and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
 				
 				
@@ -693,7 +706,8 @@ public class StatusReportColler extends Controller{
 						+ " left join location l2 on tor.route_to = l2.code"
 						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'"
 						+ " and tor.cargo_nature_detail = 'cargoNatureDetailNo'"
-						+ " and tor.cargo_nature = 'cargo'";
+						+ " and tor.cargo_nature = 'cargo' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+								+ "  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
 				//有运输单号时
 				if(!"".equals(orderNo) && orderNo != null){

@@ -248,14 +248,25 @@ public class PermissionConstant {
 	public static final String PERMSSION_IO_CREATE = "InsuranceOrder.create";
 	public static final String PERMSSION_IO_UPDATE = "InsuranceOrder.update";
 	/*收款确认*/
-	public static final String PERMSSION_COLLECTIONCONFIRM_LIST = "chargeAcceptOrder_list"; 
-	public static final String PERMSSION_COLLECTIONCONFIRM_CONFIRM = "chargeAcceptOrder_confirm"; 
+	public static final String PERMSSION_COLLECTIONCONFIRM_LIST = "chargeAcceptOrder.list"; 
+	public static final String PERMSSION_COLLECTIONCONFIRM_CONFIRM = "chargeAcceptOrder.confirm"; 
 	/*付款确认*/
-	public static final String PERMSSION_COSTCONFIRM_LIST = "costAcceptOrder_list"; 
-	public static final String PERMSSION_COSTCONFIRM_CONFIRM = "costAcceptOrder_confirm";
+	public static final String PERMSSION_COSTCONFIRM_LIST = "costAcceptOrder.list"; 
+	public static final String PERMSSION_COSTCONFIRM_CONFIRM = "costAcceptOrder.confirm";
 	/*报销单*/
-	public static final String PERMSSION_COSTREIMBURSEMENT_LIST = "costReimbureement_list";
-	public static final String PERMSSION_COSTREIMBURSEMENT_CREATE = "costReimbureement_create";
-	public static final String PERMSSION_COSTREIMBURSEMENT_UPDATE = "costReimbureement_update";
-	public static final String PERMSSION_COSTREIMBURSEMENT_CONFIRM = "costReimbureement_confirm";
+	public static final String PERMSSION_COSTREIMBURSEMENT_LIST = "costReimbureement.list";
+	public static final String PERMSSION_COSTREIMBURSEMENT_CREATE = "costReimbureement.create";
+	public static final String PERMSSION_COSTREIMBURSEMENT_UPDATE = "costReimbureement.update";
+	public static final String PERMSSION_COSTREIMBURSEMENT_CONFIRM = "costReimbureement.confirm";
+	/*报表查询权限点*/
+	public static final String PERMSSION_PRODUCTINDEX_LIST = "ProductIndex.list";
+	public static final String PERMSSION_ORDERINDEX_LIST = "OrderIndex.list";
+	public static final String PERMSSION_DAILYREPORT_LIST = "DailyReport.list";
+
+	
+	
+	
+	
+	
+	
 }

@@ -415,6 +415,7 @@
                         <!-- /.nav-second-level --> 
                     <%}%>
                     <%
+                    	
                     	var customerContractListPermission = map.ContractCustomer_list;
                     	var providerContractListPermission = map.ContractProvider_list;
                     	var deliveryContractListPermission = map.ContractDelivery_list;
@@ -442,45 +443,44 @@
                         <!-- /.nav-second-level -->
                     </li>
                    <%}%>
-                   <% if(true){%>
+                   <% 
+                   		var productIndexPermission = map.ProductIndex_list;
+                   		var orderIndexPermission = map.OrderIndex_list;
+                   		var dailyReportPermission = map.DailyReport_list;
+                   		
+                   		if(productIndexPermission != '' || orderIndexPermission !='' || dailyReportPermission !='' || InventoryListPermission !='')
+                   {%>
                     <li id="menu_report">
                         <a href="#"><i class="fa fa-table fa-fw"></i> 报表查询<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                           <% if(false){%>
-                            <li>
-                                <a href="#">中转仓库存报表</a>
-                            </li>                            
-                            <li>
-                                <a href="#">终端送货计划明细表</a>
-                            </li>
-                            <li>
-                                <a href="#">终端送货完成明细表</a>
-                            </li>
-                            <li>
-                                <a href="#">应收款结算进度表</a>
-                            </li>
-                            <li>
-                                <a href="#">应付款结算进度表</a>
-                            </li>
-                            <li>
-                                <a href="#">成本核算分析表</a>
-                            </li>
-                            <li>
-                                <a href="#">盈利分析表</a>
-                            </li>
-                            <%}%>
+                        	<%
+                        		if(productIndexPermission != ''){
+                        	%>
                             <li>
                                 <a href="/statusReport/productIndex">单品状态查询</a>
                             </li>
+                            <%}%>
+                            <%
+                        		if(orderIndexPermission !=''){
+                        	%>
                             <li>
                                 <a href="/statusReport/orderIndex">单据状态查询</a>
                             </li>
+                            <%}%>
+                            <%
+                        		if(InventoryListPermission != ''){
+                        	%>
                             <li>
                                 <a href="/stock/outUserQuery">库存查询</a>
                             </li>
+                            <%}%>
+                            <%
+                        		if(dailyReportPermission !=''){
+                        	%>
                             <li>
                                 <a href="/statusReport/dailyReport">运营日报表</a>
                             </li>
+                            <%}%>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
