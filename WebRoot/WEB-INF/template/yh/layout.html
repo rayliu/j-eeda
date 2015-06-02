@@ -95,7 +95,6 @@
                     <%}%>
                     <%  
                     	var map = permissionMap;
-                    	
                         if(map.TransferOrder_list != ""){
                     %>
                         <li id="menu_transfer">
@@ -114,25 +113,16 @@
                             <!-- /.nav-second-level -->
                         </li>
                     <%}%>
-                     <% if(true){%>
+                     <% 
+                        if(map.TransferOrder_list != ""){
+                    %>
 	                    <li id="menu_returnTransfer">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 质量管理(货损/退货)<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
 	                        	<li>
 	                                <a href="/returnTransfer">退货单</a>
 	                            </li>
-	                            <!-- <li>
-	                                <a href="">理赔单</a>
-	                            </li>
-	                            <li>
-	                                <a href="">运输单</a>
-	                            </li>
-	                            <li>
-	                                <a href="">提货调车单</a>
-	                            </li>
-	                             <li>
-	                                <a href="">干线发车</a>
-	                            </li> -->
+	                           
 	                        </ul>
 	                        <!-- /.nav-second-level -->
 	                    </li>

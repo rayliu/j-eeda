@@ -24,9 +24,11 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"ORDER_NO", "sWidth":"70px",
             	"fnRender": function(obj) {
-        			
+        			if(TransferOrder.isUpdate != ""){
         				return "<a href='/returnTransfer/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-        			
+        			}else{
+        				return obj.aData.ORDER_NO;
+        			}  
         		}
             },
             {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},

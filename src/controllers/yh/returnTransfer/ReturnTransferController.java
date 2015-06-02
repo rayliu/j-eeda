@@ -176,6 +176,7 @@ public class ReturnTransferController extends Controller{
 		transferOrderListMap.put("aaData", transferOrders);
 		renderJson(transferOrderListMap);
 	}
+	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE})
 	public void add() {
 		String order_no = null;
 		setAttr("saveOK", false);
@@ -209,6 +210,7 @@ public class ReturnTransferController extends Controller{
 		
 		render("/yh/returnTransfer/updateReturnTransferOrder.html");
 	}
+	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_UPDATE})
 	public void edit() {
 		long id = getParaToLong("id");
 		TransferOrder transferOrder = TransferOrder.dao.findById(id);
