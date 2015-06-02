@@ -2003,49 +2003,52 @@ public class DepartOrderController extends Controller {
             List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("
                     + orderIds + ")");
             for (TransferOrder transferOrder : transferOrders) {
-                InventoryItem inventoryItem = null;
-                List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find(
-                        "select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
-                for (TransferOrderItem transferOrderItem : transferOrderItems) {
-                    if (transferOrderItem != null) {
-                        if (transferOrderItem.get("product_id") != null) {
-                        	//判断是否有库存
-                            String inventoryItemSql = "select * from inventory_item where product_id = "
-                                    + transferOrderItem.get("product_id") + " and warehouse_id = "
-                                    + transferOrder.get("warehouse_id");
-                            inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
-                            //判断发车单中的运输单是否有单品,
-                            String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "
-                                    + departId + " and order_id = " + transferOrder.get("id") + " and item_id = " + transferOrderItem.get("id");
-                            Record rec = Db.findFirst(sqlTotal);
-                            Long amount = rec.getLong("total");
-                            if(amount == 0){
-                            	//当运输单没有单品时取货品信息中的数量
-                            	amount = Math.round(transferOrderItem.getDouble("amount"));
-                            }
-                            if (inventoryItem == null) {
-                                inventoryItem = new InventoryItem();
-                                inventoryItem.set("party_id", transferOrder.get("customer_id"));
-                                inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
-                                inventoryItem.set("product_id", transferOrderItem.get("product_id"));
-                                inventoryItem.set("total_quantity", amount);
-                                inventoryItem.set("available_quantity", amount);
-                                inventoryItem.save();
-                            } else {
-                                inventoryItem.set("total_quantity",
-                                        Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
-                                if(inventoryItem.get("available_quantity") == null || "".equals(inventoryItem.get("total_quantity"))){
-                                	inventoryItem.set("available_quantity", amount);
-                                }else{
-                                	inventoryItem.set("available_quantity",
-                                            Double.parseDouble(inventoryItem.get("available_quantity").toString()) + amount);
+            	if("gateIn".equals(transferOrder.get("arrival_mode")) || "deliveryToWarehouse".equals(transferOrder.get("arrival_mode"))){
+            		InventoryItem inventoryItem = null;
+                    List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find(
+                            "select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
+                    for (TransferOrderItem transferOrderItem : transferOrderItems) {
+                        if (transferOrderItem != null) {
+                            if (transferOrderItem.get("product_id") != null) {
+                            	//判断是否有库存
+                                String inventoryItemSql = "select * from inventory_item where product_id = "
+                                        + transferOrderItem.get("product_id") + " and warehouse_id = "
+                                        + transferOrder.get("warehouse_id");
+                                inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
+                                //判断发车单中的运输单是否有单品,
+                                String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "
+                                        + departId + " and order_id = " + transferOrder.get("id") + " and item_id = " + transferOrderItem.get("id");
+                                Record rec = Db.findFirst(sqlTotal);
+                                Long amount = rec.getLong("total");
+                                if(amount == 0){
+                                	//当运输单没有单品时取货品信息中的数量
+                                	amount = Math.round(transferOrderItem.getDouble("amount"));
                                 }
-                                
-                                inventoryItem.update();
+                                if (inventoryItem == null) {
+                                    inventoryItem = new InventoryItem();
+                                    inventoryItem.set("party_id", transferOrder.get("customer_id"));
+                                    inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
+                                    inventoryItem.set("product_id", transferOrderItem.get("product_id"));
+                                    inventoryItem.set("total_quantity", amount);
+                                    inventoryItem.set("available_quantity", amount);
+                                    inventoryItem.save();
+                                } else {
+                                    inventoryItem.set("total_quantity",
+                                            Double.parseDouble(inventoryItem.get("total_quantity").toString()) + amount);
+                                    if(inventoryItem.get("available_quantity") == null || "".equals(inventoryItem.get("total_quantity"))){
+                                    	inventoryItem.set("available_quantity", amount);
+                                    }else{
+                                    	inventoryItem.set("available_quantity",
+                                                Double.parseDouble(inventoryItem.get("available_quantity").toString()) + amount);
+                                    }
+                                    
+                                    inventoryItem.update();
+                                }
                             }
                         }
                     }
-                }
+            	}
+                
             }
         }
     }
@@ -2365,7 +2368,8 @@ public class DepartOrderController extends Controller {
      */
     public void  SubtractInventory(DepartTransferOrder departTransferOrder, String departOrderId){
     	TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-    	if("arrangementOrder".equals(transferOrder.get("order_type"))){
+    	
+    	if("arrangementOrder".equals(transferOrder.get("order_type")) || ("cargoReturnOrder".equals(transferOrder.get("order_type")) && "deliveryToFachtoryFromWarehouse".equals(transferOrder.get("arrival_mode")))){
     		List<TransferOrderItem> list =  TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ? ",transferOrder.get("id"));
     		for (TransferOrderItem transferOrderItem : list) {
     			if(transferOrderItem.getLong("product_id") != null && transferOrderItem.getLong("product_id") != 0 ){

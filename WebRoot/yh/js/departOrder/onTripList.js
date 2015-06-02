@@ -107,7 +107,8 @@ $(document).ready(function() {
             {"mDataProp":"ARRIVAL_MODE",
             		"sWidth": "80px",
                 	"fnRender": function(obj) {
-                		if(obj.aData.ARRIVAL_MODE == "delivery"){
+                		if(obj.aData.ARRIVAL_MODE == "delivery" || obj.aData.ARRIVAL_MODE == "deliveryToWarehouse" || obj.aData.ARRIVAL_MODE == "deliveryToFactory"
+                			|| obj.aData.ARRIVAL_MODE == "deliveryToFachtoryFromWarehouse"){
                 			return "货品直送";
                 		}else if(obj.aData.ARRIVAL_MODE == "gateIn"){
                 			return "入中转仓";

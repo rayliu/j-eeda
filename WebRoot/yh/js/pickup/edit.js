@@ -83,7 +83,7 @@
 		}
 			
 		$.get('/transferOrder/searchAllCarInfo', {input:inputStr,type:typeStr}, function(data){
-			console.log(data);
+			
 			var carNoList = $("#carNoList");
 			carNoList.empty();
 			for(var i = 0; i < data.length; i++)

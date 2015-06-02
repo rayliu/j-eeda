@@ -704,7 +704,7 @@ public class PickupOrderController extends Controller {
 					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailIds[i]);
 					detail.set("pickup_id",pickupOrder.get("id")).update();
 				}
-	            System.out.println("单品id:"+ datailIdsStr);
+	           
 	            String findOrderIdSql = "select group_concat(distinct cast(order_id as char) separator ',') id from transfer_order_item_detail where id in ("+datailIdsStr+");";
 	            Record rec = Db.findFirst(findOrderIdSql);
 	            String[] TransferIds = rec.getStr("id").split(",");
@@ -1153,7 +1153,7 @@ public class PickupOrderController extends Controller {
             TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
             TransferOrderMilestone milestone = new TransferOrderMilestone();
             if ("新建".equals(transferOrder.get("status")) || "部分已入货场".equals(transferOrder.get("status")) || "部分已入库".equals(transferOrder.get("status"))) {
-                if ("salesOrder".equals(transferOrder.get("order_type")) || "arrangementOrder".equals(transferOrder.get("order_type"))) {//销售订单
+                if ("salesOrder".equals(transferOrder.get("order_type")) || "arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))) {//销售订单
                     if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
                         transferOrder.set("status", "部分已入货场");
                         milestone.set("status", "部分已入货场");
@@ -1163,7 +1163,7 @@ public class PickupOrderController extends Controller {
                         milestone.set("status", "已入货场");
                         transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
                     }
-                    if("arrangementOrder".equals(transferOrder.get("order_type"))){
+                    if("arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))){
                     	SubtractInventory(pickupOrder,transferOrder);
                     }
                     
@@ -1188,7 +1188,7 @@ public class PickupOrderController extends Controller {
         //调车单业务处理
         TransferOrder transferOrderType = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
-        if (transferOrderType.get("order_type").equals("salesOrder") || transferOrderType.get("order_type").equals("arrangementOrder")) {
+        if (transferOrderType.get("order_type").equals("salesOrder") || transferOrderType.get("order_type").equals("arrangementOrder") || transferOrderType.get("order_type").equals("cargoReturnOrder")) {
             pickupOrder.set("status", "已入货场");
             pickupMilestone.set("status", "已入货场");
         } else if (transferOrderType.get("order_type").equals("replenishmentOrder")) {
@@ -2191,21 +2191,30 @@ public class PickupOrderController extends Controller {
     	renderJson("{\"success\":true}");
 	}
     /**
-     * 当订单类型是调拨单时，减少库存
+     * 当订单类型是调拨单或者退货单从中转仓出货时，减少库存
      */
     public void  SubtractInventory(DepartOrder pickupOrder, TransferOrder transferOrder){
-    	List<TransferOrderItem> list =  TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ? ",transferOrder.get("id"));
-    	for (TransferOrderItem transferOrderItem : list) {
-    		if(transferOrderItem.getLong("product_id") != null && transferOrderItem.getLong("product_id") != 0 ){
-    			InventoryItem ii = InventoryItem.dao.findFirst("select * from inventory_item where party_id =? and warehouse_id = ? and product_id = ?",transferOrder.get("customer_id"),transferOrder.get("from_warehouse_id"),transferOrderItem.get("product_id"));
-    			TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select count(*) as amount from transfer_order_item_detail where item_id = ? and pickup_id = ? ",transferOrderItem.get("id"),pickupOrder.get("id"));
-    			Double total_quantity = ii.getDouble("total_quantity") ;
-    			if(total_quantity - toid.getLong("amount") >= 0 ){
-    				ii.set("total_quantity", total_quantity - toid.getLong("amount"));
-    				ii.update();
-    			}
+    	boolean is_subtract = false;
+    	if("arrangementOrder".equals(transferOrder.get("order_type"))){
+    		is_subtract = true;
+    	}else{
+    		if("deliveryToFachtoryFromWarehouse".equals(transferOrder.get("arrival_mode"))){
+    			is_subtract = true;
     		}
-    		
+    	}
+		if(is_subtract){
+			 List<TransferOrderItem> list =  TransferOrderItem.dao.find("select * from transfer_order_item where order_id = ? ",transferOrder.get("id"));
+			for (TransferOrderItem transferOrderItem : list) {
+				if(transferOrderItem.getLong("product_id") != null && transferOrderItem.getLong("product_id") != 0 ){
+					InventoryItem ii = InventoryItem.dao.findFirst("select * from inventory_item where party_id =? and warehouse_id = ? and product_id = ?",transferOrder.get("customer_id"),transferOrder.get("from_warehouse_id"),transferOrderItem.get("product_id"));
+					TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select count(*) as amount from transfer_order_item_detail where item_id = ? and pickup_id = ? ",transferOrderItem.get("id"),pickupOrder.get("id"));
+					Double total_quantity = ii.getDouble("total_quantity") ;
+					if(total_quantity - toid.getLong("amount") >= 0 ){
+							ii.set("total_quantity", total_quantity - toid.getLong("amount"));
+			    				ii.update();
+			    	}
+				}
+			}
 		}
     }
     

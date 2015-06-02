@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.DepartPickupOrder;
 import models.DepartTransferOrder;
 import models.ReturnOrder;
 import models.TransferOrder;
@@ -238,7 +239,11 @@ public class TransferOrderMilestoneController extends Controller {
         renderJson(map);
     }
 
-    // 直送运输单-收货确认：不可以多次提货，整单发车
+    //TODO:  直送运输单-收货确认：不可以多次提货，整单发车
+    /**
+     * 直送时要判断是什么单据，如果是退货单，要明确是入仓还是直送到客户工厂，其中入仓的需要增加库存
+     */
+    
     public void receipt() {
         Long order_id = Long.parseLong(getPara("orderId"));
         Long departOrderId = Long.parseLong(getPara("departOrderId"));
@@ -247,7 +252,8 @@ public class TransferOrderMilestoneController extends Controller {
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        
+        //判断当前直送的模式，是入中转仓还是直接发送给客户工厂，如果是入中转仓，增加库存
+        DepartOrderController.productInWarehouse(getPara("departOrderId"));
         //修改发车单信息
         DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
         departOrder.set("status", "已收货").update();
@@ -261,6 +267,9 @@ public class TransferOrderMilestoneController extends Controller {
         //回单中"transfer_order_id"字段修改为“depart_id”
         //.set("depart_id", departOrderId)
         .set("transfer_order_id", order_id).save();
+        
+        
+        
         //修改运输单信息
         List<Record> departOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
         for (Record record : departOrderIds) {
@@ -287,6 +296,8 @@ public class TransferOrderMilestoneController extends Controller {
             .set("depart_id", departOrderId)
             .set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE)
             .save();
+          
+            
             
             ReturnOrderController roController= new ReturnOrderController(); 
             //把运输单的应收带到回单中
@@ -297,132 +308,7 @@ public class TransferOrderMilestoneController extends Controller {
             roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
 		}
         
-        //查询单品有没有经过调车？经过调车的就是部分收货？这什么逻辑？
-        /*List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
-                .find("select toid.pickup_id from transfer_order_item_detail toid where order_id = ? group by toid.pickup_id",
-                        transferOrder.get("id"));
-        if (transferOrderItemDetails.size() > 1) {
-            transferOrder.set("status", "部分已收货");
-            transferOrder.update();
-            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "部分已收货");
-            String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
-            transferOrderMilestone.set("location", "");
-            java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-            transferOrderMilestone.set("create_stamp", sqlDate);
-            transferOrderMilestone.set("order_id", order_id);
-            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-            transferOrderMilestone.save();
-            
-            departOrder.set("status", "部分已收货");
-            departOrder.update();
-            transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "部分已收货");
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
-            transferOrderMilestone.set("location", "");
-            utilDate = new java.util.Date();
-            sqlDate = new java.sql.Timestamp(utilDate.getTime());
-            transferOrderMilestone.set("create_stamp", sqlDate);
-            transferOrderMilestone.set("depart_id", departOrderId);
-            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-            transferOrderMilestone.save();
-        } else {
-            transferOrder.set("status", "已收货");
-            transferOrder.update();
-            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "已收货");
-            String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
-            transferOrderMilestone.set("location", "");
-            java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-            transferOrderMilestone.set("create_stamp", sqlDate);
-            transferOrderMilestone.set("order_id", order_id);
-            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-            transferOrderMilestone.save();
-
-            departOrder.set("status", "已收货");
-            departOrder.update();
-            transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "已收货");
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
-            transferOrderMilestone.set("location", "");
-            utilDate = new java.util.Date();
-            sqlDate = new java.sql.Timestamp(utilDate.getTime());
-            transferOrderMilestone.set("create_stamp", sqlDate);
-            transferOrderMilestone.set("depart_id", departOrderId);
-            transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-            transferOrderMilestone.save();
-            
-            String orderNo = OrderNoGenerator.getNextOrderNo("HD");
-            ReturnOrder returnOrder = new ReturnOrder();
-            returnOrder.set("order_no", orderNo);
-            returnOrder.set("transaction_status", "新建");
-            returnOrder.set("creator", users.get(0).get("id"));
-            returnOrder.set("create_date", sqlDate);
-            returnOrder.set("transfer_order_id", order_id);
-            returnOrder.set("customer_id", transferOrder.get("customer_id"));
-            returnOrder.save();
-
-            TransferOrderFinItem tFinItem = new TransferOrderFinItem();
-            if (transferOrder.get("coustomer_id") != null) {
-                // ATM计件算
-                List<Record> list = Db.find("select * from transfer_order_item where order_id ='"
-                        + transferOrder.get("id") + "'");
-                int size = list.size();
-                if (transferOrder.get("cargo_nature").equals("ATM")) {
-                    List<Record> contractList = Db
-                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                    + transferOrder.get("coustomer_id")
-                                    + "') and from_id = '"
-                                    + transferOrder.get("route_from")
-                                    + "' and to_id ='"
-                                    + transferOrder.get("routa e_to")
-                                    + "' and priceType='"
-                                    + transferOrder.get("charge_type") + "'");
-                    if (contractList.size() > 0) {
-                        tFinItem.set("order_id", transferOrder.get("id"));
-                        tFinItem.set("fin_item_id", "4");
-                        tFinItem.set("amount", Double.parseDouble(contractList.get(0).get("amount").toString()) * size);
-                        tFinItem.set("status", "未完成");
-                        tFinItem.set("creator", users.get(0).get("id"));
-                        tFinItem.set("create_date", sqlDate);
-                        tFinItem.save();
-                    }
-                } else {
-                    // 普通货品
-                    List<Record> contractList = Db
-                            .find("select amount from contract_item where contract_id in(select id from contract c where c.party_id ='"
-                                    + transferOrder.get("coustomer_id")
-                                    + "') and from_id = '"
-                                    + transferOrder.get("route_from")
-                                    + "' and to_id ='"
-                                    + transferOrder.get("routa e_to")
-                                    + "' and priceType='"
-                                    + transferOrder.get("charge_type") + "'");
-                    if (contractList.size() > 0) {
-                        tFinItem.set("order_id", transferOrder.get("id"));
-                        tFinItem.set("fin_item_id", "4");
-                        tFinItem.set("amount", contractList.get(0).get("amount"));
-                        tFinItem.set("status", "未完成");
-                        tFinItem.set("creator", users.get(0).get("id"));
-                        tFinItem.set("create_date", sqlDate);
-                        tFinItem.save();
-                    }
-                }
-            }
-            
-            
-	        ReturnOrderController roController= new ReturnOrderController(); 
-	        //直送时把保险单费用带到回单
-	        roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
-	        //根据合同生成费用
-	        roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
-        }*/
+        
         renderJson("{\"success\":true}");
     }
 
@@ -490,7 +376,9 @@ public class TransferOrderMilestoneController extends Controller {
 	        	detail.set("status", "已发车");
 	        	detail.update();
 	        }	
+	       
 	        /*if("arrangementOrder".equals(transferOrder.get("order_type"))){*/
+	        
 	        DepartOrderController dor = new DepartOrderController();
 	        dor.SubtractInventory(departTransferOrder,departOrderId);
 	    	/*}*/
@@ -500,8 +388,9 @@ public class TransferOrderMilestoneController extends Controller {
         renderJson("{\"success\":true}");        
     }
     
-    // 入库确认
+    //TODO:  入库确认
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_UPDATE})
+    
     public void warehousingConfirm() {
     	String departOrderId = getPara("departOrderId");
     	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);

@@ -104,7 +104,6 @@ import com.jfinal.config.Interceptors;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
-import com.jfinal.ext.plugin.quartz.QuartzPlugin;
 import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -117,6 +116,7 @@ import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 import controllers.yh.profile.DriverAssistantController;
+import controllers.yh.returnTransfer.ReturnTransferController;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
@@ -295,6 +295,10 @@ public class EedaConfig extends JFinalConfig {
 		me.add("/api", WeixinApiController.class, "/api");
 		//跟车人员
 		me.add("/driverAssistant", DriverAssistantController.class, contentPath);
+		//退货单
+		me.add("/returnTransfer",ReturnTransferController.class,contentPath);
+		
+		
 	}
 
     @Override
@@ -303,8 +307,8 @@ public class EedaConfig extends JFinalConfig {
     	me.add(new ShiroPlugin(routes));
     	
     	//job启动
-        QuartzPlugin quartzPlugin = new QuartzPlugin("job.properties");
-    	me.add(quartzPlugin);
+        //QuartzPlugin quartzPlugin = new QuartzPlugin("job.properties");
+    	//me.add(quartzPlugin);
     	
     	//quartzPlugin.add("*/5 * * * * ?", new YourJob());//通过API增加任务
     	//quartzPlugin.version(QuartzPlugin);//指定Quartz版本

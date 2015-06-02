@@ -8,14 +8,12 @@
             <div class="row">
                 <div class="col-lg-12">
                		 <div class="btn-header">
-                    	<% 
-	                   		if(shiro.hasPermission("TransferOrder.create")){
-	                   	%>
-	                       	<a class="btn  btn-primary" href="/transferOrder/add">新增运输单</a>
-	                    <%}%>
-                        <input id="fileUploadBtn" type="button" class="btn  btn-primary" value="导入运输单" size="30" />
+                    	
+	                    <a class="btn  btn-primary" href="/returnTransfer/add">新增退货单</a>
+	                    
+                        <input id="fileUploadBtn" type="button" class="btn  btn-primary" value="导入退货单" size="30" />
                         
-                        <sub><a id="dowmload" href="javascript:void(0)"  target='_blank'>下载导入模板</a></sub>
+                       <!--  <sub><a id="dowmload" href="javascript:void(0)"  target='_blank'>下载导入模板</a></sub> -->
                         <form id="toFileUploadForm" method="post" action="/transferOrder/intoTransferOrder" enctype="multipart/form-data">
 						     <input type="file" id="toFileUpload" name="files[]" 
 						     style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px; " size="1" data-url="/transferOrder/importTransferOrder">
@@ -23,7 +21,7 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-list fa-fw"></i>运输单列表                            
+                            <i class="fa fa-list fa-fw"></i>退货单列表                            
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
@@ -31,21 +29,14 @@
                                 <div class="row search_panel">
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label class="search-label">运输单号</label>
+                                            <label class="search-label">退货单号</label>
                                             <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
                                         </div>
                                          
                                         <div class="form-group">
                                             <label class="search-label">订单类型</label>
-                                            <select id="order_type_filter" class="form-control search-control status_filter">
-                                                <option value=""></option>
-                                                <option value="salesOrder">销售订单</option>
-                                                <option value="replenishmentOrder">补货订单</option>
-                                                <option value="arrangementOrder">调拨订单</option>                                                
-                                                <!-- <option value="cargoReturnOrder">退货订单</option>   -->                                              
-                                                <!-- <option value="damageReturnOrder">质量退单</option>    -->                                             
-                                                <option value="gateOutTransferOrder">出库运输单</option>
-                                                <option value="movesOrder">移机单</option>                                                 
+                                            <select id="order_type_filter" disabled class="form-control search-control status_filter">
+                                                <option value="cargoReturnOrder">退货订单</option>                                                                                        
                                             </select>
                                         </div>
                                         <div class="form-group">                                        
@@ -187,7 +178,6 @@
                             </div>
                             
                         </div>
-                        <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
                 </div>
@@ -223,6 +213,6 @@
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 
 
-<script src="/yh/js/transferOrder/list.js"></script>
+<script src="/yh/js/returnTransfer/list.js"></script>
 
 

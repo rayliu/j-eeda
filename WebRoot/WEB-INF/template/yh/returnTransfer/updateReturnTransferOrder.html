@@ -5,11 +5,11 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="btn-header" style="font-size:32px">运输单   
+                    <div class="btn-header" style="font-size:32px">退货单   
                     	<!-- <% if(shiro.hasPermission("TransferOrder.create")){%>
                         	<a class="btn  btn-primary" href="/transferOrder/add">新增运输单</a>
                         <%}%> -->
-                        <a class="btn  btn-primary" href="/transferOrder">返回</a>
+                        <a class="btn  btn-primary" href="/returnTransfer">返回</a>
                     </div>
                     
                     <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
@@ -56,9 +56,9 @@
                                             	<input type="hidden" name="status" value="${status!''}${transferOrder.status!''}"/>
                                             	<input type="hidden" name="create_by" value="${create_by!''}${transferOrder.create_by!''}"/>
                                                     
-	                                            <h2>运输信息</h2>
+	                                            <h2>退货信息</h2>
 	                                            <div class="form-group">
-	                                                <label  class="label-margin">运输单号</label> <strong id="showOrderNo">${order_no!''}${transferOrder.order_no!''}</strong>
+	                                                <label  class="label-margin">退货单号</label> <strong id="showOrderNo">${order_no!''}${transferOrder.order_no!''}</strong>
 	                                                <span id='checkQrCode' style="margin-left:20px;">手机签收二维码</span>
                                              		<div id="qrcodeCanvas" class="popover fade right in" style="display:none; padding:20px;left:330px;"></div>
 	                                            </div>
@@ -82,7 +82,7 @@
 	                                            <div class="form-group">
 	                                                <label class="label-margin">订单类型</label>
 	                                                	<input id="orderTypeRadio" type="hidden" value="${transferOrder.order_type!''}"/>
-	                                                	<label class="radio-inline">
+	                                                	<!-- <label class="radio-inline">
 	                                                        <input type="radio" name="orderType" id="salesOrder" value="salesOrder" checked="">销售订单
 	                                                    </label>
 	                                                	<label class="radio-inline">
@@ -90,19 +90,19 @@
 	                                                    </label>
 	                                                    <label class="radio-inline">
 	                                                        <input type="radio" name="orderType" id="arrangementOrder" value="arrangementOrder">调拨订单
-	                                                    </label>
-	                                                    <!-- <label class="radio-inline">
-	                                                        <input type="radio" name="orderType" id="cargoReturnOrder" value="cargoReturnOrder">退货订单
-	                                                    </label>
-	                                                    <label class="radio-inline">
-	                                                        <input type="radio" name="orderType" id="damageReturnOrder" value="damageReturnOrder">质量退单
 	                                                    </label> -->
-	                                                    <label class="radio-inline" id = "gateOute">
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="cargoReturnOrder" checked value="cargoReturnOrder">退货单
+	                                                    </label>
+	                                                    <label class="radio-inline" style='display:none'>
+	                                                        <input type="radio" name="orderType" id="damageReturnOrder" value="damageReturnOrder">货损单
+	                                                    </label>
+	                                                  <!--   <label class="radio-inline" id = "gateOute">
 	                                                        <input type="radio" name="orderType"  id="gateOutTransferOrder" value="gateOutTransferOrder">出库运输单
 	                                                    </label>
 	                                                    <label class="radio-inline">
 	                                                        <input type="radio" name="orderType" id="movesOrder" value="movesOrder">移机单
-	                                                    </label>
+	                                                    </label> -->
 	                                            </div>
 	                                            <div class="form-group" id="cargoNatures">
                                                 <label class="label-margin">货品属性</label>
@@ -136,14 +136,31 @@
                                             </div> 
                                             <div id="arrivalModes" class="form-group">
                                             	<input id="arrivalModeVal" type="hidden" />
-                                                <label class="label-margin">到达方式 </label>
                                                 <input id="arrivalModeRadio" type="hidden" value="${transferOrder.arrival_mode!''}"/>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn" checked="">入中转仓
-                                                </label>  
-                                                <label class="radio-inline" id="direct_model">
-                                                    <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery">货品直送
-                                                </label>
+                                                <div id='returnTransferTypeOfMarket'>
+                                                	<label class="label-margin">退货类型 </label>
+	                                                <label class="radio-inline" >
+	                                                    <input type="radio" name="arrivalMode"  value="deliveryToWarehouse" checked="true">收货人-RDC仓库
+	                                                </label>  
+	                                                <label class="radio-inline" >
+	                                                    <input type="radio" name="arrivalMode"  value="deliveryToFactory">收货人-客户工厂
+	                                                </label>
+	                                                <label class="radio-inline">
+	                                                    <input type="radio" name="arrivalMode" value="deliveryToFachtoryFromWarehouse">RDC仓库-客户工厂
+	                                                </label>
+                                                </div>
+                                                <div id='returnTransferTypeOfDamage' style='display:none'>
+                                                	<label class="label-margin">货损时间</label>
+	                                                <label class="radio-inline" >
+	                                                    <input type="radio" name="departTime"  value="deliveryToWarehouse" checked="">外发前
+	                                                </label>  
+	                                                <label class="radio-inline" >
+	                                                    <input type="radio" name="departTime"  value="deliveryToFactory">干线途中
+	                                                </label>
+	                                                <label class="radio-inline">
+	                                                    <input type="radio" name="departTime" value="deliveryToFachtoryFromWarehouse">仓库或者配送
+	                                                </label>
+                                                </div>
                                                 <div id="gateOutDiv" style="display: none;">  
 	                                                <input id="hideOutWarehouseId" type="hidden" value="${transferOrder.from_warehouse_id!''}" />     
 	                                                <input id="hideOutOfficeSelect" type="hidden" value="${outOffice.id!''}" />     
@@ -152,7 +169,7 @@
 	                                                <label class="label-margin">仓库 </label>
 	                                                <select id="gateOutSelect" name="gateOutSelect"></select> 
                                                 </div> 
-                                                <div id="gateInDiv" style="display: none;">  
+                                                <div id="gateInDiv">  
 	                                                <input id="hideWarehouseId" type="hidden" value="${transferOrder.warehouse_id!''}" />     
 	                                                <input id="hideDeliveryOfficeSelect" type="hidden" value="${office.id!''}" />     
 	                                                <label class="label-margin">RDC仓 </label>
@@ -165,7 +182,7 @@
    	                                            <label>收货单位</label>
    	                                            <input name="receiving_unit" value="${transferOrder.receiving_unit!''}" class="form-control" placeholder="请输入公司名称">
    	                                        </div>
-                                            <div id="contactInformation" style="display: none">
+                                            <div id="contactInformation" style="display:none">
     	                                        <h2>收货人信息</h2>
     	                                        <div class="form-group">
     	                                            <label>收货地址</label>
@@ -637,9 +654,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <!-- /.table-responsive -->
                                     </div>
-                                    <!-- /.panel-body -->
                                 </div>
 
                                 <div class="tab-pane fade" id="arap">
@@ -676,10 +691,6 @@
 	   												%>
                                             	</div>
                                             	<div id="unitOptions" style="display:none;">
-	                                            	<!-- <option></option>
-	                                            	<option value='台'>台</option>
-	                                            	<option value='件'>件</option>
-	                                            	<option value='套'>套</option> -->
                                             	</div>
                                             </table>
                                         </div>
@@ -776,26 +787,20 @@
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                                     <button id="saveTransferOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
                                      <button id="printBtn" type="button" class="btn  btn-primary" data-toggle="modal" disabled = 'diabled' data-target=".bs-example-modal-sm">打印</button>
-                                    <!-- <button id="receiptBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>                                   
-                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
-                                    <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
-                                    <button id="receiptBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->
+                                  
                                 </div>
-                                <!-- <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
-                                <p>发车确认：新建后可以点击，点击后生成单据状态 “已发车”，之后生成应付条目（付费给供应商）</p>
-                                <p>入库确认：如果是直送不显示该按钮，发车后可以点击，点击后生成单据状态 “已入库”</p>
-                                <p>回单签收：如果是入中转仓不显示该按钮，发车后可以点击，点击后生成单据状态 “已签收”，之后生成应收条目（向客户收钱）</p> -->
+                               
                             </div>
                         </div>
-                        <!-- /.panel-body -->
+                        
                     </div>
-                    <!-- /.panel -->
+                   
                 </div>
-                <!-- /.col-lg-12 -->
+                
 
             </div>
         </div>
-        <!-- /#page-wrapper -->
+        
 
 <%}%>
 
@@ -827,5 +832,5 @@
     Transfer.orderNo = '${transferOrder.order_no!''}';
 
 </script>
-<script src="/yh/js/transferOrder/update.js"></script>
+<script src="/yh/js/returnTransfer/update.js"></script>
 
