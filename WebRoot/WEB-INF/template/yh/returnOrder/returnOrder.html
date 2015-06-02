@@ -56,38 +56,38 @@
                                     
                                    		  <h2>回单信息</h2>  
                                    		  <div class="form-group">
-                                             <label>回单号</label>
+                                             <label>回单号:</label>
                                              <label class="radio-inline"></label><strong>${returnOrder.order_no!''}</strong>
                                              <span id='checkQrCode' style="margin-left:20px;">手机签收二维码</span>
                                              <div id="qrcodeCanvas" class="popover fade right in" style="display:none; padding:20px;left:330px;"></div>
                                              
                                           </div>
                                           <div class="form-group" id="status">
-                                             <label>状态</label>
+                                             <label>状态:</label>
                                              <label class="radio-inline"></label>
                                              <span id="sp_status"></span>
                                           </div>  
                                           <div class="form-group">
-                                              <label>回单创建人</label>
+                                              <label>回单创建人:</label>
                                               <label class="radio-inline"></label><%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>
                                           </div>                                                                               
                                           <div class="form-group">
-                                              <label>回单创建时间</label>
+                                              <label>回单创建时间:</label>
                                               <label class="radio-inline"></label>${returnOrder.create_date!''}
                                           </div>
                                         
                                         <h2>客户信息</h2>  
                                          <div class="form-group">
-                                            <label>公司名称</label>	${customerContact.company_name!''}
+                                            <label>公司名称:</label>	${customerContact.company_name!''}
                                         </div>
                                         <div class="form-group">
-                                            <label>地址</label>	${customerContact.address!''}
+                                            <label>地址:</label>	${customerContact.address!''}
                                         </div>                                                                               
                                         <div class="form-group">
-                                            <label>联系人</label>	${customerContact.contact_person!''}
+                                            <label>联系人:</label>	${customerContact.contact_person!''}
                                         </div>                                        
                                         <div class="form-group">
-                                            <label>电话</label>	${customerContact.phone!''}
+                                            <label>电话:</label>	${customerContact.phone!''}
                                         </div>
                                         <div id="customer_deliver_no">  
 	                                        <div class="form-group">
@@ -122,21 +122,23 @@
 	                                <div class="form-group">
 	                                   <h2>运输信息</h2> 
 	                                    </div> 
-	                      					<div class="form-group">
-	                                        <label>单号</label>	<strong>${transferOrder.order_no!''}</strong>
+	                      				<div class="form-group">
+	                                        <label>单号: </label>	<strong>${transferOrder.order_no!''}</strong>
 	                                    </div> 
-	                                                                            
 	                                    <div class="form-group">
-	                                     <label >业务员</label>  ${userLoginTo.c_name!''}                                    
+	                                        <label>客户单号: </label>	<strong>${transferOrder.customer_order_no!''}</strong>
+	                                    </div>                                       
+	                                    <div class="form-group">
+	                                     <label >业务员: </label>  ${userLoginTo.c_name!''}                                    
 	                                    </div>
 	                                    <div class="form-group">
-	                                        <label>货品属性</label>	<span id="cargoNatureSpan"><input id="cargoNature" type="hidden" value="${transferOrder.cargo_nature!''}"></span>
+	                                        <label>货品属性: </label>	<span id="cargoNatureSpan"><input id="cargoNature" type="hidden" value="${transferOrder.cargo_nature!''}"></span>
 	                                    </div>
 	                                    <div class="form-group">
-	                                        <label>提货方式</label>	<span id="pickupModeSpan"><input id="pickupMode" type="hidden" value="${transferOrder.pickup_mode!''}"></span>                                        
+	                                        <label>提货方式: </label>	<span id="pickupModeSpan"><input id="pickupMode" type="hidden" value="${transferOrder.pickup_mode!''}"></span>                                        
 	                                    </div>                                        
                                         <div class="form-group">
-                                            <label>到达方式</label>	<span id="arrivalModeSpan"><input id="arrivalMode" type="hidden" value="${transferOrder.arrival_mode!''}"></span>                                            
+                                            <label>到达方式: </label>	<span id="arrivalModeSpan"><input id="arrivalMode" type="hidden" value="${transferOrder.arrival_mode!''}"></span>                                            
                                         </div>                                         
 	                                    <h2>路线</h2>
 	                                   			 <div class="form-group">
