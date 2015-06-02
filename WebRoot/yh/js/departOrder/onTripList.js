@@ -93,6 +93,8 @@ $(document).ready(function() {
                 	}                	
                 }
             },
+            {"mDataProp":"ROUTE_TO",
+            		"sWidth": "80px"},
             {"mDataProp":"AMOUNT",
             	"sWidth": "40px"},
             {"mDataProp":"SPNAME"},
@@ -101,8 +103,6 @@ $(document).ready(function() {
             {"mDataProp":"PHONE",
             	"sWidth": "80px"},
             {"mDataProp":"ROUTE_FROM",
-            		"sWidth": "80px"},
-            {"mDataProp":"ROUTE_TO",
             		"sWidth": "80px"},
             {"mDataProp":"ARRIVAL_MODE",
             		"sWidth": "80px",
