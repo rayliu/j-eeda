@@ -11,7 +11,11 @@
 
   
     <title>${SYS_CONFIG.system_title!'易达物流'}</title>
+	<% if(SYS_CONFIG.logo==""){%>
 	<link rel="shortcut icon" href="/yh/img/eeda_logo.ico">
+	<%}else{%>
+	<link rel="shortcut icon" href="${SYS_CONFIG.logo!''}">
+	<%}%>
 
     <!-- Core CSS - Include with every page -->
     <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
@@ -20,7 +24,7 @@
 
 </head>
 
-<body style="background-image: url(${SYS_CONFIG.login_bg!'/upload/bg-1.jpg'});background-repeat : no-repeat;background-size: 100%;">
+<body style="background-image:url(<% if(SYS_CONFIG.login_bg=="")%>/upload/bg-1.jpg<%else%>${SYS_CONFIG.login_bg!''});background-repeat : no-repeat;background-size: 100%;">
 
     <div class="container" >
         <div class="row">
