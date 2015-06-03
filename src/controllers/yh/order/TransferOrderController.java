@@ -128,7 +128,7 @@ public class TransferOrderController extends Controller {
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " where t.status !='取消' and t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-					+ " order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收',t.planning_time desc"
+					+ " order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc,t.planning_time desc"
 					+ sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
@@ -210,7 +210,7 @@ public class TransferOrderController extends Controller {
 					+ "%' and t.create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' "
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收', t.planning_time desc" + sLimit;
+					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc, t.planning_time desc" + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
