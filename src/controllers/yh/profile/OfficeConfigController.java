@@ -221,7 +221,7 @@ public class OfficeConfigController extends Controller{
 	            }  
 	            emailTo.setMsg(basePath);
 	            /*添加邮件收件人*/
-	            emailTo.addTo("1063203104@qq.com");//设置收件人
+	            emailTo.addTo("ray_liuyu@qq.com");//设置收件人
 	            //emailTo.addTo("kate.lin@eeda123.com");
 	            emailTo.send();
 	         }catch(Exception e){
@@ -262,7 +262,7 @@ public class OfficeConfigController extends Controller{
 	            basePath =newDate + "邮箱" + email + "测试成功。";
 	            emailTo.setMsg(basePath);
 	            //添加邮件收件人
-	            emailTo.addTo("992827305@qq.com");//设置收件人
+	            emailTo.addTo(email);//设置收件人
 	            //emailTo.addTo("ray_liuyu@qq.com");
 	            emailTo.send();
 	            valid=true;
