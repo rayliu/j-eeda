@@ -80,7 +80,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 	        	for (int i = firstIndex; i <= lastIndex; i++) {
 					if(!orderNoList.get(i).equals(orderNo)){
 						importResult.put("result","false");
-						importResult.put("cause", "验证数据失败，同一张单号数据中存在其他单号数据现象，在第"+(i+2)+"行【客户订单号】列");
+						importResult.put("cause", "验证数据失败，同一张单号数据中:订单号不允许有断开存放的现象，而在第"+(lastIndex+2)+"行【客户订单号】列有和第"+(firstIndex+2)+"到第"+(i+1)+"行相同客户单号存在");
 						flag = true; 
 						break;
 					}
