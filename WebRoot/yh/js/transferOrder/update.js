@@ -108,12 +108,14 @@ $(document).ready(function() {
         		required: true
         	},
         	planning_time: {required: true},
+        	deliveryOfficeSelect: {required: true},
         	arrival_time: {required: true},
         	officeSelect: {required:true}
         },
         messages : {	             
         	customerMessage : {required:  "请选择一个客户"},
-        	officeSelect: {required: "运作网点不能为空"}
+        	officeSelect: {required: "运作网点不能为空"},
+        	deliveryOfficeSelect: {required: "RDC仓不能为空"}
         }
     });
 		
