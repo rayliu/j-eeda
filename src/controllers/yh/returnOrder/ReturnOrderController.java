@@ -33,7 +33,6 @@ import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
-import models.yh.profile.DriverAssistant;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
@@ -92,7 +91,7 @@ public class ReturnOrderController extends Controller {
 					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 			// 获取当前页的数据
-			sql = "select distinct r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+			sql = "select distinct tor.planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
@@ -142,7 +141,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 
 			// 获取当前页的数据
-			sql = "select distinct r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+			sql = "select distinct tor.planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
