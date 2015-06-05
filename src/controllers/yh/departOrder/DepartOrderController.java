@@ -270,7 +270,7 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
-    				+ " where  ifnull(deo.status,'') != 'aa'  and combine_type = '"
+    				+ " where  ifnull(deo.status,'') != '新建'  and combine_type = '"
     				+ DepartOrder.COMBINE_TYPE_DEPART + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
     				+ " group by deo.id order by deo.create_stamp desc " + sLimit;
