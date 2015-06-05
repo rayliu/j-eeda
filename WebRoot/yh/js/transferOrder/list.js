@@ -341,7 +341,13 @@ $(document).ready(function() {
         	$('#myModal').modal('show');
         	$("#footer").hide();
         } 
-    });
+    }).error(function (jqXHR, textStatus, errorThrown) {
+        alert("出错了，请刷新页面重新尝试。")
+        console.log(errorThrown);
+        // if (errorThrown === 'abort') {
+        //     alert('File Upload has been canceled');
+        // }
+    });;
 
     $('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  

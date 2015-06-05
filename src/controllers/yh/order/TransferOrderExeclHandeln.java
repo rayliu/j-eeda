@@ -38,20 +38,28 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @return 
      */
 	public boolean checkoutExeclTitle(String[] title,String execlType){
-    	int num = 0;
-    	List<Record> titleList = Db.find("select execl_title from execl_title where execl_type = '"+ execlType +"';");
-    	if(titleList != null){
-    		for (Record record : titleList) {
-				if(record.get("execl_title").equals(title[num])){
-					num++;
+    	List<Record> titleRecList = Db.find("select execl_title from execl_title where execl_type = '"+ execlType +"';");
+    	if(titleRecList != null){
+    		//判断总数是否相等
+    		if(titleRecList.size() != title.length){
+    			return false;
+    		}
+    		//判断是否所有列标题一致
+    		List<String> titleList = new ArrayList<String>(titleRecList.size());
+    		for (Record record : titleRecList) {
+    			titleList.add(record.getStr("execl_title"));
+			}
+    		for (int i = 0; i < title.length; i++) {
+				String excelTitle = title[i];
+				if(!titleList.contains(excelTitle)){
+					return false;
 				}
 			}
+    		
     	}
-    	if(num >= titleList.size()){
-    		return true;
-    	}else{
-    		return false;
-    	}
+    	
+        return true;
+    	
     }
 	
 	/**
@@ -355,6 +363,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      * @return 
      */
 	private TransferOrderItem updateTransferOrderItem(Map<String,String> content,double itemNumber,TransferOrder tansferOrder,TransferOrderItem transferOrderItem,Product product) throws Exception{
+		String unit="";
 		double size = 0;
 		double width = 0;
 		double height = 0;
@@ -363,6 +372,11 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		double sumVolume = 0;
 		double sumWeight = 0;
 		if(product != null){
+			if(product.get("unit") != null && !"".equals(product.get("unit"))){
+				unit = product.get("unit");
+			}else{
+				unit = content.get("单位");
+			}
 			if(product.get("size") != null && !"".equals(product.get("size"))){
 				size = product.getDouble("size")/1000;
 			}
@@ -416,7 +430,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     			transferOrderItem.set("item_no", product.get("item_no"))
     			.set("item_name", product.get("item_name"))
     			.set("size", product.get("size"))
-    			.set("unit", product.get("unit"))
+    			.set("unit", unit)
     			.set("width", product.get("width"))
     			.set("height", product.get("height"))
     			.set("weight", product.get("weight"))
