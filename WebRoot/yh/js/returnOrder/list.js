@@ -28,7 +28,7 @@
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
             { "mDataProp": "CREATE_DATE","sWidth":"150px"},
-            { "mDataProp": "CREATE_DATE","sWidth":"150px" },
+            { "mDataProp": "PLANNING_TIME","sWidth":"150px" },
             { "mDataProp": "TRANSACTION_STATUS","sWidth":"40px",
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new')
