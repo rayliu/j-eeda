@@ -3,19 +3,21 @@ $(document).ready(function() {
 	if(Transfer.orderNo){
         document.title = Transfer.orderNo +' | '+document.title;
     }
-	
-	$('#checkQrCode').hover(
-		function(){//in
-		$('#qrcodeCanvas').show();
-		},function(){//out
-		$('#qrcodeCanvas').hide();
-	});
 		
-	$('#qrcodeCanvas').qrcode({
-		width: 120,
-		height: 120,
-		text	: 'http://'+window.location.host+'/wx/fileUpload/'+Transfer.orderNo //'http://'+window.location.host+'
-	});	
+	if(Transfer.orderNo){
+		$('#checkQrCode').hover(
+			function(){//in
+			$('#qrcodeCanvas').show();
+			},function(){//out
+			$('#qrcodeCanvas').hide();
+		});
+
+		$('#qrcodeCanvas').qrcode({
+			width: 120,
+			height: 120,
+			text	: 'http://'+window.location.host+'/wx/fileUpload/'+Transfer.orderNo //'http://'+window.location.host+'
+		});	
+	}
 	
 	$('#menu_transfer').addClass('active').find('ul').addClass('in');
 
