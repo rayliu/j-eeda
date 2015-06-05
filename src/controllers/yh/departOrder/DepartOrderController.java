@@ -589,13 +589,20 @@ public class DepartOrderController extends Controller {
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
-            sql = "select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select * from(select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
-                    + " (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt left join depart_pickup dp on dp.pickup_id = dt.pickup_id "
-                    + " left join depart_order dd on dd.id = dt.pickup_id where dt.order_id = tor.id and (dd.status='已入货场' or dd.status='已入库') and (select group_concat(cast(pickup_id as char) separator ',') from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) is null ) pickup_id," 
-                    + " (select group_concat( distinct dor.depart_no separator '\r\n' ) from depart_transfer dt left join depart_order dor on dor.id = dt.pickup_id left join depart_pickup dp on dp.pickup_id = dt.pickup_id "
-                    + " where dt.order_id = tor.id and (dor.status='已入货场' or dor.status='已入库') and (select group_concat(cast(pickup_id as char) separator ',') from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) is null ) pickup_no,"
+                    + " (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt"
+                    + " left join depart_order dd on dd.id = dt.pickup_id"
+                    + " where dt.order_id = tor.id"
+                    + " and dd.status in('已入货场','已入库')"
+                    + " and (select count(1) from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) =0 ) pickup_id," 
+                    + " (select group_concat( distinct dor.depart_no separator '\r\n' ) from depart_transfer dt"
+                    + " left join depart_order dor on dor.id = dt.pickup_id"
+                    + " left join depart_pickup dp on dp.pickup_id = dt.pickup_id "
+                    + " where dt.order_id = tor.id"
+                    + " and dor.status in('已入货场', '已入库')"
+                    + " and (select count(1) from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) =0 ) pickup_no,"
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.charge_type2,dor.address doaddress,tor.pickup_mode,tor.status,c.abbr cname,"
                     + " (select name from location where code = tor.route_from) route_from,(select name from location where code = tor.route_to) route_to,tor.create_stamp,tor.depart_assign_status,c2.abbr spname, "
@@ -626,7 +633,9 @@ public class DepartOrderController extends Controller {
 					+ " and tor.planning_time between '" + beginTime+ "' and '" + endTime + "'"
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-                    + " order by tor.planning_time desc " + sLimit;
+                    + " order by tor.planning_time desc " 
+                    + ") A where pickup_id is not null or operation_type='out_source'" 
+                    + sLimit;
         }
         rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
