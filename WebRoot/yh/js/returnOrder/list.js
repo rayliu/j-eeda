@@ -70,7 +70,7 @@
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
             { "mDataProp": "CREATE_DATE","sWidth":"140px" },
-            { "mDataProp": "CREATE_DATE","sWidth":"140px" },
+            { "mDataProp": "PLANNING_TIME","sWidth":"140px" },
             { "mDataProp": "RECEIPT_DATE","sWidth":"140px" },
             { "mDataProp": "TRANSACTION_STATUS","sWidth":"60px",
                 "fnRender": function(obj) {
