@@ -2,6 +2,15 @@ $(document).ready(function() {
 	document.title = '应付明细确认| '+document.title;
     $('#menu_cost').addClass('active').find('ul').addClass('in');
    
+    $("input[name='allCheck']").click(function(){
+    	$("input[name='order_check_box']").each(function () {  
+    		  
+            this.checked = !this.checked;  
+  
+         });  
+
+    });
+    
 	//datatable, 动态处理
     var costConfiremTable = $('#costConfirem-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -16,7 +25,7 @@ $(document).ready(function() {
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"10px",
                 "fnRender": function(obj) {
-                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.BUSINESS_TYPE+'">';
+	              return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.BUSINESS_TYPE+'">';	
                 }
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"75px"},            	
