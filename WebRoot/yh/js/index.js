@@ -73,12 +73,13 @@ $(document).ready(function() {
             	"fnRender":function(obj){
             		return "<a href='/returnOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             	}},
-            {"mDataProp":null, "sWidth":"150px",
-            	"fnRender": function(obj) {
-            		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO
-            	}
-            },
-            { "mDataProp": "TRANSACTION_STATUS", "sWidth":"100px"},
+            { "mDataProp": "NOTIFY_PARTY_NAME", "sWidth":"150px"},
+            // {"mDataProp":null, "sWidth":"150px",
+            // 	"fnRender": function(obj) {
+            // 		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO
+            // 	}
+            // },
+            { "mDataProp": "TRANSACTION_STATUS", "sWidth":"70px"},
             { "mDataProp": "CREATE_DATE", "sWidth":"150px"},
             { "mDataProp": "AMOUNT","sWidth":"100px"},
         ]
