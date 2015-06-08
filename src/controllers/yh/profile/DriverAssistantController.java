@@ -46,7 +46,8 @@ public class DriverAssistantController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select id,name,phone,date_of_entry,identity_number,is_stop from driver_assistant " + sLimit);
+        List<Record> orders = Db.find("select id,name,phone,date_of_entry,identity_number,is_stop from driver_assistant where "
+        		+ " office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')" + sLimit);
         Map orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
