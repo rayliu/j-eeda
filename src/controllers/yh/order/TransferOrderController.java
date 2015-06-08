@@ -1128,7 +1128,7 @@ public class TransferOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		List<Record> orders =Db.find("select d.fin_item_id,d.amount,d.status,d.remark,f.name,dor.order_no as deliveryOrderNO,t.order_no as transferOrderNo "
+		List<Record> orders =Db.find("select d.*,f.name,dor.order_no as deliveryOrderNO,t.order_no as transferOrderNo "
 				+ " from transfer_order_fin_item d "
 				+ " left join fin_item f on d.fin_item_id = f.id "
 				+ " left join transfer_order t on t.id = d.order_id "
