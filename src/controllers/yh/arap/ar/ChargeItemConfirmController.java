@@ -109,7 +109,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) like '%"+start
 					+ "%' and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) like '%"+orderNo
 					+ "%' and ifnull(c.abbr,c2.abbr) like '%"+customer
-					+ "%' and ror.create_date between '"+beginTime+"' and '"+endTime+"' "
+					+ "%' and tor.planning_time between '"+beginTime+"' and '"+endTime+"' "
 					+ " group by ror.id"
 					+ " order by ror.create_date desc ) ror";
 	        sql= "select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
@@ -138,7 +138,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) like '%"+start
 					+ "%' and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) like '%"+orderNo
 					+ "%' and ifnull(c.abbr,c2.abbr) like '%"+customer
-					+ "%' and ror.create_date between '"+beginTime+"' and '"+endTime+"' "
+					+ "%' and tor.planning_time between '"+beginTime+"' and '"+endTime+"' "
 					+ " group by ror.id,tor2.id"
 					+ " order by ror.create_date desc " + sLimit;
         }
