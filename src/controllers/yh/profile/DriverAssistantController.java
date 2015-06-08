@@ -97,7 +97,7 @@ public class DriverAssistantController extends Controller {
             }
             driverAssistant.save();
         }
-    	render("/yh/profile/driverAssistant/driverAssistantList.html"); 
+    	redirect("/driverAssistant"); 
     }
 	
     public void delect() {
