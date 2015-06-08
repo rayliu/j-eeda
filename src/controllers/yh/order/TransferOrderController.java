@@ -750,19 +750,19 @@ public class TransferOrderController extends Controller {
 			locationList = Db
 					.find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_CUSTOMER
-							+ "' and (company_name like '%"
+							+ "' and (c.company_name like '%"
 							+ input
-							+ "%' or contact_person like '%"
+							+ "%' or c.contact_person like '%"
 							+ input
-							+ "%' or email like '%"
+							+ "%' or c.email like '%"
 							+ input
-							+ "%' or mobile like '%"
+							+ "%' or c.mobile like '%"
 							+ input
-							+ "%' or phone like '%"
+							+ "%' or c.phone like '%"
 							+ input
-							+ "%' or address like '%"
+							+ "%' or c.address like '%"
 							+ input
-							+ "%' or postal_code like '%"
+							+ "%' or c.postal_code like '%"
 							+ input
 							+ "%') and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') limit 0,10");
 		} else {
@@ -779,19 +779,19 @@ public class TransferOrderController extends Controller {
 			locationList = Db
 					.find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_CUSTOMER
-							+ "' and (company_name like '%"
+							+ "' and (c.company_name like '%"
 							+ input
-							+ "%' or contact_person like '%"
+							+ "%' or c.contact_person like '%"
 							+ input
-							+ "%' or email like '%"
+							+ "%' or c.email like '%"
 							+ input
-							+ "%' or mobile like '%"
+							+ "%' or c.mobile like '%"
 							+ input
-							+ "%' or phone like '%"
+							+ "%' or c.phone like '%"
 							+ input
-							+ "%' or address like '%"
+							+ "%' or c.address like '%"
 							+ input
-							+ "%' or postal_code like '%"
+							+ "%' or c.postal_code like '%"
 							+ input
 							+ "%') and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') limit 0,10");
 		} else {
@@ -813,21 +813,21 @@ public class TransferOrderController extends Controller {
 			locationList = Db
 					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and (company_name like '%"
+							+ "' and (c.company_name like '%"
 							+ input
-							+ "%' or abbr like '%"
+							+ "%' or c.abbr like '%"
 							+ input
-							+ "%' or contact_person like '%"
+							+ "%' or c.contact_person like '%"
 							+ input
-							+ "%' or email like '%"
+							+ "%' or c.email like '%"
 							+ input
-							+ "%' or mobile like '%"
+							+ "%' or c.mobile like '%"
 							+ input
-							+ "%' or phone like '%"
+							+ "%' or c.phone like '%"
 							+ input
-							+ "%' or address like '%"
+							+ "%' or c.address like '%"
 							+ input
-							+ "%' or postal_code like '%"
+							+ "%' or c.postal_code like '%"
 							+ input
 							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?) limit 0,10",parentID,pom.getCurrentOfficeId());
 		} else {
