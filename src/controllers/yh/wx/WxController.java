@@ -19,6 +19,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import models.OrderAttachmentFile;
@@ -43,6 +44,7 @@ import controllers.yh.contract.ContractController;
 
 public class WxController extends ApiController {
 	private Logger logger = Logger.getLogger(WxController.class);
+	private static Map map= new HashMap<String, String>();
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
 	 * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
@@ -88,45 +90,103 @@ public class WxController extends ApiController {
 		setAttr("token", PropKit.get("token"));
 	}
 	
-	public void getWechatUserName() throws IOException{
+	public void getWechatUserName() throws Exception{
 		String code = getPara("code");
-		String openIdUrl="http://api.weixin.qq.com/sns/oauth2/access_token?appid="+ApiConfigKit.getApiConfig().getAppId()
+		logger.debug("getWechatUserName...  code:"+code);
+		String openIdUrl="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+ApiConfigKit.getApiConfig().getAppId()
 				+"&secret="+PropKit.get("appSecret")+"&code="+code+"&grant_type=authorization_code";
-		
+		logger.debug("  openIdUrl:"+openIdUrl);
 		String status="ok";
+		
+//		String nickName = getUserName("OezXcEiiBSKSxW0eoylIeDfDMykPQSSb7-5uhD_4GTGnbP3QI0rdKGXLklQ52kM0tgnqPd9nHauOXRDRCFNUZtE7GzZPxBYBea1ge5ayWq5wuAcpGL3PA_rdt-YG-xqquNbCuemvAZ5C2Apzcq4T6A", "o3YnqszIYQvkMUOHpsxOHf0f5_SU");
+//        logger.debug("nickName:"+nickName);
+		
+		if(map.get(code)!=null){
+			String jsonStr = (String)map.get(code);
+			try {
+				JSONObject json = new JSONObject(jsonStr);
+				renderJson(json.toString());
+			} catch (JSONException e) {				
+				e.printStackTrace();
+			}
+		}
+		
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-        try {            
-        	HttpGet httpGet = new HttpGet(openIdUrl);
+        try {                        
+            HttpGet httpGet = new HttpGet(openIdUrl);
             CloseableHttpResponse response1 = httpclient.execute(httpGet);
             try {
                 HttpEntity entity = response1.getEntity();
-                JSONObject json = new JSONObject(EntityUtils.toString(entity));  
+                String jsonStr=EntityUtils.toString(entity);
+                JSONObject json = new JSONObject(jsonStr);
+                logger.debug("json:"+jsonStr);
+                
                 String accessToken = json.getString("access_token");
                 String openid = json.getString("openid");
-                String unionid = json.getString("unionid");
-                logger.debug("accessToken:"+accessToken+", openid:"+openid+", unionid:"+unionid);
-                
-                String userInfoUrl="https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
-                httpGet = new HttpGet(userInfoUrl);
-                response1 = httpclient.execute(httpGet);
-                entity = response1.getEntity();
-                json = new JSONObject(EntityUtils.toString(entity));  
-                String nickname = json.getString("nickname");
+                //String unionid = json.getString("unionid");
+                logger.debug("accessToken:"+accessToken+", openid:"+openid);
+                               
+                String nickname = getUserName(accessToken, openid);
                 logger.debug("nickname:"+nickname);
+                json.append("nickname", nickname);
+                map.put(code, json.toString());
+                logger.debug("json:"+json.toString());
                 renderJson("{\"nickname\":\""+nickname+"\", \"openid\":\""+openid+"\"}");
             }catch(Exception e){
             	status="error";
+            	logger.debug("1............"+e.getMessage());
             	e.printStackTrace();
             } finally {
                 response1.close();
             }
         }catch(Exception e){
         	status="error";
+        	logger.debug("2............"+e.getMessage());
         	e.printStackTrace();
         } finally {
             httpclient.close();
             renderJson("{\"status\":\""+status+"\"}");
         }
+	}
+	
+	private String getUserName(String accessToken, String openid) throws Exception{
+		String userName="";
+		
+		String userInfoUrl="https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {            
+            HttpGet httpGet = new HttpGet(userInfoUrl);
+            CloseableHttpResponse response1 = httpclient.execute(httpGet);
+            try {
+                logger.debug("userInfoUrl:"+userInfoUrl);
+                httpGet = new HttpGet(userInfoUrl);
+                response1 = httpclient.execute(httpGet);
+                HttpEntity entity = response1.getEntity();
+                
+                String jsonStr=EntityUtils.toString(entity);
+                JSONObject json = new JSONObject(jsonStr); 
+                logger.debug("json2:"+jsonStr);
+                
+                String nickname = json.getString("nickname");
+                logger.debug("nickname:"+nickname);
+                json.append("nickname", nickname);
+                
+                logger.debug("json:"+json.toString());
+            }catch(Exception e){
+            	logger.debug("getUserName()............"+e.getMessage());
+            	e.printStackTrace();
+            	throw e;
+            } finally {
+                response1.close();
+            }
+        }catch(Exception e){
+        	logger.debug("getUserName()............"+e.getMessage());
+        	e.printStackTrace();
+        	throw e;
+        } finally {
+            httpclient.close();
+        }
+		return userName;
 	}
 	
 	//微信JS demo页面，方便参考

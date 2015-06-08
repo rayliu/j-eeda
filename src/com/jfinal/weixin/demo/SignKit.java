@@ -46,23 +46,24 @@ public class SignKit {
     	
     	CloseableHttpClient httpclient = HttpClients.createDefault();
         try {            
-        	HttpGet httpGet = new HttpGet("https://api.weixin.qq.com/sns/oauth2/access_token?appid=123213&secret=1232131&code=1233213&grant_type=authorization_code");
-            CloseableHttpResponse response1 = httpclient.execute(httpGet);
+        	//HttpGet httpGet = new HttpGet("https://api.weixin.qq.com/sns/oauth2/access_token?appid=123213&secret=1232131&code=1233213&grant_type=authorization_code");
+            //CloseableHttpResponse response1 = httpclient.execute(httpGet);
+        	String userInfoUrl="https://api.weixin.qq.com/sns/userinfo?access_token=OezXcEiiBSKSxW0eoylIeDfDMykPQSSb7-5uhD_4GTGnbP3QI0rdKGXLklQ52kM0tgnqPd9nHauOXRDRCFNUZtE7GzZPxBYBea1ge5ayWq5wuAcpGL3PA_rdt-YG-xqquNbCuemvAZ5C2Apzcq4T6A"
+            		+"&openid=o3YnqszIYQvkMUOHpsxOHf0f5_SU&lang=zh_CN";
+            HttpGet httpGet1 = new HttpGet(userInfoUrl);
+            CloseableHttpResponse response2 = httpclient.execute(httpGet1);
             try {
-                HttpEntity entity = response1.getEntity();
-                JSONObject json = new JSONObject(EntityUtils.toString(entity));  
-                String errcode = json.getString("errcode");
-                System.out.println("errcode:"+errcode);
+//                HttpEntity entity = response1.getEntity();
+//                JSONObject json = new JSONObject(EntityUtils.toString(entity));  
+//                String errcode = json.getString("errcode");
+//                System.out.println("errcode:"+errcode);
                 
-                String userInfoUrl="https://api.weixin.qq.com/sns/userinfo?access_token=1111&openid=1111&lang=zh_CN";
-                httpGet = new HttpGet(userInfoUrl);
-                response1 = httpclient.execute(httpGet);
-                entity = response1.getEntity();
+                HttpEntity entity = response2.getEntity();
                 System.out.println(EntityUtils.toString(entity));
             }catch(Exception e){
             	e.printStackTrace();
             } finally {
-                response1.close();
+                response2.close();
             }
         } finally {
             httpclient.close();
