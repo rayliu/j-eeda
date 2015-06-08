@@ -136,7 +136,7 @@ public class RegisterUserInfoCollection implements Job {
 							: dataList.get(i).get("office_person").toString());
 			row.createCell((short) 4).setCellValue(
 					dataList.get(i).get("phone") == null ? "" : dataList.get(i)
-							.get("office_person").toString());
+							.get("phone").toString());
 			row.createCell((short) 5).setCellValue(
 					dataList.get(i).get("last_login") == null ? "" : dataList
 							.get(i).get("last_login").toString());
