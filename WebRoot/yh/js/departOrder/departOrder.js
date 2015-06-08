@@ -39,15 +39,16 @@ $(document).ready(function() {
             { "mDataProp": "PICKUP_NO","sClass": "pickup_no"},
             { "mDataProp": "PLANNING_TIME","sClass": "planning_time"},
             { "mDataProp": "CNAME", "sWidth": "100px","sClass": "cname"},
-            { "mDataProp":"OPERATION_TYPE","sClass": "operation_type"}, 
-            { "mDataProp":"CARGO_NATURE","sClass": "cargo_nature"},
+            { "mDataProp": "OPERATION_TYPE","sClass": "operation_type"}, 
+            { "mDataProp": "CARGO_NATURE","sClass": "cargo_nature"},
+            { "mDataProp": "TOTAL_AMOUNT", "sClass": "total_amount"},
             { "mDataProp": "DOADDRESS","sClass": "doaddress"},
             { "mDataProp": "ARRIVAL_MODE","sClass": "arrival_model"},
-            { "mDataProp":"PICKUP_MODE","sClass": "pickup_mode"},
+            { "mDataProp": "PICKUP_MODE","sClass": "pickup_mode"},
             { "mDataProp": "SPNAME","sWidth": "100px","sClass": "spname"},
             { "mDataProp": "ROUTE_FROM","sClass": "route_from"},
             { "mDataProp": "ROUTE_TO","sClass": "route_to"},
-            { "mDataProp":"CHARGE_TYPE2","sClass": "chargeType2"},
+            { "mDataProp": "CHARGE_TYPE2","sClass": "chargeType2"},
             { "mDataProp": "OFFICE_NAME","sClass": "office_name"}
         ]      
     });	
@@ -107,6 +108,7 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
+            { "mDataProp": "TOTAL_AMOUNT", "sClass": "total_amount"},		
             { "mDataProp": "DOADDRESS","sClass": "doaddress"},
             { "mDataProp": "ARRIVAL_MODE",
             	"sClass": "arrival_model",
@@ -222,7 +224,8 @@ $(document).ready(function() {
 		var pickup_no = $(this).parent().siblings('.pickup_no')[0].textContent;	
 		var cname = $(this).parent().siblings('.cname')[0].textContent;
 		var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
-		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;		
+		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;
+		var total_amount = $(this).parent().siblings('.total_amount')[0].textContent;	
 		var doaddress = $(this).parent().siblings('.doaddress')[0].textContent;		
 		var arrival_model = $(this).parent().siblings('.arrival_model')[0].textContent;		
 		var pickup_mode = $(this).parent().siblings('.pickup_mode')[0].textContent;		
@@ -276,7 +279,7 @@ $(document).ready(function() {
 				}
     		}
     		ckeckedTransferOrderList.append("<tr value='"+value+"' pickupid='"+pickupid+"'><td>"+order_no+"</td><td>"+pickup_no+"</td><td>"+cname+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+operation_type+"</td><td>"+cargo_nature
-    				+"</td><td>"+doaddress+"</td><td>"+arrival_model+"</td><td>"+pickup_mode+"</td><td>"+spname+"</td><td>"+charge_type+"</td><td>"+office_name+"</td></tr>");
+    				+"</td><td>"+total_amount+"</td><td>"+"</td><td>"+doaddress+"</td><td>"+arrival_model+"</td><td>"+pickup_mode+"</td><td>"+spname+"</td><td>"+charge_type+"</td><td>"+office_name+"</td></tr>");
     	}else{
     		if(transferOrderIds.length != 0){
     			transferOrderIds.splice(transferOrderIds.indexOf(value), 1); 
