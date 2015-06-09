@@ -30,6 +30,16 @@ $(document).ready(function() {
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"75px"},            	
             {"mDataProp":"SPNAME", "sWidth":"160px"},
+            {"mDataProp":null, "sWidth":"100px",
+            	"fnRender":function(obj){
+            		var timeStamp = obj.aData.DEPART_TIME;
+            		if(timeStamp == ""){
+            			return "";
+            		}else{
+            			return timeStamp;
+            		}
+            		
+            	}},
             {"mDataProp":null, "sWidth": "70px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
