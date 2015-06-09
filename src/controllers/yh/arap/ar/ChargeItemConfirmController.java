@@ -69,6 +69,7 @@ public class ChargeItemConfirmController extends Controller {
         		&&customerNo==null&&start==null){
         	sqlTotal= "select count(1) total from return_order ror where ror.transaction_status = '已签收'";
 	        sql= "select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
+	        		+ " tor.planning_time, "
 					+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
 					+ " ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) route_from,"
 					+ " ifnull((select name from location where code = tor.route_to),(select name from location where code = dvr.route_to)) route_to,"
@@ -113,6 +114,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " group by ror.id"
 					+ " order by ror.create_date desc ) ror";
 	        sql= "select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
+					+ " tor.planning_time, "
 					+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
 					+ " ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) route_from,"
 					+ " ifnull((select name from location where code = tor.route_to),(select name from location where code = dvr.route_to)) route_to,"

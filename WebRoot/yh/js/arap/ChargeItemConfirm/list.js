@@ -34,6 +34,7 @@ $(document).ready(function() {
                     return "未收款";
             }},
             {"mDataProp":"CNAME", "sWidth":"200px"},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"130px"}, 
             {"mDataProp":null, "sWidth":"150px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
@@ -53,7 +54,7 @@ $(document).ready(function() {
                     }
                     return obj.aData.TRANSACTION_STATUS;
                 }
-            },           
+            },            
             {"mDataProp":"RECEIPT_DATE", "sWidth":"150px"},        	
             {"mDataProp":"ROUTE_FROM", "sWidth":"100px"},                        
             {"mDataProp":"ROUTE_TO", "sWidth":"100px"},                        
