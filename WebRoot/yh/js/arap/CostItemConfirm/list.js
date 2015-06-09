@@ -61,6 +61,7 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未确认";
             }},
+            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"75px"}, 
             {"mDataProp":"ORDER_NO", "sWidth":"140px", 
                 "fnRender": function(obj) {
                 	var str = "";
@@ -93,7 +94,7 @@ $(document).ready(function() {
             {"mDataProp":"TAKE_COST", "sWidth":"50px"}, 
             {"mDataProp":"ANZHUANG_COST", "sWidth":"50px"},
             {"mDataProp":"CANGCHU_COST", "sWidth":"50px"}, 
-            {"mDataProp":"OTHER_COST", "sWidth":"60px"}, 
+            {"mDataProp":"OTHER_COST", "sWidth":"80px"}, 
             {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
