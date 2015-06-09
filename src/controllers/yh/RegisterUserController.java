@@ -62,6 +62,7 @@ public class RegisterUserController  extends Controller{
         	Record office_config = new Record();
         	office_config.set("office_id", office.get("id"));
         	office_config.set("system_title", officeName);
+        	office_config.set("max", 5);
         	Db.save("office_config", office_config);
         	
         	//将新注册公司的ID设值到注册用户中

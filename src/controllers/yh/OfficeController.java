@@ -12,6 +12,7 @@ import models.ParentOfficeModel;
 import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
+import models.yh.profile.OfficeCofig;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -33,16 +34,24 @@ import controllers.yh.util.PermissionConstant;
 public class OfficeController extends Controller {
     private Logger logger = Logger.getLogger(LoginUserController.class);
     Subject currentUser = SecurityUtils.getSubject();
-    
+    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_LIST})
     public void index() {
+    	OfficeCofig officeConfig = OfficeCofig.dao.findFirst("select * from office_config where office_id = ?",pom.getParentOfficeId());
+    	List<Office> list = Office.dao.find("select * from office where belong_office = " + pom.getParentOfficeId());
+    	setAttr("officeConfig", officeConfig);
+    	if(list.size()>0){
+    		setAttr("amount", list.size());
+    	}else{
+    		setAttr("amount", 0);
+    	}
+    	
         render("/yh/profile/office/office.html");
     }
 
     // 链接到添加分公司页面
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_O_CREATE})
     public void editOffice() {
-    	
         render("/yh/profile/office/edit.html");
     }
 
@@ -122,11 +131,8 @@ public class OfficeController extends Controller {
             
             Db.save("office", office);
             //自动将新的公司给是管理员的用户
-            Long parentID = parentOffice.get("belong_office");
-            if(parentID == null || "".equals(parentID)){
-            	parentID = parentOffice.getLong("id");
-            }
-            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name left join office o on o.id = ul.office_id  where role_code = 'admin' and (o.id = ? or o.belong_office = ?)",parentID,parentID);
+            
+            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name left join office o on o.id = ul.office_id  where role_code = 'admin' and (o.id = ? or o.belong_office = ?)",pom.getParentOfficeId(),pom.getParentOfficeId());
             if(urList.size()>0){
             	for (UserRole userRole : urList) {
                 	UserOffice uo = new UserOffice();
@@ -137,6 +143,14 @@ public class OfficeController extends Controller {
             }
         }
         
+        OfficeCofig officeConfig = OfficeCofig.dao.findFirst("select * from office_config where office_id = ?",pom.getParentOfficeId());
+    	List<Office> list = Office.dao.find("select * from office where belong_office = " + pom.getParentOfficeId());
+    	setAttr("officeConfig", officeConfig);
+    	if(list.size()>0){
+    		setAttr("amount", list.size());
+    	}else{
+    		setAttr("amount", 0);
+    	}
         render("/yh/profile/office/office.html");
 
     }
@@ -150,12 +164,7 @@ public class OfficeController extends Controller {
          */
         String id = getPara();
         if (id != null) {
-        	/*List<TransferOrder> orders = TransferOrder.dao.find("select * from transfer_order where office_id = "+id);
-        	for(TransferOrder order : orders){
-        		order.set("office_id", null);
-        		order.update();
-        	}
-            Db.deleteById("office", id);*/
+        	
         	Office office = Office.dao.findById(id);
         	Object obj = office.get("is_stop");
             if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
@@ -166,7 +175,14 @@ public class OfficeController extends Controller {
             office.update();
         	
         }
-        
+        OfficeCofig officeConfig = OfficeCofig.dao.findFirst("select * from office_config where office_id = ?",pom.getParentOfficeId());
+    	List<Office> list = Office.dao.find("select * from office where belong_office = " + pom.getParentOfficeId());
+    	setAttr("officeConfig", officeConfig);
+    	if(list.size()>0){
+    		setAttr("amount", list.size());
+    	}else{
+    		setAttr("amount", 0);
+    	}
         render("/yh/profile/office/office.html");
     }
 
