@@ -61,20 +61,20 @@ wx.ready(function () {
 	var saveLocation=function(openId){
 		wx.getLocation({
 			success: function (res) {
-				alert(JSON.stringify(res));
+				//alert(JSON.stringify(res));
 				var saveLoction = function(latlng, address){
-					alert("当前开始ajax保存位置信息");
+					//alert("当前开始ajax保存位置信息");
 					$.post("/wx/saveLocationInfo",
 					       {longitude: latlng.longitude,latitude: latlng.latitude,address:address, openId:openId},
 					    function(data){
 						if(data.ID != "" && data.ID != null)
-							alert("汇报成功");
+							$('#orderDesc').text("汇报成功");
 						else
-							alert("汇报失败");
+							$('#orderDesc').text("汇报失败");
 					});
 					//alert("当前结束ajax保存位置信息");
 				};
-				//getLocationInfo(res, saveLoction);
+				getLocationInfo(res, saveLoction);
 			},
 			cancel: function (res) {
 				alert('用户拒绝授权获取地理位置');
@@ -88,13 +88,13 @@ wx.ready(function () {
 		if(openId.length==0){
 			$.post("/wx/getWechatUserName",{code:code},function(data){
 				if(data.errcode==40029){
-					$('#orderDesc').append('当前授权已过期，请返回上级菜单。'+'<br>');
+					$('#orderDesc').text('当前授权已过期，请返回上级菜单。'+'<br>');
 				}else{
 					$('#openId').val(data.openid);
 					$('#nickName').val(data.nickname);
 					saveLocation(data.openid);
 				}
-				$('#orderDesc').append(JSON.stringify(data)+'<br>');
+				//$('#orderDesc').append(JSON.stringify(data)+'<br>');
 				
 			});
 		}else{
