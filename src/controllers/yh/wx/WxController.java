@@ -27,7 +27,7 @@ import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
-import models.yh.wx.WechatLacation;
+import models.yh.wx.WechatLocation;
 
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
@@ -44,7 +44,7 @@ import controllers.yh.contract.ContractController;
 
 public class WxController extends ApiController {
 	private Logger logger = Logger.getLogger(WxController.class);
-	private static Map map= new HashMap<String, String>();
+	//private static Map map= new HashMap<String, String>();
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
 	 * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
@@ -92,24 +92,13 @@ public class WxController extends ApiController {
 	
 	public void getWechatUserName() throws Exception{
 		String code = getPara("code");
+		String openId = getPara("openId");
+				
 		logger.debug("getWechatUserName...  code:"+code);
 		String openIdUrl="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+ApiConfigKit.getApiConfig().getAppId()
 				+"&secret="+PropKit.get("appSecret")+"&code="+code+"&grant_type=authorization_code";
 		logger.debug("  openIdUrl:"+openIdUrl);
 		String status="ok";
-		
-//		String nickName = getUserName("OezXcEiiBSKSxW0eoylIeDfDMykPQSSb7-5uhD_4GTGnbP3QI0rdKGXLklQ52kM0tgnqPd9nHauOXRDRCFNUZtE7GzZPxBYBea1ge5ayWq5wuAcpGL3PA_rdt-YG-xqquNbCuemvAZ5C2Apzcq4T6A", "o3YnqszIYQvkMUOHpsxOHf0f5_SU");
-//        logger.debug("nickName:"+nickName);
-		
-		if(map.get(code)!=null){
-			String jsonStr = (String)map.get(code);
-			try {
-				JSONObject json = new JSONObject(jsonStr);
-				renderJson(json.toString());
-			} catch (JSONException e) {				
-				e.printStackTrace();
-			}
-		}
 		
 		CloseableHttpClient httpclient = HttpClients.createDefault();
         try {                        
@@ -120,16 +109,21 @@ public class WxController extends ApiController {
                 String jsonStr=EntityUtils.toString(entity);
                 JSONObject json = new JSONObject(jsonStr);
                 logger.debug("json:"+jsonStr);
+                                
+                if(json.has("errcode")){
+                	status="error";
+                	renderJson(jsonStr);
+                	return;
+                }
                 
                 String accessToken = json.getString("access_token");
                 String openid = json.getString("openid");
                 //String unionid = json.getString("unionid");
                 logger.debug("accessToken:"+accessToken+", openid:"+openid);
                                
-                String nickname = getUserName(accessToken, openid);
+                String nickname = getUserNickName(accessToken, openid);
                 logger.debug("nickname:"+nickname);
-                json.append("nickname", nickname);
-                map.put(code, json.toString());
+               
                 logger.debug("json:"+json.toString());
                 renderJson("{\"nickname\":\""+nickname+"\", \"openid\":\""+openid+"\"}");
             }catch(Exception e){
@@ -145,11 +139,11 @@ public class WxController extends ApiController {
         	e.printStackTrace();
         } finally {
             httpclient.close();
-            renderJson("{\"status\":\""+status+"\"}");
+            //renderJson("{\"status\":\""+status+"\"}");
         }
 	}
 	
-	private String getUserName(String accessToken, String openid) throws Exception{
+	private String getUserNickName(String accessToken, String openid) throws Exception{
 		String userName="";
 		
 		String userInfoUrl="https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
@@ -167,9 +161,9 @@ public class WxController extends ApiController {
                 JSONObject json = new JSONObject(jsonStr); 
                 logger.debug("json2:"+jsonStr);
                 
-                String nickname = json.getString("nickname");
-                logger.debug("nickname:"+nickname);
-                json.append("nickname", nickname);
+                userName = json.getString("nickname");
+                logger.debug("nickname:"+userName);
+                //json.append("nickname", nickname);
                 
                 logger.debug("json:"+json.toString());
             }catch(Exception e){
@@ -408,9 +402,10 @@ public class WxController extends ApiController {
 		String longitude = getPara("longitude");
 		String latitude = getPara("latitude");
 		String address = getPara("address");
-		WechatLacation  wechatLacation = new WechatLacation();
-		wechatLacation.set("longitude", longitude).set("latitude", latitude).set("address", address).set("update_stamp", new Date()).save();
-		renderJson(wechatLacation);
+		String wechatOpenId = getPara("openId");
+		WechatLocation  wechatLocation = new WechatLocation();
+		wechatLocation.set("wechat_openid", wechatOpenId).set("longitude", longitude).set("latitude", latitude).set("address", address).set("update_stamp", new Date()).save();
+		renderJson(wechatLocation);
 	}
 	
 }
