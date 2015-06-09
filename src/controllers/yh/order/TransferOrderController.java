@@ -105,7 +105,7 @@ public class TransferOrderController extends Controller {
 			}
 
 			String sqlTotal = "select count(1) total from transfer_order t "
-					+ " where t.status!='取消' and t.order_type != 'cargoReturnOrder' and t.office_id in(select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " where t.order_type != 'cargoReturnOrder' and t.office_id in(select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
@@ -126,7 +126,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status !='取消' and t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
+					+ " where t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ " order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc,t.planning_time desc"
 					+ sLimit;
@@ -163,7 +163,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status !='取消' and t.order_type != 'cargoReturnOrder' "
+					+ " where t.order_type != 'cargoReturnOrder' "
 					+ " and t.order_no like '%"+ orderNo 
 					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address
@@ -196,7 +196,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status !='取消' and t.order_type != 'cargoReturnOrder' "
+					+ " where t.order_type != 'cargoReturnOrder' "
 					+ " and t.order_no like '%" + orderNo
 					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address
@@ -915,10 +915,21 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 取消
-	public void cancel() {
-		String id = getPara();
-		TransferOrder.dao.findById(id).set("Status", "取消").update();
-		renderJson("{\"success\":true}");
+	public void  cancel() {
+		String id = getPara("orderId");
+		String sql="select dt.transfer_order_no, dor.depart_no, dor.STATUS as pickup_status from depart_transfer dt "
+				+"left outer join depart_order dor on dt.pickup_id = dor.id "
+				+"where dor.STATUS not in('新建','取消') and dt.order_id="+id;
+		List<Record> nextOrders = Db.find(sql);
+		if(nextOrders.size()==0){
+			TransferOrder order = TransferOrder.dao.findById(id);
+			order.set("Status", "取消").set("last_modified_by", currentUser.getPrincipal())
+			.set("last_modified_stamp", new Date()).update();
+			renderJson("{\"success\":true}");
+		}else{
+			renderJson("{\"success\":false}");
+		}
+		
 	}
 
 	// 导入运输单
@@ -1413,10 +1424,11 @@ public class TransferOrderController extends Controller {
     	File file = new File(PathKit.getWebRootPath()+"/download/运输单导入模板.xls");
     	renderFile(file);
     }
+    
     public void searchAllUnit(){
 		List<Record> offices = Db.find("select * from unit");
 		renderJson(offices); 
     }
     
-    
+  
 }

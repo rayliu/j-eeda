@@ -539,6 +539,7 @@ $(document).ready(function() {
 					$("#showOrderNo").text(transferOrder.ORDER_NO);
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				  	$("#printBtn").attr('disabled',false);
+				  	$("#cancelBtn").attr('disabled',false);
 				  	
 	            	var order_id = $("#order_id").val();
 				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
@@ -568,6 +569,7 @@ $(document).ready(function() {
 					$("#saveTransferOrderBtn").attr("disabled", false);
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				  	$("#printBtn").attr('disabled',false);
+				  	$("#cancelBtn").attr('disabled',false);
 	            	var order_id = $("#order_id").val();
 				  	itemDataTable.fnSettings().sAjaxSource = "/transferOrderItem/transferOrderItemList?order_id="+order_id;
 				  	itemDataTable.fnDraw();
@@ -2229,8 +2231,10 @@ $(document).ready(function() {
     }
     if($("#order_id").val() != '' && $("#order_id").val() != null){
     	$("#printBtn").attr('disabled', false);
+    	$("#cancelBtn").attr('disabled', false);
     }else{
     	$("#printBtn").attr('disabled', true);
+    	$("#cancelBtn").attr('disabled', true);
     }
     if($("#arrivalMode2").prop('checked') == true){
     	$("#contactInformation").hide();
@@ -2644,6 +2648,7 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#arrival_time').trigger('keyup');
     });
+
     $("#printBtn").on('click',function(){
     	var cargoNature = $("input[name='cargoNature']:checked").val();
     	if(cargoNature == 'cargo'){
@@ -2665,6 +2670,18 @@ $(document).ready(function() {
     	}
     	
     });
+
+    $("#cancelBtn").on('click',function(){
+    	$.post('/transferOrder/cancel', {orderId:$("#order_id").val()}, function(data){ 
+    		if(!data.success){
+    			$.scojs_message('对不起，当前单据已有下级单据(调车单/发车单)，不能撤销', $.scojs_message.TYPE_ERROR);
+    		}else{
+    			$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+    		}
+    	});
+    	
+    });
+
     $("#btnOK").on('click',function(){
     	var signNO = $("input[name='sign']:checked").val();
     	/*var shzm = $("input[name='shmb']:checked").val();*/
