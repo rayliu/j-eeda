@@ -221,7 +221,6 @@ $(document).ready(function() {
 		 var officeId = $("#hiddenOfficeId").val();
 		 var itemId = $("#hiddenItemId").val();
 		 
-
 		 if(warehouseId == "" || warehouseId == "all"){
 			 tab.fnSetColumnVis( 8, false);
 		 }else{
@@ -236,6 +235,18 @@ $(document).ready(function() {
 	     tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId
 	     					+"&warehouseId="+warehouseId+"&officeId="+officeId
 	     					+"&itemId="+itemId;
+	     if(customerId !="" || warehouseId != "" || officeId != ""){
+	    	 $.ajax({  
+		            type : "post",  
+		            url : "/stock/getTotalAmount",
+		            dataType: "json",
+		            data : {customerId: customerId, warehouseId: warehouseId, officeId: officeId, itemId: itemId},  
+		            success : function(data){  
+		            	$("#totalAmount").val(data);
+		            }  
+		        });
+	     }
+	     
 		 tab.fnDraw();
 		
 	});

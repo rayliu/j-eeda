@@ -146,7 +146,6 @@ public class InventoryController extends Controller {
         
        
        String warehouseCondition = ""; 
-       /*String officeCondition = "";*/
        String customerCondition = "";
        String warehousePredict = "";
        String warehouseLocal = "";
@@ -209,36 +208,89 @@ public class InventoryController extends Controller {
         
         if(itemId != null && !"".equals(itemId)){
         	sql = sql + " and i_t.product_id =" + itemId;
-        	/*groupCondition = groupCondition + ",pid";*/
+        	
         }
         
         String sqlTotal = "select count(1) total " + sql +  groupCondition;// 获取总条数
         
-        
+        //String totalAmountSql = "select sum(i_t.total_quantity) total" + sql ;
         sql = sqlCondition + sql + groupCondition + sLimit;
        
-        Record rec = Db.findFirst(sqlTotal);
+        List<Record> rec = Db.find(sqlTotal);
         // 获取当前页的数据
         List<Record> orders = Db.find(sql);
+        /*Record amoutRec = Db.findFirst(totalAmountSql);
+        setAttr("totalAmount", amoutRec.get("total"));*/
         Map orderMap = new HashMap();
-        if(rec == null ){
-        	orderMap.put("iTotalRecords", 0);
-            orderMap.put("iTotalDisplayRecords", 0);
-        }else{
-        	orderMap.put("iTotalRecords", rec.getLong("total"));
-            orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-        }
+    	orderMap.put("iTotalRecords", rec.size());
+        orderMap.put("iTotalDisplayRecords", rec.size());
+       
         orderMap.put("sEcho", pageIndex);
         orderMap.put("aaData", orders);
         renderJson(orderMap);
     }
-
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
+    public void getTotalAmount() {
+        String customerId = getPara("customerId");
+        String warehouseId = getPara("warehouseId");
+        String officeId = getPara("officeId");
+        String itemId = getPara("itemId");
+        if("all".equalsIgnoreCase(officeId)){
+     	   officeId = "";
+        }
+        if("all".equalsIgnoreCase(warehouseId)){
+    			warehouseId = "";
+    		}
+       //获取当前用户的总公司
+       ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+       
+       Long parentID = pom.getParentOfficeId();
+       
+       
+       String sql = " from inventory_item i_t "
+					+" left join product p on  i_t.product_id = p.id "
+					+" left join party p2 on i_t.party_id = p2.id  "
+					+" left join contact c on p2.contact_id = c.id "
+					+" left join warehouse w on  i_t.warehouse_id = w.id "
+					+" left join office o on w.office_id = o.id "
+					+" left join office p_o on p2.office_id = p_o.id "
+					+" where 1=1 and (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (p_o.id = " + parentID + " or p_o.belong_office = " + parentID + ") ";
+				
+        
+	    if((customerId != null) && !"".equals(customerId)){
+	    	sql = sql + " and i_t.party_id =" + customerId ;
+	    	
+	    }
+        if(warehouseId != null && !"".equals(warehouseId)){
+        	
+        	sql = sql + " and i_t.warehouse_id =" + warehouseId ;
+        }
+        
+        if((officeId != null) && !"".equals(officeId)){
+        	sql = sql + " and w.office_id =" + officeId ;
+        }
+        
+        if(itemId != null && !"".equals(itemId)){
+        	sql = sql + " and i_t.product_id =" + itemId;
+        	
+        }
+        
+        String totalAmountSql = "select sum(i_t.total_quantity) total" + sql ;
+        Record amoutRec = Db.findFirst(totalAmountSql);
+        if(amoutRec.get("total") == null || "" .equals(amoutRec.get("total"))){
+        	renderJson(0);
+        }else{
+        	renderJson(amoutRec.get("total"));
+        }
+        	
+        
+    }
     // 入库单添加
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE})
     public void gateIn_add() {
        render("/yh/inventory/gateInEdit.html");
     }
-
+    
     // 入库单产品删除
     public void gateInProductDelect() {
         String id = getPara();
@@ -247,7 +299,7 @@ public class InventoryController extends Controller {
         }
         renderJson("{\"success\":true}");
     }
-
+   
     // 入库单产品编辑
     public void gateInProductEdit() {
         String id = getPara();
