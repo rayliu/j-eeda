@@ -151,12 +151,14 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
+    	var operation_type = $("#operation_type_filter").val();
     	transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
     											+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
     											+"&endTime="+endTime+"&officeName="+officeName
     											+"&order_type="+order_type
     											+"&plantime="+plantime+"&arrivarltime="+arrivarltime
-    											+"&customer_order_no="+customer_order_no;
+    											+"&customer_order_no="+customer_order_no
+    											+"&operation_type="+operation_type;
     	transferOrder.fnDraw(); 
     };
     $("#oname_filter,#orderNo_filter,#customer_order_no_filter").on( 'keyup click', function () {
@@ -167,7 +169,7 @@ $(document).ready(function() {
 		refreshData();
 	});
   
-    $('#status_filter,#order_type_filter').on( 'change', function () {
+    $('#status_filter,#order_type_filter,#operation_type_filter').on( 'change', function () {
     	refreshData();
     });
     

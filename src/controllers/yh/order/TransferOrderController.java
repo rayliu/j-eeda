@@ -86,8 +86,8 @@ public class TransferOrderController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		
-		String order_type=getPara("order_type");
-	
+		String order_type = getPara("order_type");
+		String operation_type = getPara("operation_type");
 		String plantime=getPara("plantime");
 		String arrivarltime=getPara("arrivarltime");
 		String customer_order_no=getPara("customer_order_no");
@@ -95,7 +95,7 @@ public class TransferOrderController extends Controller {
 		if (orderNo == null && status == null && address == null
 				&& customer == null && sp == null && beginTime == null
 				&& endTime == null&& order_type == null&& plantime == null
-				&& arrivarltime == null&& customer_order_no == null) {
+				&& arrivarltime == null&& customer_order_no == null && operation_type == null) {
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
 			if (getPara("iDisplayStart") != null
@@ -174,7 +174,8 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and t.create_stamp between '" + beginTime + "' and '" + endTime + "'  "
+					+ "%' and t.create_stamp between '" + beginTime + "' and '" + endTime + "' "
+					+ " and t.operation_type like '%" + operation_type + "%'" 
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			Record rec = Db.findFirst(sqlTotal);
@@ -209,6 +210,7 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
 					+ "%' and t.create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' "
+					+ " and t.operation_type like '%" + operation_type + "%'" 
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc, t.planning_time desc" + sLimit;
 
