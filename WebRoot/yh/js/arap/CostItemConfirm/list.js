@@ -61,7 +61,17 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未确认";
             }},
-            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"75px"}, 
+            {"mDataProp":null, "sWidth":"75px",
+            	"fnRender":function(obj){
+            		var number = obj.aData.BOOKING_NOTE_NUMBER;
+            		if(number == ""){
+            			return "";
+            		}else{
+            			return number;
+            		}
+            		
+            		
+            	}}, 
             {"mDataProp":"ORDER_NO", "sWidth":"140px", 
                 "fnRender": function(obj) {
                 	var str = "";
