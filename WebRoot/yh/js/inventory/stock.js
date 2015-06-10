@@ -242,7 +242,8 @@ $(document).ready(function() {
 		            dataType: "json",
 		            data : {customerId: customerId, warehouseId: warehouseId, officeId: officeId, itemId: itemId},  
 		            success : function(data){  
-		            	$("#totalAmount").val(data);
+		            	/*$("#totalAmount").val(data);*/
+		            	$("#totalAmount").text(data);
 		            }  
 		        });
 	     }
