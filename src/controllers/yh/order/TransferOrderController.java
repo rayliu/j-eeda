@@ -1044,20 +1044,20 @@ public class TransferOrderController extends Controller {
 		String sql= "";
 		if (input.trim().length() > 0) {
 			if(party_type!=null){
-				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where c.contact_person like '%"
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where (c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
-						+ "%' and p.party_type = '"
+						+ "%') and p.party_type = '"
 						+ party_type
 						+ "' and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 				
 			}else{
-				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where c.contact_person like '%"
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where (c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
-						+ "%' and p.party_type = 'SP_DRIVER' and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
+						+ "%') and p.party_type = 'SP_DRIVER' and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
 			}
 			
 		} else {
