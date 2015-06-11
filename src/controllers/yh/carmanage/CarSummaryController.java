@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
+import models.ParentOfficeModel;
 import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -37,6 +38,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.profile.CarinfoController;
 import controllers.yh.util.OrderNoGenerator;
+import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -44,6 +46,7 @@ import controllers.yh.util.PermissionConstant;
 public class CarSummaryController extends Controller {
 	private Logger logger = Logger.getLogger(CarinfoController.class);
 	Subject currentUser = SecurityUtils.getSubject();
+	ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_LIST, PermissionConstant.PERMSSION_CS_CREATE,PermissionConstant.PERMSSION_CS_UPDATE}, logical=Logical.OR)
 	public void index() {
        render("/yh/carmanage/carSummaryList.html");
@@ -458,7 +461,7 @@ public class CarSummaryController extends Controller {
 	
 	//查询所有自营副司机
 	public void searchAllDriver(){
-		List<Record> carinfoList = Db.find("select * from carinfo where type = 'OWN'");
+		List<Record> carinfoList = Db.find("select c.* from carinfo c left join office o on c.office_id = o.id where c.type = 'OWN' and (o.id = " + pom.getParentOfficeId() + " or o.belong_office = " + pom.getParentOfficeId() + ")");
 		renderJson(carinfoList);
 	}
 	
