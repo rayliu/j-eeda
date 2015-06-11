@@ -178,7 +178,7 @@ public class CarReimbursementController extends Controller {
         renderJson(orderMap);
 	}
 	
-	//行车单查询
+	//行车单报销单查询
 	public void carSummaryOrderList(){
 		Map orderMap = null;
 		String driver = getPara("driver");
@@ -198,7 +198,14 @@ public class CarReimbursementController extends Controller {
         String sqlTotal = "";
         String sql = "";
 		if (driver == null && carNo == null && transferOrderNo == null && orderNo == null && turnoutTime == null && departOrderNo == null) {
-			sqlTotal = "select count(0) total from car_summary_order where status='checked' and reimbursement_order_id is null";
+			sqlTotal = "select count(0) total from car_summary_order cso"
+					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
+					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
+					+ " left join transfer_order tor on tor.id = dt.order_id "
+					+ " where cso.status='checked' and cso.reimbursement_order_id is null"
+					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ " cso.month_refuel_amount, cso.deduct_apportion_amount, cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
@@ -223,7 +230,14 @@ public class CarReimbursementController extends Controller {
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 10) quarterage,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 11) weighing_charge,"
 					+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) other_charges"
-					+ " from car_summary_order cso where cso.status='checked' and cso.reimbursement_order_id is null"
+					+ " from car_summary_order cso "
+					+ " left join car_summary_detail csd on csd.car_summary_id = cso.id"
+					+ " left join depart_order dod on dod.id = csd.pickup_order_id "
+					+ " left join depart_transfer dt on dt.pickup_id = dod.id "
+					+ " left join transfer_order tor on tor.id = dt.order_id "
+					+ "where cso.status='checked' and cso.reimbursement_order_id is null "
+					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ " order by cso.create_data desc " + sLimit;
 	        
 		}else{
@@ -238,7 +252,9 @@ public class CarReimbursementController extends Controller {
 					+ " and ifnull(cso.order_no, '') like '%"+orderNo+"%'"
 					+ " and ifnull(tor.order_no, '') like '%"+transferOrderNo+"%'"
 					+ " and ifnull(dod.turnout_time, '') like '%"+turnoutTime+"%'"
-					+ " and ifnull(dod.depart_no, '') like '%"+departOrderNo+"%'";
+					+ " and ifnull(dod.depart_no, '') like '%"+departOrderNo+"%'"
+					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			
 			sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
@@ -276,6 +292,8 @@ public class CarReimbursementController extends Controller {
 					+ " and ifnull(tor.order_no, '') like '%"+transferOrderNo+"%'"
 					+ " and ifnull(dod.turnout_time, '') like '%"+turnoutTime+"%'"
 					+ " and ifnull(dod.depart_no, '') like '%"+departOrderNo+"%'"
+					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ " order by cso.create_data desc " + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
