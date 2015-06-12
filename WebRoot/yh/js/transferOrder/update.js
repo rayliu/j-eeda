@@ -2651,13 +2651,21 @@ $(document).ready(function() {
 
     $("#printBtn").on('click',function(){
     	var cargoNature = $("input[name='cargoNature']:checked").val();
+    	var customer = $("#customerMessage").val();
     	if(cargoNature == 'cargo'){
-    		$("#muban").show();
-    		$("#putong").show();
-    		$("#biaozhun").hide();
-    		$("#pdfSign_n").hide();
+    		if(customer=="江苏国光信息产业股份有限公司"){
+        		$("#muban").show();
+        		$("#putong").hide();
+        		$("#biaozhun").show();
+        		$("#pdfSign_n").show();
+        	}else{
+        		$("#muban").show();
+        		$("#putong").show();
+        		$("#biaozhun").hide();
+        		$("#pdfSign_n").hide();
+        	}
+    		
     	}else{
-    		var customer = $("#customerMessage").val();
         	if(customer=="江苏国光信息产业股份有限公司"){
         		$("#muban").show();
         		$("#putong").hide();
@@ -2692,9 +2700,15 @@ $(document).ready(function() {
     	var pdf_muban = signNO + "_" + pdf_sign;
     	var cargoNature = $("input[name='cargoNature']:checked").val();
     	if(cargoNature == 'cargo'){
-    		$.post('/report/printSignCargo', {order_no:order_no,sign:pdf_muban}, function(data){
-    			openData(data);
-        	});   		
+    		if(customer=="江苏国光信息产业股份有限公司"){
+    			$.post('/report/printSign', {order_no:order_no,sign:pdf_muban}, function(data){
+        			openData(data);
+            	});
+    		}else{
+    			$.post('/report/printSignCargo', {order_no:order_no,sign:pdf_muban}, function(data){
+        			openData(data);
+            	});
+    		}
         	$("#close").click();
     	}else{
     		if(customer=="江苏国光信息产业股份有限公司"){

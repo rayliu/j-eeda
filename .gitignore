@@ -55,3 +55,4 @@ WebRoot/WEB-INF/template/yh/arap/ChargeAdjustOrder/ChargeAdjustOrderEdit.html.or
 *.orig
 *.jasper
 *.jrxml
+*.pdf

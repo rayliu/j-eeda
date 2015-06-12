@@ -10,6 +10,7 @@ import java.util.List;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
 import models.TransferOrder;
+import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -89,12 +90,11 @@ public class ReportController extends Controller {
 	   HashMap<String, Object> hm = new HashMap<String, Object>();
 	   hm.put("order_no", order_no);
 	   boolean is_one = muban.contains("_one");
-	   TransferOrder to = TransferOrder.dao.findFirst("select id from transfer_order where order_no = ?",order_no);
+	   TransferOrder to = TransferOrder.dao.findFirst("select id,cargo_nature_detail from transfer_order where order_no = ?",order_no);
 	   List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao.find("select id,serial_no from transfer_order_item_detail where order_id =?",to.get("id"));
 	   
 	   if(list.size()>0){
 		   StringBuffer buffer = new StringBuffer();
-		   
 			   for(int i=0;i<list.size();i++){
 				   if(is_one){
 					   hm.put("id", list.get(i).get("id"));
@@ -129,6 +129,11 @@ public class ReportController extends Controller {
 		   
 		   renderText(buffer.toString());
 	   }else{
+		   if("cargoNatureDetailNo".equals(to.get("cargo_nature_detail"))){
+			   TransferOrderItem toi = TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = "+to.get("id"));
+			  // hm.put("amount", toi.get("amount"));
+		   }
+		   
 		   String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
 		   renderText(file.substring(7)); 
 	   }
