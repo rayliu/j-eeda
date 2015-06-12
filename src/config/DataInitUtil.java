@@ -311,6 +311,17 @@ public class DataInitUtil {
             //客户计费方式表格
             stmt.execute("create table if not exists charge_type (id bigint auto_increment primary key,sp_id bigint,customer_id bigint,charge_type varchar(200),remark varchar(200));");
             
+            stmt.execute("CREATE TABLE IF NOT EXISTS `wechat_location` ("
+            		  +"`id` BIGINT(20) NOT NULL AUTO_INCREMENT,"
+            		  +"`wechat_openid` VARCHAR(100) NULL DEFAULT NULL,"
+            		  +"`longitude` DOUBLE NULL DEFAULT NULL,"
+            		  +"`latitude` DOUBLE NULL DEFAULT NULL,"
+            		  +"`address` VARCHAR(500) NULL DEFAULT NULL,"
+            		  +"`update_stamp` TIMESTAMP,"
+            		  +"PRIMARY KEY (`id`))");
+            
+            CustomizeFieldDataInit.initCustomizeTables(stmt);
+            
             stmt.close();
             // conn.commit();
             conn.close();

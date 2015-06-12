@@ -1,0 +1,1 @@
+package models.yh.structure;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class Contentlet extends Model<Contentlet> {	public static final Contentlet dao = new Contentlet();}

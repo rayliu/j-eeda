@@ -92,6 +92,9 @@ import models.yh.profile.PartyInsuranceItem;
 import models.yh.profile.ProviderChargeType;
 import models.yh.profile.Route;
 import models.yh.returnOrder.ReturnOrderFinItem;
+import models.yh.structure.Contentlet;
+import models.yh.structure.Field;
+import models.yh.structure.Structure;
 import models.yh.wx.WechatLocation;
 
 import org.apache.log4j.Logger;
@@ -117,6 +120,7 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 import controllers.yh.profile.DriverAssistantController;
 import controllers.yh.returnTransfer.ReturnTransferController;
+import controllers.yh.scanorder.ContentletController;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
@@ -298,7 +302,7 @@ public class EedaConfig extends JFinalConfig {
 		//退货单
 		me.add("/returnTransfer",ReturnTransferController.class,contentPath);
 		
-		
+		me.add("/scanOrder", ContentletController.class,contentPath);
 	}
 
     @Override
@@ -437,7 +441,9 @@ public class EedaConfig extends JFinalConfig {
         //微信位置信息
         arp.addMapping("wechat_location", WechatLocation.class);
         
-        
+//        arp.addMapping("structure", Structure.class);
+//        arp.addMapping("field", Field.class);
+//        arp.addMapping("contentlet", Contentlet.class);
     }
 
     private void initDBconnector() {

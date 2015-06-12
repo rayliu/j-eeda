@@ -1,0 +1,832 @@
+<%layout("/yh/layout.html"){%>
+	<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/yh/css/ui/jquery-ui.css">
+    <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">    
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="btn-header" style="font-size:32px">运输单   
+                    	<!-- <% if(shiro.hasPermission("TransferOrder.create")){%>
+                        	<a class="btn  btn-primary" href="/transferOrder/add">新增运输单</a>
+                        <%}%> -->
+                        <a class="btn  btn-primary" href="/transferOrder">返回</a>
+                    </div>
+                    
+                    <input id="order_id" type="hidden" name="order_id" value="${transferOrder.id!''}"/>
+                    <input id="item_id" type="hidden" name="item_id" />
+                    <!-- <input id="productIdHidden" type="hidden" name="productIdHidden" /> -->
+                    <input id="customerId" type="hidden" name="customerId" value="${transferOrder.customer_id!''}"/>
+                    <input id="transferOrderStatus" type="hidden" value="${transferOrder.status!''}"/>
+                    <input id="transferOrderArrivalMode" type="hidden" value="${transferOrder.arrival_mode!''}">
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <!-- Nav tabs -->
+                            <ul id="orderTabs" class="nav nav-tabs">
+                                <li class="active"><a href="#basic" data-toggle="tab" data-src="basic" id = "chargeCheckOrderbasic">基本信息</a>
+                                </li>
+                                <li class=""><a href="#cargos" data-toggle="tab" id="transferOrderItemList">货品明细</a>
+                                </li>
+                                <li class=""><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">运输里程碑</a>
+                                </li>
+                                <li class=""><a href="#arap" data-toggle="tab" id="transferOrderArap">应收应付</a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <form role="form" id="transferOrderUpdateForm">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="basic">
+                                    <div class="row">
+                                        
+                                        <div class="col-lg-6">
+                                            	<input id="id" type="hidden" name="id" value="${transferOrder.id!''}"/>
+                                            	<input id="customer_id" type="hidden" name="customer_id" value="${transferOrder.customer_id!''}"/>
+                                            	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id!''}"/>
+                                            	<input id="notify_party_id" type="hidden" name="notify_party_id" value="${transferOrder.notify_party_id!''}"/>
+                                            	<!-- <input id="driver_id" type="hidden" name="notify_party_id" value="${transferOrder.driver_id!''}"/> -->
+                                            	<input type="hidden" name="order_no" value="${order_no!''}${transferOrder.order_no!''}"/>
+                                            	<input type="hidden" name="status" value="${status!''}${transferOrder.status!''}"/>
+                                            	<input type="hidden" name="create_by" value="${create_by!''}${transferOrder.create_by!''}"/>
+                                                    
+	                                            <h2>运输信息</h2>
+	                                            <div class="form-group">
+	                                                <label  class="label-margin">运输单号</label> <strong id="showOrderNo">${order_no!''}${transferOrder.order_no!''}</strong>
+	                                                <span id='checkQrCode' style="margin-left:20px;">手机签收二维码</span>
+                                             		<div id="qrcodeCanvas" class="popover fade right in" style="display:none; padding:20px;left:330px;"></div>
+	                                            </div>
+	                                            <div class="form-group">
+	                                                <label class="label-margin">单据状态</label>   ${status!''}${transferOrder.status!''}
+	                                            </div>
+	                                            <div class="form-group">
+	                                                <label class="label-margin">创建人</label> 
+	                                                <% if(userLogin.c_name!''==''){ %>
+	                                                	${userLogin.user_name!''}
+	                                                <%}else{%>
+	                                                	${userLogin.c_name!''}
+	                                                <%}%>
+	                                                <%if(userLogin2.c_name!''==''){ %>
+	                                                	${userLogin2.user_name!''}
+	                                                <%}else{%>
+	                                                	${userLogin2.c_name!''}
+	                                                <%}%>                                                 
+	                                            </div>
+	                                            
+	                                            <div class="form-group">
+	                                                <label class="label-margin">订单类型</label>
+	                                                	<input id="orderTypeRadio" type="hidden" value="${transferOrder.order_type!''}"/>
+	                                                	<label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="salesOrder" value="salesOrder" checked="">销售订单
+	                                                    </label>
+	                                                	<label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="replenishmentOrder" value="replenishmentOrder">补货订单
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="arrangementOrder" value="arrangementOrder">调拨订单
+	                                                    </label>
+	                                                    <!-- <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="cargoReturnOrder" value="cargoReturnOrder">退货订单
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="damageReturnOrder" value="damageReturnOrder">质量退单
+	                                                    </label> -->
+	                                                    <label class="radio-inline" id = "gateOute">
+	                                                        <input type="radio" name="orderType"  id="gateOutTransferOrder" value="gateOutTransferOrder">出库运输单
+	                                                    </label>
+	                                                    <label class="radio-inline">
+	                                                        <input type="radio" name="orderType" id="movesOrder" value="movesOrder">移机单
+	                                                    </label>
+	                                            </div>
+	                                            <div class="form-group" id="cargoNatures">
+                                                <label class="label-margin">货品属性</label>
+                                                	<input id="cargoNatureRadio" type="hidden" value="${transferOrder.cargo_nature!''}"/>
+	                                                <label class="radio-inline">
+	                                                    <input type="radio" name="cargoNature" id="cargoNature1" value="ATM" checked="">${customizeField.EX_CARGO!'贵重物品'}
+	                                                </label>
+	                                                <label class="radio-inline">
+	                                                    <input type="radio" name="cargoNature" id="cargoNature2" value="cargo">普通货品
+	                                                </label>
+	                                                <span style="display: none;" id="cargoNatureDetailSpan">
+		                                                (<label class="label-margin">是否需要单品管理?</label>
+	                                                	<input id="cargoNatureDetailRadio" type="hidden" value="${transferOrder.cargo_nature_detail!''}"/>
+	                                                	<label class="radio-inline">
+		                                                    <input type="radio" name="cargoNatureDetail" id="cargoNatureDetail1" value="cargoNatureDetailNo" checked="">否
+		                                                </label>
+		                                                <label class="radio-inline">
+		                                                    <input type="radio" name="cargoNatureDetail" id="cargoNatureDetail2" value="cargoNatureDetailYes">是
+		                                                </label>)
+	                                                </span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="label-margin">运营方式</label>
+                                                	<input id="operationTypeRadio" type="hidden" value="${transferOrder.operation_type!''}"/>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="operationType" id="operationType1" value="own" checked="">自营
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="operationType" id="operationType2" value="out_source">外包
+                                                    </label>
+                                            </div> 
+                                            <div id="arrivalModes" class="form-group">
+                                            	<input id="arrivalModeVal" type="hidden" />
+                                                <label class="label-margin">到达方式 </label>
+                                                <input id="arrivalModeRadio" type="hidden" value="${transferOrder.arrival_mode!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="arrivalMode" id="arrivalMode2" value="gateIn" checked="">入中转仓
+                                                </label>  
+                                                <label class="radio-inline" id="direct_model">
+                                                    <input type="radio" name="arrivalMode" id="arrivalMode1" value="delivery">货品直送
+                                                </label>
+                                                <div id="gateOutDiv" style="display: none;">  
+	                                                <input id="hideOutWarehouseId" type="hidden" value="${transferOrder.from_warehouse_id!''}" />     
+	                                                <input id="hideOutOfficeSelect" type="hidden" value="${outOffice.id!''}" />     
+	                                                <label class="label-margin">出库仓 </label>
+	                                                <select id="outOfficeSelect" name="outOfficeSelect"></select>                                  
+	                                                <label class="label-margin">仓库 </label>
+	                                                <select id="gateOutSelect" name="gateOutSelect"></select> 
+                                                </div> 
+                                                <div id="gateInDiv" style="display: none;">  
+	                                                <input id="hideWarehouseId" type="hidden" value="${transferOrder.warehouse_id!''}" />     
+	                                                <input id="hideDeliveryOfficeSelect" type="hidden" value="${office.id!''}" />     
+	                                                <label class="label-margin">RDC仓 </label>
+	                                                <select id="deliveryOfficeSelect" name="deliveryOfficeSelect"></select>                                  
+	                                                <label class="label-margin">仓库 </label>
+	                                                <select id="gateInSelect" name="gateInSelect"></select> 
+                                                </div>                                  
+                                            </div>
+   	                                        <div class="form-group">
+   	                                            <label>收货单位</label>
+   	                                            <input name="receiving_unit" value="${transferOrder.receiving_unit!''}" class="form-control" placeholder="请输入公司名称">
+   	                                        </div>
+                                            <div id="contactInformation" style="display: none">
+    	                                        <h2>收货人信息</h2>
+    	                                        <div class="form-group">
+    	                                            <label>收货地址</label>
+    	                                            <input name="notify_address" value="${contact.address!''}" class="form-control" placeholder="请输入收货地址">
+    	                                        </div>
+    	                                        <div class="form-group">
+    	                                            <label>联系人</label>
+    	                                            <input name="notify_contact_person" value="${contact.contact_person!''}" class="form-control" placeholder="请输入联系人">
+    	                                        </div>
+    	                                        <div class="form-group">
+    	                                            <label>电话</label>
+    	                                            <input name="notify_phone" value="${contact.phone!''}" class="form-control" placeholder="请输入电话">
+    	                                        </div>
+                                            </div>  
+                                            <div class="row">
+			                                    <div class="col-lg-6">
+			                                        <div class="form-group">                                        
+			                                            <div id="datetimepicker" class="input-append date "> 
+			                                                <label class="search-label">计划时间</label> 
+			                                                <input id="planning_time" class="form-control search-control  beginTime_filter" type="text" name="planning_time" value="${transferOrder.planning_time!''}">
+			                                                <span class="add-on">  
+			                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+			                                                </span>  
+			                                            </div>
+			                                        </div>    
+			                                    </div>
+			                                    <!-- end of col-lg-6-->
+			                                    <div class="col-lg-6">
+			                                        <div class="form-group">                                                    
+			                                            <span id="datetimepicker2" class="input-append date search-control "> 
+			                                                <label class="search-label">到货时间</label> 
+			                                                <input id="arrival_time" class="form-control search-control endTime_filter" type="text" name="arrival_time" value="${transferOrder.arrival_time!''}">
+			                                                <span class="add-on">  
+			                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+			                                                </span>  
+			                                            </span>
+			                                        </div>
+			                                    </div>
+			                                    <!-- end of col-lg-6-->
+			                                </div><!-- end of row-->
+                                            <div class="form-group">
+                                                <label>备注</label>
+                                                <textarea class="form-control" rows="3" name="remark">${transferOrder.remark!''}</textarea>
+                                            </div> 
+                                        </div>
+                                        <!-- /.col-lg-6 (nested) -->
+                                        <div class="col-lg-6">
+                                        	<h2>客户信息</h2>
+                                            <div class="form-group has-feedback">
+                                                <!--label>客户名称</label-->
+                                               
+                                                <input id="customerMessage" class="form-control" placeholder="选择客户" type="text" name="customerMessage" value="${customerContact.company_name!''}" aria-describedby="searchCustomerIcon">
+                                                <span class="glyphicon glyphicon-search form-control-feedback" style='top: 0px;' aria-hidden="true"></span>
+                                                <span id="searchCustomerIcon" class="sr-only">(success)</span>
+                                               
+                                                <ul id='customerList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;">
+    											</ul>
+                                            </div>
+                                            
+                                            <div class="form-group">     
+                                            	<h5 id="pageCustomerName">${customerContact.contact_person!''} ${customerContact.phone!''}</h5><h5 id="pageCustomerAddress">${customerContact.address!''}</h5>     
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="label-margin">应收计费方式</label>
+                                                <input id="chargeTypeRadio" type="hidden" value="${transferOrder.charge_type!''}"/>
+                                                <input id="hibLtlUnitType" type="hidden" value="${transferOrder.ltl_unit_type!''}"/>
+                                                
+                                                <input id="hiddenOrderCarType" type="hidden" value="${transferOrder.car_type!''}"/>
+                                                
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar">整车
+                                                </label>  
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
+                                                </label>  
+                                            </div>
+                                            <div style="display: none;" class="form-group" id="car_type_div" >
+                                              <lable>车辆规格(M),载重(T),集装箱(GP)</lable>
+                                              <select class="form-control" id="car_type" name="car_type">
+                                                  <option></option>
+                                                  <option>40GP</option>
+                                                  <option>20GP</option>
+                                                  <option>40T</option>
+                                                  <option>20T</option>
+                                                  <option>10T</option>
+                                                  <option>8T</option>
+                                                  <option>5T</option>
+                                                  <option>3T</option>
+                                                  <option>21M</option>
+                                                  <option>18.5M</option>
+                                                  <option>18.0M</option>
+                                                  <option>17.8M</option>
+                                                  <option>17.5M</option>
+                                                  <option>17.0M</option>
+                                                  <option>16.0M</option>
+                                                  <option>15.0M</option>
+                                                  <option>14.5M</option>
+                                                  <option>13.5M</option>
+                                                  <option>13.0M</option>
+                                                  <option>12.5M</option>
+                                                  <option>9.6M</option>
+                                                  <option>8.6M</option>
+                                                  <option>8.0M</option>
+                                                  <option>7.6M</option>
+                                                  <option>7.2M</option>
+                                                  <option>6.8M</option>
+                                                  <option>6.5M</option>
+                                                  <option>5.3M</option>
+                                                  <option>4.3M</option>
+                                                  <option>4.2M</option>
+                                                  <option>2.6M</option>
+                                              </select>
+                                          </div>
+                                          <div style="display: none;" class="form-group" id="ltl_price_type" >
+                                              <lable>零担计费方式:  </lable>
+                                              <input type="hidden" id="hibLtlUnitType" value="${departOrder.ltl_price_type!''}">
+                                              <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn1" value="perCBM" checked>按体积（每立方米）
+                                              </label>
+                                               <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn3" value="perKg">按重量（每公斤）
+                                              </label>
+                                              <label class="radio-inline">
+                                                  <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="perTon">按重量（每吨）
+                                              </label>
+                                          </div>
+                                            <div class="form-group ">
+        										<label class="control-label" for="inputSuccess">客户订单号</label> 
+        										<input class="form-control" type="text" name="customerOrderNo" value="${transferOrder.customer_order_no!''}">
+        										<label class="control-label" for="inputSuccess">取货地址</label> <input
+        											id="address" class="form-control" type="text"
+        											name="address" value="${transferOrder.address!''}">
+                                                <input id="hideOfficeId" type="hidden" value="${transferOrder.office_id!''}" />    
+        										<label class="control-label" for="inputSuccess">${customizeField.EXE_OFFICE!'运作网点'}</label>
+                                                <select id="officeSelect" class="form-control" name="officeSelect"></select>  
+        									</div>
+                                            
+                                            <label><h4>始发城市</h4></label>
+	                                            <input id="locationForm" type="hidden" name="route_from" value="${transferOrder.route_from!''}">
+	                                            <input id="hideLocationFrom" type="hidden"> 
+	                                            <div class="form-group">
+	                                                <label>省</label>
+	                                                <input id="hideProvinceFrom" type="hidden" value="${locationFrom.province!''}"/>
+	                                                <select id="mbProvinceFrom"  name="mbProvinceFrom" value=""></select>
+	                                                <label>市</label>
+	                                                <input id="hideCityFrom" type="hidden" value="${locationFrom.city!''}"/>
+	                                                <select  id="cmbCityFrom" name="cmbCityFrom" value=""></select>
+	                                                <label>区(县)</label>
+	                                                <input id="hideDistrictFrom" type="hidden" value="${locationFrom.district!''}"/>
+	                                                <select  id="cmbAreaFrom" name="cmbAreaFrom" value=""></select>
+	                                            </div>                                            
+                                            
+                                           <h2>供应商信息</h2>
+                                           <div class="form-group has-feedback">
+                                               <!--label>供应商名称</label-->
+                                                <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage"  value="${spContact.company_name!''}" aria-describedby="searchCustomerIcon">
+                                                <span class="glyphicon glyphicon-search form-control-feedback" style='top: 0px;' aria-hidden="true"></span>
+                                                <span id="searchCustomerIcon" class="sr-only">(success)</span>
+                                                <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+											        </ul>
+                                                
+                                           </div>
+                                           <div class="form-group">     
+                                           	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
+                                           </div>                                                
+                                           <div class="form-group">
+                                                <label class="label-margin">应付计费方式</label>
+                                                <input id="chargeTypeRadio2" type="hidden" value="${transferOrder.charge_type2!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType2" id="chargeType4" value="perUnit" checked="">计件
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType2" id="chargeType5" value="perCar">整车
+                                                </label>  
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="chargeType2" id="chargeType6" value="perCargo">零担
+                                                </label> 
+                                           </div>
+                                           <div class="form-group">
+                                               <input id="locationTo" type="hidden" name="route_to" value="${transferOrder.route_to!''}">
+                                              	<label><h4>目的地城市</h4></label>
+	                                       <div class="form-group">
+	                                           <label>省</label>
+	                                           <input id="hideProvinceTo" type="hidden" value="${locationTo.province!''}"/>
+	                                           <select id="mbProvinceTo" name="mbProvinceTo" value=""></select>
+	                                           <label>市</label>
+	                                           <input id="hideCityTo" type="hidden" value="${locationTo.city!''}"/>
+	                                           <select  id="cmbCityTo" name="cmbCityTo" value=""></select>
+	                                           <label>区(县)</label>
+	                                           <input id="hideDistrictTo" type="hidden" value="${locationTo.district!''}"/>
+	                                           <select  id="cmbAreaTo" name="cmbAreaTo" value=""></select>
+	                                       </div>
+                                           </div><!-- -->
+                                        </div>
+                                        <!-- /.col-lg-6 (nested) -->
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="cargos">
+                                    <div class="panel-body">             
+                                        <div class="table-responsive">
+                                        <% if(shiro.hasPermission("TransferOrder.update")){%>
+				                            <button class="btn  btn-primary" id="editTransferOrderItem">
+											  新增货品
+											</button>
+										<%}%>
+                                        <table class="table table-striped table-bordered table-hover" id="itemTable" style="width: 1500px;">
+                                            <thead>
+                                                <tr>
+                                                    <!-- <th></th> -->
+                                                    <th>型号</th>
+                                                    <th>名称</th>
+                                                    <th>长(mm)</th>
+                                                    <th>宽(mm)</th>
+                                                    <th>高(mm)</th>
+                                                    <th>重量(kg)</th>
+                                                    <th>数量</th>
+                                                    <th>单位</th>
+                                                    <th>总重量(kg)</th>
+                                                    <th>总体积(m³)</th>                                  
+                                                    <th>备注</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="transferOrderItemTbody">
+                                            </tbody>
+                                        </table>
+                                            <div id="transferOrderItemDateil" style="display: none;">
+	                                            <div class="btn-header">单品列表</div>
+	                                            <!--button class="btn  btn-primary" data-toggle="modal" data-target="#detailModal">
+												  新增货品明细
+												</button-->
+												<button id="findAllDetailBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查看所有单品</button>
+	                                            <table class="table table-striped table-bordered table-hover" id="detailTable" style="width: 2600px;">
+	                                                <thead>
+	                                                    <tr>	                                                        
+	                                                        <th>序列号</th>
+	                                                        <th>销售单号</th>
+	                                                        <th>型号</th>
+	                                                        <th>名称</th>
+	                                                        <th>体积(m³)</th>
+	                                                        <th>重量(kg)</th>
+	                                                        <th>件数</th>
+	                                                        <th>收货人</th>
+	                                                        <th>电话</th>
+	                                                        <th>收货地址</th>
+	                                                        <th>业务经理</th>
+	                                                        <th>服务站电话</th>
+	                                                        <th>服务站名称</th>
+	                                                        <th>责任人</th>
+	                                                        <th>备注</th>
+	                                                        <!-- <th></th> -->
+	                                                    </tr>
+	                                                </thead>
+	                                                <tbody id="transferOrderItemDetailTbody">
+	                                                </tbody>
+	                                            </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                     <!-- 模态框 -->
+									<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+									        <h4 class="modal-title" id="myModalLabel">新增货品</h4>
+									      </div>
+									      <div class="modal-body">
+									      	<form id="transferOrderItemForm" action="">
+                                                <input id="transfer_order_id" type="hidden" name="transfer_order_id" />
+                                                <input id="productId" type="hidden" name="productId" />
+                                                <input id="transferOrderItemId" type="hidden" name="transferOrderItemId" />
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品型号</label>
+                                                            <input id="itemNoMessage" class="form-control dropdown-toggle" placeholder="请输入货品型号" type="text" name="item_no" data-toggle="dropdown">
+                                                            <ul id='itemNoList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+                                                            </ul>
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品名称</label>
+                                                            <input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
+                                                            <ul id='itemNameList' class="pull-right dropdown-menu" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+                                                            </ul>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="inputWarning">货品长度(mm)</label> <input
+                                                                id="size" class="form-control" type="text"
+                                                                name="size" value="${product.size!''}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="inputWarning">货品宽度(mm)</label> <input
+                                                                id="width" class="form-control" type="text"
+                                                                name="width" value="${product.width!''}">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label" for="inputWarning">货品高度(mm)</label> <input
+                                                                id="height" class="form-control" type="text"
+                                                                name=height value="${height!''}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品数量</label> <input
+                                                            id="amount" class="form-control" type="text"
+                                                            name="amount">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品单位</label> <input
+                                                            id="unit" class="form-control" type="text"
+                                                            name="unit">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
+                                                            id="volume" class="form-control" type="text"
+                                                            name="volume">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
+                                                            id="weight" class="form-control" type="text"
+                                                            name="weight">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品备注</label> <input
+                                                            id="remark" class="form-control" type="text"
+                                                            name="remark">
+                                                        </div>
+                                                    </div>
+                                                </div> 							      		
+												
+										      </div>
+										      <div class="modal-footer">
+										        <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>
+										        <button id="transferOrderItemFormBtn" type="button" class="btn  btn-primary">保存</button>
+										      </div>
+											</form>
+									    </div><!-- /.modal-content -->
+									  </div><!-- /.modal-dialog -->
+									</div><!-- /.modal -->
+									
+									<!-- 模态框 -->
+									<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+									        <h4 class="modal-title" id="myModalLabel">新增货品明细</h4>
+									      </div>
+									      <div class="modal-body">									      
+									      	<form id="transferOrderItemDetailForm" action="">
+									      		<input id="detail_transfer_order_id" type="hidden" name="transfer_order_id" />
+									      		<input id="detail_transfer_order_item_id" type="hidden" name="transfer_order_item_id" />
+									      		<input id="detail_transfer_order_item_detail_id" type="hidden" name="transfer_order_item_detail_id" />
+									      		<input id="detail_notify_party_id" type="hidden" name="notify_party_id" />
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">序列号</label> <input
+                                                            id="serial_no" class="form-control" type="text"
+                                                            name="serial_no">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">名称</label> <input
+                                                            id="detail_item_name" class="form-control" type="text"
+                                                            name="detail_item_name">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品体积(m³)</label> <input
+                                                            id="detail_volume" class="form-control" type="text"
+                                                            name="detail_volume">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品重量(kg)</label> <input
+                                                            id="detail_weight" class="form-control" type="text"
+                                                            name="detail_weight">
+                                                        </div>  
+                                                        <div class="form-group ">
+                                                            <label class="control-label" for="inputSuccess">货品备注</label> <input
+                                                            id="detail_remark" class="form-control" type="text"
+                                                             name="detail_remark">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group ">
+                                                        <label class="control-label" for="inputSuccess">收货人</label> <input
+                                                            id="detail_contact_person" class="form-control" type="text"
+                                                            name="detail_contact_person">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                        <label class="control-label" for="inputSuccess">电话</label> <input
+                                                            id="detail_phone" class="form-control" type="text"
+                                                            name="detail_phone">
+                                                        </div>
+                                                        <div class="form-group ">
+                                                        <label class="control-label" for="inputSuccess">地址</label> <input
+                                                            id="detail_address" class="form-control" type="text"
+                                                            name="detail_address">
+                                                        </div>                                              
+                                                    </div>
+                                                </div>
+										      </div>
+										      <div class="modal-footer">
+										        <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>
+										        <button id="transferOrderItemDetailFormBtn" type="button" class="btn  btn-primary">保存</button>
+										      </div>
+											</form>
+									    </div><!-- /.modal-content -->
+									  </div><!-- /.modal-dialog -->
+									</div><!-- /.modal -->
+                                </div>
+                                
+									<!-- 模态框 -->
+									<div class="modal fade" id="transferOrderMilestone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+									        <h4 class="modal-title" id="myModalLabel">新里程碑</h4>
+									      </div>
+									      <div class="modal-body">
+									      	<form id="transferOrderMilestoneForm" action="">
+									      		<input id="transfer_milestone_order_id" type="hidden" name="order_id" />
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">状态(不填默认为"在途")</label> <input
+													id="status" class="form-control" type="text"
+													name="status">
+												</div>
+												<div class="form-group ">
+												<label class="control-label" for="inputSuccess">地点</label> <input
+													id="location" class="form-control" type="text"
+													name="location">
+												</div>
+										      </div>
+										      <div class="modal-footer">
+										        <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>
+										        <button id="transferOrderMilestoneFormBtn" type="button" class="btn  btn-primary">保存</button>
+										      </div>
+											</form>
+									    </div><!-- /.modal-content -->
+									  </div><!-- /.modal-dialog -->
+									</div><!-- /.modal -->
+                                <div class="tab-pane fade" id="milestone">
+                                	<div class="panel-body">
+                                		<% if(false){%>
+			                            <button class="btn  btn-primary" data-toggle="modal" data-target="#transferOrderMilestone">
+										  新里程碑
+										</button>
+										<%}%>
+										<div class="form-group"></div>
+										<div class="table-responsive">     
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>状态</th>
+                                                        <th>地点</th>
+                                                        <th>更新用户</th>
+                                                        <th>更新时间</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="transferOrderMilestoneTbody" >
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+
+                                <div class="tab-pane fade" id="arap">
+                                      <h2>应收</h2>
+                                        <div class="panel-body">
+                                            <div id='addRevenueDiv' style="display:none;">
+									 	        <button class="btn  btn-primary" id="addrow2">添加应收</button>
+                                                <input type="checkbox" name="no_contract_revenue" id="revenueCheckBox"
+                                                <% if(transferOrder.no_contract_revenue!false){ %>checked<%}%>
+                                                >不需要从合同计算应收费用
+                                            </div>
+                                    	    <div class="form-group"></div>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover" id ="table_fin">
+                                                <thead>
+                                                    <tr>
+                                                        <th>费用条目</th>
+                                                        <th>金额</th>
+                                                        <th>运输单</th>
+                                                        <th>配送单</th>
+                                                        <th>备注</th>
+                                                        <th>结算状态</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                   
+                                                </tbody>
+                                                <div id="receivableItemList" style="display:none;">
+	                                            	<%for(receivableItem in receivableItemList){ %>
+   														<option value='${receivableItem.ID!''}'>${receivableItem.NAME!''}</option>
+	   												<%		
+	   													}
+	   												%>
+                                            	</div>
+                                            	<div id="unitOptions" style="display:none;">
+	                                            	<!-- <option></option>
+	                                            	<option value='台'>台</option>
+	                                            	<option value='件'>件</option>
+	                                            	<option value='套'>套</option> -->
+                                            	</div>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                    
+                                    <hr>
+                                    <h2>应付</h2>
+                                    <div class="panel-body">
+                                        <div id='addCostDiv' style="display:none;">
+									        <button class="btn  btn-primary" id="addrow"> 添加应付</button>
+                                            <input type="checkbox" name="no_contract_cost" id="costCheckBox"
+                                            <% if(transferOrder.no_contract_cost!false){ %>checked<%}%>
+                                            >不需要从合同计算应付费用
+                                        </div>
+                                        <div class="form-group"></div>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered table-hover"  id ="table_fin2">
+                                                <thead>
+                                                    <tr>
+                                                        <th>费用条目</th>
+                                                        <th>金额</th>
+                                                        <th>运输单</th>
+                                                        <th>备注</th>
+                                                        <th>结算状态</th>
+                                                        <th></th>
+                                                </thead>
+                                                <tbody>
+                                                    
+                                                </tbody>
+                                                <div id="paymentItemList" style="display:none;">
+	                                            	<%for(paymentItem in paymentItemList){ %>
+	   														<option value='${paymentItem.ID!''}'>${paymentItem.NAME!''}</option>
+	   												<%		
+	   													}
+	   												%>
+                                            	</div>
+                                            </table>
+                                        </div>                                       
+                                    </div> <!-- /.panel-body -->
+                                    
+                                </div>
+                                </form>
+								<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+								  <div class="modal-dialog modal-sm">
+								    <div class="modal-content">
+								      	<div id ="muban" style="display:none">
+								      		<div class="modal-header">
+										        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="close">&times;</button>
+										        <h4 class="modal-title" id="myModalLabel">请选择你要打印的格式</h4>
+									      	</div>
+									      	<div class="modal-body">
+									      		 <div class="form-group" id="biaozhun">
+	                                                <label class="label-margin">签收单格式</label><br/>
+                                                	<label class="radio-inline">
+                                                        <input type="radio" name="sign" value="guoguang" checked="true">国光标准签收单
+                                                    </label><br/>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="sign" value="nonghang">农行签收单
+                                                    </label><br/>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="sign" value="china_post">邮政签收单
+                                                    </label><br/>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="sign" value="china_postal">邮储签收单
+                                                    </label>
+	                                              </div>
+	                                              <div class="form-group" id="putong" style="display:none">
+	                                                <label class="label-margin">签收单格式</label><br/>
+                                                	<label class="radio-inline">
+                                                        <input type="radio" name="sign" value="goods" checked="true">普通签收单
+                                                    </label><br/>
+	                                              </div>
+	                                              <div class="form-group">
+	                                                <label class="label-margin">PDF格式</label><br/>
+                                                	<label class="radio-inline">
+                                                        <input type="radio" name="pdfSign" value="one" checked="true">一张pdf
+                                                    </label>
+                                                    <label class="radio-inline" id='pdfSign_n' >
+                                                        <input type="radio" name="pdfSign" value="n">N张pdf
+                                                    </label><br/>
+	                                              </div>
+	                                            <br/>
+	                                            <button id="btnOK" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button> 
+									      	</div>
+									      	
+								      	</div>
+								    </div>
+								  </div>
+								</div>
+                                <div class=".tooltip-demo">
+                                    <hr/>
+                                	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
+                                    <button id="saveTransferOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
+                                    <button id="printBtn" type="button" class="btn  btn-primary" data-toggle="modal" disabled = 'diabled' data-target=".bs-example-modal-sm">打印</button>
+                                    <button id="cancelBtn" type="button" class="btn  btn-primary">撤销订单</button>
+                                    <!-- <button id="receiptBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button>                                   
+                                    <button id="departureConfirmationBtn" type="button" disabled="true" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
+                                    <button id="warehousingConfirmBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">入仓确认</button> 
+                                    <button id="receiptBtn" type="button" disabled="true" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">收货确认</button> -->
+                                </div>
+                                <!-- <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
+                                <p>发车确认：新建后可以点击，点击后生成单据状态 “已发车”，之后生成应付条目（付费给供应商）</p>
+                                <p>入库确认：如果是直送不显示该按钮，发车后可以点击，点击后生成单据状态 “已入库”</p>
+                                <p>回单签收：如果是入中转仓不显示该按钮，发车后可以点击，点击后生成单据状态 “已签收”，之后生成应收条目（向客户收钱）</p> -->
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+<%}%>
+
+
+
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.editable.js" type="text/javascript"></script>
+<script src="/yh/js/plugins/dataTables/jquery.jeditable.js" type="text/javascript"></script>
+<!-- 二维码图像 -->
+<script src="/yh/js/plugins/jquery-qrcode/jquery.qrcode.min.js"></script>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/yh/css/ui/jquery-ui.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+<!-- <script src="/yh/js/sb-admin.js"></script> -->
+
+<script>
+	<%
+		var transferOrderUpdate = shiro.hasPermission("TransferOrder.update");
+	%>
+	var Transfer={};
+	Transfer.isUpdate = ${transferOrderUpdate};
+    Transfer.orderNo = '${transferOrder.order_no!''}';
+
+</script>
+<script src="/yh/js/transferOrder/update.js"></script>
+

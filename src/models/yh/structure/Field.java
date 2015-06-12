@@ -1,0 +1,1 @@
+package models.yh.structure;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class Field extends Model<Field> {	public static final Field dao = new Field();}
