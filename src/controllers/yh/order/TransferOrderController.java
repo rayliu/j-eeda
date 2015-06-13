@@ -952,7 +952,7 @@ public class TransferOrderController extends Controller {
  				content = ReaderXlSX.getXlsContent(file);
  			}else{
  				resultMap.put("result", "false");
-				resultMap.put("cause", "导入失败，请选择正确的execl文件");
+				resultMap.put("cause", "导入失败，请选择正确的excel文件");
  			}
  			if(title != null && content.size() > 0){
 				TransferOrderExeclHandeln handeln = new TransferOrderExeclHandeln();
@@ -960,13 +960,13 @@ public class TransferOrderController extends Controller {
 					resultMap = handeln.importTransferOrder(content);
 				}else{
 					resultMap.put("result", "false");
-					resultMap.put("cause", "导入失败，execl标题列与系统默认execl标题列不一致");
+					resultMap.put("cause", "导入失败，excel标题列与系统默认excel标题列不一致");
 				}
  			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultMap.put("result", "false");
-			resultMap.put("cause", "导入失败，请选择正确的execl文件<br/>（建议使用Microsoft Office Execl软件操作数据）");
+			resultMap.put("cause", "导入失败，请选择正确的excel文件<br/>（建议使用Microsoft Office Excel软件操作数据）");
 			//renderJson(resultMap);
 		}
  		logger.debug("result:" + resultMap.get("result") +",cause:"+resultMap.get("cause"));

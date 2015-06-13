@@ -249,7 +249,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     	}
     	if(verifyDuplicateRow == content.size()){
     		importResult.put("result","false");
-			importResult.put("cause", "不能多次导入同一execl文件！");
+			importResult.put("cause", "不能多次导入同一excel文件！");
     	}else if(!"".equals(title)){
     		importResult.put("result","false");
     		if("客户订单号".equals(title)){
