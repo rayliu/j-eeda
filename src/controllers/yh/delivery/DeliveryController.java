@@ -1501,6 +1501,7 @@ public class DeliveryController extends Controller {
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
         		+ " and t2.order_no = '" + transferOrderNo + "'"
+        		+ " and t1.amount != t1.complete_amount "
         		+ " order by t1.id desc";
     	
         String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,pro.item_no,pro.item_name,t1.amount,t1.complete_amount,t2.order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
@@ -1516,6 +1517,7 @@ public class DeliveryController extends Controller {
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
         		+ " and t2.order_no = '" + transferOrderNo + "'"
+        		+ " and t1.amount != t1.complete_amount"
         		+ " order by t1.id desc " + sLimit;
         
         Record rec = Db.findFirst(sqlTotal);
