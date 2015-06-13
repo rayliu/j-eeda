@@ -10,7 +10,12 @@ wx.ready(function () {
         alert(JSON.stringify(res));
         //异步向后台提交数据 
         $.post('/wx/saveScanResult', {serialNo:res.resultStr}, function(data){
-          alert(JSON.stringify(data));
+          //alert(JSON.stringify(data));
+          if(data.status=='ok'){
+            $('#orderDesc').text('单号保存成功');
+          }else{
+            $('#orderDesc').text('单号保存失败');
+          }
         });
       }
     });
