@@ -2657,12 +2657,15 @@ $(document).ready(function() {
         		$("#muban").show();
         		$("#putong").hide();
         		$("#biaozhun").show();
-        		$("#pdfSign_n").show();
+        		//$("#pdfSign_n").show();
+        		$("#nonghangMu").hide();
+        		$("#postMu").hide();
+        		$("#postalMu").hide();
         	}else{
         		$("#muban").show();
         		$("#putong").show();
         		$("#biaozhun").hide();
-        		$("#pdfSign_n").hide();
+        		//$("#pdfSign_n").hide();
         	}
     		
     	}else{
@@ -2670,7 +2673,7 @@ $(document).ready(function() {
         		$("#muban").show();
         		$("#putong").hide();
         		$("#biaozhun").show();
-        		$("#pdfSign_n").show();
+        		//$("#pdfSign_n").show();
         	}else{
         		$("#printBtn").removeAttr('data-target');
         		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
