@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>微信JS-SDK Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+  <link rel="stylesheet" href="/yh/css/plugins/wx/style.css">
+</head>
+<body ontouchstart="">
+<div class="wxapi_container">
+    <div class="wxapi_index_container">
+      <ul class="label_box lbox_close wxapi_index_list">
+        
+      </ul>
+    </div>
+    <div class="lbox_close wxapi_form">
+      <h3 id="menu-scan">微信扫一扫</h3>
+      <span class="desc">调起微信扫一扫接口</span>
+      <button class="btn btn_primary" id="scanQRCode0">scanQRCode(微信处理结果)</button>
+      <button class="btn btn_primary" id="scanQRCode1">scanQRCode(直接返回结果)</button>
+
+    </div>
+  </div>
+</body>
+
+<script>
+  wx.config({
+      debug: true,
+      appId: '${appId}',
+      timestamp: ${timestamp},
+      nonceStr: '${nonceStr}',
+      signature: '${signature}',
+      jsApiList: [
+        'checkJsApi',
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage',
+        'onMenuShareQQ',
+        'onMenuShareWeibo',
+        'hideMenuItems',
+        'showMenuItems',
+        'hideAllNonBaseMenuItem',
+        'showAllNonBaseMenuItem',
+        'translateVoice',
+        'startRecord',
+        'stopRecord',
+        'onRecordEnd',
+        'playVoice',
+        'pauseVoice',
+        'stopVoice',
+        'uploadVoice',
+        'downloadVoice',
+        'chooseImage',
+        'previewImage',
+        'uploadImage',
+        'downloadImage',
+        'getNetworkType',
+        'openLocation',
+        'getLocation',
+        'hideOptionMenu',
+        'showOptionMenu',
+        'closeWindow',
+        'scanQRCode',
+        'chooseWXPay',
+        'openProductSpecificView',
+        'addCard',
+        'chooseCard',
+        'openCard'
+      ]
+  });
+</script>
+<script src="/yh/js/wx/scanOrder.js"> </script>
+</html>

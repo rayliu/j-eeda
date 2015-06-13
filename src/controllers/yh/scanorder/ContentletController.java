@@ -48,13 +48,13 @@ public class ContentletController extends Controller {
     		
     		
     		if(("customer_id").equals(record.getStr("field_name"))){
-    			contentletFields += ", (SELECT c.company_name FROM party p left outer join contact c "
-    					+ " on p.contact_id = c.id where p.party_type='CUSTOMER'　and p.id="+record.getStr("field_contentlet")
+    			contentletFields += ", (SELECT c.company_name FROM party pa left outer join contact c "
+    					+ " on pa.contact_id = c.id where pa.party_type='CUSTOMER' and pa.id=cl."+record.getStr("field_contentlet")
     					+ " ) as customer_company_name ";
     		}
 		} 
     	
-    	String sql = "select COUNT(*) as seq"+contentletFields+" from contentlet where structure_id=1";
+    	String sql = "select COUNT(*) as seq"+contentletFields+" from contentlet cl where structure_id=1";
     	
     	List<Record> results = Db.find(sql);
 

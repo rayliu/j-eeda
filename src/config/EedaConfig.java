@@ -441,9 +441,9 @@ public class EedaConfig extends JFinalConfig {
         //微信位置信息
         arp.addMapping("wechat_location", WechatLocation.class);
         
-//        arp.addMapping("structure", Structure.class);
-//        arp.addMapping("field", Field.class);
-//        arp.addMapping("contentlet", Contentlet.class);
+        arp.addMapping("structure", Structure.class);
+        arp.addMapping("field", Field.class);
+        arp.addMapping("contentlet", Contentlet.class);
     }
 
     private void initDBconnector() {
