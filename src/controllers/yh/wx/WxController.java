@@ -27,6 +27,7 @@ import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
+import models.yh.structure.Contentlet;
 import models.yh.wx.WechatLocation;
 
 import com.jfinal.kit.PropKit;
@@ -72,7 +73,11 @@ public class WxController extends ApiController {
 		HttpServletRequest request = this.getRequest();
 		String path = request.getContextPath();
 	    String basePath = request.getScheme()+"://"+request.getServerName();
-	    String url = basePath+contextPath+"?"+request.getQueryString();
+	    
+	    String url = basePath+contextPath;
+	    if(request.getQueryString()!=null){
+	    	url=url	+"?"+request.getQueryString();
+	    }
 	    logger.debug("url = "+url);
 	    
 		String jsapi_ticket = JsTicketApi.getJsTicket().getJsTicket();
@@ -223,11 +228,13 @@ public class WxController extends ApiController {
 	
 	//客户查询
 	public void searchOrder() {
+		setPageAttr("/wx/searchOrder");
 		render("/yh/wx/searchOrder.html");
 	}
 	
-	//客户查询
+	//扫单助手
 	public void scanOrder() {
+		setPageAttr("/wx/scanOrder");
 		render("/yh/wx/scanOrder.html");
 	}
 	
@@ -413,4 +420,11 @@ public class WxController extends ApiController {
 		renderJson(wechatLocation);
 	}
 	
+	public void saveScanResult(){
+		String resultStr = getPara("serialNo");
+		
+		Contentlet scanOrder = new Contentlet();
+		scanOrder.set("structure_id", 1).set("text1", resultStr).set("date1", new Date()).save();
+		renderJson("{\"status\":\"ok\"}");
+	}
 }

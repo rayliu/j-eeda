@@ -54,7 +54,7 @@ public class ContentletController extends Controller {
     		}
 		} 
     	
-    	String sql = "select COUNT(*) as seq"+contentletFields+" from contentlet cl where structure_id=1";
+    	String sql = "select 'aa' as seq"+contentletFields+" from contentlet cl where structure_id = 1";
     	
     	List<Record> results = Db.find(sql);
 
