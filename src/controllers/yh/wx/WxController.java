@@ -226,6 +226,11 @@ public class WxController extends ApiController {
 		render("/yh/wx/searchOrder.html");
 	}
 	
+	//客户查询
+	public void scanOrder() {
+		render("/yh/wx/scanOrder.html");
+	}
+	
 	//获取回单数据
 	public void getRo() {
 		String type = getPara("type");
