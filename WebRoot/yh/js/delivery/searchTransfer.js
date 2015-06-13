@@ -582,6 +582,49 @@ $(document).ready(function() {
 		$('#hiddenRdc').val(id);
 		$('#rdcList').hide();
 	});
+	
+	
+	//选择序列号
+	$('#orderStatue2').on('keyup click', function(){
+		var orderStatue2 = $("#orderStatue2").val();
+		var warehouse2 = $("#warehouse2").val();
+		var customerName2 = $("#customerName2").val();
+		var warehouse_Name =$("#warehouse2").val();
+		if((warehouse2 != '' && warehouse2 != null)&&(customerName2!=null && customerName2!='')){
+			$.get('/delivery/searchAllOrderStatue',{orderStatue:orderStatue2,warehouse:warehouse2,customerName: customerName2}, function(data){
+				console.log(data);
+				var orderStatueList =$("#orderStatueList");
+				orderStatueList.empty();
+				for(var i = 0; i < data.length; i++)
+				{
+					orderStatueList.append("<li><a tabindex='-1' class='fromLocationItem' style='display: inline;padding-left: 0px;' code='"+data[i].ID+"'>型号："+data[i].ITEM_NO+"，序列号：<span class='seqNo'>"+data[i].SERIAL_NO+"</span>，仓库："+warehouse_Name+"</a></li>");
+				}
+			},'json');
+			$("#orderStatueList").css({ 
+		    	left:$(this).position().left+"px", 
+		    	top:$(this).position().top+32+"px" 
+		    }); 
+		    $('#orderStatueList').show();
+	    }
+	});
+	$('#orderStatue2').on('blur', function(){
+		$("#orderStatueList").hide();
+	});
+	$('#orderStatueList').on('blur', function(){
+		$('#orderStatueList').hide();
+	});
+
+	$('#orderStatueList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+	$('#orderStatueList').on('mousedown', '.fromLocationItem', function(e){
+		/*var id =$(this).attr('');*/
+		var status2 = $('#orderStatue2');
+		status2.val($(this).find('.seqNo').text());
+		status2.trigger( "click" );
+		$('#orderStatueList').hide();
+	});
+	
     
 	/***red,? 客户和仓库一有值得时候触发事件****/
   	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2').on('keyup click', function(){

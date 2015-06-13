@@ -24,7 +24,6 @@ import models.TransferOrder;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
-import models.UserOffice;
 import models.Warehouse;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
@@ -1421,6 +1420,52 @@ public class DeliveryController extends Controller {
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
     }
+    
+    // 查找序列号
+    public void searchAllOrderStatue() {
+    	String inputStr = getPara("orderStatue");
+    	String warehouse = getPara("warehouse");
+    	String customerName = getPara("customerName");
+    	
+    	String sql ="";
+    	if(inputStr != null && !"".equals(inputStr)){
+    		sql= " SELECT t1.serial_no, t1.item_no, t1.id AS tid, t1.notify_party_company AS company, t2.*, w.warehouse_name, c.abbr"
+        			+ " FROM transfer_order_item_detail t1"
+        			+ " LEFT JOIN transfer_order t2 ON t1.order_id = t2.id"
+        			+ " LEFT JOIN warehouse w ON t2.warehouse_id = w.id"
+        			+ " LEFT JOIN party p ON t2.customer_id = p.id"
+        			+ " LEFT JOIN contact c ON p.contact_id = c.id"
+        			+ " LEFT JOIN party p2 ON t1.notify_party_id = p2.id"
+        			+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
+        			+ " LEFT JOIN office o ON o.id = t2.office_id"
+        			+ " WHERE delivery_id IS NULL"
+        			+ " AND t2.cargo_nature = 'ATM'"
+        			+ " AND ( t1.is_delivered IS NULL OR t1.is_delivered = FALSE )"
+        			+ " AND t1.depart_id IS NOT NULL"
+        			+ " AND w.warehouse_name LIKE '%"+warehouse+"%'"
+        			+ " AND c.abbr LIKE '%"+customerName+"%'"
+        			+ " and t1.serial_no LIKE '%"+inputStr+"%'";
+    	}else{
+    		sql= " SELECT t1.serial_no, t1.item_no, t1.id AS tid, t1.notify_party_company AS company, t2.*, w.warehouse_name, c.abbr"
+    			+ " FROM transfer_order_item_detail t1"
+    			+ " LEFT JOIN transfer_order t2 ON t1.order_id = t2.id"
+    			+ " LEFT JOIN warehouse w ON t2.warehouse_id = w.id"
+    			+ " LEFT JOIN party p ON t2.customer_id = p.id"
+    			+ " LEFT JOIN contact c ON p.contact_id = c.id"
+    			+ " LEFT JOIN party p2 ON t1.notify_party_id = p2.id"
+    			+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
+    			+ " LEFT JOIN office o ON o.id = t2.office_id"
+    			+ " WHERE delivery_id IS NULL"
+    			+ " AND t2.cargo_nature = 'ATM'"
+    			+ " AND ( t1.is_delivered IS NULL OR t1.is_delivered = FALSE )"
+    			+ " AND t1.depart_id IS NOT NULL"
+    			+ " AND w.warehouse_name LIKE '%"+warehouse+"%'"
+    			+ " AND c.abbr LIKE '%"+customerName+"%'";
+    	}
+        List<TransferOrderItemDetail> TOIDetail = TransferOrderItemDetail.dao.find(sql);
+        renderJson(TOIDetail);
+    }
+    
     // 查找仓库
     public void searchAllwarehouse() {
     	String inputStr = getPara("warehouseName");
