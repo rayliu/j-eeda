@@ -40,6 +40,7 @@ import com.jfinal.kit.PathKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.util.OrderNoGenerator;
@@ -957,7 +958,7 @@ public class DeliveryController extends Controller {
 
 	// 配送单保存
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE,PermissionConstant.PERMSSION_DYO_UPDATE},logical=Logical.OR)
-
+	@Before(Tx.class)
 	public void deliverySave() {
         String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
         String ltlPriceType = getPara("ltlUnitType");//如果是零担，需要知道零担计费类型：按体积，按重量
@@ -1545,13 +1546,13 @@ public class DeliveryController extends Controller {
         		+ " where t2.status = '已入库' and t2.cargo_nature = 'cargo'"
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
-        		+ " and t2.order_no = '" + transferOrderNo + "'"
-        		+ " and t1.amount != t1.complete_amount "
+        		+ " and t2.order_no like '%" + transferOrderNo + "%'"
+        		+ " and (t1.amount != t1.complete_amount or t1.complete_amount is null) "
         		+ " order by t1.id desc";
     	
-        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,pro.item_no,pro.item_name,t1.amount,t1.complete_amount,t2.order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
+        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,t1.amount,t1.complete_amount,t2.order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
         		+ " (select sum(product_number) from delivery_order_item  toi left join delivery_order dor on dor.id = toi.delivery_id "
-        		+ " where toi.transfer_no = '" + transferOrderNo + "' and toi.product_id = t1.product_id and dor.status = '新建') quantity "
+        		+ " where toi.transfer_no like '%" + transferOrderNo + "%' and toi.product_id = t1.product_id and dor.status = '新建') quantity "
         		+ " from transfer_order_item t1"
         		+ " left join transfer_order t2 on t1.order_id = t2.id"
         		+ " left join product pro on pro.id = t1.product_id"
@@ -1561,8 +1562,8 @@ public class DeliveryController extends Controller {
         		+ " where t2.status = '已入库' and t2.cargo_nature = 'cargo'"
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
-        		+ " and t2.order_no = '" + transferOrderNo + "'"
-        		+ " and t1.amount != t1.complete_amount"
+        		+ " and t2.order_no like '%" + transferOrderNo + "%'"
+        		+ " and (t1.amount != t1.complete_amount or t1.complete_amount is null)"
         		+ " order by t1.id desc " + sLimit;
         
         Record rec = Db.findFirst(sqlTotal);
