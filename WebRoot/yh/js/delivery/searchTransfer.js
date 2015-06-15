@@ -17,9 +17,12 @@ $(document).ready(function() {
 	//点击创建 - 普货  
 	$("#saveDeliveryCargo").click(function(e){
 		e.preventDefault();
-    	var productIds=[];
+    	/*var productIds=[];
     	var transferItemIds=[];
-    	var shippingNumbers = [];
+    	var shippingNumbers = [];*/
+		var productIds = null;
+    	var transferItemIds = null;
+    	var shippingNumbers = null;
     	var result = true;
     	$("#eeda-table2 tr:not(:first)").each(function(){
         	$("input:checked",this).each(function(){
@@ -27,18 +30,26 @@ $(document).ready(function() {
         			$.scojs_message('配送数量不能为空,请重新输入', $.scojs_message.TYPE_ERROR);
         			$(this).parent().parent().find("td>input[name='amount']").focus();
         			result = false;
+        		}else if($(this).parent().parent().find("td>input[name='amount']").val() == 0){
+        			$.scojs_message('对不起，配送数量不能为0', $.scojs_message.TYPE_ERROR);
+        			$(this).parent().parent().find("td>input[name='amount']").focus();
+        			result = false;
         		}
-        		productIds.push($(this).val()); //货品id
+        		/*productIds.push($(this).val()); //货品id
         		shippingNumbers.push($(this).parent().parent().find("td>input[name='amount']").val());
-        		transferItemIds.push($(this).parent().parent().attr("id"));
+        		transferItemIds.push($(this).parent().parent().attr("id"));*/
+        		productIds = $(this).val(); //货品id
+        		shippingNumbers = $(this).parent().parent().find("td>input[name='amount']").val();
+        		transferItemIds = $(this).parent().parent().attr("id");
         	});
     	}); 
     	if(result){
-    		console.log("运输明细id:"+transferItemIds+",货品id:" + productIds + ",发货数量: " + shippingNumbers);
+    		
         	$("#productIds").val(productIds);
         	$("#shippingNumbers").val(shippingNumbers);
         	$("#transferItemIds").val(transferItemIds);
-        	$("#transferOrderNo1").val($("#transferOrderNo").val());
+        	/*$("#transferOrderNo").val()*/
+        	$("#transferOrderNo1").val();
             $('#createCargoForm').submit();
     	}
 	});
@@ -66,7 +77,7 @@ $(document).ready(function() {
 			    	}else if((obj.aData.COMPLETE_AMOUNT + obj.aData.QUANTITY) == obj.aData.AMOUNT){
 			    		return "";
 			    	}else{
-			    		return '<input type="checkbox" class="checkedOrUnchecked" inventoryId='+obj.aData.INVERTORYID+' code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.PRODUCTID+'">';
+			    		return '<input type="checkbox" class="checkedOrUnchecked" inventoryId='+obj.aData.TID+' code3='+obj.aData.PID+' name="check_box" value="'+obj.aData.PRODUCTID+'">';
 			    	}
 			    }
 			},   
@@ -143,7 +154,7 @@ $(document).ready(function() {
 		var transferNo= ($(this).attr('pcode'));
 		$.post('/delivery/creat/'+id,function(id){
              // 保存成功后，刷新列表
-             console.log(id);
+             
              if(id>0){
             	 // dataTable2.fnSettings().sAjaxSource="/delivery/orderList?trandferOrderId="+id;
             	 window.location.href="/delivery/creat2?id="+id+"&localArr="+transferNo;
@@ -233,7 +244,7 @@ $(document).ready(function() {
 				$("#saveDeliveryCargo").attr('disabled', false);
 				
 			}
-			console.log("可用数量："+$(objCheckBox).parent().parent().find("td").eq(9).text());
+			
 			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(9).text());// 允许输入配送数量
 			
 		}else{
@@ -294,7 +305,7 @@ $(document).ready(function() {
 	};
 	
 	$("#eeda-table4").on('click', function(){
-		console.log("click table");
+		
 	});
 	
 	$("#eeda-table4").on('click', '.checkedOrUnchecked', function(){
@@ -302,7 +313,22 @@ $(document).ready(function() {
 	});
 	
 	$("#eeda-table2").on('click', '.checkedOrUnchecked', function(){
+		var val = $(this).prop("checked");
+		var tid = $(this).attr("inventoryId");
+		$("input[name='check_box']").each(function(){
+			var id = $(this).attr("inventoryId");
+			if(id != tid){
+				if($(this).prop("checked") == true){
+		    	   	$(this).prop("checked",false);
+		    	   	$(this).parent().parent().find('input[name=amount]').val("0");
+		    	   	$(this).parent().parent().find('input[name=amount]').attr("disabled",true); 
+		        }
+			}
+			
+		}); 
+		//$(this).prop("checked",true);
 		buildItems(this, "cargo");
+			
 	});
 	
 	$("#saveDelivery").click(function(e){
@@ -344,7 +370,7 @@ $(document).ready(function() {
 	$('#customerName2').on('keyup click', function(){
            var inputStr = $('#customerName2').val();
            $.get("/customerContract/search", {locationName:inputStr}, function(data){
-               console.log(data);
+              
                var companyList =$("#companyList");
                companyList.empty();
                for(var i = 0; i < data.length; i++)
@@ -396,7 +422,7 @@ $(document).ready(function() {
     $('#customerName1').on('keyup click', function(){
         var inputStr = $('#customerName1').val();
         $.get("/customerContract/search", {locationName:inputStr}, function(data){
-            console.log(data);
+          
             var companyList =$("#companyList1");
             companyList.empty();
             for(var i = 0; i < data.length; i++)
@@ -420,14 +446,12 @@ $(document).ready(function() {
          	var customerName1 = $("#customerName1").val();
 	      	var warehouse1 = $("#warehouse1").val();
 	      	var transferOrderNo = $("#transferOrderNo").val();
-	      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+	      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
+	      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
 	      		dab2.fnSettings().oFeatures.bServerSide = true;
 	      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 		      	dab2.fnDraw();
-	      	}/*else{
-	      		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
-		      	dab2.fnDraw();
-	      	}*/
+	      	}
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customerName1').on('blur', function(){
@@ -449,7 +473,7 @@ $(document).ready(function() {
  	$('#warehouse1').on('keyup click', function(){
  		var warehouse_Name =$("#warehouse1").val();
  		$.get('/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
- 			console.log(data);
+ 			
  			var warehouseList =$("#warehouseList1");
  			warehouseList.empty();
  			for(var i = 0; i < data.length; i++)
@@ -484,14 +508,12 @@ $(document).ready(function() {
  		var customerName1 = $("#customerName1").val();
       	var warehouse1 = $("#warehouse1").val();
       	var transferOrderNo = $("#transferOrderNo").val();
-      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
+      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
       		dab2.fnSettings().oFeatures.bServerSide = true;
       		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
-      	}/*else{
-     		dab2.fnSettings().sAjaxSource = "/delivery/searchTransfer";
-	      	dab2.fnDraw();
-     	}*/
+      	}
      	$('#warehouseList1').hide();
  	});
  	
@@ -501,7 +523,7 @@ $(document).ready(function() {
 		var rdc = $('#hiddenRdc').val();
 		if(rdc != null && rdc != ""){
  		$.get('/delivery/searchAllwarehouse',{warehouseName:warehouse_Name,rdc:rdc}, function(data){
- 			console.log(data);
+ 			
  			var warehouseList =$("#warehouseList");
  			warehouseList.empty();
  			for(var i = 0; i < data.length; i++)
@@ -551,7 +573,7 @@ $(document).ready(function() {
 		if(rdc == "")
 		$("#hiddenRdc").val("");
 		$.get('/delivery/searchAllRDC',{rdc:rdc}, function(data){
-			console.log(data);
+			
 			var warehouseList =$("#rdcList");
 			warehouseList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -649,7 +671,8 @@ $(document).ready(function() {
   		var customerName1 = $("#customerName1").val();
       	var warehouse1 = $("#warehouse1").val();
       	var transferOrderNo = $("#transferOrderNo").val();
-      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
+      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
       		dab2.fnSettings().oFeatures.bServerSide = true;
       		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
@@ -660,7 +683,8 @@ $(document).ready(function() {
   		var customerName1 = $("#customerName1").val();
       	var warehouse1 = $("#warehouse1").val();
       	var transferOrderNo = $("#transferOrderNo").val();
-      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""&&transferOrderNo!=""&&transferOrderNo!=null){
+      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
+      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
       		dab2.fnSettings().oFeatures.bServerSide = true;
       		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
@@ -670,7 +694,6 @@ $(document).ready(function() {
   	// radio选择普通货品和ATM
 	$("input[name=aabbcc]").change(function(){
 		var cargo =$(this).val();
-		console.log(cargo);
 		if(cargo=="ATM"){
 			$("#cargoNature").val("ATM");
 			$("#cargos").show();
@@ -686,10 +709,14 @@ $(document).ready(function() {
 	$("#eeda-table2").on('keyup click', 'input[name="amount"]', function(e){
 		var value = $(this).val();
 		var available = $(this).parent().parent().find("td").eq(9).text();
-		console.log("value:"+value+",available:"+available);
 		if(isNaN(value)){
 			$.scojs_message('只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
+			$(this).focus();
+			return false;
+		}else if(value == 0){
+			$.scojs_message('对不起，数量不能为0', $.scojs_message.TYPE_ERROR);
+			$(this).val(available);
 			$(this).focus();
 			return false;
 		}else{

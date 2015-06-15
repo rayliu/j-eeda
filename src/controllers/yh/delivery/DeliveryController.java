@@ -21,6 +21,7 @@ import models.Office;
 import models.ParentOfficeModel;
 import models.Party;
 import models.TransferOrder;
+import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -493,7 +494,7 @@ public class DeliveryController extends Controller {
 	
 		String customerId = getPara("customerId");
 		String warehouseId = getPara("warehouseId");
-		String transferOrderNo = getPara("transferOrderNo1");
+		//String transferOrderNo = getPara("transferOrderNo1");
 		String transferItemIds = getPara("transferItemIds");
 		String productIds = getPara("productIds");
 		String shippingNumbers = getPara("shippingNumbers");
@@ -533,10 +534,12 @@ public class DeliveryController extends Controller {
 				setAttr("locationFrom", locationFrom);
 			}
 		}
+		TransferOrderItem transferItem = TransferOrderItem.dao.findById(transferItemIds);
+		TransferOrder transferOrder = TransferOrder.dao.findById(transferItem.get("order_id"));
 		setAttr("transferItemIds", transferItemIds);
 		setAttr("productIds", productIds);
 		setAttr("shippingNumbers", shippingNumbers);
-		setAttr("transferOrderNo", transferOrderNo);
+		setAttr("transferOrderNo", transferOrder.get("order_no"));
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);//货品属性
 		//setAttr("cargoNaturName", "普通货品");
@@ -545,6 +548,7 @@ public class DeliveryController extends Controller {
 		
 		render("/yh/delivery/deliveryOrderEdit.html");
 	}
+	
 
 	// 创建配送单普通货品
 	public void creat() {
