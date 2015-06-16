@@ -85,6 +85,7 @@ $(document).ready(function() {
             {"mDataProp":"ITEM_NO"},
             {"mDataProp":"ITEM_NAME"},
             {"mDataProp":"ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
             {"mDataProp":"STATUS","bVisible": false},
             {"mDataProp":"CARGO_NATURE","bVisible": false,
             	"sClass": "cargo_nature", "sWidth":"70px",
@@ -200,6 +201,7 @@ $(document).ready(function() {
 					       return  "<a class='transferNo' style='color:#464D51;text-decoration:none;' code2='"+obj.aData.ORDER_NO+"'>"+obj.aData.ORDER_NO+ "</a>";
 					    }
             		},
+            {"mDataProp":"CUSTOMER_ORDER_NO"},
             {"mDataProp":"STATUS"},        	
             {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature",
             	"fnRender":function(obj){
@@ -245,7 +247,7 @@ $(document).ready(function() {
 				
 			}
 			
-			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(9).text());// 允许输入配送数量
+			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(10).text());// 允许输入配送数量
 			
 		}else{
 			$inputAmount.attr('disabled', true);// 不允许输入配送数量
@@ -708,7 +710,7 @@ $(document).ready(function() {
 	//输入普货配送数量
 	$("#eeda-table2").on('keyup click', 'input[name="amount"]', function(e){
 		var value = $(this).val();
-		var available = $(this).parent().parent().find("td").eq(9).text();
+		var available = $(this).parent().parent().find("td").eq(10).text();
 		if(isNaN(value)){
 			$.scojs_message('只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");

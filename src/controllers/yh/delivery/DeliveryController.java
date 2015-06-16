@@ -1582,7 +1582,7 @@ public class DeliveryController extends Controller {
         		+ " and (t1.amount != t1.complete_amount or t1.complete_amount is null) "
         		+ " order by t1.id desc";
     	
-        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,t1.amount,t1.complete_amount,t2.order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
+        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,t1.amount,t1.complete_amount,t2.order_no,t2.customer_order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
         		+ " (select sum(product_number) from delivery_order_item  toi left join delivery_order dor on dor.id = toi.delivery_id "
         		+ " where toi.transfer_no like '%" + transferOrderNo + "%' and toi.product_id = t1.product_id and dor.status = '新建') quantity "
         		+ " from transfer_order_item t1"
