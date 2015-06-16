@@ -47,6 +47,8 @@ $(document).ready(function() {
             },
             {"mDataProp":"TRANSFER_ORDER_NO",
             	"sWidth": "100px"},
+        	 {"mDataProp":"CUSTOMER_ORDER_NO",
+            	"sWidth": "100px"},
             {"mDataProp":"CNAME",
             	"sWidth": "100px"}, 
             {"mDataProp":null,
