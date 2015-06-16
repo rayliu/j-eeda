@@ -26,6 +26,7 @@ $(document).ready(function() {
             },
             { "mDataProp": "ORDER_NO"},
             { "mDataProp": "CNAME"},
+            { "mDataProp": "CUSTOMER_ORDER_NO"},
             { "mDataProp": "PLANNING_TIME"},
             { "mDataProp":"OPERATION_TYPE",
             	"sClass": "operation_type",

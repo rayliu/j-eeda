@@ -513,7 +513,7 @@ public class DepartOrderController extends Controller {
             		+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
           
-            sql = "select * from(select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select * from(select distinct tor.id,tor.order_no,tor.customer_order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt"                   
@@ -589,7 +589,7 @@ public class DepartOrderController extends Controller {
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
-            sql = "select * from(select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+            sql = "select * from(select distinct tor.id,tor.order_no,tor.customer_order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
             		+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
                     + " (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt"
@@ -683,7 +683,7 @@ public class DepartOrderController extends Controller {
     				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
     		rec = Db.findFirst(sqlTotal);
     		logger.debug("total records:" + rec.getLong("total"));
-    		sql = "select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+    		sql = "select distinct tor.id,tor.order_no,tor.customer_order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
     				+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
     				+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id = tor.id) as total_amount,"
@@ -730,7 +730,7 @@ public class DepartOrderController extends Controller {
 					+ " and tor.planning_time between '" + beginTime + "' "
 					+ " and '" + endTime + "' ";
     		
-    		sql = "select distinct tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
+    		sql = "select distinct tor.id,tor.order_no,tor.customer_order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
     				+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
     				+ " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
