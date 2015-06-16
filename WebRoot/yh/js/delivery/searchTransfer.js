@@ -472,7 +472,7 @@ $(document).ready(function() {
     //选择仓库 
  	$('#warehouse1').on('keyup click', function(){
  		var warehouse_Name =$("#warehouse1").val();
- 		$.get('/gateIn/searchAllwarehouse',{warehouseName:warehouse_Name}, function(data){
+ 		$.get('/delivery/searchPartWarehouse',{warehouseName:warehouse_Name}, function(data){
  			
  			var warehouseList =$("#warehouseList1");
  			warehouseList.empty();
@@ -572,7 +572,7 @@ $(document).ready(function() {
 		var rdc =$("#rdc").val();
 		if(rdc == "")
 		$("#hiddenRdc").val("");
-		$.get('/delivery/searchAllRDC',{rdc:rdc}, function(data){
+		$.get('/delivery/searchPartRDC',{rdc:rdc}, function(data){
 			
 			var warehouseList =$("#rdcList");
 			warehouseList.empty();

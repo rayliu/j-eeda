@@ -1425,6 +1425,20 @@ public class DeliveryController extends Controller {
         List<Office> office = Office.dao.find(sql);
         renderJson(office);
     }
+    public void searchPartRDC() {
+    	String inputStr = getPara("rdc");
+    	String sql ="";
+    	ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    	Long parentID = pom.getParentOfficeId();
+    	/*"select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"*/
+    	if(inputStr!=null){
+    		sql = "select * from office where  office_name like '%"+inputStr+"%' and id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    	}else{
+    		sql= "select * from office where id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    	}
+        List<Office> office = Office.dao.find(sql);
+        renderJson(office);
+    }
     
     // 查找序列号
     public void searchAllOrderStatue() {
@@ -1490,6 +1504,20 @@ public class DeliveryController extends Controller {
     		sql = "select * from warehouse w left join office o on o.id = w.office_id where o.id = "+rdc;
     	}else{
     		sql= "select * from warehouse";
+    	}
+    	
+    	
+        List<Warehouse> warehouses = Warehouse.dao.find(sql);
+        renderJson(warehouses);
+    }
+    public void searchPartWarehouse() {
+    	String inputStr = getPara("warehouseName");
+    	String rdc = getPara("rdc");
+    	String sql ="";
+    	if(inputStr!=null){
+    		sql = "select w.* from warehouse w left join office o on w.office_id = o.id where w.warehouse_name like '%"+inputStr+"%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+    	}else{
+    		sql= "select w.* from warehouse w left join office o on w.office_id = o.id where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
     	}
     	
     	
