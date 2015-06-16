@@ -110,7 +110,7 @@ public class DepartOrderController extends Controller {
         String office = getPara("office");
         String start = getPara("start");
         String destination = getPara("destination");
-
+        String customer = getPara("customer");
         
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -120,7 +120,7 @@ public class DepartOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         if (orderNo == null && departNo == null && status == null && sp == null && beginTime == null && endTime == null
-        		&& office == null && start == null&& destination == null ) {
+        		&& office == null && start == null&& destination == null && customer == null) {
             sqlTotal = "select count(1) total from depart_order deo "
                     + "left join carinfo  car on deo.driver_id=car.id"
                     + " left join depart_transfer dtf on dtf.depart_id = deo.id"
@@ -132,7 +132,7 @@ public class DepartOrderController extends Controller {
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
-            		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ct.abbr abbr,"
+            		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no, "
             		+ " deo.transfer_type as trip_type"
@@ -144,6 +144,8 @@ public class DepartOrderController extends Controller {
 					+ " left join transfer_order tor on tor .id = dtf.order_id"
 					+ " left join user_login u on u.id = tor .create_by"
 					+ " left join office o on o.id = tor.office_id"
+					+ " left join party cp on tor.customer_id = cp.id "
+					+ " left join contact cc on cp.contact_id = cc.id"
 					+ " where ifnull(deo.status, '') != ''"
 					+ " and combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
@@ -156,7 +158,7 @@ public class DepartOrderController extends Controller {
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            String whereSql = "  where deo.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' "
+            String whereSql = "  where deo.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
                     + " and ifnull(deo.status,'') like '%" + status
                     + "%' and ifnull(deo.depart_no,'') like '%" + departNo
                     + "%' and ifnull(tor.order_no,'') like '%" + orderNo
@@ -164,6 +166,7 @@ public class DepartOrderController extends Controller {
                     + "%' and ifnull(o.office_name,'') like '%"+ office
                     + "%' and ifnull(l1.name,'') like '%"+ start
                     + "%' and ifnull(l2.name,'') like '%"+ destination
+                    + "%' and ifnull(cc.abbr,cc.company_name)  like '%" + customer
                     + "%' and deo.create_stamp between '" + beginTime + "' and '" + endTime +"'"
                     + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
@@ -176,10 +179,13 @@ public class DepartOrderController extends Controller {
 					+ " left join user_login u on u.id = tor .create_by"
 					+ " left join office o on o.id = tor .office_id"
 					+ " left join location l1 on l1.code = deo.route_from"
-					+ " left join location l2 on l2.code = deo.route_to " + whereSql;
+					+ " left join location l2 on l2.code = deo.route_to "
+					+ " left join party cp on tor.customer_id = cp.id "
+					+ " left join contact cc on cp.contact_id = cc.id"
+					+ whereSql;
 
             sql = "select deo.id,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(nullif(u.c_name,''),u.user_name) user_name,"
-            		+ " o.office_name office_name,deo.departure_time departure_time ,ct.abbr abbr,"
+            		+ " o.office_name office_name,deo.departure_time departure_time ,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no , "
             		+ " deo.transfer_type as trip_type"
@@ -192,7 +198,10 @@ public class DepartOrderController extends Controller {
 					+ " left join user_login u on u.id = tor.create_by"
 					+ " left join office o on o.id = tor.office_id"
 					+ " left join location l1 on l1.code = deo.route_from"
-					+ " left join location l2 on l2.code = deo.route_to " + whereSql
+					+ " left join location l2 on l2.code = deo.route_to " 
+					+ " left join party cp on tor.customer_id = cp.id "
+					+ " left join contact cc on cp.contact_id = cc.id"
+					+ whereSql
                     + " group by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " + sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
