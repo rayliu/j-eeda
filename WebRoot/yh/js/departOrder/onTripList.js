@@ -126,14 +126,19 @@ $(document).ready(function() {
         ]  
     });	
    
-    //签收完成
+    //入库的确认
     $("#eeda-table").on('click', '.confirmInWarehouse', function(e){
     	var departOrderId =$(this).attr("code");
+    	
     	if(confirm("确定入库吗？")){
+    		$(this).attr("disabled",true);
     		$.post('/transferOrderMilestone/warehousingConfirm',{departOrderId:departOrderId},function(data){
     			if(data.success){
-    				detailTable.fnDraw(); 		
+    				detailTable.fnDraw(); 
+    				$.scojs_message('已入库', $.scojs_message.TYPE_OK);
+    				
                 }else{
+                	detailTable.fnDraw();
                     alert('入库失败');
                 }
     		},'json');
@@ -147,10 +152,13 @@ $(document).ready(function() {
     	var orderId =$(this).attr("code");
     	var departOrderId =$(this).attr("departOrderId");
     	if(confirm("确定收货吗？")){
+    		$(this).attr("disabled",true);
     		$.post('/transferOrderMilestone/receipt', {orderId:orderId, departOrderId:departOrderId}, function(data){    
     			if(data.success){
-    				detailTable.fnDraw(); 		
+    				detailTable.fnDraw();
+    				$.scojs_message('已收货', $.scojs_message.TYPE_OK);	
                 }else{
+                	detailTable.fnDraw();
                     alert('收货出错');
                 }
         	});
@@ -412,4 +420,15 @@ $(document).ready(function() {
 		
 	 }
  },'json');
+	/*----------------------------提示所需JS-----------------------------------*/
+	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable"  style="display:none">'+
+	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+	    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+	    '</div>';
+	$('body').append(alerMsg);
+
+	$('#message_trigger_err').on('click', function(e) {
+		e.preventDefault();
+	});
+	/*--------------------------------------------------------------------*/
 } );

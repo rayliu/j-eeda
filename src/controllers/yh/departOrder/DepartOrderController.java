@@ -243,17 +243,10 @@ public class DepartOrderController extends Controller {
     			&& office == null && start == null && end == null
     			&& customer == null) {
     		sqlTotal = "select count(distinct deo.id) total from depart_order deo "
-    				+ " left join carinfo c on deo.carinfo_id = c.id "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
     				+ " left join transfer_order t on t.id = dt.order_id "
     				+ " left join office o on o.id = t.office_id "
-    				+ " left join party p1 on t.customer_id = p1.id "
-					+ " left join party p2 on deo.sp_id = p2.id "
-					+ " left join contact c1 on p1.contact_id = c1.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join location l1 on deo.route_from = l1.code "
-					+ " left join location l2 on deo.route_to =l2.code "
-    				+ " where combine_type = '"+ DepartOrder.COMBINE_TYPE_DEPART 
+    				+ " where (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车') and combine_type = '"+ DepartOrder.COMBINE_TYPE_DEPART 
     				+ "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
     		
@@ -280,7 +273,7 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
-    				+ " where  ifnull(deo.status,'') != '新建'  and combine_type = '"
+    				+ " where  (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车')  and combine_type = '"
     				+ DepartOrder.COMBINE_TYPE_DEPART + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
     				+ " group by deo.id order by deo.create_stamp desc " + sLimit;
@@ -303,8 +296,8 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
-    				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
-    				+ "  where deo.combine_type = 'DEPART' and "
+    				+ " left join transfer_order tr  on tr.id = dt.order_id"
+    				+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
     				+ "ifnull(deo.status,'') like '%" + status + "%' and "
     				+ "ifnull(deo.depart_no,'') like '%" + departNo 
     				+ "%' and ifnull(c2.abbr,'')  like '%"+ sp 
@@ -351,8 +344,8 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
-    				+ " left join transfer_order tr  on tr.id in(select order_id from depart_transfer dt where dt.depart_id=deo.id )"
-    				+ "  where deo.combine_type = 'DEPART' "
+    				+ " left join transfer_order tr  on tr.id = dt.order_id"
+    				+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' "
     				+ " and ifnull(deo.status,'') like '%"+ status
     				+ "%' and ifnull(deo.depart_no,'') like '%"+ departNo
     				+ "%' and ifnull(tr.order_no,'') like '%"+ orderNo
