@@ -22,10 +22,10 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.profile.CarinfoController;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -69,7 +69,9 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join contact c2 on p2.contact_id = c2.id"
-					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed'";
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			
 			sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
 					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
@@ -78,7 +80,9 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join contact c2 on p2.contact_id = c2.id"
-					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed' order by d.create_stamp desc "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by d.create_stamp desc "
 					+ sLimit;
 
 		} else {
@@ -90,13 +94,15 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed'"
 					+ " and ifnull(d.order_no,'') like '%" + orderNoFilter + "%' "
 					+ " and ifnull(d.status,'') like '%" + statusFilter + "%' "
 					+ " and ifnull(c.abbr,'') like '%" + customerFilter + "%' "
 					+ " and ifnull(dt2.transfer_no,'') like '%" + transferFilter + "%' "
 					+ " and ifnull(c2.company_name,'') like'%" + spFilter + "%' "
-					+ " and ifnull(trid.serial_no,'') like'%" + serialNo + "%'";
+					+ " and ifnull(trid.serial_no,'') like'%" + serialNo + "%' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
 			sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
 					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
@@ -107,13 +113,15 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
+					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed'"
 					+ " and ifnull(d.order_no,'') like '%" + orderNoFilter + "%' "
 					+ " and ifnull(d.status,'') like '%" + statusFilter + "%' "
 					+ " and ifnull(c.abbr,'') like '%" + customerFilter + "%' "
 					+ " and ifnull(dt2.transfer_no,'') like '%" + transferFilter + "%' "
 					+ " and ifnull(c2.company_name,'') like'%" + spFilter + "%' "
-					+ " and ifnull(trid.serial_no,'') like'%" + serialNo + "%' "
+					+ " and ifnull(trid.serial_no,'') like'%" + serialNo + "%' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ " group by d.id order by d.create_stamp desc" + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
@@ -148,7 +156,11 @@ public class DeliveryPlanOrderController extends Controller {
         String sql = "";
 		if (orderNo == null && deliveryNo == null && officeId == null
 				&& carNo == null && returnTime == null && turnoutTime == null) {
-			sqlTotal = "select count(0) total from delivery_plan_order ";
+			sqlTotal = "select count(dpo.id) total from delivery_plan_order dpo"
+					+ " left join delivery_plan_order_detail dpod on dpo.id = dpod.order_id"
+					+ " left join delivery_order do on dpod.delivery_id = do.id "
+					+ " where  dpo.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and do.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			sql = "select d.*,u.user_name, o.office_name,"
 					+ " (select group_concat(de.order_no separator '\r\n') from delivery_plan_order_detail dd"
 					+ " left join delivery_order de on de.id = dd.delivery_id where dd.order_id = d.id) deliver_no,"
@@ -163,7 +175,11 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " from delivery_plan_order d"
 					+ " left join office o on o.id = d.office_id"
 					+ " left join delivery_plan_order_detail de on de.order_id = d.id"
-					+ " left join user_login u on u.id = d.create_id group by d.id order by d.id desc " + sLimit;
+					+ " left join user_login u on u.id = d.create_id "
+					+ " left join delivery_order do on de.delivery_id = do.id "
+					+ " where  d.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and do.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " group by d.id order by d.id desc " + sLimit;
 	        
 		}else{
 			
@@ -177,7 +193,9 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " and ifnull(d.turnout_time, '') like '%" + turnoutTime + "%'"
 					+ " and ifnull(d.return_time, '') like '%" + returnTime + "%'"
 					+ " and ifnull(d.car_no, '') like '%" + carNo + "%'"
-					+ " and ifnull(dor.order_no, '') like '%" + deliveryNo + "%'";
+					+ " and ifnull(dor.order_no, '') like '%" + deliveryNo + "%' "
+					+ " and d.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and dor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			
 			sql = "select d.*,u.user_name, o.office_name,"
 					+ " (select group_concat(de.order_no separator '\r\n') from delivery_plan_order_detail dd"
@@ -201,6 +219,8 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " and ifnull(d.return_time, '') like '%" + returnTime + "%'"
 					+ " and ifnull(d.car_no, '') like '%" + carNo + "%'"
 					+ " and ifnull(dor.order_no, '') like '%" + deliveryNo + "%'"
+					+ " and d.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and dor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ "group by d.id order by d.id desc " + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
@@ -246,6 +266,7 @@ public class DeliveryPlanOrderController extends Controller {
 	}
 	
 	//保存
+	@Before(Tx.class)
 	public void saveDeliveryPlanOrder(){
 		
 		String deliveryPlanOrderId = getPara("deliveryPlanOrderId");
@@ -264,10 +285,11 @@ public class DeliveryPlanOrderController extends Controller {
 		if (deliveryPlanOrderId == null || "".equals(deliveryPlanOrderId)) {
 			String name = (String) currentUser.getPrincipal();
 	        UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
-	        System.out.println(",.,.,.,.,.,.,.,.,.,.,..,.,,.,.,.,.:"+users.get("office_id"));
+	       
 			deliveryPlanOrder = new DeliveryPlanOrder();
             deliveryPlanOrder.set("order_no", OrderNoGenerator.getNextOrderNo("PSPC"))//配送排车单
-            .set("status", "新建").set("create_id", users.get("id")).set("create_stamp", new Date())
+            .set("status", "新建")
+            .set("create_id", users.get("id")).set("create_stamp", new Date())
             .set("sp_id", spId).set("turnout_time", turnoutIime).set("car_no", carNo)
             .set("driver", driver).set("phone", phone).set("carinfo_id", carInfoId)
             .set("office_id", users.get("office_id"));
