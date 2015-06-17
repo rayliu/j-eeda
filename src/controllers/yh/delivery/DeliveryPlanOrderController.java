@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.ParentOfficeModel;
 import models.UserLogin;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.delivery.DeliveryPlanOrder;
@@ -26,6 +27,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.profile.CarinfoController;
 import controllers.yh.util.OrderNoGenerator;
+import controllers.yh.util.ParentOffice;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -335,11 +337,11 @@ public class DeliveryPlanOrderController extends Controller {
 		String name = getPara("name");
 		String input = getPara("input");
 		String sql="";
-		
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		if(input == null || "".equals(input)){
-			sql = "select * from carinfo where type = '" + type + "'";
+			sql = "select c.* from carinfo c left join office o on c.office_id = o.id where c.type = '" + type + "' and (o.id = " + pom.getParentOfficeId() + " or o.belong_office = " + pom.getParentOfficeId()  + ")";
 		}else{
-			sql = "select * from carinfo where type = '" + type + "' and " + name + " like '" + input + "';";
+			sql = "select c.* from carinfo c left join office o on c.office_id = o.id where c.type = '" + type + "' and c." + name + " like '%" + input + "%' and (o.id = " + pom.getParentOfficeId() + " or o.belong_office = " + pom.getParentOfficeId()  + ")";
 		}
 		List<Record> locationList = Db.find(sql);
 		renderJson(locationList);
