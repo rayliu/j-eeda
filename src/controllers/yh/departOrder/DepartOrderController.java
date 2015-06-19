@@ -250,7 +250,7 @@ public class DepartOrderController extends Controller {
     				+ "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
     		
-    		sql = "select deo.id,deo.depart_no ,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
+    		sql = "select deo.id,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
     				+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
     				+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
                     + " ((select ifnull(sum(amount),0) from transfer_order_item where order_id in (select order_id from depart_transfer dtp left join transfer_order tor on tor.id = dtp.order_id where dtp.depart_id = deo.id and tor.cargo_nature = 'cargo')) "
@@ -306,11 +306,11 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(l1.name,'') like '%" + start 
     				+ "%' and ifnull(l2.name,'') like '%" + end 
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer  
-    				+ "%' and deo.create_stamp between '" + beginTime + "' " + "and '" + endTime +"'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+    				+ "%' and deo.departure_time between '" + beginTime + "' " + "and '" + endTime +"'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ " and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" + sLimit;
     		
     		sql = "select deo.id,"
-    				+ "deo.depart_no ,"
+    				+ "deo.depart_no ,deo.departure_time,"
     				+ "deo.charge_type,"
     				+ "deo.create_stamp ,"
     				+ "deo.status as depart_status,"
@@ -354,7 +354,7 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(l2.name,'') like '%" + end 
     				+ "%' and ifnull(c2.abbr,'') like '%" +sp
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer 
-    				+ "%' and deo.create_stamp between '"+ beginTime+ "' and '"+ endTime
+    				+ "%' and deo.departure_time between '"+ beginTime+ "' and '"+ endTime
     				+ "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
     				+ "  and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
     				+ " group by deo.id order by deo.create_stamp desc " + sLimit;

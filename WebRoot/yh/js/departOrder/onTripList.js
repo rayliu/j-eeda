@@ -45,6 +45,8 @@ $(document).ready(function() {
             		 
             	}
             },
+            {"mDataProp":"DEPARTURE_TIME",
+            	"sWidth": "100px"},
             {"mDataProp":"TRANSFER_ORDER_NO",
             	"sWidth": "100px"},
         	 {"mDataProp":"CUSTOMER_ORDER_NO",
