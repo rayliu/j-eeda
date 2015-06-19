@@ -161,7 +161,7 @@ $(document).ready(function() {
     											+"&operation_type="+operation_type;
     	transferOrder.fnDraw(); 
     };
-    $("#oname_filter,#orderNo_filter").on( 'keyup click', function () {
+    $("#oname_filter,#orderNo_filter,#customer_order_no_filter").on( 'keyup click', function () {
     	refreshData();
     });
 
