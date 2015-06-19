@@ -215,7 +215,6 @@ public class CostItemConfirmController extends Controller {
 				+ " select distinct dpr.id,"
 				+ " dpr.depart_no order_no,"
 				+ " dpr.status,c.abbr spname,"
-				
 				+ " (select count(id) from transfer_order_item_detail where pickup_id = pofi.pickup_order_id)as amount,"
 				+ " round((select sum(volume) as volume from transfer_order_item_detail where pickup_id = pofi.pickup_order_id),2) volume,"
 				+ " round((select sum(weight) from transfer_order_item_detail where pickup_id = pofi.pickup_order_id),2) weight,"
@@ -226,7 +225,7 @@ public class CostItemConfirmController extends Controller {
 				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,"
 				+ " dpr.sign_status return_order_collection,"
 				+ " dpr.remark,"
-				+ " null as depart_time,"
+				+ " tom.create_stamp as depart_time,"
 				+ " oe.office_name office_name,"
 				+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='运输费') as transport_cost,"
         		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='搬运费') as carry_cost,"
@@ -245,7 +244,8 @@ public class CostItemConfirmController extends Controller {
 				+ " left join pickup_order_fin_item pofi on pofi.pickup_order_id = dtr.pickup_id"
 				+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
 				+ " left join office oe on oe.id = tor.office_id "
-				+ " where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' and p.party_type='SERVICE_PROVIDER' AND toid.item_id = toi.id and pofi.id is not null and dpr.combine_type='PICKUP' group by dpr.id"
+				+ " left join transfer_order_milestone tom on tom.pickup_id = dpr.id "
+				+ " where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' and p.party_type='SERVICE_PROVIDER' AND toid.item_id = toi.id and pofi.id is not null and dpr.combine_type='PICKUP' and tom.status ='已入货场' and tom.type='PICKUPORDERMILESTONE' group by dpr.id"
 				+ " union "
 				+ " select distinct ior.id,"
 				+ " ior.order_no order_no,"
@@ -262,7 +262,7 @@ public class CostItemConfirmController extends Controller {
 				+ " group_concat(distinct tor.order_no separator '\r\n') transfer_order_no,"
 				+ " ior.sign_status return_order_collection,"
 				+ " ior.remark,"
-				+ " null as depart_time,"
+				+ " ior.create_stamp as depart_time,"
 				+ " oe.office_name office_name,"
 				+ " (select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='运输费') as transport_cost,"
         		+ " (select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='搬运费') as carry_cost,"
@@ -296,7 +296,7 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
         			+ " and ifnull(status,'') like '%" + status + "%' "
         			+ " and ifnull(spname,'') like '%" + sp + "%' "
-        			+ " and create_stamp between '" + beginTime + "' and '" + endTime + "' "
+        			+ " and depart_time between '" + beginTime + "' and '" + endTime + "' "
         			+ " and ifnull(business_type,'') like '%" + type + "%'";
         }
        
