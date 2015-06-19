@@ -182,8 +182,8 @@ $(document).ready(function() {
 		}else if($('#customer_id').val() == ""){
 			$.get('/transferOrder/searchPartCustomer', {input:inputStr}, function(data){
 				if(data.length == 0){
-					$('#customerMessage').after("<label  name ='errorMessage' for='customerMessage' class='error'>当前客户没有维护，请" +
-							"<a href='/customer/add'>维护客户</a></label>");
+					$('#customerMessage').after("<label  name ='errorMessage' for='customerMessage' class='error'>当前客户不存在，请" +
+							"<a href='/customer/add'>先添加客户</a></label>");
 				}
 				if(data.length ==1){
 					
