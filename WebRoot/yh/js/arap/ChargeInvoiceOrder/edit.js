@@ -26,7 +26,7 @@ $(document).ready(function() {
 		$.post('/chargeInvoiceOrder/save', $("#chargeInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeInvoiceOrderId").val(data.ID);
-			  	//$("#style").show();
+				$("#arapAuditInvoice_order_no").text(data.ORDER_NO);
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			}else{
 				alert('数据保存失败。');
@@ -49,6 +49,7 @@ $(document).ready(function() {
 				if(data.ID>0){
 					$("#chargeInvoiceOrderId").val(data.ID);
 					$("#saveChargeInvoiceOrderBtn").attr("disabled", true);
+					$("#chargeInvoiceOrderStatus").html(data.STATUS);
 				}else{
 					$("#departureConfirmationBtn").attr("disabled", false);
 					alert('数据保存失败。');
