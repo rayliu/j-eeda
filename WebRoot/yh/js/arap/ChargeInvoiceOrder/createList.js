@@ -106,7 +106,7 @@ $(document).ready(function() {
     };
   
     
-    $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter,#orderNo_filter').on( 'keyup', function () {
+    $('#beginTime_filter,#endTime_filter,#orderNo_filter,#orderNo_filter').on( 'keyup', function () {
     	refreshCreateList();
 	} );
     $("#status_filter,#office_filter").on('change',function(){

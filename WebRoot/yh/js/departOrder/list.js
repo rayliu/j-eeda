@@ -70,7 +70,7 @@ function refreshData(){
 										+"&customer="+customer;
 	dataTable.fnDraw();
 }
-$('#departNo_filter,#endTime_filter ,#beginTime_filter ,#sp_filter ,#orderNo_filter,#start_filter,#destination_filter,#customer_filter').on( 'keyup click', function () {
+$('#departNo_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter,#start_filter,#destination_filter').on( 'keyup click', function () {
 	refreshData();
 } );
 //供应商，状态，选择框
@@ -82,6 +82,7 @@ $.post('/transferOrder/searchPartOffice',function(data){
 	 if(data.length > 0){
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();
+		 
 		 officeSelect.append("<option ></option>");
 		
 		 for(var i=0; i<data.length; i++){

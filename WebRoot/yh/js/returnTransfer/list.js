@@ -308,13 +308,13 @@ $(document).ready(function() {
     
     
     //根据输入的名称过滤
-    $('input.customer_filter').on('keyup click', function () {
+   /* $('input.customer_filter').on('keyup click', function () {
     	refreshData();
     });
     
     $('input.sp_filter').on('keyup click', function () {
     	refreshData();
-    });
+    });*/
     
     
     $('#beginTime_filter').on('keyup click', function () {

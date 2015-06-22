@@ -305,7 +305,7 @@ $(document).ready(function() {
        };
        /*=====================条件过滤=======================*/
         //过滤客户
-        $('#orderNo_filter,#sp_filter,#customer_filter,#beginTime_filter,#endTime_filter').on( 'keyup', function () {
+        $('#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter').on( 'keyup', function () {
         	refreshData();
      	} );
         $('#order_type_filter,#order_status_filter').on( 'change', function () {

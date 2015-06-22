@@ -113,7 +113,7 @@ $(document).ready(function() {
     };
     
     
-    $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter').on( 'keyup', function () {
+    $('#beginTime_filter,#endTime_filter,#orderNo_filter').on( 'keyup', function () {
     	refreshCreate();
 	} );
     $('#office_filter,#status_filter').on( 'change', function () {

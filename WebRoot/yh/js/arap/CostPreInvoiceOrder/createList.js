@@ -214,7 +214,7 @@ $(document).ready(function() {
 												        +"&endTime="+endTime;
         uncheckedCostCheckTable.fnDraw();
    };
-	$("#sp_filter2,#customer_filter,#orderNo_filter,#beginTime_filter,#endTime_filter").on('keyup',function(){
+	$("#orderNo_filter,#beginTime_filter,#endTime_filter").on('keyup',function(){
 		refreshCreateList();
 	});
     $('#datetimepicker').datetimepicker({  

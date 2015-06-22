@@ -156,7 +156,7 @@
     });
     
     //条件查询
-    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two,#customer_filter").on( 'keyup click', function () {    	 	
+    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on( 'keyup click', function () {    	 	
     	findData();
     });
 

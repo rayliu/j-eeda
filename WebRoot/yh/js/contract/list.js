@@ -195,7 +195,7 @@ $(document).ready(function() {
     });
 	
 	//条件搜索>>,
-    $("#contractName_filter,#contactPerson_filter,#periodFrom_filter,#companyName_filter,#phone_filter,#periodTo_filter").on('keyup click', function () {    	 	
+    $("#contactPerson_filter,#periodFrom_filter,#phone_filter,#periodTo_filter").on('keyup click', function () {    	 	
       	var contractName_filter = $("#contractName_filter").val();
       	var contactPerson_filter = $("#contactPerson_filter").val();
     	var periodFrom_filter = $("#periodFrom_filter").val();

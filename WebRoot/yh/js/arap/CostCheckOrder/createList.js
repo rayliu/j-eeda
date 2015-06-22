@@ -302,7 +302,7 @@ $(document).ready(function() {
     	
     	
     };
-    $("#orderNo_filter,#sp_filter2,#no,#beginTime_filter,#endTime_filter").on('keyup',function(){
+    $("#orderNo_filter,#no,#beginTime_filter,#endTime_filter").on('keyup',function(){
     	refreshCreateList();
     });
     $("#order_type_filter,#order_status_filter").on('change',function(){

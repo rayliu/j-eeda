@@ -106,7 +106,7 @@ $(document).ready(function() {
     
     
     //条件筛选
-	$("#orderNo_filter ,#transfer_filter ,#status_filter,#customer_filter,#sp_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no").on('keyup', function () {    	 	
+	$("#orderNo_filter ,#transfer_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no").on('keyup', function () {    	 	
 		refreshData();
       });
 	$("#status_filter").on('change',function(){

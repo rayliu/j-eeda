@@ -201,8 +201,8 @@ $(document).ready(function() {
             for(var i = 0; i < data.length; i++)
                 companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
         },'json');
-        if(inputStr=='')
-        	transferOrder.fnFilter('', 2);
+        /*if(inputStr=='')
+        	transferOrder.fnFilter('', 2);*/
         companyList.css({ 
 	    	left:$(this).position().left+"px", 
 	    	top:$(this).position().top+32+"px" 
@@ -309,13 +309,13 @@ $(document).ready(function() {
     
     
     //根据输入的名称过滤
-    $('input.customer_filter').on('keyup click', function () {
+	/*$('input.customer_filter').on('keyup click', function () {
     	refreshData();
     });
-    
-    $('input.sp_filter').on('keyup click', function () {
+    */
+/*    $('input.sp_filter').on('keyup click', function () {
     	refreshData();
-    });
+    });*/
     
     
     $('#beginTime_filter').on('keyup click', function () {

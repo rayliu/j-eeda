@@ -210,7 +210,7 @@ $(document).ready(function() {
 	
  
 
-    $('#customer_filter,#endTime_filter ,#sp_filter,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
+    $('#endTime_filter ,#sp_filter,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
     	
     	var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();

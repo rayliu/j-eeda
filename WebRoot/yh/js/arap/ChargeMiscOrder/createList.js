@@ -158,7 +158,6 @@ $(document).ready(function() {
     });    
     
     $('#companyName,#beginTime_filter,#endTime_filter,#beginTime,#endTime').on( 'keyup', function () {
-    	
     	var companyName = $('#companyName').val();
 		var beginTime = $("#beginTime_filter").val();
 		var endTime = $("#endTime_filter").val();

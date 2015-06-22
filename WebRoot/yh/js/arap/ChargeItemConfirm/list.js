@@ -159,7 +159,7 @@ $(document).ready(function() {
        });
        
        //过滤客户
-       $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter,#customerNo_filter,#start_filter').on( 'keyup ',function(){
+       $('#beginTime_filter,#endTime_filter,#orderNo_filter,#customerNo_filter,#start_filter').on( 'keyup ',function(){
     	   refreshCreateList();  
        });
        $("#shouru_filter").on('change',function(){

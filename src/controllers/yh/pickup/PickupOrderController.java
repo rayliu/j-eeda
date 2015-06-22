@@ -56,8 +56,6 @@ public class PickupOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void index() {
-    	
-    	
     	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
 

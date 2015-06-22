@@ -88,7 +88,7 @@ $(document).ready(function() {
 															+"&office="+office;
 		datatable.fnDraw();
     };
-    $('#select_orderNo_filter,#status_filter,#select_customer_filter,#sp_filter,#tihuo_filter,#kaishi_filter,#jieshu_filter').on( 'keyup', function () {
+    $('#select_orderNo_filter,#status_filter,#tihuo_filter,#kaishi_filter,#jieshu_filter').on( 'keyup', function () {
     	//alert("OK");
     	refreshList();
 	} );
