@@ -241,6 +241,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	public void auditChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		ArapChargeInvoiceApplication arapAuditOrder = null;
+		Map map =new HashMap();
 		if(chargePreInvoiceOrderId != null && !"".equals(chargePreInvoiceOrderId)){
 			arapAuditOrder = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
 			arapAuditOrder.set("status", "已审核");
@@ -249,14 +250,18 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("audit_by", users.get(0).get("id"));
 			arapAuditOrder.set("audit_stamp", new Date());
 			arapAuditOrder.update();
+			map.put("arapAuditOrder", arapAuditOrder);
+			map.put("user", users.get(0));
 		}
-        renderJson(arapAuditOrder);
+		
+        renderJson(map);
 	}
 	
 	// 审批
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CONFIRMATION})
 	public void approvalChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
+		Map map =new HashMap();
 		if(chargePreInvoiceOrderId != null && !"".equals(chargePreInvoiceOrderId)){
 			ArapChargeInvoiceApplication arapAuditOrder = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
 			arapAuditOrder.set("status", "已审批");
@@ -265,8 +270,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("approver_by", users.get(0).get("id"));
 			arapAuditOrder.set("approval_stamp", new Date());
 			arapAuditOrder.update();
+			map.put("arapAuditOrder", arapAuditOrder);
+			map.put("user", users.get(0));
 		}
-		renderJson("{\"success\":true}");
+		renderJson(map);
 	}
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
 	public void edit() throws ParseException {
