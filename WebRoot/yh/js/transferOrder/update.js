@@ -2704,6 +2704,7 @@ $(document).ready(function() {
     	var cargoNature = $("input[name='cargoNature']:checked").val();
     	if(cargoNature == 'cargo'){
     		if(customer=="江苏国光信息产业股份有限公司"){
+    			 pdf_muban = signNO + "_puhuo";
     			$.post('/report/printSign', {order_no:order_no,sign:pdf_muban}, function(data){
         			openData(data);
             	});
