@@ -14,8 +14,12 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
+				$("#sorder_no").html('<strong>'+data.ORDER_NO+'<strong>');
+			  	$("#create_stamp").html(data.CREATE_STAMP);
+			  	$("#remark").val(data.REMARK);
 				$("#costPreInvoiceOrderId").val(data.ID);
 				$("#auditBtn").attr("disabled",false);
+				$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -29,8 +33,16 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/auditCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
-			$("#approvalBtn").attr("disabled",false);
-			$("#costPreInvoiceOrderStatus").text("已确认");
+			if(data.arapAuditOrder.ID>0){
+				$("#audit_name").html(data.ul.C_NAME);
+				$("#audit_stamp").html(data.arapAuditOrder.AUDIT_STAMP);
+				$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+				$("#auditBtn").attr("disabled",true);
+				$("#approvalBtn").attr("disabled",false);
+				$("#costPreInvoiceOrderStatus").text("已审核");
+			}else{
+				alert('数据审核失败。');
+			}
 		},'json');
 	});
 	
@@ -41,8 +53,18 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/approvalCostPreInvoiceOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
-			$("#printBtn").attr("disabled",false);
-			$("#costPreInvoiceOrderStatus").text("已审批");
+			if(data.arapAuditOrder.ID>0){
+				$("#approver_name").html(data.ul.C_NAME);
+				$("#approval_stamp").html(data.arapAuditOrder.APPROVAL_STAMP);
+				$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+				$("#auditBtn").attr("disabled",true);
+				$("#approvalBtn").attr("disabled",true);
+				$("#printBtn").attr("disabled",false);
+				$("#costPreInvoiceOrderStatus").text("已审批");
+			}else{
+				alert('数据审批失败。');
+			}
+			
 		},'json');
 		
 	});

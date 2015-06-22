@@ -223,8 +223,9 @@ public class CostPreInvoiceOrderController extends Controller {
 @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_APPROVAL})
 	public void auditCostPreInvoiceOrder(){
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
+		ArapCostInvoiceApplication arapAuditOrder = null;
 		if(costPreInvoiceOrderId != null && !"".equals(costPreInvoiceOrderId)){
-			ArapCostInvoiceApplication arapAuditOrder = ArapCostInvoiceApplication.dao.findById(costPreInvoiceOrderId);
+			arapAuditOrder = ArapCostInvoiceApplication.dao.findById(costPreInvoiceOrderId);
 			arapAuditOrder.set("status", "已审核");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -232,15 +233,20 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("audit_stamp", new Date());
 			arapAuditOrder.update();
 		}
-        renderJson("{\"success\":true}");
+		Map BillingOrderListMap = new HashMap();
+		UserLogin ul = UserLogin.dao.findById(arapAuditOrder.get("audit_by"));
+		BillingOrderListMap.put("arapAuditOrder", arapAuditOrder);
+		BillingOrderListMap.put("ul", ul);
+        renderJson(BillingOrderListMap);
 	}
 	
 	// 审批
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CONFIRMATION})
 	public void approvalCostPreInvoiceOrder(){
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
+		ArapCostInvoiceApplication arapAuditOrder = null;
 		if(costPreInvoiceOrderId != null && !"".equals(costPreInvoiceOrderId)){
-			ArapCostInvoiceApplication arapAuditOrder = ArapCostInvoiceApplication.dao.findById(costPreInvoiceOrderId);
+			arapAuditOrder = ArapCostInvoiceApplication.dao.findById(costPreInvoiceOrderId);
 			arapAuditOrder.set("status", "已审批");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -248,7 +254,11 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("approval_stamp", new Date());
 			arapAuditOrder.update();
 		}
-		renderJson("{\"success\":true}");
+		Map BillingOrderListMap = new HashMap();
+		UserLogin ul = UserLogin.dao.findById(arapAuditOrder.get("approver_by"));
+		BillingOrderListMap.put("arapAuditOrder", arapAuditOrder);
+		BillingOrderListMap.put("ul", ul);
+        renderJson(BillingOrderListMap);
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_UPDATE})
 	public void edit() throws ParseException {

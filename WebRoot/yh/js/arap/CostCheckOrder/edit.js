@@ -22,12 +22,20 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/costCheckOrder/save', $("#costCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
+				$("#sorder_no").html('<strong>'+data.ORDER_NO+'<strong>');
+			  	//$("#suser_name").html(data.USER_NAME);
+			  	$("#create_stamp").html(data.CREATE_STAMP);
+			  	$("#confirm_name").html(data.CONFIRM_NAME);
+			  	$("#confirm_stamp").html(data.CONFIRM_STAMP);
+			  	$("#remark").val(data.REMARK);
+				
 				$("#costCheckOrderId").val(data.ID);
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			  	//if("costCheckOrderbasic" == parentId){
-			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			  		$("#auditBtn").attr("disabled",false);
+			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			  	$("#saveCostCheckOrderBtn").attr("disabled",true);
+			  	$("#auditBtn").attr("disabled",false);
 			  	//}
 			}else{
 				alert('数据保存失败。');
@@ -50,9 +58,13 @@ $(document).ready(function() {
 		var costCheckOrderId = $("#costCheckOrderId").val();
 		$.post('/costCheckOrder/auditCostCheckOrder', {costCheckOrderId:costCheckOrderId}, function(data){
 			/*console.log(data.success);*/
-			if(data.success){
+			if(data.arapAuditOrder.ID>0){
+				$("#confirm_name").html(data.ul.C_NAME);
+			  	$("#confirm_stamp").html(data.arapAuditOrder.CONFIRM_STAMP);
 				$("#printBtn").attr("disabled",false);
 				$("#costCheckOrderStatus").text("已确认");
+				$("#saveCostCheckOrderBtn").attr("disabled",true);
+			  	$("#auditBtn").attr("disabled",true);	
 			}
 		},'json');
 		

@@ -52,23 +52,23 @@
 		                                        <label>创建人</label>	<%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>创建时间</label>	<span>${create_stamp!''}</span>                                       
+		                                        <label>创建时间</label>	<span id="create_stamp">${create_stamp!''}</span>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审核人</label>	<span>${audit_name!''}</span>                                      
+		                                        <label>审核人</label>	<span id="audit_name">${audit_name!''}</span>                                      
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审核时间</label>	<span>${audit_stamp!''}</span>                                         
+		                                        <label>审核时间</label>	<span id="audit_stamp">${audit_stamp!''}</span>                                         
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审批人</label>	<span>${approver_name!''}</span>                                
+		                                        <label>审批人</label>	<span id="approver_name">${approver_name!''}</span>                                
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>审批时间</label>	<span>${approval_stamp!''}</span>                                          
+		                                        <label>审批时间</label>	<span id="approval_stamp">${approval_stamp!''}</span>                                          
 		                                    </div>                                            
                                             <div class="form-group">
                                                 <label>备注</label>
-                                                <textarea class="form-control" rows="7" name="remark">${arapAuditInvoiceApplication.remark!''}</textarea>
+                                                <textarea class="form-control" rows="7" name="remark" id="remark">${arapAuditInvoiceApplication.remark!''}</textarea>
                                             </div>                               
                                     </div>
                                     <!-- /.col-lg-6 (nested) -->

@@ -31,7 +31,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -113,8 +112,8 @@ public class CostCheckOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
         
-        UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
-        setAttr("userLogin", userLogin);
+        UserLogin ul = UserLogin.dao.findById(users.get(0).get("id"));
+        setAttr("create_name", ul.get("c_name"));
 
         setAttr("status", "new");
     		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
@@ -326,7 +325,7 @@ public class CostCheckOrderController extends Controller {
 	            }
 	    	}
     	}
-        renderJson(arapAuditOrder);;
+        renderJson(arapAuditOrder);
     }
 
 @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_UPDATE})
@@ -339,8 +338,12 @@ public class CostCheckOrderController extends Controller {
 	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
 	        setAttr("sp", contact);
     	}    	
-    	UserLogin userLogin = UserLogin.dao.findById(arapAuditOrder.get("create_by"));
-    	setAttr("userLogin", userLogin);
+    	
+    	UserLogin create_user = UserLogin.dao.findById(arapAuditOrder.get("create_by"));
+    	setAttr("create_user", create_user);
+    	UserLogin confirm_user = UserLogin.dao.findById(arapAuditOrder.get("confirm_by"));
+    	setAttr("confirm_user", confirm_user);
+    	
     	setAttr("arapAuditOrder", arapAuditOrder);
     	String orderIds = "";
     	String orderNos = "";
@@ -362,8 +365,9 @@ public class CostCheckOrderController extends Controller {
 	@Before(Tx.class)
 	public void auditCostCheckOrder(){
 		String costCheckOrderId = getPara("costCheckOrderId");
+		ArapCostOrder arapAuditOrder = null;
 		if(costCheckOrderId != null && !"".equals(costCheckOrderId)){
-			ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
+			arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
 			arapAuditOrder.set("status", "已确认");
 	        String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -381,7 +385,11 @@ public class CostCheckOrderController extends Controller {
 			
 			//updateReturnOrderStatus(arapAuditOrder, "对账已确认");
 		}
-        renderJson("{\"success\":true}");
+		Map BillingOrderListMap = new HashMap();
+		UserLogin ul = UserLogin.dao.findById(arapAuditOrder.get("confirm_by"));
+		BillingOrderListMap.put("arapAuditOrder", arapAuditOrder);
+		BillingOrderListMap.put("ul", ul);
+        renderJson(BillingOrderListMap);
 	}
 	
 	public void costConfirmList(){
