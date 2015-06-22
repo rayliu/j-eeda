@@ -31,8 +31,11 @@ $(document).ready(function() {
         }
 		//异步向后台提交数据
 		$.post('/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
+			
 			if(data.ID>0){
 				$("#chargePreInvoiceOrderId").val(data.ID);
+				$("#arapAudit_order_no").text(data.ORDER_NO);
+				$("#createData").text(data.CREATE_STAMP);
 				$('#auditBtn').attr('disabled', false);
 			}else{
 				alert('数据保存失败。');
@@ -47,9 +50,18 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
 		$.post('/chargePreInvoiceOrder/auditChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
-			if(data.ID != null){
+			
+			if(data.arapAuditOrder.ID != null){
 				$('#savechargePreInvoiceOrderBtn').attr('disabled', true);
 				$('#auditBtn').attr('disabled', true);
+				$("#auditData").text(data.arapAuditOrder.AUDIT_STAMP);
+				$("#chargePreInvoiceOrderStatus").html(data.arapAuditOrder.STATUS);
+				if(data.user.C_NAME != null && data.user.C_NAME != ''){
+					$("#auditName").text(data.user.C_NAME);
+				}else{
+					$("#auditName").text(data.user.USER_NAME);
+				}
+				
 				$('#approvalBtn').attr('disabled', false);
 			}
 			
@@ -63,9 +75,21 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
 		$.post('/chargePreInvoiceOrder/approvalChargePreInvoiceOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId}, function(data){
-			$('#savechargePreInvoiceOrderBtn').attr('disabled', true);
-			$('#auditBtn').attr('disabled', true);
-			$('#approvalBtn').attr('disabled', true);
+			if(data.arapAuditOrder.ID != null){
+				$('#savechargePreInvoiceOrderBtn').attr('disabled', true);
+				$('#auditBtn').attr('disabled', true);
+				$('#approvalBtn').attr('disabled', true);
+				$("#chargePreInvoiceOrderStatus").html(data.arapAuditOrder.STATUS);
+				$("#approvalData").text(data.arapAuditOrder.APPROVAL_STAMP);
+				if(data.user.C_NAME != null && data.user.C_NAME != ''){
+					$("#approvalName").text(data.user.C_NAME);
+				}else{
+					$("#approvalName").text(data.user.USER_NAME);
+				}
+				
+			}else{
+				$.scojs_message('审批失败', $.scojs_message.TYPE_ERROR);
+			}
 		},'json');
 	});
 	
