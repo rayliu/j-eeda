@@ -402,8 +402,9 @@ public class ChargeCheckOrderController extends Controller {
 	@Before(Tx.class)
 	public void auditChargeCheckOrder(){
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
+		ArapChargeOrder arapAuditOrder = null;
 		if(chargeCheckOrderId != null && !"".equals(chargeCheckOrderId)){
-			ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
+			arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "已确认");
 			arapAuditOrder.update();
 			List<ArapMiscChargeOrder> list = ArapMiscChargeOrder.dao.find("select * from arap_misc_charge_order where charge_order_id = ?",arapAuditOrder.get("id"));
@@ -415,7 +416,7 @@ public class ChargeCheckOrderController extends Controller {
 			}
 			updateReturnOrderStatus(arapAuditOrder, "对账已确认");
 		}
-        renderJson("{\"success\":true}");
+        renderJson(arapAuditOrder);
 	}
 	
 	// 更新回单状态

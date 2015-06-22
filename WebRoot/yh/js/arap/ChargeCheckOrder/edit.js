@@ -49,6 +49,7 @@ $(document).ready(function() {
 		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
 		$.post('/chargeCheckOrder/auditChargeCheckOrder', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
 			$('#auditBtn').attr('disabled', true);
+			$("#chargeCheckOrderStatus").html(data.STATUS);
 			$('#saveChargeCheckOrderBtn').attr('disabled', true);
 		},'json');
 	});
