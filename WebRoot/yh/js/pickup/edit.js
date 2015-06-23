@@ -5,7 +5,6 @@
 		document.title = pickupOrder.depart_no +' | '+document.title;
 	}
 	
-	
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 var pickupOrderId = $("#pickupOrderId").val();
 	 var parentId = "chargeCheckOrderbasic";
@@ -277,7 +276,7 @@
     		$("#cartype option[value='"+svalue+"']").attr("selected","selected");
     	}
     }
-    
+   
     // 保存单品
     var handlePickkupOrderDetail = function(){
     	if(!$("#saveTransferOrderBtn").prop('disabled')){
@@ -292,6 +291,7 @@
 					$("#saveTransferOrderBtn").prop('disabled',false);
 			        showFinishBut();
 				  	//$("#style").show();	
+			        contactUrl("edit?id",data.ID);
 			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				}else{
 					alert('数据保存失败。');
@@ -299,7 +299,6 @@
 			},'json');
     	}
     };
-    
     var savePickupOrderFunction = function(){
     	if(!$("#saveTransferOrderBtn").prop('disabled')){
 	    	var detailIds = [];
