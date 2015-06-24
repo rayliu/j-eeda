@@ -11,6 +11,17 @@
                     <div class="btn-header">
                     	<% if(shiro.hasPermission("PickupOrder.create")){%>
 	                    	<a class="btn  btn-primary" href="/pickupOrder/add">新建提货调车单</a>
+	                    	<a class="btn  btn-primary" href="/pickupOrder/add?flag=derect">新建直送调车单</a>
+	                    	<!-- <div class="btn-group">  
+								<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">  
+								    新建提货调车单
+								  <span class="caret"></span>  
+								</a>  
+								<ul class="dropdown-menu">  
+								  <li><a class="" href="/pickupOrder/add?flag=derect">新建直送调车单</a></li>
+								  <li><a class="" href="/pickupOrder/add">新建提货调车单</a></li>
+								</ul>  
+							</div>  -->
 	                    <%}%>
 	                    <% if(shiro.hasPermission("DepartOrder.create")){%>
 	                    	<a class="btn  btn-primary" href="/departOrder/addForRouteSp">新建整车发车单</a>

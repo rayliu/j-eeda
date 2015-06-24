@@ -35,7 +35,6 @@
 		}
  		
  		$.get('/transferOrder/searchAllDriver', {input:inputStr, partyType:party_type}, function(data){
- 			console.log(data);
  			var driverList = $("#driverList");
  			driverList.empty();
  			for(var i = 0; i < data.length; i++)
@@ -324,7 +323,6 @@
 	        $("#driverAssistantIds").val(AssistantIds.toString());
 			$("#driverAssistantNames").val(names.toString());
 			$("#driverAssistantPhones").val(phones.toString());
-			console.log("ids:"+AssistantIds);
 	    	if(uncheckedDetailIds.length > 0){
 	    		handlePickkupOrderDetail();
 	    		// 对一张单进行多次提货,把选中的和没选中的单品区分开来,然后在进行判断s
@@ -487,7 +485,6 @@
 	var swapPosition = function(currentId,targetId,currentVal,targetVal){
 		$.post('/pickupOrder/swapPickupSeq', {currentId:currentId,targetId:targetId,currentVal:currentVal,targetVal:targetVal}, function(data){
 			//保存成功后，刷新列表
-            console.log(data);
             if(data.success){
             	routeTable.fnDraw();
             }else{
@@ -562,7 +559,7 @@
 			if($(this).val() != 'own'){
 				$("#spDiv").show();
 				$("#pickupOrderPayment").show();
-			}else{
+			}else{	
 				$("#pickupOrderPayment").hide();
 			}
 			$(this).attr('checked', true);
@@ -589,12 +586,15 @@
     	$("#driverMessage").val("");
     	$("#driver_phone").val("");
     	
-  	  //console.log(this);
   	  inputId  = $(this).attr('id');
 	  if(inputId=='pickupMode1'){
 		  $("#spDiv").hide();
 		  $("#paymentDiv").hide();
-		  $("#pickupOrderPayment").hide();
+		  if($("#flag").val()=='derect' || $("#is_direct_deliver").val()=='true'){
+			  $("#pickupOrderPayment").show();
+		  }else{
+			  $("#pickupOrderPayment").hide();
+		  }
 		  $("#show_follow_name").show();
 	  }else{
 		  $("#spDiv").show();
@@ -602,12 +602,16 @@
 		  $("#pickupOrderPayment").show();
 		  $("#show_follow_name").hide();
 	  } 
-  	});  
+  	});
+    
+    if($("#flag").val()=='derect' || $("#is_direct_deliver").val()=='true'){
+		  $("#pickupOrderPayment").show();
+    }
 	
 	// 显示已完成按钮
 	var showFinishBut = function(){
 		if($("#pickupOrderId").val() != ""){
-			if($("#finishBtnVal").val() == "已入货场" || $("#finishBtnVal").val() == "已入库"){
+			if($("#finishBtnVal").val() == "已入货场" || $("#finishBtnVal").val() == "已入库" || $("#tstatus").val() == "已收货" || $("#tstatus").val() == "已签收"){
 				$("#finishBtn").attr('disabled', true);					
 				$("#saveTransferOrderBtn").attr('disabled', true);					
 			}else{
@@ -652,7 +656,6 @@
 			$('#sp_id').val($(this).attr(''));
 		}
 		$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
-			console.log(data);
 			var spList =$("#spList");
 			spList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -721,10 +724,15 @@
 	
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
+		 /*if($("input:checkbox:checked").val()=='receiverCheckbox'){
+	        if($("#route-table input:radio:checked").val()!='receiver'){
+	            alert("路线列表中的发往类型有误，请确认发往类型正确后再按确认");
+	            return;
+	        }
+		 }*/
 		// 处理入库运输单
-		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val()}, function(data){
+		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val(), receiverId:$("#receiverId").val()}, function(data){
 			//保存成功后，刷新列表
-            //console.log(data);
             if(data.success){
             	var pickupOrderId = $("#pickupOrderId").val();
             	var priceType = $("input[name='priceType']:checked").val();
@@ -732,8 +740,8 @@
             		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
                 		pickupOrderMilestone();	
                     	var pickupOrderId = $("#pickupOrderId").val();
-                    	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
-                		paymenttable.fnDraw(); 
+                    	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;/*/"+pickupOrderId;
+*/                		paymenttable.fnDraw(); 
                 		routeTable.fnDraw(); 
                 		$("#finishBtn").attr('disabled', true);	
                     	$("#saveTransferOrderBtn").attr('disabled', true);	
@@ -753,6 +761,7 @@
 		paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
 		paymenttable.fnDraw(); 
     });	*/
+	
     
 	// 判断货场是否选中
 	$("#checkbox1").click(function(){
@@ -762,6 +771,17 @@
 			$("#addressDiv").hide();			
 		}
 	});
+	
+	
+    // 判断直送收货人是否选中
+    $("#checkbox3").click(function(){
+        if($(this).prop('checked') == true){
+            $("#receiverDiv").show();
+        }else{
+            $("#receiverDiv").hide();            
+        }
+    });
+
 	
 	// 获取所有仓库
 	$.post('/transferOrder/searchAllWarehouse',function(data){
@@ -794,7 +814,12 @@
 		$("#addressDiv").show();
 		$("#checkbox1").prop('checked', true);
 	}else{
-		$("#checkbox1").prop('checked', false);		
+		/*if($("#is_direct_deliver").val()=='false' || $("#is_direct_deliver").val()==''){
+			$("#checkbox1").prop('checked', true);
+	    	$("#addressDiv").show();
+	    }else{*/
+	    	$("#checkbox1").prop('checked', false);		
+	    /*}*/
 	}
 	
 	// 回显仓库
@@ -806,6 +831,30 @@
 		$("#checkbox2").prop('checked', false);		
 	}
 	
+	//只送人地址回显
+	if($("#flag").val()=='derect'){
+    	$("#receiverId").val($("#t_id").val());
+		$("#div1").hide();
+		$("#checkbox3").prop('checked',true);
+        /*$("#checkbox1").prop('checked',false);
+        $("#checkbox1").attr('disabled',true);
+        $("#checkbox2").prop('checked',false);
+        $("#checkbox2").attr('disabled',true);*/
+        $("#receiverDiv").show();
+	}else if($("#is_direct_deliver").val()=='true'){
+		$("#receiverId").val($("#t_id").val());
+		$("#div1").hide();
+		$("#checkbox3").prop('checked',true);
+        /*$("#checkbox1").prop('checked',false);
+        $("#checkbox1").attr('disabled',true);
+        $("#checkbox2").prop('checked',false);
+        $("#checkbox2").attr('disabled',true);*/
+        $("#receiverDiv").show();
+	}else{
+		$("#div2").hide();
+		$("#addressDiv").show();
+		$("#checkbox1").prop('checked', true);
+	}
 	//datatable, 动态处理
     var externalTable = $('#external-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -872,7 +921,6 @@
 
     var refreshAddress = function(data){
     	//保存成功后，刷新列表
-        console.log(data);
         if(data.success){
         	var pickupOrderId = $("#pickupOrderId").val();
     		$.post('/pickupOrder/findAllAddress', {pickupOrderId:pickupOrderId}, function(data){
@@ -900,7 +948,6 @@
         });
         tableArr.push($("#message").val());
         $("#message").val(tableArr);
-        console.log(tableArr);
         $('#transferOrderIds').val(trArr);
         $('#addExternalPickupOrderId').val($("#pickupOrderId").val());
         $.post('/pickupOrder/addExternalTransferOrder', $('#addExternalTransferOrderForm').serialize(),function(data){
@@ -922,11 +969,11 @@
         		});
         	$("#gateInSelect").attr("disabled","disabled");
     	}
-    }if($("#transferOrderType").val() == 'salesOrder'){
+    }/*if($("#transferOrderType").val() == 'salesOrder'){
     	$("#checkbox1").prop('checked', true);
     	$("#addressDiv").show();
-    }
-    
+    }*/
+   
 //    $.post('/pickupOrder/searchAllPayItem', function(data){
 //		var paymentItemList=$("#paymentItemList");
 //		paymentItemList.append("<option></option>");
@@ -1009,7 +1056,6 @@
 		e.preventDefault();
 		$.post('/pickupOrder/finItemdel/'+id,function(data){
              //保存成功后，刷新列表
-             console.log(data);
              paymenttable.fnDraw();
         },'text');
 	});
@@ -1017,7 +1063,6 @@
 	$("#addrow").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
 		$.post('/pickupOrder/addNewRow/'+pickupOrderId,function(data){
-			console.log(data);
 			if(data[0] != null){
 				paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;   
 				paymenttable.fnDraw();
@@ -1030,7 +1075,6 @@
 	$("#addIncomeBtn").click(function(){	
 		var pickupOrderId =$("#pickupOrderId").val();
 		$.post('/pickupOrder/addIncomeRow/'+pickupOrderId,function(data){
-			console.log(data);
 			if(data[0] != null){
 				incomeTab.fnSettings().sAjaxSource = "/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId;   
 				incomeTab.fnDraw();
@@ -1146,7 +1190,6 @@
 		if(orderId != "" ){
 			$.post('/pickupOrder/delReceivable/'+orderId,function(data){
 	             //保存成功后，刷新列表
-	             console.log(data);
 	             incomeTab.fnDraw();
 	        },'text');
 		}
@@ -1263,7 +1306,14 @@
             {"mDataProp":"CREATE_STAMP", "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"150px",
             	"fnRender": function(obj) {
-            		return "<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' checked='' value='yard'>货场</label>		<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='warehouse'>中转仓</label>";
+            		/*if(obj.aData.STATUS=='已收货' || obj.aData.STATUS=='已签收'){*/
+            		if(obj.aData.IS_DIRECT_DELIVER || $("#flag").val()=='derect'){
+            			return "<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='receiver' checked=''>直送收货人</label>";
+            		}else{
+            			return  "<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' checked='' value='yard'>货场</label>" +
+         			   			"<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='warehouse'>中转仓</label>"/*+
+         			   			"<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='receiver'>直送收货人</label>"*/;
+            		}
             }},                           
             {"mDataProp":"STATUS", "sWidth":"100px"},                        
             {"mDataProp":"REMARK", "sWidth":"150px"},                         
@@ -1286,6 +1336,9 @@
 				$("#warehouseIds").val(warehouseIds);
 			}
 		}
+		/*if($(this).val() == "receiver"){
+			$("#receiverId").val(id);
+		}*/
 	});
     
     

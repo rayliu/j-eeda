@@ -70,6 +70,7 @@ $(document).ready(function() {
     });
 
 	//datatable, 动态处理
+    var flag=$("#flag").val();
     var pickupOrder = $('#eeda-table').dataTable({
     	"bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
@@ -80,7 +81,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/pickupOrder/createList",
+        "sAjaxSource": "/pickupOrder/createList?flag="+flag,
         "aoColumns": [
             { "mDataProp": null,
 				 "fnRender": function(obj) {
@@ -104,12 +105,17 @@ $(document).ready(function() {
             	"sClass": "order_no",
             	"fnRender": function(obj) {
             		//atm、补货订单、不是直送运输单
-            		if(obj.aData.CARGO_NATURE == "ATM" || (obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailYes")){
-            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择单品</button>';
-            			return obj.aData.ORDER_NO + str1;
-            		}else if(obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailNo"){
-            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择货品</button>';
-            			return obj.aData.ORDER_NO + str1;
+            		
+	            		if(flag!='derect'){
+	            		if(obj.aData.CARGO_NATURE == "ATM" || (obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailYes")){
+	            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择单品</button>';
+	            			return obj.aData.ORDER_NO + str1;
+	            		}else if(obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailNo"){
+	            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择货品</button>';
+	            			return obj.aData.ORDER_NO + str1;
+	            		}else{
+	            			return obj.aData.ORDER_NO;
+	            		}
             		}else{
             			return obj.aData.ORDER_NO;
             		}
@@ -517,6 +523,12 @@ $(document).ready(function() {
 					alert("请选择同一货品属性的运输单");
 					return false;
 				}
+				if(flag=="derect"){
+					if(order_no[0]!=$(this).parent().siblings('.order_no')[0].innerHTML){
+						alert("只能选择一张订单");
+						return false;
+					}
+				}
 				orderType.push($(this).parent().siblings('.order_type')[0].innerHTML);
 				officeType.push($(this).parent().siblings('.office_name')[0].innerHTML);
 			}else{
@@ -530,6 +542,7 @@ $(document).ready(function() {
 				}
 			}
 			//sumValue();
+			
 			transferOrderIds.push(value);
 			if(cargo_nature == 'ATM'){
 				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value}, function(data){

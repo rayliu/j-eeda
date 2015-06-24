@@ -15,17 +15,16 @@ import models.DepartOrderFinItem;
 import models.DepartTransferOrder;
 import models.FinItem;
 import models.InventoryItem;
-import models.Office;
 import models.ParentOfficeModel;
 import models.Party;
 import models.PickupOrderFinItem;
+import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
-import models.UserOffice;
 import models.yh.contract.Contract;
 import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.Carinfo;
@@ -44,6 +43,8 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.departOrder.DepartOrderController;
+import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
@@ -64,10 +65,11 @@ public class PickupOrderController extends Controller {
 
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void add() {
-    	
+    	String flag = getPara("flag");
     	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
+    	customizeField.put("flag", flag);
     	setAttr("customizeField", customizeField);
-       render("/yh/pickup/pickupOrderSearchTransfer.html");
+        render("/yh/pickup/pickupOrderSearchTransfer.html");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void createPickupOrder() {
@@ -78,6 +80,7 @@ public class PickupOrderController extends Controller {
         String cargoIds = getPara("cargoIds");
         String cargoNumbers = getPara("cargoNumbers");
         String cargoItemIds = getPara("cargoItemIds");
+        String flag = getPara("flag");
 
         if (transferOrderIds.length == 1) {
             TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
@@ -99,6 +102,14 @@ public class PickupOrderController extends Controller {
             transferOrder.set("pickup_seq", i + 1);
             transferOrder.update();
         }
+        String sql = "SELECT *,con.address con_address FROM transfer_order tra "
+                + " LEFT JOIN party de on de.id = tra.notify_party_id"
+                + " LEFT JOIN contact con on con.id = de.contact_id"
+                + " where tra.id in("+list+")";
+        Record tro = Db.findFirst(sql);
+        setAttr("transferOrder",tro);
+        setAttr("t_id", list);
+        
         TransferOrder transferOrder = new TransferOrder();
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -113,6 +124,7 @@ public class PickupOrderController extends Controller {
         setAttr("cargoIds", cargoIds);
         setAttr("cargoNumbers", cargoNumbers);
         setAttr("cargoItemIds", cargoItemIds);
+        setAttr("flag", flag);
         
         List<Record> paymentItemList = Collections.EMPTY_LIST;
         paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -262,6 +274,7 @@ public class PickupOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_CREATE})
     public void createList() {
         Map transferOrderListMap = null;
+        String flag = getPara("flag");
         String orderNo = getPara("orderNo");
         String status = getPara("status");
         String address = getPara("address");
@@ -271,7 +284,13 @@ public class PickupOrderController extends Controller {
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
         String orderType = getPara("orderType") == null ? "" : getPara("orderType");
-
+        
+        String sql1 = "";
+        if(flag=="" || flag==null){
+        	sql1 = "";
+        }else if(flag.equals("derect")){
+        	sql1 = "and tor.arrival_mode='delivery'";
+        }
         if (!"".equals(orderType)) {
             if ("销售订单".contains(orderType)) {
                 orderType = "salesOrder";
@@ -325,6 +344,7 @@ public class PickupOrderController extends Controller {
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" 
                     + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+                    + sql1
                     + " order by tor.planning_time desc" + sLimit;
         } else if ("".equals(routeFrom) && "".equals(routeTo)) {
             if (beginTime == null || "".equals(beginTime)) {
@@ -606,6 +626,7 @@ public class PickupOrderController extends Controller {
         String gateInSelect = getPara("gateInSelect");
         String returnTime = getPara("return_time");
         String datailIdsStr = getPara("detailIds");
+        String con_address = getPara("con_address");
         String[] detailIds = getPara("detailIds").split(",");
         String[] orderids = getPara("orderid").split(",");
         String[] cargoIds = getPara("cargoIds").split(",");
@@ -617,7 +638,7 @@ public class PickupOrderController extends Controller {
         
         if (pickId == null || "".equals(pickId)) {
             pickupOrder = new DepartOrder();
-            pickupOrder.set("depart_no", OrderNoGenerator.getNextOrderNo("PC"));
+            pickupOrder.set("depart_no", OrderNoGenerator.getNextOrderNo("DC"));
             pickupOrder.set("status", getPara("status"));
             pickupOrder.set("charge_type", getPara("chargeType"));
             pickupOrder.set("create_by", getPara("create_by"));
@@ -672,6 +693,19 @@ public class PickupOrderController extends Controller {
                         	}
                             pickupOrder.set("address", null);
                         }
+                        if ("receiverCheckbox".equals(values[i])) {
+                        	pickupOrder.set("is_direct_deliver", true);
+                        	String sql = "SELECT *,con.id con_id FROM transfer_order tra "
+                                    + " LEFT JOIN party de on de.id = tra.notify_party_id"
+                                    + " LEFT JOIN contact con on con.id = de.contact_id"
+                                    + " where tra.id in("+orderids[0]+")";
+                        	Record record =Db.findFirst(sql);
+                        	record.get("con_id");
+                        	Contact contact = Contact.dao.findById(record.get("con_id"));
+                        	contact.set("address", con_address).update();
+                        }else{
+                        	pickupOrder.set("is_direct_deliver", false);
+                        }
                     }
                 } else {
                     for (int i = 0; i < values.length; i++) {
@@ -690,6 +724,7 @@ public class PickupOrderController extends Controller {
             } else {
                 pickupOrder.set("address", null);
                 pickupOrder.set("warehouse_id", null);
+                pickupOrder.set("is_direct_deliver", false);
             }
             pickupOrder.set("car_summary_type", "untreated");
             pickupOrder.save();
@@ -1022,6 +1057,16 @@ public class PickupOrderController extends Controller {
         String[] transferOrderIds = list.split(",");
         TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
         setAttr("transferOrderAttr", transferOrderAttr);
+        
+        String sq = "SELECT *,con.address con_address FROM transfer_order tra "
+                + " LEFT JOIN party de on de.id = tra.notify_party_id"
+                + " LEFT JOIN contact con on con.id = de.contact_id"
+                + " where tra.id in("+transferOrderIds[0]+")";
+        Record tro = Db.findFirst(sq);
+        setAttr("transferOrder",tro);
+        setAttr("t_id",transferOrderIds[0]);
+        
+        
 
         Long sp_id = pickupOrder.get("sp_id");
         if (sp_id != null) {
@@ -1146,66 +1191,100 @@ public class PickupOrderController extends Controller {
         DepartOrder pickupOrder = DepartOrder.dao.findById(pickupOrderId);
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where pickup_id = ?",
                 pickupOrder.get("id"));
-        //相关运输单业务处理:提货发车之后，运输单中除了补货订单状态为已入库外，其他都是默认为正在处理状态
-        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-            TransferOrderMilestone milestone = new TransferOrderMilestone();
-            if ("新建".equals(transferOrder.get("status")) || "部分已入货场".equals(transferOrder.get("status")) || "部分已入库".equals(transferOrder.get("status"))) {
-                if ("salesOrder".equals(transferOrder.get("order_type")) || "arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))) {//销售订单
-                    if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
-                        transferOrder.set("status", "部分已入货场");
-                        milestone.set("status", "部分已入货场");
-                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
-                    } else {
-                        transferOrder.set("status", "已入货场");
-                        milestone.set("status", "已入货场");
-                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-                    }
-                    if("arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))){
-                    	SubtractInventory(pickupOrder,transferOrder);
-                    }
-                    
-                } else if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {
-                        transferOrder.set("status", "已入库");
-                        milestone.set("status", "已入库");
-                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-                }
-            }
-            transferOrder.update();
-            milestone.set("location", "");
-            milestone.set("order_id", transferOrder.get("id"));
-            String name = (String) currentUser.getPrincipal();
-            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-            milestone.set("create_by", users.get(0).get("id"));
-            java.util.Date utilDate = new java.util.Date();
-            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-            milestone.set("create_stamp", sqlDate);
-            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-            milestone.save();
+        //TransferOrder tro = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
+        boolean direct = false;
+        if(pickupOrder.get("is_direct_deliver")!= null && !"".equals(pickupOrder.get("is_direct_deliver"))){
+        	if(pickupOrder.get("is_direct_deliver")){
+        		direct = true; 	
+        	}
+        }
+        if(!direct){
+	        //相关运输单业务处理:提货发车之后，运输单中除了补货订单状态为已入库外，其他都是默认为正在处理状态
+	        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
+	            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+	            TransferOrderMilestone milestone = new TransferOrderMilestone();
+	            if ("新建".equals(transferOrder.get("status")) || "部分已入货场".equals(transferOrder.get("status")) || "部分已入库".equals(transferOrder.get("status"))) {
+	                if ("salesOrder".equals(transferOrder.get("order_type")) || "arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))) {//销售订单
+	                    if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
+	                        transferOrder.set("status", "部分已入货场");
+	                        milestone.set("status", "部分已入货场");
+	                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+	                    } else {
+	                        transferOrder.set("status", "已入货场");
+	                        milestone.set("status", "已入货场");
+	                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	                    }
+	                    if("arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))){
+	                    	SubtractInventory(pickupOrder,transferOrder);
+	                    }
+	                    
+	                } else if ("replenishmentOrder".equals(transferOrder.get("order_type"))) {
+	                        transferOrder.set("status", "已入库");
+	                        milestone.set("status", "已入库");
+	                        transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+	                }
+	            }
+	            transferOrder.update();
+	            milestone.set("location", "");
+	            milestone.set("order_id", transferOrder.get("id"));
+	            String name = (String) currentUser.getPrincipal();
+	            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	            milestone.set("create_by", users.get(0).get("id"));
+	            java.util.Date utilDate = new java.util.Date();
+	            java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	            milestone.set("create_stamp", sqlDate);
+	            milestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+	            milestone.save();
+	        }
         }
         //调车单业务处理
         TransferOrder transferOrderType = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
-        if (transferOrderType.get("order_type").equals("salesOrder") || transferOrderType.get("order_type").equals("arrangementOrder") || transferOrderType.get("order_type").equals("cargoReturnOrder")) {
-            pickupOrder.set("status", "已入货场");
-            pickupMilestone.set("status", "已入货场");
-        } else if (transferOrderType.get("order_type").equals("replenishmentOrder")) {
-            pickupOrder.set("status", "已入库");
-            pickupMilestone.set("status", "已入库");
-            if (!"".equals(pickupOrderId) && pickupOrderId != null) {
-                productInWarehouse(pickupOrderId);
-            }
+        if(!direct){
+	        if (transferOrderType.get("order_type").equals("salesOrder") || transferOrderType.get("order_type").equals("arrangementOrder") || transferOrderType.get("order_type").equals("cargoReturnOrder")) {
+	            pickupOrder.set("status", "已入货场");
+	            pickupMilestone.set("status", "已入货场");
+	        } else if (transferOrderType.get("order_type").equals("replenishmentOrder")) {
+	            pickupOrder.set("status", "已入库");
+	            pickupMilestone.set("status", "已入库");
+	            if (!"".equals(pickupOrderId) && pickupOrderId != null) {
+	                productInWarehouse(pickupOrderId);
+	            }
+	        }
+	        pickupOrder.update();
+	        String name = (String) currentUser.getPrincipal();
+	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+	        pickupMilestone.set("create_by", users.get(0).get("id"));
+	        java.util.Date utilDate = new java.util.Date();
+	        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+	        pickupMilestone.set("create_stamp", sqlDate);
+	        pickupMilestone.set("pickup_id", pickupOrder.get("id"));
+	        pickupMilestone.set("type", TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE);
+	        pickupMilestone.save();
+        }else{
+        	//获取运输单中的应付
+        	String sql1 = "SELECT count(1) total FROM transfer_order_fin_item tor "
+        			+ " LEFT JOIN depart_transfer dt on tor.order_id = dt.order_id "
+        			+ " where dt.pickup_id = "+ pickupOrderId
+        			+ " and tor.fin_item_id in (1,2,3,18,32,33,34,35)";
+        	String sql = "SELECT tor.* FROM transfer_order_fin_item tor "
+        			+ " LEFT JOIN depart_transfer dt on tor.order_id = dt.order_id "
+        			+ " where dt.pickup_id = "+ pickupOrderId
+        			+ " and tor.fin_item_id in (1,2,3,18,32,33,34,35)";
+        	Record rc1 = Db.findFirst(sql1);
+        	Record rc = Db.findFirst(sql);
+        	//System.out.println(rc.hashCode());
+        	if(rc1.getLong("total")>0){
+        		PickupOrderFinItem finItem = new PickupOrderFinItem();
+                finItem.set("status", "新建");
+                finItem.set("pickup_order_id", pickupOrderId);
+                finItem.set("fin_item_id", rc.getLong("fin_item_id"));
+                finItem.set("amount",  rc.getDouble("amount"));
+                finItem.set("create_date",  rc.getDate("create_date"));
+                finItem.set("remark",  rc.getStr("remark"));
+                finItem.save();
+        	}
         }
-        pickupOrder.update();
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        pickupMilestone.set("create_by", users.get(0).get("id"));
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-        pickupMilestone.set("create_stamp", sqlDate);
-        pickupMilestone.set("pickup_id", pickupOrder.get("id"));
-        pickupMilestone.set("type", TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE);
-        pickupMilestone.save();
 
         // 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
         // 先获取有效期内的合同，条目越具体优先级越高
@@ -1245,8 +1324,13 @@ public class PickupOrderController extends Controller {
         List<Record> transferOrderItemList = Db
                 .find("select toi.*, t_o.route_from, t_o.route_to from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
                         + transferId + ") order by pickup_seq desc");
+        String name = (String) currentUser.getPrincipal();
+    	List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        pickupMilestone.set("create_by", users.get(0).get("id"));
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         if (spId != null) {
-
+        	
             if ("perUnit".equals(chargeType)) {
                 genFinPerUnit(pickupOrder, users, sqlDate, spContract, chargeType, transferOrderItemList);
             } else if ("perCar".equals(chargeType)) {
@@ -1400,11 +1484,17 @@ public class PickupOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select tor.*,c.abbr cname from transfer_order tor "
-        		+ " left join party p on tor.customer_id = p.id left join contact c on c.id = p.contact_id"
+//        String sql = "select tor.*,c.abbr cname from transfer_order tor "
+//        		+ " left join party p on tor.customer_id = p.id left join contact c on c.id = p.contact_id"
+//        		+ " where tor.id in("+orderIds+") order by tor.pickup_seq desc " + sLimit;
+        
+        String sql = "select distinct tor.*,c.abbr cname ,deo.is_direct_deliver from transfer_order tor"
+        		+ " left join party p on tor.customer_id = p.id left join contact c on c.id = p.contact_id "
+        		+ " left join depart_transfer dept on dept.order_id = tor.id "
+        		+ " left join depart_order deo on deo.id = dept.pickup_id"
         		+ " where tor.id in("+orderIds+") order by tor.pickup_seq desc " + sLimit;
 
-        logger.debug("sql:" + sql);
+        //logger.debug("sql:" + sql);
         List<Record> transferOrders = Db.find(sql);
 
         Map transferOrderListMap = new HashMap();
@@ -1480,6 +1570,10 @@ public class PickupOrderController extends Controller {
     // 筛选掉入库的运输单
     public void getTransferOrderDestination() {
     	String warehouseIds = getPara("warehouseIds");
+    	String receiverId = getPara("receiverId");
+    	if(receiverId!=null && !"".equals(receiverId)){
+    		receipt(receiverId);
+    	}else{
     	if(warehouseIds != null && !"".equals(warehouseIds)){
     		String[] warehouseIdArr = warehouseIds.split(",");
 			for (int i=0;i<warehouseIdArr.length;i++) {
@@ -1502,9 +1596,81 @@ public class PickupOrderController extends Controller {
 				productInWarehouseOnTransferOrderId(warehouseIdArr[i]);
 			}
     	}
+    	}
     	renderJson("{\"success\":true}");
     }
 
+    
+    public void receipt(String receiverId) {
+        String order_id = receiverId;
+        DepartTransferOrder depart = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id in ("+order_id+")");
+        long departOrderId = depart.get("pickup_id");
+        depart.set("depart_id", departOrderId).update();
+        
+        //TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+        String name = (String) currentUser.getPrincipal();
+        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        //判断当前直送的模式，是入中转仓还是直接发送给客户工厂，如果是入中转仓，增加库存
+        DepartOrderController.productInWarehouse(getPara("departOrderId"));
+        //修改发车单信息
+        DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
+        departOrder.set("status", "已收货")
+        .set("sign_status", "已回单").update();
+        //直接生成回单，在把合同等费用带到回单中
+        String orderNo = OrderNoGenerator.getNextOrderNo("HD");
+        ReturnOrder returnOrder = new ReturnOrder();
+        returnOrder.set("order_no", orderNo)
+        .set("transaction_status", "新建")
+        .set("creator", users.get(0).get("id"))
+        .set("create_date", sqlDate)
+        //回单中"transfer_order_id"字段修改为“depart_id”
+        //.set("depart_id", departOrderId)
+        .set("transfer_order_id", depart.get("order_id")).save();
+        
+        
+        
+        //修改运输单信息
+        List<Record> departOrderIds = Db.find("select order_id from depart_transfer where pickup_id = ? ;",departOrderId);
+        for (Record record : departOrderIds) {
+        	long transerOrderId = record.getLong("order_id");
+        	TransferOrder transferOrder = TransferOrder.dao.findById(transerOrderId);
+			transferOrder.set("status", "已收货").update();
+			//设置回单客户信息，必须是同一个客户
+            returnOrder.set("customer_id", transferOrder.get("customer_id")).update();
+            
+            TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+            transferOrderMilestone.set("status", "已收货")
+            .set("create_by", users.get(0).get("id"))
+            .set("location", "")
+            .set("create_stamp", sqlDate)
+            .set("order_id", depart.get("order_id"))
+            .set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE)
+            .save();
+
+            transferOrderMilestone = new TransferOrderMilestone();
+            transferOrderMilestone.set("status", "已收货")
+            .set("create_by", users.get(0).get("id"))
+            .set("location", "")
+            .set("create_stamp", sqlDate)
+            .set("depart_id", departOrderId)
+            .set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE)
+            .save();
+            
+            ReturnOrderController roController= new ReturnOrderController(); 
+            //把运输单的应收带到回单中
+            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, Long.parseLong("0"), transerOrderId);
+            //直送时把保险单费用带到回单
+            roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
+            //TODO:根据合同生成费用
+            roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
+		}
+        
+        
+        renderJson("{\"success\":true}");
+    }
+    
     // 产品入库
     public void productInWarehouseOnTransferOrderId(String transOrderId) {
         if (!"".equals(transOrderId) && transOrderId != null) {
@@ -1631,6 +1797,37 @@ public class PickupOrderController extends Controller {
             renderJson(orderMap);
             return;
         }
+        
+        DepartOrder dp = DepartOrder.dao.findById(id);
+        /*if(dp.get("is_direct_deliver")){
+        	String sql1 = "SELECT count(1) total FROM transfer_order_fin_item tor "
+        			+ " LEFT JOIN depart_transfer dt on tor.order_id = dt.order_id "
+        			+ " where dt.pickup_id = "+ id
+        			+ " and tor.fin_item_id in (1,2,3,18,32,33,34,35)";
+        	String sql = "SELECT tor.* FROM transfer_order_fin_item tor "
+        			+ " LEFT JOIN depart_transfer dt on tor.order_id = dt.order_id "
+        			+ " where dt.pickup_id = "+ id
+        			+ " and tor.fin_item_id in (1,2,3,18,32,33,34,35)";
+        	Record rc1 = Db.findFirst(sql1);
+        	Record rc = Db.findFirst(sql);
+        	//System.out.println(rc.hashCode());
+        	if(rc1.getLong("total")>0){
+        		PickupOrderFinItem finItem = new PickupOrderFinItem();
+                finItem.set("status", "新建");
+                finItem.set("pickup_order_id", id);
+                finItem.set("fin_item_id", rc.getLong("fin_item_id"));
+                finItem.set("amount",  rc.getDouble("amount"));
+                finItem.set("create_date",  rc.getDate("create_date"));
+                finItem.set("remark",  rc.getStr("remark"));
+                finItem.save();
+        	}else{
+        		System.out.println("空");
+        	}
+        }*/
+        /*PickupOrderFinItem finItem = new PickupOrderFinItem();
+        finItem.set("status", "新建").set("pickup_order_id", pickupOrderId).set("fin_item_id", item.get("id"));
+        finItem.save();*/
+        
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
