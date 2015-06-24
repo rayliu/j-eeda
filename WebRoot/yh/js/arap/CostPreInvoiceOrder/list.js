@@ -50,6 +50,7 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
+            {"mDataProp":null},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",                
