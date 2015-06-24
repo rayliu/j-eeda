@@ -161,10 +161,15 @@ $(document).ready(function() {
     });
     
     $("#printBtn").on('click',function(){
-    	var order_no = $("#order_no").text();
-    	$.post('/report/printCheckOrder', {order_no:order_no}, function(data){
-    		window.open(data);
-    	});
+    	var order_no = $("#sorder_no").text();
+    	if(order_no != null && order_no != ""){
+    		$.post('/report/printCheckOrder', {order_no:order_no}, function(data){
+        		window.open(data);
+        	});
+    	}else{
+    		$.scojs_message('当前单号为空', $.scojs_message.TYPE_ERROR);
+    	}
+    	
     });
     
     
