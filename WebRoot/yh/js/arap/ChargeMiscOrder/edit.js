@@ -44,10 +44,9 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveChargeMiscOrderBtn").click(function(e){
- 		
  		saveChargeMiscOrder(e);
- 		
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		
 	});
 	
 	$("#chargeMiscOrderItem").click(function(e){
@@ -62,10 +61,13 @@ $(document).ready(function() {
 			if(data.ID>0){
 				$("#chargeMiscOrderId").val(data.ID);
 			  	//$("#style").show();
+				
 			  	$("#departureConfirmationBtn").attr("disabled", false);
+			  	contactUrl("edit?id",data.ID);
 			  	if("chargeMiscOrderbasic" == parentId){
 			  		
 			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			  		
 			  	}
 			}else{
 				alert('数据保存失败。');

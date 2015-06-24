@@ -90,7 +90,7 @@ $(document).ready(function() {
 	         	//已经有一个重复的contractId 在前面了
 	         	$('#accountId2').val(data);
 	         	dataTable.fnSettings().sAjaxSource="/account/accountItem?accountId="+data.ID; 
-
+	         	contactUrl("edit?id",data.ID);
 	         	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	         }else{
 	        	 $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);

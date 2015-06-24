@@ -205,6 +205,7 @@
     	 $.post("/serviceProvider/save",$("#customerForm").serialize(),function(data){
     		
      		if(data.ID != null && data.ID != ""){
+     			contactUrl("edit?id",data.ID);
      			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
      			$("#partyId").val(data.ID);
      			$("#sp_id").val(data.ID);

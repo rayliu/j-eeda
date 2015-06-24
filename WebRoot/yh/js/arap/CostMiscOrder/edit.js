@@ -16,6 +16,7 @@ $(document).ready(function() {
 			if(data.ID>0){
 				$("#costMiscOrderId").val(data.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				contactUrl("edit?id",data.ID);
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}

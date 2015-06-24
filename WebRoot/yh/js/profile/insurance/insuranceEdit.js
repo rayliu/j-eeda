@@ -66,6 +66,7 @@ $(document).ready(function(){
 	    		$("#insuranceId").val(order.ID);
 	    		$("#rateInsuranceId").val(order.ID);
 	    		$("#assRateBtn").prop("disabled",false);
+	    		contactUrl("edit?id",order.ID);
 	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	    	}else{
 	    		$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
