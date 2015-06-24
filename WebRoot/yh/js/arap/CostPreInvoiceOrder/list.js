@@ -35,7 +35,7 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":null},
+            {"mDataProp":"CNAME"},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
