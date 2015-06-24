@@ -347,23 +347,24 @@ $(document).ready(function() {
 		    }); */
 			
 		
-		/*--------------------------------------------------------------------*/
-		var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
-		    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-		    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
-		    '</div>';
-		$('body').append(alerMsg);
 
-		$('#message_trigger_err').on('click', function(e) {
-			e.preventDefault();
-		});
+
+		
 		var parentId = "chargeCheckOrderbasic";
 		$("#chargeCheckOrderbasic").click(function(e){
 			e.preventDefault();
 			parentId = e.target.getAttribute("id");
 		});
 		
-		/*--------------------------------------------------------------------*/
+		var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable"  style="display:none">'+
+		    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
+		    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
+		    '</div>';
+		$('body').append(alerMsg);
+	
+		$('#message_trigger_err').on('click', function(e) {
+			e.preventDefault();
+		});
 		
 		//运输里程碑
 		$("#transferOrderMilestoneList").click(function(e){
