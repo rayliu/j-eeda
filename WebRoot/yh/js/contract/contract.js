@@ -812,6 +812,7 @@ $(document).ready(function() {
 	                    	dataTable.fnSettings().sAjaxSource="/spContract/routeEdit?routId="+contractId;
 	                    	dataTable2.fnSettings().sAjaxSource="/spContract/routeEdit2?routId="+contractId;
 	                    	dataTable3.fnSettings().sAjaxSource="/spContract/routeEdit3?routId="+contractId;
+	                    	contactUrl("edit?id",contractId);
 	                    	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	                    	$("#contractId").val(contractId);
 	                    }else{

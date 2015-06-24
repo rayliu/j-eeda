@@ -537,6 +537,7 @@ $(document).ready(function() {
 				  	//$("#style").show();	
 					$("#saveTransferOrderBtn").attr("disabled", false);
 					$("#showOrderNo").text(transferOrder.ORDER_NO);
+					contactUrl("edit?id",transferOrder.ID);
 				  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				  	$("#printBtn").attr('disabled',false);
 				  	$("#cancelBtn").attr('disabled',false);

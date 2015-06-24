@@ -147,6 +147,7 @@ $(document).ready(function() {
  				$("#car_summary_id").val(data.ID);
  				$("#car_summary_no").val(data.ORDER_NO);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 				contactUrl("edit?id",data.ID);
  			}else{
  				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
  			}

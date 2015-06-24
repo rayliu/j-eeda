@@ -32,6 +32,7 @@ $(document).ready(function() {
 				$("#costCheckOrderId").val(data.ID);
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
+			  	contactUrl("edit?id",data.ID);
 			  	//if("costCheckOrderbasic" == parentId){
 			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	$("#saveCostCheckOrderBtn").attr("disabled",true);

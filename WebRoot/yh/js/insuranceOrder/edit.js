@@ -112,6 +112,7 @@
  			if(data.ID>0){
  				$("#insuranceId").val(data.ID);
  				$("#hideInsuranceId").val(data.INSURANCE_ID);
+ 				contactUrl("edit?id",data.ID);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  				if(clickTabId == "insuranceOrderItemList"){
  					findInsuranceItems();

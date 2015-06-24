@@ -151,6 +151,7 @@ $(document).ready(function() {
          	//$("#style").show();
          	$("#gateOutConfirmBtn").attr("disabled", false);
          	if("transferOrderbasic" ==parentId || "saveInventoryBtn"==e.target.getAttribute("id")){
+         		contactUrl("edit?id",data);
          		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
          	}
          	

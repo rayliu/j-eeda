@@ -111,7 +111,6 @@ $(document).ready(function() {
 	//transferOrderForm 不需要提交	
  	$("#saveCostPreInvoiceOrderBtn").click(function(e){
  		saveCostPreInvoiceOrder(e);
-
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
@@ -129,6 +128,7 @@ $(document).ready(function() {
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			  	if("costPreInvoiceOrderbasic" == parentId){
+			  		contactUrl("edit?id",data.ID);
 			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	}
 			}else{

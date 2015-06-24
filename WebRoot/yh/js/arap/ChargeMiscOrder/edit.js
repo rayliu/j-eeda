@@ -46,7 +46,7 @@ $(document).ready(function() {
  	$("#saveChargeMiscOrderBtn").click(function(e){
  		
  		saveChargeMiscOrder(e);
-
+ 		
  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
@@ -64,6 +64,7 @@ $(document).ready(function() {
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			  	if("chargeMiscOrderbasic" == parentId){
+			  		
 			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	}
 			}else{

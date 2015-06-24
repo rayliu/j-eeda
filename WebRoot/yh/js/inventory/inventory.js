@@ -396,6 +396,7 @@ $(document).ready(function() {
                  	$("#ConfirmBtn").attr("disabled", false);
                  	
                  	//有问题
+                 	contactUrl("edit?id",data);
                  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
                  }else{
                      alert('数据保存失败。');

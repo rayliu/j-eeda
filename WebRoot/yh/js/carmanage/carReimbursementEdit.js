@@ -112,6 +112,7 @@ $(document).ready(function() {
 	    		$("#status").text(order.STATUS);
 	    		//$("#creator").val(order.ORDER_NO);
 	    		$("#create_time").text(order.CREATE_STAMP);
+	    		contactUrl("edit?id",order.ID);
 	    		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	    	}else{
 	    		$.scojs_message('数据保存失败', $.scojs_message.TYPE_ERROR);

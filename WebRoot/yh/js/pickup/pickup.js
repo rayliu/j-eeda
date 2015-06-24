@@ -412,7 +412,7 @@ $(document).ready(function() {
         $('#createForm').submit();
     });
     
-    $('input.orderNo_filter, input.status_filter, input.address_filter, input.customer_filter, input.routeFrom_filter, #beginTime_filter, #endTime_filter, input.routeTo_filter, input.orderType_filter').on( 'keyup click', function () {
+    $('input.orderNo_filter, input.status_filter, input.address_filter, input.routeFrom_filter, #beginTime_filter, #endTime_filter, input.routeTo_filter, input.orderType_filter').on( 'keyup click', function () {
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
