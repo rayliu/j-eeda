@@ -1192,12 +1192,8 @@ public class PickupOrderController extends Controller {
         List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where pickup_id = ?",
                 pickupOrder.get("id"));
         //TransferOrder tro = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
-        boolean direct = false;
-        if(pickupOrder.get("is_direct_deliver")!= null && !"".equals(pickupOrder.get("is_direct_deliver"))){
-        	if(pickupOrder.get("is_direct_deliver")){
-        		direct = true; 	
-        	}
-        }
+        //boolean direct = false;
+        boolean direct= pickupOrder.get("is_direct_deliver");
         if(!direct){
 	        //相关运输单业务处理:提货发车之后，运输单中除了补货订单状态为已入库外，其他都是默认为正在处理状态
 	        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
@@ -1639,7 +1635,7 @@ public class PickupOrderController extends Controller {
     public void getTransferOrderDestination() {
     	String warehouseIds = getPara("warehouseIds");
     	String receiverId = getPara("receiverId");
-    	if(receiverId!=null && !"".equals(receiverId)){
+    	if(receiverId != null && !"".equals(receiverId)){
     		receipt(receiverId);
     	}else{
     	if(warehouseIds != null && !"".equals(warehouseIds)){
