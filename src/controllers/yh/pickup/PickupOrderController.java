@@ -1193,7 +1193,7 @@ public class PickupOrderController extends Controller {
                 pickupOrder.get("id"));
         //TransferOrder tro = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         //boolean direct = false;
-        boolean direct= pickupOrder.get("is_direct_deliver");
+        boolean direct = pickupOrder.getBoolean("is_direct_deliver");
         if(!direct){
 	        //相关运输单业务处理:提货发车之后，运输单中除了补货订单状态为已入库外，其他都是默认为正在处理状态
 	        for (DepartTransferOrder departTransferOrder : departTransferOrders) {
