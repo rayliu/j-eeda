@@ -1566,41 +1566,8 @@ public class PickupOrderController extends Controller {
         }
         renderJson("{\"success\":true}");
     }
-    
-    // 筛选掉入库的运输单
-    public void getTransferOrderDestination() {
-    	String warehouseIds = getPara("warehouseIds");
-    	String receiverId = getPara("receiverId");
-    	if(receiverId!=null && !"".equals(receiverId)){
-    		receipt(receiverId);
-    	}else{
-    	if(warehouseIds != null && !"".equals(warehouseIds)){
-    		String[] warehouseIdArr = warehouseIds.split(",");
-			for (int i=0;i<warehouseIdArr.length;i++) {
-				// 去掉入库的单据
-				TransferOrder transferOrder = TransferOrder.dao.findById(warehouseIdArr[i]);
-				transferOrder.set("status", "已入库");
-				transferOrder.update();
-				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-				transferOrderMilestone.set("status", "已入库");
-				String name = (String) currentUser.getPrincipal();
-				List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-				transferOrderMilestone.set("create_by", users.get(0).get("id"));
-				java.util.Date utilDate = new java.util.Date();
-				java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-				transferOrderMilestone.set("create_stamp", sqlDate);
-				transferOrderMilestone.set("order_id", transferOrder.get("id"));
-				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-				
-				// 产品入库
-				productInWarehouseOnTransferOrderId(warehouseIdArr[i]);
-			}
-    	}
-    	}
-    	renderJson("{\"success\":true}");
-    }
-
-    
+     
+    //直送调车完成后生成回单
     public void receipt(String receiverId) {
         String order_id = receiverId;
         DepartTransferOrder depart = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = "+order_id);
@@ -1666,10 +1633,43 @@ public class PickupOrderController extends Controller {
             //TODO:根据合同生成费用
             roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
 		}
-        
-        
-        renderJson("{\"success\":true}");
     }
+    
+    // 筛选掉入库的运输单
+    public void getTransferOrderDestination() {
+    	String warehouseIds = getPara("warehouseIds");
+    	String receiverId = getPara("receiverId");
+    	if(receiverId!=null && !"".equals(receiverId)){
+    		receipt(receiverId);
+    	}else{
+    	if(warehouseIds != null && !"".equals(warehouseIds)){
+    		String[] warehouseIdArr = warehouseIds.split(",");
+			for (int i=0;i<warehouseIdArr.length;i++) {
+				// 去掉入库的单据
+				TransferOrder transferOrder = TransferOrder.dao.findById(warehouseIdArr[i]);
+				transferOrder.set("status", "已入库");
+				transferOrder.update();
+				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+				transferOrderMilestone.set("status", "已入库");
+				String name = (String) currentUser.getPrincipal();
+				List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+				transferOrderMilestone.set("create_by", users.get(0).get("id"));
+				java.util.Date utilDate = new java.util.Date();
+				java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+				transferOrderMilestone.set("create_stamp", sqlDate);
+				transferOrderMilestone.set("order_id", transferOrder.get("id"));
+				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+				
+				// 产品入库
+				productInWarehouseOnTransferOrderId(warehouseIdArr[i]);
+			}
+    	}
+    	}
+    	renderJson("{\"success\":true}");
+    }
+
+    
+
     
     // 产品入库
     public void productInWarehouseOnTransferOrderId(String transOrderId) {
