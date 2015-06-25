@@ -28,7 +28,6 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
-import org.h2.store.Data;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -446,6 +445,7 @@ public class CarSummaryController extends Controller {
 	    		.set("actual_payment_amount", actualPaymentAmount).update();
         	}
         }
+        carSummaryId = carSummaryOrder.getLong("id").toString();
         //修改费用合计中的司机工资
         if(!"0".equals(mainDriverAmount) || !"0".equals(minorDriverAmount) ){
 	        double amount = Double.parseDouble(mainDriverAmount)+Double.parseDouble(minorDriverAmount);
