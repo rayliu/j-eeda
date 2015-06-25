@@ -11,9 +11,7 @@
  };
  
 
- window.onupload=function(){
-	 var stateObj = {needUpdateSTO:"11"};
-	 if(Ext.isFunction(window.history.pushState)){
-		 window.history.pushState(stateObj,"","");
-	 }
+ window.onunload=function(){
+    //页面刷新时调用，这里需要判断是否当前单据是否有更新，提示用户先保存
+	//暂时不处理 
  };
