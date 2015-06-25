@@ -1603,8 +1603,8 @@ public class PickupOrderController extends Controller {
     
     public void receipt(String receiverId) {
         String order_id = receiverId;
-        DepartTransferOrder depart = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id in ("+order_id+")");
-        long departOrderId = depart.get("pickup_id");
+        DepartTransferOrder depart = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = "+order_id);
+        Object departOrderId = depart.get("pickup_id");
         depart.set("depart_id", departOrderId).update();
         
         //TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
