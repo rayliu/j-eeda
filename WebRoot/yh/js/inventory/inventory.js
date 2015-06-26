@@ -14,7 +14,7 @@ $(document).ready(function() {
 	}if(inventory=='gateOut'){
 		$("#btn2").show();
 		source = "/gateOut/gateOutlist";
-		source2 = "/gateOut/gateOutEdit/";
+		source2 = "/gateOut/gateOutEdit";
 		is_true = gateOut.isUpdate || gateOut.isComplete;
 	}
 	//入库单list
@@ -32,7 +32,7 @@ $(document).ready(function() {
 				{ "mDataProp": "ORDER_NO",
 					"fnRender": function(obj) {
 						if(is_true){
-							return "<a href='"+source2+""+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+							return "<a href='"+source2+"?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 						}else{
 							return obj.aData.ORDER_NO;
 						}
