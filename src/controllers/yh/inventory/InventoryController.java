@@ -318,7 +318,7 @@ public class InventoryController extends Controller {
     // 入库单修改edit
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INUPDATE})
     public void gateInEdit() {
-        String id = getPara();
+        String id = getPara("id");
         System.out.println(id);
         WarehouseOrder orders = WarehouseOrder.dao
                 .findFirst("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "

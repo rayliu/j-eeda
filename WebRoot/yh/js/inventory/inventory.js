@@ -9,7 +9,7 @@ $(document).ready(function() {
 	if(inventory=='gateIn'){
 		$("#btn1").show();
 		source = "/gateIn/gateInlist";
-		source2 = "/gateIn/gateInEdit/";
+		source2 = "/gateIn/gateInEdit";
 		is_true = gateIn.isUpdate || gateIn.isComplete;
 	}if(inventory=='gateOut'){
 		$("#btn2").show();
@@ -56,7 +56,6 @@ $(document).ready(function() {
 	} );
 	 var wid = $("#warehouseorderId").val();
 	 //入库产品list
-	 console.log(wid);
 	 productDataTable2 = $('#itemTable').dataTable({
 	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
@@ -96,7 +95,6 @@ $(document).ready(function() {
 		 var id = $(this).attr('code');
 		 $.post('/gateIn/gateInProductEdit/'+id,function(data){
              //保存成功后，刷新列表
-             console.log(data);
              if(data!=null){
             	 $("#productId").val(data.PRODUCT_ID);
             	 	$("#warehouseOrderItemId").val(data.ID);
@@ -135,7 +133,7 @@ $(document).ready(function() {
 	 $('#customerMessage').on('keyup click', function(){
 			var inputStr = $('#customerMessage').val();
 			$.get('/gateIn/searchCustomer', {input:inputStr}, function(data){
-				console.log(data);
+				
 				var customerList =$("#customerList");
 				customerList.empty();
 				for(var i = 0; i < data.length; i++)
@@ -169,7 +167,7 @@ $(document).ready(function() {
 			$('#customerList').hide();
 			
 			$.post('/gateIn/confirmproduct/'+partyId,function(data){
-                console.log(data);
+                
              if(data.success){
             	 
              }else{
@@ -251,7 +249,7 @@ $(document).ready(function() {
 			var inputStr = $('#itemNoMessage').val();
 			var customerId = $('#party_id').val();
 			$.get('/gateOut/searchItemNo', {input:inputStr,customerId:customerId}, function(data){
-				console.log(data);
+				
 				var itemNoList =$("#itemNoList");
 				itemNoList.empty();
 				for(var i = 0; i < data.length; i++)
@@ -295,7 +293,7 @@ $(document).ready(function() {
 	 	
 	 	//选择仓库 
 		$.get('/gateIn/searchAllwarehouse', function(data){
-			console.log(data);
+			
 			if(data.length > 0){
 			var warehouseSelect = $("#warehouseSelect");
 			warehouseSelect.empty();
@@ -371,7 +369,6 @@ $(document).ready(function() {
 			e.preventDefault();
 			if("chargeCheckOrderbasic" == parentId){
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				
 			}
 			parentId = e.target.getAttribute("id");
 		});
@@ -389,17 +386,19 @@ $(document).ready(function() {
 	            e.preventDefault();
 	            //异步向后台提交数据
 	           $.post('/gateIn/gateInSave',$("#inventoryForm").serialize(), function(data){
-	                console.log(data);
+	                
                  if(data>0){
-                	 console.log(data);
+                	 
                  	$("#warehouseorderId").val(data);
                  	//$("#style").show();
                  	$("#ConfirmBtn").attr("disabled", false);
                  	
                  	//有问题
-                 	contactUrl("edit?id",data);
+                 	console.log("55");
+                 	contactUrl("gateInEdit?id",data);
+                 	
                  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-                 }else{
+                 	}else{
                      alert('数据保存失败。');
                  }
 	             },'json');
