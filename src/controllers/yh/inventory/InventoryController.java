@@ -331,8 +331,7 @@ public class InventoryController extends Controller {
     // 出库单修改edit
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_OUTUPDATE})
     public void gateOutEdit() {
-        String id = getPara();
-        System.out.println(id);
+        String id = getPara("id");
         WarehouseOrder orders = WarehouseOrder.dao
                 .findFirst("select w_o.*,c.company_name,w.warehouse_name from warehouse_order w_o "
                         + "left join party p on p.id =w_o.party_id " + "left join contact c on p.contact_id =c.id "
