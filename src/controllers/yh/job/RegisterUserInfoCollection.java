@@ -21,6 +21,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -30,7 +31,7 @@ import config.EedaConfig;
  * @author Administrator 收集一个礼拜内新用户注册的信息,每周五下午5:30分发送邮件
  */
 public class RegisterUserInfoCollection implements Job {
-
+	private Logger logger = Logger.getLogger(RegisterUserInfoCollection.class);
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException  {
 
@@ -78,13 +79,13 @@ public class RegisterUserInfoCollection implements Job {
 	   		email.addTo("ray_liu@eeda123.com");//设置收件人
 	   		email.addTo("kate.lin@eeda123.com");
        		email.send();
-			System.out.println("邮件已发送!");
+       		logger.debug("邮件已发送!");
 		} catch (Exception e) {
-			System.out.println("发送邮件出错了!");
+			logger.debug("发送邮件出错了!");
 			e.printStackTrace();
 		}
 	}
-
+	
 	/*
 	 * 把数据库中的字段导入到Excel ，并生成Excel文档
 	 */
@@ -143,8 +144,8 @@ public class RegisterUserInfoCollection implements Job {
 		}
 		// 第六步，将文件存到指定位置
 		try {
-			System.out.println("路径:"+this.getClass().getResource("/").getPath());
-			System.out.println("项目路径:"+System.getProperty("user.dir"));
+			logger.debug("路径:"+this.getClass().getResource("/").getPath());
+			logger.debug("项目路径:"+System.getProperty("user.dir"));
 			
 			//FileOutputStream fout = new FileOutputStream("E:/易达注册信息.xls");
 			FileOutputStream fout = new FileOutputStream(System.getProperty("user.dir")+"\\WebRoot\\upload\\eeda_register_info.xls");
@@ -154,5 +155,5 @@ public class RegisterUserInfoCollection implements Job {
 			e.printStackTrace();
 		}
 	}
-
+	
 }
