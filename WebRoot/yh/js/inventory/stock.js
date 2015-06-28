@@ -3,29 +3,30 @@ $(document).ready(function() {
 	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	//库存list
 	var tab =$('#example2').dataTable( {
-		   "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-	       //"sPaginationType": "bootstrap",
-		   "iDisplayLength": 10,
-	       "bSort": false, // 不要排序
-	       "bFilter": false, //不需要默认的搜索框
-	       "bServerSide": true,
-	       "bAutoWidth":true,
-	   	   "oLanguage": {
-	           "sUrl": "/eeda/dataTables.ch.txt"
-	       },
-	       "sAjaxSource":"/stock/stocklist",
-			"aoColumns": [
-				{"mDataProp":"ITEM_NAME", "sWidth":"100px"},
-	            {"mDataProp":"ITEM_NO", "sWidth":"80px"}, 
-	            {"mDataProp":"COMPANY_NAME", "sWidth":"130px"},
-	            {"mDataProp":"PREDICT_AMOUNT","sWidth":"40px"},
-	            {"mDataProp":"VALID_AMOUNT","sWidth":"40px"},
-	            {"mDataProp":"LOCK_AMOUNT","sWidth":"40px"},
-	            {"mDataProp":"TOTAL_QUANTITY", "sWidth":"80px"},
-	            {"mDataProp":"UNIT", "sWidth":"30px"},
-	            {"mDataProp":"WAREHOUSE_NAME",'bVisible':false,"sWidth":"120px"},
-	            {"mDataProp":"OFFICE_NAME",'bVisible':false,"sWidth":"100px"}
-	           ]
+	   //"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
+	   "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+       //"sPaginationType": "bootstrap",
+	   "iDisplayLength": 10,
+       "bSort": false, // 不要排序
+       "bFilter": false, //不需要默认的搜索框
+       "bServerSide": true,
+       "bAutoWidth":true,
+   	   "oLanguage": {
+           "sUrl": "/eeda/dataTables.ch.txt"
+       },
+       "sAjaxSource":"/stock/stocklist",
+		"aoColumns": [
+			{"mDataProp":"ITEM_NAME", "sWidth":"100px"},
+            {"mDataProp":"ITEM_NO", "sWidth":"80px"}, 
+            {"mDataProp":"COMPANY_NAME", "sWidth":"130px"},
+            {"mDataProp":"PREDICT_AMOUNT","sWidth":"40px"},
+            {"mDataProp":"VALID_AMOUNT","sWidth":"40px"},
+            {"mDataProp":"LOCK_AMOUNT","sWidth":"40px"},
+            {"mDataProp":"TOTAL_QUANTITY", "sWidth":"80px"},
+            {"mDataProp":"UNIT", "sWidth":"30px"},
+            {"mDataProp":"WAREHOUSE_NAME",'bVisible':false,"sWidth":"120px"},
+            {"mDataProp":"OFFICE_NAME",'bVisible':false,"sWidth":"100px"}
+           ]
 	} );
 	
 	//选择仓库 

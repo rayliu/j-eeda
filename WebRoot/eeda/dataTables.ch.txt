@@ -1,5 +1,5 @@
 {
-    "sProcessing":   "处理中...",
+    "sProcessing":   "&nbsp;&nbsp;&nbsp;<img src='/yh/image/loading5.gif' style='height: 20px;'>",
     "sLengthMenu":   "显示 _MENU_ 项结果",
     "sZeroRecords":  "没有匹配结果",
     "sInfo":         "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
@@ -9,7 +9,7 @@
     "sSearch":       "过滤条件:",
     "sUrl":          "",
     "sEmptyTable":     "表中数据为空",
-    "sLoadingRecords": "载入中...",
+    "sLoadingRecords": "&nbsp;&nbsp;&nbsp;载入中...",
     "sInfoThousands":  ",",
     "oPaginate": {
         "sFirst":    "",

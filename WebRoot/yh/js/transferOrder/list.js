@@ -13,12 +13,14 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var transferOrder = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
+        "bProcessing": true, //table载入数据时，是否显示‘loading...’提示        
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
     	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
+            "sUrl": "/eeda/dataTables.ch.txt",//datatable的中文翻译
+            "sProcessing":     "Procesando..."
         },
         "sAjaxSource": "/transferOrder/list",
         "aoColumns": [   

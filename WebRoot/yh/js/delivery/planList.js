@@ -5,7 +5,8 @@ $(document).ready(function() {
 	$('#menu_deliver').addClass('active').find('ul').addClass('in');
 	
 	var pickupOrder = $('#dataTables-example').dataTable({
-		"bFilter": false, //不需要默认的搜索框
+      "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
+		  "bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,

@@ -1,13 +1,13 @@
  $(document).ready(function() {
 	 document.title = '发车单查询 | '+document.title;
 	$('#menu_assign').addClass('active').find('ul').addClass('in');
-var dataTable =$('#dataTables-example').dataTable({
+	var dataTable =$('#dataTables-example').dataTable({
+		"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
 		"bFilter": false, //不需要默认的搜索框
         "bSort": false, 
 		//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "bFilter": false, //不需要默认的搜索框
         "iDisplayLength": 10,
         "bServerSide": true,
     	"oLanguage": {

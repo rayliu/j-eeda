@@ -4,6 +4,7 @@ $(document).ready(function() {
     $('#saveBtn').attr('disabled', true);
 	//datatable, 动态处理
     var uncheckedChargeCheckTable = $('#uncheckedChargeCheck-table').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
         "bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -79,6 +80,7 @@ $(document).ready(function() {
     });
     
     var checkedChargeCheckTable = $('#checkedChargeCheck-table').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",

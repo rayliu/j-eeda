@@ -5,6 +5,7 @@ $(document).ready(function() {
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 	//datatable, 动态处理
     var accountAuditLogTable = $('#accountAuditLog-table').dataTable({
+        "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",

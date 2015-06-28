@@ -25,6 +25,7 @@ $(document).ready(function() {
 	var unDisposePickuoIds=[];
 	//行车单查询，dataTable
     var carSummaryTbody = $('#carSummaryTbody').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -147,6 +148,7 @@ $(document).ready(function() {
 	
     //刷新行车报销单
 	var carReimbursementTbody = $('#carReimbursementTbody').dataTable({
+		"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",

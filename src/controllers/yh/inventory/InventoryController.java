@@ -136,9 +136,14 @@ public class InventoryController extends Controller {
             orderMap.put("iTotalDisplayRecords", 0);
             orderMap.put("aaData", null);
             renderJson(orderMap);
-            return;
+            
+        }else{
+        	searchByCondition(customerId, warehouseId, officeId, itemId);
         }
-        String sLimit = "";
+    }
+	private void searchByCondition(String customerId, String warehouseId,
+			String officeId, String itemId) {
+		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " limit " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
@@ -228,7 +233,7 @@ public class InventoryController extends Controller {
         orderMap.put("sEcho", pageIndex);
         orderMap.put("aaData", orders);
         renderJson(orderMap);
-    }
+	}
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void getTotalAmount() {
         String customerId = getPara("customerId");
