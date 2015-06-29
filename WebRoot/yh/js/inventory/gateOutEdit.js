@@ -202,11 +202,11 @@ $(document).ready(function() {
 		$.get('/gateOut/searchName2', {warehouseId:warehouseId,input:inputStr,customerId:customerId}, function(data){
 			var itemNameList =$("#itemNameList");
 			itemNameList.empty();
-			for(var i = 0; i < data.length; i++)
+			for(var i = 0; i < data.length; i++)//test
 			{
 				var item_name = data[i].ITEM_NAME;
-				if(item_name == null){
-					item_name = '';
+				if(item_name == null||item_name==''){
+					item_name =data[i].ITEM_NO ;
 				}
 				//需要对元素尽心是否为空的判断
 				var item_desc = data[i].ITEM_DESC;
@@ -306,6 +306,7 @@ $(document).ready(function() {
 				if(item_no == null){
 					item_no = '';
 				}
+			
 				var item_name = data[i].ITEM_NAME;
 				if(item_name == null){
 					item_name = '';
@@ -406,7 +407,16 @@ $("#warehouseOrderItemFormBtn").click(function(){
             }
 	},'json');
 });
-
+//计量单位
+	$.post('/gateOut/alluom',function(data){
+		var uom=$('#uom');
+		uom.empty();
+		uom.append("<option>请选择</option>");
+		for(var i=0; i<data.length; i++){
+			var name=data[i].NAME;
+			uom.append("<option value='"+name+"'>"+name+"</option>");
+		}
+	},'json'); 
 //校验出仓货品数量
 $('#warehouseOrderItemForm').validate({
     rules: {

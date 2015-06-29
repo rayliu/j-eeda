@@ -485,7 +485,6 @@ public class InventoryController extends Controller {
         
         WarehouseOrder warehouseOrder = new WarehouseOrder();
         String gateOutId = getPara("warehouseorderId");
-        System.out.println();
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         Date createDate = Calendar.getInstance().getTime();
@@ -824,7 +823,13 @@ public class InventoryController extends Controller {
             renderJson("{\"success\":false}");
         }
     }
-    
+    //添加产品计量单位
+    public void alluom(){
+    	List<Record> locationList = Collections.EMPTY_LIST;
+    	locationList = Db
+                .find("select u.name from unit u");
+    	renderJson(locationList);
+    }
     // 查找所有网点
     public void searchAllOffice() {
     	String officeName = getPara("officeName");
