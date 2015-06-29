@@ -513,6 +513,11 @@ $(document).ready(function() {
 		var assign_status = $(this).parent().siblings('.assign_status')[0].textContent;
 		var office_name = $(this).parent().siblings('.office_name')[0].textContent;
 		var value = $(this).val();
+		if(total_amount==0){
+			$.scojs_message('运输单货品可用数量不能为0', $.scojs_message.TYPE_FAIL);
+			$(this).prop('checked',false);
+			return;
+		}
 		if($(this).prop('checked') == true){
 			if(orderType.length != 0){
 				if(orderType[0] != $(this).parent().siblings('.order_type')[0].innerHTML){
