@@ -311,6 +311,14 @@ public class CostPreInvoiceOrderController extends Controller {
         renderJson("{\"success\":true}");
     }
     
+    
+    //删除发票
+    public void deleteInvoiceItem() {
+        String id = getPara();
+        ArapCostInvoiceItemInvoiceNo.dao.deleteById(id);
+        renderJson("{\"success\":true}");
+    }
+    
     // 发票号列表
     public void costInvoiceItemList(){
     	String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");

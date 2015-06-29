@@ -185,10 +185,32 @@ $(document).ready(function() {
   	            	return str;
   	            }
   	        },
-            {"mDataProp":"COST_ORDER_NO"}            
+            {"mDataProp":"COST_ORDER_NO"},
+            {  
+                "mDataProp": null, 
+                "sWidth": "60px",  
+            	"sClass": "remark",              
+                "fnRender": function(obj) {
+                    return	"<a class='btn btn-danger deleteInvoiceItem' code='"+obj.aData.ID+"'>"+
+              		"<i class='fa fa-trash-o fa-fw'> </i> "+
+              		"删除"+
+              		"</a>";
+                }
+            }     
+  	        
             /*{"mDataProp":null}*/
          ]
 	});	
+	
+	//异步删除发票
+	$("#invoiceItem-table").on('click', '.deleteInvoiceItem', function(e){
+		var id = $(this).attr('code');
+		e.preventDefault();
+		$.post('/costPreInvoiceOrder/deleteInvoiceItem/'+id,function(data){
+             //保存成功后，刷新列表
+             invoiceItemTable.fnDraw();
+        },'text');
+	});
 
 	$("#invoiceItem-table").on('blur', 'input', function(e){
 		e.preventDefault();
