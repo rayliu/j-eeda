@@ -925,7 +925,7 @@ public class TransferOrderController extends Controller {
 		List<Record> nextOrders = Db.find(sql);
 		if(nextOrders.size()==0){
 			TransferOrder order = TransferOrder.dao.findById(id);
-			order.set("Status", "取消").set("last_modified_by", currentUser.getPrincipal())
+			order.set("Status", "取消").set("last_modified_by", LoginUserController.getLoginUserId(this))
 			.set("last_modified_stamp", new Date()).update();
 			renderJson("{\"success\":true}");
 		}else{
