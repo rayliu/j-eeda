@@ -13,7 +13,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        //"sAjaxSource": "/returnOrder/list?status=新建",
+        "sAjaxSource": "/returnOrder/list?status=新建",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
    				"sWidth":"100px",
@@ -55,7 +55,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        //"sAjaxSource": "/returnOrder/list",
+        "sAjaxSource": "/returnOrder/list",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
    				"sWidth":"100px",
