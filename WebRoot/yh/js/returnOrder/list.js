@@ -3,6 +3,11 @@
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 	var clickTabId = "createTab";
 	
+	//条件查询
+    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on('keyup click', function () {    	 	
+    	findData();
+    });
+	
 	var createDataTable =$('#example').dataTable( {
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
     	  "bSort": false, // 不要排序
@@ -88,7 +93,7 @@
             { "mDataProp": "REMARK"}
          ]
 	});
-
+	
 	// 回单签收
 	$("#example").on('click', '.returnOrderReceipt', function(e){
 		e.preventDefault();
@@ -135,6 +140,7 @@
     	var time_one = $("#time_one").val();
     	var time_two = $("#time_two").val();
     	var inputStr =$("#customer_filter").val();
+    	
     	if(clickTabId == "createTab"){
     		createDataTable.fnSettings().oFeatures.bServerSide = true; 
         	createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=新建&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
@@ -153,11 +159,6 @@
     $("#createTab ,#finishTab").on('click', function (e) { 
     	clickTabId = e.target.getAttribute("id");
     	console.log("当前选项卡："+clickTabId);
-    	findData();
-    });
-    
-    //条件查询
-    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on( 'keyup click', function () {    	 	
     	findData();
     });
 
