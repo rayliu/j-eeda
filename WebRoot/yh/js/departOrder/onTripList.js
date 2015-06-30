@@ -211,9 +211,7 @@ $(document).ready(function() {
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 	
- 
-
-    $('#endTime_filter ,#sp_filter,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
+    $('#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
     	
     	var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();
@@ -283,7 +281,9 @@ $(document).ready(function() {
         $('#endTime_filter').trigger('keyup');
     });
     
-    
+    $('#sp_filter').on('blur', function(){
+ 		$('#cpnameList').hide();
+ 	});
   //获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
@@ -304,10 +304,6 @@ $(document).ready(function() {
         $('#cpnameList').show();
 	});
 
-	// 没选中供应商，焦点离开，隐藏列表
-	$('#sp_filter').on('blur', function(){
- 		$('#cpnameList').hide();
- 	});
 
 	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
 	$('#cpnameList').on('blur', function(){
