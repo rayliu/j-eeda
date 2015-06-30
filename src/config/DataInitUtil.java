@@ -965,11 +965,11 @@ public class DataInitUtil {
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('行车单','CarSummary.update', '行车单更新权限');");
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('行车单','CarSummary.approval', '行车单审核权限');");
 		/*收款确认*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('收款确认','chargeAcceptOrder_list', '收款确认查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('收款确认','chargeAcceptOrder_confirm', '收款确认确认权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('收款确认','chargeAcceptOrder.list', '收款确认查询权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('收款确认','chargeAcceptOrder.confirm', '收款确认确认权限');");
 		/*付款确认*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款确认','costAcceptOrder_list', '付款确认查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款确认','costAcceptOrder_confirm', '付款确认确认权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款确认','costAcceptOrder.list', '付款确认查询权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('付款确认','costAcceptOrder.confirm', '付款确认确认权限');");
 		
 		/*报销单*/
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('报销单','costReimbureement_list', '报销单查询权限');");
