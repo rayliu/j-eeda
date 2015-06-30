@@ -160,12 +160,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			}
     		
     		try {
-        		if("".equals(content.get(j).get("向客户预约时间"))){
-        			title = "向客户预约时间";
-        			break;
-        		}else{
-        			dbDataFormat.parse(content.get(j).get("向客户预约时间"));
-        		}
+        		dbDataFormat.parse(content.get(j).get("向客户预约时间"));
 			} catch (ParseException e) {
 				title = "向客户预约时间";
 				because = "数据有误";
