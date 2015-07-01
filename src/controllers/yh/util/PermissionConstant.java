@@ -255,7 +255,7 @@ public class PermissionConstant {
 	public static final String PERMSSION_COSTCONFIRM_CONFIRM = "costAcceptOrder.confirm";
 	/*报销单*/
 	public static final String PERMSSION_COSTREIMBURSEMENT_LIST = "costReimbureement_list";
-	public static final String PERMSSION_COSTREIMBURSEMENT_CREATE = "costReimbureement.create";
+	public static final String PERMSSION_COSTREIMBURSEMENT_CREATE = "costReimbureement_create";
 	public static final String PERMSSION_COSTREIMBURSEMENT_UPDATE = "costReimbureement.update";
 	public static final String PERMSSION_COSTREIMBURSEMENT_CONFIRM = "costReimbureement.confirm";
 	/*报表查询权限点*/
