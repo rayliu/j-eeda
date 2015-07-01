@@ -7,10 +7,67 @@
     $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on('keyup click', function () {    	 	
     	findData();
     });
+    
+    
+    //获取所有客户
+    $('#customer_filter').on('keyup click', function(){
+       var inputStr = $('#customer_filter').val();
+       var companyList =$("#companyList");
+       $.get("/customerContract/search", {locationName:inputStr}, function(data){
+           companyList.empty();
+           for(var i = 0; i < data.length; i++)
+               companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+       },'json');
+       companyList.show();
+    });
+
+	$('#companyList').on('click', '.fromLocationItem', function(e){        
+       $('#customer_filter').val($(this).text());
+       $("#companyList").hide();
+       var companyId = $(this).attr('partyId');
+       $('#customerId').val(companyId);
+       findData();
+	});
+	// 没选中客户，焦点离开，隐藏列表
+	$('#customer_filter').on('blur', function(){
+		$('#companyList').hide();
+	});
+
+	//当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+	$('#companyList').on('blur', function(){
+		$('#companyList').hide();
+	});
+
+	$('#companyList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+   
+    //开始-时间按钮
+    $('#datetimepicker').datetimepicker({  
+	    format: 'yyyy-MM-dd',  
+	    language: 'zh-CN',
+	    autoclose: true,
+	    pickerPosition: "bottom-left"
+	}).on('changeDate', function(ev){
+		$(".bootstrap-datetimepicker-widget").hide();
+	    $('#time_one').trigger('keyup');
+	});
+    
+    //结束-时间按钮
+    $('#datetimepicker2').datetimepicker({  
+	    format: 'yyyy-MM-dd',  
+	    language: 'zh-CN',
+	    autoclose: true,
+	    pickerPosition: "bottom-left"
+	}).on('changeDate', function(ev){
+		$(".bootstrap-datetimepicker-widget").hide();
+	    $('#time_two').trigger('keyup');
+	});
+    
 	
 	var createDataTable =$('#example').dataTable( {
-        "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
-    	  "bSort": false, // 不要排序
+       /* "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  */    	  
+		"bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -18,6 +75,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+		
         "sAjaxSource": "/returnOrder/list?status=新建",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
@@ -162,59 +220,6 @@
     	findData();
     });
 
-    //获取所有客户
-    $('#customer_filter').on('keyup click', function(){
-       var inputStr = $('#customer_filter').val();
-       var companyList =$("#companyList");
-       $.get("/customerContract/search", {locationName:inputStr}, function(data){
-           companyList.empty();
-           for(var i = 0; i < data.length; i++)
-               companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
-       },'json');
-       companyList.show();
-    });
-
-	$('#companyList').on('click', '.fromLocationItem', function(e){        
-       $('#customer_filter').val($(this).text());
-       $("#companyList").hide();
-       var companyId = $(this).attr('partyId');
-       $('#customerId').val(companyId);
-       findData();
-	});
-	// 没选中客户，焦点离开，隐藏列表
-	$('#customer_filter').on('blur', function(){
-		$('#companyList').hide();
-	});
-
-	//当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
-	$('#companyList').on('blur', function(){
-		$('#companyList').hide();
-	});
-
-	$('#companyList').on('mousedown', function(){
-		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-	});
    
-    //开始-时间按钮
-    $('#datetimepicker').datetimepicker({  
-	    format: 'yyyy-MM-dd',  
-	    language: 'zh-CN',
-	    autoclose: true,
-	    pickerPosition: "bottom-left"
-	}).on('changeDate', function(ev){
-		$(".bootstrap-datetimepicker-widget").hide();
-	    $('#time_one').trigger('keyup');
-	});
-    
-    //结束-时间按钮
-    $('#datetimepicker2').datetimepicker({  
-	    format: 'yyyy-MM-dd',  
-	    language: 'zh-CN',
-	    autoclose: true,
-	    pickerPosition: "bottom-left"
-	}).on('changeDate', function(ev){
-		$(".bootstrap-datetimepicker-widget").hide();
-	    $('#time_two').trigger('keyup');
-	});
    
 });
