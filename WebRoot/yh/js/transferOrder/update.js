@@ -2701,6 +2701,9 @@ $(document).ready(function() {
     	var customer = $("#customerMessage").val();
     	var order_no = $("#showOrderNo").text();
     	var pdf_sign = $("input[name='pdfSign']:checked").val();
+    	if(pdf_sign == null)
+    		pdf_sign = 'n';//多张pdf
+    	
     	var pdf_muban = signNO + "_" + pdf_sign;
     	var cargoNature = $("input[name='cargoNature']:checked").val();
     	if(cargoNature == 'cargo'){
