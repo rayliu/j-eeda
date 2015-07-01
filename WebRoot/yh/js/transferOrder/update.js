@@ -2695,12 +2695,12 @@ $(document).ready(function() {
     });
 
     $("#btnOK").on('click',function(){
-    	var signNO = $("#pdfSign1").val();
+    	var signNO = $("input[name='sign']:checked").val();
     	/*var shzm = $("input[name='shmb']:checked").val();*/
     	//打印签收单
     	var customer = $("#customerMessage").val();
     	var order_no = $("#showOrderNo").text();
-    	var pdf_sign = $("#pdfSign2").val();
+    	var pdf_sign = $("input[name='pdfSign']:checked").val();
     	var pdf_muban = signNO + "_" + pdf_sign;
     	var cargoNature = $("input[name='cargoNature']:checked").val();
     	if(cargoNature == 'cargo'){
