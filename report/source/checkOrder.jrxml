@@ -172,7 +172,7 @@ left join contact c on c.id = p.contact_id where aco.order_no =$P{order_no}]]>
 	<detail>
 		<band height="133" splitType="Stretch">
 			<subreport>
-				<reportElement x="0" y="0" width="802" height="131" uuid="2be426ab-76d2-4b1b-a09b-58aa38445a71"/>
+				<reportElement x="0" y="2" width="802" height="131" uuid="2be426ab-76d2-4b1b-a09b-58aa38445a71"/>
 				<subreportParameter name="order_id">
 					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 				</subreportParameter>
