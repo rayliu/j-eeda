@@ -52,7 +52,7 @@ $(document).ready(function() {
             		}else if(obj.aData.PICK_STATUS == "新建"){
             			status = "新建运输";
             		}
-            		return "<b>"+status+"</b>";
+            		return "<b style='color:red'>"+status+"</b>";
                 }
             },       	
             {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
