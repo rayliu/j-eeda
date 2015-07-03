@@ -232,9 +232,16 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
             			break;
             		}
     			}else{
-    				title = "单品序列号";
-    				because = "，此单品已配送或没有此单品【"+content.get(j).get("单品序列号")+"】";
-        			break;
+    				TransferOrderItemDetail transferOrderItemDetail5 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and(toid.status is null or toid.status != '已入库') and toid.serial_no = '"+content.get(j).get("单品序列号")+"';");
+    				if(transferOrderItemDetail5 != null){
+        				title = "单品序列号";
+        				because = "，此单品【"+content.get(j).get("单品序列号")+"】没入库或已配送";
+            			break;
+        			}else{
+        				title = "单品序列号";
+        				because = "，没有此单品【"+content.get(j).get("单品序列号")+"】";
+            			break;
+        			}
     			}
     		}
     	}
