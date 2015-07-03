@@ -416,11 +416,12 @@ public class CostPreInvoiceOrderController extends Controller {
         String endTime = getPara("endTime");
         
         String sqlTotal = "";
-        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name from arap_cost_order aco "
+        String sql = "select aco.*,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name,o.office_name oname from arap_cost_order aco "
 	        		+ " left join party p on p.id = aco.payee_id"
 	        		+ " left join contact c on c.id = p.contact_id"
 	        		+ " left join user_login ul on ul.id = aco.create_by"
 	        		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id"
+	        		+ " left join office o on o.id=p.office_id"
 	        		+ " where aco.status = '已确认' ";
         String condition = "";
         //TODO 客户条件过滤没有做

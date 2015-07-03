@@ -39,7 +39,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":null},
-            {"mDataProp":null},
+            {"mDataProp":"ONAME", "sWidth":"150px"},
             {"mDataProp":"CNAME", "sWidth":"150px"},
             {"mDataProp":null},
             {"mDataProp":null},
