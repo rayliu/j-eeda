@@ -75,16 +75,16 @@
                                     <div class="col-lg-6"> 
                                         <h2>应付信息</h2>
                                         <div class="form-group" id="noInvoice">                                      
-                                            <input type="checkbox" name="noInvoice" id="InvoiceCheckBox"<% if(noInvoice!''=='true'){ %>checked<%}%>>
+                                            <input type="checkbox" name="noInvoice" value="y" id="InvoiceCheckBox"<% if(noInvoice!''=='true'){ %>checked<%}%>>
                                             <strong>代开发票</strong>（代开发票，供应商和收款人要分开输入）
                                         </div>
                                         <div class="form-group">
                                             <label>供应商</label>
-                                            <input  class="form-control search-control" type="text" value="${customer.company_name!''}">
+                                            <input  class="form-control search-control" readonly="true" name="payeename1"  type="text" value="${customer.company_name!''}">
                                         </div>
                                         <div class="form-group">
                                             <label>收款人</label>
-                                            <input  class="form-control search-control" type="text">
+                                            <input  class="form-control search-control" readonly="true" name="payeename" type="text" value="${customer.contact_person!''}">
                                         </div>
                                         <div><label>应付总金额:</label><label class="radio-inline"><strong>${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</strong></label></div>
                                         <div class="form-group" id="paymentMethods">
@@ -96,9 +96,15 @@
                                                 <label class="radio-inline">
                                                     <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账
                                                 </label>
+                                                <div id="acc">
+                                                <select id="account" class="form-control"  name="account">
+													<option></option>
+												</select>
+											    </div>
                                         </div>
+                                        
                                         <div class="form-group" id="noInvoice">                                      
-                                            <input type="checkbox" name="noInvoice" id="InvoiceCheckBox"<% if(noInvoice!''=='true'){ %>checked<%}%>>
+                                            <input type="checkbox" value="y1"  name="noInvoice1" id="InvoiceCheckBox1"<% if(noInvoice!''=='true'){ %>checked<%}%>>
 											<strong>无发票</strong>
                                         </div>
  

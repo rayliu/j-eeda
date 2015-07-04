@@ -4,6 +4,7 @@ import interceptor.SetAttrLoginUserInterceptor;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +59,11 @@ public class CostPreInvoiceOrderController extends Controller {
     	setAttr("classify", "receivable");
         render("/yh/arap/ChargeAcceptOrder/ChargeCheckOrderEdit.html");
     }
-
+    public void allaccount(){
+    List<Record> locationList = Collections.EMPTY_LIST;
+	locationList = Db.find("select * from fin_account f");
+	renderJson(locationList);
+    }
     // 应付条目列表
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
     public void list() {
@@ -195,6 +200,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
+			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
 			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
 			if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
 				arapAuditInvoiceApplication.set("total_amount", getPara("total_amount"));				

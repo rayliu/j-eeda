@@ -25,7 +25,42 @@ $(document).ready(function() {
 			}
 		},'json');
 	};
-    
+	$.post('/costPreInvoiceOrder/allaccount',function(data){
+		var account=$('#account');
+		account.empty();
+		account.append("<option>请选择</option>");
+		for(var i=0; i<data.length; i++){
+			var name=data[i].BANK_NAME;
+			var account_no=data[i].ACCOUNT_NO;
+			var bank_person=data[i].BANK_PERSON;
+			account.append("<option value='"+name+"'>"+name+"&nbsp;&nbsp;&nbsp;&nbsp;"+account_no+"&nbsp;&nbsp;&nbsp;&nbsp;"+bank_person+"</option>");
+		}
+	},'json');
+	$("#InvoiceCheckBox1").on('click',function(){
+		 var noinvice1 =$("input[name='noInvoice1']:checked").val();
+		 if(noinvice1=="y1"){
+				$('input[name=noInvoice]').attr("disabled","disabled");
+			}
+			 else{
+				 $('input[name=noInvoice]').removeAttr("disabled");
+			 }
+	});
+	
+	$("#InvoiceCheckBox").on('click',function(){
+    var noinvice =$("input[name='noInvoice']:checked").val();
+    if(noinvice=="y"){
+    	$("input[name='payeename']").removeAttr("readonly");
+    	$("input[name='payeename1']").removeAttr("readonly");
+    	//$("input[name='noInvoice']").removeAttr("readonly"); 
+    	//$('input[name=noInvoice]').attr("checkbox","false");
+    	$('input[name=noInvoice1]').attr("disabled","disabled");
+    }
+    else{
+    	$('input[name=payeename]').attr("readonly","readonly");
+    	$('input[name=payeename1]').attr("readonly","readonly");
+    	$('input[name=noInvoice1]').removeAttr("disabled");
+    }
+	});
 	// 审核
 	$("#auditBtn").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
@@ -67,6 +102,14 @@ $(document).ready(function() {
 			
 		},'json');
 		
+	});
+	$("#paymentMethod2,#paymentMethod1").click(function(e){
+	if($('input:radio:checked').val()=="cash"){
+		$("#acc").hide();
+	}
+	if($('input:radio:checked').val()=="transfers"){
+		$("#acc").show();
+	}
 	});
 	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
 		$("#auditBtn").attr("disabled",false);
