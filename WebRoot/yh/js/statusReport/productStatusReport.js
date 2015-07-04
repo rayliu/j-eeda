@@ -16,6 +16,7 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [   
+            {"mDataProp":"ID", "sWidth":"80px"},          
             {"mDataProp":"SERIAL_NO", "sWidth":"80px"},
             {"mDataProp":"ITEM_NO", "sWidth":"100px"},
             {"mDataProp":"CUSTOMER", "sWidth":"100px"},
