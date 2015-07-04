@@ -1,9 +1,5 @@
 package controllers.yh.report;
 
-import java.io.File;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,15 +8,10 @@ import models.ArapCostOrder;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.log4j.Logger;
 
 import com.jfinal.core.Controller;
-import com.jfinal.plugin.activerecord.DbKit;
 
 import controllers.yh.util.PrintPatterns;
 
