@@ -1350,7 +1350,8 @@ $(document).ready(function() {
 			$(nRow).attr({'id': aData.ID, 'notify_party_id': aData.PID});
 			return nRow;
 		},
-        "aoColumns": [  			            
+        "aoColumns": [
+            {"mDataProp":"ID","sWidth": "80px" },
             {
             	"mDataProp":"SERIAL_NO",
         		"sWidth": "80px",
