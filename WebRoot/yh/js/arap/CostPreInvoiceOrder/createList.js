@@ -41,7 +41,7 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":"ONAME", "sWidth":"150px"},
             {"mDataProp":"CNAME", "sWidth":"150px"},
-            {"mDataProp":null},
+            {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":null},
