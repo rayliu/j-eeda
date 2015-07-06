@@ -4,10 +4,6 @@ package controllers.yh.order;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,16 +28,13 @@ import models.UserLogin;
 import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Contact;
-import models.yh.profile.CustomizeField;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.util.IOUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.StringUtils;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -172,9 +165,11 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
 					+ "%' and ifnull(t.order_type,'') like '%" + order_type
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
-					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
-					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and t.create_stamp between '" + beginTime + "' and '" + endTime + "' "
+					+ "%' and ifnull(t.planning_time,'') between '" + plantime
+					+ "' and '" + arrivarltime + "' "
+//					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
+//					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
+					+ " and t.create_stamp between '" + beginTime + "' and '" + endTime + "' "
 					+ " and t.operation_type like '%" + operation_type + "%'" 
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
@@ -206,9 +201,11 @@ public class TransferOrderController extends Controller {
 					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
 					+ "%' and ifnull(t.order_type,'') like '%" + order_type
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
-					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
-					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and t.create_stamp between '" + beginTime
+					+ "%' and ifnull(t.planning_time,'') between '" + plantime
+					+ "' and '" + arrivarltime + "' "
+//					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
+//					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
+					+ " and t.create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' "
 					+ " and t.operation_type like '%" + operation_type + "%'" 
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "

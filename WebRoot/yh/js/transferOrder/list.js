@@ -168,7 +168,12 @@ $(document).ready(function() {
     });
 
     $("#plantime,#arrivaltime").on('keyup click', function () {
-		refreshData();
+    	var plantime=$("#plantime").val();
+    	var arrivarltime=$("#arrivaltime").val();
+    	if(plantime != '' && arrivarltime != '')
+    	{
+    		refreshData();
+    	}
 	});
   
     $('#status_filter,#order_type_filter,#operation_type_filter').on( 'change', function () {
