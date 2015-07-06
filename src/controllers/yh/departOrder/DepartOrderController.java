@@ -2359,7 +2359,7 @@ public class DepartOrderController extends Controller {
     	List<TransferOrderFinItem> tofiList ;
     	if(tran.size()>0){
     		for (TransferOrder transferOrder : tran) {
-					tofiList = TransferOrderFinItem.dao.find("select sum(amount) as total_cost,fin_item_id from transfer_order_fin_item where order_id = ? group by  fin_item_id",transferOrder.get("id"));
+					tofiList = TransferOrderFinItem.dao.find("select sum(amount) as total_cost,fin_item_id from transfer_order_fin_item tofi left join fin_item fi on fi.id = tofi.fin_item_id where order_id = ? and fi.type='应付' group by tofi.fin_item_id",transferOrder.get("id"));
     				String name = (String) currentUser.getPrincipal();
 				    UserLogin users = UserLogin.dao.findFirst("select * from user_login where user_name='" + name + "'");
 				    java.util.Date utilDate = new java.util.Date();
