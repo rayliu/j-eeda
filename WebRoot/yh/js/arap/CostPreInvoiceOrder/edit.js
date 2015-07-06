@@ -5,6 +5,8 @@ $(document).ready(function() {
 	$('#menu_cost').addClass('active').find('ul').addClass('in');
 	var invoiceNoArr=[];
 	var saveCostPreInvoiceOrder = function(e){
+		$("#account_id").val($("#account").val());
+		$("#paymentMethod").val($("input[name='paymentMethod']:checked").val());
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -12,7 +14,7 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
+		$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#sorder_no").html('<strong>'+data.ORDER_NO+'<strong>');
 			  	$("#create_stamp").html(data.CREATE_STAMP);
@@ -30,10 +32,12 @@ $(document).ready(function() {
 		account.empty();
 		account.append("<option>请选择</option>");
 		for(var i=0; i<data.length; i++){
+			var account_id=data[i].ID;
 			var name=data[i].BANK_NAME;
 			var account_no=data[i].ACCOUNT_NO;
 			var bank_person=data[i].BANK_PERSON;
-			account.append("<option value='"+name+"'>"+name+"&nbsp;&nbsp;&nbsp;&nbsp;"+account_no+"&nbsp;&nbsp;&nbsp;&nbsp;"+bank_person+"</option>");
+			account.append("<option  value='"+account_id+"'>"+name+"&nbsp;&nbsp;&nbsp;&nbsp;"+account_no+"&nbsp;&nbsp;&nbsp;&nbsp;"+bank_person+"</option>");
+		
 		}
 	},'json');
 	$("#InvoiceCheckBox1").on('click',function(){
@@ -165,7 +169,8 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-		$.post('/costPreInvoiceOrder/save', $("#costPreInvoiceOrderForm").serialize(), function(data){
+        
+		$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#costPreInvoiceOrderId").val(data.ID);
 			  	//$("#style").show();

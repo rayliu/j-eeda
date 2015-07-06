@@ -41,6 +41,8 @@
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditInvoiceApplication.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditInvoiceApplication.endTime!''}"/>
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}"/>
+                                        	<input type="hidden" id="account_id">
+                                        	<input type="hidden" id="paymentMethod">
 		                                    <h2>申请信息</h2>
 		                                    <div class="form-group">
 		                                        <label>付款申请单号</label>	<span id ="sorder_no"><strong>${order_no!''}${arapAuditInvoiceApplication.order_no!''}</strong></span>
@@ -96,7 +98,7 @@
                                                 <label class="radio-inline">
                                                     <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账
                                                 </label>
-                                                <div id="acc"  style="display:none;">
+                                                <div id="acc" style="display:none;">
                                                 <select id="account" class="form-control"  name="account">
 													<option></option>
 												</select>
