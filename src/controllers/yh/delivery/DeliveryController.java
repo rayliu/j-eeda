@@ -147,7 +147,7 @@ public class DeliveryController extends Controller {
 					+ customer_filter
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transfer_filter
-					+ "%' and ifnull(c2.company_name,'') like'%"
+					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp_filter
 					+ "%' and ifnull(trid.serial_no,'') like'%"
 					+ serial_no
@@ -176,7 +176,7 @@ public class DeliveryController extends Controller {
 					+ customer_filter
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transfer_filter
-					+ "%' and ifnull(c2.company_name,'') like'%"
+					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp_filter
 					+ "%' and ifnull(trid.serial_no,'') like'%"
 					+ serial_no
@@ -268,7 +268,7 @@ public class DeliveryController extends Controller {
 					+ customer
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo
-					+ "%' and ifnull(c2.company_name,'') like'%"
+					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp
 					+ "%' and d.create_stamp between '"
 					+ beginTime
@@ -294,7 +294,7 @@ public class DeliveryController extends Controller {
 					+ customer
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo
-					+ "%' and ifnull(c2.company_name,'') like'%"
+					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp
 					+ "%' and d.create_stamp between '"
 					+ beginTime
