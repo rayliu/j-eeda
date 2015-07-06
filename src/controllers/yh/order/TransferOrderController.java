@@ -140,6 +140,14 @@ public class TransferOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
+			
+			if (plantime == null || "".equals(plantime)) {
+				plantime = "1-1-1";
+			}
+			if (arrivarltime == null || "".equals(arrivarltime)) {
+				arrivarltime = "9999-12-31";
+			}
+			
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
 			if (getPara("iDisplayStart") != null
