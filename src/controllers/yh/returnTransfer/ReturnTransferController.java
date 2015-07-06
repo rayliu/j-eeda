@@ -125,7 +125,7 @@ public class ReturnTransferController extends Controller{
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and create_stamp between '" + beginTime + "' and '" + endTime + "'  "
+					+ "%' and t.create_stamp between '" + beginTime + "' and '" + endTime + "'  "
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			
@@ -156,7 +156,7 @@ public class ReturnTransferController extends Controller{
 					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ "%' and create_stamp between '" + beginTime
+					+ "%' and t.create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' "
 					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收', t.planning_time desc" + sLimit;
