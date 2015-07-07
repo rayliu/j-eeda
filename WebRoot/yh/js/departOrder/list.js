@@ -35,6 +35,7 @@
             	}},
             {"mDataProp":"DEPART_STATUS"},
             {"mDataProp":"CUSTOMER", "sWidth":"160px"},
+            {"mDataProp":"BOOKING_NOTE_NUMBER"},
             {"mDataProp":"ABBR", "sWidth":"200px"},
             {"mDataProp":"CONTACT_PERSON"},
             {"mDataProp":"PHONE"},
@@ -58,6 +59,7 @@ function refreshData(){
 	var beginTime = $("#beginTime_filter").val();
 	var endTime = $("#endTime_filter").val();
 	var customer = $("#customer_filter").val();
+	var booking_note_number = $("#booking_note_number").val();
 	dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo
 										+"&departNo="+departNo_filter
 										+"&status="+status
@@ -67,10 +69,11 @@ function refreshData(){
 										+"&office="+office
 										+"&start="+start
 										+"&destination="+destination
-										+"&customer="+customer;
+										+"&customer="+customer
+										+"&booking_note_number="+booking_note_number;
 	dataTable.fnDraw();
 }
-$('#departNo_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter,#start_filter,#destination_filter').on( 'keyup click', function () {
+$('#departNo_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter,#start_filter,#destination_filter,#booking_note_number').on( 'keyup click', function () {
 	refreshData();
 } );
 //供应商，状态，选择框

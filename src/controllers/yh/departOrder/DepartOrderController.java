@@ -111,6 +111,7 @@ public class DepartOrderController extends Controller {
         String start = getPara("start");
         String destination = getPara("destination");
         String customer = getPara("customer");
+        String booking_note_number = getPara("booking_note_number");
         
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -120,7 +121,7 @@ public class DepartOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         if (orderNo == null && departNo == null && status == null && sp == null && beginTime == null && endTime == null
-        		&& office == null && start == null&& destination == null && customer == null) {
+        		&& office == null && start == null&& destination == null && customer == null && booking_note_number==null) {
             sqlTotal = "select count(1) total from depart_order deo "
                     + "left join carinfo  car on deo.driver_id=car.id"
                     + " left join depart_transfer dtf on dtf.depart_id = deo.id"
@@ -131,7 +132,7 @@ public class DepartOrderController extends Controller {
                     + DepartOrder.COMBINE_TYPE_DEPART + "'and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
-            sql = "select deo.id,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
+            sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
             		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no, "
@@ -161,6 +162,7 @@ public class DepartOrderController extends Controller {
             String whereSql = "  where deo.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
                     + " and ifnull(deo.status,'') like '%" + status
                     + "%' and ifnull(deo.depart_no,'') like '%" + departNo
+                    + "%' and ifnull(deo.booking_note_number,'') like '%" + booking_note_number
                     + "%' and ifnull(tor.order_no,'') like '%" + orderNo
                     + "%' and ifnull(ct.abbr,'')  like '%"+ sp
                     + "%' and ifnull(o.office_name,'') like '%"+ office
@@ -184,7 +186,7 @@ public class DepartOrderController extends Controller {
 					+ " left join contact cc on cp.contact_id = cc.id"
 					+ whereSql;
 
-            sql = "select deo.id,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(nullif(u.c_name,''),u.user_name) user_name,"
+            sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(nullif(u.c_name,''),u.user_name) user_name,"
             		+ " o.office_name office_name,deo.departure_time departure_time ,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no , "
