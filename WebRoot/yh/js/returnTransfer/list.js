@@ -232,11 +232,13 @@ $(document).ready(function() {
 
     //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('keyup click', function(){
+    $('#sp_filter').on('input', function(){
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
 		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-			console.log(data);
+			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
+				return;
+			}
 			spList.empty();
 			for(var i = 0; i < data.length; i++){
 				var abbr = data[i].ABBR;

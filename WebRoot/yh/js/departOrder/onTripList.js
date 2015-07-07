@@ -285,23 +285,27 @@ $(document).ready(function() {
  		$('#cpnameList').hide();
  	});
   //获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('keyup click', function(){
+    $('#sp_filter').on('input', function(){
+    	var me=this;
 		var inputStr = $('#sp_filter').val();
 		$.get('/transferOrder/searchSp',{input:inputStr}, function(data){
-			//console.log(data);
+			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
+				return;
+			}
 			var cpnameList =$("#cpnameList");
 			cpnameList.empty();
 			for(var i = 0; i < data.length; i++)
 			{
 				cpnameList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].COMPANY_NAME+"</a></li>");
 			}
+			$("#cpnameList").css({ 
+	        	left:$(me).position().left+"px", 
+	        	top:$(me).position().top+32+"px" 
+	        }); 
+	        $('#cpnameList').show();
 		},'json');
 
-		$("#cpnameList").css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+32+"px" 
-        }); 
-        $('#cpnameList').show();
+		
 	});
 
 

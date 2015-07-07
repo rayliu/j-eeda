@@ -200,21 +200,24 @@ $(document).ready(function() {
 	},'json');
 
     //获取客户列表，自动填充
-    $('#customer_filter').on('keyup click', function(){
+    $('#customer_filter').on('keyup click', function(event){
+        var me = this;
         var inputStr = $('#customer_filter').val();
         var companyList =$("#companyList");
         $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
             companyList.empty();
             for(var i = 0; i < data.length; i++)
                 companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+                
+            companyList.css({ 
+		    	left:$(me).position().left+"px", 
+		    	top:$(me).position().top+32+"px" 
+		    });
+	        companyList.show();    
         },'json');
         /*if(inputStr=='')
         	transferOrder.fnFilter('', 2);*/
-        companyList.css({ 
-	    	left:$(this).position().left+"px", 
-	    	top:$(this).position().top+32+"px" 
-	    });
-        companyList.show();
+        
     });
     $('#companyList').on('click', '.fromLocationItem', function(e){        
         $('#customer_filter').val($(this).text());
@@ -239,11 +242,14 @@ $(document).ready(function() {
 
     //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('keyup click', function(){
+    $('#sp_filter').on('input', function(){
+    	var me = this;
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
 		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-			console.log(data);
+			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
+				return;
+			}
 			spList.empty();
 			for(var i = 0; i < data.length; i++){
 				var abbr = data[i].ABBR;
@@ -262,14 +268,16 @@ $(document).ready(function() {
 				
 				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
+			spList.css({ 
+	        	left:$(me).position().left+"px", 
+	        	top:$(me).position().top+32+"px" 
+	        }); 
+			
+			spList.show();
+			
 		},'json');
 		
-		spList.css({ 
-        	left:$(this).position().left+"px", 
-        	top:$(this).position().top+32+"px" 
-        }); 
 		
-		spList.show();
     });
     
     // 没选中供应商，焦点离开，隐藏列表

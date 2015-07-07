@@ -151,17 +151,20 @@ $(document).ready(function() {
   });
    
    //获取供应商的list，选中信息在下方展示其他信息
-   $('#sp_filter').on('keyup click', function(){
+   $('#sp_filter').on('input', function(){
+   		var me=this;
 		var inputStr = $('#sp_filter').val();
 		if(inputStr == ""){
-		var pageSpName = $("#pageSpName");
-		pageSpName.empty();
-		var pageSpAddress = $("#pageSpAddress");
-		pageSpAddress.empty();
-		$('#sp_id').val($(this).attr(''));
+			var pageSpName = $("#pageSpName");
+			pageSpName.empty();
+			var pageSpAddress = $("#pageSpAddress");
+			pageSpAddress.empty();
+			$('#sp_id').val($(this).attr(''));
 		}
 		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-			
+			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
+				return;
+			}
 			var spList =$("#spList");
 			spList.empty();
 			for(var i = 0; i < data.length; i++){
@@ -183,12 +186,13 @@ $(document).ready(function() {
 				}
 				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
+			$("#spList").css({ 
+				left:$(me).position().left+"px", 
+				top:$(me).position().top+32+"px" 
+			}); 
+		    $('#spList').show();
 		},'json');
-		$("#spList").css({ 
-			left:$(this).position().left+"px", 
-			top:$(this).position().top+32+"px" 
-		}); 
-	    $('#spList').show();
+		
 	});
 
    	// 没选中供应商，焦点离开，隐藏列表
