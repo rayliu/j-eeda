@@ -314,7 +314,7 @@ $(document).ready(function() {
        
        
      //获取供应商的list，选中信息在下方展示其他信息
-       $('#sp_filter').on('input', function(){
+       $('#sp_filter').on('input click', function(){
        	   var me = this;
        		var inputStr = $('#sp_filter').val();
        		if(inputStr == ""){

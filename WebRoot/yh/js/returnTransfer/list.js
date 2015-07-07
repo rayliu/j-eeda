@@ -232,7 +232,7 @@ $(document).ready(function() {
 
     //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('input', function(){
+    $('#sp_filter').on('input click', function(){
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
 		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){

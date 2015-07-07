@@ -141,7 +141,7 @@ $(document).ready(function() {
 	});
 	
 	//获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter2').on('input', function(){
+    $('#sp_filter2').on('input click', function(){
     		var me=this;
     		var inputStr = $('#sp_filter2').val();
     		if(inputStr == ""){
