@@ -301,6 +301,8 @@ $(document).ready(function() {
     		var endTime = $("#endTime_filter").val();
     		var status = $("#order_status_filter").val();
     		var type = $("#order_type_filter").val();
+    		var booking_note_number = $("#booking_note_number").val();
+    		
     		
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
 											    		+"&sp="+sp
@@ -308,13 +310,14 @@ $(document).ready(function() {
 											    		+"&beginTime="+beginTime
 											    		+"&endTime="+endTime
 											    		+"&status="+status
-											    		+"&type="+type;
+											    		+"&type="+type
+											    		+"&booking_note_number="+booking_note_number;
     	
     		costConfiremTable.fnDraw();
        };
        /*=====================条件过滤=======================*/
         //过滤客户
-        $('#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter').on( 'keyup', function () {
+        $('#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
         	refreshData();
      	} );
         $('#order_type_filter,#order_status_filter').on( 'change', function () {

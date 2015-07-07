@@ -64,6 +64,7 @@ public class CostItemConfirmController extends Controller {
         String endTime = getPara("endTime");
         String status = getPara("status");
         String type = getPara("type");
+        String booking_note_number = getPara("booking_note_number");
         
         
         String sqlTotal = "";
@@ -297,7 +298,8 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(status,'') like '%" + status + "%' "
         			+ " and ifnull(spname,'') like '%" + sp + "%' "
         			+ " and depart_time between '" + beginTime + "' and '" + endTime + "' "
-        			+ " and ifnull(business_type,'') like '%" + type + "%'";
+        			+ " and ifnull(business_type,'') like '%" + type + "%'"
+        			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'";
         }
        
         sqlTotal = " select count(1) total from (" + sql + condition + ") as B"; 
