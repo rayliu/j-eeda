@@ -35,6 +35,14 @@
             	}},
             {"mDataProp":"DEPART_STATUS"},
             {"mDataProp":"CUSTOMER", "sWidth":"160px"},
+            {"mDataProp":null,
+            	"fnRender":function(obj){
+            		if(obj.aData.TOTAL_COST == '0' ){
+            			return "<b style='color:red'>"+obj.aData.TOTAL_COST+"</b>";
+            		}else{
+            			return obj.aData.TOTAL_COST;
+            		}
+            }},
             {"mDataProp":"BOOKING_NOTE_NUMBER"},
             {"mDataProp":"ABBR", "sWidth":"200px"},
             {"mDataProp":"CONTACT_PERSON"},
@@ -60,6 +68,12 @@ function refreshData(){
 	var endTime = $("#endTime_filter").val();
 	var customer = $("#customer_filter").val();
 	var booking_note_number = $("#booking_note_number").val();
+	var costchebox = $("input[type='checkbox']:checked").val();
+	if(costchebox!='zero'){
+		costchebox = '1';
+	}else{
+		costchebox = '0';
+	}
 	dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo
 										+"&departNo="+departNo_filter
 										+"&status="+status
@@ -70,10 +84,11 @@ function refreshData(){
 										+"&start="+start
 										+"&destination="+destination
 										+"&customer="+customer
-										+"&booking_note_number="+booking_note_number;
+										+"&booking_note_number="+booking_note_number
+										+"&costchebox="+costchebox;
 	dataTable.fnDraw();
 }
-$('#departNo_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter,#start_filter,#destination_filter,#booking_note_number').on( 'keyup click', function () {
+$('#departNo_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter,#start_filter,#destination_filter,#booking_note_number,#costcheckbox').on( 'keyup click', function () {
 	refreshData();
 } );
 //供应商，状态，选择框
