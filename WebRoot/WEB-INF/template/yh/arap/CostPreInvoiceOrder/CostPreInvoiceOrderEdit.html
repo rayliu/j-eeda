@@ -43,6 +43,7 @@
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}"/>
                                         	<input type="hidden" id="account_id">
                                         	<input type="hidden" id="paymentMethod">
+                                        	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id!''}"/>
 		                                    <h2>申请信息</h2>
 		                                    <div class="form-group">
 		                                        <label>付款申请单号</label>	<span id ="sorder_no"><strong>${order_no!''}${arapAuditInvoiceApplication.order_no!''}</strong></span>
@@ -82,7 +83,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label>供应商</label>
-                                            <input  class="form-control search-control" readonly="true" name="payeename1"  type="text" value="${customer.company_name!''}">
+                                            <input  class="form-control search-control" id="sp_filter" readonly="true" name="payeename1"  type="text" value="${customer.company_name!''}">
+                                            <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+											</ul>
                                         </div>
                                         <div class="form-group">
                                             <label>收款人</label>

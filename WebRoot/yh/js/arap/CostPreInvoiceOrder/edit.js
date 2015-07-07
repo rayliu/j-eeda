@@ -37,9 +37,57 @@ $(document).ready(function() {
 			var account_no=data[i].ACCOUNT_NO;
 			var bank_person=data[i].BANK_PERSON;
 			account.append("<option  value='"+account_id+"'>"+name+"&nbsp;&nbsp;&nbsp;&nbsp;"+account_no+"&nbsp;&nbsp;&nbsp;&nbsp;"+bank_person+"</option>");
-		
 		}
 	},'json');
+	//供应商下拉列表
+	$('#sp_filter').on('keyup click', function(){
+		var inputStr = $('#sp_filter').val();
+		var spList =$("#spList");
+		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
+			console.log(data);
+			spList.empty();
+			for(var i = 0; i < data.length; i++){
+				var company_name = data[i].COMPANY_NAME;
+				var company_id=data[i].ID;
+				if(company_name == null){
+					company_name='';
+				}
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' company_id="+company_id+">"+company_name+" </a></li>");
+			}
+		},'json');
+		
+		spList.css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });		 
+		if($("input[name='noInvoice']:checked").val()=='y'){
+			spList.show();
+		}
+		else{
+        	spList.hide();		
+		}	 
+    });
+	$('#sp_filter').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+	$('#spList').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	$('#spList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+
+	// 选中供应商
+	
+	$('#spList').on('mousedown', '.fromLocationItem', function(e){
+		var message = $(this).text();
+		$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
+		$('#sp_id').val($(this).attr('company_id'));
+        $('#spList').hide();
+    });
 	$("#InvoiceCheckBox1").on('click',function(){
 		 var noinvice1 =$("input[name='noInvoice1']:checked").val();
 		 if(noinvice1=="y1"){

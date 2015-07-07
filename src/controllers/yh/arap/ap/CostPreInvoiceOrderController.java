@@ -66,6 +66,30 @@ public class CostPreInvoiceOrderController extends Controller {
 				.find("select * from fin_account f where bank_name<>'现金'");
 		renderJson(locationList);
 	}
+	//供应商下拉列表查询
+	public void sp_filter_list(){
+		String input = getPara("input");
+		List<Record> locationList = Collections.EMPTY_LIST;
+		locationList = Db
+				.find("select * from contact c where company_name<>''and (c.company_name like '%"
+							+ input
+							+ "%' or c.abbr like '%"
+							+ input
+							+ "%' or c.contact_person like '%"
+							+ input
+							+ "%' or c.email like '%"
+							+ input
+							+ "%' or c.mobile like '%"
+							+ input
+							+ "%' or c.phone like '%"
+							+ input
+							+ "%' or c.address like '%"
+							+ input
+							+ "%' or c.postal_code like '%"
+							+ input
+							+ "%')");
+		renderJson(locationList);
+	}
 	// 应付条目列表
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_LIST})
 	public void list() {
@@ -172,6 +196,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
 		String paymentMethod = getPara("paymentMethod");
 		String account_id = getPara("account");
+		String spId = getPara("sp_id");
 		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
 					.findById(costPreInvoiceOrderId);
@@ -183,6 +208,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					getPara("create_by"));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
 			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
+			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
 			String noInvoice = getPara("noInvoice");
 			if ("on".equals(noInvoice)) {
@@ -199,10 +225,10 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.update();
 		} else {
 			String payee_id = getPara("customer_id");
-			if (payee_id == null || "".equals(payee_id)) {
-				payee_id = null;
+			if (spId != null && !"".equals(spId)) {
+				payee_id = spId;
 			}
-
+			else{}
 			arapAuditInvoiceApplication = new ArapCostInvoiceApplication();
 
 			String sql = "select * from arap_cost_invoice_application_order order by id desc limit 0,1";
