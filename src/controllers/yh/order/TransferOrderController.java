@@ -99,7 +99,7 @@ public class TransferOrderController extends Controller {
 
 			String sqlTotal = "select count(1) total from transfer_order t "
 					+ " where t.order_type != 'cargoReturnOrder' and t.office_id in(select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ "and t.status!='手动删除' and t.customer_id in (select customer_id from user_customer where  user_name='"+currentUser.getPrincipal()+"') ";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -119,7 +119,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
+					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ " order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc,t.planning_time desc"
 					+ sLimit;
@@ -164,7 +164,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.order_type != 'cargoReturnOrder' "
+					+ " where t.order_type != 'cargoReturnOrder' and t.status!='手动删除' "
 					+ " and t.order_no like '%"+ orderNo 
 					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address
@@ -200,7 +200,7 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.order_type != 'cargoReturnOrder' "
+					+ " where t.order_type != 'cargoReturnOrder' and t.status!='手动删除' "
 					+ " and t.order_no like '%" + orderNo
 					+ "%' and t.status like '%" + status
 					+ "%' and t.address like '%" + address
