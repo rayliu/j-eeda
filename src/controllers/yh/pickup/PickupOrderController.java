@@ -172,7 +172,7 @@ public class PickupOrderController extends Controller {
                     + " left join transfer_order_item toi on toi.order_id = t_o.id "
                     + " left join product pd on pd.id = toi.product_id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
-            		+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+            		+ " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
             		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
             sql = "select dor.id,dor.depart_no,dor.status,dor.pickup_mode,dor.car_no,dor.driver contact_person,dor.phone, dor.turnout_time,dor.remark,"
@@ -193,7 +193,7 @@ public class PickupOrderController extends Controller {
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
-            		+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+            		+ " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " group by dor.id order by dor.create_stamp desc" + sLimit;
         } else {
@@ -223,7 +223,7 @@ public class PickupOrderController extends Controller {
 					+ " and ifnull(o.office_name,'') like '%"+office+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "
 					+ " and c1.abbr like '%" + customerId + "%'"
-                    + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
             sql = "select dor.id,dor.depart_no,dor.status,dor.pickup_mode,dor.car_no,dor.driver contact_person,dor.phone, dor.turnout_time,dor.remark,"
@@ -254,7 +254,7 @@ public class PickupOrderController extends Controller {
 					+ " and ifnull(o.office_name,'') like '%"+office+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "
 					+ " and c1.abbr like '%" + customerId + "%'"
-					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
             		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
             		+ " group by dor.id order by dor.create_stamp desc" + sLimit;
     

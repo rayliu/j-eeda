@@ -130,7 +130,7 @@ public class DepartOrderController extends Controller {
 					+ " left join office o on o.id = tor.office_id"
             		+ " where combine_type = '"
                     + DepartOrder.COMBINE_TYPE_DEPART + "'and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+                    + " and deo.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
             sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
             		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
@@ -148,7 +148,7 @@ public class DepartOrderController extends Controller {
 					+ " left join party cp on tor.customer_id = cp.id "
 					+ " left join contact cc on cp.contact_id = cc.id"
 					+ " where ifnull(deo.status, '') != ''"
-					+ " and combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
+					+ " and deo.status!='手动删除' and combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by deo.id,o.office_name "
 					+ " order by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " + sLimit;
@@ -170,7 +170,7 @@ public class DepartOrderController extends Controller {
                     + "%' and ifnull(l2.name,'') like '%"+ destination
                     + "%' and ifnull(cc.abbr,cc.company_name)  like '%" + customer
                     + "%' and deo.create_stamp between '" + beginTime + "' and '" + endTime +"'"
-                    + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and deo.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sqlTotal = "select count(1) total from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
