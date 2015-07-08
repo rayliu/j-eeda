@@ -112,6 +112,16 @@ public class DepartOrderController extends Controller {
         String destination = getPara("destination");
         String customer = getPara("customer");
         String booking_note_number = getPara("booking_note_number");
+        String costchebox = getPara("costchebox");
+        
+        String limi = "";
+        if( costchebox == null ||costchebox.equals("")){
+            limi="";
+        }else{
+            if(costchebox.equals("0"))
+            limi = "HAVING (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id  and fi.type= '应付' )= 0";
+        }
+
         
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -136,6 +146,7 @@ public class DepartOrderController extends Controller {
             		+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (select order_id from depart_transfer dt where dt.depart_id = deo.id)) as transfer_order_no, "
+                    + " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
             		+ " deo.transfer_type as trip_type"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
@@ -151,7 +162,8 @@ public class DepartOrderController extends Controller {
 					+ " and deo.status!='手动删除' and combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"'"
 					+ " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by deo.id,o.office_name "
-					+ " order by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " + sLimit;
+					+ limi
+					+ " order by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " +limi+ sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -190,6 +202,7 @@ public class DepartOrderController extends Controller {
             		+ " o.office_name office_name,deo.departure_time departure_time ,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
             		+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
             		+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no , "
+                    + " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
             		+ " deo.transfer_type as trip_type"
             		+ " from depart_order deo"
 					+ " left join carinfo c on deo.carinfo_id = c.id"
@@ -204,7 +217,7 @@ public class DepartOrderController extends Controller {
 					+ " left join party cp on tor.customer_id = cp.id "
 					+ " left join contact cc on cp.contact_id = cc.id"
 					+ whereSql
-                    + " group by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " + sLimit;
+                    + " group by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc " +limi+ sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
