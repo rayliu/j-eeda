@@ -462,6 +462,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
     		.set("serial_no", content.get("单品序列号"));
     	}
     	itemDatail.set("notify_party_company", content.get("单品收货地址"))//收货地址
+    	.set("receive_address", content.get("收货网点"))//收货网点
 		.set("notify_party_name", content.get("单品收货人"))//收货人
 		.set("notify_party_phone", content.get("单品收货人联系电话"))//收货人电话
 		.set("sales_order_no", content.get("单品销售单号"))//销售单号

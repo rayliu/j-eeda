@@ -1465,6 +1465,17 @@ $(document).ready(function() {
                     }
             }},
             {
+            	"mDataProp":"RECEIVE_ADDRESS",
+        		"sWidth": "80px",
+            	"sClass": "receive_address",
+            	"fnRender": function(obj) {
+                    if(obj.aData.RECEIVE_ADDRESS!='' && obj.aData.RECEIVE_ADDRESS != null){
+                        return "<input type='text' name='receive_address' value='"+obj.aData.RECEIVE_ADDRESS+"'>";
+                    }else{
+                    	 return "<input type='text' name='receive_address'>";
+                    }
+            }},
+            {
             	"mDataProp":"NOTIFY_PARTY_COMPANY",
         		"sWidth": "80px",
             	"sClass": "notify_party_company",
