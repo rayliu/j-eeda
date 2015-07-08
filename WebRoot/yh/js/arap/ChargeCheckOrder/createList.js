@@ -1,5 +1,6 @@
 
 $(document).ready(function() {
+	var cName = [];
     $('#menu_charge').addClass('active').find('ul').addClass('in');
     $('#saveBtn').attr('disabled', true);
 	//datatable, 动态处理
@@ -21,7 +22,7 @@ $(document).ready(function() {
 	            }
 	          },  
 	          {"mDataProp":"ID", "bVisible": false},
-	          {"mDataProp":"ORDER_NO",
+	          {"mDataProp":"ORDER_NO","sClass": "order_no",
 	        	  "fnRender": function(obj) {
 	        		  if(Return.isUpdate || Return.isComplete){
 	        			  return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
@@ -34,7 +35,7 @@ $(document).ready(function() {
 	                "fnRender": function(obj) {
 	                    return "未收款";
 	          }},
-	          {"mDataProp":"CNAME", "sWidth":"200px"},
+	          {"mDataProp":"CNAME","sClass": "cname", "sWidth":"200px"},
 	          {"mDataProp":null, "sWidth":"150px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
 	          {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
@@ -127,7 +128,15 @@ $(document).ready(function() {
     var ids = [];
     // 未选中列表
 	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
+		var cname = $(this).parent().siblings('.cname')[0].textContent;		
 		if($(this).prop("checked") == true){
+			if(cname.length != 0){
+				cName.push($(this).parent().siblings('.cname')[0].innerHTML);
+				if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
+					alert("请选择同一客户名称的回单");
+					return false;
+				}
+			}
 			$(this).parent().parent().appendTo($("#checkedChargeCheckList"));
 			ids.push($(this).val());
 			$("#checkedReturnOrder").val(ids);
@@ -188,6 +197,7 @@ $(document).ready(function() {
     	refreshCreate();
 	} );
     
+ 
     //获取客户的list，选中信息自动填写其他信息
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
