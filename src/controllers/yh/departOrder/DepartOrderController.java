@@ -263,7 +263,7 @@ public class DepartOrderController extends Controller {
     				+ " left join office o on o.id = t.office_id "
     				+ " where (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车') and combine_type = '"+ DepartOrder.COMBINE_TYPE_DEPART 
     				+ "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-    				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+    				+ " and deo.status!='手动删除' and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
     		
     		sql = "select deo.id,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
     				+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
@@ -290,7 +290,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l2 on deo.route_to =l2.code "
     				+ " where  (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车')  and combine_type = '"
     				+ DepartOrder.COMBINE_TYPE_DEPART + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-    				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+    				+ " and deo.status!='手动删除' and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
     				+ " group by deo.id order by deo.create_stamp desc " + sLimit;
     	} else {
     		if (beginTime == null || "".equals(beginTime)) {
@@ -322,7 +322,7 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(l2.name,'') like '%" + end 
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer  
     				+ "%' and deo.departure_time between '" + beginTime + "' " + "and '" + endTime +"'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-    				+ " and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" + sLimit;
+    				+ "and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" + sLimit;
     		
     		sql = "select deo.id,"
     				+ "deo.depart_no ,deo.departure_time,"
@@ -371,7 +371,7 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer 
     				+ "%' and deo.departure_time between '"+ beginTime+ "' and '"+ endTime
     				+ "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-    				+ "  and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+    				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
     				+ " group by deo.id order by deo.create_stamp desc " + sLimit;
     	}
     	Record rec = Db.findFirst(sqlTotal);
@@ -528,7 +528,7 @@ public class DepartOrderController extends Controller {
                     + " or (tor.cargo_nature = 'cargo' and tor.pickup_assign_status = 'ALL' and (select group_concat(cast(dorr.id as char) separator ',') pickup_id from depart_transfer dt left join depart_order dorr on dorr.id = dt.pickup_id where dt.order_id = tor.id and dt.depart_id is null and dorr.status != '已入货场') is null)) "
                     + " and (ifnull(tor.depart_assign_status, '') = '"+TransferOrder.ASSIGN_STATUS_NEW+"' or (tor.pickup_assign_status = '"+TransferOrder.ASSIGN_STATUS_PARTIAL+"' and (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt "
                     + " left join depart_pickup dp on dp.pickup_id = dt.pickup_id  left join depart_order dd on dd.id = dt.pickup_id where dt.order_id = tor.id "
-                    + " and (select group_concat(cast(pickup_id as char) separator ',') from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) is null) is not null))"
+                    + " and tor.status!='手动删除' and (select group_concat(cast(pickup_id as char) separator ',') from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) is null) is not null))"
             		+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
           
@@ -573,7 +573,7 @@ public class DepartOrderController extends Controller {
                     + " where order_id = tor.id"
                     + " and pickup_id = dt.pickup_id ) IS NULL ) IS NOT NULL ))"
             		+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+                    + " and tor.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
                     + " order by tor.planning_time desc "
                     + ") A where pickup_id is not null or operation_type='out_source'" 
                     + sLimit;
@@ -605,7 +605,7 @@ public class DepartOrderController extends Controller {
 					+ " and l1.name like '%" + routeFrom + "%' "
 					+ " and l2.name like '%" + routeTo + "%' "
 					+ " and tor.planning_time between '" + beginTime+ "' and '" + endTime + "'"
-					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " and tor.status!='手动删除' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
             sql = "select * from(select distinct tor.id,tor.order_no,tor.customer_order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
@@ -651,7 +651,7 @@ public class DepartOrderController extends Controller {
 					+ " and l2.name like '%" + routeTo + "%' "
 					+ " and tor.planning_time between '" + beginTime+ "' and '" + endTime + "'"
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+                    + " and tor.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
                     + " order by tor.planning_time desc " 
                     + ") A where pickup_id is not null or operation_type='out_source'" 
                     + sLimit;

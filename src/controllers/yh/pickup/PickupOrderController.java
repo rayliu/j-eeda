@@ -325,7 +325,7 @@ public class PickupOrderController extends Controller {
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车','已投保') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL 
                     + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+                    + " and tor.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
             		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
                     + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
@@ -342,7 +342,7 @@ public class PickupOrderController extends Controller {
                     + " left join office o on o.id = tor.office_id "
                     + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车','已投保') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" 
-                    + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.status!='手动删除'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + sql1
                     + " order by tor.planning_time desc" + sLimit;
@@ -380,7 +380,7 @@ public class PickupOrderController extends Controller {
                     + endTime
                     + "' and tor.order_type like '%"
                     + orderType + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
+                    + "and tor.status!='手动删除'  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
             		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
                     + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
@@ -415,7 +415,7 @@ public class PickupOrderController extends Controller {
                     + endTime
                     + "' and tor.order_type like '%"
                     + orderType + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.status!='手动删除'  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.planning_time desc" + sLimit;
         } else {
             if (beginTime == null || "".equals(beginTime)) {
@@ -451,7 +451,7 @@ public class PickupOrderController extends Controller {
                     + endTime
                     + "' and tor.order_type like '%"
                     + orderType + "%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+                    + " and tor.status!='手动删除'  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
             sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
             		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
@@ -488,7 +488,7 @@ public class PickupOrderController extends Controller {
                     + endTime
                     + "' and tor.order_type like '%"
                     + orderType + "%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor.status!='手动删除'  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.planning_time desc" + sLimit;
 
             
