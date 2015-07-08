@@ -42,6 +42,7 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未收款";
             }},
+            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
             {"mDataProp":"ORDER_NO", "sWidth":"200px", 
                 "fnRender": function(obj) {
                 	var str = "";
@@ -287,6 +288,7 @@ $(document).ready(function() {
         $('#endTime_filter').trigger('keyup');
     });
     var refreshCreateList = function() {
+    	var booking_id = $("#booking_id").val();
     	var orderNo = $("#orderNo_filter").val();
     	var sp = $("#sp_filter2").val();
     	var no = $("#no").val();
@@ -301,12 +303,13 @@ $(document).ready(function() {
 														+"&orderNo="+orderNo
 														+"&no="+no
 														+"&type="+type
-														+"&status="+status;
+														+"&status="+status
+    	                                                +"&booking_id="+booking_id;
     	uncheckedCostCheckTable.fnDraw();
     	
     	
     };
-    $("#orderNo_filter,#no,#beginTime_filter,#endTime_filter").on('keyup',function(){
+    $("#orderNo_filter,#booking_id,#no,#beginTime_filter,#endTime_filter").on('keyup',function(){
     	refreshCreateList();
     });
     $("#order_type_filter,#order_status_filter").on('change',function(){
