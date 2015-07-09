@@ -45,8 +45,8 @@ $(document).ready(function() {
 	                return obj.aData.STATUS;
 	            }
 	        },
-	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":"C_STAMP","sWidth":"80px"},
+	        {"mDataProp":"ONAME","sWidth":"80px"},
 	        {"mDataProp":"CNAME","sWidth":"200px"},
 	        {"mDataProp":null,"sWidth":"80px"},
 	        {"mDataProp":"TOTAL_AMOUNT","sWidth":"80px"},

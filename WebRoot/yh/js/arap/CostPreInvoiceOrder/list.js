@@ -36,9 +36,9 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CNAME"},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
+            {"mDataProp":"C_STAMP"},
+            {"mDataProp":"ONAME"},
+            {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},

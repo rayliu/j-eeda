@@ -38,7 +38,7 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":null},
+            {"mDataProp":"C_STAMP"},
             {"mDataProp":"ONAME", "sWidth":"150px"},
             {"mDataProp":"CNAME", "sWidth":"150px"},
             {"mDataProp":"COMPANY_NAME"},

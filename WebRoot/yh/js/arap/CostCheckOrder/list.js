@@ -18,10 +18,10 @@ $(document).ready(function() {
         			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"ORDER_STATUS"},
-            {"mDataProp":null},
-            {"mDataProp":null},
+            {"mDataProp":"C_STAMP"},
+            {"mDataProp":"ONAME"},
             {"mDataProp":"CNAME"},
-            {"mDataProp":null},
+            {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":null},

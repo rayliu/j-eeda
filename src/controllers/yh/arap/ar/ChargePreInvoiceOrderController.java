@@ -329,10 +329,11 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String office = getPara("office");
 		String status = getPara("status");
 		String orderNo = getPara("orderNo");
-		String sql ="select distinct aao.*, usl.user_name as creator_name,c.abbr cname"
+		String sql ="select distinct aao.*, usl.user_name as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp"
 					+ " from arap_charge_order aao "
 					+ " left join party p on p.id = aao.payee_id "
 					+ " left join contact c on c.id = p.contact_id"
+					+ " left join office o on o.id = p.office_id"
 					+ " left join user_login usl on usl.id=aao.create_by"
 					+ " where aao.status = '已确认' ";
 		String sqlTotal ="";

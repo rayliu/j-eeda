@@ -107,11 +107,12 @@ public class CostPreInvoiceOrderController extends Controller {
 		String endTime = getPara("endTime");
 
 		String sqlTotal = "";
-		String sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
+		String sql = "select aaia.*, MONTH (aaia.create_stamp) AS c_stamp,c.abbr cname,c.company_name as company_name,o.office_name oname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by"
 				+ " left join party p on p.id = aaia.payee_id "
+				+ " left join office o ON o.id = p.office_id"
 				+ " left join contact c on c.id = p.contact_id";
 		String condition = "";
 		// TODO 客户和供应商没做
@@ -503,7 +504,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String endTime = getPara("endTime");
 
 		String sqlTotal = "";
-		String sql = "select aco.*,c.company_name as company_name,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name,o.office_name oname from arap_cost_order aco "
+		String sql = "select aco.*,MONTH (aco.create_stamp) AS c_stamp,c.company_name as company_name,group_concat(acoo.invoice_no separator ',') invoice_no,c.abbr cname,ul.user_name creator_name,o.office_name oname from arap_cost_order aco "
 				+ " left join party p on p.id = aco.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
 				+ " left join user_login ul on ul.id = aco.create_by"

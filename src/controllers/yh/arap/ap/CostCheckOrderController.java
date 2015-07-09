@@ -188,7 +188,7 @@ public class CostCheckOrderController extends Controller {
         String endTime = getPara("endTime");
         
         String sqlTotal = "";
-        String sql = "select aco.*,"
+        String sql = "select aco.*,MONTH(aco.create_stamp) as c_stamp,o.office_name oname,c.company_name as company_name,"
         		+ " group_concat(acoo.invoice_no separator ',') invoice_no,"
         		+ " c.abbr cname,"
         		+ " ul.user_name creator_name,"
@@ -200,6 +200,7 @@ public class CostCheckOrderController extends Controller {
         		+ " from arap_cost_order aco "
         		+ " left join party p on p.id = aco.payee_id"
         		+ " left join contact c on c.id = p.contact_id"
+        		+ " left join office o ON o.id=p.office_id"
         		+ " left join user_login ul on ul.id = aco.create_by"
         		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id ";
         String condition = "";
