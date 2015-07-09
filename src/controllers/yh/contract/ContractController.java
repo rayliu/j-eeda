@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import models.FinItem;
 import models.Location;
-import models.Office;
 import models.ParentOfficeModel;
-import models.UserOffice;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
@@ -392,7 +390,7 @@ public class ContractController extends Controller {
         setAttr("saveOK", false);
 
     }
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CP_UPDATE,PermissionConstant.PERMSSION_CD_UPDATE})
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CP_UPDATE,PermissionConstant.PERMSSION_CD_UPDATE},logical=Logical.OR)
     public void edit() {
         String id = getPara();
         if (id != null) {
