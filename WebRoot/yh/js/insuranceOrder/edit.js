@@ -337,7 +337,7 @@
 		 var officeSelect = $("#officeSelect");
 		 officeSelect.empty();
 		 var hideOfficeId = $("#hideOfficeId").val();
-		 officeSelect.append("<option ></option>");
+		 //officeSelect.append("<option ></option>");
 		 for(var i=0; i<data.length; i++){
 			 if(data[i].ID == hideOfficeId){
 				 officeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
@@ -356,7 +356,7 @@
 			var insuranceSelect = $("#insuranceSelect");
 			insuranceSelect.empty();
 			var hideInsuranceId = $("#hideInsuranceId").val();
-			insuranceSelect.append("<option ></option>");
+			//insuranceSelect.append("<option ></option>");
 			for(var i=0; i<data.length; i++){
 				if(data[i].ID == hideInsuranceId){
 					insuranceSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].COMPANY_NAME+"</option>");
