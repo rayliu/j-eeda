@@ -34,13 +34,15 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"100px",
             	"fnRender":function(obj){
             		var timeStamp = obj.aData.DEPART_TIME;
+            		var subtimeStamp=timeStamp.substring(0,10);
             		if(timeStamp == ""){
             			return "";
             		}else{
-            			return timeStamp;
+            			return subtimeStamp;
             		}
             		
             	}},
+            	
             {"mDataProp":null, "sWidth": "70px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -56,12 +58,15 @@ $(document).ready(function() {
                     }
                     return obj.aData.STATUS;
                 }
-            },                         
+            },   
+            {"mDataProp":"ROUTE_FROM", "sWidth":"75px"},
+            {"mDataProp":"ROUTE_TO", "sWidth":"75px"},                      
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"75px"},  
 		    {"mDataProp":null, "sWidth":"75px",
                 "fnRender": function(obj) {
                     return "未确认";
             }},
+            
             {"mDataProp":null, "sWidth":"75px",
             	"fnRender":function(obj){
             		var number = obj.aData.BOOKING_NOTE_NUMBER;
@@ -306,8 +311,8 @@ $(document).ready(function() {
     		var status = $("#order_status_filter").val();
     		var type = $("#order_type_filter").val();
     		var booking_note_number = $("#booking_note_number").val();
-    		
-    		
+    		var route_from =$("#route_from").val();
+    		var route_to = $("#route_to").val();
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
 											    		+"&sp="+sp
 											    		+"&no="+no
@@ -315,13 +320,15 @@ $(document).ready(function() {
 											    		+"&endTime="+endTime
 											    		+"&status="+status
 											    		+"&type="+type
-											    		+"&booking_note_number="+booking_note_number;
+											    		+"&booking_note_number="+booking_note_number
+    		                                            +"&route_from="+route_from
+    		                                            +"&route_to="+route_to;
     	
     		costConfiremTable.fnDraw();
        };
        /*=====================条件过滤=======================*/
         //过滤客户
-        $('#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
+        $('#route_to,#route_from,#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
         	refreshData();
      	} );
         $('#order_type_filter,#order_status_filter').on( 'change', function () {
