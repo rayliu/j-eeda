@@ -84,7 +84,7 @@
                  	}else{
                  		return obj.aData.INSURANCE_AMOUNT.toFixed(2);
                  	}
-             }},
+             }}/*,
              {"mDataProp": null,
             	 "sWidth": "100px",
             	 "sClass": "insurance_no", 
@@ -94,7 +94,7 @@
                      }else{
                     	 return "<input type='text' name='insurance_no'>";
                      }
-             }}                                  
+             }}     */                             
          ]       
      });
  	
@@ -109,6 +109,7 @@
  	var saveInsuranceOrder = function(){
   		$.post('/insuranceOrder/save', $("#insuranceOrderForm").serialize(), function(data){
  			$("#insuranceOrderId").val(data.ID);
+ 			/*$("#insurance_no").val(data.INSURANCE_NO);*/
  			if(data.ID>0){
  				$("#insuranceId").val(data.ID);
  				$("#hideInsuranceId").val(data.INSURANCE_ID);
@@ -120,7 +121,7 @@
  					findInsurancePayment();
  				}
  			}else{
- 				$.scojs_message('保存成功', $.scojs_message.TYPE_ERROR);
+ 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
  			}
  		},'json');
  	};
@@ -132,6 +133,7 @@
  	  		var hidInseranceId = $("#hideInsuranceId").val();
  	 		var insuranceSelect = $("#insuranceSelect").val();
  	 		var customer_id = $("#hid_customer_id").val();
+ 	 		
  			if(hidInseranceId != insuranceSelect){
  				if(confirm("已更换保险公司，是否重新计算保险费用？")){
  					$.post('/insuranceOrder/resetInsurance', {insuranceId:insuranceId,insuranceSelect:insuranceSelect,customer_id:customer_id}, function(data){

@@ -270,10 +270,10 @@ public class InsuranceOrderController extends Controller {
         		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
         sql = "select distinct ior.*, con.company_name, (select c.abbr from party p left join contact c on p.contact_id = c.id where p.id=tor.customer_id) as customer,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no,"
-        		+ " (select group_concat(cast(deo.departure_time as char) separator '<br>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id left join depart_order deo on deo.id = dt.depart_id where	tor.insurance_id = ior.id ) departure_time ,"
-        		+ " (SELECT group_concat( insfi.insurance_no SEPARATOR '<br>' ) FROM insurance_order ior"
-        		+ " left JOIN insurance_fin_item insfi on insfi.insurance_order_id=ior.id"
-        		+ " WHERE tor.insurance_id = ior.id) insurance_no"
+        		+ " (select group_concat(cast(deo.departure_time as char) separator '<br>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id left join depart_order deo on deo.id = dt.depart_id where	tor.insurance_id = ior.id ) departure_time "
+//        		+ " (SELECT group_concat( insfi.insurance_no SEPARATOR '<br>' ) FROM insurance_order ior"
+//        		+ " left JOIN insurance_fin_item insfi on insfi.insurance_order_id=ior.id"
+//        		+ " WHERE tor.insurance_id = ior.id) insurance_no"
         		+ " from insurance_order ior "
         		+ " left join transfer_order tor on tor.insurance_id = ior.id "
         		+ " left join office o on o.id = tor .office_id "
@@ -423,6 +423,7 @@ public class InsuranceOrderController extends Controller {
     	String insuranceOrderId = getPara("insuranceId");
     	String officeSelect = getPara("officeSelect");
     	String insuranceSelect = getPara("insuranceSelect");
+    	String insurance_no = getPara("insurance_no");
     	if(insuranceOrderId != null && !"".equals(insuranceOrderId)){
     		insuranceOrder = InsuranceOrder.dao.findById(insuranceOrderId);
     		if(officeSelect != null && !"".equals(officeSelect)){
@@ -430,6 +431,9 @@ public class InsuranceOrderController extends Controller {
     		}
     		if(insuranceSelect != null && !"".equals(insuranceSelect)){
     			insuranceOrder.set("insurance_id", insuranceSelect);    			
+    		}
+    		if(insurance_no != null && !"".equals(insurance_no)){
+    			insuranceOrder.set("insurance_no", insurance_no);    			
     		}
     		insuranceOrder.set("remark", getPara("remark")).update();
     	}else{
@@ -449,6 +453,7 @@ public class InsuranceOrderController extends Controller {
     		}
 			insuranceOrder.set("audit_status", "新建");
 			insuranceOrder.set("sign_status", "未回单");
+			insuranceOrder.set("insurance_no", insurance_no);
     		insuranceOrder.save();
     		
     		String orderId = getPara("orderid");
@@ -501,6 +506,7 @@ public class InsuranceOrderController extends Controller {
 				}
     		}
     	}
+    	
     	renderJson(insuranceOrder);
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_UPDATE})
@@ -510,6 +516,7 @@ public class InsuranceOrderController extends Controller {
     	InsuranceOrder insuranceOrder = null;
     	if(id != null && !"".equals(id)){
     		insuranceOrder = InsuranceOrder.dao.findById(id);
+    		setAttr("insurance_no", insuranceOrder.getStr("insurance_no"));
     	}
     	setAttr("insuranceOrder", insuranceOrder);
     	setAttr("paymentItemList", paymentItemList);
@@ -532,7 +539,8 @@ public class InsuranceOrderController extends Controller {
             setAttr("customerContact", customerContact);
             setAttr("hid_customer_id", customerId);
         }
-    		render("/yh/insuranceOrder/insuranceOrderEdit.html");
+        
+        render("/yh/insuranceOrder/insuranceOrderEdit.html");
     }
     
     // 应付
