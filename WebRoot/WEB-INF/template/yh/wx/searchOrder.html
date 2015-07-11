@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>我要查询</title>
+  <title>${SYS_CONFIG.system_title!'易达物流'} 我要查询</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
   <link rel="stylesheet" href="/yh/css/plugins/wx/style.css">
 </head>
@@ -22,7 +22,7 @@
         <button class="btn btn_primary" id="scanQRCode1">scanQRCode(直接返回结果)</button-->
         <span id='orderDesc' class="desc" style='display:none;'></span>
       </div>
-    	 <div id="value">
+    	 <div id="value" style='display:none;'>
       		<b>单据信息</b>
       		<div class="form-group">
       			<span class="label">单据号码：</span><span class="content" id="order_no"></span>

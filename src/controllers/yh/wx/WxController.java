@@ -378,7 +378,7 @@ public class WxController extends ApiController {
 	
 	
 	
-	public void findWXNo(){
+	public void findOrderNo(){
 		String serialNo = getPara("serialNo").trim();
 		String sql = "";
 		String orderHead = serialNo.substring(0, 2);
