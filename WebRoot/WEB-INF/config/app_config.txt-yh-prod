@@ -3,3 +3,14 @@ dbUrl=jdbc:mysql://120.24.67.19/eeda_yh?characterEncoding=UTF-8&zeroDateTimeBeha
 username=eeda_root
 pwd=Eeda123
 is_check_permission=Y
+
+# 微信服务器回调所用的 token
+token=123456
+
+# 测试用的账号
+appId=432432432
+appSecret=ewqewq432
+
+#是否对消息进行加密，是否对消息进行加密，对应于微信平台的消息加解密方式，false支持明文模式及兼容模式，true支持安全模式及兼容模式
+#encryptMessage=true
+#encodingAesKey=yourEncodingAesKey

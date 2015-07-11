@@ -13,15 +13,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import models.OrderAttachmentFile;
 import models.Party;
 import models.ReturnOrder;
@@ -29,6 +20,14 @@ import models.TransferOrder;
 import models.TransferOrderItemDetail;
 import models.yh.structure.Contentlet;
 import models.yh.wx.WechatLocation;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
@@ -40,8 +39,6 @@ import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.JsTicketApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
-
-import controllers.yh.contract.ContractController;
 
 public class WxController extends ApiController {
 	private Logger logger = Logger.getLogger(WxController.class);
