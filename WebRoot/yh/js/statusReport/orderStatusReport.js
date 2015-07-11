@@ -50,16 +50,17 @@ $(document).ready(function() {
         ]  
     });	
     
-    $("#beginTime,#endTime,#routeTo,#order_no,#routeFrom,#setOutTime,#customerMessage,#sp_name").on('keyup click', function () {
-    	var beginTime = $("#beginTime").val();
+    $("#customerMessage").on('keyup click', function () {
+    	/*var beginTime = $("#beginTime").val();
     	var routeTo = $("#routeTo").val();
     	var routeFrom = $("#routeFrom").val();
     	var order_no = $("#order_no").val();
     	var setOutTime = $("#setOutTime").val();
     	var customerMessage = $("#customerMessage").val();
     	var endTime=$("#endTime").val();
-    	var sp_name = $("#sp_name").val();
-    	if(beginTime != "" || endTime != ""||routeTo!=""||routeFrom!=""||order_no!=""||setOutTime!=""||customerMessage!=""||sp_name!=""){
+    	var sp_name = $("#sp_name").val();*/
+    	var customerMessage = $("#customerMessage").val();
+    	if(customerMessage!= ''){
     		$("#queryBtn").prop("disabled",false);
     	}else{
     		$("#queryBtn").prop("disabled",true);
@@ -138,6 +139,7 @@ $(document).ready(function() {
 		$('#customerMessage').focus();
 		$("#customer_id").val($(this).attr('partyId'));
 		$('#customerList').hide();
+		$("#queryBtn").prop("disabled",false);
     }); 
     
 	
