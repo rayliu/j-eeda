@@ -381,6 +381,7 @@ public class WxController extends ApiController {
 	public void findOrderNo(){
 		String serialNo = getPara("serialNo").trim();
 		String sql = "";
+		serialNo = serialNo.toUpperCase();
 		String orderHead = serialNo.substring(0, 2);
 		if(orderHead.equals("PS")){
 			sql ="select de.order_no, (select '配送单') as order_type, de.status, loc.name as beginCity, loc2.name as endCity, con.company_name as sp_name, con2.company_name as customer_name from delivery_order de"
