@@ -36,7 +36,7 @@ $(document).ready(function() {
             }},
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"130px"}, 
-            {"mDataProp":null, "sWidth":"150px"},
+            {"mDataProp":"DEPART_TIME", "sWidth":"130px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},        	
@@ -61,22 +61,23 @@ $(document).ready(function() {
             {"mDataProp":"ROUTE_TO", "sWidth":"100px"},                        
             /*{"mDataProp":null, "sWidth":"150px"},                         
             {"mDataProp":null, "sWidth":"100px"},*/                        
-            {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"150px"},                        
+            {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"150px"},
+            {"mDataProp":"TRANSFER_AMOUNT", "sWidth":"150px"},
             //{"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"SEND_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"INSURANCE_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"SUPER_MILEAGE_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"STEP_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"INSTALLATION_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
+            {"mDataProp":"LOAD_AMOUNT", "sWidth":"150px"},                        
             {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
+            {"mDataProp":"WAIT_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":"OTHER_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"200px"}                       
+            {"mDataProp":"ADDRESS", "sWidth":"150px"},                        
+            {"mDataProp":"REMARK", "sWidth":"200px"}                       
         ]      
     });	
     
