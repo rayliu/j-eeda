@@ -917,6 +917,55 @@ public class PickupOrderController extends Controller {
         renderJson(pickupOrder);
     }
     
+    
+ //撤销调车单
+ 	public void cancelPickupOder() {
+ 		String pickupId = getPara("pickupId");
+ 		String sql="SELECT * FROM depart_order d where d. STATUS IN ('已发车', '已收货', '已入货场' , '已入库' ) and d.id = '"+pickupId+ "'";
+ 		List<Record> nextOrders = Db.find(sql);
+ 		if(nextOrders.size()==0){
+ 			//取消里程碑
+ 			Record r1 = Db.findFirst("SELECT * FROM transfer_order_milestone where pickup_id = '" + pickupId+ "'");
+ 			TransferOrderMilestone.dao.findById(r1.get("id")).set("status", "取消");
+ 			
+ 			List<Record> r = Db.find("select * from depart_transfer dt where dt.pickup_id = '"+pickupId + "'");
+ 			for(int i = 0; i < r.size(); i++){
+ 				//运输单单品总数
+            	Record totalTransferOrderAmount = Db.findFirst("select count(0) total from transfer_order_item_detail where order_id = " + r.get(i).getLong("order_id"));
+            	//总提货数量（之前+现在）
+            	Record totalPickAmount = Db.findFirst("select count(0) total from transfer_order_item_detail where pickup_id is not null and  order_id = '" +  r.get(i).getLong("order_id")+"'");
+            	//总提货数量（现在）
+            	Record currentPickAmount = Db.findFirst("select count(0) total from transfer_order_item_detail where pickup_id is not null and  order_id = '" +  r.get(i).getLong("order_id")+"' and pickup_id = '"+pickupId+"'");
+            	//回滚运输单状态
+            	if(currentPickAmount.getLong("total") == totalTransferOrderAmount.getLong("total")){
+            		TransferOrder.dao.findById(r.get(i).getLong("order_id")).set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW).set("pickup_mode", null).set("pickup_seq",null).update();
+				}else{
+					if(currentPickAmount.getLong("total") == totalPickAmount.getLong("total")){
+						TransferOrder.dao.findById(r.get(i).getLong("order_id")).set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW).set("pickup_mode", null).set("pickup_seq",null).update();
+					}else{
+						TransferOrder.dao.findById(r.get(i).getLong("order_id")).set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL).update();
+					}
+				}
+            	//删除DepartTransferOrder表数据
+     			//DepartTransferOrder.dao.findById(r.get(i).getLong("id")).delete();
+ 			}
+ 			//回滚单品数量
+ 			List<Record> detail = Db.find("SELECT * FROM transfer_order_item_detail where pickup_id = '" + pickupId+ "'");
+ 			for(int i = 0; i < detail.size(); i++){
+ 				TransferOrderItemDetail.dao.findById(detail.get(i).getLong("id")).set("pickup_id", null).update();
+ 			}
+ 			
+ 			//更新调车单表运输状态为取消
+ 			DepartOrder.dao.findById(pickupId).set("Status", "取消").update();
+ 			renderJson("{\"success\":true}");
+ 		}else{
+ 			renderJson("{\"success\":false}");
+ 		}
+ 		
+ 	}
+    
+    
+    
     // 保存发车记录单
     public void saveCarManagePickupOrder() {
     	DepartOrder pickupOrder = null;

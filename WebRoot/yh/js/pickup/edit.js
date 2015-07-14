@@ -332,6 +332,7 @@
 	    	}
 	 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        $("#finishBtn").attr('disabled', false);
+	        $("#cancelBtn").attr('disabled', false);
     	}
     };
     
@@ -761,6 +762,11 @@
 		paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
 		paymenttable.fnDraw(); 
     });	*/
+	
+	//撤销按钮显示
+	if($("#pickupId").val() != null && !$("#pickupId").val()==''){
+		  $("#cancelBtn").attr('disabled', false);
+	}
 	
     
 	// 判断货场是否选中
@@ -1408,6 +1414,20 @@
     //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
     $('#customer_filter').on('blur', function(){
         $('#companyList').hide();
+    });
+    
+    
+    //撤销调车单
+    $("#cancelBtn").on('click',function(){
+    	$.post('/pickupOrder/cancelPickupOder', {pickupId:$("#pickupId").val()}, function(data){ 
+    		if(!data.success){
+    			$.scojs_message('对不起，当前单据(已入货场/已入库)或有下级单据(发车单/回单)，不能撤销', $.scojs_message.TYPE_ERROR);
+    		}else{
+    			$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+    			 $("#finishBtn").attr('disabled', true);
+    		}
+    	});
+    	
     });
     
     
