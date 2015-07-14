@@ -222,20 +222,22 @@ public class DeliveryController extends Controller {
 		String sqlTotal = "";
 		
 
-		String sql = "select d.*,"
-				+ "c.abbr as customer,"
-				+ "c2.company_name as c2,"
-				+ "(select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
-				+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+		String sql = " select d.*,toid.id toid,toid.item_no item_no,toid.pieces pieces,"
+				+ " c.abbr as customer,"
+				+ " c2.company_name as c2,"
+				+ " (select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
+				+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 				+ " from delivery_order d "
-				+ "left join party p on d.customer_id = p.id "
-				+ "left join contact c on p.contact_id = c.id "
-				+ "left join party p2 on d.sp_id = p2.id "
-				+ "left join contact c2 on p2.contact_id = c2.id "
+				+ " left join party p on d.customer_id = p.id "
+				+ " left join contact c on p.contact_id = c.id "
+				+ " left join party p2 on d.sp_id = p2.id "			
+				+ " left join contact c2 on p2.contact_id = c2.id "
 				+ " left join warehouse w on d.from_warehouse_id = w.id "
-				+ "where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " left join delivery_order_item doi on doi.delivery_id = d.id"
+				+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id"
+				+ " where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-				+ "order by d.create_stamp desc" + sLimit;
+				+ " order by d.create_stamp desc" + sLimit;
 
 		List<Record> depart = null;
 		if (transferorderNo == null && deliveryNo == null && customer == null

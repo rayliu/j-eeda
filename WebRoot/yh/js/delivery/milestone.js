@@ -57,6 +57,9 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CUSTOMER","sWidth":"70px"},
+            {"mDataProp":"TOID","sWidth":"70px"},
+            {"mDataProp":"ITEM_NO","sWidth":"100px"},
+            {"mDataProp":"PIECES","sWidth":"70px"},
             {"mDataProp":"C2","sWidth":"70px"},
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"TRANSFER_ORDER_NO"},          
