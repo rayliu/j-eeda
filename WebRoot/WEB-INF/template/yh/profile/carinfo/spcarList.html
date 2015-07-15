@@ -68,6 +68,7 @@ $(document).ready(function() {
 	var dataTable= $('#example').dataTable( {
 		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
 	        //"sPaginationType": "bootstrap",
+	        "bProcessing": true, //table载入数据时，是否显示‘loading...’提示        
 	        "iDisplayLength": 10,
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
