@@ -108,14 +108,14 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		//atm、补货订单、不是直送运输单
             		
-	            		if(flag!='derect'){
+	            	if(flag!='derect'){
 	            		if(obj.aData.CARGO_NATURE == "ATM" || (obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailYes")){
 	            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择单品</button>';
 	            			return obj.aData.ORDER_NO + str1;
-	            		}else if(obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailNo"){
+	            		}/*else if(obj.aData.CARGO_NATURE == "cargo" && obj.aData.CARGO_NATURE_DETAIL == "cargoNatureDetailNo"){
 	            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">选择货品</button>';
 	            			return obj.aData.ORDER_NO + str1;
-	            		}else{
+	            		}*/else{
 	            			return obj.aData.ORDER_NO;
 	            		}
             		}else{
