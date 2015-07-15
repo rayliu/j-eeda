@@ -926,7 +926,17 @@ public class PickupOrderController extends Controller {
  		if(nextOrders.size()==0){
  			//取消里程碑
  			Record r1 = Db.findFirst("SELECT * FROM transfer_order_milestone where pickup_id = '" + pickupId+ "'");
- 			TransferOrderMilestone.dao.findById(r1.get("id")).set("status", "取消");
+ 			TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+ 			String name = (String) currentUser.getPrincipal();
+ 	        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+ 	        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+ 	        transferOrderMilestone.set("status", "取消");
+ 	        java.util.Date utilDate = new java.util.Date();
+ 	        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+ 	        transferOrderMilestone.set("create_stamp", sqlDate);
+ 	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE);
+ 	        transferOrderMilestone.set("pickup_id", pickupId);
+ 	        transferOrderMilestone.save();
  			
  			List<Record> r = Db.find("select * from depart_transfer dt where dt.pickup_id = '"+pickupId + "'");
  			for(int i = 0; i < r.size(); i++){
@@ -947,7 +957,7 @@ public class PickupOrderController extends Controller {
 					}
 				}
             	//删除DepartTransferOrder表数据
-     			//DepartTransferOrder.dao.findById(r.get(i).getLong("id")).delete();
+     			DepartTransferOrder.dao.findById(r.get(i).getLong("id")).delete();
  			}
  			//回滚单品数量
  			List<Record> detail = Db.find("SELECT * FROM transfer_order_item_detail where pickup_id = '" + pickupId+ "'");

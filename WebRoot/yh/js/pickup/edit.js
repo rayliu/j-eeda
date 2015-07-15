@@ -1425,6 +1425,8 @@
     		}else{
     			$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
     			 $("#finishBtn").attr('disabled', true);
+    			 $("#saveTransferOrderBtn").attr('disabled', true);
+    			 $("#cancelBtn").attr('disabled', true);
     		}
     	});
     	
