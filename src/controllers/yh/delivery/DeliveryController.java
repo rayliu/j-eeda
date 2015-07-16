@@ -104,7 +104,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
+			String sql = "select toi.item_no item_no,toi.amount amount, tor.planning_time plan_time ,d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
 					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
 					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
@@ -112,6 +112,9 @@ public class DeliveryController extends Controller {
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " left join contact c2 on p2.contact_id = c2.id "
+					+ " left join delivery_order_item doi on doi.delivery_id = d.id "
+					+ " left join transfer_order tor on tor.id = doi.transfer_order_id "
+					+ " left join transfer_order_item toi on toi.order_id = tor.id "
 					+ " where d.status != '初始化' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " order by d.create_stamp desc "
@@ -158,7 +161,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
+			String sql = "select toi.item_no item_no,toi.amount amount ,tor.planning_time plan_time , d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
 					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
 					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
@@ -168,6 +171,9 @@ public class DeliveryController extends Controller {
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " left join delivery_order_item doi on doi.delivery_id = d.id "
+					+ " left join transfer_order tor on tor.id = doi.transfer_order_id"
+					+ " left join transfer_order_item toi on toi.order_id = tor.id "
 					+ " where ifnull(d.order_no,'') like '%"
 					+ orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%"

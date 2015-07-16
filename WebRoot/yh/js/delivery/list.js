@@ -26,6 +26,9 @@ $(document).ready(function() {
      		}
             },
             {"mDataProp":"CUSTOMER"},
+            {"mDataProp":"ITEM_NO"},
+            {"mDataProp":"AMOUNT"},
+            {"mDataProp":"PLAN_TIME"},
             {"mDataProp":"C2"},
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"STATUS"},
