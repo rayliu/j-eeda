@@ -46,6 +46,8 @@ $(document).ready(function() {
             		 
             	}
             },
+            {"mDataProp":"PLAN_TIME",
+            	"sWidth": "100px"},
             {"mDataProp":"DEPARTURE_TIME",
             	"sWidth": "100px"},
             {"mDataProp":"TRANSFER_ORDER_NO",
@@ -211,7 +213,7 @@ $(document).ready(function() {
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 	
-    $('#endTime_filter ,#beginTime_filter  ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
+    $('#endTime_filter ,#beginTime_filter ,#planBeginTime ,#planEndTime ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
     	
     	var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();
@@ -224,12 +226,17 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
+    	
+    	var planBeginTime = $("#planBeginTime").val();
+    	var planEndTime = $("#planEndTime").val();
     	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
 											+"&departNo="+departNo_filter
 											+"&status="+status
 											+"&sp="+sp
 											+"&beginTime="+beginTime
 											+"&endTime="+endTime
+											+"&planBeginTime="+planBeginTime
+											+"&planEndTime="+planEndTime
 											+"&office="+office
 											+"&start="+start
 											+"&end="+end
@@ -272,6 +279,26 @@ $(document).ready(function() {
 
 
     $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+    	$(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter').trigger('keyup');
+    });
+    
+    $('#datetimepicker3').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+    	$(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter').trigger('keyup');
+    });
+    
+    $('#datetimepicker4').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN', 
         autoclose: true,

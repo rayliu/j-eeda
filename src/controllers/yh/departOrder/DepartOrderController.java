@@ -249,6 +249,8 @@ public class DepartOrderController extends Controller {
     	String start =getPara("start");
     	String end =getPara("end");
     	String customer =getPara("customer");
+    	String planBeginTime = getPara("planBeginTime");
+    	String planEndTime = getPara("planEndTime");
     	
     	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
     		sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
@@ -256,7 +258,7 @@ public class DepartOrderController extends Controller {
     	if (orderNo == null && departNo == null && status == null 
     			&& sp == null && beginTime == null && endTime == null
     			&& office == null && start == null && end == null
-    			&& customer == null) {
+    			&& customer == null && planBeginTime == null && planEndTime == null) {
     		sqlTotal = "select count(distinct deo.id) total from depart_order deo "
     				+ " left join depart_transfer dt on dt.depart_id = deo.id "
     				+ " left join transfer_order t on t.id = dt.order_id "
@@ -322,7 +324,8 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(l2.name,'') like '%" + end 
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer  
     				+ "%' and deo.departure_time between '" + beginTime + "' " + "and '" + endTime +"'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-    				+ "and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" + sLimit;
+    				+ " and deo.arrival_time between '" + planBeginTime + "' " + "and '" + planEndTime + "'"
+    				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" + sLimit;
     		
     		sql = "select deo.id,"
     				+ "deo.depart_no ,deo.departure_time,"
@@ -371,6 +374,7 @@ public class DepartOrderController extends Controller {
     				+ "%' and ifnull(c1.abbr,'') like '%" + customer 
     				+ "%' and deo.departure_time between '"+ beginTime+ "' and '"+ endTime
     				+ "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+    				+ " and deo.arrival_time between '" + planBeginTime + "' " + "and '" + planEndTime + "'"
     				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
     				+ " group by deo.id order by deo.create_stamp desc " + sLimit;
     	}
