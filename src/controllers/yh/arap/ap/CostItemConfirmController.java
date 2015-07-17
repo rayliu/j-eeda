@@ -67,6 +67,7 @@ public class CostItemConfirmController extends Controller {
         String booking_note_number = getPara("booking_note_number");
         String route_from =getPara("route_from");
         String route_to=getPara("route_to");
+        String customer_name = getPara("customer_name");
         
         
         String sqlTotal = "";
@@ -163,6 +164,7 @@ public class CostItemConfirmController extends Controller {
         		+ " dor.remark,"
         		+ " DATE(dor.appointment_stamp) as depart_time,"
         		+ " oe.office_name office_name,"
+        		+ " c1.abbr cname,"
         		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='运输费') as transport_cost,"
         		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='搬运费') as carry_cost,"
         		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='上楼费') as climb_cost,"
@@ -178,7 +180,9 @@ public class CostItemConfirmController extends Controller {
 				+ " left join delivery_order_fin_item dofi on dor.id = dofi.order_id "
 				+ " left join transfer_order_item toi on doi.transfer_item_id = toi.id "
 				+ " left join product prod on toi.product_id = prod.id "
-				+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+				+ " left join transfer_order tor ON tor.id = doi.transfer_order_id"
+				+ " left join party p1 on tor.customer_id = p1.id"
+				+ " left join contact c1 on p1.contact_id = c1.id"
 				+ " left join user_login ul on dor.create_by = ul.id "
 				+ " left join warehouse w on dor.from_warehouse_id = w.id "
 				+ " left join office oe on w.office_id = oe.id "
@@ -205,6 +209,7 @@ public class CostItemConfirmController extends Controller {
 				+ "dpr.remark,"
 				+ "DATE(dpr.departure_time) as depart_time, "
 				+ "oe.office_name office_name,"
+				+ " c1.abbr cname,"
 				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='运输费' and fi.type = '应付') transport_cost, "
 				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='搬运费' and fi.type = '应付') carry_cost,"
 				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='上楼费' and fi.type = '应付') climb_cost,"
@@ -216,6 +221,8 @@ public class CostItemConfirmController extends Controller {
 				+ " from depart_order dpr "
 				+ " left join depart_transfer dtr on dtr.depart_id = dpr.id"
 				+ " left join transfer_order tor on tor.id = dtr.order_id "
+				+ " left join party p1 on tor.customer_id = p1.id"
+				+ " left join contact c1 on p1.contact_id = c1.id"
 				+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ "	left join depart_order_fin_item dofi on dofi.depart_order_id = dpr.id "
 				+ " left join product prod on toi.product_id = prod.id "
@@ -244,6 +251,7 @@ public class CostItemConfirmController extends Controller {
 				+ " dpr.remark,"
 				+ " DATE(tom.create_stamp) as depart_time,"
 				+ " oe.office_name office_name,"
+				+ " c1.abbr cname,"
 				+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='运输费') as transport_cost,"
         		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='搬运费') as carry_cost,"
         		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='上楼费') as climb_cost,"
@@ -255,6 +263,8 @@ public class CostItemConfirmController extends Controller {
 				+ " from depart_order dpr "
 				+ " left join depart_transfer dtr on dtr.pickup_id = dpr.id"
 				+ " left join transfer_order tor on tor.id = dtr.order_id "
+				+ " left join party p1 on tor.customer_id = p1.id"
+				+ " left join contact c1 on p1.contact_id = c1.id"
 				+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ " left join transfer_order_item_detail toid on toid.order_id = tor.id "
 				+ " left join product prod on toi.product_id = prod.id "
@@ -285,6 +295,7 @@ public class CostItemConfirmController extends Controller {
 				+ " ior.remark,"
 				+ " ior.create_stamp as depart_time,"
 				+ " oe.office_name office_name,"
+				+ " c1.abbr cname,"
 				+ " (select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='运输费') as transport_cost,"
         		+ " (select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='搬运费') as carry_cost,"
         		+ " (select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='上楼费') as climb_cost,"
@@ -296,6 +307,8 @@ public class CostItemConfirmController extends Controller {
 				+ " from insurance_order ior "
 				+ " left join insurance_fin_item ifit on ifit.insurance_order_id = ior.id"
 				+ " left join transfer_order tor on ior.id = tor.insurance_id "
+				+ " left join party p1 on tor.customer_id = p1.id"
+				+ " left join contact c1 on p1.contact_id = c1.id"
 				+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ " left join user_login ul on ul.id = ior.create_by"
 				+ " left join party p on ior.insurance_id = p.id "
@@ -321,7 +334,8 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(business_type,'') like '%" + type + "%'"
         			+ " and ifnull(route_from,'') like '%" + route_from + "%'"
         			+ " and ifnull(route_to,'') like '%" + route_to + "%'"
-        			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'";
+        			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'"
+        	        + " and ifnull(cname,'') like '%" + customer_name + "%'";
         }
        
         sqlTotal = " select count(1) total from (" + sql + condition + ") as B"; 

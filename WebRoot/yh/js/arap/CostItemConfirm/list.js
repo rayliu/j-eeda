@@ -94,7 +94,8 @@ $(document).ready(function() {
                     }
                     return str;
                 }
-            },            	
+            }, 
+            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
             {"mDataProp":"AMOUNT", "sWidth":"35px"},                        
             {"mDataProp":"VOLUME", "sWidth":"35px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"}, 
@@ -113,10 +114,10 @@ $(document).ready(function() {
             {"mDataProp":"ANZHUANG_COST", "sWidth":"50px"},
             {"mDataProp":"CANGCHU_COST", "sWidth":"50px"}, 
             {"mDataProp":"OTHER_COST", "sWidth":"80px"}, 
-            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
-            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},                       
+            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},
+            {"mDataProp":"CNAME", "sWidth":"80px"},
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });	
@@ -144,7 +145,7 @@ $(document).ready(function() {
     
     /*--------------------------------------------------------------------*/
     //获取所有客户
-    $('#customer_filter').on('keyup click', function(){
+   /* $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();
            
            $.get("/customerContract/search", {locationName:inputStr}, function(data){
@@ -161,20 +162,37 @@ $(document).ready(function() {
            },'json');
 
           
-       });
+       });*/
+    $('#customer_name').on('keyup click', function(){
+        var inputStr = $('#customer_name').val();
+        $.get("/customerContract/search", {locationName:inputStr}, function(data){
+            //console.log(data);
+            var companyList =$("#companyList");
+            companyList.empty();
+            for(var i = 0; i < data.length; i++)
+            {
+                companyList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].ABBR+"</a></li>");
+            }
+            if(data.length>0)
+                companyList.show();
+            
+        },'json');
+
+       
+    });
 
 
 
    //选中某个客户时候
       $('#companyList').on('click', '.fromLocationItem', function(e){        
-           $('#customer_filter').val($(this).text());
+           $('#customer_name').val($(this).text());
            $("#companyList").hide();
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
            refreshData();
        });
     // 没选中客户，焦点离开，隐藏列表
-       $('#customer_filter').on('blur', function(){
+       $('#customer_name').on('blur', function(){
            $('#companyList').hide();
        });
 
@@ -302,10 +320,11 @@ $(document).ready(function() {
             $(".bootstrap-datetimepicker-widget").hide();
             $('#endTime_filter').trigger('keyup');
         });
+        
        var refreshData = function(){
         	var orderNo = $('#orderNo_filter').val();
     		var sp = $("#sp_filter").val();
-    		var no = $("#customer_filter").val();
+    		var no = $("#operation_number").val();
     		var beginTime = $("#beginTime_filter").val();
     		var endTime = $("#endTime_filter").val();
     		var status = $("#order_status_filter").val();
@@ -313,6 +332,7 @@ $(document).ready(function() {
     		var booking_note_number = $("#booking_note_number").val();
     		var route_from =$("#route_from").val();
     		var route_to = $("#route_to").val();
+    		var customer_name = $("#customer_name").val();
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
 											    		+"&sp="+sp
 											    		+"&no="+no
@@ -322,13 +342,14 @@ $(document).ready(function() {
 											    		+"&type="+type
 											    		+"&booking_note_number="+booking_note_number
     		                                            +"&route_from="+route_from
-    		                                            +"&route_to="+route_to;
+    		                                            +"&route_to="+route_to
+    		                                            +"&customer_name="+customer_name;     
     	
     		costConfiremTable.fnDraw();
        };
        /*=====================条件过滤=======================*/
         //过滤客户
-        $('#route_to,#route_from,#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
+        $('#route_to,#route_from,#customer_name,#orderNo_filter,#operation number,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
         	refreshData();
      	} );
         $('#order_type_filter,#order_status_filter').on( 'change', function () {

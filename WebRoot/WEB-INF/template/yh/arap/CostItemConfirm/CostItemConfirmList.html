@@ -52,7 +52,7 @@
                                         </div>
                                      	<div class="form-group">
                                             <label class="search-label">操作单号</label>
-                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter">
+                                            <input type="text" class="form-control search-control customer_filter" id="operation_number">
                                        	</div>
                                        	<div class="form-group">
                                             <label class="search-label">目的城市</label>
@@ -77,6 +77,11 @@
                                         <div class="form-group">
                                             <label class="search-label">托运单号</label>
                                             <input type="text" class="form-control search-control customer_filter" id="booking_note_number">
+                                       	</div>
+                                       	<div class="form-group">
+                                            <label class="search-label">客户名称</label>
+                                            <input type="text" class="form-control search-control customer_filter" id="customer_name">
+                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 95%; left: 30%;"></ul>
                                        	</div>
                                        	
                                     </div>
@@ -133,6 +138,7 @@
                                             <th>成本确认</th>
                                             <th>托运单号</th>
                                             <th>业务单号</th>
+                                            <th>总费用</th>
                                             <th>数量</th>
                                             <th>体积</th>
                                             <th>重量</th>
@@ -144,10 +150,10 @@
                                             <th>安装费</th>
                                             <th>仓储费</th>
                                             <th>其他费用</th>
-                                            <th>总费用</th>
                                             <th>运输单号</th>
                                             <th>操作时间</th>
                                             <th>操作网点</th>
+                                            <th>客户名称</th>
                                             <th>备注</th>
                                         </tr>
                                     </thead>
