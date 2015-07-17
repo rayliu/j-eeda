@@ -21,7 +21,7 @@ $(document).ready(function() {
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px"},            	
             {"mDataProp":"SPNAME", "sWidth":"200px"},
-            {"mDataProp":null, "sWidth": "90px", 
+            {"mDataProp":null, "sWidth": "160px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -37,6 +37,9 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },                        
+            {"mDataProp":"FROM_NAME", "sWidth":"150px"},  
+            {"mDataProp":"TO_NAME", "sWidth":"150px"},  
+            {"mDataProp":"PLANNING_TIME", "sWidth":"180px"},  
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"90px"},  
 		    {"mDataProp":null, "sWidth":"90px",
                 "fnRender": function(obj) {
@@ -59,7 +62,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"CREATE_STAMP", "sWidth":"140px"},                 	
+            {"mDataProp":"CREATE_STAMP", "sWidth":"180px"},                 	
             {"mDataProp":"AMOUNT", "sWidth":"40px"},                        
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                        
