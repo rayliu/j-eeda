@@ -41,7 +41,9 @@
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditInvoiceApplication.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditInvoiceApplication.endTime!''}"/>
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}"/>
-                                        	<input type="hidden" id="account_id">
+                                        	<input type="hidden" name="account_id" id="account_id" >
+                                        	<input type="hidden" id="bank_no" name="bank_no" value="${customer.bank_no!''}">
+                                        	<input type="hidden" id="bank_name" name="bank_name" value="${customer.bank_name!''}">
                                         	<input type="hidden" id="paymentMethod">
                                         	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id!''}"/>
 		                                    <h2>申请信息</h2>
@@ -89,7 +91,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>收款人</label>
-                                            <input  class="form-control search-control" readonly="true" name="payeename" type="text" value="${customer.contact_person!''}">
+                                            <input  class="form-control search-control" readonly="true" name="payeename" type="text" value="${customer.receiver!''}">
                                         </div>
                                         <div><label>应付总金额:</label><label class="radio-inline"><strong>${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</strong></label></div>
                                         <div class="form-group" id="paymentMethods">
@@ -102,10 +104,11 @@
                                                     <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账
                                                 </label>
                                                 <div id="acc" style="display:none;">
-                                                <select id="account" class="form-control"  name="account">
-													<option></option>
-												</select>
-											    </div>
+                                                  <p> <label>账&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+                                               <input  class="form-control search-control" id="bank_no1" name="payeenumber" type="text" value="${customer.bank_no!''}"></p>    
+											    <label>开户行</label>
+                                              <input  class="form-control search-control" id="bank_name1" name=“bankname" type="text" value="${customer.bank_name!''}">
+                                               </div>
                                         </div>
                                         
                                         <div class="form-group" id="noInvoice">                                      

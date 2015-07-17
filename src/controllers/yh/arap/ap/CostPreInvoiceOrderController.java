@@ -197,7 +197,9 @@ public class CostPreInvoiceOrderController extends Controller {
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
 		String paymentMethod = getPara("paymentMethod");
 		String account_id = getPara("account");
-		String spId = getPara("sp_id");
+		String bank_no = getPara("bank_no");
+		String bank_name = getPara("bank_name");
+		String sp_Id = getPara("sp_id");
 		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
 					.findById(costPreInvoiceOrderId);
@@ -211,6 +213,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
+			arapAuditInvoiceApplication.set("bank_no", bank_no);
+			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			String noInvoice = getPara("noInvoice");
 			if ("on".equals(noInvoice)) {
 				noInvoice = "true";
@@ -226,8 +230,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.update();
 		} else {
 			String payee_id = getPara("customer_id");
-			if (spId != null && !"".equals(spId)) {
-				payee_id = spId;
+			if (sp_Id != null && !"".equals(sp_Id)) {
+				payee_id = sp_Id;
 			}
 			else{}
 			arapAuditInvoiceApplication = new ArapCostInvoiceApplication();
@@ -249,6 +253,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
 			arapAuditInvoiceApplication.set("payment_method",
 					getPara("paymentMethod"));
+			arapAuditInvoiceApplication.set("bank_no", bank_no);
+			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			if (getPara("total_amount") != null
 					&& !"".equals(getPara("total_amount"))) {
 				arapAuditInvoiceApplication.set("total_amount",
@@ -590,11 +596,5 @@ public class CostPreInvoiceOrderController extends Controller {
 		BillingOrderListMap.put("aaData", BillingOrders);
 
 		renderJson(BillingOrderListMap);
-	}
-
-	public void searchAllAccount() {
-		List<Account> accounts = Account.dao
-				.find("select * from fin_account where type != 'REC'");
-		renderJson(accounts);
 	}
 }

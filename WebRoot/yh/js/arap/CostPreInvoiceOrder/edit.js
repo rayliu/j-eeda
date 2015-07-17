@@ -6,6 +6,8 @@ $(document).ready(function() {
 	var invoiceNoArr=[];
 	var saveCostPreInvoiceOrder = function(e){
 		$("#account_id").val($("#account").val());
+		$("#bank_name").val($("#bank_name1").val());
+		$("#bank_no").val($("#bank_no1").val());
 		$("#paymentMethod").val($("input[name='paymentMethod']:checked").val());
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -27,18 +29,6 @@ $(document).ready(function() {
 			}
 		},'json');
 	};
-	$.post('/costPreInvoiceOrder/allaccount',function(data){
-		var account=$('#account');
-		account.empty();
-		account.append("<option>请选择</option>");
-		for(var i=0; i<data.length; i++){
-			var account_id=data[i].ID;
-			var name=data[i].BANK_NAME;
-			var account_no=data[i].ACCOUNT_NO;
-			var bank_person=data[i].BANK_PERSON;
-			account.append("<option  value='"+account_id+"'>"+name+"&nbsp;&nbsp;&nbsp;&nbsp;"+account_no+"&nbsp;&nbsp;&nbsp;&nbsp;"+bank_person+"</option>");
-		}
-	},'json');
 	//供应商下拉列表
 	$('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
@@ -158,9 +148,11 @@ $(document).ready(function() {
 	$("#paymentMethod2,#paymentMethod1").click(function(e){
 	if($('input:radio:checked').val()=="cash"){
 		$("#acc").hide();
+		$("#bankname").hide();
 	}
 	if($('input:radio:checked').val()=="transfers"){
 		$("#acc").show();
+		$("#bankname").hide();
 	}
 	});
 	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
