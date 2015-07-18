@@ -4,7 +4,7 @@ $(document).ready(function() {
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
-	var saveCostMiscOrder = function(e){
+	var saveCostMiscOrder = function(e, callback){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -16,7 +16,9 @@ $(document).ready(function() {
 			if(data.ID>0){
 				$("#costMiscOrderId").val(data.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				contactUrl("edit?id",data.ID);
+				contactUrl("edit?id", data.ID);
+
+				callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
@@ -320,59 +322,24 @@ $(document).ready(function() {
     if($("#costMiscOrderStatus").text() == 'new'){
     	$("#costMiscOrderStatus").text('新建');
 	}
-    
+   
     var feeTable = $('#feeItemList-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 20,
-    	"bServerSide": false,
+    	"bServerSide": true,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
+    	"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
         "fnRowCallback": function(nRow, aData) {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
         "aoColumns": [   
-          	/*{"mDataProp":"ORDER_STAMP","sWidth": "100px"},*/
-          	{"mDataProp":null,"sWidth": "100px",
-			    "fnRender": function(obj) {
-			        if(obj.aData.ORDER_TYPE!='' && obj.aData.ORDER_TYPE != null){
-			        	var str="";
-			        	$("#orderTypeList").children().each(function(){
-			        		if(obj.aData.ORDER_TYPE == $(this).text()){
-			        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";   
-			        		}else{
-			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-			        		}
-			        	});
-			            return "<select name='order_type' class='form-control search-control'>"+str+"</select>";
-			        }else{
-			        	var str="";
-			        	$("#orderTypeList").children().each(function(){
-			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-			        	});
-			        	return "<select name='order_type' class='form-control search-control'>"+str+"</select>";
-			        }
-			}},
-          	{"mDataProp": null,
-           	 "fnRender": function(obj) {
-		       		if(obj.aData.ORDER_STAMP!='' && obj.aData.ORDER_STAMP != null)
-		           		return "<div class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='order_stamp' value='"+obj.aData.ORDER_STAMP+"'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'> </i></span></div>";
-		       		else
-		       			return "<div class='input-append date'><input type='text' class='form-control search-control orderNo_filter' name='order_stamp'><span class='add-on'><i class='fa fa-calendar' data-time-icon='icon-time' data-date-icon='icon-calendar' onClick='datetimepicker(this)'> </i></span></div>";
-                }
-            },
-			{"mDataProp": null,
-           	 "fnRender": function(obj) {
-	       		 	if(obj.aData.ORDER_NO!='' && obj.aData.ORDER_NO != null){
-			            return "<input type='text' name='order_no' value="+obj.aData.ORDER_NO+" class='form-control search-control order_no'>";
-			        }else{
-			        	return "<input type='text' name='order_no' class='form-control search-control order_no'>";
-			        }
-                }
-            },
+          	{"mDataProp":null,"sWidth": "100px"},
+          	{"mDataProp":"CUSTOMER_ORDER_NO", "sWidth": "70px",},
 			{"mDataProp":null,"sWidth": "70px",
 			    "fnRender": function(obj) {
 			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
@@ -454,15 +421,25 @@ $(document).ready(function() {
     }); 
 	
 	//应收
-	$("#addFee").click(function(){	
+	$("#addFee").click(function(event){	
 		 var costMiscOrderId =$("#costMiscOrderId").val();
-		 $.post('/costMiscOrder/addNewFee?costMiscOrderId='+costMiscOrderId,function(data){
-			console.log(data);
-			if(data.ID > 0){
-				feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
-				feeTable.fnDraw();  
-			}
-		});		
+
+		 var insertNewFee = function(orderId){
+		 	$.post('/costMiscOrder/addNewFee?costMiscOrderId='+costMiscOrderId,function(data){
+				console.log(data);
+				if(data.ID > 0){
+					feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
+					feeTable.fnDraw();  
+				}
+			});
+		 }
+
+		 if(costMiscOrderId==""){
+		 	saveCostMiscOrder(event, insertNewFee); //save 主表
+		 }else{
+		 	insertNewFee(costMiscOrderId);
+		 }
+
 	});	
 	
 	//保存修改费用明细的方法
