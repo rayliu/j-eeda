@@ -276,7 +276,6 @@ public class CostMiscOrderController extends Controller {
 	public void updateCostMiscOrderItem(){
 		String paymentId = getPara("paymentId");
 		String costMiscOrderId = getPara("costMiscOrderId");
-		String costCheckOrderIds = getPara("costCheckOrderIds");
 		String name = getPara("name");
 		String value = getPara("value");
 		if ("amount".equals(name) && "".equals(value)) {
@@ -292,17 +291,7 @@ public class CostMiscOrderController extends Controller {
 		arapMiscCostOrder.set("total_amount", record.get("sum_amount"));
 		arapMiscCostOrder.update();
 		
-		if(costCheckOrderIds != null && !"".equals(costCheckOrderIds)){
-			if("amount".equals(name) && value != null && !"".equals(value)){
-				ArapCostOrder arapChargeOrder = ArapCostOrder.dao.findById(costCheckOrderIds);
-				Double debit_amount = arapChargeOrder.getDouble("debit_amount");  
-				Double misc_total_amount = Double.parseDouble(value);
-				Double total_amount = arapChargeOrder.getDouble("total_amount");
-				arapChargeOrder.set("debit_amount", debit_amount + misc_total_amount);
-				arapChargeOrder.set("cost_amount", total_amount - (debit_amount + misc_total_amount));
-				arapChargeOrder.update();
-			}
-		}
+		
 		renderJson(arapMiscCostOrder);
 	}
 	
