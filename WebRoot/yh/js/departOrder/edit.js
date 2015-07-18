@@ -664,6 +664,10 @@
     	    	}
     	    	// 保存单品
     	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
+    	    		$.post('/departOrder/saveupdatestate', $("#orderForm").serialize(), function(){	
+ 	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
+ 	                	paymenttable.fnDraw(); 
+ 	                });
     				$("#departOrderId").val(data.ID);
     				if(data.ID>0){
     					$("#departOrderId").val(data.ID);
@@ -712,6 +716,11 @@
     			e.preventDefault();	
     			//异步向后台提交数据
     			saveDepartOrderFunction();
+    			$.post('/departOrder/saveupdatestate', $("#orderForm").serialize(), function(){
+                	//$("#warehousingConfirmBtn").attr("disabled",false);
+                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
+                	paymenttable.fnDraw(); 
+                });
     	       
     	    }; 
     	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
@@ -726,7 +735,9 @@
     	    /*--------------------------------------------------------------------*/
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
+    	    	var priceType = $("input[name='priceType']:checked").val();
     	    	e.preventDefault();
+    	    	
 	    		$("#saveDepartOrderBtn").attr("disabled", true);
 			   	clickSaveDepartOrder(e);
     	    });
@@ -751,7 +762,7 @@
     			e.preventDefault();
     			var message=$("#message").val();
     	        var type=$("#type").val();
-    	        var depart_id=$("#depart_id").val();
+    	        var sp=$("#sp_id").val();
     	        var tr_item=$("#tr_itemid_list").val();
     	        var item_detail=$("#item_detail").val();
     	 	    var departOrderId = $("#departOrderId").val();
@@ -1055,15 +1066,12 @@
 					{"mDataProp":"PRICE"},
 					{"mDataProp":"AMOUNT",
 					     "fnRender": function(obj) {
-					    	 if(obj.aData.CREATE_NAME == 'system'){
-				        	 	 return obj.aData.AMOUNT;
-				        	 }else{
 				        		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
 						             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
 						         }else{
 						         	 return "<input type='text' name='amount'>";
 						         }
-				        	 }
+				        	 
 					 }},
 					 {"mDataProp":null,
 						 "fnRender":function(obj){
@@ -1124,7 +1132,6 @@
     			  e.preventDefault();
     			  $.post('/departOrder/finItemdel/'+id,function(data){
     	               //保存成功后，刷新列表
-    	               console.log(data);
     	               paymenttable.fnDraw();
     	           },'json');
     		 });
