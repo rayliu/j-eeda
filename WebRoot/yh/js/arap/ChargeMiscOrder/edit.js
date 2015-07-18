@@ -101,17 +101,17 @@ $(document).ready(function() {
             {"mDataProp":"CUSTOMER_ORDER_NO",
             	"fnRender": function(obj) {
 		        if(obj.aData.CUSTOMER_ORDER_NO!='' && obj.aData.CUSTOMER_ORDER_NO != null){
-		            return "<input type='text' name='customer_order_no' value='"+obj.aData.CUSTOMER_ORDER_NO+"'>";
+		            return "<input type='text' name='customer_order_no' value='"+obj.aData.CUSTOMER_ORDER_NO+"' class='form-control search-control'>";
 		        }else{
-		        	 return "<input type='text' name='customer_order_no'>";
+		        	 return "<input type='text' name='customer_order_no' class='form-control search-control'>";
 		        }
 		     }},
           	{"mDataProp":"ITEM_DESC",
 			    "fnRender": function(obj) {
 			        if(obj.aData.ITEM_DESC!='' && obj.aData.ITEM_DESC != null){
-			            return "<input type='text' name='item_desc' value='"+obj.aData.ITEM_DESC+"'>";
+			            return "<input type='text' name='item_desc' value='"+obj.aData.ITEM_DESC+"' class='form-control search-control'>";
 			        }else{
-			        	 return "<input type='text'  name='item_desc'>";
+			        	 return "<input type='text'  name='item_desc' class='form-control search-control'>";
 			        }
 			}},
 			{"mDataProp":"NAME",
@@ -126,13 +126,13 @@ $(document).ready(function() {
 			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
 			        		}
 			        	});
-			            return "<select name='fin_item_id'>"+str+"</select>";
+			            return "<select name='fin_item_id' class='form-control search-control'>"+str+"</select>";
 			        }else{
 			        	var str="";
 			        	$("#receivableItemList").children().each(function(){
 			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
 			        	});
-			        	return "<select name='fin_item_id'>"+str+"</select>";
+			        	return "<select name='fin_item_id' class='form-control search-control'>"+str+"</select>";
 			        }
 			 }},
 			{"mDataProp":"AMOUNT",
@@ -145,9 +145,9 @@ $(document).ready(function() {
 				         }
 			    	 }else{
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"' class='form-control search-control'>";
 				         }else{
-				         	 return "<input type='text' name='amount'>";
+				         	 return "<input type='text' name='amount' class='form-control search-control'>";
 				         }
 			    	 }
 			 }},
