@@ -322,7 +322,7 @@ $(document).ready(function() {
     if($("#costMiscOrderStatus").text() == 'new'){
     	$("#costMiscOrderStatus").text('新建');
 	}
-   
+    
     var feeTable = $('#feeItemList-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
@@ -332,14 +332,31 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
-        "fnRowCallback": function(nRow, aData) {
+    	
+    	//"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
+        "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
-		},
-        "aoColumns": [   
-          	{"mDataProp":null,"sWidth": "100px"},
-          	{"mDataProp":"CUSTOMER_ORDER_NO", "sWidth": "70px",},
+		},		
+        "aoColumns": [ 
+          	{"mDataProp":"CUSTOMER_ORDER_NO", "sWidth": "100px",
+          	 "fnRender": function(obj) {
+		        if(obj.aData.CUSTOMER_ORDER_NO!='' && obj.aData.CUSTOMER_ORDER_NO != null){
+		            return "<input type='text' name='customer_order_no' value='"+obj.aData.CUSTOMER_ORDER_NO+"' class='form-control search-control'>";
+		        }else{
+		        	 return "<input type='text' name='customer_order_no' class='form-control search-control'>";
+		        }
+		     }
+            },
+            {"mDataProp":null,"sWidth": "130px",
+        	    "fnRender": function(obj) {
+			        if(obj.aData.ITEM_DESC!='' && obj.aData.ITEM_DESC != null){
+			            return "<input type='text' name='item_desc' value='"+obj.aData.ITEM_DESC+"'  class='form-control search-control'>";
+			        }else{
+			        	 return "<input type='text'  name='item_desc' class='form-control search-control'>";
+			        }
+			    }
+        	},
 			{"mDataProp":null,"sWidth": "70px",
 			    "fnRender": function(obj) {
 			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
@@ -369,57 +386,22 @@ $(document).ready(function() {
 			        	return "<input type='text' name='amount' class='form-control search-control'>";
 			        }
 			}},
-			{"mDataProp":null,
-			    "fnRender": function(obj) {
-			        if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-			            return "<input type='text' name='remark' value="+obj.aData.REMARK+" class='form-control search-control'>";
-			        }else{
-			        	return "<input type='text' name='remark' class='form-control search-control'>";
-			        }
-			}},
+			{"mDataProp":"STATUS"},
 			{"mDataProp": null,
                 "fnRender": function(obj) {
-               		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'><i class='fa fa-trash-o fa-fw'> </i>删除明细</a>";
+               		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
                 }
             }   
         ]      
     });
-    
-    //查询银行账号
-    $.post('/costMiscOrder/searchAllAccount',function(data){
-		 if(data.length > 0){
-			 var accountTypeSelect = $("#accountTypeSelect");
-			 accountTypeSelect.empty();
-			 var hideAccountId = $("#hideAccountId").val();
-			 accountTypeSelect.append("<option ></option>");
-			 for(var i=0; i<data.length; i++){
-				 if(data[i].ID == hideAccountId){
-					 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
-				 }else{
-					 accountTypeSelect.append("<option value='"+data[i].ID+"'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");					 
-				 }
-			}
-		}
-	},'json');
-    
-    $("input[name='paymentMethod']").each(function(){
-		if($("#paymentMethodRadio").val() == $(this).val()){
-			$(this).attr('checked', true);
-			if($(this).val() == 'transfers'){	    		
-	    		$("#accountTypeDiv").show();    		
-	    	}
-		}
-	 }); 
-    
-    //付款方式
-    $("#paymentMethods").on('click', 'input', function(){
-    	if($(this).val() == 'cash'){
-    		$("#accountTypeDiv").hide();
-    	}else{
-    		$("#accountTypeDiv").show();    		
-    	}
-    }); 
-	
+
+	//不知道为什么，直接定义dataTable里定义sAjaxSource不起作用，需要在这里重新load
+	var costMiscOrderId =$("#costMiscOrderId").val();
+    if(costMiscOrderId!=""){
+		feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
+		feeTable.fnDraw(); 
+	} 
+    	
 	//应收
 	$("#addFee").click(function(){	
 		 var insertNewFee = function(costMiscOrderId){
@@ -453,7 +435,7 @@ $(document).ready(function() {
 		if(paymentId != "" && value != "" && costMiscOrderId != "")
 		$.post('/costMiscOrder/updateCostMiscOrderItem', {paymentId:paymentId, name:name, value:value, costMiscOrderId: costMiscOrderId, costCheckOrderIds: costCheckOrderIds}, function(data){
 			if(data.ID > 0){
-				$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;
+				//$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;
 			}else{
 				alert("修改失败!");
 			}
@@ -467,47 +449,11 @@ $(document).ready(function() {
 	});
 	
 	//费用明细列表修改(单据号，费用类型，金额，备注，日期)
-	$("#feeItemList-table").on('blur', 'input[name="order_stamp"],input[name="order_no"],input[name="amount"],input[name="remark"],select[name="fin_item_id"]', function(e){
+	$("#feeItemList-table").on('blur', 'input, select', function(e){
 		savaUpdataMethod(this);
 	});
 	
-	//点击文本框显示可选单号列表
-	$('#feeItemList-table').on('keyup click', 'input[name="order_no"]', function(){
-		var name = $(this);
-		var inputStr = $(this).val();
-		var orderType = $(this).parent().parent().find("td").find("select[name='order_type']").val();
-		var orderStamp = $(this).parent().parent().find("td").find("div").find("input[name='order_stamp']").val();
-		console.log("orderType:"+orderType+",orderStamp:"+orderStamp);
-		$(this).next().remove();
-		if(orderType != "otherOrder"){
-			$.get("/costMiscOrder/findOrderNoByOrderType", {input:inputStr,orderType:orderType,orderStamp:orderStamp}, function(data){
-				var str = "";
-	            for(var i = 0; i < data.length; i++)
-	            	str += "<li><a tabindex='-1' class='fromLocationItem' order_no='"+data[i].ORDER_NO+"' orderid='"+data[i].ID+"'>"+data[i].ORDER_NO+"</a></li>";
-	            name.after('<ul class="pull-right dropdown-menu default dropdown-scroll driverAssistantList" tabindex="-1" style="l">'+str+'</ul>');
-	            name.next().css({left:name.position().left+"px", top:name.position().top+32+"px",width: "100px"}).show();
-	        },'json');
-		}
-	});
-	
-	// 选中列表单号
-	$('#feeItemList-table').on('mousedown', '.fromLocationItem', function(e){	
-		$(this).parent().parent().parent().parent().attr("orderid",$(this).attr('orderid'));
-		$(this).parent().parent().parent().find("input[name='order_no']").val($(this).attr('order_no'));
-	    $(this).parent().parent().hide();   
-    });
-	
-    // 没选中单号，焦点离开，隐藏列表
-	$('#feeItemList-table').on('blur', '.order_no', function(e){	
-    	$(this).next().eq(0).css({left:$(this).position().left+"px", top:$(this).position().top+32+"px"}).hide();
-    });
-
-    //当用户只点击了滚动条，没选单号，再点击页面别的地方时，隐藏列表
-    $('#feeItemList-table').on('blur','.order_no', function(){
-        $('#companyList').hide();
-    });
-	
-	
+		
 	$("#costMiscOrderItem").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -540,88 +486,7 @@ $(document).ready(function() {
      		 feeTable.fnDraw();  
         },'text');
 	});	
-	
-	var typeRadio = $("#typeRadio").val();
-	$("input[name='type']").each(function(){
-		if(typeRadio == $(this).val()){
-			$(this).prop('checked', true);
-		}
-	});
-	
-	var costCheckListTab = $('#costCheckList-table').dataTable({
-        "bFilter": false, //不需要默认的搜索框
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 10,
-        "bServerSide": false,
-    	  "oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "aoColumns": [   
-            {"mDataProp":"ORDER_NO",
-            	"fnRender": function(obj) {
-        			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-        		}},
-            {"mDataProp":"STATUS",
-                "fnRender": function(obj) {
-                    if(obj.aData.STATUS=='new'){
-                        return '新建';
-                    }else if(obj.aData.STATUS=='checking'){
-                        return '已发送对帐';
-                    }else if(obj.aData.STATUS=='confirmed'){
-                        return '已审核';
-                    }else if(obj.aData.STATUS=='completed'){
-                        return '已结算';
-                    }else if(obj.aData.STATUS=='cancel'){
-                        return '取消';
-                    }
-                    return obj.aData.STATUS;
-                }
-            },
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":"CNAME"},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":"TOTAL_AMOUNT"},
-            {"mDataProp":null},
-            {"mDataProp":"DEBIT_AMOUNT"},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":"COST_AMOUNT"},
-            {"mDataProp":"REMARK"},
-            {"mDataProp":null},        	
-            {"mDataProp":"CREATE_STAMP"}                       
-        ]      
-    });	
-	
-	//tab-对账单明细
-    $("#costCheckList").click(function(e){
-    	if(parentId == "costMiscOrderbasic"){
-        	saveCostMiscOrder(e);
-        }
-    	var costCheckOrderIds =$("#costCheckOrderIds").val();
-		if(costCheckOrderIds != "" && costCheckOrderIds != null){
-			costCheckListTab.fnSettings().oFeatures.bServerSide = true;
-			costCheckListTab.fnSettings().sAjaxSource = "/costMiscOrder/costCheckorderListById?costCheckOrderIds="+costCheckOrderIds;
-			costCheckListTab.fnDraw();
-		}
-		parentId = e.target.getAttribute("id");
-    });
-    
-    //保存费用明细客户与供应商的方法
-    var savePartyInfo = function(partyId,partyType){
-		var costMiscId = $("#costMiscOrderId").val();
-		if(costMiscId != ""){
-			$.post('/costMiscOrder/saveMiscPartyInfo',{miscId:costMiscId,partyId:partyId,partyType:partyType},function(data){
-				if(!data.success){
-					alert("保存出错");
-				}
-			});	
-		}
-	};
-    
+	    
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
@@ -705,6 +570,7 @@ $(document).ready(function() {
     });
     
 });
+
 function datetimepicker(data){
 	if(!$("#saveCarSummaryBtn").prop("disabled")){
 		$('.input-append').datetimepicker({  

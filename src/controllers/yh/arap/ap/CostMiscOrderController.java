@@ -240,7 +240,7 @@ public class CostMiscOrderController extends Controller {
 
 		// 获取当前页的数据
 		List<Record> orders = Db
-				.find("select amcoi.id, amcoi.create_date, amcoi.customer_order_no, amcoi.amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amcoi.remark,amco.order_no cost_order_no,c.abbr cname,fi.name name "
+				.find("select amcoi.id, amcoi.create_date, amcoi.status, amcoi.item_desc, amcoi.customer_order_no, amcoi.amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amcoi.remark,amco.order_no cost_order_no,c.abbr cname,fi.name name "
 					+ " from arap_misc_cost_order_item amcoi"
 					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
 					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
