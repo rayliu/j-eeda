@@ -421,10 +421,8 @@ $(document).ready(function() {
     }); 
 	
 	//应收
-	$("#addFee").click(function(event){	
-		 var costMiscOrderId =$("#costMiscOrderId").val();
-
-		 var insertNewFee = function(orderId){
+	$("#addFee").click(function(){	
+		 var insertNewFee = function(costMiscOrderId){
 		 	$.post('/costMiscOrder/addNewFee?costMiscOrderId='+costMiscOrderId,function(data){
 				console.log(data);
 				if(data.ID > 0){
@@ -432,9 +430,9 @@ $(document).ready(function() {
 					feeTable.fnDraw();  
 				}
 			});
-		 }
-
-		 if(costMiscOrderId==""){
+		 };
+		 var costMiscOrderId =$("#costMiscOrderId").val();
+		 if(costMiscOrderId=="" || costMiscOrderId==null){
 		 	saveCostMiscOrder(event, insertNewFee); //save 主表
 		 }else{
 		 	insertNewFee(costMiscOrderId);
