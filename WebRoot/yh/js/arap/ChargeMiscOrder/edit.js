@@ -4,7 +4,7 @@ $(document).ready(function() {
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
-	var saveChargeMiscOrder = function(e){
+	var saveChargeMiscOrder = function(e,callback){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -14,7 +14,11 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/chargeMiscOrder/save', $("#chargeMiscOrderForm").serialize(), function(data){
 			if(data.ID>0){
+				$("#miscChargeOrderNo").html('<strong>'+data.ORDER_NO+'</strong>');
+				$("#create_stamp").html(data.CREATE_STAMP);
 				$("#chargeMiscOrderId").val(data.ID);
+				contactUrl("edit?id",data.ID);
+				callback(data.ID);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -92,11 +96,25 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/chargeMiscOrder/chargeMiscOrderItemList",
+        "sAjaxSource": "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+$("#chargeMiscOrderId").val(),
         "aoColumns": [   
-          	{"mDataProp":"CHARGE_ORDER_NO","sWidth": "80px"},
-          	{"mDataProp":"CNAME","sWidth": "150px"},
-			{"mDataProp":"NAME","sWidth": "150px",
+            {"mDataProp":"CUSTOMER_ORDER_NO",
+            	"fnRender": function(obj) {
+		        if(obj.aData.CUSTOMER_ORDER_NO!='' && obj.aData.CUSTOMER_ORDER_NO != null){
+		            return "<input type='text' name='customer_order_no' value='"+obj.aData.CUSTOMER_ORDER_NO+"'>";
+		        }else{
+		        	 return "<input type='text' name='customer_order_no'>";
+		        }
+		     }},
+          	{"mDataProp":"ITEM_DESC",
+			    "fnRender": function(obj) {
+			        if(obj.aData.ITEM_DESC!='' && obj.aData.ITEM_DESC != null){
+			            return "<input type='text' name='item_desc' value='"+obj.aData.ITEM_DESC+"'>";
+			        }else{
+			        	 return "<input type='text'  name='item_desc'>";
+			        }
+			}},
+			{"mDataProp":"NAME",
 			    "fnRender": function(obj) {
 			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
 			        	var str="";
@@ -117,7 +135,7 @@ $(document).ready(function() {
 			        	return "<select name='fin_item_id'>"+str+"</select>";
 			        }
 			 }},
-			{"mDataProp":"AMOUNT","sWidth": "150px",
+			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
 			    	 if(obj.aData.CREATE_NAME == 'system'){
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
@@ -132,16 +150,14 @@ $(document).ready(function() {
 				         	 return "<input type='text' name='amount'>";
 				         }
 			    	 }
-			 }},  
-			{"mDataProp":"REMARK","sWidth": "200px",
-			    "fnRender": function(obj) {
-			        if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-			            return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
-			        }else{
-			        	 return "<input type='text' name='remark'>";
-			        }
-			}}, 
-			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},                    
+			 }},
+			{"mDataProp":"STATUS","sClass": "status"},
+            {"mDataProp": null,"sWidth": "80px",
+                "fnRender": function(obj) {
+                        return    "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'><i class='fa fa-trash-o fa-fw'> </i>删除明细</a>";
+                }
+            }   
+
 			/* TODO 由于暂时未处理,所以先注释
 			 * {
 				"mDataProp": null, 
@@ -157,7 +173,7 @@ $(document).ready(function() {
         ]      
     });
     
-    $.post('/chargeMiscOrder/searchAllAccount',function(data){
+   /* $.post('/chargeMiscOrder/searchAllAccount',function(data){
 		 if(data.length > 0){
 			 var accountTypeSelect = $("#accountTypeSelect");
 			 accountTypeSelect.empty();
@@ -172,7 +188,7 @@ $(document).ready(function() {
 			}
 		}
 	},'json');
-
+*/
     $("input[name='paymentMethod']").each(function(){
 		if($("#paymentMethodRadio").val() == $(this).val()){
 			$(this).attr('checked', true);
@@ -190,16 +206,79 @@ $(document).ready(function() {
     	}
     }); 
 	
+    
+  //保存费用明细客户与供应商的方法
+    var savePartyInfo = function(partyId,partyType){
+		var costMiscId = $("#costMiscOrderId").val();
+		if(costMiscId != ""){
+			$.post('/costMiscOrder/saveMiscPartyInfo',{miscId:costMiscId,partyId:partyId,partyType:partyType},function(data){
+				if(!data.success){
+					alert("保存出错");
+				}
+			});	
+		}
+	};
+    
+    //获取客户列表，自动填充
+    $('#customer_filter').on('keyup click', function(){
+        var inputStr = $('#customer_filter').val();
+        var companyList =$("#companyList");
+        $.get("/transferOrder/searchPartCustomer", {input:inputStr}, function(data){
+            companyList.empty();
+            for(var i = 0; i < data.length; i++){
+                var abbr = data[i].ABBR;
+				var company_name = data[i].COMPANY_NAME;
+				if(abbr == null) 
+					abbr = '';
+				if(company_name == null)
+					company_name = '';
+				companyList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
+            }
+        },'json');
+        companyList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
+    });
+    
+    $('#companyList').on('click', '.fromLocationItem', function(e){        
+        $('#customer_filter').val($(this).attr("company_name"));
+        $("#companyList").hide();
+        var companyId = $(this).attr('partyId');
+        $('#customer_id').val(companyId);
+        //savePartyInfo(companyId,"CUSTOMER");
+    });
+    // 没选中客户，焦点离开，隐藏列表
+    $('#customer_filter').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+    $('#customer_filter').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    $('#companyList').on('mousedown', function(){
+        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+    });
+    
+    
 	//应收
-	$("#addFee").click(function(){	
-		 var chargeMiscOrderId =$("#chargeMiscOrderId").val();
-		 $.post('/chargeMiscOrder/addNewFee?chargeMiscOrderId='+chargeMiscOrderId,function(data){
-			console.log(data);
-			if(data.ID > 0){
-				feeTable.fnSettings().sAjaxSource = "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+chargeMiscOrderId;
-				feeTable.fnDraw();  
-			}
-		});		
+	$("#addFee").click(function(){
+		var insertNewFee  = function(chargeMiscOrderId){
+			$.post('/chargeMiscOrder/addNewFee?chargeMiscOrderId='+chargeMiscOrderId,function(data){
+				console.log(data);
+				if(data.ID > 0){
+					feeTable.fnSettings().sAjaxSource = "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+chargeMiscOrderId;
+					feeTable.fnDraw();  
+				}
+			});		
+		};
+		
+		var chargeMiscOrderId =$("#chargeMiscOrderId").val();
+		if(chargeMiscOrderId==null || chargeMiscOrderId==''){
+			saveChargeMiscOrder(event, insertNewFee);
+		}else{
+		 	insertNewFee(chargeMiscOrderId);
+		 }
+		 
 	});	
 	
 	//应收修改
@@ -212,7 +291,7 @@ $(document).ready(function() {
 		var chargeCheckOrderIds = $("#chargeCheckOrderIds").val();
 		$.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value, chargeMiscOrderId: chargeMiscOrderId, chargeCheckOrderIds: chargeCheckOrderIds}, function(data){
 			if(data.ID > 0){
-				$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;
+				$("#totalAmountSpan").html(data.TOTAL_AMOUNT);
 			}else{
 				alert("修改失败!");
 			}
@@ -224,16 +303,16 @@ $(document).ready(function() {
 		feeTable.fnDraw();  
 	});
 	
-	//异步删除应付
+	//异步删除应收
 	$("#feeItemList-table").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
 		$.post('/chargeMiscOrder/finItemdel/'+id,function(data){
              //保存成功后，刷新列表
-             console.log(data);
+			 $("#totalAmountSpan").html(data.TOTAL_AMOUNT);
              feeTable.fnSettings().sAjaxSource = "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+$("#chargeMiscOrderId").val();
-     		 feeTable.fnDraw();  
-        },'text');
+     		 feeTable.fnDraw(); 
+        },'json');
 	});	
 	
 	var typeRadio = $("#typeRadio").val();

@@ -31,7 +31,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -129,9 +128,11 @@ public class ChargeMiscOrderController extends Controller {
 		ArapMiscChargeOrder arapMiscChargeOrder = null;
 		String chargeMiscOrderId = getPara("chargeMiscOrderId");
 		String paymentMethod = getPara("paymentMethod");
+		String customer_id = getPara("customer_id");
 		if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {
 			arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(chargeMiscOrderId);
 			arapMiscChargeOrder.set("type", getPara("type"));
+			arapMiscChargeOrder.set("customer_id", getPara("customer_id"));
 			arapMiscChargeOrder.set("remark", getPara("remark"));
 			arapMiscChargeOrder.set("payment_method", getPara("paymentMethod"));
 			if("transfers".equals(paymentMethod)){
@@ -146,6 +147,9 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrder = new ArapMiscChargeOrder();
 			arapMiscChargeOrder.set("status", "新建");
 			arapMiscChargeOrder.set("type", getPara("type"));
+			if(!"".equals(customer_id) && customer_id != null){
+				arapMiscChargeOrder.set("customer_id", getPara("customer_id"));
+			}
 			arapMiscChargeOrder.set("create_by", getPara("create_by"));
 			arapMiscChargeOrder.set("create_stamp", new Date());
 			arapMiscChargeOrder.set("remark", getPara("remark"));
@@ -167,7 +171,7 @@ public class ChargeMiscOrderController extends Controller {
 			}
 			arapMiscChargeOrder.save();
 		}
-		renderJson(arapMiscChargeOrder);;
+		renderJson(arapMiscChargeOrder);
 	}
 	
 	// 审核
@@ -213,7 +217,9 @@ public class ChargeMiscOrderController extends Controller {
 		UserLogin userLogin = UserLogin.dao.findById(arapMiscChargeOrder.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapMiscChargeOrder", arapMiscChargeOrder);
-			render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
+		Record r = Db.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"+arapMiscChargeOrder.getLong("customer_id")+"'" );
+		setAttr("customer_id", r.get("company_name"));
+		render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
 	}
     
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
@@ -272,6 +278,7 @@ public class ChargeMiscOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		arapMiscChargeOrderItem.set("creator", users.get(0).get("id"));
 		arapMiscChargeOrderItem.set("create_date", new Date());
+		arapMiscChargeOrderItem.set("fin_item_id", 4);
 		arapMiscChargeOrderItem.set("misc_order_id", getPara("chargeMiscOrderId"));
 		arapMiscChargeOrderItem.save();
 		renderJson(arapMiscChargeOrderItem);
@@ -311,8 +318,17 @@ public class ChargeMiscOrderController extends Controller {
 	}
 	
 	public void finItemdel(){
-		ArapMiscChargeOrderItem.dao.deleteById(getPara());
-		renderJson("{\"success\":true}");
+		//ArapMiscChargeOrderItem.dao.deleteById(getPara());
+		ArapMiscChargeOrderItem arapMiscChargeOrderItem = ArapMiscChargeOrderItem.dao.findById(getPara());
+		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(arapMiscChargeOrderItem.getLong("misc_order_id"));
+		Double Tamount = arapMiscChargeOrder.getDouble("total_amount");
+		Double amount = arapMiscChargeOrderItem.getDouble("amount");
+		if((Tamount != null && !Tamount.equals("")) && (amount != null && !amount.equals(""))){
+			Double total_amount = arapMiscChargeOrder.getDouble("total_amount")-arapMiscChargeOrderItem.getDouble("amount");
+			arapMiscChargeOrder.set("total_amount",total_amount).update();
+		}
+		arapMiscChargeOrderItem.delete();
+		renderJson(arapMiscChargeOrder);
 	}
 	
 	public void chargeCheckList() {

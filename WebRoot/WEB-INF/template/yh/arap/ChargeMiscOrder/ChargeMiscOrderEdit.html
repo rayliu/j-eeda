@@ -11,39 +11,38 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <!-- Nav tabs -->
                             <ul id="orderTabs" class="nav nav-tabs">
                                 <li class="active"><a href="#basic" data-toggle="tab" data-src="basic" id ="chargeMiscOrderbasic" >基本信息</a>
-                                </li>
+                                <!-- </li>
                                 <li class=""><a href="#arap" data-toggle="tab" id="chargeMiscOrderItem">费用明细</a>
-                                </li>
-                                <li class="" style="display:none;"><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
-                                </li>                                
-                                <li class=""><a href="#cargos" data-toggle="tab" id="chargeCheckList">对账单明细</a>
-                                </li>
+                                </li> -->
+                                <!-- <li class="" style="display:none;"><a href="#milestone" data-toggle="tab" id="transferOrderMilestoneList">里程碑</a>
+                                </li>  -->                               
+                               <!--  <li class=""><a href="#cargos" data-toggle="tab" id="chargeCheckList">对账单明细</a>
+                                </li> -->
                             </ul>
 
                             <!-- Tab panes -->
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="basic">
                                 <div class="row">
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <form role="form" id="chargeMiscOrderForm">
                                         	<input id="chargeMiscOrderId" type="hidden" name="chargeMiscOrderId" value="${arapMiscChargeOrder.id!''}"/>
                                         	<input id="customer_id" type="hidden" name="customer_id" value="${party.id!''}"/>
                                         	<input type="hidden" id="chargeCheckOrderIds" name="chargeCheckOrderIds" value="${chargeCheckOrderIds!''}${arapMiscChargeOrder.charge_order_id!''}"/>
-                                        	<input type="hidden" name="order_no" value="${order_no!''}${arapMiscChargeOrder.order_no!''}"/>
+                                        	<input type="hidden" name="order_no" id = "order_no" value="${order_no!''}${arapMiscChargeOrder.order_no!''}"/>
                                         	<input type="hidden" name="status" value="${status!''}${arapMiscChargeOrder.status!''}"/>
                                         	<input type="hidden" name="create_by" value="${create_by!''}${arapMiscChargeOrder.create_by!''}"/>
                                         	<input type="hidden" id="totalAmount" name="total_amount" value="${arapMiscChargeOrder.total_amount!''}"/>
 		                                    <h2>手工收入单信息</h2>
 		                                    <div class="form-group">
-		                                        <label>手工收入单号</label> <strong>${order_no!''}${arapMiscChargeOrder.order_no!''}</strong>
+		                                        <label>手工收入单号</label> <span id="miscChargeOrderNo"><strong>${order_no!''}${arapMiscChargeOrder.order_no!''}</strong></span>
 		                                    </div>
-		                                    <div class="form-group">
+		                                   <!--  <div class="form-group">
 		                                        <label>类型</label>
 		                                        <input id="typeRadio" type="hidden" value="${arapMiscChargeOrder.type!''}"/>
                                                 <label class="radio-inline">
@@ -52,7 +51,7 @@
                                                 <label class="radio-inline">
                                                     <input type="radio" name="type" id="type2" value="offset_payment">抵扣运费
                                                 </label>
-		                                    </div>
+		                                    </div> -->
 		                                    <div class="form-group">
 		                                        <label>状态</label>   <span  id="chargeMiscOrderStatus">${status!''}${arapMiscChargeOrder.status!''}</span>
 		                                    </div>
@@ -60,23 +59,28 @@
 		                                        <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>创建时间</label>   ${arapMiscChargeOrder.create_stamp!''}                                     
+		                                        <label>创建时间</label> <span  id="create_stamp">${arapMiscChargeOrder.create_stamp!''}</span>                                    
 		                                    </div>
                                             <div class="form-group">
                                                 <label>备注</label>
-                                                <textarea class="form-control" rows="7" name="remark">${arapMiscChargeOrder.remark!''}</textarea>
+                                                <textarea class="form-control" rows="5" name="remark">${arapMiscChargeOrder.remark!''}</textarea>
                                             </div>                               
                                     </div>
                                     <!-- /.col-lg-6 (nested) -->
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <h2>应收信息</h2>
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label>客户</label>
                                             <label class="radio-inline" id="company">${customer.company_name!''}</label>
-                                        </div>
+                                        </div> -->
+                                        <div class="form-group">
+		                                            <label class="search-label">客户名称</label>
+		                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择客户" value="${customer_id!''}">
+		                                        	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 22%; left: 33%;"></ul>
+		                                </div>
                                         <div class="form-group">
                                             <label>收款金额</label>
-                                            <label class="radio-inline" id="totalAmountSpan">${arapMiscChargeOrder.total_amount!''}</label>
+                                            <span id="totalAmountSpan">${arapMiscChargeOrder.total_amount!''}</span>
                                         </div>
                                         <!--div class="form-group" id="paymentMethods">
                                             <label class="label-margin">收款方式</label>
@@ -93,8 +97,7 @@
                                             <input id="hideAccountId" type="hidden" value="${arapMiscChargeOrder.account_id!''}" />   
                                             <select id="accountTypeSelect" class="form-control" name="accountTypeSelect"></select> 
                                         </div-->                                            
-                                    </form>                                        
-                                       
+                                    </form>           
                                    <!--  <h2>时间段</h2>
                                     <form role="form">
                                         <div class="form-group">
@@ -104,9 +107,41 @@
                                     </form> -->
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
+                                
                             </div>
+                            <div class="panel-body">
+                            		<h2>收款明细</h2>
+                                    <div class ="form-group">
+                                    	<button class="btn  btn-primary btn-sm" id="addFee">添加费用</button>
+                                    </div>
+                                        <div class="table-responsive">
+			                                <table class="table table-striped table-bordered table-hover" id="feeItemList-table">
+			                                    <thead>
+			                                        <tr>
+			                                            <th>委托单号</th>
+			                                            <th>费用描述</th>
+			                                            <th>费用条目</th>
+			                                            <th>金额</th>
+			                                            <th>状态</th>
+			                                            <th>撤销</th>
+			                                        </tr>
+			                                    </thead>
+			                                    <tbody>
+			                                    <div id="receivableItemList" style="display:none;">
+	                                            	<%for(receivableItem in receivableItemList){ %>
+   														<option value='${receivableItem.ID!''}'>${receivableItem.NAME!''}</option>
+	   												<%		
+	   													}
+	   												%>
+                                            	</div>                                                                                                  
+			                                    </tbody>
+			                                </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                            
                          </div>
-                                <div class="tab-pane fade" id="milestone">
+                                <!-- <div class="tab-pane fade" id="milestone">
                                     <div class="panel-body">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered table-hover">
@@ -165,11 +200,11 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <!-- /.table-responsive -->
+                                        /.table-responsive
                                     </div>
-                                    <!-- /.panel-body -->
-                                </div>
-                                <div class="tab-pane fade" id="arap">
+                                    /.panel-body
+                                </div> -->
+                                <!-- <div class="tab-pane fade" id="arap">
                                     <div class="panel-body">
                                     <div class ="form-group">
                                     	<button class="btn  btn-primary btn-sm" id="addFee">添加费用</button>
@@ -184,7 +219,7 @@
 			                                            <th>金额</th>
 			                                            <th>备注</th>
 			                                            <th>状态</th>
-			                                            <!-- <th></th> -->
+			                                            <th></th>
 			                                        </tr>
 			                                    </thead>
 			                                    <tbody>
@@ -198,11 +233,11 @@
 			                                    </tbody>
 			                                </table>
                                         </div>
-                                        <!-- /.table-responsive -->
+                                        /.table-responsive
                                     </div>
-                                    <!-- /.panel-body -->
-								</div>
-                                <div class="tab-pane fade" id="cargos">
+                                    /.panel-body
+								</div> -->
+                                <!-- <div class="tab-pane fade" id="cargos">
                                     <div class="panel-body">
                                         <div class="table-responsive">
 			                                <table class="table table-striped table-bordered table-hover" id="chargeCheckList-table">
@@ -233,10 +268,10 @@
 			                                    </tbody>
 			                                </table>
                                         </div>
-                                        <!-- /.table-responsive -->
+                                        /.table-responsive
                                     </div>
-                                    <!-- /.panel-body -->
-								</div>
+                                    /.panel-body
+								</div> -->
                                 <div class=".tooltip-demo">
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
