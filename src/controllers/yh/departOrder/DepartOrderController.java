@@ -785,7 +785,7 @@ public class DepartOrderController extends Controller {
 					+ " or (tor.cargo_nature = 'cargo' and tor.pickup_assign_status = 'ALL' and (select group_concat(cast(dorr.id as char) separator ',') pickup_id from depart_transfer dt left join depart_order dorr on dorr.id = dt.pickup_id where dt.order_id = tor.id and dt.depart_id is null and dorr.status != '已入货场') is null)) "
 					+ " and (ifnull(tor.depart_assign_status, '') = '"
 					+ TransferOrder.ASSIGN_STATUS_NEW
-					+ "' or (tor.pickup_assign_status = '"
+					+ "' or (tor.depart_assign_status = '"
 					+ TransferOrder.ASSIGN_STATUS_PARTIAL
 					+ "' and (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt "
 					+ " left join depart_pickup dp on dp.pickup_id = dt.pickup_id  left join depart_order dd on dd.id = dt.pickup_id where dt.order_id = tor.id "
