@@ -218,7 +218,8 @@ public class ChargeMiscOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 		setAttr("arapMiscChargeOrder", arapMiscChargeOrder);
 		Record r = Db.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"+arapMiscChargeOrder.getLong("customer_id")+"'" );
-		setAttr("customer_id", r.get("company_name"));
+		if(r!=null)
+			setAttr("customer_id", r.get("company_name"));
 		render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
 	}
     
