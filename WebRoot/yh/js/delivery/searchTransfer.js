@@ -184,7 +184,8 @@ $(document).ready(function() {
 			    "fnRender": function(obj) {
 			       return '<input type="checkbox" class="checkedOrUnchecked" code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.ID+'">';
 			    }
-			},          
+			},  
+			{"mDataProp":"TID"},
             {"mDataProp":null,
 				"sWidth": "10%", 
 				"fnRender": function(obj) {
@@ -399,11 +400,13 @@ $(document).ready(function() {
          var warehouseName =$("#warehouse2").val();
          var code= $("#orderStatue2").val();
          var deliveryOrderNo = $("#deliveryOrderNo2").val();
+         var singleid = $("#singleid").val();
          var rdc = $('#hiddenRdc').val();
+         var customer_order_number =$("#customer_order_number").val();
          //如果客户和仓库都有值，触发查询
          if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
         	 dab.fnSettings().oFeatures.bServerSide = true;
-             dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+             dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
         	 dab.fnDraw();
          }
          
@@ -560,11 +563,13 @@ $(document).ready(function() {
 		var warehouseName =$("#warehouse2").val();
 		var code= $("#orderStatue2").val();
 		var deliveryOrderNo = $("#deliveryOrderNo2").val();
+		var customer_order_number = $("#customer_order_number").val();
+		var singleid= $("#singleid").val();
 		var rdc = $('#hiddenRdc').val();
 		//如果客户和仓库都有值，触发查询
 		if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
 			dab.fnSettings().oFeatures.bServerSide = true;
-			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
 			dab.fnDraw();
 		}
 	  
@@ -653,19 +658,21 @@ $(document).ready(function() {
 	
     
 	/***red,? 客户和仓库一有值得时候触发事件****/
-  	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2').on('keyup click', function(){
+  	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2,#customer_order_number,#singleid').on('keyup click', function(){
   		var inputStr = $('#customerName2').val();
         var warehouseName =$("#warehouse2").val();
+        var customer_order_number = $("#customer_order_number").val();
         var code= $("#orderStatue2").val();
         var deliveryOrderNo = $("#deliveryOrderNo2").val();
+        var singleid = $("#singleid").val();
        //如果客户和仓库都有值，触发查询
         if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
     		dab.fnDraw();
         }else{
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
     		dab.fnDraw();
         }
 		           

@@ -714,6 +714,8 @@ public class DeliveryController extends Controller {
 		String orderStatue = getPara("orderStatue");
 		String warehouse = getPara("warehouse");
 		String code =getPara("code");
+		String customer_order_number=getPara("customer_order_number");
+		String singleid = getPara("singleid");
 		Map transferOrderListMap = new HashMap();
 		if(customerName==null&&warehouse==null){
 			transferOrderListMap.put("sEcho", 0);
@@ -746,7 +748,7 @@ public class DeliveryController extends Controller {
 		
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null && orderStatue == null && warehouse == null&&code==null) {
-			sql= "select  t1.serial_no,t1.item_no,t1.id as tid,t1.notify_party_company as company,t2.*,w.warehouse_name,c.abbr,c2.address as Naddress "
+			sql= "select t1.id id,t1.serial_no,t1.item_no,t1.id as tid,t1.notify_party_company as company,t2.*,w.warehouse_name,c.abbr,c2.address as Naddress "
 					+ " from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
 					+ " left join warehouse w on t2.warehouse_id = w.id "
@@ -785,6 +787,14 @@ public class DeliveryController extends Controller {
 			if(deliveryOrderNo!=""&&deliveryOrderNo!=null){
 				sqlTotal =sqlTotal+" and ifnull(t2.order_no,'') like '%"+ deliveryOrderNo+ "%'";
 				sql =sql+" and ifnull(t2.order_no,'') like '%"+ deliveryOrderNo+ "%'";
+			}
+			if(singleid!=""&&singleid!=null){
+				sqlTotal =sqlTotal+" and ifnull(t1.id,'') like '%"+ singleid+ "%'";
+				sql =sql+" and ifnull(t1.id,'') like '%"+ singleid+ "%'";
+			}
+			if(customer_order_number!=""&&customer_order_number!=null){
+				sqlTotal =sqlTotal+" and ifnull(t2.customer_order_no,'') like '%"+ customer_order_number+ "%'";
+				sql =sql+" and ifnull(t2.customer_order_no,'') like '%"+ customer_order_number+ "%'";
 			}
 			
 			if(warehouse!=""&&customerName!=""&&warehouse!=null&&customerName!=null){
