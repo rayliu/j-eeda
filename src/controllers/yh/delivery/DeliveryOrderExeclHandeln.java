@@ -159,26 +159,26 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 				break;
 			}
     		
-    		try {
-        		dbDataFormat.parse(content.get(j).get("向客户预约时间"));
-			} catch (ParseException e) {
-				title = "向客户预约时间";
-				because = "数据有误";
-				break;
-			}
-    		
-    		try {
-        		if("".equals(content.get(j).get("业务要求配送时间"))){
-        			title = "业务要求配送时间";
-        			break;
-        		}else{
-        			dbDataFormat.parse(content.get(j).get("业务要求配送时间"));
-        		}
-			} catch (ParseException e) {
-				title = "业务要求配送时间";
-				because = "数据有误";
-				break;
-			}
+//    		try {
+//        		dbDataFormat.parse(content.get(j).get("向客户预约时间"));
+//			} catch (ParseException e) {
+//				title = "向客户预约时间";
+//				because = "数据有误";
+//				break;
+//			}
+//    		
+//    		try {
+//        		if("".equals(content.get(j).get("业务要求配送时间"))){
+//        			title = "业务要求配送时间";
+//        			break;
+//        		}else{
+//        			dbDataFormat.parse(content.get(j).get("业务要求配送时间"));
+//        		}
+//			} catch (ParseException e) {
+//				title = "业务要求配送时间";
+//				because = "数据有误";
+//				break;
+//			}
     		
     		because = "数据有误";
     		//始发地城市
