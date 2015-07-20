@@ -42,7 +42,7 @@
                                         	<input type="hidden" name="create_by" value="${create_by!''}${arapMiscCostOrder.create_by!''}"/>
 		                                    <h2></h2>
 		                                    <div class="form-group">
-		                                        <label>手工成本单号</label> <strong>${order_no!''}${arapMiscCostOrder.order_no!''}</strong>
+		                                        <label>手工成本单号</label> <span id="arapMiscCostOrderNo"><strong>${order_no!''}${arapMiscCostOrder.order_no!''}</strong></span>
 		                                    </div>
 		                                    <!-- <div class="form-group">
 		                                        <label>类型</label>
@@ -61,7 +61,7 @@
 		                                        <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>                                       
 		                                    </div>
 		                                    <div class="form-group">
-		                                        <label>创建时间</label>   ${arapMiscCostOrder.create_stamp!''}                                     
+		                                        <label>创建时间</label>   <span id="create_time">${arapMiscCostOrder.create_stamp!''} </span>                                    
 		                                    </div>
                                             <div class="form-group">
                                                 <label>备注</label>

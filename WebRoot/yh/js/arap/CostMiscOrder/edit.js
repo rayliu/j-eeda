@@ -14,6 +14,8 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/costMiscOrder/save', $("#costMiscOrderForm").serialize(), function(data){
 			if(data.ID>0){
+				$("#arapMiscCostOrderNo").html(data.ORDER_NO);
+				$("#create_time").html(data.CREATE_STAMP);
 				$("#costMiscOrderId").val(data.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				contactUrl("edit?id", data.ID);
@@ -339,7 +341,7 @@ $(document).ready(function() {
 			return nRow;
 		},		
         "aoColumns": [ 
-          	{"mDataProp":"CUSTOMER_ORDER_NO", "sWidth": "100px",
+          	{"mDataProp":null, "sWidth": "100px",
           	 "fnRender": function(obj) {
 		        if(obj.aData.CUSTOMER_ORDER_NO!='' && obj.aData.CUSTOMER_ORDER_NO != null){
 		            return "<input type='text' name='customer_order_no' value='"+obj.aData.CUSTOMER_ORDER_NO+"' class='form-control search-control'>";
