@@ -333,7 +333,25 @@ public class CostItemConfirmController extends Controller {
 				+ " left join party p on ior.insurance_id = p.id "
 				+ " left join contact c on p.contact_id = c.id "
 				+ " left join office oe on oe.id = tor.office_id "
-				+ " where unix_timestamp(ior.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and ior.audit_status='新建' and p.party_type = 'INSURANCE_PARTY' and ifit.id is not null group by ior.id  ) as A ";
+				+ " where unix_timestamp(ior.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and ior.audit_status='新建' and p.party_type = 'INSURANCE_PARTY' and ifit.id is not null group by ior.id "
+				+ " union "
+				+ " SELECT DISTINCT	amco.id,amco.order_no, amco.STATUS, l.name route_from,"
+				+ " l1.name route_to,c.abbr spname,NULL as amount,NULL as volume,NULL as weight,"
+				+ " amco.create_stamp,ul.user_name creator,'成本单' business_type,"
+				+ " NULL as booking_note_number,amco.total_amount pay_amount,NULL as alance,"
+				+ " NULL as transfer_order_no,NULL as return_order_collection,amco.remark remark,"
+				+ " amco.create_stamp as depart_time,NULL as office_name,c1.abbr cname,NULL as transport_cost,"
+				+ " NULL as carry_cost,NULL as climb_cost,NULL as insurance_cost,NULL as take_cost,"
+				+ " NULL as anzhuang_cost,NULL as cangchu_cost,NULL as other_cost"
+				+ " FROM arap_misc_cost_order amco"
+				+ " LEFT JOIN user_login ul ON ul.id = amco.create_by"
+				+ " LEFT JOIN party p1 ON amco.customer_id = p1.id"
+				+ " LEFT JOIN contact c1 ON p1.contact_id = c1.id"
+				+ " LEFT JOIN party p ON amco.sp_id = p.id"
+				+ " LEFT JOIN contact c ON p.contact_id = c.id"
+				+ " LEFT JOIN location l ON amco.route_from=l.code"
+				+ " LEFT JOIN location l1 ON amco.route_to=l1.code"
+				+ " GROUP BY amco.id) as A ";
         String condition = "";
       
         if(orderNo != null || sp != null || no != null || beginTime != null
