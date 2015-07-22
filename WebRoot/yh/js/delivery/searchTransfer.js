@@ -185,9 +185,8 @@ $(document).ready(function() {
 			       return '<input type="checkbox" class="checkedOrUnchecked" code3='+obj.aData.CUSTOMER_ID+' name="order_check_box" value="'+obj.aData.ID+'">';
 			    }
 			},  
-			{"mDataProp":"TID"},
-            {"mDataProp":null,
-				"sWidth": "10%", 
+            {"mDataProp":null,//序列号
+				"sWidth": "8%", 
 				"fnRender": function(obj) {
 						if(obj.aData.SERIAL_NO==null){
 							return "<a class='serId' style='color:#464D51;text-decoration:none;' code='"+obj.aData.TID+"'></a>";
@@ -197,16 +196,25 @@ $(document).ready(function() {
 				      
 				    }
             	},
-            {"mDataProp":"ITEM_NO"},
-            {"mDataProp":null,
+            {"mDataProp":"ITEM_NO"},//产品型号
+            {"mDataProp":"PIECES"},
+            {"mDataProp":"ARRIVAL_TIME"},
+            {"mDataProp":"COMPANY","sWidth": "8%"},//地址
+            {"mDataProp":"DRIVER"},
+            {"mDataProp":"PHONE"},
+            {"mDataProp":"OFFICE_NAME"},
+            {"mDataProp":"ABBR",//客户
+            	"sClass": "cname"},
+            {"mDataProp":"CUSTOMER_ORDER_NO"},//客户订单号
+            {"mDataProp":null,//运输单号
             		"sWidth": "10%", 
 					"fnRender": function(obj) {
 					       return  "<a class='transferNo' style='color:#464D51;text-decoration:none;' code2='"+obj.aData.ORDER_NO+"'>"+obj.aData.ORDER_NO+ "</a>";
 					    }
             		},
-            {"mDataProp":"CUSTOMER_ORDER_NO"},
-            {"mDataProp":"STATUS"},        	
-            {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature",
+               
+            {"mDataProp":"STATUS"},//状态
+            {"mDataProp":"CARGO_NATURE","sClass": "cargo_nature",//货品属性
             	"fnRender":function(obj){
             		if(obj.aData.CARGO_NATURE =="ATM"){
             			return deliver_tran.ex_cargo;
@@ -215,7 +223,7 @@ $(document).ready(function() {
             		}
             		
             	}},
-            {"mDataProp":"PICKUP_MODE",
+            {"mDataProp":"PICKUP_MODE",//提货方式
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == "routeSP"){
             			return "干线供应商自提";
@@ -225,11 +233,9 @@ $(document).ready(function() {
             			return deliver_tran.ex_type;
             			
             		}}},
-            {"mDataProp":"WAREHOUSE_NAME",
+            {"mDataProp":"WAREHOUSE_NAME",//仓库
             	"sClass": "warehouse"},
-            {"mDataProp":"ABBR",
-            	"sClass": "cname"},
-            {"mDataProp":"COMPANY"}
+            {"mDataProp":"TID"}
         ]      
     });	
 
