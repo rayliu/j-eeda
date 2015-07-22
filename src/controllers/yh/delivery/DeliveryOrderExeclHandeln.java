@@ -117,10 +117,10 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
     		if("".equals(content.get(j).get("配送单号").trim())){
     			title = "客户订单号";
     			break;
-    		}else if("".equals(content.get(j).get("收货单位").trim())){
+    		}/*else if("".equals(content.get(j).get("收货单位").trim())){
     			title = "收货单位";
     			break;
-    		}else if("".equals(content.get(j).get("货品数量").trim())){
+    		}*/else if("".equals(content.get(j).get("货品数量").trim())){
     			title = "货品数量";
     			break;
     		}else if("".equals(content.get(j).get("客户名称(简称)").trim())){
@@ -129,8 +129,8 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
     		}else if("".equals(content.get(j).get("货品型号").trim())){
     			title = "货品型号";
     			break;
-    		}else if("".equals(content.get(j).get("单品序列号").trim())){
-    			title = "单品序列号";
+    		}else if("".equals(content.get(j).get("单品序列号").trim()) && "".equals(content.get(j).get("单品ID").trim())){
+    			title = "单品序列号/单品ID";
     			break;
     		}else if("".equals(content.get(j).get("供应商名称(简称)").trim())){
     			title = "供应商名称(简称)";
@@ -215,32 +215,66 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 				title = "客户名称(简称)";
 				break;
     		}else{
-    			//单品序列号
-    			TransferOrderItemDetail transferOrderItemDetail1 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.serial_no = '"+content.get(j).get("单品序列号")+"';");
-    			if(transferOrderItemDetail1 != null){
-    				TransferOrderItemDetail transferOrderItemDetail2 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.serial_no = '"+content.get(j).get("单品序列号")+"' and tor.customer_id = '" + customer.get("pid") + "';");
-        			if(transferOrderItemDetail2 != null){
-        				TransferOrderItemDetail transferOrderItemDetail3 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.item_no = '"+content.get(j).get("货品型号")+"' and toid.serial_no = '"+content.get(j).get("单品序列号")+"' and tor.customer_id = '" + customer.get("pid") + "';");
-            			if(transferOrderItemDetail3 == null){
-            				title = "单品序列号";
-            				because = "，该货品型号下没有此单品【"+content.get(j).get("单品序列号")+"】";
+    			//单品序列号校验
+    			if(!"".equals(content.get(j).get("单品序列号").trim())){
+    				TransferOrderItemDetail transferOrderItemDetail1 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.serial_no = '"+content.get(j).get("单品序列号")+"';");
+        			if(transferOrderItemDetail1 != null){
+        				TransferOrderItemDetail transferOrderItemDetail2 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.serial_no = '"+content.get(j).get("单品序列号")+"' and tor.customer_id = '" + customer.get("pid") + "';");
+            			if(transferOrderItemDetail2 != null){
+            				TransferOrderItemDetail transferOrderItemDetail3 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.item_no = '"+content.get(j).get("货品型号")+"' and toid.serial_no = '"+content.get(j).get("单品序列号")+"' and tor.customer_id = '" + customer.get("pid") + "';");
+                			if(transferOrderItemDetail3 == null){
+                				title = "单品序列号";
+                				because = "，该货品型号下没有此单品【"+content.get(j).get("单品序列号")+"】";
+                    			break;
+                    		}
+                		}else{
+                			title = "单品序列号";
+            				because = "，该客户没有此单品【"+content.get(j).get("单品序列号")+"】";
                 			break;
                 		}
-            		}else{
-            			title = "单品序列号";
-        				because = "，该客户没有此单品【"+content.get(j).get("单品序列号")+"】";
-            			break;
-            		}
-    			}else{
-    				TransferOrderItemDetail transferOrderItemDetail5 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and(toid.status is null or toid.status != '已入库') and toid.serial_no = '"+content.get(j).get("单品序列号")+"';");
-    				if(transferOrderItemDetail5 != null){
-        				title = "单品序列号";
-        				because = "，此单品【"+content.get(j).get("单品序列号")+"】没入库或已配送";
-            			break;
         			}else{
-        				title = "单品序列号";
-        				because = "，没有此单品【"+content.get(j).get("单品序列号")+"】";
-            			break;
+        				TransferOrderItemDetail transferOrderItemDetail5 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and(toid.status is null or toid.status != '已入库') and toid.serial_no = '"+content.get(j).get("单品序列号")+"';");
+        				if(transferOrderItemDetail5 != null){
+            				title = "单品序列号";
+            				because = "，此单品【"+content.get(j).get("单品序列号")+"】没入库或已配送";
+                			break;
+            			}else{
+            				title = "单品序列号";
+            				because = "，没有此单品【"+content.get(j).get("单品序列号")+"】";
+                			break;
+            			}
+        			}
+    			}
+    			
+    			
+    			//单品ID校验
+    			if(!"".equals(content.get(j).get("单品ID").trim())){
+    				TransferOrderItemDetail transferOrderItemDetail1 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.id = '"+content.get(j).get("单品ID")+"';");
+        			if(transferOrderItemDetail1 != null){
+        				TransferOrderItemDetail transferOrderItemDetail2 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.id = '"+content.get(j).get("单品ID")+"' and tor.customer_id = '" + customer.get("pid") + "';");
+            			if(transferOrderItemDetail2 != null){
+            				TransferOrderItemDetail transferOrderItemDetail3 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and toid.status = '已入库' and toid.item_no = '"+content.get(j).get("货品型号")+"' and toid.id = '"+content.get(j).get("单品ID")+"' and tor.customer_id = '" + customer.get("pid") + "';");
+                			if(transferOrderItemDetail3 == null){
+                				title = "单品ID";
+                				because = "，该货品型号下没有此单品【"+content.get(j).get("单品ID")+"】";
+                    			break;
+                    		}
+                		}else{
+                			title = "单品ID";
+            				because = "，该客户没有此单品【"+content.get(j).get("单品ID")+"】";
+                			break;
+                		}
+        			}else{
+        				TransferOrderItemDetail transferOrderItemDetail5 = TransferOrderItemDetail.dao.findFirst("select toid.id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.delivery_id is null and(toid.status is null or toid.status != '已入库') and toid.id = '"+content.get(j).get("单品ID")+"';");
+        				if(transferOrderItemDetail5 != null){
+            				title = "单品ID";
+            				because = "，此单品【"+content.get(j).get("单品ID")+"】没入库或已配送";
+                			break;
+            			}else{
+            				title = "单品ID";
+            				because = "，没有此单品【"+content.get(j).get("单品ID")+"】";
+                			break;
+            			}
         			}
     			}
     		}
@@ -268,8 +302,14 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 		
 		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date orderDeliveryStamp = dbDataFormat.parse(content.get("预约送货时间"));
-		Date clientOrderStamp = dbDataFormat.parse(content.get("向客户预约时间"));
-		Date businessStamp = dbDataFormat.parse(content.get("业务要求配送时间"));
+		Date clientOrderStamp = null;
+		if(!content.get("向客户预约时间").equals("")){
+			clientOrderStamp = dbDataFormat.parse(content.get("向客户预约时间"));
+		}
+		Date businessStamp = null;
+		if(!content.get("业务要求配送时间").trim().equals("")){
+			businessStamp = dbDataFormat.parse(content.get("业务要求配送时间"));
+		}
 		//String orderNo = OrderNoGenerator.getNextOrderNo("PS");
 		String orderNo = content.get("配送单号");
 		
@@ -397,8 +437,13 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					for (int j = 0; j < content.size(); j++) {
 						causeRow = j+2;
 						System.out.println("导入至第【"+causeRow+"】行");
-						TransferOrder order = TransferOrder.dao.findFirst("select tor.* from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ?;",content.get(j).get("单品序列号"));
-						TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where serial_no = ?;",content.get(j).get("单品序列号"));
+						TransferOrder order = null;
+						TransferOrderItemDetail detail = null;
+						if(!content.get(j).get("单品ID").equals("") || !content.get(j).get("单品序列号").equals("")){
+							 order = TransferOrder.dao.findFirst("select tor.* from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ? and toid.id = ?;",content.get(j).get("单品序列号"),content.get(j).get("单品ID"));
+							 System.out.println(content.get(j).get("单品ID"));
+							 detail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where serial_no = ? and id = ?;",content.get(j).get("单品序列号"),content.get(j).get("单品ID"));
+						}
 						if(order != null && detail != null){
 							//判断是否为同一张单
 							if(deliverOrderNo.equals(content.get(j).get("配送单号")) && customer.equals(content.get(j).get("客户名称(简称)")) &&
