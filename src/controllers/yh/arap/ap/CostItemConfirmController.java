@@ -9,6 +9,7 @@ import java.util.Map;
 import models.DepartOrder;
 import models.InsuranceOrder;
 import models.Party;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
@@ -340,10 +341,41 @@ public class CostItemConfirmController extends Controller {
 				+ " amco.create_stamp,ul.user_name creator,'成本单' business_type,"
 				+ " NULL as booking_note_number,amco.total_amount pay_amount,NULL as alance,"
 				+ " NULL as transfer_order_no,NULL as return_order_collection,amco.remark remark,"
-				+ " amco.create_stamp as depart_time,NULL as office_name,c1.abbr cname,NULL as transport_cost,"
-				+ " NULL as carry_cost,NULL as climb_cost,NULL as insurance_cost,NULL as take_cost,"
-				+ " NULL as anzhuang_cost,NULL as cangchu_cost,NULL as other_cost"
+				+ " NULL as depart_time,NULL as office_name,c1.abbr cname,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id"
+				+ " AND fi.NAME = '运输费') transport_cost,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id "
+				+ " AND fi.NAME = '搬运费') carry_cost,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id"
+				+ " AND fi.NAME = '上楼费') climb_cost,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id"
+				+ " AND fi.NAME = '提货费') insurance_cost,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id"
+				+ " AND fi.NAME = '保险费') take_cost,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id"
+				+ " AND fi.NAME = '安装费') anzhuang_cost,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id"
+				+ " AND fi.NAME = '仓库费') cangchu_cost,"
+				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
+				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
+				+ " WHERE amcoi.misc_order_id = amco.id"
+				+ " AND fi.NAME = '其他费用') other_cost"
 				+ " FROM arap_misc_cost_order amco"
+				+ " LEFT JOIN arap_misc_cost_order_item amcoi ON amcoi.misc_order_id = amco.id"
 				+ " LEFT JOIN user_login ul ON ul.id = amco.create_by"
 				+ " LEFT JOIN party p1 ON amco.customer_id = p1.id"
 				+ " LEFT JOIN contact c1 ON p1.contact_id = c1.id"
@@ -351,6 +383,7 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN contact c ON p.contact_id = c.id"
 				+ " LEFT JOIN location l ON amco.route_from=l.code"
 				+ " LEFT JOIN location l1 ON amco.route_to=l1.code"
+				+ " where amco.audit_status = '新建' and amcoi.amount IS NOT NULL"
 				+ " GROUP BY amco.id) as A ";
         String condition = "";
       
@@ -409,6 +442,10 @@ public class CostItemConfirmController extends Controller {
     			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(idArr[i]);
     			deliveryOrder.set("audit_status", "已确认");
     			deliveryOrder.update();
+    		}else if("成本单".equals(orderNoArr[i])){
+    			ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao.findById(idArr[i]);
+    			arapmisccostOrder.set("audit_status", "已确认");
+    			arapmisccostOrder.update();
     		}else{
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(idArr[i]);
     			insuranceOrder.set("audit_status", "已确认");

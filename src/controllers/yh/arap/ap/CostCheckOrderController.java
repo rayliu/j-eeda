@@ -84,7 +84,16 @@ public class CostCheckOrderController extends Controller {
             	totalAmount = totalAmount + rec.getDouble("sum_amount");
             	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(orderIdsArr[i]);
             	spId = deliveryOrder.getLong("sp_id");
-            }else{
+            }else if("成本单".equals(orderNoArr[i])){
+            	//这是成本单的应付
+            	rec = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
+            	totalAmount = totalAmount + rec.getDouble("sum_amount");
+            	ArapMiscCostOrder arapmisc = ArapMiscCostOrder.dao.findById(orderIdsArr[i]);
+            	spId = arapmisc.getLong("sp_id");
+            	/*InsuranceOrder insuraceOrder = InsuranceOrder.dao.findById(orderIdsArr[i]);
+            	spId = insuraceOrder.get("sp_id");*/
+            }
+            else{
             	//这是保险单的应付
             	rec = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
             	totalAmount = totalAmount + rec.getDouble("sum_amount");
@@ -319,6 +328,10 @@ public class CostCheckOrderController extends Controller {
 	            	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(orderIdsArr[i]);
 	            	deliveryOrder.set("audit_status", "对账中");
 	            	deliveryOrder.update();
+	            }else if("成本单".equals(orderNoArr[i])){
+	            	ArapMiscCostOrder arapmisc = ArapMiscCostOrder.dao.findById(orderIdsArr[i]);
+	            	arapmisc.set("audit_status", "对账中");
+	            	arapmisc.update();
 	            }else{
 	            	InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(orderIdsArr[i]);
 	            	insuranceOrder.set("audit_status", "对账中");
@@ -577,7 +590,26 @@ public class CostCheckOrderController extends Controller {
 							+ " left join office oe on oe.id = tor.office_id "
 							+ " left join location lo on lo.code = dpr.route_from "
 							+ " left join location lo2 on lo2.code = dpr.route_to "
-							+ " where ior.audit_status='已确认' group by ior.id) as newView" ;
+							+ " where ior.audit_status='已确认' group by ior.id"
+							+ " union "
+							+ " SELECT DISTINCT amco.id,amco.route_from,l. NAME route_name,"
+							+ " amco.route_to,l1. NAME to_name,NULL AS planning_time,"
+							+ " amco.order_no,amco. STATUS,c.abbr spname,NULL AS amount,"
+							+ " NULL AS volume,NULL AS weight,amco.create_stamp,"
+							+ " ul.user_name creator,'成本单' business_type,"
+							+ " amco.total_amount pay_amount,NULL AS transfer_order_no,"
+							+ " NULL AS return_order_collection,amco.remark remark,"
+							+ " NULL AS booking_note_number,NULL AS office_name"
+							+ " FROM arap_misc_cost_order amco"
+							+ " LEFT JOIN user_login ul ON ul.id = amco.create_by"
+							+ " LEFT JOIN party p1 ON amco.customer_id = p1.id"
+							+ " LEFT JOIN contact c1 ON p1.contact_id = c1.id"
+							+ " LEFT JOIN party p ON amco.sp_id = p.id"
+							+ " LEFT JOIN contact c ON p.contact_id = c.id"
+							+ " LEFT JOIN location l ON amco.route_from = l. CODE"
+							+ " LEFT JOIN location l1 ON amco.route_to = l1. CODE"
+							+ " WHERE	amco.audit_status = '已确认'"
+							+ " GROUP BY amco.id) as newView" ;
     	String condition = "";
     	
     	
@@ -624,6 +656,7 @@ public class CostCheckOrderController extends Controller {
     	String departId = "";
     	String deliveryId = "";
     	String insuranceId = "";
+    	String arapmiscId = "";
     	if(orderIds == null || orderIds == ""){
     		pickupId = "-1";
         	departId = "-1";
@@ -640,6 +673,8 @@ public class CostCheckOrderController extends Controller {
 	            	departId += orderIdsArr[i] + ",";
 	            }else if("配送".equals(orderNoArr[i])){
 	            	deliveryId += orderIdsArr[i] + ",";
+	            }else if("成本单".equals(orderNoArr[i])){
+	            	arapmiscId += orderIdsArr[i] + ",";
 	            }else{
 	            	insuranceId += orderIdsArr[i] + ",";
 	            }
@@ -658,6 +693,11 @@ public class CostCheckOrderController extends Controller {
 	    		deliveryId = deliveryId.substring(0, deliveryId.length() - 1);
 			} else{
 				deliveryId = "-1";
+			}
+	    	if(arapmiscId != null && !"".equals(arapmiscId)){
+	    		arapmiscId = arapmiscId.substring(0, arapmiscId.length() - 1);
+			} else{
+				arapmiscId = "-1";
 			}
 	    	if(insuranceId != null && !"".equals(insuranceId)){
 	    		insuranceId = insuranceId.substring(0, insuranceId.length() - 1);
@@ -709,8 +749,15 @@ public class CostCheckOrderController extends Controller {
 							+ " left join transfer_order_item toi on toi.order_id = tor.id "
 							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
 							+ " left join product prod on toi.product_id = prod.id "
-							+ " left join user_login ul on ul.id = ior.create_by"
-							+ " left join office oe on oe.id = tor.office_id where ior.id in("+insuranceId+") group by ior.id ";
+							+ " left join user_login ul on ul.id = ior.create_by "
+							+ " left join office oe on oe.id = tor.office_id where ior.id in("+insuranceId+") group by ior.id "
+							+ " union "
+							+ " SELECT DISTINCT amco.id,amco.order_no,amco. STATUS,c.abbr spname,amco.total_amount,NULL AS volume,NULL AS weight,amco.create_stamp,ul.user_name creator,'成本单' business_type,NULL AS transfer_order_no,NULL AS return_order_collection,amco.remark remark,amco.create_stamp AS depart_time,NULL AS office_name "
+							+ " FROM arap_misc_cost_order amco "
+							+ " LEFT JOIN arap_misc_cost_order_item amcoi ON amcoi.misc_order_id = amco.id "
+							+ " LEFT JOIN user_login ul ON ul.id = amco.create_by "
+							+ " LEFT JOIN party p ON amco.sp_id = p.id "
+							+ " LEFT JOIN contact c ON p.contact_id = c.id WHERE amco.id in ("+arapmiscId+") GROUP BY amco.id";
     	
 		String sqlTotal = "select count(1) total from ("+searchSql+") a";
 		Record rec = Db.findFirst(sqlTotal);

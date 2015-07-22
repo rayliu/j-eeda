@@ -34,6 +34,9 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"100px",
             	"fnRender":function(obj){
             		var timeStamp = obj.aData.DEPART_TIME;
+            		if(timeStamp==null){
+            			return "";
+            		}
             		var subtimeStamp=timeStamp.substring(0,10);
             		if(timeStamp == ""){
             			return "";
@@ -117,8 +120,8 @@ $(document).ready(function() {
             	}}, 
             {"mDataProp":"CARRY_COST", "sWidth":"50px"},
             {"mDataProp":"CLIMB_COST", "sWidth":"50px"}, 
-            {"mDataProp":"INSURANCE_COST", "sWidth":"50px"}, 
             {"mDataProp":"TAKE_COST", "sWidth":"50px"}, 
+            {"mDataProp":"INSURANCE_COST", "sWidth":"50px"}, 
             {"mDataProp":"ANZHUANG_COST", "sWidth":"50px"},
             {"mDataProp":"CANGCHU_COST", "sWidth":"50px"}, 
             {"mDataProp":"OTHER_COST", "sWidth":"80px"}, 
