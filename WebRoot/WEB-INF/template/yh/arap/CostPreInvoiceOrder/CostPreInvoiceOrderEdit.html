@@ -98,12 +98,12 @@
                                             <label class="label-margin">付款方式</label>
                                             	<input id="paymentMethodRadio" type="hidden" value="${arapAuditInvoiceApplication.payment_method!''}"/>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="paymentMethod" id="paymentMethod1" value="cash" checked="">现金
+                                                    <input type="radio" name="paymentMethod" id="paymentMethod1" value="cash"  >现金
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账
+                                                    <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers" checked="">转账
                                                 </label>
-                                                <div id="acc" style="display:none;">
+                                                <div id="acc" >
                                                   <p> <label>账&nbsp;&nbsp;&nbsp;&nbsp;号</label>
                                                <input  class="form-control search-control" id="bank_no1" name="payeenumber" type="text" value="${customer.bank_no!''}"></p>    
 											    <label>开户行</label>
