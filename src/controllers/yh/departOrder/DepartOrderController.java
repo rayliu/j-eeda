@@ -347,6 +347,12 @@ public class DepartOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
+			if (planBeginTime == null || "".equals(planBeginTime)) {
+				planBeginTime = "1-1-1";
+			}
+			if (planEndTime == null || "".equals(planEndTime)) {
+				planEndTime = "9999-12-31";
+			}
 			sqlTotal = "select count(distinct deo.id) total"
 					+ " from depart_order deo "
 					+ " left join carinfo c on deo.carinfo_id = c.id "

@@ -219,14 +219,12 @@ $(document).ready(function() {
     	var start =$("#start_filter").val();
     	var end =$("#end_filter").val();
     	var customer =$("#customer_filter").val();
-    	
     	var orderNo = $("#orderNo_filter").val();
     	var departNo_filter = $("#departNo_filter").val();
     	var status = $("#status_filter").val();
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	
     	var planBeginTime = $("#planBeginTime").val();
     	var planEndTime = $("#planEndTime").val();
     	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
