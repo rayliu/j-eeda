@@ -154,7 +154,7 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("sp_id",spId);
 			arapMiscCostOrder.set("route_from", routeFrom);
 			arapMiscCostOrder.set("route_to", routeTo);
-			
+			arapMiscCostOrder.set("audit_status", "新建");
 			arapMiscCostOrder.set("create_by", getPara("create_by"));
 			arapMiscCostOrder.set("create_stamp", new Date());
 			arapMiscCostOrder.set("remark", getPara("remark"));
@@ -268,6 +268,7 @@ public class CostMiscOrderController extends Controller {
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		arapMiscCostOrderItem.set("creator", users.get(0).get("id"));
 		arapMiscCostOrderItem.set("create_date", new Date());
+		arapMiscCostOrderItem.set("fin_item_id", "1");
 		arapMiscCostOrderItem.set("misc_order_id", getPara("costMiscOrderId"));
 		arapMiscCostOrderItem.save();
 		renderJson(arapMiscCostOrderItem);

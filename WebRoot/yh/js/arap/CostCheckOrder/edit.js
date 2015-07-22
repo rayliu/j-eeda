@@ -148,7 +148,7 @@ $(document).ready(function() {
             {"mDataProp":"WEIGHT"},                        
             {"mDataProp":"PAY_AMOUNT"},                        
             {"mDataProp":"OFFICE_NAME"},                       
-            {"mDataProp":"REMARK", }                         
+            {"mDataProp":"REMARK"}                         
         ]      
     });	
     
