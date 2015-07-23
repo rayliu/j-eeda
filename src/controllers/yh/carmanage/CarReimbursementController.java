@@ -206,7 +206,7 @@ public class CarReimbursementController extends Controller {
 					+ " where cso.status='checked' and cso.reimbursement_order_id is null"
 					+ " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-			sql = "select cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+			sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ " cso.month_refuel_amount, cso.deduct_apportion_amount, cso.actual_payment_amount,"
 					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
 					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
