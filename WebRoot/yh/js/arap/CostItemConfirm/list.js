@@ -99,14 +99,6 @@ $(document).ready(function() {
                 }
             }, 
             {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
-            {"mDataProp":null, "sWidth":"50px",
-            	"fnRender":function(obj){
-            		if(obj.aData.ALANCE >0){
-            			return "+"+obj.aData.ALANCE;
-            		}else{
-            			return obj.aData.ALANCE;
-            		}
-            	}},
             {"mDataProp":"AMOUNT", "sWidth":"35px"},                        
             {"mDataProp":"VOLUME", "sWidth":"35px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"}, 
