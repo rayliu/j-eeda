@@ -27,7 +27,15 @@ $(document).ready(function() {
             },
             {"mDataProp":"CUSTOMER"},
             {"mDataProp":"ITEM_NO"},
-            {"mDataProp":"AMOUNT"},
+            {"mDataProp":null,
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == 'cargo'){
+            			return obj.aData.CARGOAMOUNT;
+            		}else{
+            			return obj.aData.AMOUNT;
+            		}	
+            	}
+            },
             {"mDataProp":"PLAN_TIME"},
             {"mDataProp":"C2"},
             {"mDataProp":"CREATE_STAMP"},
