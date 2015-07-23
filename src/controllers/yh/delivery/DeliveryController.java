@@ -952,6 +952,21 @@ public class DeliveryController extends Controller {
 		renderJson(Map);
 	}
 	
+	//更新货品明细列表
+	public void updateTansterOrderItemDetail(){
+		String detailId = getPara("detailId");
+		String name = getPara("name");
+		String value = getPara("value");
+		
+		TransferOrderItemDetail t =TransferOrderItemDetail.dao.findById(detailId);
+		t.set(name, value).update();
+
+		renderJson(t);
+	}
+	
+	
+	
+	
 	// 配送单货品ATMlist
 	public void orderList2() {
 		String idlist = getPara("localArr");

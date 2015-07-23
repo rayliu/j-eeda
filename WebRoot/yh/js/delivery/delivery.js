@@ -154,7 +154,15 @@ $(document).ready(function() {
 	        "sAjaxSource": "/delivery/orderList2?localArr="+localArr+"&localArr2="+localArr2,
 	        "aoColumns": [
 	            {"mDataProp":"ITEM_NO"},  
-	            {"mDataProp":"SERIAL_NO"},
+	            {"mDataProp":"SERIAL_NO",
+	            	 "fnRender": function(obj) {
+	 			        if(obj.aData.SERIAL_NO!='' && obj.aData.SERIAL_NO != null){
+	 			            return "<input type='text' name='serial_no' value='"+obj.aData.SERIAL_NO+"' class='form-control search-control'>";
+	 			        }else{
+	 			        	 return "<input type='text'  name='serial_no' class='form-control search-control'>";
+	 			        }
+	 			}},
+	            {"mDataProp":"PIECES"},
 	            {"mDataProp":"ITEM_NAME"},
 	            {"mDataProp":"VOLUME"},
 	            {"mDataProp":"WEIGHT"},
@@ -163,6 +171,22 @@ $(document).ready(function() {
 	        ]      
 	    });	
 	}
+	
+	
+	$("#eeda-table").on('blur', 'input,select', function(e){
+		e.preventDefault();
+		var delivery_id = $("#delivery_id").val();
+		var detailId = $("#localArr2").val();
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/delivery/updateTansterOrderItemDetail', {name:name, value:value,detailId:detailId}, function(data){
+			if(data.ID > 0){
+				$.scojs_message('更新货品明细成功', $.scojs_message.TYPE_OK);
+			}else{
+				$.scojs_message('更新货品明细失败', $.scojs_message.TYPE_OK);
+			}
+    	},'json');
+	});
 	
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
 	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
