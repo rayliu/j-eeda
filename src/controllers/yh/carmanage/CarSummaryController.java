@@ -1042,11 +1042,12 @@ public class CarSummaryController extends Controller {
     	String carNo = order.getStr("car_no");
     	double mileage = 0;
     	double refuelCost = 0;
+    	int carSummaryIds=(Integer.parseInt(carSummaryId))-1;
     	double hundredFuelStandard = 0;
     	if(order.get("month_car_run_mileage") != null && !"".equals(order.getDouble("month_car_run_mileage"))){
     		mileage = order.getDouble("month_car_run_mileage");//行驶里程
     	}
-    	Record oilFee = Db.findFirst("select avg(refuel_unit_cost) refuel_cost from car_summary_detail_oil_fee where car_summary_id = "+carSummaryId);
+    	Record oilFee = Db.findFirst("select avg(refuel_unit_cost) refuel_cost from car_summary_detail_oil_fee order by id desc limit 1");
     	if(oilFee.get("refuel_cost") != null && !"".equals(oilFee.get("refuel_cost"))){
     		refuelCost = oilFee.getDouble("refuel_cost");//平均油价
     	}
