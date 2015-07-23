@@ -147,7 +147,6 @@ $(document).ready(function() {
  				$("#car_summary_id").val(data.ID);
  				$("#car_summary_no").val(data.ORDER_NO);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
- 				contactUrl("edit?id",data.ID);
  			}else{
  				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
  			}
@@ -184,7 +183,6 @@ $(document).ready(function() {
 			var car_summary_id = $("#car_summary_id").val();
 			if(car_summary_id != ""){
 				$.post('/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
-					console.log(data);
 					if(data !="" && data != null){
 						$.each(data, function(name, value) {
 							$("#"+name+"").val(value);
@@ -234,6 +232,7 @@ $(document).ready(function() {
 	
 	// 选显卡-线路 TODO
 	$("#carmanageLine").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
 		if(clickTabId == "carmanagebasic"){
 			clickTabId = e.target.getAttribute("id");
 			saveCarSummaryData(pickupAddressTbody);
@@ -241,7 +240,12 @@ $(document).ready(function() {
 			clickTabId = e.target.getAttribute("id");
 			findTableDataService(pickupAddressTbody);
 		}
-		
+		}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(pickupAddressTbody);
+			findTableDataService(pickupAddressTbody);
+		}
 	});
 	
 	//刷新货品信息
@@ -281,14 +285,21 @@ $(document).ready(function() {
 	
 	// 选显卡-货品信息 TODO
 	$("#carmanageItemList").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
 		if(clickTabId == "carmanagebasic"){
 			clickTabId = e.target.getAttribute("id");
 			saveCarSummaryData(pickupItemTbody);
-		}else{
+		}
+		else{
 			clickTabId = e.target.getAttribute("id");
 			findTableDataService(pickupItemTbody);
 		}
-		
+		}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(pickupItemTbody);
+			findTableDataService(pickupItemTbody);
+		}
 	});
 	//刷新里程碑
 	var pickupMilestoneTbody = $('#pickupMilestoneTbody').dataTable({
@@ -328,16 +339,6 @@ $(document).ready(function() {
          ]
 	});
 	
-	// 选项卡-里程碑 TODO
-	$("#carmanageMilestoneList").click(function(e){
-		if(clickTabId == "carmanagebasic"){
-			clickTabId = e.target.getAttribute("id");
-			saveCarSummaryData(pickupMilestoneTbody);
-		}else{
-			clickTabId = e.target.getAttribute("id");
-			findTableDataService(pickupMilestoneTbody);
-		}
-	});
 	
 	
 	//刷新路桥费明细
@@ -441,11 +442,18 @@ $(document).ready(function() {
 	
 	// 选项卡-路桥费明细 TODO
 	$("#carmanageRoadBridge").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
 		if(clickTabId == "carmanagebasic"){
 			clickTabId = e.target.getAttribute("id");
 			saveCarSummaryData(carSummaryDetailRouteFeeTbody);
 		}else{
 			clickTabId = e.target.getAttribute("id");
+			findTableDataService(carSummaryDetailRouteFeeTbody);
+		}
+		}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailRouteFeeTbody);
 			findTableDataService(carSummaryDetailRouteFeeTbody);
 		}
 	});
@@ -722,6 +730,7 @@ $(document).ready(function() {
 	
 	// 选项卡-加油记录 TODO
 	$("#carmanageRefuel").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
 		if(clickTabId == "carmanagebasic"){
 			clickTabId = e.target.getAttribute("id");
 			saveCarSummaryData(carSummaryDetailOilFeeTbody);
@@ -729,6 +738,13 @@ $(document).ready(function() {
 			clickTabId = e.target.getAttribute("id");
 			findTableDataService(carSummaryDetailOilFeeTbody);
 		}
+		}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailOilFeeTbody);
+			findTableDataService(carSummaryDetailOilFeeTbody);
+		}
+		
 	});
 	// 新增加油记录
 	$("#addCarSummaryDetailOilFee").click(function(e){
@@ -751,7 +767,6 @@ $(document).ready(function() {
 	$("#carSummaryDetailOilFeeTbody").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		$.post('/carsummary/delCarSummaryDetailOilFee/'+id,function(data){
-			console.log(data);
 			findTableDataService(carSummaryDetailOilFeeTbody);
         });
 	});
@@ -945,11 +960,18 @@ $(document).ready(function() {
 	
 	// 选项卡-送货员工资明细 TODO
 	$("#carmanageSalary").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
 		if(clickTabId == "carmanagebasic"){
 			clickTabId = e.target.getAttribute("id");
 			saveCarSummaryData(carSummaryDetailSalaryTbody);
 		}else{
 			clickTabId = e.target.getAttribute("id");
+			findTableDataService(carSummaryDetailSalaryTbody);
+		}
+		}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailSalaryTbody);
 			findTableDataService(carSummaryDetailSalaryTbody);
 		}
 	});
@@ -994,6 +1016,7 @@ $(document).ready(function() {
 	    	},'json');
 		}
 	});	
+	
 	//刷新费用合计
  	var carSummaryDetailOtherFeeTbody = $('#carSummaryDetailOtherFeeTbody').dataTable({
  		"bFilter": false, //不需要默认的搜索框
@@ -1001,7 +1024,6 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 12,
     	"bServerSide": false,
-    	"bLengthChange":false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -1070,12 +1092,36 @@ $(document).ready(function() {
 	
 	// 选项卡-费用合计 TODO
 	$("#carmanageCostSummation").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
 		if(clickTabId == "carmanagebasic"){
 			clickTabId = e.target.getAttribute("id");
 			saveCarSummaryData(carSummaryDetailOtherFeeTbody);
 		}else{
 			clickTabId = e.target.getAttribute("id");
 			findTableDataService(carSummaryDetailOtherFeeTbody);
+		}
+	}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(carSummaryDetailOtherFeeTbody);
+			findTableDataService(carSummaryDetailOtherFeeTbody);
+		}
+	});
+	// 选项卡-里程碑 TODO
+	$("#carmanageMilestoneList").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
+		if(clickTabId == "carmanagebasic"){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(pickupMilestoneTbody);
+		}else{
+			clickTabId = e.target.getAttribute("id");
+			findTableDataService(pickupMilestoneTbody);
+		}
+		}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(pickupMilestoneTbody);
+			findTableDataService(pickupMilestoneTbody);
 		}
 	});
 	//修改费用合计
@@ -1223,11 +1269,18 @@ $(document).ready(function() {
 	
 	// 选项卡-运输单 TODO
 	$("#transferOrderList").click(function(e){
+		if(!$("#saveCarSummaryBtn").prop("disabled")){
 		if(clickTabId == "carmanagebasic"){
 			clickTabId = e.target.getAttribute("id");
 			saveCarSummaryData(transferOrderTbody);
 		}else{
 			clickTabId = e.target.getAttribute("id");
+			findTableDataService(transferOrderTbody);
+		}
+		}
+		if($("#saveCarSummaryBtn").prop("disabled")){
+			clickTabId = e.target.getAttribute("id");
+			saveCarSummaryData(transferOrderTbody);
 			findTableDataService(transferOrderTbody);
 		}
 	});
