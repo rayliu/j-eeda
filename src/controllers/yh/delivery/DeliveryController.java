@@ -120,7 +120,7 @@ public class DeliveryController extends Controller {
 //					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 //					+ " order by d.create_stamp desc "
 //					+ sLimit;
-			String sql = "SELECT toi.item_no item_no, trid.pieces amount, toi.amount cargoamount, tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
+			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,trid.notify_party_company AS company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, trid.pieces amount, toi.amount cargoamount, tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
 					+ "( SELECT group_concat( DISTINCT doi.transfer_no SEPARATOR ' [java] ' ) FROM delivery_order_item doi WHERE delivery_id = d.id ) AS transfer_order_no,"
 					+ " ( SELECT group_concat( trid.serial_no SEPARATOR '  [java] ' )"
 					+ " FROM "
@@ -135,6 +135,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+					+ " LEFT JOIN office o ON o.id = tor.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " WHERE"
 					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
