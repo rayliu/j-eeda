@@ -14,8 +14,25 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/delivery/deliveryList",
         "aoColumns": [   
-            
-            {"mDataProp":"ORDER_NO",
+            {"mDataProp":"CUSTOMER"},//客户
+            {"mDataProp":"SERIAL_NO"},//序列号
+            {"mDataProp":"ITEM_NO"},//型号
+            {"mDataProp":null,//件数
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == 'cargo'){
+            			return obj.aData.CARGOAMOUNT;
+            		}else{
+            			return obj.aData.AMOUNT;
+            		}	
+            	}
+            },
+            {"mDataProp":"BUSINESS_STAMP"},//配送时间
+            {"mDataProp":"COMPANY"},//地址
+            {"mDataProp":"DRIVER"},//联系人
+            {"mDataProp":"PHONE"},//联系电话
+            {"mDataProp":"OFFICE_NAME"},//网点
+            {"mDataProp":"PLAN_TIME"},//计划时间
+            {"mDataProp":"ORDER_NO",//运输单号
             	"fnRender": function(obj) {
             		if(Delivery.isUpdate || Delivery.isComplete){
             			return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -25,26 +42,23 @@ $(document).ready(function() {
      			
      		}
             },
-            {"mDataProp":"CUSTOMER"},
-            {"mDataProp":"ITEM_NO"},
-            {"mDataProp":null,
+            {"mDataProp":"CUSTOMER_ORDER_NO"},//客户订单号
+            {"mDataProp":"STATUS"},//状态
+            {"mDataProp":"CARGO_NATURE"},//属性
+            {"mDataProp":"PICKUP_MODE",
             	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == 'cargo'){
-            			return obj.aData.CARGOAMOUNT;
+            		if(obj.aData.PICKUP_MODE == "own"){
+            			return "干线供应商自提";
+            		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
+            			return "外包供应商提货";
             		}else{
-            			return obj.aData.AMOUNT;
-            		}	
-            	}
-            },
-            {"mDataProp":"PLAN_TIME"},
-            {"mDataProp":"C2"},
-            {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"STATUS"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},
-            {"mDataProp":"SERIAL_NO","sWidth": "10%"},
+            			return deliver_tran.ex_type;
+            			
+            		}}},//提货方式
+            {"mDataProp":"WAREHOUSE_NAME"},//仓库
+            {"mDataProp":"TID"},
             { 
-                "mDataProp": null, 
-                "sWidth": "5%", 
+                "mDataProp": null,  
                 "bVisible":false,
                 "fnRender": function(obj) {                    
                     return "<a class='btn btn-danger cancelbutton' title='取消单据' code='"+obj.aData.ID+"'>"+
