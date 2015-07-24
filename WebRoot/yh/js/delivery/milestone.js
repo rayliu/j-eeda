@@ -57,7 +57,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CUSTOMER","sWidth":"70px"},
-            {"mDataProp":"TOID","sWidth":"70px"},
+            {"mDataProp":"SERIAL_NO","sWidth":"90px"},
             {"mDataProp":"ITEM_NO","sWidth":"100px"},
             {"mDataProp":"PIECES","sWidth":"70px"},
             {"mDataProp":"C2","sWidth":"70px"},

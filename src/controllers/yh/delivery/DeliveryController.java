@@ -257,6 +257,7 @@ public class DeliveryController extends Controller {
 		String sql = " select d.*,toid.id toid,toid.item_no item_no,toid.pieces pieces,"
 				+ " c.abbr as customer,"
 				+ " c2.company_name as c2,"
+				+ " toid.serial_no serial_no,"
 				+ " (select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
 				+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 				+ " from delivery_order d "
