@@ -340,7 +340,7 @@ public class DeliveryController extends Controller {
 					+ beginTime
 					+ "' and '"
 					+ endTime + "'  and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" + sLimit;
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')order by d.create_stamp desc" + sLimit;
 			depart = Db.find(sql_seach);
 		}
 		Record rec = Db.findFirst(sqlTotal);
