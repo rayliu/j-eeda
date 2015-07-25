@@ -32,12 +32,12 @@ $(document).ready(function() {
             {"mDataProp":"PHONE"},//联系电话
             {"mDataProp":"OFFICE_NAME"},//网点
             {"mDataProp":"PLAN_TIME"},//计划时间
-            {"mDataProp":"ORDER_NO",//运输单号
+            {"mDataProp":"TRANSFER_ORDER_NO",//运输单号
             	"fnRender": function(obj) {
             		if(Delivery.isUpdate || Delivery.isComplete){
-            			return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.TRANSFER_ORDER_NO+"</a>";
             		}else{
-            			return obj.aData.ORDER_NO;
+            			return obj.aData.TRANSFER_ORDER_NO;
             		}
      			
      		}
