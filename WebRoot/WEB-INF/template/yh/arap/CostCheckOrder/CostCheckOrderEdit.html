@@ -43,7 +43,7 @@
                                         	<input type="hidden" name="create_by" value="${create_by!''}${arapAuditOrder.create_by!''}"/>
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditOrder.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditOrder.endTime!''}"/>
-                                        	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditOrder.total_amount!''}"/>
+                                        	<input type="hidden" name="total_amount" id="total_amount" value="${actualAmount!''}${arapAuditOrder.total_amount!''}"/>
                                         	<input type="hidden" id="hiddenDebitAmount" name="debit_amount" value="${debitAmount!''}${arapAuditOrder.debit_amount!''}"/>
                                     <h3>对账单信息</h3>
                                     <div class="form-group">
@@ -76,9 +76,9 @@
 	                                        <label>供应商</label>
 	                                        <label class="radio-inline" id="company">${sp.company_name!''}</label>
 	                                    </div>
-	                                    <div><label>应付总金额:</label><label class="radio-inline">${totalAmount!''}${arapAuditOrder.total_amount!''}</label></div>
-                                        <div><label>扣款金额</label><label class="radio-inline" id="debitAmount">${arapAuditOrder.debit_amount!''}</label></div>
-                                        <div><label>实付金额</label><label class="radio-inline" id="costAmount">${totalAmount!''}${arapAuditOrder.cost_amount!''}</label></div>
+	                                    <div><label>应付总金额:</label><label class="radio-inline">${totalAmount!''}</label></div>
+                                        <div><label>调整金额</label><label class="radio-inline" id="debitAmount">${changeAmount!''}</label></div>
+                                        <div><label>实付金额</label><label class="radio-inline" id="costAmount">${actualAmount!''}</label></div>
 	                                    <div class="form-group">                                        
                                             <div id="datetimepicker" class="input-append date "> 
                                                 <label class="search-label">对账开始时间</label> 
@@ -120,6 +120,7 @@
 			                                           <th>体积</th>
 			                                           <th>重量</th>
 			                                           <th>总费用</th>
+			                                           <th>调整费用</th>
 			                                           <th>操作网点</th>
 			                                           <th>备注</th>
 			                                       </tr>

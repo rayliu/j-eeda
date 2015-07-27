@@ -18,7 +18,6 @@ $(document).ready(function() {
  	$("#saveCostCheckOrderBtn").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
-		
 		//异步向后台提交数据
 		$.post('/costCheckOrder/save', $("#costCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
@@ -115,6 +114,11 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.DID);
+			$(nRow).attr('ids', aData.ID);
+			return nRow;
+		},
         "sAjaxSource": "/costCheckOrder/costConfirmListById",
         "aoColumns": [ 
             {"mDataProp":"BUSINESS_TYPE"},            	
@@ -146,7 +150,17 @@ $(document).ready(function() {
             {"mDataProp":"AMOUNT"},                        
             {"mDataProp":"VOLUME"},                        
             {"mDataProp":"WEIGHT"},                        
-            {"mDataProp":"PAY_AMOUNT"},                        
+            {"mDataProp":"PAY_AMOUNT"},
+            {"mDataProp":"CHANGE_AMOUNT",
+            	"fnRender": function(obj) {
+                    if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+                        return "<input type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                        
+                    }else {
+                        return "<input type='text' name='change_amount'/>";
+                    }
+                }
+            },
             {"mDataProp":"OFFICE_NAME"},                       
             {"mDataProp":"REMARK"}                         
         ]      
@@ -171,9 +185,23 @@ $(document).ready(function() {
     	}
     	
     });
-    
-    
-
+    $("#costConfirem-table").on('blur', 'input', function(e){
+		e.preventDefault();
+		var orderNos = $("#orderNos").val();
+		var ids=$(this).parent().parent().attr("ids");
+		var paymentId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		 if(isNaN(value)){      
+			 alert("调整金额为数字类型");
+		 }else{
+			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
+				 $("#debitAmount").html(data.changeAmount);
+				 $("#costAmount").html(data.actualAmount); 
+				 $("#total_amount").val(data.actualAmount); 
+		    	},'json');
+		 }
+	}); 
     var costMiscListTable = $('#costMiscList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",

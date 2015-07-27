@@ -67,14 +67,6 @@ $(document).ready(function() {
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                        
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
-            {"mDataProp":null, "sWidth":"50px",
-            	"fnRender":function(obj){
-            		if(obj.aData.ALANCE >0){
-            			return "+"+obj.aData.ALANCE;
-            		}else{
-            			return obj.aData.ALANCE;
-            		}
-            	}},
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"},                       
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
