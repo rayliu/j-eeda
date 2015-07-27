@@ -215,6 +215,7 @@ $(document).ready(function() {
 			alert("请输入目的地城市");
 			return false;
 		}
+		$("#receivingunit").val($("#notify_address").val());
 		/*if(cmbAreaTo == "--请选择区(县)--" || cmbAreaTo == ""){
 			alert("请输入目的地区（县）");
 			return false;
@@ -642,37 +643,17 @@ $(document).ready(function() {
 		},'json');
     
     $("#mbProvinceTo").on('change',function(){
-		$("#notify_address").val("");
 		$("#locationTo").val($(this).val());
-		if($("#mbProvinceTo").find("option:selected").text() =="--请选择省份--"){
-			$("#notify_address").val("");
-		}else{
-			$("#notify_address").val($("#mbProvinceTo").find("option:selected").text());
-		}
 		$("#cmbAreaTo").get(0).selectedIndex=0;
 		$("#cmbAreaTo").empty();
 	});
 	$("#cmbCityTo").on('change',function(){
-		$("#notify_address").val("");
 		$("#locationTo").val($(this).val());
-		if($("#cmbCityTo").find("option:selected").text() =="--请选择城市--"){
-			$("#notify_address").val($("#mbProvinceTo").find("option:selected").text());
-		}else{
-			$("#notify_address").val($("#mbProvinceTo").find("option:selected").text()+" "+$("#cmbCityTo").find("option:selected").text());
-		}
 		
 		
 	});
 	$("#cmbAreaTo").on('change',function(){
-		$("#notify_address").val("");
 		$("#locationTo").val($(this).val());
-		if($("#cmbCityTo").find("option:selected").text() =="--请选择城市--"){
-			$("#notify_address").val($("#mbProvinceTo").find("option:selected").text());
-		}else if($("#cmbAreaTo").find("option:selected").text() =="--请选择区(县)--"){
-			$("#notify_address").val($("#mbProvinceTo").find("option:selected").text()+" "+$("#cmbCityTo").find("option:selected").text());
-		}else{
-			$("#notify_address").val($("#mbProvinceTo").find("option:selected").text()+" "+$("#cmbCityTo").find("option:selected").text()+" "+$("#cmbAreaTo").find("option:selected").text());
-		}
 	});
 
 

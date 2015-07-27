@@ -120,7 +120,7 @@ public class DeliveryController extends Controller {
 //					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 //					+ " order by d.create_stamp desc "
 //					+ sLimit;
-			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,trid.notify_party_company AS company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, trid.pieces amount, toi.amount cargoamount, tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
+			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(d.receivingunit,IFNULL(trid.notify_party_company,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, trid.pieces amount, toi.amount cargoamount, tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
 					+ "( SELECT group_concat( DISTINCT doi.transfer_no SEPARATOR ' [java] ' ) FROM delivery_order_item doi WHERE delivery_id = d.id ) AS transfer_order_no,"
 					+ " ( SELECT group_concat( trid.serial_no SEPARATOR '  [java] ' )"
 					+ " FROM "
@@ -188,19 +188,23 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select toi.item_no item_no,trid.pieces amount ,toi.amount cargoamount,tor.planning_time plan_time , d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
-					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
-					+ " from delivery_order d "
-					+ " left join party p on d.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on d.sp_id = p2.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
-					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " left join delivery_order_item doi on doi.delivery_id = d.id "
-					+ " left join transfer_order tor on tor.id = doi.transfer_order_id"
-					+ " left join transfer_order_item toi on toi.order_id = tor.id "
+			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(d.receivingunit,IFNULL(trid.notify_party_company,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, trid.pieces amount, toi.amount cargoamount, tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
+					+ "( SELECT group_concat( DISTINCT doi.transfer_no SEPARATOR ' [java] ' ) FROM delivery_order_item doi WHERE delivery_id = d.id ) AS transfer_order_no,"
+					+ " ( SELECT group_concat( trid.serial_no SEPARATOR '  [java] ' )"
+					+ " FROM "
+					+ " delivery_order_item doi LEFT JOIN transfer_order_item_detail trid ON trid.id = doi.transfer_item_detail_id"
+					+ " WHERE doi.delivery_id = d.id ) AS serial_no FROM delivery_order d"
+					+ " LEFT JOIN party p ON d.customer_id = p.id"
+					+ " LEFT JOIN contact c ON p.contact_id = c.id"
+					+ " LEFT JOIN party p2 ON d.sp_id = p2.id"
+					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
+					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
+					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
+					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
+					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
+					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+					+ " LEFT JOIN office o ON o.id = tor.office_id"
+					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " where ifnull(d.order_no,'') like '%"
 					+ orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%"
@@ -1049,7 +1053,7 @@ public class DeliveryController extends Controller {
 		String clientOrderStamp = getPara("client_order_stamp");
 		String orderDeliveryStamp  = getPara("order_delivery_stamp");
 		String transferOrderNo  = getPara("transferOrderNo").trim();
-
+		String receivingunit =getPara("receivingunit");
 		String[] idlist = getPara("localArr").split(",");
 		String[] idlist2 = getPara("localArr2").split(",");
 		String[] idlist4 = getPara("localArr3").split(",");
@@ -1099,6 +1103,7 @@ public class DeliveryController extends Controller {
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", warehouseId)
 					.set("cargo_nature", cargoNature)
+					.set("receivingunit", receivingunit)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
@@ -1192,6 +1197,7 @@ public class DeliveryController extends Controller {
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))
+					.set("receivingunit", receivingunit)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no", getPara("customerDelveryNo"));
