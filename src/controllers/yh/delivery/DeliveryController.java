@@ -205,7 +205,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
 					+ " LEFT JOIN office o ON o.id = tor.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
-					+ " where ifnull(d.order_no,'') like '%"
+					+ " where ifnull(tor.customer_order_no,'') like '%"
 					+ orderNo_filter
 					+ "%' and ifnull(d.status,'') like '%"
 					+ status_filter
