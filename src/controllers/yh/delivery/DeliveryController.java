@@ -752,8 +752,9 @@ public class DeliveryController extends Controller {
 		String code =getPara("code");
 		String customer_order_number=getPara("customer_order_number");
 		String singleid = getPara("singleid");
+		String inputStrrdc =getPara("inputStrrdc");
 		Map transferOrderListMap = new HashMap();
-		if(customerName==null&&warehouse==null){
+		if(customerName==null&&inputStrrdc==null){
 			transferOrderListMap.put("sEcho", 0);
 			transferOrderListMap.put("iTotalRecords", 0);
 			transferOrderListMap.put("iTotalDisplayRecords",null);
@@ -837,7 +838,7 @@ public class DeliveryController extends Controller {
 				sql =sql+" and ifnull(t2.customer_order_no,'') like '%"+ customer_order_number+ "%'";
 			}
 			
-			if(warehouse!=""&&customerName!=""&&warehouse!=null&&customerName!=null){
+			if(inputStrrdc!=""&&customerName!=""&&inputStrrdc!=null&&customerName!=null){
 				sqlTotal += " and w.warehouse_name like '%" + warehouse + "%' "
 						+ " and c.abbr like '%" + customerName + "%'";
 				sql += " and w.warehouse_name like '%" + warehouse + "%' "

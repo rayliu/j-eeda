@@ -664,17 +664,18 @@ $(document).ready(function() {
 	
     
 	/***red,? 客户和仓库一有值得时候触发事件****/
-  	$('#customerName2,#warehouse2,#orderStatue2,#deliveryOrderNo2,#customer_order_number,#singleid').on('keyup click', function(){
+  	$('#customerName2,#rdc,#warehouse2,#orderStatue2,#deliveryOrderNo2,#customer_order_number,#singleid').on('keyup click', function(){
   		var inputStr = $('#customerName2').val();
         var warehouseName =$("#warehouse2").val();
         var customer_order_number = $("#customer_order_number").val();
         var code= $("#orderStatue2").val();
         var deliveryOrderNo = $("#deliveryOrderNo2").val();
         var singleid = $("#singleid").val();
+        var inputStrrdc=$("#rdc").val();
        //如果客户和仓库都有值，触发查询
-        if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""){
+        if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
     		dab.fnDraw();
         }else{
         	dab.fnSettings().oFeatures.bServerSide = true;
