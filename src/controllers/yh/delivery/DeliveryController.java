@@ -15,7 +15,6 @@ import java.util.Map;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartTransferOrder;
-import models.InventoryItem;
 import models.Location;
 import models.Office;
 import models.ParentOfficeModel;
@@ -535,7 +534,7 @@ public class DeliveryController extends Controller {
 	 * ); renderJson(contactjson); }
 	 */
 	public void creat2() {
-	
+
 		String customerId = getPara("customerId");
 		String warehouseId = getPara("warehouseId");
 		//String transferOrderNo = getPara("transferOrderNo1");
@@ -543,6 +542,9 @@ public class DeliveryController extends Controller {
 		String productIds = getPara("productIds");
 		String shippingNumbers = getPara("shippingNumbers");
 		String cargoNature = getPara("cargoNature");
+//		//客户ID
+//		Record record = Db.findFirst("SELECT tor.customer_id FROM transfer_order tor LEFT JOIN transfer_order_item toi on toi.order_id = tor.id where toi.id in (?)",transferItemIds);
+//		Long customerId = record.getLong("customer_id");
 		//客户
 		if (customerId != null) {
 			
@@ -1094,7 +1096,7 @@ public class DeliveryController extends Controller {
 					.set("phone", getPara("notify_phone"))
 					.set("mobile", getPara("notify_mobile"));
 			contact.save();
-			party.set("contact_id", contact.get("id"))
+			party.set("contact_id", contact.get("id")) 
 					.set("party_type", "NOTIFY_PARTY")
 					.set("create_date", createDate)
 					.set("creator", users.get(0).get("id"));
@@ -1144,21 +1146,30 @@ public class DeliveryController extends Controller {
 			}
 			deliveryOrder.save();
 
+			
 			if("cargo".equals(cargoNature)){
 				TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
 				for (int i = 0; i < productId.length; i++) {
 					//修改可用库存
-					InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
-					item.set("available_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
+					//InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
+					//item.set("available_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
+					
 					//新增配送单从表
 					DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
 					deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"))
-					.set("product_id", productId[i])
 					.set("product_number", shippingNumber[i])
 					.set("transfer_item_id", transferItemId[i])
 					.set("transfer_no", transferOrderNo)
 					.set("transfer_order_id",order.get("id"))
+					.set("amount", shippingNumber[i])
 					.save();
+					
+					long transfer_id = order.getLong("id");
+					// 改变运输单状态
+					TransferOrder tOrder = TransferOrder.dao
+							.findById(transfer_id);
+					tOrder.set("status", "配送中");
+					tOrder.update();
 				} 
 			}else{
 				String string = getPara("tranferid");
@@ -1229,6 +1240,8 @@ public class DeliveryController extends Controller {
 		}
 		renderJson(deliveryOrder);
 	}
+	
+	
 
 	// 保存运输里程碑
 	private void saveDeliveryOrderMilestone(DeliveryOrder deliveryOrder) {
@@ -1632,7 +1645,7 @@ public class DeliveryController extends Controller {
         		+ " left join party p on ii.party_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
         		+ " where w.id = '" + warehouseId + "' and p.id = '" + customerId + "' and pro.id in (" + productIds + ");";*/
-        String sql = "select pro.item_no,pro.item_name,pro.volume,pro.weight,c.abbr,tor.order_no from transfer_order_item toi "
+        String sql = "select toi.*,c.abbr,tor.order_no from transfer_order_item toi "
         		+ " left join transfer_order tor on tor.id = toi.order_id"
         		+ " left join product pro on pro.id = toi.product_id"
         		+ " left join party p on p.id = tor.customer_id"
@@ -1744,5 +1757,24 @@ public class DeliveryController extends Controller {
 		File file = new File(PathKit.getWebRootPath()+"/download/配送单导入模板.xlsx");
 		renderFile(file);
 	}
+	
+	
+	
+
+    // 列出客户公司名称
+    public void searchCustomer() {
+        String locationName = getPara("locationName");
+        
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (locationName.trim().length() > 0) {
+            locationList = Db
+                    .find("select * from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.abbr like '%"+locationName+"%' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+
+        } else {
+            locationList = Db.find("select * from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'  and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+
+        }
+        renderJson(locationList);
+    }
 
 }

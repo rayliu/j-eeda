@@ -199,7 +199,8 @@
 	                                            	if(cargoNature=="cargo")
 	                                            		cargoNaturName="普通货品";
 	                                            %>
-	                                        	<label>货品属性：</label><lable>${customizeField.EX_CARGO!'贵重物品'}</lable>
+	                                        	<!-- <label>货品属性：</label><lable>${customizeField.EX_CARGO!'贵重物品'}${cargoNature!''}</lable> -->
+	                                        	<label>货品属性：</label><lable><%if(cargoNature!''=="cargo"){%>普通货品<%}else if(cargoNature!''=="ATM"){%>ATM柜员机<%}else{%>贵重物品<%}%></lable>
 	                                        	<input type="hidden" id="cargoNature" name="cargoNature" value ="${cargoNature!''}">
 	                                        </div>
 	                                    </div>

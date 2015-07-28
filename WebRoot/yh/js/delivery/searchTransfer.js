@@ -380,13 +380,13 @@ $(document).ready(function() {
 	// 增加仓库查询代码和客户查询代码
 	$('#customerName2').on('keyup click', function(){
            var inputStr = $('#customerName2').val();
-           $.get("/customerContract/search", {locationName:inputStr}, function(data){
+           $.get("/delivery/searchCustomer", {locationName:inputStr}, function(data){
               
                var companyList =$("#companyList");
                companyList.empty();
                for(var i = 0; i < data.length; i++)
                {
-                   companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+                   companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
                }
            },'json');
            $("#companyList").css({ 
@@ -434,13 +434,13 @@ $(document).ready(function() {
 	//获取客户
     $('#customerName1').on('keyup click', function(){
         var inputStr = $('#customerName1').val();
-        $.get("/customerContract/search", {locationName:inputStr}, function(data){
+        $.get("/delivery/searchCustomer", {locationName:inputStr}, function(data){
           
             var companyList =$("#companyList1");
             companyList.empty();
             for(var i = 0; i < data.length; i++)
             {
-                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
             }
         },'json');
         $("#companyList1").css({ 
