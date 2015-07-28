@@ -753,6 +753,18 @@ public class DeliveryController extends Controller {
 		String customer_order_number=getPara("customer_order_number");
 		String singleid = getPara("singleid");
 		String inputStrrdc =getPara("inputStrrdc");
+		String inputStr = getPara("warehouse");
+    	String rdc = getPara("rdc");
+    	String wnsql ="";	
+    	if(inputStr != null && rdc != null && !"".equals(inputStr) && !"".equals(rdc)){
+    		wnsql = "select w.warehouse_name from warehouse w left join office o on o.id = w.office_id where w.warehouse_name LIKE '%"+inputStr+"%' and o.id = "+rdc;
+    	}else if(inputStr != null && !"".equals(inputStr)){
+    		wnsql = "select w.warehouse_name from warehouse where warehouse_name like '%"+inputStr+"%'";
+    	}else if(rdc != null && !"".equals(rdc)){
+    		wnsql = "select w.warehouse_name from warehouse w left join office o on o.id = w.office_id where o.id = "+rdc;
+    	}else{
+    		wnsql= "select w.warehouse_name from warehouse";
+    	}
 		Map transferOrderListMap = new HashMap();
 		if(customerName==null&&inputStrrdc==null){
 			transferOrderListMap.put("sEcho", 0);
@@ -762,6 +774,7 @@ public class DeliveryController extends Controller {
 			renderJson(transferOrderListMap);
 			return;
 		}
+		
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -769,7 +782,7 @@ public class DeliveryController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		String sqlTotal="select  count(1) total from transfer_order_item_detail t1 "
+		String sqlTotal="select count(1) total from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
 					+ " left join warehouse w on t2.warehouse_id = w.id "
 					+ " left join party p on t2.customer_id = p.id "
@@ -840,8 +853,10 @@ public class DeliveryController extends Controller {
 			
 			if(inputStrrdc!=""&&customerName!=""&&inputStrrdc!=null&&customerName!=null){
 				sqlTotal += " and w.warehouse_name like '%" + warehouse + "%' "
-						+ " and c.abbr like '%" + customerName + "%'";
+						+ " and w.warehouse_name in("+wnsql+")"
+					+ " and c.abbr like '%" + customerName + "%' order by t1.serial_no asc";
 				sql += " and w.warehouse_name like '%" + warehouse + "%' "
+						+ " and w.warehouse_name in("+wnsql+")"
 					+ " and c.abbr like '%" + customerName + "%' order by t1.serial_no asc";
 			}
 			

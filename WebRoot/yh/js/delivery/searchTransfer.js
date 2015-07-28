@@ -618,6 +618,7 @@ $(document).ready(function() {
 		$('#rdc').val($(this).text());
 		$('#hiddenRdc').val(id);
 		$('#rdcList').hide();
+		var rdc = $('#hiddenRdc').val();
 		var inputStr = $('#customerName2').val();
         var warehouseName =$("#warehouse2").val();
         var customer_order_number = $("#customer_order_number").val();
@@ -628,11 +629,11 @@ $(document).ready(function() {
        //如果客户和仓库都有值，触发查询
         if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc+"&rdc="+rdc;
     		dab.fnDraw();
         }else{
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&rdc="+rdc;
     		dab.fnDraw();
         }
 	});
@@ -701,7 +702,8 @@ $(document).ready(function() {
             dab.fnDraw();
         }
     });
-	$('#rdcList,#companyList').on('click', '.fromLocationItem', function(e){        
+	$('#rdcList,#companyList').on('click', '.fromLocationItem', function(e){
+		var rdc = $('#hiddenRdc').val();
 		var inputStr = $('#customerName2').val();
         var warehouseName =$("#warehouse2").val();
         var customer_order_number = $("#customer_order_number").val();
@@ -712,16 +714,17 @@ $(document).ready(function() {
        //如果客户和仓库都有值，触发查询
         if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc+"&rdc="+rdc;
     		dab.fnDraw();
         }else{
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&rdc="+rdc;
     		dab.fnDraw();
         }
     });
 	/***red,? 客户和仓库一有值得时候触发事件****/
   	$('#customerName2,#rdc,#warehouse2,#orderStatue2,#deliveryOrderNo2,#customer_order_number,#singleid').on('keyup click', function(){
+  		var rdc = $('#hiddenRdc').val();
   		var inputStr = $('#customerName2').val();
         var warehouseName =$("#warehouse2").val();
         var customer_order_number = $("#customer_order_number").val();
@@ -732,11 +735,11 @@ $(document).ready(function() {
        //如果客户和仓库都有值，触发查询
         if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc+"&rdc="+rdc;
     		dab.fnDraw();
         }else{
         	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&rdc="+rdc;
     		dab.fnDraw();
         }
 		           
