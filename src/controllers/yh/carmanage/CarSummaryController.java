@@ -60,7 +60,7 @@ public class CarSummaryController extends Controller {
 		String driver = getPara("driver");
 		String car_no = getPara("car_no");
 		String transferOrderNo = getPara("transferOrderNo");
-		String create_stamp = getPara("create_stamp");
+		String turnout_time = getPara("create_stamp");
 		
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -72,7 +72,7 @@ public class CarSummaryController extends Controller {
         
         
 		if (driver == null && status == null && car_no == null
-				&& transferOrderNo == null && create_stamp == null ) {
+				&& transferOrderNo == null && turnout_time == null ) {
 
 	        // 获取总条数
 	        sqlTotal = "select ifnull(count(0),0) total from depart_order dor"
@@ -133,7 +133,7 @@ public class CarSummaryController extends Controller {
 		        	+ " and ifnull(dor.driver, '') like '%"+driver+"%'"
 					+ " and ifnull(dor.status, '') like '%"+status+"%'"
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
-					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
+					+ " and ifnull(dor.turnout_time, '') like '%"+turnout_time+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
 		        	+ " and o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')"
 		        	+ " and t_o.customer_id in (select customer_id from user_customer where user_name = '"+currentUser.getPrincipal()+"')"
@@ -164,7 +164,7 @@ public class CarSummaryController extends Controller {
 		        	+ " and ifnull(dor.driver, '') like '%"+driver+"%'"
 					+ " and ifnull(dor.status, '') like '%"+status+"%'"
 					+ " and ifnull(dor.car_no, '') like '%"+car_no+"%'"
-					+ " and ifnull(dor.create_stamp, '') like '%"+create_stamp+"%'"
+					+ " and ifnull(dor.turnout_time, '') like '%"+turnout_time+"%'"
 					+ " and ifnull(dtf.transfer_order_no, '') like '%"+transferOrderNo+"%'"
 		        	+ " and o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')"
 		        	+ " and t_o.customer_id in (select customer_id from user_customer where user_name = '"+currentUser.getPrincipal()+"')"
