@@ -1259,7 +1259,7 @@ public class PickupOrderController extends Controller {
 	            TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
 	            TransferOrderMilestone milestone = new TransferOrderMilestone();
 	            if ("新建".equals(transferOrder.get("status")) || "部分已入货场".equals(transferOrder.get("status")) || "部分已入库".equals(transferOrder.get("status"))) {
-	                if ("salesOrder".equals(transferOrder.get("order_type")) || "arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))) {//销售订单
+	                if ("movesOrder".equals(transferOrder.get("order_type")) ||"salesOrder".equals(transferOrder.get("order_type")) || "arrangementOrder".equals(transferOrder.get("order_type")) || "cargoReturnOrder".equals(transferOrder.get("order_type"))) {//销售订单
 	                    if (transferOrder.get("pickup_assign_status").equals(TransferOrder.ASSIGN_STATUS_PARTIAL)) {
 	                        transferOrder.set("status", "部分已入货场");
 	                        milestone.set("status", "部分已入货场");
@@ -1296,7 +1296,7 @@ public class PickupOrderController extends Controller {
         TransferOrder transferOrderType = TransferOrder.dao.findById(departTransferOrders.get(0).get("order_id"));
         TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
         if(!direct){
-	        if (transferOrderType.get("order_type").equals("salesOrder") || transferOrderType.get("order_type").equals("arrangementOrder") || transferOrderType.get("order_type").equals("cargoReturnOrder")) {
+	        if (transferOrderType.get("order_type").equals("salesOrder") || transferOrderType.get("order_type").equals("movesOrder") || transferOrderType.get("order_type").equals("arrangementOrder") || transferOrderType.get("order_type").equals("cargoReturnOrder")) {
 	            pickupOrder.set("status", "已入货场");
 	            pickupMilestone.set("status", "已入货场");
 	        } else if (transferOrderType.get("order_type").equals("replenishmentOrder")) {
