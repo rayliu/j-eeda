@@ -22,8 +22,6 @@ import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
-import models.yh.delivery.DeliveryPlanOrderDetail;
-import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -38,7 +36,6 @@ import com.jfinal.plugin.activerecord.Record;
 import controllers.yh.LoginUserController;
 import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -95,8 +92,8 @@ public class DeliveryOrderMilestoneController extends Controller {
   		if("cargo".equals(cargoNature)){
   			for (int i = 0; i < productId.length; i++) {
   				//修改实际库存
-  				InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
-  				item.set("total_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
+  				//InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
+  				//item.set("total_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
   				//修改运输单已完成数量
   				TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
   				double outCompleteAmount = transferOrderItem.getDouble("complete_amount")==null?0:transferOrderItem.getDouble("complete_amount");
