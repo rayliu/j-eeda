@@ -559,12 +559,11 @@ $(document).ready(function() {
 			$('#warehouseList').hide();
 		});
 
-	$('#warehouseList').on('mousedown', function(){
+	$('#warehouseList,#rdcList,#companyList').on('mousedown', function(){
 		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
-	$('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
+	$('#warehouseList,#rdcList,#companyList').on('mousedown', '.fromLocationItem', function(e){
 		//var id =$(this).attr('code');
-		$('#warehouse2').val($(this).text());
 		var inputStr = $('#customerName2').val();
 		var warehouseName =$("#warehouse2").val();
 		var code= $("#orderStatue2").val();
@@ -572,10 +571,11 @@ $(document).ready(function() {
 		var customer_order_number = $("#customer_order_number").val();
 		var singleid= $("#singleid").val();
 		var rdc = $('#hiddenRdc').val();
+		var inputStrrdc=$("#rdc").val();
 		//如果客户和仓库都有值，触发查询
-		if(warehouseName!=null&&inputStr!=null&&warehouseName!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
+		if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""&&rdc!=null&&rdc!=""){
 			dab.fnSettings().oFeatures.bServerSide = true;
-			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
 			dab.fnDraw();
 		}
 	  
@@ -618,6 +618,23 @@ $(document).ready(function() {
 		$('#rdc').val($(this).text());
 		$('#hiddenRdc').val(id);
 		$('#rdcList').hide();
+		var inputStr = $('#customerName2').val();
+        var warehouseName =$("#warehouse2").val();
+        var customer_order_number = $("#customer_order_number").val();
+        var code= $("#orderStatue2").val();
+        var deliveryOrderNo = $("#deliveryOrderNo2").val();
+        var singleid = $("#singleid").val();
+        var inputStrrdc=$("#rdc").val();
+       //如果客户和仓库都有值，触发查询
+        if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
+        	dab.fnSettings().oFeatures.bServerSide = true;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
+    		dab.fnDraw();
+        }else{
+        	dab.fnSettings().oFeatures.bServerSide = true;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+    		dab.fnDraw();
+        }
 	});
 	
 	
@@ -661,8 +678,48 @@ $(document).ready(function() {
 		status2.trigger( "click" );
 		$('#orderStatueList').hide();
 	});
-	
-    
+	$('#warehouseList').on('mousedown', '.fromLocationItem', function(e){
+        var id =$(this).attr('code');
+        $('#warehouse2').val($(this).text());
+        $('#hiddenRdc').val(id);
+        $('#rdcList').hide();
+        var inputStr = $('#customerName2').val();
+        var warehouseName =$("#warehouse2").val();
+        var customer_order_number = $("#customer_order_number").val();
+        var code= $("#orderStatue2").val();
+        var deliveryOrderNo = $("#deliveryOrderNo2").val();
+        var singleid = $("#singleid").val();
+        var inputStrrdc=$("#rdc").val();
+       //如果客户和仓库都有值，触发查询
+        if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
+            dab.fnSettings().oFeatures.bServerSide = true;
+            dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
+            dab.fnDraw();
+        }else{
+            dab.fnSettings().oFeatures.bServerSide = true;
+            dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+            dab.fnDraw();
+        }
+    });
+	$('#rdcList,#companyList').on('click', '.fromLocationItem', function(e){        
+		var inputStr = $('#customerName2').val();
+        var warehouseName =$("#warehouse2").val();
+        var customer_order_number = $("#customer_order_number").val();
+        var code= $("#orderStatue2").val();
+        var deliveryOrderNo = $("#deliveryOrderNo2").val();
+        var singleid = $("#singleid").val();
+        var inputStrrdc=$("#rdc").val();
+       //如果客户和仓库都有值，触发查询
+        if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
+        	dab.fnSettings().oFeatures.bServerSide = true;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc;
+    		dab.fnDraw();
+        }else{
+        	dab.fnSettings().oFeatures.bServerSide = true;
+        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid;
+    		dab.fnDraw();
+        }
+    });
 	/***red,? 客户和仓库一有值得时候触发事件****/
   	$('#customerName2,#rdc,#warehouse2,#orderStatue2,#deliveryOrderNo2,#customer_order_number,#singleid').on('keyup click', function(){
   		var inputStr = $('#customerName2').val();
@@ -684,6 +741,7 @@ $(document).ready(function() {
         }
 		           
     });
+  	
   	
   	$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1,#transferOrderNo").on('keyup click', function () {
   		var customerName1 = $("#customerName1").val();
