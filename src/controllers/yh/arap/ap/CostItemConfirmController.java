@@ -386,13 +386,16 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(route_from,'') like '%" + route_from + "%'"
         			+ " and ifnull(route_to,'') like '%" + route_to + "%'"
         			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'"
-        	        + " and ifnull(cname,'') like '%" + customer_name + "%'";
+        	        + " and ifnull(cname,'') like '%" + customer_name + "%'"
+        	        + " and ifnull(status, '') != '手动删除'";
         }
-       
+        if (condition == "" ){
+        	condition=" where ifnull(status, '') != '手动删除' ";
+        }
         sqlTotal = " select count(1) total from (" + sql + condition + ") as B"; 
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-       
+        
         List<Record> BillingOrders = Db.find(sql + condition + " order by create_stamp desc" + sLimit);
 
         Map BillingOrderListMap = new HashMap();
