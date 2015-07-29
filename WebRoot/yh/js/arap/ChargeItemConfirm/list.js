@@ -17,7 +17,7 @@ $(document).ready(function() {
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
               "fnRender": function(obj) {
-                return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
+                return '<input type="checkbox" name="order_check_box" order_type="'+obj.aData.ORDER_TP+'" value="'+obj.aData.ID+'">';
               }
             },  
             {"mDataProp":"ID", "bVisible": false},
@@ -84,14 +84,17 @@ $(document).ready(function() {
     $("#chargeConfiremBtn").click(function(e){
         e.preventDefault();
     	var trArr=[];
+    	var orderNoArr=[];
         $("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
         		trArr.push($(this).val());
+        		orderNoArr.push($(this).attr('order_type'));
         	}
         });     
         console.log(trArr);
         var returnOrderIds = trArr.join(",");
-        $.post("/chargeConfiremList/chargeConfiremReturnOrder", {returnOrderIds:returnOrderIds}, function(data){
+        var orderno=orderNoArr.join(",");
+        $.post("/chargeConfiremList/chargeConfiremReturnOrder", {returnOrderIds:returnOrderIds,orderno:orderno}, function(data){
         	if(data.success){
         		chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list";
         		chargeConfiremTable.fnDraw(); 

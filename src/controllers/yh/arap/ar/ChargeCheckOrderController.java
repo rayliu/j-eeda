@@ -178,10 +178,23 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
 				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
 				+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已确认' ";
+				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已确认' "
+				+ " group by ror.id,tor2.id"
+				+ " UNION"
+				+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
+				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
+				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
+				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
+				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,c.abbr cname,amcoi.customer_order_no customer_order_no,"
+				+ " NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
+				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,amco.total_amount charge_total_amount"
+				+ " FROM arap_misc_charge_order amco"
+				+ " LEFT JOIN arap_misc_charge_order_item amcoi ON amcoi.misc_order_id = amco.id"
+				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
+				+ " WHERE amco. STATUS = '已确认')";
 		if (customer == null && beginTime == null && endTime == null
 				 && orderNo == null && customerNo == null && address == null ) {
-			condition = " group by ror.id,tor2.id  order by ror.create_date desc ";
+			condition = " ";
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -195,13 +208,13 @@ public class ChargeCheckOrderController extends Controller {
 						+ " and (ifnull(tor.customer_order_no,'')  like '%"+ customerNo +"%' or ifnull(tor2.customer_order_no,'')  like '%"+ customerNo +"%') "
 						+ " and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id))  like '%"+ orderNo +"%' "
 						+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from))  like '%"+ address +"%' "
-						+ " group by ror.id,tor2.id order by ror.create_date desc ";
+						+ "  order by ror.create_date desc ";
 		}
 		sqlTotal = "select count(1) total from ("+ sql + condition +") as A";
 		rec = Db.findFirst(sqlTotal + fieldsWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 		
-		orders = Db.find(sql + condition + fieldsWhere);
+		orders = Db.find(sql  + fieldsWhere);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
