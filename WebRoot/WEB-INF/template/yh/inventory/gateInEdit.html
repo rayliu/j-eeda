@@ -114,7 +114,7 @@
 									      		<input id="warehouseOrderItemId" type="hidden" name="warehouseOderItemId" />
 												<div class="form-group ">
 													<label class="control-label" for="inputSuccess">货品名称</label>
-													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
+													<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown"><span id="itemNameMessagespan" style="color:red;">请输入货品名称</span>
 	                                                <ul id='itemNameList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 	    											</ul>
 												</div>
@@ -141,7 +141,7 @@
 									       <div class="col-lg-6">
 									      		<div class="form-group">
 													<label class="control-label" for="inputSuccess">货品型号</label>
-													<input id="itemNoMessage" class="form-control dropdown-toggle" placeholder="请输入货品型号" type="text" name="itemNoMessage" data-toggle="dropdown">
+													<input id="itemNoMessage" class="form-control dropdown-toggle" placeholder="请输入货品型号" type="text" name="itemNoMessage" data-toggle="dropdown"><span id="itemNoMessagespan" style="color:red;">请输入货品型号</span>
 	                                                <ul id='itemNoList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
 	    											</ul>
 												</div>
@@ -150,19 +150,20 @@
 													<input id="caton_no" class="form-control" type="text" name="caton_no" value="${product.width!''}">
 												</div>
 												<div class="form-group ">
-													<label class="control-label" for="inputSuccess">数量</label><sp
-													<input id="total_quantity" class="form-control" type="text" name="total_quantity">
+													<label class="control-label" for="inputSuccess">数量</label>
+													<input id="total_quantity" class="form-control" type="text" name="total_quantity"><span id="total_quantityspan" style="color:red;">请输入数量</span>
 												</div>
 												<div class="form-group">
 													<label class="control-label" for="inputWarning">单位价格</label> 
-													<input id="unit_price" class="form-control" type="text" name="unit_price" value="${product.width!''}">
+													<input id="unit_price" class="form-control" type="text" name="unit_price"><span id="unit_pricespan" style="color:red;">请输入单位价格</span>
 												</div>
 												<div class="form-group ">
 													<label class="control-label" for="inputSuccess">单位成本</label> 
-													<input id="unit_cost" class="form-control" type="text" name="unit_cost">
+													<input id="unit_cost" class="form-control" type="text" name="unit_cost"><span id="unit_costspan" style="color:red;">请输入单位成本</span>
 												</div>
 										      </div>
 										      </div>
+										      
 									      </div>
 										      <div class="modal-footer">
 										        <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>

@@ -524,10 +524,53 @@ $(document).ready(function() {
 		 
 			// 保存货品
 		 $("#addproduct").click(function(){
+			 $("#itemNameMessagespan").hide();
+			 $("#itemNoMessagespan").hide();
+			 $("#total_quantityspan").hide();
+			 $("#unit_pricespan").hide();
+			 $("#unit_costspan").hide();
 			 $('#reset').click();
 		 });
 		    $("#warehouseOrderItemFormBtn").click(function(e){
+		    	var itemNameMessage =$("#itemNameMessage").val();
+		    	var itemNoMessage =$("#itemNoMessage").val();
+		    	var total_quantity =$("#total_quantity").val();
+		    	var unit_price = $("#unit_price").val();
 		    	var warehouseorderid = $("#warehouseorderId").val();
+		    	var unit_cost =$("#unit_cost").val();
+		    	if(itemNameMessage==""||itemNoMessage==""||total_quantity==""||unit_price==""||unit_cost==""){
+		    		if(itemNameMessage==""){
+		    			$("#itemNameMessagespan").show();
+		    		}
+		    		else{
+		    			$("#itemNameMessagespan").hide();
+		    		}
+		    		if(itemNoMessage==""){
+		    			$("#itemNoMessagespan").show();
+		    		}
+		    		else{
+		    			$("#itemNoMessagespan").hide();
+		    		}
+		    		if(total_quantity==""){
+		    			$("#total_quantityspan").show();
+		    		}
+		    		else{
+		    			$("#total_quantityspan").hide();
+		    		}
+		    		if(unit_price==""){
+		    			$("#unit_pricespan").show();
+		    		}
+		    		else{
+		    			$("#unit_pricespan").hide();
+		    		}
+		    		if(unit_cost==""){
+		    			$("#unit_costspan").show();
+		    		}
+		    		else{
+		    			$("#unit_costspan").hide();
+		    		}
+		    	}
+		    	else{
 		    	$.post('/gateIn/savewareOrderItem/'+warehouseorderid,$("#warehouseOrderItemForm").serialize(), function(id){
 						//保存成功后，刷新列表
 		                if(id>0){
@@ -542,7 +585,9 @@ $(document).ready(function() {
 		                    alert('客户无产品,保存失败！。');
 		                }
 				},'json');
+		    	}
 		    });
+		    
 		    //入仓确认
 		    $("#ConfirmBtn").click(function(){
 		    	var warehouseorderid = $("#warehouseorderId").val();
