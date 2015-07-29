@@ -44,7 +44,18 @@ $(document).ready(function() {
             },
             {"mDataProp":"CUSTOMER_ORDER_NO"},//客户订单号
             {"mDataProp":"STATUS"},//状态
-            {"mDataProp":"CARGO_NATURE"},//属性
+            {"mDataProp":"CARGO_NATURE",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == 'ATM'){
+            			return 'ATM柜员机';
+            		}else if(obj.aData.CARGO_NATURE == 'cargo'){
+            			return '普通货品';
+            		}else{
+            			return '贵重物品';
+            		}
+            		
+            	}
+            },
             {"mDataProp":"PICKUP_MODE",
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == "own"){
@@ -52,7 +63,8 @@ $(document).ready(function() {
             		}else if(obj.aData.PICKUP_MODE == "pickupSP"){
             			return "外包供应商提货";
             		}else{
-            			return deliver_tran.ex_type;
+            			//return deliver_tran.ex_type;
+            			return null;
             			
             		}}},//提货方式
             {"mDataProp":"WAREHOUSE_NAME"},//仓库
