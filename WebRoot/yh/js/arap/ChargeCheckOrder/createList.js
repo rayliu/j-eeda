@@ -18,7 +18,7 @@ $(document).ready(function() {
         "aoColumns": [ 
 	          { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
-	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	              return '<input type="checkbox" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
 	            }
 	          },  
 	          {"mDataProp":"ID", "bVisible": false},
@@ -126,6 +126,7 @@ $(document).ready(function() {
     });
     
     var ids = [];
+    var order =[]
     // 未选中列表
 	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		var cname = $(this).parent().siblings('.cname')[0].textContent;		
@@ -139,7 +140,9 @@ $(document).ready(function() {
 			}
 			$(this).parent().parent().appendTo($("#checkedChargeCheckList"));
 			ids.push($(this).val());
+			order.push($(this).attr('tporder'));
 			$("#checkedReturnOrder").val(ids);
+			$("#order").val(order);
 			$('#saveBtn').attr('disabled', false);
 		}			
 	});

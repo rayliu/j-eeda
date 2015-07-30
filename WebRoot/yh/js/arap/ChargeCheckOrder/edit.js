@@ -182,7 +182,7 @@ $(document).ready(function() {
     });	
     
     $("#chargeCheckOrderItem").click(function(){
-    	chargeConfiremTable.fnSettings().sAjaxSource = "/chargeCheckOrder/returnOrderList?returnOrderIds="+$("#returnOrderIds").val();
+    	chargeConfiremTable.fnSettings().sAjaxSource = "/chargeCheckOrder/returnOrderList?order="+$("#order").val()+"&returnOrderIds="+$("#returnOrderIds").val();
     	chargeConfiremTable.fnDraw();   
     });
     
