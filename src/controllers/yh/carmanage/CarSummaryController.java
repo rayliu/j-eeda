@@ -711,8 +711,9 @@ public class CarSummaryController extends Controller {
     		carSummaryDetailOilFee.set(name, value);
     		if(refuel_number != null && !"".equals(refuel_number)){
     			carSummaryDetailOilFee.set("refuel_number", refuel_number);
+    			carSummaryDetailOilFee.update();
     			//修改费用合计中的本次加油
-    			Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id ="+carSummaryId);
+    			Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where car_summary_id ="+carSummaryId);
 				String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+"  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
     			Db.update(sql);
     			//修改费用合计中的本次油耗
@@ -1003,8 +1004,8 @@ public class CarSummaryController extends Controller {
     		costMap.put("next_start_car_amount", rec1.getDouble("amount"));
     		order.set("next_start_car_amount", rec1.getDouble("amount"));
     	}
-    	//总加油费（油卡和现金）
-    	Record rec2 = Db.findFirst("select sum(refuel_amount) amount from car_summary_detail_oil_fee where car_summary_id = "+carSummaryId+";");
+    	//总加油费（现金）
+    	Record rec2 = Db.findFirst("select sum(refuel_amount) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id = "+carSummaryId+";");
     	if(rec2.get("amount") != null && rec2.get("amount") != ""){
     		costMap.put("month_refuel_amount ", rec2.getDouble("amount"));
     		order.set("month_refuel_amount", rec2.getDouble("amount"));

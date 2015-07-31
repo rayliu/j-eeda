@@ -141,6 +141,22 @@ $(document).ready(function() {
  	
  	//点击保存
 	$("#saveCarSummaryBtn").click(function(e){
+		if(clickTabId != "carmanagebasic"){
+			var car_summary_id = $("#car_summary_id").val();
+			if(car_summary_id != ""){
+				$.post('/carsummary/calculateCost',{carSummaryId:car_summary_id},function(data){
+					if(data !="" && data != null){
+						$.each(data, function(name, value) {
+							$("#"+name+"").val(value);
+						});
+					}else
+						$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_ERROR);
+				},'json');	
+			}else{
+				$.scojs_message('费用自动统计失败', $.scojs_message.TYPE_ERROR);
+			}
+		}
+		clickTabId = e.target.getAttribute("id");
 		$("#saveCarSummaryBtn").prop("disabled",true);
 		$.post('/carsummary/saveCarSummary', $("#carSummaryForm").serialize(), function(data){
  			if(data != null){
