@@ -46,21 +46,6 @@ $(document).ready(function() {
             		 
             	}
             },
-            {"mDataProp":"PLAN_TIME",
-            	"sWidth": "100px"},
-            {"mDataProp":"DEPARTURE_TIME",
-            	"sWidth": "100px"},
-            {"mDataProp":"TRANSFER_ORDER_NO",
-            	"sWidth": "100px"},
-        	 {"mDataProp":"CUSTOMER_ORDER_NO",
-            	"sWidth": "100px"},
-            {"mDataProp":"CNAME",
-            	"sWidth": "100px"}, 
-            {"mDataProp":null,
-            	"sWidth": "80px",
-            	"fnRender": function(obj) {
-            			return obj.aData.TRIP_TYPE;
-            	}},
             {"mDataProp":null,
             	"sWidth": "90px",
                 "fnRender": function(obj) {
@@ -100,6 +85,21 @@ $(document).ready(function() {
                 	}                	
                 }
             },
+            {"mDataProp":"PLAN_TIME",
+            	"sWidth": "100px"},
+            {"mDataProp":"DEPARTURE_TIME",
+            	"sWidth": "100px"},
+            {"mDataProp":"TRANSFER_ORDER_NO",
+            	"sWidth": "100px"},
+        	 {"mDataProp":"CUSTOMER_ORDER_NO",
+            	"sWidth": "100px"},
+            {"mDataProp":"CNAME",
+            	"sWidth": "100px"}, 
+            {"mDataProp":null,
+            	"sWidth": "80px",
+            	"fnRender": function(obj) {
+            			return obj.aData.TRIP_TYPE;
+            	}},
             {"mDataProp":"ROUTE_TO",
             		"sWidth": "80px"},
             {"mDataProp":"AMOUNT",
