@@ -1153,23 +1153,27 @@ public class DeliveryController extends Controller {
 					//修改可用库存
 					//InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
 					//item.set("available_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
-					
+	
+					//更新transferOrderIten表
+					TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
+					Double total_amount = transferOrderItem.getDouble("amount");
+					Double Tcomplete_amount = transferOrderItem.getDouble("complete_amount");
+					if(Tcomplete_amount == null){
+						Tcomplete_amount = 0.00;
+					}
+//					Double complete_amount = Tcomplete_amount + Double.valueOf(shippingNumber[i]) ;
+					Double this_amount = Double.valueOf(shippingNumber[i]);
+//					transferOrderItem.set("complete_amount", complete_amount).update();
 					//新增配送单从表
 					DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
 					deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"))
-					.set("product_number", shippingNumber[i])
 					.set("transfer_item_id", transferItemId[i])
 					.set("transfer_no", transferOrderNo)
 					.set("transfer_order_id",order.get("id"))
-					.set("amount", shippingNumber[i])
+					.set("amount", this_amount)
 					.save();
 					
-					long transfer_id = order.getLong("id");
-					// 改变运输单状态
-					TransferOrder tOrder = TransferOrder.dao
-							.findById(transfer_id);
-					tOrder.set("status", "配送中");
-					tOrder.update();
+				
 				} 
 			}else{
 				String string = getPara("tranferid");
@@ -1679,7 +1683,7 @@ public class DeliveryController extends Controller {
         		+ " left join warehouse w on t2.warehouse_id = w.id"
         		+ " left join party p on t2.customer_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
-        		+ " where t2.status = '已入库' and t2.cargo_nature = 'cargo'"
+        		+ " where t2.status in ('已入库','部分配送中') and t2.cargo_nature = 'cargo'"
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
         		+ " and t2.order_no like '%" + transferOrderNo + "%'"
@@ -1695,7 +1699,7 @@ public class DeliveryController extends Controller {
         		+ " left join warehouse w on t2.warehouse_id = w.id"
         		+ " left join party p on t2.customer_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
-        		+ " where t2.status = '已入库' and t2.cargo_nature = 'cargo'"
+        		+ " where t2.status in ('已入库','部分配送中') and t2.cargo_nature = 'cargo'"
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
         		+ " and t2.order_no like '%" + transferOrderNo + "%'"

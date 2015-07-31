@@ -99,6 +99,18 @@ public class DeliveryOrderMilestoneController extends Controller {
   				double outCompleteAmount = transferOrderItem.getDouble("complete_amount")==null?0:transferOrderItem.getDouble("complete_amount");
   				double newCompleteAmount = outCompleteAmount + Double.parseDouble(shippingNumber[i]);
   				transferOrderItem.set("complete_amount", newCompleteAmount).update();
+  				
+  				//货品明细表
+				long transfer_id = transferOrderItem.getLong("order_id");
+				// 改变运输单状态
+				TransferOrder tOrder = TransferOrder.dao.findById(transfer_id);
+				Double total_amount = transferOrderItem.getDouble("amount");
+				if(total_amount == newCompleteAmount){
+					tOrder.set("status", "配送中");
+				}else{
+					tOrder.set("status", "部分配送中");
+				}
+				tOrder.update();
   			}
   		}
         
@@ -356,6 +368,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "已签收");
         deliveryOrder.update();
+
         //String transferId = deliveryOrder.get("transfer_order_id");
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
@@ -382,19 +395,26 @@ public class DeliveryOrderMilestoneController extends Controller {
         
         //查询配送单中的运输单,如果是普货配送就验证是否以配送完成
         if(!"ATM".equals(deliveryOrder.get("cargo_nature"))){
+        	Record deliveryTotal = Db.findFirst("SELECT * FROM delivery_order_item doi LEFT JOIN delivery_order dor on dor.id = doi.delivery_id LEFT JOIN transfer_order_item toi on toi.id = doi.transfer_item_id where dor.id = '" + delivery_id + "';");
+    		double SumDelivery = deliveryTotal.getDouble("complete_amount");//已配送的数量
+    		double totalamount = deliveryTotal.getDouble("amount"); //货品总数
+        	
+        	
         	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
         	DeliveryOrderItem item = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where delivery_id = '" + delivery_id + "';");
         	long transferOrderId = item.getLong("transfer_order_id");
         	//运输单货品总数
-			Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + transferOrderId + "';");
-			double SumTranferItem = tranferTotal.getDouble("amount");
+			//Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + transferOrderId + "';");
+			//double SumTranferItem = tranferTotal.getDouble("amount");
 			//已配送总数
-			Record deliveryTotal = Db.findFirst("select sum(ifnull(doi.product_number,0)) product_number from delivery_order_item doi where doi.transfer_order_id = '" + transferOrderId + "';");
-			double SumDelivery = deliveryTotal.getDouble("product_number");
-			if(SumTranferItem == SumDelivery){
-				Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + transferOrderId + "';");
-				double deliveryNumber = rec.getLong("total");
-				if(deliveryNumber == 0){
+			//Record deliveryTotal = Db.findFirst("select sum(ifnull(doi.product_number,0)) product_number from delivery_order_item doi where doi.transfer_order_id = '" + transferOrderId + "';");
+			
+			if(totalamount == SumDelivery){
+				//Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + transferOrderId + "';");
+				//double deliveryNumber = rec.getLong("total");
+				//已送达的货品数量
+				Record finishTotal = Db.findFirst("SELECT sum(doi.amount) total FROM `delivery_order_item` doi where doi.transfer_order_id = '" + transferOrderId + "';");
+				if(finishTotal.getDouble("total") == totalamount){
 					//当运输单配送完成时生成回单
 					returnOrder.set("order_no", orderNo);
 		            returnOrder.set("delivery_order_id", delivery_id);
