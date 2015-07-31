@@ -92,7 +92,7 @@ $(document).ready(function() {
 	$('#customerMessage').on('keyup click', function(){
 		if($('#customerMessage').val() == "")
 			$("#customer_id").val("");
-		$.get('/customerContract/search', {locationName:$('#customerMessage').val()}, function(data){
+		$.get('/statusReport/search', {locationName:$('#customerMessage').val()}, function(data){
 			var customerList =$("#customerList");
 			customerList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -109,10 +109,17 @@ $(document).ready(function() {
 				if(phone == null){
 					phone = '';
 				}
-				customerList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' payment='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
+				
+				var abbr = data[i].ABBR;
+				if(abbr == null){
+					abbr = '';
+				}
+				customerList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' payment='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");   
+				//customerList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' payment='"+data[i].PAYMENT+"' partyId='"+data[i].PID+"' location='"+data[i].LOCATION+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' cid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');
 		$("#customerList").css({ 
+			
         	left:$(this).position().left+"px", 
         	top:$(this).position().top+32+"px" 
         }); 

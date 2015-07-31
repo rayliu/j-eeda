@@ -2,11 +2,9 @@ package controllers.yh.statusReport;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -809,7 +807,21 @@ public class StatusReportColler extends Controller{
 	
 	
 	
-	
+	 // 列出客户公司名称
+    public void search() {
+        String locationName = getPara("locationName");
+        
+        List<Record> locationList = Collections.EMPTY_LIST;
+        if (locationName.trim().length() > 0) {
+            locationList = Db
+                    .find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.abbr like '%"+locationName+"%' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+
+        } else {
+            locationList = Db.find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'  and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+
+        }
+        renderJson(locationList);
+    }
 	
 	
 	
