@@ -331,18 +331,27 @@ public class CostPreInvoiceOrderController extends Controller {
 		String id = getPara("id");
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
 				.findById(id);
+		Contact con = Contact.dao.findById(arapAuditInvoiceApplication.get("payee_id")
+				.toString());
+		String company_name =con.get("company_name");
 		Long customerId = arapAuditInvoiceApplication.get("payee_id");
+		setAttr("payee_name",arapAuditInvoiceApplication.get("payee_name"));
+		setAttr("bank_name",arapAuditInvoiceApplication.get("bank_name"));
+		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
+		setAttr("company_name",company_name);
 		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
 		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
 		setAttr("approval_stamp",
 				arapAuditInvoiceApplication.get("approval_stamp"));
 		setAttr("noInvoice", arapAuditInvoiceApplication.get("noInvoice"));
+		if(company_name==""||arapAuditInvoiceApplication.get("payee_name")==""||arapAuditInvoiceApplication.get("bank_name")==""||arapAuditInvoiceApplication.get("bank_no")==""){
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);
 			Contact contact = Contact.dao.findById(party.get("contact_id")
 					.toString());
 			setAttr("customer", contact);
+		}
 		}
 		UserLogin userLogin = UserLogin.dao
 				.findById(arapAuditInvoiceApplication.get("create_by"));
@@ -361,11 +370,13 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("costCheckOrderIds", costCheckOrderIds);
 		userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication
 				.get("approver_by"));
+		if(userLogin!=null){
 		setAttr("approver_name", userLogin.get("c_name"));
+		
 		userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication
 				.get("audit_by"));
 		setAttr("audit_name", userLogin.get("c_name"));
-
+		}
 		render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
 
