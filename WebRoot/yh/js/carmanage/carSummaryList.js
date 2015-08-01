@@ -128,8 +128,13 @@ $(document).ready(function() {
 						/*var data1 = obj.aData.TURNOUT_TIME.split("-");
 						var data2 = obj.aData.RETURN_TIME.split("-");
 						return data2[2] - data1[2];*/
+						if(obj.aData.RETURN_TIME!=null&&obj.aData.TURNOUT_TIME!=null){
+							return DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
+						}
+						else{
+							return "";
+						}
 						
-						return DateDiff(obj.aData.RETURN_TIME,obj.aData.TURNOUT_TIME);
 					}
 			  },        	
 			  {"mDataProp":"VOLUME", "sWidth":"70px"},           
@@ -287,7 +292,7 @@ $(document).ready(function() {
 	} );
     
 });
-function DateDiff(d1,d2){ 
+/*function DateDiff(d1,d2){ 
     var day = 24 * 60 * 60 *1000; 
 	try{     
 	   var dateArr = d1.split("-"); 
@@ -305,4 +310,14 @@ function DateDiff(d1,d2){
     }catch(e){ 
     	return false; 
     }
-};
+};*/
+function DateDiff(sDate1, sDate2) {  //sDate1和sDate2是yyyy-MM-dd格式
+    var aDate, oDate1, oDate2, iDays;
+    aDate = sDate1.split("-");
+    oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);  //转换为yyyy-MM-dd格式
+    aDate = sDate2.split("-");
+    oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+    iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24); //把相差的毫秒数转换为天数
+    var beginHour = parseInt(iDays, 10);
+    return beginHour;  //返回相差天数
+}
