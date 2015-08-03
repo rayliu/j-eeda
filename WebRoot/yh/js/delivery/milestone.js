@@ -80,6 +80,7 @@ $(document).ready(function() {
     });	
     //签收完成
     $("#eeda-table").on('click', '.confirmDelivery', function(e){
+    	$(this).hide();
     	var delivery_id =$(this).attr("code");
     	if(confirm("到达确认 吗？")){
     		$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
