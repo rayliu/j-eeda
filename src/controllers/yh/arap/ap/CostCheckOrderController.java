@@ -397,6 +397,55 @@ public class CostCheckOrderController extends Controller {
     	orderNos = orderNos.substring(0, orderNos.length() - 1);
     	setAttr("orderIds", orderIds);
     	setAttr("orderNos", orderNos);
+    	//调整金额
+    	//for(int i=0;i<orderIds.length();i++){
+    	Record rec1 = null;
+    	Record rec = null;
+    	Double totalAmount = 0.00;
+    	Double changeAmount = 0.00;
+    	
+            if("提货".equals(orderNos)){
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIds);
+            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	rec = Db.findFirst("select sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?", orderIds);
+            	if(rec.getDouble("change_amount")!=null){
+            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            }else if("零担".equals(orderNos)){
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIds);
+            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	rec = Db.findFirst("select sum(change_amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ?", orderIds);
+            	if(rec.getDouble("change_amount")!=null){
+            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            }else if("配送".equals(orderNos)){
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", orderIds);
+            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	rec = Db.findFirst("select sum(change_amount) change_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ?", orderIds);
+            	if(rec.getDouble("change_amount")!=null){
+            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            }else if("成本单".equals(orderNos)){
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",orderIds);
+            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	rec = Db.findFirst("select sum(change_amount) change_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ?",orderIds);
+            	if(rec.getDouble("change_amount")!=null){
+            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            }else{
+            	rec1 = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIds);
+            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	rec = Db.findFirst("select sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",orderIds);
+            	if(rec.getDouble("change_amount")!=null){
+            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            }
+            Double actualAmount=totalAmount-changeAmount;
+            setAttr("changeAmount", changeAmount);
+            setAttr("actualAmount", actualAmount);
+    	//}
+    	
+    	
     		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
     }
 
