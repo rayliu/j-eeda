@@ -196,7 +196,7 @@ $(document).ready(function() {
 	$('#customerMessage').on('keyup click', function(){
 		if($('#customerMessage').val() == "")
 			$("#customer_id").val("");
-		$.get('/customerContract/search', {locationName:$('#customerMessage').val()}, function(data){
+		$.get('/statusReport/search', {locationName:$('#customerMessage').val()}, function(data){
 			console.log(data);
 			var customerList =$("#customerList");
 			customerList.empty();
