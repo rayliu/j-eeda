@@ -3,6 +3,22 @@ $(document).ready(function() {
 		document.title = order_no +' | '+document.title;
 	}
 	$('#menu_cost').addClass('active').find('ul').addClass('in');
+	
+	if(order_status=='新建'){
+		$("#saveCostPreInvoiceOrderBtn").attr("disabled",false);
+		$("#auditBtn").attr("disabled",true);
+		$("#approvalBtn").attr("disabled",true);
+	}else if(order_status=='已审核'){
+		$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+		$("#auditBtn").attr("disabled",true);
+		$("#approvalBtn").attr("disabled",false);
+	}else if(order_status=='已审批'){
+		$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+		$("#auditBtn").attr("disabled",true);
+		$("#approvalBtn").attr("disabled",true);
+		$("#printBtn").attr("disabled",false);
+	}
+	
 	var invoiceNoArr=[];
 	var saveCostPreInvoiceOrder = function(e){
 		$("#account_id").val($("#account").val());
@@ -146,34 +162,34 @@ $(document).ready(function() {
 		
 	});
 	$("#paymentMethod2,#paymentMethod1").click(function(e){
-	if($('input:radio:checked').val()=="cash"){
-		$("#acc").hide();
-		$("#bankname").hide();
-	}
-	if($('input:radio:checked').val()=="transfers"){
-		$("#acc").show();
-		$("#bankname").hide();
-	}
+		if($('input:radio:checked').val()=="cash"){
+			$("#acc").hide();
+			$("#bankname").hide();
+		}
+		if($('input:radio:checked').val()=="transfers"){
+			$("#acc").show();
+			$("#bankname").hide();
+		}
 	});
-	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
-		$("#auditBtn").attr("disabled",false);
-		$("#approvalBtn").attr("disabled",false);
-	}else if($("#costPreInvoiceOrderStatus").text()=="新建" || $("#costPreInvoiceOrderStatus").text()=="new"){
-		var str=$("#costPreInvoiceOrderId").val();
-		if(str !=null && str !=""){
-			$("#auditBtn").attr("disabled",false);
-		}
-	}else{
-		$("#auditBtn").attr("disabled",false);
-		$("#approvalBtn").attr("disabled",false);
-		$("#printBtn").attr("disabled",false);
-		if($("#costPreInvoiceOrderStatus").text()=="已付款确认"){
-			$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
-			$("#auditBtn").attr("disabled",true);
-			
-			$("#approvalBtn").attr("disabled",true);
-		}
-	}
+//	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
+//		$("#auditBtn").attr("disabled",false);
+//		$("#approvalBtn").attr("disabled",false);
+//	}else if($("#costPreInvoiceOrderStatus").text()=="新建" || $("#costPreInvoiceOrderStatus").text()=="new"){
+//		var str=$("#costPreInvoiceOrderId").val();
+//		if(str !=null && str !=""){
+//			$("#auditBtn").attr("disabled",false);
+//		}
+//	}else{
+//		$("#auditBtn").attr("disabled",false);
+//		$("#approvalBtn").attr("disabled",false);
+//		$("#printBtn").attr("disabled",false);
+//		if($("#costPreInvoiceOrderStatus").text()=="已付款确认"){
+//			$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+//			$("#auditBtn").attr("disabled",true);
+//			
+//			$("#approvalBtn").attr("disabled",true);
+//		}
+//	}
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
 	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+

@@ -187,7 +187,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
 		setAttr("userLogin", userLogin);
 
-		setAttr("status", "new");
+		setAttr("status", "新建");
 		render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE,
@@ -203,7 +203,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
 					.findById(costPreInvoiceOrderId);
-			arapAuditInvoiceApplication.set("status", "new");
+			
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
