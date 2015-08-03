@@ -174,10 +174,8 @@ public class CostReimbursementOrder extends Controller {
 			setAttr("approvalName", approval.get("user_name"));
 		}
 		
-		List<Record> paymentItemList  = Db.find("select * from fin_item where type='报销'");
+		List<Record> paymentItemList  = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
-        List<Record> attributionItemList  = Db.find("select * from fin_item where type='报销分类'");
-        setAttr("attributionItemList", attributionItemList);
 		
 		render("/yh/arap/CostReimbursement/CostReimbursementEdit.html");
 	}
@@ -259,12 +257,12 @@ public class CostReimbursementOrder extends Controller {
     public void addNewRow() {
         List<FinItem> items = new ArrayList<FinItem>();
         String orderId = getPara();
-        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '报销' order by id asc");
-        FinItem attribution = FinItem.dao.findFirst("select * from fin_item where type = '报销分类' order by id asc");
+        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+        
         if(item != null){
         	ReimbursementOrderFinItem dFinItem = new ReimbursementOrderFinItem();
 	        dFinItem.set("fin_item_id", item.get("id"))
-	        .set("fin_attribution_id", attribution.get("id"))
+	        .set("fin_attribution_id", null)
 	        .set("order_id", orderId)
 	        .save();
         }

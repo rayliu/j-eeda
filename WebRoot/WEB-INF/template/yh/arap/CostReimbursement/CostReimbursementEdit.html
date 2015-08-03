@@ -144,7 +144,6 @@
 			                                                    <th>费用项目</th>
 			                                                    <th>发票金额</th>
 			                                                    <th>报销金额</th>
-			                                                    <th>归属分类</th>
 			                                                    <th>备注</th>
 			                                                    <th></th>
 			                                                </tr>
@@ -156,11 +155,7 @@
            	   														<option value='${paymentItem.ID!''}'>${paymentItem.NAME!''}</option>
            	   												<%}%>
 		                                            	</div>
-		                                            	<div id="attributionItemList" style="display:none;">
-			                                            	<%for(attribution in attributionItemList){ %>
-           	   														<option value='${attribution.ID!''}'>${attribution.NAME!''}</option>
-           	   												<%}%>
-		                                            	</div>
+		                                            	
 			                                        </table>
 			                                    </div>
 			                                    <!-- /.table-responsive -->

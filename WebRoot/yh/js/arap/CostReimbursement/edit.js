@@ -216,37 +216,6 @@ $(document).ready(function() {
 				         }
 			    	 }
 			 }},
-			 {"mDataProp":"ATTRIBUTION",
-				 "fnRender": function(obj) {
-					 if(obj.aData.ATTRIBUTION!='' && obj.aData.ATTRIBUTION != null){
-				        	var str="";
-				        	if($("#saveExpenseAccount").prop("disabled")){
-					        	$("#attributionItemList").children().each(function(){
-					        		if(obj.aData.ATTRIBUTION == $(this).text())
-					        			str+=$(this).text();
-					        	});
-					        	return str;
-				        	}else{
-				        		$("#attributionItemList").children().each(function(){
-					        		if(obj.aData.ATTRIBUTION == $(this).text()){
-					        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";
-					        		}else{
-					        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-					        		}
-					        	});
-					        	return "<select name='fin_attribution_id'>"+str+"</select>";
-				        	}
-				        }else{
-				        	var str="";
-				        	$("#attributionItemList").children().each(function(){
-				        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-				        	});
-				        	if($("#saveExpenseAccount").prop("disabled"))
-				        		return "";
-				        	else
-				        		return "<select name='fin_attribution_id'>"+str+"</select>";
-				        }
-	         }}, 
 			 {"mDataProp":"REMARK",
 				 "fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
