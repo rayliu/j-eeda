@@ -46,6 +46,17 @@ $(document).ready(function() {
             		
             	}},
             	
+            {"mDataProp":null, "sWidth":"75px",//托运单号
+            	"fnRender":function(obj){
+            		var number = obj.aData.BOOKING_NOTE_NUMBER;
+            		if(number == ""){
+            			return "";
+            		}else{
+            			return number;
+            	}		
+            }}, 
+            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
             {"mDataProp":null, "sWidth": "70px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -69,18 +80,6 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未确认";
             }},
-            
-            {"mDataProp":null, "sWidth":"75px",
-            	"fnRender":function(obj){
-            		var number = obj.aData.BOOKING_NOTE_NUMBER;
-            		if(number == ""){
-            			return "";
-            		}else{
-            			return number;
-            		}
-            		
-            		
-            	}}, 
             {"mDataProp":"ORDER_NO", "sWidth":"140px", 
                 "fnRender": function(obj) {
                 	var str = "";
@@ -98,7 +97,7 @@ $(document).ready(function() {
                     return str;
                 }
             }, 
-            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
+          
             {"mDataProp":"AMOUNT", "sWidth":"35px"},                        
             {"mDataProp":"VOLUME", "sWidth":"35px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"}, 
@@ -117,7 +116,7 @@ $(document).ready(function() {
             {"mDataProp":"ANZHUANG_COST", "sWidth":"50px"},
             {"mDataProp":"CANGCHU_COST", "sWidth":"50px"}, 
             {"mDataProp":"OTHER_COST", "sWidth":"80px"}, 
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
+            
             {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
             {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},
             {"mDataProp":"CNAME", "sWidth":"80px"},
