@@ -17,6 +17,18 @@ $(document).ready(function() {
 		$("#auditBtn").attr("disabled",true);
 		$("#approvalBtn").attr("disabled",true);
 		$("#printBtn").attr("disabled",false);
+	}else if(order_status=='已复核'){
+		$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+		$("#auditBtn").attr("disabled",true);
+		$("#approvalBtn").attr("disabled",true);
+		$("#printBtn").attr("disabled",false);
+		$("#payConfirmBtn").attr("disabled",false);
+	}else if(order_status=='已付款确认'){
+		$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+		$("#auditBtn").attr("disabled",true);
+		$("#approvalBtn").attr("disabled",true);
+		$("#printBtn").attr("disabled",false);
+		$("#payConfirmBtn").attr("disabled",true);
 	}
 	
 	var invoiceNoArr=[];
@@ -524,4 +536,70 @@ $(document).ready(function() {
     	
 
     });
+    
+    
+  //点击确认
+	$("#auditBtn").click(function(){
+		if(paymentMethod == '现金'){
+			$("#paymentMethod1").attr("checked","checked");
+			$("#cashLabel").show();
+			$("#transfersLabel").hide();
+			$("#accountTypeDiv").hide();
+		}else if(paymentMethod == '转账'){
+			$("#paymentMethod2").attr("checked","checked");
+			$("#cashLabel").hide();
+			$("#transfersLabel").show();
+			$("#accountTypeDiv").show();
+		}
+	});
+	
+	//选择单据
+	$("#costAccept-table").on('click', '.checkedOrUnchecked', function(){
+		if($(this).prop('checked') == true){
+			if(paymentMethod != ""){
+				if(paymentMethod != $(this).parent().siblings('.payment_method')[0].innerHTML){
+					alert("请选择相同的付款方式!");
+					return false;
+				}
+			}else
+				paymentMethod = $(this).parent().siblings('.payment_method')[0].innerHTML;
+		}else{
+			var checkedNumber = 0;
+			$("#costAccept-table tr").each(function (){
+				if($(this).find("td").find("input[type='checkbox']").prop('checked') == true)
+					checkedNumber+=1;
+			});
+			if(checkedNumber == 0)
+				paymentMethod = "";
+		}
+		console.log("付款方式:"+paymentMethod);
+	});
+	
+	
+	 $.post('/costMiscOrder/searchAllAccount',function(data){
+		 if(data.length > 0){
+			 var accountTypeSelect = $("#accountTypeSelect");
+			 accountTypeSelect.empty();
+			 var hideAccountId = $("#hideAccountId").val();
+			 accountTypeSelect.append("<option ></option>");
+			 for(var i=0; i<data.length; i++){
+				 if(data[i].ID == hideAccountId){
+					 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
+				 }else{
+					 accountTypeSelect.append("<option value='"+data[i].ID+"'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");					 
+				 }
+			}
+		}
+	},'json');
+
+   $("#paymentMethods").on('click', 'input', function(){
+   	if($(this).val() == 'cash'){
+   		$("#accountTypeDiv").hide();
+   	}else{
+   		$("#accountTypeDiv").show();    		
+   	}
+   });    
+    
+    
+    
 } );
