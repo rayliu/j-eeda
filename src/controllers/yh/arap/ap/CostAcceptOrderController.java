@@ -2,11 +2,17 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Account;
+import models.ArapAccountAuditLog;
+import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
+import models.yh.arap.ArapMiscCostOrder;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -17,9 +23,11 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.DbKit;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -34,8 +42,7 @@ public class CostAcceptOrderController extends Controller {
     	    render("/yh/arap/CostAcceptOrder/CostAcceptOrderList.html");
     }
 
-    // billing order 列表
-    public void list() {
+    public void unlist() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -80,26 +87,7 @@ public class CostAcceptOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-       /* String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
-        		+ " from arap_cost_invoice_application_order aci "
-        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "'  group by aci.id "
-				+ " union all "
-				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
-				+ " from arap_misc_cost_order amco"
-				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
-				+ " where amco.status='" + fk_status + "') tab";
-        
-        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
-        		+ " from arap_cost_invoice_application_order aci "
-        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id "
-				+ " union all "
-				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
-				+ " from arap_misc_cost_order amco"
-				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
-				+ " where amco.status='" + fk_status + "' "
-				+ " order by create_time desc " + sLimit;*/
+      
         String sqlTotal = "select count(1) total"
 		        		+ " from arap_cost_invoice_application_order aci "
 		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"

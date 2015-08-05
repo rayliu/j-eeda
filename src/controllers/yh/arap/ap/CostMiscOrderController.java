@@ -422,16 +422,5 @@ public class CostMiscOrderController extends Controller {
 					+ " and (o.id = " + parentID + " or o.belong_office = " + parentID + ");");	
 		renderJson(recordList);
 	}
-	public void checkStatus(){
-		String orderId=getPara("ids");
-		String[] orderArrId=orderId.split(",");
-		List<Record> recordList= new ArrayList<Record>();
-		for(int i=0;i<orderArrId.length;i++){
-			ArapCostInvoiceApplication arapcostinvoiceapplication= ArapCostInvoiceApplication.dao.findById(orderArrId[i]);
-			arapcostinvoiceapplication.set("status","已复核");
-			arapcostinvoiceapplication.update();
-			renderJson("{\"success\":true}");
-		}
-	}
 	
 }
