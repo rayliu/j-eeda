@@ -100,7 +100,57 @@ public class CostAcceptOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    
+    public void unlist() {
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+       /* String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_cost_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "'  group by aci.id "
+				+ " union all "
+				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
+				+ " from arap_misc_cost_order amco"
+				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
+				+ " where amco.status='" + fk_status + "') tab";
+        
+        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_cost_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id "
+				+ " union all "
+				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
+				+ " from arap_misc_cost_order amco"
+				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
+				+ " where amco.status='" + fk_status + "' "
+				+ " order by create_time desc " + sLimit;*/
+        String sqlTotal = "select count(1) total"
+		        		+ " from arap_cost_invoice_application_order aci "
+		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='已复核'";
+        
+        String sql = "select aci.id, aci.order_no, aci.payment_method, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_cost_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='已复核' group by aci.id order by aci.create_stamp desc " + sLimit;;
+        
+        
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+
+        List<Record> BillingOrders = Db.find(sql);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
+    }
     // 收款
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTCONFIRM_CONFIRM})
     @Before(Tx.class)
