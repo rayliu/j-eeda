@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
+import models.ArapAccountAuditLog;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostInvoiceItemInvoiceNo;
 import models.ArapCostOrder;
 import models.ArapCostOrderInvoiceNo;
 import models.Party;
 import models.UserLogin;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -31,6 +33,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -608,4 +611,121 @@ public class CostPreInvoiceOrderController extends Controller {
 
 		renderJson(BillingOrderListMap);
 	}
+	
+	//收款确认
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTCONFIRM_CONFIRM})
+    public void payConfirm(){
+    	String costIds = getPara("costIds");
+    	String paymentMethod = getPara("paymentMethod");
+    	String accountId = getPara("accountTypeSelect");
+    	String[] costIdArr = null; 
+    	if(costIds != null && !"".equals(costIds)){
+    		costIdArr = costIds.split(",");
+    	}
+    	
+    	String id = "";
+    	for(int i=0;i<costIdArr.length;i++){
+    		String[] arr = costIdArr[i].split(":");
+    		String orderId = arr[0];
+    		id = orderId;
+    		String orderNo = arr[1];
+            if(orderNo.startsWith("SGFK")){
+				ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(orderId);
+				arapMiscCostOrder.set("status", "已付款确认");
+				arapMiscCostOrder.update();
+            }else{
+                ArapCostInvoiceApplication arapcostInvoice = ArapCostInvoiceApplication.dao.findById(orderId);
+                arapcostInvoice.set("status", "已付款确认");
+                arapcostInvoice.update();
+               /* //应收对账单的状态改变
+                ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findFirst("select * from arap_cost_order where application_order_id = ?",orderId);
+                arapAuditOrder.set("status", "已付款确认");
+                arapAuditOrder.update();
+                //手工付款单的状态改变：注意有的对账单没有手工付款单
+                Long arapMiscId = arapAuditOrder.get("id");
+                if(arapMiscId != null && !"".equals(arapMiscId)){
+                	List<ArapMiscCostOrder> list = ArapMiscCostOrder.dao.find("select * from arap_misc_cost_order where cost_order_id = ?",arapMiscId);
+                	if(list.size()>0){
+                		for (ArapMiscCostOrder model : list) {
+                			model.set("status", "对账已完成");
+                			model.update();
+						}
+                	}
+                    
+                }*/
+                
+            	}
+			
+				//现金 或 银行  金额处理
+				if("cash".equals(paymentMethod)){
+					Account account = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
+					if(account!=null){
+						Record rec = null;
+						if(orderNo.startsWith("SGFK")){
+							rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
+									+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+		                    if(rec!=null){
+		                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+		                        //银行账户 金额处理
+		                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+		                        //日记账
+		                        createAuditLog(orderId, account, total, paymentMethod, "手工付款单");
+		                    }
+						}else{
+							rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+							if(rec!=null){
+		                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+		                        //银行账户 金额处理
+		                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+		                        //日记账
+		                        createAuditLog(orderId, account, total, paymentMethod, "应付开票申请单");
+		                    }
+						}
+					}
+				}else{//银行账户  金额处理
+				    Account account = Account.dao.findFirst("select * from fin_account where id ="+accountId);
+	                if(account!=null){
+	                	Record rec = null;
+						if(orderNo.startsWith("SGFK")){
+							rec = Db.findFirst("select sum(amcoi.amount) total from arap_misc_cost_order amco, arap_misc_cost_order_item amcoi "
+									+ "where amco.id = amcoi.misc_order_id and amco.order_no='"+orderNo+"'");
+		                    if(rec!=null){
+		                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+		                        //银行账户 金额处理
+		                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+		                        //日记账
+		                        createAuditLog(orderId, account, total, paymentMethod, "手工付款单");
+		                    }
+						}else{
+							rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+		                    if(rec!=null){
+		                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
+		                        //银行账户 金额处理
+		                        account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - total).update();
+		                        //日记账
+		                        createAuditLog(orderId, account, total, paymentMethod, "应付开票申请单");
+		                    }
+						}
+	                }
+				}
+    		}
+    		redirect("/costPreInvoiceOrder/edit?id="+id);
+    	}
+
+	
+		private void createAuditLog(String orderId, Account account, double total, String paymentMethod, String sourceOrder) {
+	        ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
+	        auditLog.set("payment_method", paymentMethod);
+	        auditLog.set("payment_type", ArapAccountAuditLog.TYPE_COST);
+	        auditLog.set("amount", total);
+	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
+	        auditLog.set("create_date", new Date());
+	        auditLog.set("misc_order_id", orderId);
+	        auditLog.set("invoice_order_id", null);
+	        auditLog.set("account_id", account.get("id"));
+	        auditLog.set("source_order", sourceOrder);
+	        auditLog.save();
+	    }	
+	
+	
 }
