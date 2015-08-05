@@ -937,7 +937,7 @@ public class CostCheckOrderController extends Controller {
     	Record rec1 = null;
     	Double totalAmount = 0.0;
     	Double changeAmount=0.0;
-		for(int i=0;i<orderNoArr.length;i++){
+		for(int i=0;i<orderIdsArr.length;i++){
             if("提货".equals(orderNoArr[i])){
             	PickupOrderFinItem pickuporderfinitem =PickupOrderFinItem.dao.findById(paymentId);
             	pickuporderfinitem.set(name, value);

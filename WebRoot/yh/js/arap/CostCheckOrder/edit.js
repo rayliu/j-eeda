@@ -188,7 +188,7 @@ $(document).ready(function() {
     $("#costConfirem-table").on('blur', 'input', function(e){
 		e.preventDefault();
 		var orderNos = $("#orderNos").val();
-		var ids=$(this).parent().parent().attr("ids");
+		var ids=$("#orderIds").val();
 		var paymentId = $(this).parent().parent().attr("id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
