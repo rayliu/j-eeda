@@ -2,17 +2,22 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+
+
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import models.Account;
-import models.ArapAccountAuditLog;
+
+
+
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
-import models.yh.arap.ArapMiscCostOrder;
+
+
+
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -23,11 +28,12 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.DbKit;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
-import controllers.yh.LoginUserController;
+
+
+
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -81,7 +87,7 @@ public class CostAcceptOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
-    public void unlist() {
+    public void list() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -113,6 +119,19 @@ public class CostAcceptOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
+    public void checkStatus(){
+        String orderId=getPara("ids");
+        String[] orderArrId=orderId.split(",");
+        List<Record> recordList= new ArrayList<Record>();
+        for(int i=0;i<orderArrId.length;i++){
+            ArapCostInvoiceApplication arapcostinvoiceapplication= ArapCostInvoiceApplication.dao.findById(orderArrId[i]);
+            arapcostinvoiceapplication.set("status","已复核");
+            arapcostinvoiceapplication.update();
+            renderJson("{\"success\":true}");
+        }
+    }
+    
+
     // 收款
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTCONFIRM_CONFIRM})
     @Before(Tx.class)
