@@ -237,6 +237,10 @@ $(document).ready(function() {
 		var charge_type = $(this).parent().siblings('.chargeType2')[0].textContent;		
 		var office_name = $(this).parent().siblings('.office_name')[0].textContent;		
     	if($(this).prop("checked") == true){
+    		if(total_amount == null || total_amount == ""){
+				alert("货品数量不能为空!");
+				return false;
+			}
     		$("#saveBtn").attr('disabled', false);
     		if(transferOrderIds.length == 0){
     			customer = cname;
