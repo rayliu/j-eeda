@@ -5,7 +5,7 @@ $(document).ready(function() {
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
 		"bFilter": false, //不需要默认的搜索框
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -14,10 +14,11 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/delivery/deliveryList",
         "aoColumns": [   
-            {"mDataProp":"CUSTOMER"},//客户
-            {"mDataProp":"SERIAL_NO"},//序列号
-            {"mDataProp":"ITEM_NO"},//型号
+            {"mDataProp":"CUSTOMER" , "sWidth":"70px"},//客户
+            {"mDataProp":"SERIAL_NO", "sWidth":"100px"},//序列号
+            {"mDataProp":"ITEM_NO","sWidth":"90px"},//型号
             {"mDataProp":null,//件数
+            	"sWidth":"50px",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == 'cargo'){
             			return obj.aData.CARGOAMOUNT;
@@ -26,13 +27,14 @@ $(document).ready(function() {
             		}	
             	}
             },
-            {"mDataProp":"BUSINESS_STAMP"},//配送时间
+            {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
             {"mDataProp":"COMPANY"},//地址
-            {"mDataProp":"DRIVER"},//联系人
-            {"mDataProp":"PHONE"},//联系电话
-            {"mDataProp":"OFFICE_NAME"},//网点
-            {"mDataProp":"PLAN_TIME"},//计划时间
+            {"mDataProp":"DRIVER","sWidth":"70px"},//联系人
+            {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
+            {"mDataProp":"OFFICE_NAME","sWidth":"80px"},//网点
+            {"mDataProp":"PLAN_TIME","sWidth":"100px"},//计划时间
             {"mDataProp":"TRANSFER_ORDER_NO",//运输单号
+            	"sWidth":"120px",
             	"fnRender": function(obj) {
             		if(Delivery.isUpdate || Delivery.isComplete){
             			return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.TRANSFER_ORDER_NO+"</a>";
@@ -42,9 +44,10 @@ $(document).ready(function() {
      			
      		}
             },
-            {"mDataProp":"CUSTOMER_ORDER_NO"},//客户订单号
-            {"mDataProp":"STATUS"},//状态
+            {"mDataProp":"CUSTOMER_ORDER_NO","sWidth":"100px"},//客户订单号
+            {"mDataProp":"STATUS","sWidth":"70px"},//状态
             {"mDataProp":"CARGO_NATURE",
+            	"sWidth":"80px",
             	"fnRender": function(obj) {
             		if(obj.aData.CARGO_NATURE == 'ATM'){
             			return 'ATM柜员机';
@@ -57,6 +60,7 @@ $(document).ready(function() {
             	}
             },
             {"mDataProp":"PICKUP_MODE",
+            	"sWidth":"100px",
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == "own"){
             			return "干线供应商自提";
@@ -67,8 +71,8 @@ $(document).ready(function() {
             			return null;
             			
             		}}},//提货方式
-            {"mDataProp":"WAREHOUSE_NAME"},//仓库
-            {"mDataProp":"TID"},
+            {"mDataProp":"WAREHOUSE_NAME","sWidth":"100px"},//仓库
+            {"mDataProp":"TID","sWidth":"70px"},
             { 
                 "mDataProp": null,  
                 "bVisible":false,
@@ -165,9 +169,11 @@ $(document).ready(function() {
             }
             if(data.length>0)
                 companyList.show();
-            
+            $("#companyList").css({ 
+            	left:$(this).position().left+"px", 
+            	top:$(this).position().top+32+"px" 
+            }); 
         },'json');
-
         if(inputStr==''){
         	dataTable.fnFilter('', 2);
         }
