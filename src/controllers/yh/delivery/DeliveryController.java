@@ -796,7 +796,8 @@ public class DeliveryController extends Controller {
 					+ " where delivery_id is null "
 					+ " and t2.cargo_nature = 'ATM' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
-					+ " and t1.depart_id is not null";
+					+ " and t1.depart_id is not null"
+					+ " and t2.`STATUS` != '手动删除' ";
 		
 		String sql="";
 		if (deliveryOrderNo == null && customerName == null && orderStatue == null && warehouse == null&&code==null) {
@@ -816,6 +817,7 @@ public class DeliveryController extends Controller {
 					+ " and t2.cargo_nature = 'ATM' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
 					+ " and t1.depart_id is not null"
+					+ " and t2.`STATUS` != '手动删除' "
 					+ " order by t1.serial_no asc " + sLimit;
 			
 		} else {
@@ -834,7 +836,8 @@ public class DeliveryController extends Controller {
 					+ " where delivery_id is null "
 					+ " and t2.cargo_nature = 'ATM' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
-					+ " and t1.depart_id is not null";
+					+ " and t1.depart_id is not null"
+					+ " and t2.`STATUS` != '手动删除' ";
 			if(code!=""&&code!=null){
 				sqlTotal =sqlTotal+" and serial_no like '%"+code+"%'";
 				sql =sql +" and serial_no like '%"+code+"%'";
