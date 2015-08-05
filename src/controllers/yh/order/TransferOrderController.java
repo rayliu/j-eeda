@@ -520,7 +520,7 @@ public class TransferOrderController extends Controller {
 			}
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
-			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
+			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery") || getPara("arrivalMode").equals("deliveryToFactory")) {
 				if (notifyPartyId == null || "".equals(notifyPartyId)) {
 					party = saveContact();
 				} else {
@@ -582,7 +582,7 @@ public class TransferOrderController extends Controller {
 			}
 			Party party = null;
 			String notifyPartyId = getPara("notify_party_id");
-			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery")) {
+			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery") || getPara("arrivalMode").equals("deliveryToFactory")) {
 				if (notifyPartyId == null || "".equals(notifyPartyId)) {
 					party = saveContact();
 				} else {
