@@ -35,8 +35,11 @@ $(document).ready(function() {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}
             },
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},  
+            {"mDataProp":"CNAME", "sWidth":"150px"},   
+            {"mDataProp":"PAYEE_NAME", "sWidth":"150px"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
-            {"mDataProp":"PAYMENT_METHOD","sClass": "payment_method",
+            {"mDataProp":"PAYMENT_METHOD", "sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
                         return '现金';
@@ -67,7 +70,7 @@ $(document).ready(function() {
             {"mDataProp":"CNAME"},*/            
             {"mDataProp":null},     
             {"mDataProp":null},     
-            {"mDataProp":"CNAME", "sWidth":"150px"},     
+              
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
@@ -77,7 +80,7 @@ $(document).ready(function() {
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
-            {"mDataProp":"TOTAL_AMOUNT"},     
+               
             {"mDataProp":"REMARK"},
             {"mDataProp":null},     
             {"mDataProp":null}                        
@@ -102,8 +105,11 @@ $(document).ready(function() {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}
             },
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},  
+            {"mDataProp":"CNAME", "sWidth":"150px"},   
+            {"mDataProp":"PAYEE_NAME", "sWidth":"150px"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
-            {"mDataProp":"PAYMENT_METHOD","sClass": "payment_method",
+            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
                         return '现金';
@@ -133,9 +139,7 @@ $(document).ready(function() {
             {"mDataProp":"OFFICE_NAME"},
             {"mDataProp":"CNAME"},*/            
             {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":"CNAME", "sWidth":"150px"},     
-            {"mDataProp":null},     
+            {"mDataProp":null},   
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
@@ -144,7 +148,7 @@ $(document).ready(function() {
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
-            {"mDataProp":"TOTAL_AMOUNT"},     
+            {"mDataProp":null},    
             {"mDataProp":"REMARK"},
             {"mDataProp":null},     
             {"mDataProp":null}                        

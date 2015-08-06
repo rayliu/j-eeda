@@ -67,7 +67,7 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
 		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "'";
         
-        String sql = "select aci.id, aci.order_no, aci.payment_method, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        String sql = "select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id order by aci.create_stamp desc " + sLimit;;
@@ -97,12 +97,12 @@ public class CostAcceptOrderController extends Controller {
         String sqlTotal = "select count(1) total"
 		        		+ " from arap_cost_invoice_application_order aci "
 		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='已复核'";
+		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ('已复核','已付款确认')";
         
-        String sql = "select aci.id, aci.order_no, aci.payment_method, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        String sql = "select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='已复核' group by aci.id order by aci.create_stamp desc " + sLimit;;
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ('已复核','已付款确认') group by aci.id order by aci.create_stamp desc " + sLimit;;
         
         
         Record rec = Db.findFirst(sqlTotal);
