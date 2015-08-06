@@ -13,7 +13,17 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/delivery/deliveryList",
-        "aoColumns": [   
+        "aoColumns": [  
+			{"mDataProp":"ORDER_NO",//运输单号
+				"sWidth":"120px",
+				"fnRender": function(obj) {
+					if(Delivery.isUpdate || Delivery.isComplete){
+						return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+					}else{
+						return obj.aData.ORDER_NO;
+					}
+				}
+			},
             {"mDataProp":"CUSTOMER" , "sWidth":"70px"},//客户
             {"mDataProp":"SERIAL_NO", "sWidth":"100px"},//序列号
             {"mDataProp":"ITEM_NO","sWidth":"90px"},//型号
@@ -33,17 +43,7 @@ $(document).ready(function() {
             {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
             {"mDataProp":"OFFICE_NAME","sWidth":"80px"},//网点
             {"mDataProp":"PLAN_TIME","sWidth":"100px"},//计划时间
-            {"mDataProp":"TRANSFER_ORDER_NO",//运输单号
-            	"sWidth":"120px",
-            	"fnRender": function(obj) {
-            		if(Delivery.isUpdate || Delivery.isComplete){
-            			return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.TRANSFER_ORDER_NO+"</a>";
-            		}else{
-            			return obj.aData.TRANSFER_ORDER_NO;
-            		}
-     			
-     		}
-            },
+            {"mDataProp":"TRANSFER_ORDER_NO"},
             {"mDataProp":"CUSTOMER_ORDER_NO","sWidth":"100px"},//客户订单号
             {"mDataProp":"STATUS","sWidth":"70px"},//状态
             {"mDataProp":"CARGO_NATURE",
