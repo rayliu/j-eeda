@@ -57,6 +57,7 @@ $(document).ready(function() {
             }}, 
             {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
+            {"mDataProp":"AMOUNT", "sWidth":"35px"},
             {"mDataProp":null, "sWidth": "70px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -96,9 +97,7 @@ $(document).ready(function() {
                     }
                     return str;
                 }
-            }, 
-          
-            {"mDataProp":"AMOUNT", "sWidth":"35px"},                        
+            },                         
             {"mDataProp":"VOLUME", "sWidth":"35px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"}, 
             {"mDataProp":null, "sWidth":"50px",
