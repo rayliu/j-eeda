@@ -110,7 +110,8 @@ public class ReturnOrderController extends Controller {
 					+ " left join location lo on ifnull(tor.route_from,tor2.route_from) = lo.code "
 					+ " left join location lo2 on ifnull(tor.route_to,tor2.route_to) = lo2.code "
 					+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id "
-					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " where r_o.transaction_status = '"+status
+					+ "' and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit;
 		} else {

@@ -122,7 +122,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/returnOrder/list",
+        "sAjaxSource": "/returnOrder/list?status=已签收",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
    				"sWidth":"100px",
