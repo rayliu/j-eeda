@@ -180,7 +180,10 @@ public class ChargeCheckOrderController extends Controller {
 		String totalWhere = "";
 		String sqlTotal = "";
 		String sql = "";
+		String sql2 = "";
+		String sql3 = "";
 		String condition = "";
+		String condition2 = "";
 		Record rec;
 		List<Record> orders;
 		// TODO 收入状态条件过滤未做
@@ -211,8 +214,8 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
 				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
 				+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已确认' "
-				+ " group by ror.id,tor2.id"
+				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已确认' ";
+     sql2 = " group by ror.id,tor2.id"
 				+ " UNION"
 				+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
@@ -224,7 +227,8 @@ public class ChargeCheckOrderController extends Controller {
 				+ " FROM arap_misc_charge_order amco"
 				+ " LEFT JOIN arap_misc_charge_order_item amcoi ON amcoi.misc_order_id = amco.id"
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
-				+ " WHERE amco. STATUS = '已确认')";
+				+ " WHERE amco. STATUS = '已确认' ";
+     sql3 = " ) order by create_date desc ";
 		if (customer == null && beginTime == null && endTime == null
 				&& orderNo == null && customerNo == null && address == null) {
 			condition = " ";
@@ -254,13 +258,14 @@ public class ChargeCheckOrderController extends Controller {
 					+ orderNo
 					+ "%' "
 					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from))  like '%"
-					+ address + "%' " + "  order by ror.create_date desc ";
+					+ address + "%' ";
+			condition2 = " and c.abbr like '%"+customer + "%' and amcoi.customer_order_no like '%"+customerNo +"%'";
 		}
-		sqlTotal = "select count(1) total from (" + sql + condition + ") as A";
+		sqlTotal = "select count(1) total from (" + sql + condition + sql2 + condition2 + sql3 +") as A";
 		rec = Db.findFirst(sqlTotal + fieldsWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		orders = Db.find(sql + fieldsWhere);
+		orders = Db.find(sql + condition + sql2 + condition2 + sql3 + fieldsWhere);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
