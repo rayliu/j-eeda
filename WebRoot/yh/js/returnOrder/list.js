@@ -87,12 +87,17 @@
             			return obj.aData.ORDER_NO;
         		}
    			},
-            { "mDataProp": "CNAME","sWidth":"120px"},
+            { "mDataProp": "CNAME","sWidth":"80px"},
             { "mDataProp": "TRANSFER_ORDER_NO","sWidth":"120px"},
-            { "mDataProp": "FROM_NAME","sWidth":"120px"},
-            { "mDataProp": "TO_NAME","sWidth":"120px"},
+            { "mDataProp": "FROM_NAME","sWidth":"80px"},
+            { "mDataProp": "TO_NAME","sWidth":"80px"},
             { "mDataProp": "ADDRESS","sWidth":"120px"},
-            { "mDataProp": "SERIAL_NO","sWidth":"120px"},
+            { "mDataProp": "SERIAL_NO","sWidth":"60px"},
+            /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
+            { "mDataProp": "RECEIPT_PERSON","sWidth":"60px"},
+            { "mDataProp": "RECEIPT_PHONE","sWidth":"120px"},
+            { "mDataProp": "RECEIVING_UNIT","sWidth":"120px"},
+            { "mDataProp": "RECEIPT_ADDRESS","sWidth":"220px"},
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
             { "mDataProp": "CREATE_DATE","sWidth":"150px"},
