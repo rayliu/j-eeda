@@ -16,7 +16,7 @@ $(document).ready(function() {
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
-                  return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';
+                  return '<input type="checkbox" name="order_check_box" amount="'+obj.aData.PAY_AMOUNT+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';
                 }
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px"},            	
@@ -105,14 +105,18 @@ $(document).ready(function() {
     
     var ids = [];
     var orderNos = [];
+    var amount = [];
     // 未选中列表
 	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
 			$(this).parent().parent().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
 			orderNos.push($(this).attr('order_no'));
+			amount.push($(this).attr('amount'));
+			var sum =eval(amount.join("+"));//求和
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
+			$("#amount").html(sum);
 			if(ids.length>0){
 				$("#saveBtn").attr("disabled",false);
 			}
@@ -144,7 +148,12 @@ $(document).ready(function() {
 	
 	$("#checkedCostCheckOrder").click(function(){
 		$("#checked").show();
+		$("#amount_st").show();
 	});
+	$("#uncheckedCostCheckOrder").click(function(){
+		$("#amount_st").hide();
+	});
+	
 	
 	//获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter2').on('input click', function(){

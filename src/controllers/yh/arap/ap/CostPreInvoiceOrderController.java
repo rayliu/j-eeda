@@ -110,7 +110,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String endTime = getPara("endTime");
 
 		String sqlTotal = "";
-		String sql = "select aaia.*, MONTH (aaia.create_stamp) AS c_stamp,c.abbr cname,c.company_name as company_name,o.office_name oname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
+		String sql = "select aaia.*, MONTH (aaia.create_stamp) AS c_stamp,c.abbr cname,c.company_name as company_name,o.office_name oname,ifnull(ul.c_name,ul.user_name) create_b,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by"
