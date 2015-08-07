@@ -31,6 +31,21 @@ $(document).ready(function() {
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"75px"},            	
             {"mDataProp":"SPNAME", "sWidth":"160px"},
+           
+            	
+            {"mDataProp":null, "sWidth":"75px",//托运单号
+            	"fnRender":function(obj){
+            		var number = obj.aData.BOOKING_NOTE_NUMBER;
+            		if(number == ""){
+            			return "";
+            		}else{
+            			return number;
+            	}		
+            }}, 
+            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
+            {"mDataProp":"AMOUNT", "sWidth":"35px"},
+            {"mDataProp":"CNAME", "sWidth":"80px"},
             {"mDataProp":null, "sWidth":"100px",
             	"fnRender":function(obj){
             		var timeStamp = obj.aData.DEPART_TIME;
@@ -45,19 +60,6 @@ $(document).ready(function() {
             		}
             		
             	}},
-            	
-            {"mDataProp":null, "sWidth":"75px",//托运单号
-            	"fnRender":function(obj){
-            		var number = obj.aData.BOOKING_NOTE_NUMBER;
-            		if(number == ""){
-            			return "";
-            		}else{
-            			return number;
-            	}		
-            }}, 
-            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
-            {"mDataProp":"AMOUNT", "sWidth":"35px"},
             {"mDataProp":null, "sWidth": "70px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -118,7 +120,6 @@ $(document).ready(function() {
             
             {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
             {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},
-            {"mDataProp":"CNAME", "sWidth":"80px"},
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });	
