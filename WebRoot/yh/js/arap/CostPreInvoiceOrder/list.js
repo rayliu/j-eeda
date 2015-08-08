@@ -36,7 +36,19 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CNAME"},
+            {"mDataProp":"PAYMENT_METHOD", "sWidth":"80px",
+                "fnRender": function(obj) {
+                    if(obj.aData.PAYMENT_METHOD == 'cash')
+                        return '现金';
+                    else if(obj.aData.PAYMENT_METHOD == 'transfers')
+                        return '转账';
+                    else
+                    	return '';
+                }
+            },
+            {"mDataProp":"PAYEE_NAME"},
             {"mDataProp":"C_STAMP"},
+            {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"ONAME"},
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
@@ -47,7 +59,6 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
-            {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_B"},
             {"mDataProp":"CREATE_STAMP"},
