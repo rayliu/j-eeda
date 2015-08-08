@@ -424,7 +424,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String totalWhere = "";
 		String sql = "select count(1) total from arap_cost_invoice_item_invoice_no acio"
 				+ " left join arap_cost_order_invoice_no  acoi on acoi.invoice_no = acio.invoice_no"
-				+ " where acio.invoice_id = " + costPreInvoiceOrderId;
+				+ " where acio.invoice_id = '" + costPreInvoiceOrderId +"'";
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
@@ -434,9 +434,9 @@ public class CostPreInvoiceOrderController extends Controller {
 						+ " from arap_cost_invoice_item_invoice_no acio"
 						+ " left join arap_cost_order_invoice_no  acoi on acoi.invoice_no = acio.invoice_no"
 						+ " left join party p on p.id = acio.payee_id left join contact c on c.id = p.contact_id"
-						+ " where acio.invoice_id = "
+						+ " where acio.invoice_id = '"
 						+ costPreInvoiceOrderId
-						+ " " + sLimit);
+						+ "' " + sLimit);
 
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

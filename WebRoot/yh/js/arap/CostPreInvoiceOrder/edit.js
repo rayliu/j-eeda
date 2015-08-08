@@ -244,10 +244,10 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
-        
-		$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), function(data){
+        var saveCallback=function(data){
 			if(data.ID>0){
 				$("#costPreInvoiceOrderId").val(data.ID);
+				loadItem(data.ID);
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			  	if("costPreInvoiceOrderbasic" == parentId){
@@ -257,15 +257,30 @@ $(document).ready(function() {
 			}else{
 				alert('数据保存失败。');
 			}
-		},'json');
-		parentId = e.target.getAttribute("id");		
-
-	    var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
-		invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
-	    invoiceItemTable.fnDraw();
-		var costCheckOrderIds = $("#costCheckOrderIds").val();	
-		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
-		costPreInvoiceOrderTable.fnDraw();
+		};
+       
+		parentId = e.target.getAttribute("id");	
+		
+		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
+		if(costPreInvoiceOrderId==""){
+			$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), saveCallback, 'json');
+		}else{
+			loadItem(costMiscOrderId);
+		}
+		
+		var loadItem = function(costPreInvoiceOrderId){
+				invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+			    invoiceItemTable.fnDraw();
+				var costCheckOrderIds = $("#costCheckOrderIds").val();	
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+				costPreInvoiceOrderTable.fnDraw();
+				
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+				costPreInvoiceOrderTable.fnDraw();
+		};	
+		
+		
+		
 	});
 	
     if($("#costPreInvoiceOrderStatus").text() == 'new'){
@@ -283,7 +298,7 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/costPreInvoiceOrder/costInvoiceItemList",
+        "sAjaxSource": "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+$("#costPreInvoiceOrderId").val(),
    			"aoColumns": [
             { "mDataProp": null,
   	            "fnRender": function(obj) {
@@ -368,7 +383,7 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/costPreInvoiceOrder/costCheckOrderListById",
+        "sAjaxSource": "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+$("#costPreInvoiceOrderId").val(),
         "aoColumns": [     
           { "mDataProp": "INVOICE_NO",
           	"fnRender": function(obj) {
@@ -452,7 +467,7 @@ $(document).ready(function() {
 		},'json');
 	});
 	
-	$("#costPreInvoiceOrderItem").click(function(){	
+	/*$("#costPreInvoiceOrderItem").click(function(){	
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		$.post('/costPreInvoiceOrder/findAllInvoiceItemNo', {costPreInvoiceOrderId:costPreInvoiceOrderId}, function(data){
 			if(data.length > 0){
@@ -474,7 +489,7 @@ $(document).ready(function() {
 	    
 		costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;    
 		costPreInvoiceOrderTable.fnDraw();
-	});	
+	});	*/
 
 	$("#costPreInvoiceOrder-table").on('blur', 'select', function(e){
 		e.preventDefault();
