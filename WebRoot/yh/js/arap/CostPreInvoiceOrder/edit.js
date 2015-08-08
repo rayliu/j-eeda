@@ -174,14 +174,20 @@ $(document).ready(function() {
 		},'json');
 		
 	});
-	$("#paymentMethod2,#paymentMethod1").click(function(e){
+	$(document).ready(function(){ 
 		if($('input:radio:checked').val()=="cash"){
 			$("#acc").hide();
-			$("#bankname").hide();
 		}
 		if($('input:radio:checked').val()=="transfers"){
 			$("#acc").show();
-			$("#bankname").hide();
+		}
+	});
+	$("#paymentMethod2,#paymentMethod1").click(function(e){
+		if($('input:radio:checked').val()=="cash"){
+			$("#acc").attr("style","display:none");
+		}
+		if($('input:radio:checked').val()=="transfers"){
+			$("#acc").attr("style","display:block");
 		}
 	});
 //	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
