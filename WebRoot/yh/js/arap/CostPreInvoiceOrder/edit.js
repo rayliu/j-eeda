@@ -250,7 +250,7 @@ $(document).ready(function() {
 				loadItem(data.ID);
 			  	//$("#style").show();
 			  	$("#departureConfirmationBtn").attr("disabled", false);
-			  	if("costPreInvoiceOrderbasic" == parentId){
+			  	if("costPreInvoiceOrderItem" == parentId){
 			  		contactUrl("edit?id",data.ID);
 			  	}
 			}else{
@@ -278,9 +278,6 @@ $(document).ready(function() {
 		}else{
 			loadItem(costPreInvoiceOrderId);
 		}
-		
-			
-		
 		
 		
 	});
