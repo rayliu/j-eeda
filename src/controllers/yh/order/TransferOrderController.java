@@ -64,6 +64,10 @@ public class TransferOrderController extends Controller {
 		
 		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
+		
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
+		setAttr("userOffices", offices);
+		
 		render("/yh/transferOrder/transferOrderList.html");
 	}
 

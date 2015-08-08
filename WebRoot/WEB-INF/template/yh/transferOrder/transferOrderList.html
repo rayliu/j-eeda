@@ -27,7 +27,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <form role="form" style="margin: 0 15px;">
+                            <form role="form" style="margin: 0 15px;" id='searchForm'>
                                 <div class="row search_panel">
                                     <div class="col-lg-4">
                                         <div class="form-group">
@@ -74,6 +74,9 @@
                                                 <option value="out_source">外包</option>                                               
                                             </select>
                                         </div> 
+                                        <div class="form-group">
+                                            <button id="resetBtn" class="btn  btn-primary" type="button">清空条件</button>
+                                        </div> 
                                     </div>
                                     <!-- end of col-lg-6-->
                                     <div class="col-lg-4">
@@ -118,7 +121,14 @@
                                         <div class="form-group">
                                             <label class="search-label">网点</label>
                                             <!-- <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"> -->
-                                            <select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>
+                                            <select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect">
+                                                <option value=""></option>
+                                                <%
+                                                    for(office in userOffices){
+                                                %>
+                                                    <option value="${office.OFFICE_NAME}">${office.OFFICE_NAME}</option>
+                                                <%}%>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">状态</label>

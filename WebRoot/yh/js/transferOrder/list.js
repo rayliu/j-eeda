@@ -4,12 +4,7 @@ $(document).ready(function() {
     document.title = '运输单查询 | '+document.title;
 
     $('#menu_transfer').addClass('active').find('ul').addClass('in');
-    
-    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
-    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
-    '</div>';
-    
+       
 	//datatable, 动态处理
     var transferOrder = $('#eeda-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -140,29 +135,7 @@ $(document).ready(function() {
 		},'json');
 	});
     
-    var refreshData=function(){
-    	var order_type=$("#order_type_filter").val();
-    	var plantime=$("#plantime").val();
-    	var arrivarltime=$("#arrivaltime").val();
-    	var customer_order_no=$("#customer_order_no_filter").val();
-    	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var officeName = $("#officeSelect").val();
-    	var operation_type = $("#operation_type_filter").val();
-    	transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
-    											+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
-    											+"&endTime="+endTime+"&officeName="+officeName
-    											+"&order_type="+order_type
-    											+"&plantime="+plantime+"&arrivarltime="+arrivarltime
-    											+"&customer_order_no="+customer_order_no
-    											+"&operation_type="+operation_type;
-    	transferOrder.fnDraw(); 
-    };
+    
     $("#oname_filter,#orderNo_filter,#customer_order_no_filter").on( 'keyup click', function () {
     	refreshData();
     });
@@ -188,17 +161,7 @@ $(document).ready(function() {
     	refreshData();
     });
     
-    //获取所有的网点
-	$.post('/transferOrder/searchPartOffice',function(data){
-	 if(data.length > 0){
-		 var officeSelect = $("#officeSelect");
-		 officeSelect.empty();
-		 officeSelect.append("<option ></option>");
-		 for(var i=0; i<data.length; i++)
-			 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
-	 }
-	},'json');
-
+    
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(event){
         var me = this;
@@ -401,5 +364,86 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#plantime').trigger('keyup');
     });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+        saveConditions();
+        refreshData();
+    });
+
+    var saveConditions=function(){
+        var conditions={
+            order_type:$("#order_type_filter").val(),
+            plantime :$("#plantime").val(),
+            arrivarltime:$("#arrivaltime").val(),
+            customer_order_no:$("#customer_order_no_filter").val(),
+            orderNo : $("#orderNo_filter").val(),
+            status : $("#status_filter").val(),
+            address : $("#address_filter").val(),
+            customer : $("#customer_filter").val(),
+            sp : $("#sp_filter").val(),
+            beginTime : $("#beginTime_filter").val(),
+            endTime : $("#endTime_filter").val(),
+            officeName : $("#officeSelect").val(),
+            operation_type : $("#operation_type_filter").val()
+        }
+        if(!!window.localStorage){//查询条件处理
+            localStorage.setItem("query_to", JSON.stringify(conditions));
+        }
+    };
+
+    var refreshData=function(){
+        var order_type=$("#order_type_filter").val();
+        var plantime=$("#plantime").val();
+        var arrivarltime=$("#arrivaltime").val();
+        var customer_order_no=$("#customer_order_no_filter").val();
+        var orderNo = $("#orderNo_filter").val();
+        var status = $("#status_filter").val();
+        var address = $("#address_filter").val();
+        var customer = $("#customer_filter").val();
+        var sp = $("#sp_filter").val();
+        var beginTime = $("#beginTime_filter").val();
+        var endTime = $("#endTime_filter").val();
+        var officeName = $("#officeSelect").val();
+        var operation_type = $("#operation_type_filter").val();
+        transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
+                                                +"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+                                                +"&endTime="+endTime+"&officeName="+officeName
+                                                +"&order_type="+order_type
+                                                +"&plantime="+plantime+"&arrivarltime="+arrivarltime
+                                                +"&customer_order_no="+customer_order_no
+                                                +"&operation_type="+operation_type;
+        transferOrder.fnDraw(); 
+        saveConditions();
+    };
+
+    var loadConditions=function(){
+        if(!!window.localStorage){//查询条件处理
+            var query_to = localStorage.getItem('query_to');
+            if(!query_to)
+                return;
+
+            var conditions = JSON.parse(localStorage.getItem('query_to'));
+            $("#order_type_filter").val(conditions.order_type);
+            $("#plantime").val(conditions.plantime);
+            $("#arrivaltime").val(conditions.arrivarltime);
+            $("#customer_order_no_filter").val(conditions.customer_order_no);
+            $("#orderNo_filter").val(conditions.orderNo);
+            $("#status_filter").val(conditions.status);
+            $("#address_filter").val(conditions.address);
+            $("#customer_filter").val(conditions.customer);
+            $("#sp_filter").val(conditions.sp);
+            $("#beginTime_filter").val(conditions.beginTime);
+            $("#endTime_filter").val(conditions.endTime);
+            $("#officeSelect").val(conditions.officeName);
+            $("#operation_type_filter").val(conditions.operation_type);
+        }
+    };
+
+    loadConditions();
+    refreshData();
+
+    
+    
 
 } );
