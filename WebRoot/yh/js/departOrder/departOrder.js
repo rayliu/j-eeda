@@ -56,6 +56,7 @@ $(document).ready(function() {
     
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bSort": false, // 不要排序
     	"bFilter": false, //不需要默认的搜索框
     	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
