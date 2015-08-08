@@ -252,7 +252,6 @@ $(document).ready(function() {
 			  	$("#departureConfirmationBtn").attr("disabled", false);
 			  	if("costPreInvoiceOrderbasic" == parentId){
 			  		contactUrl("edit?id",data.ID);
-			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	}
 			}else{
 				alert('数据保存失败。');
@@ -261,23 +260,26 @@ $(document).ready(function() {
        
 		parentId = e.target.getAttribute("id");	
 		
+		var loadItem = function(costPreInvoiceOrderId){
+			invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+		    invoiceItemTable.fnDraw();
+			var costCheckOrderIds = $("#costCheckOrderIds").val();	
+			costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
+			costPreInvoiceOrderTable.fnDraw();
+			
+			costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+			costPreInvoiceOrderTable.fnDraw();
+			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	};
+		
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();	
-		if(costPreInvoiceOrderId==""){
+		if(costPreInvoiceOrderId=="" || costPreInvoiceOrderId == null){
 			$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), saveCallback, 'json');
 		}else{
-			loadItem(costMiscOrderId);
+			loadItem(costPreInvoiceOrderId);
 		}
 		
-		var loadItem = function(costPreInvoiceOrderId){
-				invoiceItemTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costInvoiceItemList?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
-			    invoiceItemTable.fnDraw();
-				var costCheckOrderIds = $("#costCheckOrderIds").val();	
-				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderList?costCheckOrderIds="+costCheckOrderIds;   
-				costPreInvoiceOrderTable.fnDraw();
-				
-				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
-				costPreInvoiceOrderTable.fnDraw();
-		};	
+			
 		
 		
 		
