@@ -45,7 +45,8 @@ $(document).ready(function() {
         }
 		//异步向后台提交数据
 		$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), function(data){
-			if(data.ID>0){
+			if(data.ID>0){	
+				contactUrl("edit?id",data.ID);
 				$("#sorder_no").html('<strong>'+data.ORDER_NO+'<strong>');
 			  	$("#create_stamp").html(data.CREATE_STAMP);
 			  	$("#remark").val(data.REMARK);
