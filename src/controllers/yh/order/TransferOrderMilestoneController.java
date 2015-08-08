@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import models.DepartOrder;
-import models.DepartPickupOrder;
 import models.DepartTransferOrder;
 import models.ReturnOrder;
 import models.TransferOrder;
@@ -245,9 +244,12 @@ public class TransferOrderMilestoneController extends Controller {
      */
     
     public void receipt() {
-        Long order_id = Long.parseLong(getPara("orderId"));
+        //Long order_id = Long.parseLong(getPara("orderId"));
         Long departOrderId = Long.parseLong(getPara("departOrderId"));
         //TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
+        //通过发车单获取运输单ID
+        List<Record> transferOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
+        
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
         String name = (String) currentUser.getPrincipal();
@@ -257,23 +259,22 @@ public class TransferOrderMilestoneController extends Controller {
         //修改发车单信息
         DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
         departOrder.set("status", "已收货").update();
-        //直接生成回单，在把合同等费用带到回单中
-        String orderNo = OrderNoGenerator.getNextOrderNo("HD");
-        ReturnOrder returnOrder = new ReturnOrder();
-        returnOrder.set("order_no", orderNo)
-        .set("transaction_status", "新建")
-        .set("creator", users.get(0).get("id"))
-        .set("create_date", sqlDate)
-        //回单中"transfer_order_id"字段修改为“depart_id”
-        //.set("depart_id", departOrderId)
-        .set("transfer_order_id", order_id).save();
-        
-        
-        
-        //修改运输单信息
-        List<Record> departOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
-        for (Record record : departOrderIds) {
+       
+        for (Record record : transferOrderIds) {
+        	//获取运输单ID
         	long transerOrderId = record.getLong("order_id");
+        	 //直接生成回单，在把合同等费用带到回单中
+            String orderNo = OrderNoGenerator.getNextOrderNo("HD");
+            ReturnOrder returnOrder = new ReturnOrder();
+            returnOrder.set("order_no", orderNo)
+            .set("transaction_status", "新建")
+            .set("creator", users.get(0).get("id"))
+            .set("create_date", sqlDate)
+            //回单中"transfer_order_id"字段修改为“depart_id”
+            //.set("depart_id", departOrderId)
+            .set("transfer_order_id", transerOrderId).save();
+        	
+            //修改运输单信息
         	TransferOrder transferOrder = TransferOrder.dao.findById(transerOrderId);
 			transferOrder.set("status", "已收货").update();
 			//设置回单客户信息，必须是同一个客户
@@ -284,7 +285,7 @@ public class TransferOrderMilestoneController extends Controller {
             .set("create_by", users.get(0).get("id"))
             .set("location", "")
             .set("create_stamp", sqlDate)
-            .set("order_id", order_id)
+            .set("order_id", transerOrderId)
             .set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE)
             .save();
 
