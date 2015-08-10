@@ -443,6 +443,7 @@ public class CostCheckOrderController extends Controller {
             	}
             }
             Double actualAmount=totalAmount-changeAmount;
+            setAttr("totalAmount", totalAmount);
             setAttr("changeAmount", changeAmount);
             setAttr("actualAmount", actualAmount);
     	}
