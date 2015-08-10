@@ -69,7 +69,7 @@ $(document).ready(function() {
 		},'json');
 		
 	});
-	if($("#costCheckOrderStatus").text()!="新建"){
+	/*if($("#costCheckOrderStatus").text()!="新建"){
 		
 		$("#auditBtn").attr("disabled",false);
 		$("#printBtn").attr("disabled",false);
@@ -83,6 +83,16 @@ $(document).ready(function() {
 			$("#auditBtn").attr("disabled",false);
 			$("#printBtn").attr("disabled",true);
 		}
+	}*/
+	
+	if($("#costCheckOrderStatus").text()=="新建"){
+		$("#saveCostCheckOrderBtn").attr("disabled",false);
+		$("#auditBtn").attr("disabled",true);
+		$("#printBtn").attr("disabled",true);
+	}else{
+		$("#saveCostCheckOrderBtn").attr("disabled",true);
+		$("#auditBtn").attr("disabled",true);
+		$("#printBtn").attr("disabled",false);
 	}
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
