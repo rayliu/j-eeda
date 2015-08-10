@@ -840,7 +840,7 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or c.postal_code like '%"
 							+ input
-							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?) limit 0,10",parentID,parentID);
+							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",parentID,parentID);
 		} else {
 			locationList = Db
 					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
