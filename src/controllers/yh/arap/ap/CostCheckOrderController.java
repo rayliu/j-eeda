@@ -729,7 +729,7 @@ public class CostCheckOrderController extends Controller {
     					+ " and business_type like '%" + type + "%' "
     					+ " and status like '%" + status + "%' "
     					+ " and spname like '%" + sp + "%' "
-    					+ " and booking_note_number like '%"+booking_id+"%'"
+    					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
     					+ " and create_stamp between '" + beginTime + "' and '" + endTime + "' ";
     	}
     	
