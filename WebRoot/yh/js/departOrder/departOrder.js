@@ -111,7 +111,16 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            { "mDataProp": "TOTAL_AMOUNT", "sClass": "total_amount"},		
+            { "mDataProp": "TOTAL_AMOUNT", "sClass": "total_amount",
+    			"sClass": "total_amount",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CARGO_NATURE == "ATM"){
+            			return obj.aData.TOTAL_AMOUNT;
+            		}else 
+            			return obj.aData.CARGO_AMOUNT;
+            		}
+            },
+            { "mDataProp": "TOTAL_AMOUNT2", "sClass": "total_amount2"},		
             { "mDataProp": "DOADDRESS","sClass": "doaddress"},
             { "mDataProp": "ARRIVAL_MODE",
             	"sClass": "arrival_model",
