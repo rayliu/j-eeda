@@ -394,8 +394,10 @@ public class CostPreInvoiceOrderController extends Controller {
 
 		String costCheckOrderIds = "";
 		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
-				"select * from arap_cost_order where application_order_id = ?",
-				id);
+				"SELECT * FROM `arap_cost_order` aco "
+				+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id "
+				+ " where caor.application_order_id = '"+id+"'"
+				);
 		for (ArapCostOrder arapCostOrder : arapCostOrders) {
 			costCheckOrderIds += arapCostOrder.get("id") + ",";
 		}
@@ -674,7 +676,8 @@ public class CostPreInvoiceOrderController extends Controller {
 				+ " ( SELECT caor.pay_amount this_pay FROM cost_application_order_rel caor"
 				+ " WHERE caor.cost_order_id = aco.id and caor.application_order_id = appl_order.id ) pay_amount "
 				+ " from arap_cost_invoice_application_order appl_order"
-				+ " left join arap_cost_order aco on aco.application_order_id = appl_order.id"
+				+ " LEFT JOIN cost_application_order_rel caor on caor.application_order_id = appl_order.id "
+				+ " LEFT JOIN arap_cost_order aco on aco.id = caor.cost_order_id"
 				+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id"
 				+ " left join user_login ul on ul.id = aco.create_by"
 				+ " where appl_order.id = "
