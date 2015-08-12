@@ -398,6 +398,10 @@ public class CostPreInvoiceOrderController extends Controller {
 				+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id "
 				+ " where caor.application_order_id = '"+id+"'"
 				);
+		if(arapCostOrders.size()== 0){
+			arapCostOrders = ArapCostOrder.dao.find(
+	                "select * from arap_cost_order where application_order_id = '"+ id+"'");
+		}
 		for (ArapCostOrder arapCostOrder : arapCostOrders) {
 			costCheckOrderIds += arapCostOrder.get("id") + ",";
 		}
@@ -686,6 +690,23 @@ public class CostPreInvoiceOrderController extends Controller {
 
 		logger.debug("sql:" + sql);
 		List<Record> BillingOrders = Db.find(sql);
+		//以前都逻辑
+		if(BillingOrders.get(0).getLong("id")==null){
+			 sql = "select aco.*,c.abbr cname, (select group_concat(acai.invoice_no) from arap_cost_order aaia left join arap_cost_order_invoice_no acai on acai.cost_order_id = aaia.id where aaia.id = aco.id) invoice_no,"
+					+ " (select group_concat(cost_invoice_no.invoice_no separator ',') from arap_cost_invoice_item_invoice_no cost_invoice_no where cost_invoice_no.invoice_id = appl_order.id) all_invoice_no,ul.user_name creator_name,"
+					+ " ( SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
+					+ " WHERE caor.cost_order_id = aco.id ) total_pay ,"
+					+ " ( SELECT caor.pay_amount this_pay FROM cost_application_order_rel caor"
+					+ " WHERE caor.cost_order_id = aco.id and caor.application_order_id = appl_order.id ) pay_amount "
+					+ " from arap_cost_invoice_application_order appl_order"
+	                + " left join arap_cost_order aco on aco.application_order_id = appl_order.id"
+					+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id"
+					+ " left join user_login ul on ul.id = aco.create_by"
+					+ " where appl_order.id = "
+					+ costPreInvoiceOrderId
+					+ " order by aco.create_stamp desc " + sLimit;
+			BillingOrders = Db.find(sql);
+		}
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
@@ -757,7 +778,14 @@ public class CostPreInvoiceOrderController extends Controller {
 		                        createAuditLog(orderId, account, total, paymentMethod, "手工付款单");
 		                    }
 						}else{
-							rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+							//rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+							String sql = "select sum(caor.pay_amount) total from arap_cost_invoice_application_order aci "
+									+ " LEFT JOIN cost_application_order_rel caor on caor.application_order_id = aci.id"
+									+ " where aci.id = '"+id+"'";
+							rec = Db.findFirst(sql);
+							if(rec.getDouble("total") == null){
+	                            rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+							}
 							if(rec!=null){
 		                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
 		                        //银行账户 金额处理
@@ -782,7 +810,14 @@ public class CostPreInvoiceOrderController extends Controller {
 		                        createAuditLog(orderId, account, total, paymentMethod, "手工付款单");
 		                    }
 						}else{
-							rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+							//rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+							String sql = "select sum(caor.pay_amount) total from arap_cost_invoice_application_order aci "
+									+ " LEFT JOIN cost_application_order_rel caor on caor.application_order_id = aci.id"
+									+ " where aci.id = '"+id+"'";
+							rec = Db.findFirst(sql);
+							if(rec.getDouble("total") == null){
+	                            rec = Db.findFirst("select aci.total_amount total from arap_cost_invoice_application_order aci where aci.order_no='"+orderNo+"'");
+							}
 		                    if(rec!=null){
 		                    	double total = rec.getDouble("total")==null?0.0:rec.getDouble("total");
 		                        //银行账户 金额处理
