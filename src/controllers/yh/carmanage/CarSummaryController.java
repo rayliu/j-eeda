@@ -1037,7 +1037,7 @@ public class CarSummaryController extends Controller {
     		order.set("deduct_apportion_amount", money);
     	}
     	//实际应付费用
-    	Record rec3 = Db.findFirst("select sum(amount) amount  from car_summary_detail_other_fee where is_delete = '否' and car_summary_id = "+carSummaryId+";");
+    	Record rec3 = Db.findFirst("select sum(amount) amount  from car_summary_detail_other_fee where is_delete = '否' and car_summary_id = "+carSummaryId+" and item!=1;");
     	Record rec5 = Db.findFirst("select sum(refuel_amount) amount from car_summary_detail_oil_fee where payment_type = '现金' and car_summary_id = "+carSummaryId+";");
     	if(rec3.get("amount") != null && rec3.get("amount") != ""){
     		BigDecimal b = new BigDecimal(rec3.getDouble("amount")); 
