@@ -94,6 +94,8 @@
                                             <input  class="form-control search-control" readonly="true" name="payeename" type="text" value="${customer.receiver!''}${payee_name!''}">
                                         </div>
                                         <div><label>应付总金额:</label><label class="radio-inline"><strong>${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</strong></label></div>
+                                       <!--  <div><label>已付总金额:</label><label class="radio-inline"><strong>${totalPay!''}</strong></label></div>
+                                        <div><label>需付金额:</label><label class="radio-inline"><strong>${payAmount!''}</strong></label></div> -->
                                         <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">付款方式</label>
                                             	<input id="paymentMethodRadio" type="hidden" value="${arapAuditInvoiceApplication.payment_method!''}"/>
@@ -236,6 +238,8 @@
 			                                            <th>罚款金额</th>
 			                                            <th>奖励金额</th>
 			                                            <th>应付金额</th>
+			                                            <th>余付金额</th>
+			                                            <th>此次付款金额</th>
 			                                            <th>备注</th>
 			                                            <th>对账人</th>
 			                                            <th>对账时间</th>

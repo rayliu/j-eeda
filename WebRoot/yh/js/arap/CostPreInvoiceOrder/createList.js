@@ -44,6 +44,7 @@ $(document).ready(function() {
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
+            {"mDataProp":"TOTAL_PAY"},
             {"mDataProp":null},
             {"mDataProp":"DEBIT_AMOUNT"},
             {"mDataProp":null},

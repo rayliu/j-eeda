@@ -23,6 +23,7 @@ import models.ArapCostOrderInvoiceNo;
 import models.ArapMiscChargeOrder;
 import models.ArapMiscChargeOrderItem;
 import models.Category;
+import models.CostApplicationOrderRel;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
@@ -413,6 +414,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_order_invoice_no", ArapCostOrderInvoiceNo.class);
         arp.addMapping("arap_misc_cost_order", ArapMiscCostOrder.class);
         arp.addMapping("arap_misc_cost_order_item", models.yh.arap.ArapMiscCostOrderItem.class);
+        arp.addMapping("cost_application_order_rel", CostApplicationOrderRel.class);
         //应付报销单
         arp.addMapping("reimbursement_order", ReimbursementOrder.class);
         arp.addMapping("reimbursement_order_fin_item", ReimbursementOrderFinItem.class);

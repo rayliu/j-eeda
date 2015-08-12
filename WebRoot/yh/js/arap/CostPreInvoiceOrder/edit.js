@@ -380,6 +380,7 @@ $(document).ready(function() {
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.ID);
+			$(nRow).attr('cost_amount', aData.COST_AMOUNT);
 			return nRow;
 		},
         "sAjaxSource": "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+$("#costPreInvoiceOrderId").val(),
@@ -450,6 +451,29 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"COST_AMOUNT"},
+            {"mDataProp":null,
+  	            "fnRender": function(obj) {
+  	            	var str;
+  	            	if(obj.aData.TOTAL_PAY == null){
+  	            		str = obj.aData.TOTAL_PAY;
+  	            	}else{
+  	            		str = obj.aData.COST_AMOUNT - obj.aData.TOTAL_PAY;
+  	            	}
+  	            	return str;
+  	            }
+            },
+            {"mDataProp":null,
+  	            "fnRender": function(obj) {
+  	            	var str;
+  	            	if(obj.aData.PAY_AMOUNT == null){
+  	            		str = "<input type='text' name='pay_amount'>";
+  	            		//str = "<input type='text' name='pay_amount' value='"+(obj.aData.COST_AMOUNT - obj.aData.TOTAL_PAY)+"'>";
+  	            	}else{
+  	            		str = "<input type='text' name='pay_amount' value='"+obj.aData.PAY_AMOUNT+"'>";
+  	            	}
+  	            	return str;
+  	            }
+            },
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"}                        
@@ -465,6 +489,30 @@ $(document).ready(function() {
 			}
 		},'json');
 	});
+	
+	
+	$("#costPreInvoiceOrder-table").on('blur', 'input', function(e){
+		e.preventDefault();
+		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+		var costOrderId = $(this).parent().parent().attr("id");
+		var cost_amount = $(this).parent().parent().attr("cost_amount");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		if(parseInt(cost_amount) < parseInt(value)){
+			$.scojs_message('注意：此次付款金额已超过应付金额！！', $.scojs_message.FALSE);
+			return;
+		}else{
+			$.post('/costPreInvoiceOrder/updateArapCostOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId ,costOrderId:costOrderId, name:name, value:value}, function(data){
+				if(data.ID > 0){
+					$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
+				}else{
+					$.scojs_message('更新失败', $.scojs_message.TYPE_ERROR);
+				}
+	    	},'json');
+		}
+		//var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+		
+	});	
 	
 	/*$("#costPreInvoiceOrderItem").click(function(){	
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
