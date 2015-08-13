@@ -167,7 +167,7 @@ $(document).ready(function() {
                         return "<input type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                         
                     }else {
-                        return "<input type='text' name='change_amount'/>";
+                        return "<input type='text' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
                     }
                 }
             },
@@ -200,12 +200,13 @@ $(document).ready(function() {
 		var orderNos = $("#orderNos").val();
 		var ids=$("#orderIds").val();
 		var paymentId = $(this).parent().parent().attr("id");
+		var departId = $(this).parent().parent().attr("ids");
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		 if(isNaN(value)){      
 			 alert("调整金额为数字类型");
 		 }else{
-			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
+			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,departId:departId,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
 				 $("#debitAmount").html(data.changeAmount);
 				 $("#costAmount").html(data.actualAmount); 
 				 $("#total_amount").val(data.actualAmount); 
