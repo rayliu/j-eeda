@@ -16,6 +16,7 @@ $(document).ready(function() {
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
+			$(nRow).attr({order_no: aData.ATTRIBUTE});
 			return nRow;
 		},
         "sAjaxSource": "/costAcceptOrder/unlist",
@@ -25,7 +26,7 @@ $(document).ready(function() {
 	            	if(obj.aData.STATUS == "已付款确认"){
 	            		return "";
 	            	}else{
-	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            		return '<input type="checkbox" name="order_check_box"  class="checkedOrUnchecked" value="'+obj.aData.ID+'" order_no="'+obj.aData.ATTRIBUTE+'">';
 	            	}
 	              
 	            }
@@ -53,6 +54,10 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='audit'){
+                        return '已审核';
                     }else if(obj.aData.STATUS=='checking'){
                         return '已发送对帐';
                     }else if(obj.aData.STATUS=='confirmed'){
@@ -221,14 +226,17 @@ $(document).ready(function() {
 		
 	$("#checkBtn").on('click', function(){
 		var idArr=[];  	
+		var orderArr=[];
         $("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true){
         		idArr.push($(this).attr('value'));
+        		orderArr.push($(this).attr('order_no'));
         	}
         });     
         console.log(idArr);
         var ids = idArr.join(",");
-        $.post("/costAcceptOrder/checkStatus", {ids:ids}, function(data){
+        var order= orderArr.join(",");
+        $.post("/costAcceptOrder/checkStatus", {ids:ids,order:order}, function(data){
         	costAcceptOrderTab.fnDraw(); 
         	uncostAcceptOrderTab.fnDraw();
         },'json');
