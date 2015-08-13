@@ -22,21 +22,7 @@ $(document).ready(function() {
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px"},            	
             {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
-            {"mDataProp":"ORDER_NO", "sWidth":"200px", 
-                "fnRender": function(obj) {
-                	var str = "";
-                    if(obj.aData.ORDER_NO.indexOf("PS") > -1){
-                        str = "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else if(obj.aData.ORDER_NO.indexOf("PC") > -1){
-                        str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
-                        str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else {
-                        str = "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }
-                    return str;
-                }
-            },
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"AMOUNT", "sWidth":"40px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
@@ -64,9 +50,22 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未收款";
             }},
-            
-            
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
+
+            {"mDataProp":"ORDER_NO", "sWidth":"200px", 
+                "fnRender": function(obj) {
+                	var str = "";
+                    if(obj.aData.ORDER_NO.indexOf("PS") > -1){
+                        str = "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }else if(obj.aData.ORDER_NO.indexOf("PC") > -1){
+                        str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
+                        str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }else {
+                        str = "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }
+                    return str;
+                }
+            },
             {"mDataProp":"CREATE_STAMP", "sWidth":"180px"},                 	                       
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                                           
