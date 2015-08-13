@@ -142,9 +142,7 @@ public class CostCheckOrderController extends Controller {
     	Double actualAmount=totalAmount-changeAmount;
     	setAttr("orderIds", orderIds);	 
     	setAttr("orderNos", orderNos);	 
-    	setAttr("totalAmount", totalAmount);
     	setAttr("changeAmount", changeAmount);
-    	setAttr("actualAmount",actualAmount);
         setAttr("saveOK", false);
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
@@ -950,6 +948,9 @@ public class CostCheckOrderController extends Controller {
             	}
             }else if("零担".equals(orderNoArr[i])){
             	DepartOrderFinItem departorderfinitem =DepartOrderFinItem.dao.findById(paymentId);
+            	if(value.equals("")){
+            		value=null;
+            	}
             	departorderfinitem.set(name, value);
             	departorderfinitem.update();
             	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
