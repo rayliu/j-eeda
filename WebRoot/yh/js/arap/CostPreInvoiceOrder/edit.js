@@ -505,7 +505,9 @@ $(document).ready(function() {
 			return;
 		}else{
 			$.post('/costPreInvoiceOrder/updateArapCostOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId ,costOrderId:costOrderId, name:name, value:value}, function(data){
-				if(data.ID > 0){
+				if(data.ID > 0){	
+					costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+					costPreInvoiceOrderTable.fnDraw();
 					$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
 				}else{
 					$.scojs_message('更新失败', $.scojs_message.TYPE_ERROR);
