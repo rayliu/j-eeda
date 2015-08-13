@@ -173,6 +173,8 @@ $(document).ready(function() {
 		    			return "已撤销";
 		    		}else if("reimbursement" == obj.aData.STATUS){
 		    			return "已报销";
+		    		}else if("已复核" == obj.aData.STATUS){
+		    			return "已复核";
 		    		}else{
 		    			return "";
 		    		}
