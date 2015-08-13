@@ -700,7 +700,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		logger.debug("sql:" + sql);
 		List<Record> BillingOrders = Db.find(sql);
 		//以前都逻辑
-		if(BillingOrders.get(0).getLong("id")==null){
+		if(BillingOrders.size()!=0&&BillingOrders.get(0).getLong("id")== null){
 			 sql = "select aco.*,c.abbr cname, (select group_concat(acai.invoice_no) from arap_cost_order aaia left join arap_cost_order_invoice_no acai on acai.cost_order_id = aaia.id where aaia.id = aco.id) invoice_no,"
 					+ " (select group_concat(cost_invoice_no.invoice_no separator ',') from arap_cost_invoice_item_invoice_no cost_invoice_no where cost_invoice_no.invoice_id = appl_order.id) all_invoice_no,ul.user_name creator_name,"
 					+ " ( SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
