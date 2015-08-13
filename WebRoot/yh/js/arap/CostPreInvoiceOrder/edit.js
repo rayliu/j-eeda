@@ -381,6 +381,7 @@ $(document).ready(function() {
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.ID);
 			$(nRow).attr('cost_amount', aData.COST_AMOUNT);
+			$(nRow).attr('yufu_amount', aData.YUFU_AMOUNT);
 			return nRow;
 		},
         "sAjaxSource": "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+$("#costPreInvoiceOrderId").val(),
@@ -451,7 +452,8 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"COST_AMOUNT"},
-            {"mDataProp":null,
+            {"mDataProp":"YUFU_AMOUNT"
+            	/*"sClass": "yufu",
   	            "fnRender": function(obj) {
   	            	var str;
   	            	if(obj.aData.TOTAL_PAY == null){
@@ -460,7 +462,7 @@ $(document).ready(function() {
   	            		str = obj.aData.COST_AMOUNT - obj.aData.TOTAL_PAY;
   	            	}
   	            	return str;
-  	            }
+  	            }*/
             },
             {"mDataProp":null,
   	            "fnRender": function(obj) {
@@ -495,10 +497,10 @@ $(document).ready(function() {
 		e.preventDefault();
 		var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
 		var costOrderId = $(this).parent().parent().attr("id");
-		var cost_amount = $(this).parent().parent().attr("cost_amount");
+		var yufu_amount = $(this).parent().parent().attr("yufu_amount");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		if(parseInt(cost_amount) < parseInt(value)){
+		if(parseInt(yufu_amount) < parseInt(value)){
 			$.scojs_message('注意：此次付款金额已超过应付金额！！', $.scojs_message.FALSE);
 			return;
 		}else{
