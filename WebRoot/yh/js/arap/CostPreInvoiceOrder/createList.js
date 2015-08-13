@@ -45,6 +45,11 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"TOTAL_PAY"},
+            {"mDataProp":null,
+            	 "fnRender": function(obj) {
+            		 return obj.aData.TOTAL_AMOUNT - obj.aData.TOTAL_PAY;
+            	 }
+            },
             {"mDataProp":null},
             {"mDataProp":"DEBIT_AMOUNT"},
             {"mDataProp":null},
