@@ -49,6 +49,8 @@ $(document).ready(function() {
             {"mDataProp":"PAYEE_NAME"},
             {"mDataProp":"C_STAMP"},
             {"mDataProp":"TOTAL_AMOUNT"},
+            {"mDataProp":"PAY_AMOUNT"},
+            {"mDataProp":"COST_ORDER_NO"},
             {"mDataProp":"ONAME"},
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},

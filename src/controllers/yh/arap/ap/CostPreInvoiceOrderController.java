@@ -111,7 +111,16 @@ public class CostPreInvoiceOrderController extends Controller {
 		String endTime = getPara("endTime");
 
 		String sqlTotal = "";
-		String sql = "select aco.order_no cost_order_no,caor.pay_amount, aaia.*, MONTH (aaia.create_stamp) AS c_stamp,c.abbr cname,c.company_name as company_name,o.office_name oname,ifnull(ul.c_name,ul.user_name) create_b,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
+		String sql = "select DISTINCT "
+				+ " (SELECT group_concat(DISTINCT aco.order_no SEPARATOR '<br/>')"
+				+ " from arap_cost_order aco"
+				+ " LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id"
+				+ " where caor.application_order_id = aaia.id)cost_order_no,"
+				+ " (SELECT sum(caor.pay_amount)"
+				+ " FROM arap_cost_order aco"
+				+ " LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id"
+				+ " WHERE caor.application_order_id = aaia.id ) pay_amount,"
+				+ " aaia.*, MONTH (aaia.create_stamp) AS c_stamp,c.abbr cname,c.company_name as company_name,o.office_name oname,ifnull(ul.c_name,ul.user_name) create_b,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by"
