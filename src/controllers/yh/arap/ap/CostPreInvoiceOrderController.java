@@ -111,13 +111,15 @@ public class CostPreInvoiceOrderController extends Controller {
 		String endTime = getPara("endTime");
 
 		String sqlTotal = "";
-		String sql = "select aco.order_no, aaia.*, MONTH (aaia.create_stamp) AS c_stamp,c.abbr cname,c.company_name as company_name,o.office_name oname,ifnull(ul.c_name,ul.user_name) create_b,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
+		String sql = "select aco.order_no cost_order_no,caor.pay_amount, aaia.*, MONTH (aaia.create_stamp) AS c_stamp,c.abbr cname,c.company_name as company_name,o.office_name oname,ifnull(ul.c_name,ul.user_name) create_b,ul2.user_name audit_by,ul3.user_name approval_by from arap_cost_invoice_application_order aaia "
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by"
 				+ " left join party p on p.id = aaia.payee_id "
 				+ " left join office o ON o.id = p.office_id"
-				+ " left join contact c on c.id = p.contact_id";
+				+ " left join contact c on c.id = p.contact_id"
+				+ " left join cost_application_order_rel caor on caor.application_order_id = aaia.id"
+				+ " LEFT JOIN arap_cost_order aco on aco.id = caor.cost_order_id ";
 		String condition = "";
 		// TODO 客户和供应商没做
 		if (sp != null || customer != null || orderNo != null
@@ -135,24 +137,20 @@ public class CostPreInvoiceOrderController extends Controller {
 		}
 
 		sqlTotal = "select count(1) total from arap_cost_invoice_application_order aaia "
-				+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
-				+ " left join user_login ul3 on ul3.id = aaia.approver_by";
+				+ " left join user_login ul on ul.id = aaia.create_by "
+				+ " left join user_login ul2 on ul2.id = aaia.audit_by "
+				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
+				+ " left join cost_application_order_rel caor on caor.application_order_id = aaia.id"
+				+ " LEFT JOIN arap_cost_order aco on aco.id = caor.cost_order_id ";
 
 		//sql = sql + condition + " order by aaia.create_stamp desc " + sLimit;
 		
-		String left = " left join cost_application_order_rel caor on caor.application_order_id = aaia.id"
-				+ " LEFT JOIN arap_cost_order aco on aco.id = caor.cost_order_id ";
-		String left2 = " LEFT JOIN arap_cost_order aco on aco.application_order_id = aaia.id ";
+		
 
-		Record rec = Db.findFirst(sqlTotal + left + condition);
+		Record rec = Db.findFirst(sqlTotal  + condition);
 		logger.debug("total records:" + rec.getLong("total"));
-		List<Record> BillingOrders = null;
-		if(rec.getLong("total")==0){
-			 BillingOrders = Db.find(sql + left2 + condition + " order by aaia.create_stamp desc " + sLimit);
-		}else{
-			 BillingOrders = Db.find(sql + left + condition + " order by aaia.create_stamp desc " + sLimit);
-		}
+		
+		List<Record>   BillingOrders = Db.find(sql + condition + " order by aaia.create_stamp desc " + sLimit);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
