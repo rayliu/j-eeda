@@ -218,7 +218,9 @@ public class CostPreInvoiceOrderController extends Controller {
 		String account_id = getPara("account");
 		String bank_no = getPara("bank_no");
 		String bank_name = getPara("bank_name");
+		String payee_unit = getPara("payee_unit");
 		String sp_Id = getPara("sp_id");
+		String billing = getPara("billing");
 		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
 					.findById(costPreInvoiceOrderId);
@@ -231,7 +233,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
 			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
-			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
+			arapAuditInvoiceApplication.set("payee_unit", payee_unit);
+			arapAuditInvoiceApplication.set("billing_unit", billing);
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
 			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			String noInvoice = getPara("noInvoice");
@@ -270,6 +273,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
+			arapAuditInvoiceApplication.set("payee_unit", payee_unit);
+			arapAuditInvoiceApplication.set("billing_unit", billing);
 			arapAuditInvoiceApplication.set("payment_method",
 					getPara("paymentMethod"));
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
@@ -379,6 +384,8 @@ public class CostPreInvoiceOrderController extends Controller {
 		
 		String company_name =con.get("company_name");
 		Long customerId = arapAuditInvoiceApplication.get("payee_id");
+		setAttr("payee_unit",arapAuditInvoiceApplication.get("payee_unit"));
+		setAttr("billing_unit",arapAuditInvoiceApplication.get("billing_unit"));
 		setAttr("payee_name",arapAuditInvoiceApplication.get("payee_name"));
 		setAttr("bank_name",arapAuditInvoiceApplication.get("bank_name"));
 		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
@@ -388,7 +395,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("approval_stamp",
 				arapAuditInvoiceApplication.get("approval_stamp"));
 		setAttr("noInvoice", arapAuditInvoiceApplication.get("noInvoice"));
-		if(company_name==""||arapAuditInvoiceApplication.get("payee_name")==""||arapAuditInvoiceApplication.get("bank_name")==""||arapAuditInvoiceApplication.get("bank_no")==""){
+		if(company_name==""||"".equals(arapAuditInvoiceApplication.get("payee_name"))||"".equals(arapAuditInvoiceApplication.get("bank_name"))||"".equals(arapAuditInvoiceApplication.get("bank_no"))){
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);

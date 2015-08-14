@@ -45,7 +45,9 @@
                                         	<input type="hidden" id="bank_no" name="bank_no" value="${customer.bank_no!''}">
                                         	<input type="hidden" id="bank_name" name="bank_name" value="${customer.bank_name!''}">
                                         	<input type="hidden" id="paymentMethod">
-                                        	<input id="sp_id" type="hidden" name="sp_id" value="${transferOrder.sp_id!''}"/>
+                                        	<input type="hidden" id="billing" name="billing" value="">
+                                        	<input id="sp_id" type="hidden" name="sp_id" >
+                                        	<input type="hidden" id="payee_unit" name="payee_unit" />
 		                                    <h2>申请信息</h2>
 		                                    <div class="form-group">
 		                                        <label>付款申请单号</label>	<span id ="sorder_no"><strong>${order_no!''}${arapAuditInvoiceApplication.order_no!''}</strong></span>
@@ -80,19 +82,39 @@
                                     <div class="col-lg-6"> 
                                         <h2>应付信息</h2>
                                         <div class="form-group" id="noInvoice">                                      
-                                            <input type="checkbox" name="noInvoice" value="y" id="InvoiceCheckBox"<% if(noInvoice!''=='true'){ %>checked<%}%>>
-                                            <strong>代开发票</strong>（代开发票，供应商和收款人要分开输入）
+                                            <label class="radio-inline">
+                                                    <input type="radio" name="payment" id="payment1" value="z" checked="" >自开发票
+                                            </label>
+                                            <label class="radio-inline">
+                                                    <input type="radio" name="payment" id="payment2" value="d"  >代开发票
+                                            </label>
+                                            <label class="radio-inline">
+                                                    <input type="radio" name="payment" id="payment3" value="w"  >无发票
+                                            </label>
                                         </div>
                                         <div class="form-group">
-                                            <label>供应商</label>
-                                            <input  class="form-control search-control" id="sp_filter" readonly="true" name="payeename1"  type="text" value="${customer.company_name!''}${company_name!''}">
+                                            <label>供&nbsp;&nbsp;应&nbsp;&nbsp;商</label>
+                                            <input  class="form-control search-control" id="sp_filter" name="payeename1"  type="text" value="${customer.company_name!''}${company_name!''}">
                                             <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 											</ul>
                                         </div>
                                         <div class="form-group">
-                                            <label>收款人</label>
-                                            <input  class="form-control search-control" readonly="true" name="payeename" type="text" value="${customer.receiver!''}${payee_name!''}">
+                                            <label>收款单位</label>
+                                            <input  class="form-control search-control" id="make_collections" name="payeename2"  type="text" value="${payee_unit!''}">
+                                            <ul id='collectionsList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+											</ul>
                                         </div>
+                                        <div class="form-group">
+                                            <label>开票单位</label>
+                                            <input  class="form-control search-control" id="billing_unit" name="payeename3"  type="text" value="${billing_unit!''}">
+                                            <ul id='billingList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+											</ul>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>收&nbsp;&nbsp;款&nbsp;&nbsp;人</label>
+                                            <input  class="form-control search-control" name="payeename" type="text" value="${customer.receiver!''}${payee_name!''}">
+                                        </div>
+                                        
                                         <div><label>应付总金额:</label><label class="radio-inline"><strong>${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</strong></label></div>
                                        <!--  <div><label>已付总金额:</label><label class="radio-inline"><strong>${totalPay!''}</strong></label></div>
                                         <div><label>需付金额:</label><label class="radio-inline"><strong>${payAmount!''}</strong></label></div> -->
@@ -112,12 +134,7 @@
                                               <input  class="form-control search-control" id="bank_name1" name=“bankname" type="text" value="${customer.bank_name!''}${bank_name!''}">
                                                </div>
                                         </div>
-                                        
-                                        <div class="form-group" id="noInvoice">                                      
-                                            <input type="checkbox" value="y1"  name="noInvoice1" id="InvoiceCheckBox1"<% if(noInvoice!''=='true'){ %>checked<%}%>>
-											<strong>无发票</strong>
-                                        </div>
- 
+                                            注意事项：收款单位是用来打印PDF"付款申请单"里的收款单位 和 "供应商对账明细"里的供应商
                                         <!-- <div class="form-group" style="display: none;" id="accountTypeDiv">
                                             <label>银行账户</label>
                                             <input id="hideAccountId" type="hidden" value="${arapAuditInvoiceApplication.account_id!''}" />   

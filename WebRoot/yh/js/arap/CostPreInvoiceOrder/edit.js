@@ -36,6 +36,8 @@ $(document).ready(function() {
 		$("#account_id").val($("#account").val());
 		$("#bank_name").val($("#bank_name1").val());
 		$("#bank_no").val($("#bank_no1").val());
+		$("#payee_unit").val($("#make_collections").val());
+		$("#billing").val($("#billing_unit").val());
 		$("#paymentMethod").val($("input[name='paymentMethod']:checked").val());
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -79,12 +81,7 @@ $(document).ready(function() {
         	left:$(this).position().left+"px", 
         	top:$(this).position().top+32+"px" 
         });		 
-		if($("input[name='noInvoice']:checked").val()=='y'){
 			spList.show();
-		}
-		else{
-        	spList.hide();		
-		}	 
     });
 	$('#sp_filter').on('blur', function(){
  		$('#spList').hide();
@@ -107,31 +104,81 @@ $(document).ready(function() {
 		$('#sp_id').val($(this).attr('company_id'));
         $('#spList').hide();
     });
-	$("#InvoiceCheckBox1").on('click',function(){
-		 var noinvice1 =$("input[name='noInvoice1']:checked").val();
-		 if(noinvice1=="y1"){
-				$('input[name=noInvoice]').attr("disabled","disabled");
+	//收款单位
+	$('#make_collections').on('keyup click', function(){
+		var inputStr = $('#make_collections').val();
+		var collectionsList =$("#collectionsList");
+		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
+			collectionsList.empty();
+			for(var i = 0; i < data.length; i++){
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name='';
+				}
+				collectionsList.append("<li><a tabindex='-1' class='fromLoca'>"+company_name+" </a></li>");
 			}
-			 else{
-				 $('input[name=noInvoice]').removeAttr("disabled");
-			 }
+		},'json');
+		
+		collectionsList.css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });		 
+			collectionsList.show();	 
+    });
+	$('#make_collections').on('blur', function(){
+ 		$('#collectionsList').hide();
+ 	});
+	$('#spList').on('blur', function(){
+ 		$('#collectionsList').hide();
+ 	});
+
+	$('#collectionsList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+	$('#collectionsList').on('mousedown', '.fromLoca', function(e){
+		var message = $(this).text();
+		$('#make_collections').val(message.substring(0, message.indexOf(" ")));
+        $('#collectionsList').hide();
+    });
+	
+	//开票单位
+	$('#billing_unit').on('keyup click', function(){
+		var inputStr = $('#billing_unit').val();
+		var billingList =$("#billingList");
+		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
+			billingList.empty();
+			for(var i = 0; i < data.length; i++){
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name='';
+				}
+				billingList.append("<li><a tabindex='-1' class='fromLo'>"+company_name+" </a></li>");
+			}
+		},'json');
+		
+		billingList.css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });		 
+		billingList.show();	 
+    });
+	$('#billing_unit').on('blur', function(){
+ 		$('#billingList').hide();
+ 	});
+	$('#spList').on('blur', function(){
+ 		$('#billingList').hide();
+ 	});
+
+	$('#billingList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
 	
-	$("#InvoiceCheckBox").on('click',function(){
-    var noinvice =$("input[name='noInvoice']:checked").val();
-    if(noinvice=="y"){
-    	$("input[name='payeename']").removeAttr("readonly");
-    	$("input[name='payeename1']").removeAttr("readonly");
-    	//$("input[name='noInvoice']").removeAttr("readonly"); 
-    	//$('input[name=noInvoice]').attr("checkbox","false");
-    	$('input[name=noInvoice1]').attr("disabled","disabled");
-    }
-    else{
-    	$('input[name=payeename]').attr("readonly","readonly");
-    	$('input[name=payeename1]').attr("readonly","readonly");
-    	$('input[name=noInvoice1]').removeAttr("disabled");
-    }
-	});
+	$('#billingList').on('mousedown', '.fromLo', function(e){
+		var message = $(this).text();
+		$('#billing_unit').val(message.substring(0, message.indexOf(" ")));
+        $('#billingList').hide();
+    });
+	
 	// 审核
 	$("#auditBtn").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
