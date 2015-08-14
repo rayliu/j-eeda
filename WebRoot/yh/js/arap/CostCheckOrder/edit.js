@@ -209,7 +209,7 @@ $(document).ready(function() {
 			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,departId:departId,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
 				 $("#debitAmount").html(data.changeAmount);
 				 $("#costAmount").html(data.actualAmount); 
-				 $("#total_amount").val(data.actualAmount); 
+				 $("#total_amount").val(data.changeAmount);
 		    	},'json');
 		 }
 	}); 
