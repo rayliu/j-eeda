@@ -1073,6 +1073,7 @@
 						         }
 				        	 
 					 }},
+					 {"mDataProp":"CHANGE_AMOUNT"},
 					 {"mDataProp":null,
 						 "fnRender":function(obj){
 							 if(obj.aData.FIN_CHARGE_TYPE != null){
