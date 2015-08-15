@@ -454,7 +454,8 @@ $(document).ready(function() {
 				         	 return "<input type='text' name='amount'>";
 				         }
 			    	 }
-			 }},  
+			 }},
+			 {"mDataProp":"CHANGE_AMOUNT"},
 			/*
 			 * {"mDataProp":"FIN_ITEM_NAME","sWidth":
 			 * "80px","sClass": "name"},
