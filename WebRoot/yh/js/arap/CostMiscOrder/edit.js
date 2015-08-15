@@ -388,6 +388,7 @@ $(document).ready(function() {
 			        	return "<input type='text' name='amount' class='form-control search-control'>";
 			        }
 			}},
+			{"mDataProp":"CHANGE_AMOUNT"},
 			{"mDataProp":"STATUS"},
 			{"mDataProp": null,
                 "fnRender": function(obj) {
