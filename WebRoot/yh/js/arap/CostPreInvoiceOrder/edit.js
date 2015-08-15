@@ -39,6 +39,7 @@ $(document).ready(function() {
 		$("#payee_unit").val($("#make_collections").val());
 		$("#billing").val($("#billing_unit").val());
 		$("#paymentMethod").val($("input[name='paymentMethod']:checked").val());
+		$("#billtype").val($("input[name='payment']:checked").val());
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -61,7 +62,7 @@ $(document).ready(function() {
 		},'json');
 	};
 	//供应商下拉列表
-	$('#sp_filter').on('keyup click', function(){
+	/*$('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
 		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
@@ -82,8 +83,8 @@ $(document).ready(function() {
         	top:$(this).position().top+32+"px" 
         });		 
 			spList.show();
-    });
-	$('#sp_filter').on('blur', function(){
+    });*/
+	/*$('#sp_filter').on('blur', function(){
  		$('#spList').hide();
  	});
 
@@ -94,16 +95,16 @@ $(document).ready(function() {
 
 	$('#spList').on('mousedown', function(){
 		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-	});
+	});*/
 
 	// 选中供应商
 	
-	$('#spList').on('mousedown', '.fromLocationItem', function(e){
+	/*$('#spList').on('mousedown', '.fromLocationItem', function(e){
 		var message = $(this).text();
 		$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
 		$('#sp_id').val($(this).attr('company_id'));
         $('#spList').hide();
-    });
+    });*/
 	//收款单位
 	$('#make_collections').on('keyup click', function(){
 		var inputStr = $('#make_collections').val();
@@ -128,7 +129,7 @@ $(document).ready(function() {
 	$('#make_collections').on('blur', function(){
  		$('#collectionsList').hide();
  	});
-	$('#spList').on('blur', function(){
+	$('#collectionsList').on('blur', function(){
  		$('#collectionsList').hide();
  	});
 
@@ -165,7 +166,7 @@ $(document).ready(function() {
 	$('#billing_unit').on('blur', function(){
  		$('#billingList').hide();
  	});
-	$('#spList').on('blur', function(){
+	$('#billingList').on('blur', function(){
  		$('#billingList').hide();
  	});
 
@@ -220,22 +221,6 @@ $(document).ready(function() {
 			
 		},'json');
 		
-	});
-	$(document).ready(function(){ 
-		if($('input:radio:checked').val()=="cash"){
-			$("#acc").hide();
-		}
-		if($('input:radio:checked').val()=="transfers"){
-			$("#acc").show();
-		}
-	});
-	$("#paymentMethod2,#paymentMethod1").click(function(e){
-		if($('input:radio:checked').val()=="cash"){
-			$("#acc").attr("style","display:none");
-		}
-		if($('input:radio:checked').val()=="transfers"){
-			$("#acc").attr("style","display:block");
-		}
 	});
 //	if($("#costPreInvoiceOrderStatus").text()=="已确认"){
 //		$("#auditBtn").attr("disabled",false);
@@ -547,6 +532,7 @@ $(document).ready(function() {
 		var yufu_amount = $(this).parent().parent().attr("yufu_amount");
 		var name = $(this).attr("name");
 		var value = $(this).val();
+		$("#tpayment").html(value);
 		if(parseInt(yufu_amount) < parseInt(value)){
 			$.scojs_message('注意：此次付款金额已超过应付金额！！', $.scojs_message.FALSE);
 			return;

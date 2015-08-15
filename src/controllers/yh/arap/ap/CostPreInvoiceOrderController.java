@@ -173,6 +173,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
+		String id1 = getPara("costCheckedOrderIds");
 		setAttr("costCheckOrderIds", ids);
 		Double totalAmount = 0.0;
 		if (ids != null && !"".equals(ids)) {
@@ -195,9 +196,14 @@ public class CostPreInvoiceOrderController extends Controller {
 				totalAmount = totalAmount + costCheckAmount;
 			}
 		}
-
+		Record rec = Db.findFirst("SELECT(SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
+				+ " WHERE caor.cost_order_id = aco.id) total_pay FROM arap_cost_order aco"
+				+ " LEFT JOIN arap_cost_order_invoice_no acoo ON acoo.cost_order_id = aco.id"
+				+ " where aco.id=?",ids);
+		Double paidAmount=rec.getDouble("total_pay");
 		setAttr("saveOK", false);
 		setAttr("totalAmount", totalAmount);
+		setAttr("paidAmount", paidAmount);
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
@@ -221,6 +227,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String payee_unit = getPara("payee_unit");
 		String sp_Id = getPara("sp_id");
 		String billing = getPara("billing");
+		String billtype = getPara("billtype");
 		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
 					.findById(costPreInvoiceOrderId);
@@ -235,6 +242,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
 			arapAuditInvoiceApplication.set("payee_unit", payee_unit);
 			arapAuditInvoiceApplication.set("billing_unit", billing);
+			arapAuditInvoiceApplication.set("bill_type", billtype);
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
 			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			String noInvoice = getPara("noInvoice");
@@ -275,6 +283,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
 			arapAuditInvoiceApplication.set("payee_unit", payee_unit);
 			arapAuditInvoiceApplication.set("billing_unit", billing);
+			arapAuditInvoiceApplication.set("bill_type", billtype);
 			arapAuditInvoiceApplication.set("payment_method",
 					getPara("paymentMethod"));
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
@@ -408,12 +417,18 @@ public class CostPreInvoiceOrderController extends Controller {
 				.findById(arapAuditInvoiceApplication.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
+		Record rec = Db.findFirst("SELECT(SELECT caor.pay_amount this_pay FROM cost_application_order_rel caor"
+				+ " WHERE caor.cost_order_id = aco.id AND caor.application_order_id = appl_order.id ) pay_amount"
+				+ " FROM arap_cost_invoice_application_order appl_order"
+				+ " LEFT JOIN cost_application_order_rel caor ON caor.application_order_id = appl_order.id"
+				+ " LEFT JOIN arap_cost_order aco ON aco.id = caor.cost_order_id"
+				+ " WHERE appl_order.id =?",id);
 		//需付款金额
 //		Double totalpay = totalPay.getDouble("totalPay");
 //		Double cost_amount = arapAuditInvoiceApplication.getDouble("total_amount");
 //		Double payAmount = cost_amount - totalpay;
 //		setAttr("payAmount", payAmount);
-
+		setAttr("tpayment", rec.getDouble("pay_amount"));
 		String costCheckOrderIds = "";
 		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
 				"SELECT * FROM `arap_cost_order` aco "
