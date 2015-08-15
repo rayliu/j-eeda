@@ -281,6 +281,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/costPreInvoiceOrder", controllers.yh.arap.ap.CostPreInvoiceOrderController.class, contentPath);
         me.add("/costAdjustOrder", controllers.yh.arap.ap.CostAdjustOrderController.class, contentPath);
         me.add("/costAcceptOrder", controllers.yh.arap.ap.CostAcceptOrderController.class, contentPath);
+        me.add("/costConfirm", controllers.yh.arap.ap.CostConfirmController.class, contentPath);
         //应付报销单
         me.add("/costReimbursement", controllers.yh.arap.ap.CostReimbursementOrder.class, contentPath);
         

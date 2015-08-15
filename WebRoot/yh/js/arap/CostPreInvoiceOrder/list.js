@@ -15,6 +15,11 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/costPreInvoiceOrder/list",
         "aoColumns": [   
+			{ "mDataProp": null, "sWidth":"20px",
+			    "fnRender": function(obj) {
+			      return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
+			    }
+			},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -76,6 +81,26 @@ $(document).ready(function() {
             }                         
         ]      
     });	
+    
+    
+    var ids = [];
+    // 未选中列表
+	$("#costPreInvoiceOrderList-table").on('click', '.invoice', function(e){
+		if($(this).prop("checked") == true){
+			//$(this).parent().parent().appendTo($("#checkedCostCheckList"));
+			ids.push($(this).attr('id'));
+			$("#invoiceApplicationOrderIds").val(ids);
+			if(ids.length>0){
+				$("#confirmBtn").attr("disabled",false);
+			}
+		}			
+	});
+	
+	$('#confirmBtn').click(function(e){
+        e.preventDefault();
+        $('#confirmForm').submit();
+    });
+    
     
     /*--------------------------------------------------------------------*/
     //获取所有客户

@@ -388,9 +388,14 @@
 	                        <%}%>
 	                        <% if(costConfirmPermission != ''){%>
 	                            <li>
-	                                <a href="/costAcceptOrder">付款确认</a>
+	                                <a href="/costAcceptOrder">付款复核</a>
 	                            </li>
                             <%}%>
+                            <% if(costConfirmPermission != ''){%>
+	                            <li>
+	                                <a href="/costConfirm">付款确认</a>
+	                            </li>
+	                        <%}%>
                             <% if(chunarijiPermission != ''){%>
 	                        	<li>
 	                                <a href="/accountAuditLog">出纳日记帐</a>
@@ -416,6 +421,7 @@
 	                                <a href="/costReimbursement">报销单</a>
 	                            </li>
                             <%}%>
+                            
                         </ul>
                      </li>
                         <!-- /.nav-second-level --> 
