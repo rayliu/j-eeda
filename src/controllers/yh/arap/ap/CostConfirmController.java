@@ -13,6 +13,7 @@ import models.yh.arap.ArapMiscCostOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
@@ -94,13 +95,13 @@ public class CostConfirmController extends Controller {
     // 付款确认单列表
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void list() {
-    	String orderNo = getPara("orderNo");
-    	String appOrderNo = getPara("applicationOrderNo");
-		String status = getPara("status");
-		String sp = getPara("sp");
-		String officeName = getPara("receiverName");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
+    	String orderNo = getPara("orderNo")==null?null:getPara("orderNo").trim();
+    	String appOrderNo = getPara("applicationOrderNo")==null?null:getPara("applicationOrderNo").trim();
+		String status = getPara("status")==null?null:getPara("status").trim();
+		String spName = getPara("sp_name")==null?null:getPara("sp_name").trim();
+		String receiverName = getPara("receiverName")==null?null:getPara("receiverName").trim();
+		String beginTime = getPara("beginTime")==null?null:getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?null:getPara("endTime").trim();
 		
     	String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -119,18 +120,47 @@ public class CostConfirmController extends Controller {
         
         String columsSql = "select cpco.*, 'afdafa' fksq_no, c1.abbr sp_name,"
         		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
-        		+ fromSql +" order by cpco.create_date desc ";
+        		+ fromSql;
+        String orderBy= " order by cpco.create_date desc ";
         
-        if (orderNo != null && status != null && appOrderNo != null){
-        	String conditions="";
-        	columsSql+=conditions;
+        String conditions=" where 1=1 ";
+        if (StringUtils.isNotEmpty(orderNo)){
+        	conditions+=" and UPPER(cpco.order_no) like '%"+orderNo.toUpperCase()+"%'";
+        }
+//        if (appOrderNo != null){
+//        	conditions+=" fksq_no like'%"+appOrderNo+"%'";
+//        }
+        if (StringUtils.isNotEmpty(status)){
+        	conditions+=" and cpco.status = '"+status+"'";
+        }
+        if (StringUtils.isNotEmpty(spName)){
+        	conditions+=" and c1.abbr like '%"+spName+"%'";
+        }
+        if (StringUtils.isNotEmpty(receiverName)){
+        	conditions+=" and cpco.receive_person like '%"+receiverName+"%'";
         }
         
+        if (StringUtils.isNotEmpty(beginTime)){
+        	beginTime = " and cpco.create_date between'"+beginTime+"'";
+        }else{
+        	beginTime =" and cpco.create_date between '1970-1-1'";
+        }
+        
+        if (StringUtils.isNotEmpty(endTime)){
+        	endTime =" and '"+endTime+"'";
+        }else{
+        	endTime =" and '3000-1-1'";
+        }
+        conditions+=beginTime+endTime;
+        
+        
+        totalSql+=conditions;
         Record recTotal = Db.findFirst(totalSql);
         Long total = recTotal.getLong("total");
         logger.debug("total records:" + total);
         
-        List<Record> costPayConfirmOrders = Db.find(columsSql+sLimit);
+        columsSql+=conditions + orderBy + sLimit;
+        List<Record> costPayConfirmOrders = Db.find(columsSql);
 
         Map orderListMap = new HashMap();
         orderListMap.put("sEcho", pageIndex);
