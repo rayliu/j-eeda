@@ -30,11 +30,13 @@ public class CostConfirmController extends Controller {
     private Logger logger = Logger.getLogger(CostConfirmController.class);
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CONFIRMATION})
     public void index() {
-    	    //render("/yh/arap/CostConfirm/CostConfirmList.html");
-    	render("/yh/arap/CostConfirm/CostConfrimAdd.html");
+    	render("/yh/arap/CostConfirm/CostConfirmList.html");
     }
     
-    
+   	public void edit() {
+   		String ids = getPara("id");
+   		render("/yh/arap/CostConfirm/CostConfrimAdd.html");
+   	}
     
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void create() {
@@ -89,62 +91,55 @@ public class CostConfirmController extends Controller {
         render("/yh/arap/CostAcceptOrder/CostCheckOrderEdit.html");
     }
 
-    // 应付申请列表
+    // 付款确认单列表
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void list() {
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        String invoiceApplicationOrderIds = getPara("invoiceApplicationOrderIds");
-        String sqlTotal = "";
-        String sql = "";
-        List<Record> record = null;
-        Record re = null;
-        if (invoiceApplicationOrderIds != null && !"".equals(invoiceApplicationOrderIds)) {
-			String[] idArray = invoiceApplicationOrderIds.split(",");
-			sql = "SELECT aci.*,"
-					+ "( SELECT group_concat( DISTINCT aco.order_no SEPARATOR '<br/>' ) "
-					+ " FROM "
-					+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
-					+ " ON caor.cost_order_id = aco.id"
-					+ " WHERE "
-					+ " caor.application_order_id = aci.id ) cost_order_no,"
-					+ " ( SELECT sum(caor.pay_amount) "
-					+ " FROM "
-					+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
-					+ " ON caor.cost_order_id = aco.id"
-					+ " WHERE caor.application_order_id = aci.id ) pay_amount,"
-					+ "aco.create_stamp cost_stamp FROM arap_cost_invoice_application_order aci "
-	        		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id "
-	        		+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
-	        		+ " where aci.id in(" + invoiceApplicationOrderIds + ") GROUP BY aci.id " ;
-			record = Db.find(sql);
-			//re = Db.findFirst("select count(")
-//			Long spId = arapCostOrder.getLong("payee_id");
-//			if (!"".equals(spId) && spId != null) {
-//				Party party = Party.dao.findById(spId);
-//				setAttr("party", party);
-//				Contact contact = Contact.dao.findById(party.get("contact_id")
-//						.toString());
-//				setAttr("customer", contact);
-//			}
-			for (int i = 0; i < idArray.length; i++) {
-				
-			}
+    	String orderNo = getPara("orderNo");
+    	String appOrderNo = getPara("applicationOrderNo");
+		String status = getPara("status");
+		String sp = getPara("sp");
+		String officeName = getPara("receiverName");
+		String beginTime = getPara("beginTime");
+		String endTime = getPara("endTime");
+		
+    	String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
 		}
-        //sqlTotal = " select count(1) total from (" + sql + condition + ") as B"; 
-        //Record rec = Db.findFirst(sqlTotal);
-        //logger.debug("total records:" + rec.getLong("total"));
+               
+        String fromSql = " from arap_cost_pay_confirm_order cpco "
+        			+ " left join party p1 on cpco.sp_id = p1.id "
+					+ " left join contact c1 on p1.contact_id = c1.id"
+					+ " left join user_login ul on ul.id=cpco.creator";
         
-//        List<Record> BillingOrders = Db.find(sql + condition + " order by create_stamp desc" + sLimit);
-//
-        Map BillingOrderListMap = new HashMap();
-        BillingOrderListMap.put("sEcho", pageIndex);
-        BillingOrderListMap.put("iTotalRecords", record.size());
-        BillingOrderListMap.put("iTotalDisplayRecords", record.size());
+        String totalSql = "select count(1) total" + fromSql;
+        
+        String columsSql = "select cpco.*, 'afdafa' fksq_no, c1.abbr sp_name,"
+        		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
+        		+ fromSql +" order by cpco.create_date desc ";
+        
+        if (orderNo != null && status != null && appOrderNo != null){
+        	String conditions="";
+        	columsSql+=conditions;
+        }
+        
+        Record recTotal = Db.findFirst(totalSql);
+        Long total = recTotal.getLong("total");
+        logger.debug("total records:" + total);
+        
+        List<Record> costPayConfirmOrders = Db.find(columsSql+sLimit);
 
-        BillingOrderListMap.put("aaData", record);
+        Map orderListMap = new HashMap();
+        orderListMap.put("sEcho", pageIndex);
+        orderListMap.put("iTotalRecords", total);
+        orderListMap.put("iTotalDisplayRecords", costPayConfirmOrders.size());
 
-        renderJson(BillingOrderListMap);
+        orderListMap.put("aaData", costPayConfirmOrders);
+
+        renderJson(orderListMap);
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void costConfiremReturnOrder(){
