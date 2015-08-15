@@ -40,7 +40,9 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"CNAME"},
+            {"mDataProp":"CNAME",
+            	"sClass": "cname"
+            },
             {"mDataProp":"PAYMENT_METHOD", "sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
@@ -51,7 +53,9 @@ $(document).ready(function() {
                     	return '';
                 }
             },
-            {"mDataProp":"PAYEE_NAME"},
+            {"mDataProp":"PAYEE_NAME",
+            	"sClass": "payee_name"
+            },
             {"mDataProp":"C_STAMP"},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"PAY_AMOUNT"},
@@ -83,18 +87,54 @@ $(document).ready(function() {
     });	
     
     
+    
     var ids = [];
+	var cnames = [];
+	var payee_names = [];
     // 未选中列表
 	$("#costPreInvoiceOrderList-table").on('click', '.invoice', function(e){
 		if($(this).prop("checked") == true){
-			//$(this).parent().parent().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
-			$("#invoiceApplicationOrderIds").val(ids);
 			if(ids.length>0){
 				$("#confirmBtn").attr("disabled",false);
+				if(ids.length > 1){
+					if(cnames[0] != $(this).parent().siblings('.cname')[0].textContent){
+						$.scojs_message('请选择相同的供应商!', $.scojs_message.TYPE_FALSE);
+						var tmpArr1 = [];
+						for(id in ids){
+							if(ids[id] != $(this).attr('id')){
+								tmpArr1.push(ids[id]);
+							}
+						}
+						ids = tmpArr1;
+						return false;
+					}else if(payee_names[0] != $(this).parent().siblings('.payee_name')[0].textContent){
+						$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
+						var tmpArr2 = [];
+						for(id in ids){
+							if(ids[id] != $(this).attr('id')){
+								tmpArr2.push(ids[id]);
+							}
+						}
+						ids = tmpArr2;
+						return false;
+					}
+				}
+				cnames.push($(this).parent().siblings('.cname')[0].textContent);
+				payee_names.push($(this).parent().siblings('.payee_name')[0].textContent);
 			}
-		}			
+		}else if($(this).prop("checked") == false){
+			var tmpArr = [];
+			for(id in ids){
+				if(ids[id] != $(this).attr('id')){
+					tmpArr.push(ids[id]);
+				}
+			}
+			ids = tmpArr;
+		}
+		$("#invoiceApplicationOrderIds").val(ids);
 	});
+	
 	
 	$('#confirmBtn').click(function(e){
         e.preventDefault();
