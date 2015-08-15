@@ -173,7 +173,6 @@ public class CostPreInvoiceOrderController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
-		String id1 = getPara("costCheckedOrderIds");
 		setAttr("costCheckOrderIds", ids);
 		Double totalAmount = 0.0;
 		if (ids != null && !"".equals(ids)) {
@@ -423,12 +422,20 @@ public class CostPreInvoiceOrderController extends Controller {
 				+ " LEFT JOIN cost_application_order_rel caor ON caor.application_order_id = appl_order.id"
 				+ " LEFT JOIN arap_cost_order aco ON aco.id = caor.cost_order_id"
 				+ " WHERE appl_order.id =?",id);
+		Record rec1 = Db.findFirst("SELECT(SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
+				+ " WHERE caor.cost_order_id = aco.id) paid_Amount"
+				+ " FROM arap_cost_invoice_application_order appl_order"
+				+ " LEFT JOIN cost_application_order_rel caor ON caor.application_order_id = appl_order.id"
+				+ " LEFT JOIN arap_cost_order aco ON aco.id = caor.cost_order_id"
+				+ " where appl_order.id=?",id);
+		Double paidAmount=rec1.getDouble("total_pay");
 		//需付款金额
 //		Double totalpay = totalPay.getDouble("totalPay");
 //		Double cost_amount = arapAuditInvoiceApplication.getDouble("total_amount");
 //		Double payAmount = cost_amount - totalpay;
 //		setAttr("payAmount", payAmount);
 		setAttr("tpayment", rec.getDouble("pay_amount"));
+		setAttr("paidAmount", rec1.getDouble("paid_Amount"));
 		String costCheckOrderIds = "";
 		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
 				"SELECT * FROM `arap_cost_order` aco "
