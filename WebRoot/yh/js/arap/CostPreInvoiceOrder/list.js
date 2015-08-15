@@ -133,6 +133,11 @@ $(document).ready(function() {
 			ids = tmpArr;
 		}
 		$("#invoiceApplicationOrderIds").val(ids);
+		if(ids.length == 0){
+			$("#confirmBtn").attr("disabled",true);
+			 cnames = [];
+			 payee_names = [];
+		}
 	});
 	
 	
