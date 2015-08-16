@@ -163,7 +163,7 @@ $(document).ready(function() {
             {"mDataProp":"PAY_AMOUNT"},
             {"mDataProp":"CHANGE_AMOUNT",
             	"fnRender": function(obj) {
-            		if($("#costCheckOrderStatus").text()=="已确认"||$("#costCheckOrderStatus").text()=="付款申请中"){
+            		if($("#costCheckOrderStatus").text()=="已确认"||$("#costCheckOrderStatus").text()=="付款申请中"||$("#costCheckOrderStatus").text()=="付款确认中"||$("#costCheckOrderStatus").text()=="已付款确认"){
             			if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
                             return obj.aData.CHANGE_AMOUNT;  
                         }

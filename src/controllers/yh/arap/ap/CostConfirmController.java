@@ -9,6 +9,8 @@ import java.util.Map;
 
 import models.Account;
 import models.ArapCostInvoiceApplication;
+import models.ArapCostItem;
+import models.ArapCostOrder;
 import models.ArapCostPayConfirmOrder;
 import models.ArapCostPayConfirmOrderDtail;
 import models.ArapCostPayConfirmOrderLog;
@@ -108,6 +110,10 @@ public class CostConfirmController extends Controller {
 				//更新申请单状态
 				ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
 				arapCostInvoiceApplication.set("status", "付款确认中").update();
+				List<ArapCostOrder> arapcostorderList = ArapCostOrder.dao.find("select id, status from arap_cost_order where application_order_id = ?",idArray[i]);
+				for(ArapCostOrder arapCostorder : arapcostorderList){
+					arapCostorder.set("status", "付款确认中").update();
+		    	}
 			}
 			
 		}
@@ -156,6 +162,11 @@ public class CostConfirmController extends Controller {
 			for (int i = 0; i < idArray.length; i++) {
 				ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
 				arapCostInvoiceApplication.set("status", "已付款确认").update();
+				//List<Record> list= Db.find("SELECT STATUS from arap_cost_order where application_order_id =?",idArray[i]);
+				List<ArapCostOrder> arapcostorderList = ArapCostOrder.dao.find("select id,status from arap_cost_order where application_order_id = ?",idArray[i]);
+				for(ArapCostOrder arapCostorder : arapcostorderList){
+					arapCostorder.set("status", "已付款确认").update();
+		    	}
 			}
 		}else{
 			arapCostPayConfirmOrder.set("status", "部分已付款").update();

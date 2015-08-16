@@ -238,7 +238,7 @@ public class CostCheckOrderController extends Controller {
         String sql = "select aco.*,MONTH(aco.begin_time) as c_stamp,o.office_name oname,c.company_name as company_name,"
         		+ " group_concat(acoo.invoice_no separator ',') invoice_no,"
         		+ " c.abbr cname,"
-        		+ " ul.user_name creator_name,"
+        		+ " ifnull(ul.c_name,ul.user_name) creator_name,"
         		+ " (select case "
         		+ " when aciao. status = '已付款确认' then aciao.status "
         		+ " when aciao.status != '已付款确认' and aciao.status !='' then '付款申请中' "
