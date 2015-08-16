@@ -298,7 +298,7 @@ public class CostCheckOrderController extends Controller {
     	if(!"".equals(costCheckOrderId) && costCheckOrderId != null){
     		arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
 	    	//arapAuditOrder.set("order_type", );
-	    	arapAuditOrder.set("status", "new");
+	    	arapAuditOrder.set("status", "新建");
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
 	    	arapAuditOrder.set("remark", getPara("remark"));
@@ -321,7 +321,7 @@ public class CostCheckOrderController extends Controller {
 	    	if(sp_id == null || "".equals(sp_id)){
 	    		sp_id = null;
 	    	}
-	    	arapAuditOrder.set("status", "new");
+	    	arapAuditOrder.set("status", "新建");
 	    	arapAuditOrder.set("payee_id", sp_id);
 	    	arapAuditOrder.set("create_by", getPara("create_by"));
 	    	arapAuditOrder.set("create_stamp", new Date());
