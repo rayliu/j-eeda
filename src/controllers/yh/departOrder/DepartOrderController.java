@@ -41,6 +41,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.util.LocationUtil;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.getCustomFile;
@@ -627,80 +628,18 @@ public class DepartOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
+		String fromSql=" from v_create_depart vcd where "
+					+ " vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()	+ "') "
+					+ " and vcd.status!='手动删除' "
+					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='"	+ currentUser.getPrincipal() + "')"
+					+ " and (pickup_id is not null or operation_type='out_source')";
+		
 		if (orderNo == null && status == null && address == null
 				&& customer == null && routeFrom == null && routeTo == null
-				&& beginTime == null && endTime == null) {
-			sqlTotal = "select count(1) total from  depart_order dor "
-					+ " LEFT JOIN depart_transfer dt ON dor.id = dt.pickup_id"
-					+ " LEFT JOIN transfer_order tor ON tor.id = dt.order_id"
-					+ " left join party p on tor.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join location l1 on tor.route_from = l1.code "
-					+ " left join location l2 on tor.route_to = l2.code"
-					+ " left join office o on o.id = tor.office_id "
-					+ " where ((tor.cargo_nature = 'ATM' and ifnull(tor.depart_assign_status,'') != 'ALL') "
-					+ " or (tor.operation_type = 'out_source' and tor.status = '外包') "
-					+ " or (tor.cargo_nature = 'ATM' and ((tor.status = '已投保' or tor.status = '部分已入货场')) and (select group_concat(cast(dt.pickup_id as char) separator ',') pickup_id "
-					+ " from depart_transfer dt left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id)) is not null)"
-					+ " or (tor.cargo_nature = 'cargo' and tor.pickup_assign_status = 'ALL' and (select group_concat(cast(dorr.id as char) separator ',') pickup_id from depart_transfer dt left join depart_order dorr on dorr.id = dt.pickup_id where dt.order_id = tor.id and dt.depart_id is null and dorr.status != '已入货场') is null)) "
-					+ " and (ifnull(tor.depart_assign_status, '') = '"
-					+ TransferOrder.ASSIGN_STATUS_NEW
-					+ "' or (tor.pickup_assign_status = '"
-					+ TransferOrder.ASSIGN_STATUS_PARTIAL
-					+ "' and (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt "
-					+ " left join depart_pickup dp on dp.pickup_id = dt.pickup_id  left join depart_order dd on dd.id = dt.pickup_id where dt.order_id = tor.id "
-					+ " and tor.status!='手动删除' and (select group_concat(cast(pickup_id as char) separator ',') from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) is null) is not null))"
-					+ " and tor.office_id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal() + "')";
-
-			sql = "select * from(select distinct tor.id,tor.order_no,tor.customer_order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
-					+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
-					+ " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
-					+ " dt.pickup_id as pickup_id,"
-					+ " dor.depart_no as pickup_no,"
-					+ " (SELECT count(toid.id) FROM transfer_order_item_detail toid WHERE  toid.pickup_id = dor.id and toid.order_id = tor.id) as total_amount,"
-					+ " ( SELECT sum(toi.amount) FROM transfer_order_item toi where toi.order_id = tor.id) AS cargo_amount,"
-					+ " (SELECT sum(toid.pieces) FROM transfer_order_item_detail toid WHERE  toid.pickup_id = dor.id and toid.order_id = tor.id) as total_amount2,"
-					+ " tor.charge_type2,ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.abbr cname,"
-					+ " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid,"
-					+ " o.office_name office_name "
-					+ " from depart_order dor "
-					+ " LEFT JOIN depart_transfer dt ON dor.id = dt.pickup_id"
-					+ " LEFT JOIN transfer_order tor ON tor.id = dt.order_id"
-					+ " left join party p on tor.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on tor.sp_id = p2.id "
-					+ " left join contact cont on  cont.id=p2.contact_id "
-					+ " left join depart_pickup dp on dp.pickup_id = dt.pickup_id"
-					+ " left join location l1 on tor.route_from = l1.code "
-					+ " left join location l2 on tor.route_to = l2.code "
-					+ " left join office o on o.id=tor.office_id "
-					+ " where ((tor.cargo_nature = 'ATM' and ifnull(tor.depart_assign_status,'') != 'ALL') "
-					+ " or (tor.operation_type = 'out_source' and tor.status = '新建') "
-					+ " or (tor.cargo_nature = 'ATM' and ((tor.status = '已投保' or tor.status = '部分已入货场')) and (select group_concat(cast(dt.pickup_id as char) separator ',') pickup_id "
-					+ " from depart_transfer dt left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id)) is not null)"
-					+ " or (tor.cargo_nature = 'cargo' and tor.pickup_assign_status = 'ALL' and (select group_concat(cast(dorr.id as char) separator ',') pickup_id from depart_transfer dt left join depart_order dorr on dorr.id = dt.pickup_id where dt.order_id = tor.id and dt.depart_id is null and dorr.status != '已入货场') is null)) "
-					+ " and (ifnull( tor.depart_assign_status, '' ) = 'NEW'"
-					+ " or (( tor.depart_assign_status = 'PARTIAL' OR tor.depart_assign_status = 'ALL' )"
-					+ " and ( select group_concat( DISTINCT cast(dt.pickup_id AS CHAR) SEPARATOR ',' )"
-					+ " from depart_transfer dt LEFT JOIN depart_pickup dp ON dp.pickup_id = dt.pickup_id "
-					+ " left JOIN depart_order dd ON dd.id = dt.pickup_id WHERE dt.order_id = tor.id "
-					+ " and ( select group_concat( cast(pickup_id AS CHAR) SEPARATOR ',' )"
-					+ " from depart_pickup"
-					+ " where order_id = tor.id"
-					+ " and pickup_id = dt.pickup_id ) IS NULL ) IS NOT NULL ))"
-					+ " and tor.office_id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and tor.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal()
-					+ "')"
-					+ " order by tor.planning_time desc, order_no  "
-					+ ") A where pickup_id is not null or operation_type='out_source'"
-					+ sLimit;
+				&& beginTime == null && endTime == null) {			
+			sqlTotal = "select count(1) total "+ fromSql;
+			sql = "select * " + fromSql+ " order by planning_time desc, order_no" + sLimit;
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -708,120 +647,30 @@ public class DepartOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			sqlTotal = "select count(1) total from  depart_order dor "
-					+ " LEFT JOIN depart_transfer dt ON dor.id = dt.pickup_id"
-					+ " LEFT JOIN transfer_order tor ON tor.id = dt.order_id"
-					+ " left join party p on tor.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join location l1 on tor.route_from = l1.code "
-					+ " left join location l2 on tor.route_to = l2.code  "
-					+ " left join office o on o.id = tor.office_id "
-					+ " where ((tor.cargo_nature = 'ATM' and ifnull(tor.depart_assign_status,'') != 'ALL') "
-					+ " or (tor.operation_type = 'out_source' and tor.status = '外包') "
-					+ " or (tor.cargo_nature = 'ATM' and ((tor.status = '已投保' or tor.status = '部分已入货场')) and (select group_concat(cast(dt.pickup_id as char) separator ',') pickup_id "
-					+ " from depart_transfer dt left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id)) is not null)"
-					+ " or (tor.cargo_nature = 'cargo' and tor.pickup_assign_status = 'ALL' and (select group_concat(cast(dorr.id as char) separator ',') pickup_id from depart_transfer dt left join depart_order dorr on dorr.id = dt.pickup_id where dt.order_id = tor.id and dt.depart_id is null and dorr.status != '已入货场') is null)) "
-					+ " and (ifnull(tor.depart_assign_status, '') = '"
-					+ TransferOrder.ASSIGN_STATUS_NEW
-					+ "' or (tor.pickup_assign_status = '"
-					+ TransferOrder.ASSIGN_STATUS_PARTIAL
-					+ "' and (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt "
-					+ " left join depart_pickup dp on dp.pickup_id = dt.pickup_id  left join depart_order dd on dd.id = dt.pickup_id where dt.order_id = tor.id "
-					+ " and (select group_concat(cast(pickup_id as char) separator ',') from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) is null) is not null))"
-					+ " and tor.order_no like '%"
-					+ orderNo
-					+ "%' "
-					+ " and tor.status like '%"
-					+ status
-					+ "%' "
-					+ " and tor.address like '%"
-					+ address
-					+ "%' "
-					+ " and c.abbr like '%"
-					+ customer
-					+ "%' "
-					+ " and l1.name like '%"
-					+ routeFrom
-					+ "%' "
-					+ " and l2.name like '%"
-					+ routeTo
-					+ "%' "
-					+ " and tor.planning_time between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime
-					+ "'"
-					+ " and tor.status!='手动删除' and tor.office_id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal() + "')";
+			sqlTotal = "select count(1) total " + fromSql
+					+ " and vcd.order_no like '%"+ orderNo+ "%' "
+					+ " and vcd.status like '%"+ status+ "%' "
+					+ " and vcd.doaddress like '%"+ address+ "%' "
+					+ " and vcd.cname like '%"+ customer+ "%' "
+					+ " and vcd.route_from like '%"+ routeFrom+ "%' "
+					+ " and vcd.route_to like '%"+ routeTo+ "%' "
+					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
+					+ " and vcd.status!='手动删除' "
+					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
+					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
 
-			sql = "select * from(select distinct tor.id,tor.order_no,tor.customer_order_no,tor.planning_time,tor.operation_type,tor.cargo_nature, tor.arrival_mode ,"
-					+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_volume, "
-					+ " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = tor.id),2) total_weight, "
-					+ " dt.pickup_id as pickup_id,"
-					+ " dor.depart_no as pickup_no,"
-					+ " (SELECT count(toid.id) FROM transfer_order_item_detail toid WHERE  toid.pickup_id = dor.id and toid.order_id = tor.id) as total_amount,"
-					+ " (SELECT sum(toi.amount) FROM transfer_order_item toi where toi.order_id = tor.id) AS cargo_amount,"
-					+ " (SELECT sum(toid.pieces) FROM transfer_order_item_detail toid WHERE  toid.pickup_id = dor.id and toid.order_id = tor.id) as total_amount2,"
-					+ " tor.charge_type2,ifnull(dor.address, '') doaddress, ifnull(tor.pickup_mode, '') pickup_mode,tor.status,c.abbr cname,"
-					+ " l1.name route_from,l2.name route_to,tor.create_stamp ,cont.abbr as spname,cont.id as spid,"
-					+ " o.office_name office_name "
-					+ " from depart_order dor "
-					+ " LEFT JOIN depart_transfer dt ON dor.id = dt.pickup_id"
-					+ " LEFT JOIN transfer_order tor ON tor.id = dt.order_id"
-					+ " left join party p on tor.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on tor.sp_id = p2.id "
-					+ " left join contact cont on  cont.id=p2.contact_id "
-					+ " left join depart_pickup dp on dp.pickup_id = dt.pickup_id"
-					+ " left join location l1 on tor.route_from = l1.code "
-					+ " left join location l2 on tor.route_to = l2.code "
-					+ " left join office o on o.id=tor.office_id "
-					+ " where ((tor.cargo_nature = 'ATM' and ifnull(tor.depart_assign_status,'') != 'ALL') "
-					+ " or (tor.operation_type = 'out_source' and tor.status = '新建') "
-					+ " or (tor.cargo_nature = 'ATM' and ((tor.status = '已投保' or tor.status = '部分已入货场')) and (select group_concat(cast(dt.pickup_id as char) separator ',') pickup_id "
-					+ " from depart_transfer dt left join depart_pickup dp on dp.order_id = dt.order_id left join depart_order dord on dord.id = dt.pickup_id where dt.order_id = tor.id and dord.status = '已入货场' and dt.pickup_id not in (select pickup_id from depart_pickup where order_id = tor.id)) is not null)"
-					+ " or (tor.cargo_nature = 'cargo' and tor.pickup_assign_status = 'ALL' and (select group_concat(cast(dorr.id as char) separator ',') pickup_id from depart_transfer dt left join depart_order dorr on dorr.id = dt.pickup_id where dt.order_id = tor.id and dt.depart_id is null and dorr.status != '已入货场') is null)) "
-					+ " and (ifnull(tor.depart_assign_status, '') = '"
-					+ TransferOrder.ASSIGN_STATUS_NEW
-					+ "' or (tor.depart_assign_status = '"
-					+ TransferOrder.ASSIGN_STATUS_PARTIAL
-					+ "' and (select group_concat( distinct cast(dt.pickup_id as char) separator ',' ) from depart_transfer dt "
-					+ " left join depart_pickup dp on dp.pickup_id = dt.pickup_id  left join depart_order dd on dd.id = dt.pickup_id where dt.order_id = tor.id "
-					+ " and (select group_concat(cast(pickup_id as char) separator ',') from depart_pickup where order_id = tor.id and pickup_id = dt.pickup_id) is null) is not null))"
-					+ " and tor.order_no like '%"
-					+ orderNo
-					+ "%' "
-					+ " and tor.status like '%"
-					+ status
-					+ "%' "
-					+ " and tor.address like '%"
-					+ address
-					+ "%' "
-					+ " and c.abbr like '%"
-					+ customer
-					+ "%' "
-					+ " and l1.name like '%"
-					+ routeFrom
-					+ "%' "
-					+ " and l2.name like '%"
-					+ routeTo
-					+ "%' "
-					+ " and tor.planning_time between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime
-					+ "'"
-					+ " and tor.office_id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and tor.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal()
-					+ "')"
-					+ " order by tor.planning_time desc, order_no  "
-					+ ") A where pickup_id is not null or operation_type='out_source'"
+			sql = "select * "  + fromSql
+					+ " and vcd.order_no like '%"+ orderNo+ "%' "
+					+ " and vcd.status like '%"+ status+ "%' "
+					+ " and vcd.doaddress like '%"+ address+ "%' "
+					+ " and vcd.cname like '%"+ customer+ "%' "
+					+ " and vcd.route_from like '%"+ routeFrom+ "%' "
+					+ " and vcd.route_to like '%"+ routeTo+ "%' "
+					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
+					+ " and vcd.status!='手动删除' "
+					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
+					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')"
+					+ " order by planning_time desc, order_no"
 					+ sLimit;
 		}
 		rec = Db.findFirst(sqlTotal);
@@ -1041,42 +890,14 @@ public class DepartOrderController extends Controller {
 				numone = 1;
 			}
 			String routeFrom = transferOrder.get("route_from");
-			Location locationFrom = null;
-			if (routeFrom != null || !"".equals(routeFrom)) {
-				List<Location> provinces = Location.dao
-						.find("select * from location where pcode ='1'");
-				Location l = Location.dao
-						.findFirst("select * from location where code = (select pcode from location where code = '"
-								+ routeFrom + "')");
-				if (provinces.contains(l)) {
-					locationFrom = Location.dao
-							.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-									+ routeFrom + "'");
-				} else {
-					locationFrom = Location.dao
-							.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-									+ routeFrom + "'");
-				}
+			Location locationFrom = LocationUtil.getLocation(routeFrom);
+			if (locationFrom != null) {
 				setAttr("locationFrom", locationFrom);
 			}
 
 			String routeTo = transferOrder.get("route_to");
-			Location locationTo = null;
+			Location locationTo = LocationUtil.getLocation(routeTo);;
 			if (routeTo != null || !"".equals(routeTo)) {
-				List<Location> provinces = Location.dao
-						.find("select * from location where pcode ='1'");
-				Location l = Location.dao
-						.findFirst("select * from location where code = (select pcode from location where code = '"
-								+ routeTo + "')");
-				if (provinces.contains(l)) {
-					locationTo = Location.dao
-							.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-									+ routeTo + "'");
-				} else {
-					locationTo = Location.dao
-							.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-									+ routeTo + "'");
-				}
 				setAttr("locationTo", locationTo);
 			}
 			if (transferOrder.get("sp_id") != null) {
@@ -1236,16 +1057,14 @@ public class DepartOrderController extends Controller {
 
 			// 更新运输单发车状态，新建发车单从表
 			for (int i = 0; i < orderids.length; i++) {
-				TransferOrder transferOrder = TransferOrder.dao
-						.findById(orderids[i]);
+				TransferOrder transferOrder = TransferOrder.dao.findById(orderids[i]);
 				DepartTransferOrder departTransferOrder = new DepartTransferOrder();
 				departTransferOrder.set("depart_id", dp.get("id"));
 				departTransferOrder.set("order_id", orderids[i]);
-				departTransferOrder.set("transfer_order_no",
-						transferOrder.get("order_no"));
+				departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
 				departTransferOrder.save();
 				// 记录调车单中单品的发车单ID，//发车单从表记录所选的调车单
-				if ("整车".equals(transfer_type) || pickupIds[0].trim() == ""
+				if ("整车".equals(transfer_type) || pickupIds.length==0 || pickupIds[0].trim() == ""
 						|| pickupIds[0].trim() == null
 						|| "null".equals(pickupIds[0].trim())) {
 					List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
