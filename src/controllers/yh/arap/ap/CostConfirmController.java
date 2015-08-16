@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
+import models.ArapCostInvoiceApplication;
 import models.ArapCostPayConfirmOrder;
 import models.ArapCostPayConfirmOrderDtail;
 import models.ArapCostPayConfirmOrderLog;
@@ -71,9 +72,6 @@ public class CostConfirmController extends Controller {
    		String billing_unit = getPara("billing_unit"); //开票单位
    		String bank_no = getPara("bank_no");           //账号
    		
-   		
-   		
-   		
    		if(confirmId != ""&& confirmId != null){
 			//更新主表
 			arapCostPayConfirmOrder = arapCostPayConfirmOrder.dao.findById(confirmId);
@@ -106,7 +104,12 @@ public class CostConfirmController extends Controller {
 				arapCostPayConfirmOrderDtail.set("order_id", arapCostPayConfirmOrder.getLong("id"));
 				arapCostPayConfirmOrderDtail.set("application_order_id", idArray[i]);
 				arapCostPayConfirmOrderDtail.save();
+				
+				//更新申请单状态
+				ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
+				arapCostInvoiceApplication.set("status", "付款确认中").update();
 			}
+			
 		}
    		renderJson(arapCostPayConfirmOrder);
    	}
@@ -116,7 +119,9 @@ public class CostConfirmController extends Controller {
    		String pay_bank = getPara("pay_bank");
    		String pay_account_no = getPara("pay_account_no");
    		String pay_amount = getPara("pay_amount");
-   		//String nopay_amount = getPara("nopay_amount");
+   		String nopay_amount = getPara("nopay_amount");
+   		String total_amount = getPara("total_amount");
+   		String invoiceApplicationOrderIds = getPara("invoiceApplicationOrderIds");
 		
 		ArapCostPayConfirmOrderLog arapCostPayConfirmOrderLog = null;
    		String confirmId = getPara("confirmId");
@@ -139,6 +144,23 @@ public class CostConfirmController extends Controller {
 				+ "  where acp.order_id = '"+confirmId+"'";
 		Record re = Db.findFirst(sql);
 		
+		
+		ArapCostPayConfirmOrder arapCostPayConfirmOrder = ArapCostPayConfirmOrder.dao.findById(confirmId);
+		
+		String[] idArray = invoiceApplicationOrderIds.split(",");
+		if(re.getDouble("total") == Double.parseDouble(total_amount)){
+			//更新确认表状态
+			arapCostPayConfirmOrder.set("status", "已确认").update();
+			
+			//更新申请单状态
+			for (int i = 0; i < idArray.length; i++) {
+				ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
+				arapCostInvoiceApplication.set("status", "已付款确认").update();
+			}
+		}else{
+			arapCostPayConfirmOrder.set("status", "部分已确认").update();
+		}
+		
 		Map BillingOrderListMap = new HashMap();
    		BillingOrderListMap.put("arapCostPayConfirmOrderLog", arapCostPayConfirmOrderLog);
    		BillingOrderListMap.put("re", re);
@@ -149,7 +171,7 @@ public class CostConfirmController extends Controller {
 	public void logList() {
         String pageIndex = getPara("sEcho");
 		String confirmId = getPara("confirmId");
-		String sql = "select *,ul.c_name from arap_cost_pay_confirm_order_log acp "
+		String sql = "select acp.*,ul.c_name from arap_cost_pay_confirm_order_log acp "
 				+ " left join user_login ul on ul.id = acp.creator "
 				+ "  where acp.order_id = '"+confirmId+"'";
 		List<Record> re = Db.find(sql);
