@@ -20,6 +20,9 @@ import models.ArapCostInvoiceItemInvoiceNo;
 import models.ArapCostItem;
 import models.ArapCostOrder;
 import models.ArapCostOrderInvoiceNo;
+import models.ArapCostPayConfirmOrder;
+import models.ArapCostPayConfirmOrderDtail;
+import models.ArapCostPayConfirmOrderLog;
 import models.ArapMiscChargeOrder;
 import models.ArapMiscChargeOrderItem;
 import models.Category;
@@ -416,6 +419,9 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_misc_cost_order", ArapMiscCostOrder.class);
         arp.addMapping("arap_misc_cost_order_item", models.yh.arap.ArapMiscCostOrderItem.class);
         arp.addMapping("cost_application_order_rel", CostApplicationOrderRel.class);
+        arp.addMapping("arap_cost_pay_confirm_order_detail", ArapCostPayConfirmOrderDtail.class);
+        arp.addMapping("arap_cost_pay_confirm_order", ArapCostPayConfirmOrder.class);
+        arp.addMapping("arap_cost_pay_confirm_order_log", ArapCostPayConfirmOrderLog.class);
         //应付报销单
         arp.addMapping("reimbursement_order", ReimbursementOrder.class);
         arp.addMapping("reimbursement_order_fin_item", ReimbursementOrderFinItem.class);
