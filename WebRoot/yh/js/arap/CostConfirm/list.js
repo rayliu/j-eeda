@@ -27,9 +27,13 @@ $(document).ready(function() {
             {"mDataProp":"STATUS", "sWidth": "60px"},//状态
             {"mDataProp":"SP_NAME", "sWidth": "100px"},//供应商
             {"mDataProp":"RECEIVE_PERSON","sWidth": "80px"},//收款人
-            {"mDataProp":null,"sWidth": "60px"},//付款金额  
-            {"mDataProp":null,"sWidth": "60px"},//已付金额
-            {"mDataProp":null,"sWidth": "60px"},//未付金额
+            {"mDataProp":"PAY_AMOUNT","sWidth": "60px"},//付款金额  
+            {"mDataProp":"ALREADY_PAY","sWidth": "60px"},//已付金额
+            {"mDataProp":null,"sWidth": "60px", //未付金额
+                "fnRender": function(obj) {
+                    return obj.aData.PAY_AMOUNT - obj.aData.ALREADY_PAY;
+                }    
+            },
             {"mDataProp":"REMARKS","sWidth": "100px"},//备注
             {"mDataProp":"USER_NAME","sWidth": "60px"},//创建人
             {"mDataProp":"CREATE_DATE","sWidth": "80px",

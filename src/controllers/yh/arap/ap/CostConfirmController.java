@@ -314,7 +314,16 @@ public class CostConfirmController extends Controller {
         
         String totalSql = "select count(1) total" + fromSql;
         
-        String columsSql = "select cpco.*, 'afdafa' fksq_no, c1.abbr sp_name,"
+        String columsSql = "select cpco.*, "
+        		+ " (select group_concat( DISTINCT cao.order_no SEPARATOR '<br/>' ) "
+        		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
+				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) fksq_no,"
+				+ " (select sum(cao.total_amount) "
+        		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
+				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) pay_amount,"
+				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_cost_pay_confirm_order_log log "
+				+ " where log.order_id = cpco.id) already_pay, "
+        		+ " c1.abbr sp_name,"
         		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
         		+ fromSql;
         String orderBy= " order by cpco.create_date desc ";
