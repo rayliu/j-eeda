@@ -107,7 +107,10 @@ $(document).ready(function() {
         "aoColumns": [
 			{ "mDataProp": null, "sWidth":"20px",
 			    "fnRender": function(obj) {
-			      return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
+                    if(obj.aData.STATUS=='付款确认中' || obj.aData.STATUS=='已付款确认'){
+                        return '';
+                    }
+			        return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
 			    }
 			},
             {"mDataProp":"ORDER_NO","sWidth":"80px",
@@ -116,13 +119,9 @@ $(document).ready(function() {
         		}
             },
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},  
-            {"mDataProp":"CNAME",
-            	"sClass": "cname"
-            },  
-            {"mDataProp":"PAYEE_NAME",
-            	"sClass": "payee_name"
-            },
-            {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
+            {"mDataProp":"CNAME", "sWidth":"100px"},  
+            {"mDataProp":"PAYEE_NAME", "sWidth":"100px" },
+            {"mDataProp":"INVOICE_NO", "sWidth":"80px" },
             {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
