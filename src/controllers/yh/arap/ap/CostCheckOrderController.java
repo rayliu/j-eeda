@@ -235,7 +235,7 @@ public class CostCheckOrderController extends Controller {
         String endTime = getPara("endTime");
         
         String sqlTotal = "";
-        String sql = "select aco.*,MONTH(aco.create_stamp) as c_stamp,o.office_name oname,c.company_name as company_name,"
+        String sql = "select aco.*,MONTH(aco.begin_time) as c_stamp,o.office_name oname,c.company_name as company_name,"
         		+ " group_concat(acoo.invoice_no separator ',') invoice_no,"
         		+ " c.abbr cname,"
         		+ " ul.user_name creator_name,"
