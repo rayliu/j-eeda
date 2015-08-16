@@ -76,7 +76,7 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
 		        		+ " where ro.STATUS='audit') as a";
         
-        String sql = "select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id "
@@ -88,7 +88,8 @@ public class CostAcceptOrderController extends Controller {
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
-        		+ " where ro.STATUS='audit'" + sLimit;;
+        		+ " where ro.STATUS='audit') A"
+        		+ " order by A.create_time desc " + sLimit;
         
         
         Record rec = Db.findFirst(sqlTotal);
@@ -117,7 +118,7 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
 		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ('已复核','已付款确认')";
         
-        String sql = "select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ('已复核','已付款确认') group by aci.id "
@@ -129,7 +130,8 @@ public class CostAcceptOrderController extends Controller {
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
-        		+ " where ro.STATUS='已复核'"  + sLimit;
+        		+ " where ro.STATUS='已复核') A"
+        		+ " order by A.create_time desc "  + sLimit;
         
         
         Record rec = Db.findFirst(sqlTotal);
