@@ -206,9 +206,21 @@
 		                                    </div>
 		                                </div>-->                            
 		                        </form>
-		                        <div class ="form-group">
-									
-								</div>
+		                        
+		                  <!--   ------------------------------------------------ -->
+	                       <div class="row">
+                        	<form id="confirmForm" action="/costConfirm/create" method="post">
+	                            <input id='invoiceApplicationOrderIds' name='ids' type="hidden">
+	                            <div class="col-lg-6">
+	                                <div class="form-group">
+	                                    <div class="controls">
+	                                      <button id="confirmBtn" disabled="true" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建付款确认单</button>
+	                                    </div>
+	                                </div>
+	                            </div>    
+	                        </form> 
+		                    </div>
+		                     <!--   ------------------------------------------------ -->
 								<!-- Modal -->
 		
 		                        <input type="hidden" value="" id="type">
@@ -216,6 +228,7 @@
 		                                <table class="table table-striped table-bordered table-hover" id="costAccept-table" style="width: 2800px;">
 		                                    <thead>
 		                                        <tr>
+		                                        	<th></th>
 		                                            <th>单号</th>
                                                     <th>付款金额</th>
                                                     <th>供应商</th>

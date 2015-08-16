@@ -15,11 +15,6 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/costPreInvoiceOrder/list",
         "aoColumns": [   
-			{ "mDataProp": null, "sWidth":"20px",
-			    "fnRender": function(obj) {
-			      return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
-			    }
-			},
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -88,63 +83,7 @@ $(document).ready(function() {
     
     
     
-    var ids = [];
-	var cnames = [];
-	var payee_names = [];
-    // 未选中列表
-	$("#costPreInvoiceOrderList-table").on('click', '.invoice', function(e){
-		if($(this).prop("checked") == true){
-			ids.push($(this).attr('id'));
-			if(ids.length>0){
-				$("#confirmBtn").attr("disabled",false);
-				if(ids.length > 1){
-					if(cnames[0] != $(this).parent().siblings('.cname')[0].textContent){
-						$.scojs_message('请选择相同的供应商!', $.scojs_message.TYPE_FALSE);
-						var tmpArr1 = [];
-						for(id in ids){
-							if(ids[id] != $(this).attr('id')){
-								tmpArr1.push(ids[id]);
-							}
-						}
-						ids = tmpArr1;
-						return false;
-					}else if(payee_names[0] != $(this).parent().siblings('.payee_name')[0].textContent){
-						$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
-						var tmpArr2 = [];
-						for(id in ids){
-							if(ids[id] != $(this).attr('id')){
-								tmpArr2.push(ids[id]);
-							}
-						}
-						ids = tmpArr2;
-						return false;
-					}
-				}
-				cnames.push($(this).parent().siblings('.cname')[0].textContent);
-				payee_names.push($(this).parent().siblings('.payee_name')[0].textContent);
-			}
-		}else if($(this).prop("checked") == false){
-			var tmpArr = [];
-			for(id in ids){
-				if(ids[id] != $(this).attr('id')){
-					tmpArr.push(ids[id]);
-				}
-			}
-			ids = tmpArr;
-		}
-		$("#invoiceApplicationOrderIds").val(ids);
-		if(ids.length == 0){
-			$("#confirmBtn").attr("disabled",true);
-			 cnames = [];
-			 payee_names = [];
-		}
-	});
-	
-	
-	$('#confirmBtn').click(function(e){
-        e.preventDefault();
-        $('#confirmForm').submit();
-    });
+   
     
     
     /*--------------------------------------------------------------------*/

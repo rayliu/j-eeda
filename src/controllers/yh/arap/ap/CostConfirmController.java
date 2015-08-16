@@ -150,7 +150,7 @@ public class CostConfirmController extends Controller {
 		String[] idArray = invoiceApplicationOrderIds.split(",");
 		if(re.getDouble("total") == Double.parseDouble(total_amount)){
 			//更新确认表状态
-			arapCostPayConfirmOrder.set("status", "已确认").update();
+			arapCostPayConfirmOrder.set("status", "已付款").update();
 			
 			//更新申请单状态
 			for (int i = 0; i < idArray.length; i++) {
@@ -158,7 +158,7 @@ public class CostConfirmController extends Controller {
 				arapCostInvoiceApplication.set("status", "已付款确认").update();
 			}
 		}else{
-			arapCostPayConfirmOrder.set("status", "部分已确认").update();
+			arapCostPayConfirmOrder.set("status", "部分已付款").update();
 		}
 		
 		Map BillingOrderListMap = new HashMap();
