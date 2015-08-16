@@ -12,39 +12,39 @@
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="search-label">供应商</label>
-                                        <input type="text" class="form-control search-control sp_filter" id="sp_filter">
+                                        <input type="text" class="form-control search-control sp_filter" id="sp_filter1" readonly="readonly" value="${invoiceApplicationOrder.abbr!''}">
                                     </div>
                                      <div class="form-group">
                                         <label class="search-label">收款单位</label>
-                                        <input type="text" class="form-control search-control payee_unit" id="payee_unit">
+                                        <input type="text" class="form-control search-control payee_unit" id="payee_unit" readonly="readonly" value="${invoiceApplicationOrder.payee_unit!''}">
                                     </div>
                                     <div class="form-group">                                  
                                         <label class="search-label">账户名</label> 
-                                        <input type="text" class="form-control search-control account_name" id="account_name">
+                                        <input type="text" class="form-control search-control account_name" id="account_name" readonly="readonly" value="${invoiceApplicationOrder.bank_name!''}">
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="search-label">发票类型</label>
-                                        <input type="text" class="form-control search-control invoice_type" id="invoice_type">
+                                        <input type="text" class="form-control search-control invoice_type" id="invoice_type" readonly="readonly" value="${invoiceApplicationOrder.bill_type!''}">
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">收款人</label>
-                                        <input type="text" class="form-control search-control payee_name" id="payee_name">
+                                        <input type="text" class="form-control search-control payee_name" id="payee_name" readonly="readonly" value="${invoiceApplicationOrder.payee_name!''}">
                                     </div>
 	                                <div class="form-group">    
                                         <label class="search-label">开户行</label> 
-                                        <input type="text" class="form-control search-control deposit_bank" id="deposit_bank">
+                                        <input type="text" class="form-control search-control deposit_bank" id="deposit_bank" readonly="readonly" value="${invoiceApplicationOrder.bank_name!''}">
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label class="search-label">开票单位</label>
-                                        <input type="text" class="form-control search-control billing_unit" id="billing_unit">
+                                        <input type="text" class="form-control search-control billing_unit" id="billing_unit" readonly="readonly" value="${invoiceApplicationOrder.billing_unit!''}">
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">收款账号</label>
-                                    	<input type="text" class="form-control search-control payee_no" id="payee_no">
+                                    	<input type="text" class="form-control search-control bank_no" id="bank_no" readonly="readonly" value="${invoiceApplicationOrder.bank_no!''}">
                                     </div>
                                 </div>
                                 
@@ -87,15 +87,27 @@
                                         <label class="search-label">复核人</label>
                                         <input type="text" class="form-control search-control check_name" id="check_name">
                                     </div>
-                                     <div class="form-group">
-                                        <label class="search-label">付款方式</label>
-                                        <input type="text" class="form-control search-control pay_type" id="pay_type">
-                                    </div>
+                                   
+                                    <div class="form-group">
+                                    	   <label class="search-label">付款方式</label>
+                                           <select id="pay_type" class="form-control search-control pay_type">
+                                           	<option value=""></option>
+                                           	<option value="cash">现金</option>
+                                            <option value="zhuangzhang">转账</option>                                             
+                                           </select>
+                                     </div>
                                 </div>
                                 <div class="col-lg-4">
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label class="search-label">支付银行</label>
                                         <input type="text" class="form-control search-control pay_bank" id="pay_bank">
+                                        <select id="accountTypeSelect"  name="accountTypeSelect"></select>
+                                    </div> -->
+                                    <div class="form-group">
+                                            <label class="search-label">支付银行</label>
+                                            <input type="text" class="form-control search-control pay_bank" id="pay_bank" placeholder="请选择支付银行">
+                                        	<ul id='bankList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+											</ul>
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">支付账号</label>
@@ -117,7 +129,7 @@
 					        <div class=".tooltip-demo">
                                 <hr/>
                             	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                                <button id="saveTransferOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
+                                <button id="savePayConfirmBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
                                 <button id="printBtn" type="button" class="btn  btn-primary" data-toggle="modal" disabled = 'diabled' data-target=".bs-example-modal-sm">付款确认</button>
                                 <button id="cancelBtn" type="button" class="btn  btn-primary">返回</button>
                             </div>
@@ -154,6 +166,6 @@
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 
 <script src="/yh/js/arap/CostConfirm/list.js"></script>
-<script src="/yh/js/plugins/sco/js/sco.message.js"></script>

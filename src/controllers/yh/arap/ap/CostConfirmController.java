@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Account;
 import models.DepartOrder;
 import models.InsuranceOrder;
 import models.Party;
@@ -43,9 +44,19 @@ public class CostConfirmController extends Controller {
 	public void create() {
 		String ids = getPara("ids");
 		setAttr("invoiceApplicationOrderIds", ids);
-//		if(ids != null && !"".equals(ids)){
-//			String[] idArray = ids.split(",");
-//			logger.debug(String.valueOf(idArray.length));
+		if(ids != null && !"".equals(ids)){
+			String[] idArray = ids.split(",");
+			logger.debug(String.valueOf(idArray.length));
+			String sql = "SELECT c.abbr,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
+					+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
+					+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
+					+ " LEFT JOIN party p ON p.id = aci.payee_id "
+					+ " LEFT JOIN office o ON o.id = p.office_id "
+					+ " LEFT JOIN contact c ON c.id = p.contact_id"
+					+ " where aci.id = '"+idArray[0]+"'";
+			Record record = Db.findFirst(sql);
+			setAttr("invoiceApplicationOrder", record);
+			
 //	
 //			setAttr("chargeCheckOrderIds", ids);
 //			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
@@ -58,7 +69,7 @@ public class CostConfirmController extends Controller {
 //				setAttr("type", "CUSTOMER");
 //				setAttr("classify", "");
 //			}
-//		}
+		}
 //
 //		setAttr("saveOK", false);
 //		String name = (String) currentUser.getPrincipal();
@@ -74,6 +85,11 @@ public class CostConfirmController extends Controller {
 //		setAttr("receivableItemList", receivableItemList);
 //		setAttr("status", "new");
 		render("/yh/arap/CostConfirm/CostConfrimAdd.html");
+	}
+	
+	public void searchAllAccount(){
+		List<Account> accounts = Account.dao.find("select * from fin_account where type != 'REC' and bank_name != '现金'");
+		renderJson(accounts);
 	}
 
 

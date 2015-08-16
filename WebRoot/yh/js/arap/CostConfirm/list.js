@@ -1,4 +1,4 @@
-
+﻿
 $(document).ready(function() {
 	document.title = '付款确认单查询| '+document.title;
 
@@ -20,6 +20,7 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_NO", "sWidth": "100px", //付款确认单号
             	"fnRender": function(obj) {
         			return "<a href='/costConfirm/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+    				$("#total_amount").val(total);
         		}
             },
             {"mDataProp":"FKSQ_NO", "sWidth": "100px"}, //付款申请单号
@@ -39,7 +40,7 @@ $(document).ready(function() {
                 }
             },//创建时间           
         ]      
-    });	 
+    });	
 
     //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
