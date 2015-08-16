@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
+import models.ArapAccountAuditLog;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostItem;
 import models.ArapCostOrder;
@@ -171,6 +172,26 @@ public class CostConfirmController extends Controller {
 		}else{
 			arapCostPayConfirmOrder.set("status", "部分已付款").update();
 		}
+		
+		//新建日记账表数据
+		 ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
+	        auditLog.set("payment_method", pay_type);
+	        auditLog.set("payment_type", ArapAccountAuditLog.TYPE_COST);
+	        auditLog.set("amount", pay_amount);
+	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
+	        auditLog.set("create_date", new Date());
+	        auditLog.set("misc_order_id", confirmId);
+	        auditLog.set("invoice_order_id", null);
+	        auditLog.set("account_id", account.get("id"));
+	        auditLog.set("source_order", "应付开票申请单");
+	        auditLog.save();
+	        
+	        if("cash".equals(pay_type)){
+	        	Account cash = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
+	        	cash.set("amount", (cash.getDouble("amount")==null?0.0:cash.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
+	        }else{
+	        	account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
+	        }
 		
 		Map BillingOrderListMap = new HashMap();
    		BillingOrderListMap.put("arapCostPayConfirmOrderLog", arapCostPayConfirmOrderLog);
