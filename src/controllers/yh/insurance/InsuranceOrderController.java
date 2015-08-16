@@ -96,7 +96,7 @@ public class InsuranceOrderController extends Controller {
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id = tor .office_id"
-                    + " where (tor.status = '已发车' or tor.status='部分已发车') and tor.insurance_id is null and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " where (tor.status = '已发车' or tor.status='部分已发车' or tor.status = '新建') and tor.insurance_id is null and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
@@ -112,8 +112,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join user_login ul on ul.id = tor.create_by "  
                     + " left join depart_transfer dt on dt.order_id = tor.id "  
                     + " left join office o on o.id = tor .office_id"
-                    + " left join depart_order dor on dor.id = dt.depart_id where (tor.status = '已发车' or tor.status='部分已发车') and tor.insurance_id is null "
-                    + " and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' "
+                    + " left join depart_order dor on dor.id = dt.depart_id where (tor.status = '已发车' or tor.status='部分已发车' or tor.status = '新建' ) and tor.insurance_id is null "    
                     + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.create_stamp desc" + sLimit;
@@ -130,7 +129,7 @@ public class InsuranceOrderController extends Controller {
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id = tor .office_id"
-                    + "  where (tor.status = '已发车' or tor.status='部分已发车') and ifnull(l1.name, '') like '%"
+                    + "  where (tor.status = '已发车' or tor.status='部分已发车' or tor.status = '新建') and ifnull(l1.name, '') like '%"
                     + routeFrom
                     + "%' and ifnull(l2.name, '') like '%"
                     + routeTo
@@ -160,7 +159,7 @@ public class InsuranceOrderController extends Controller {
                     + " left join depart_transfer dt on dt.order_id = tor.id "
                     + " left join office o on o.id = tor .office_id"
                     + " left join depart_order dor on dor.id = dt.depart_id "
-                    + " where (tor.status = '已发车' or tor.status='部分已发车') and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull((select name from location l where l.code = dor.route_from), '') like '%"
+                    + " where (tor.status = '已发车' or tor.status='部分已发车' or tor.status = '新建') and ifnull((select name from location l where l.code = dor.route_from), '') like '%"
                     + routeFrom
                     + "%' and ifnull((select name from location l where l.code = dor.route_to), '') like '%"
                     + routeTo
@@ -383,7 +382,7 @@ public class InsuranceOrderController extends Controller {
         		+ " round(ifi.amount * toi.amount,2) total_amount,ifi.insurance_amount,ifnull(toi.item_no, pd.item_no) item_no,"
         		+ " ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.volume, pd.volume) * toi.amount volume,"
         		+ " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
-        		+ " (select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to "
+        		+ " ifnull((select name from location l where l.code = dor.route_from),'') route_from,ifnull((select name from location l where l.code = dor.route_to),'') route_to "
         		+ " from insurance_fin_item  ifi "
         		+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
         		+ " left join transfer_order tor on tor.id = toi.order_id"
@@ -393,7 +392,7 @@ public class InsuranceOrderController extends Controller {
         		+ " left join depart_transfer dt on dt.order_id = tor.id"
         		+ " left join depart_order dor on dor.id = dt.depart_id"
         		+ " where ifi.insurance_order_id = '" + insuranceOrderId + "'"
-				+ " and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' order by ifi.create_stamp desc " + sLimit;
+				+ " order by ifi.create_stamp desc " + sLimit;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
