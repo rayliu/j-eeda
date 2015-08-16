@@ -31,7 +31,7 @@ public class PrintPatterns {
        	 file.mkdir();
         }
         Date date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         
         outFileName += "-" + format.format(date) + ".pdf";
 		try {

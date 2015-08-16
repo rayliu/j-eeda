@@ -22,6 +22,10 @@ public class ReportController extends Controller {
     public void index() {
         
     }
+    
+    public static String test(String test){
+    	return "test:"+test;
+    }
 
     public void printCheckOrder(){
     	String order_no = getPara("order_no");
@@ -37,7 +41,7 @@ public class ReportController extends Controller {
     	String outFileName = "WebRoot/download/供应商对账单";
     	HashMap<String, Object> hm = new HashMap<String, Object>();
     	hm.put("order_no", order_no);
-    	String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
+    	String file = PrintPatterns.getInstance().print(fileName, outFileName + order_no, hm);
     	return file;
     }
    public void printPayMent(){
@@ -55,7 +59,7 @@ public class ReportController extends Controller {
 	   String outFileName = "WebRoot/download/付款申请单";
 	   HashMap<String, Object> hm = new HashMap<String, Object>();
 	   hm.put("order_no", order_no);
-	   String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
+	   String file = PrintPatterns.getInstance().print(fileName,outFileName + order_no,hm);
 	   buffer.append(file.substring(7));
 	   buffer.append(",");
 	   renderText(buffer.toString());
