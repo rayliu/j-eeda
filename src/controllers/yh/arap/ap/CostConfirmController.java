@@ -10,7 +10,6 @@ import java.util.Map;
 import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapCostInvoiceApplication;
-import models.ArapCostItem;
 import models.ArapCostOrder;
 import models.ArapCostPayConfirmOrder;
 import models.ArapCostPayConfirmOrderDtail;
@@ -48,7 +47,29 @@ public class CostConfirmController extends Controller {
     }
     
    	public void edit() {
-   		String ids = getPara("id");
+   		String id = getPara("id");
+   		setAttr("confirmId", id);
+   		ArapCostPayConfirmOrder arapCostPayConfirmOrder = ArapCostPayConfirmOrder.dao.findById(id);
+   		setAttr("arapCostPayConfirmOrder", arapCostPayConfirmOrder);
+   		
+   		String sql1 = "select * from  party p LEFT JOIN office o ON o.id = p.office_id where p.id = '"+arapCostPayConfirmOrder.getLong("sp_id")+"'";
+   		Record re1 = Db.findFirst(sql1);
+   		setAttr("abbr", re1.getStr("abbr"));
+   		
+   		String sql = "SELECT "
+   				+ " (SELECT group_concat(cast(application_order_id as char) SEPARATOR ',' ) "
+   				+ "FROM arap_cost_pay_confirm_order_detail where order_id = acp.id ) ids "
+   				+ "FROM arap_cost_pay_confirm_order acp WHERE acp.id = '"+id+"'";
+		Record re = Db.findFirst(sql);
+		setAttr("invoiceApplicationOrderIds", re.get("ids"));
+		
+		
+		//获取已付款金额
+   		String sql2 = "select sum(acp.amount) total from arap_cost_pay_confirm_order_log acp "
+				+ "  where acp.order_id = '"+id+"'";
+		Record re2 = Db.findFirst(sql2);
+		setAttr("total_pay", re2.get("total"));
+
    		render("/yh/arap/CostConfirm/CostConfrimAdd.html");
    	}
    	
@@ -68,7 +89,7 @@ public class CostConfirmController extends Controller {
    		
    		String sp_filter = getPara("sp_filter");       //供应商
    		String payee_unit = getPara("payee_unit");    //收款单位
-   		String account_name = getPara("account_name");//账户名
+   		String account_name = getPara("account_name");//账户人名
    		String invoice_type = getPara("invoice_type");//开票类型
    		String payee_name = getPara("payee_name");    //收款人
    		String deposit_bank = getPara("deposit_bank");//开户行
@@ -77,7 +98,7 @@ public class CostConfirmController extends Controller {
    		
    		if(confirmId != ""&& confirmId != null){
 			//更新主表
-			arapCostPayConfirmOrder = arapCostPayConfirmOrder.dao.findById(confirmId);
+			arapCostPayConfirmOrder = ArapCostPayConfirmOrder.dao.findById(confirmId);
 			arapCostPayConfirmOrder.set("last_updator", LoginUserController.getLoginUserId(this));
 			arapCostPayConfirmOrder.set("last_update_date", new Date()).update();				
 		} else {
@@ -94,7 +115,7 @@ public class CostConfirmController extends Controller {
 			arapCostPayConfirmOrder.set("receive_company", payee_unit);
 			arapCostPayConfirmOrder.set("receive_person", payee_name);
 			arapCostPayConfirmOrder.set("receive_bank", deposit_bank);
-			arapCostPayConfirmOrder.set("receive_bank_person_name", account_name);
+			arapCostPayConfirmOrder.set("receive_bank_person_name", account_name);//账户人名
 			arapCostPayConfirmOrder.set("receive_account_no",bank_no);
 			arapCostPayConfirmOrder.set("creator",userId);
 			arapCostPayConfirmOrder.set("create_date",new Date());

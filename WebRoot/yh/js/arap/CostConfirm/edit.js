@@ -24,9 +24,22 @@
     			"fnRender": function(obj) {
     				total = total + parseInt(obj.aData.PAY_AMOUNT) ;
     				$("#total").html(total);
-    				$("#nopay_amount").val(total);
-    				$("#pay_amount").val(total);
     				$("#total_amount").val(total);
+    				if($("#status").val()=='' ){
+    					$("#nopay_amount").val(total);
+    					$("#pay_amount").val(total);
+    				}else{
+    					if($("#status").val()=='部分已付款'){
+    						$("#pay_amount").val($("#total_amount").val()-$("#total_pay").val());
+    						$("#nopay_amount").val($("#total_amount").val()-$("#total_pay").val());
+    						$("#saveBtn").attr("disabled", true);
+    						$("#savePayConfirmBtn").attr("disabled", false);
+    					}else if($("#status").val()=='已付款'){
+    						$("#saveBtn").attr("disabled", true);
+    						$("#savePayConfirmBtn").attr("disabled", true);
+    					}
+    				}
+    				
     				return obj.aData.PAY_AMOUNT;
     			}
         	},
@@ -36,9 +49,6 @@
             {"mDataProp":null,"sWidth": "150px"}                       
         ]      
     });	
-    
-    
-    
     
   
     
@@ -105,6 +115,9 @@
 		};
 	});
 	
+	
+	
+		
 	
 	$("#saveBtn").on('click',function(){
 		$.get('/costConfirm/save',$("#confirmForm").serialize(), function(data){
@@ -175,4 +188,6 @@
             {"mDataProp":"C_NAME"}
         ]      
 	});
+	
+	
 });

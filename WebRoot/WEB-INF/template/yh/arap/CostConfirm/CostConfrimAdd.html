@@ -11,46 +11,47 @@
             		 	<form id="confirmForm">
             			<div class="row search_panel">
             			<input id='invoiceApplicationOrderIds' name='invoiceApplicationOrderIds' type="hidden" value="${invoiceApplicationOrderIds!''}">
-            			<input id='confirmId' name='confirmId' type="hidden" >
-            			<input id='total_pay' name='total_pay' type="hidden" >
+            			<input id='confirmId' name='confirmId' type="hidden" value="${confirmId!''}">
+            			<input id='status' name='status' type="hidden" value="${arapCostPayConfirmOrder.status!''}">
+            			<input id='total_pay' name='total_pay' type="hidden" value="${total_pay!'0'}" >
             			<input id='total_amount' name='total_amount' type="hidden" >
             			
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="search-label">供应商</label>
-                                    <input type="text" class="form-control search-control sp_filter" id="sp_filter" name="sp_filter" readonly="readonly" value="${invoiceApplicationOrder.abbr!''}">
+                                    <input type="text" class="form-control search-control sp_filter" id="sp_filter" name="sp_filter" readonly="readonly" value="${invoiceApplicationOrder.abbr!''}${abbr!''}">
                                 </div>
                                  <div class="form-group">
                                     <label class="search-label">收款单位</label>
-                                    <input type="text" class="form-control search-control payee_unit" id="payee_unit" name="payee_unit" readonly="readonly" value="${invoiceApplicationOrder.payee_unit!''}">
+                                    <input type="text" class="form-control search-control payee_unit" id="payee_unit" name="payee_unit" readonly="readonly" value="${invoiceApplicationOrder.payee_unit!''}${arapCostPayConfirmOrder.receive_company!''}">
                                 </div>
                                 <div class="form-group">                                  
                                     <label class="search-label">账户名</label> 
-                                    <input type="text" class="form-control search-control account_name" id="account_name" name="account_name" readonly="readonly" value="${invoiceApplicationOrder.bank_name!''}">
+                                    <input type="text" class="form-control search-control account_name" id="account_name" name="account_name" readonly="readonly" value="${invoiceApplicationOrder.bank_name!''}${arapCostPayConfirmOrder.receive_bank_person_name!''}">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="search-label">发票类型</label>
-                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="<% if(invoiceApplicationOrder.bill_type!''=="mbill")%>自开发票<%else%>${invoiceApplicationOrder.bill_type!''}">
+                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="${arapCostPayConfirmOrder.invoice_type!''}<% if(invoiceApplicationOrder.bill_type!''=="mbill")%>自开发票<%else%>${invoiceApplicationOrder.bill_type!''}">
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">收款人</label>
-                                    <input type="text" class="form-control search-control payee_name" id="payee_name" name="payee_name" readonly="readonly" value="${invoiceApplicationOrder.payee_name!''}">
+                                    <input type="text" class="form-control search-control payee_name" id="payee_name" name="payee_name" readonly="readonly" value="${invoiceApplicationOrder.payee_name!''}${arapCostPayConfirmOrder.receive_person!''}">
                                 </div>
                              <div class="form-group">    
                                     <label class="search-label">开户行</label> 
-                                    <input type="text" class="form-control search-control deposit_bank" id="deposit_bank" name="deposit_bank" readonly="readonly" value="${invoiceApplicationOrder.bank_name!''}">
+                                    <input type="text" class="form-control search-control deposit_bank" id="deposit_bank" name="deposit_bank" readonly="readonly" value="${invoiceApplicationOrder.bank_name!''}${arapCostPayConfirmOrder.receive_bank!''}">
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="search-label">开票单位</label>
-                                    <input type="text" class="form-control search-control billing_unit" id="billing_unit" name="billing_unit" readonly="readonly" value="${invoiceApplicationOrder.billing_unit!''}">
+                                    <input type="text" class="form-control search-control billing_unit" id="billing_unit" name="billing_unit" readonly="readonly" value="${invoiceApplicationOrder.billing_unit!''}${arapCostPayConfirmOrder.invoice_company!''}">
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">收款账号</label>
-                                	<input type="text" class="form-control search-control bank_no" id="bank_no" name="bank_no" readonly="readonly" value="${invoiceApplicationOrder.bank_no!''}">
+                                	<input type="text" class="form-control search-control bank_no" id="bank_no" name="bank_no" readonly="readonly" value="${invoiceApplicationOrder.bank_no!''}${arapCostPayConfirmOrder.receive_account_no!''}">
                                 </div>
                             </div>
                         </div>

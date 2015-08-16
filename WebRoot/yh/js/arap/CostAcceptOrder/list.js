@@ -119,8 +119,11 @@ $(document).ready(function() {
         		}
             },
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},  
-            {"mDataProp":"CNAME", "sWidth":"100px"},  
-            {"mDataProp":"PAYEE_NAME", "sWidth":"100px" },
+            {"mDataProp":"CNAME", 
+            	"sClass": "cname"
+            },  
+            {"mDataProp":"PAYEE_NAME", 
+            	"sClass": "payee_name"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px" },
             {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
                 "fnRender": function(obj) {
