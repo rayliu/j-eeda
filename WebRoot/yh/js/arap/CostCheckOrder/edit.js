@@ -163,12 +163,23 @@ $(document).ready(function() {
             {"mDataProp":"PAY_AMOUNT"},
             {"mDataProp":"CHANGE_AMOUNT",
             	"fnRender": function(obj) {
+            		if($("#costCheckOrderStatus").text()=="已确认"||$("#costCheckOrderStatus").text()=="付款申请中"){
+            			if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+                            return obj.aData.CHANGE_AMOUNT;  
+                        }
+                        else {
+                            return obj.aData.PAY_AMOUNT;
+                        }
+                    }
+            		else{
                     if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
                         return "<input type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                         
-                    }else {
+                    }
+                    else {
                         return "<input type='text' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
                     }
+            		}
                 }
             },
             {"mDataProp":"OFFICE_NAME"},                       
