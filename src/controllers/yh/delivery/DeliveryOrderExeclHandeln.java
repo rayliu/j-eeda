@@ -440,9 +440,9 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 						TransferOrder order = null;
 						TransferOrderItemDetail detail = null;
 						if(!content.get(j).get("单品ID").equals("") || !content.get(j).get("单品序列号").equals("")){
-							 order = TransferOrder.dao.findFirst("select tor.* from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ? and toid.id = ?;",content.get(j).get("单品序列号"),content.get(j).get("单品ID"));
+							 order = TransferOrder.dao.findFirst("select tor.* from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ? or toid.id = ?;",content.get(j).get("单品序列号"),content.get(j).get("单品ID"));
 							 System.out.println(content.get(j).get("单品ID"));
-							 detail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where serial_no = ? and id = ?;",content.get(j).get("单品序列号"),content.get(j).get("单品ID"));
+							 detail = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where serial_no = ? or id = ?;",content.get(j).get("单品序列号"),content.get(j).get("单品ID"));
 						}
 						if(order != null && detail != null){
 							//判断是否为同一张单
