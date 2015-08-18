@@ -33,6 +33,7 @@
                                         <form role="form" id="chargeMiscOrderForm">
                                         	<input id="chargeMiscOrderId" type="hidden" name="chargeMiscOrderId" value="${arapMiscChargeOrder.id!''}"/>
                                         	<input id="customer_id" type="hidden" name="customer_id" value="${party.id!''}"/>
+                                        	<input id="sp_id" type="hidden" name="sp_id" value="${sp_id!''}"/>
                                         	<input type="hidden" id="chargeCheckOrderIds" name="chargeCheckOrderIds" value="${chargeCheckOrderIds!''}${arapMiscChargeOrder.charge_order_id!''}"/>
                                         	<input type="hidden" name="order_no" id = "order_no" value="${order_no!''}${arapMiscChargeOrder.order_no!''}"/>
                                         	<input type="hidden" name="status" value="${status!''}${arapMiscChargeOrder.status!''}"/>
@@ -77,6 +78,11 @@
 		                                            <label class="search-label">客户名称</label>
 		                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择客户" value="${customer_id!''}">
 		                                        	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 22%; left: 33%;"></ul>
+		                                </div>
+		                                <div class="form-group">
+		                                            <label class="search-label">供应商</label>
+		                                            <input type="text" class="form-control search-control customer_filter" id="sp_filter" placeholder="请选择供应商" value="${sp_id!''}"">
+		                                        	<ul id='spList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 22%; left: 33%;"></ul>
 		                                </div>
                                         <div class="form-group">
                                             <label>收款金额</label>

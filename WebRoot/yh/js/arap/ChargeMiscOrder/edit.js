@@ -79,7 +79,44 @@ $(document).ready(function() {
 		},'json');
 		parentId = e.target.getAttribute("id");
 	});
+	$('#sp_filter').on('keyup click', function(){
+		var inputStr = $('#sp_filter').val();
+		var spList =$("#spList");
+		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
+			spList.empty();
+			for(var i = 0; i < data.length; i++){
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name='';
+				}
+				spList.append("<li><a tabindex='-1' spId='"+data[i].ID+"' class='fromLo'>"+company_name+" </a></li>");
+			}
+		},'json');
+		
+		spList.css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });		 
+		spList.show();	 
+    });
+	$('#sp_filter').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+	$('#spList').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	$('#spList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
 	
+	$('#spList').on('mousedown', '.fromLo', function(e){
+		var message = $(this).text();
+		$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
+        $('#spList').hide();
+        var spId = $(this).attr('spId');
+        $('#sp_id').val(spId);
+    });
     if($("#chargeMiscOrderStatus").text() == 'new'){
     	$("#chargeMiscOrderStatus").text('新建');
 	}

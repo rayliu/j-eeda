@@ -129,12 +129,16 @@ public class ChargeMiscOrderController extends Controller {
 		String chargeMiscOrderId = getPara("chargeMiscOrderId");
 		String paymentMethod = getPara("paymentMethod");
 		String customer_id = getPara("customer_id");
+		String sp_id = getPara("sp_id");
 		if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {
 			arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(chargeMiscOrderId);
 			arapMiscChargeOrder.set("type", getPara("type"));
 			arapMiscChargeOrder.set("customer_id", getPara("customer_id"));
 			arapMiscChargeOrder.set("remark", getPara("remark"));
 			arapMiscChargeOrder.set("payment_method", getPara("paymentMethod"));
+			if(getPara("sp_id") != null && !"".equals(getPara("sp_id"))){
+				arapMiscChargeOrder.set("payee_id", getPara("sp_id"));
+			}
 			if("transfers".equals(paymentMethod)){
 				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
 					arapMiscChargeOrder.set("account_id", getPara("accountTypeSelect"));
@@ -217,9 +221,13 @@ public class ChargeMiscOrderController extends Controller {
 		UserLogin userLogin = UserLogin.dao.findById(arapMiscChargeOrder.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapMiscChargeOrder", arapMiscChargeOrder);
+		setAttr("sp_id", arapMiscChargeOrder.get("payee_id"));
 		Record r = Db.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"+arapMiscChargeOrder.getLong("customer_id")+"'" );
 		if(r!=null)
 			setAttr("customer_id", r.get("company_name"));
+		Record q = Db.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"+arapMiscChargeOrder.getLong("payee_id")+"'" );
+		if(q!=null)
+			setAttr("sp_name", q.get("company_name"));
 		render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
 	}
     
