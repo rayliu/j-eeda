@@ -36,7 +36,16 @@ $(document).ready(function() {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}
             },
-            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},  
+            {"mDataProp":"TOTAL_AMOUNT",
+            	"sClass": "pay_amount",
+            	 "fnRender": function(obj) {
+            		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
+            			 return '<p style="color:red">0<p>';
+            		 }else{
+            			 return obj.aData.TOTAL_AMOUNT;
+            		 }
+            	 }
+            },  
             {"mDataProp":"CNAME", "sWidth":"150px"},   
             {"mDataProp":"PAYEE_NAME", "sWidth":"150px"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
@@ -91,6 +100,24 @@ $(document).ready(function() {
             {"mDataProp":null}                        
         ]      
     });
+    
+    //未复核列表
+	$("#uncostAccept-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			if($(this).parent().siblings('.pay_amount')[0].textContent == 0){
+				$.scojs_message('申请金额不能为0!', $.scojs_message.TYPE_FALSE);
+				return false;
+			}
+		}
+	});
+	
+	
+	$('#confirmBtn').click(function(e){
+        e.preventDefault();
+        $('#confirmForm').submit();
+    });
+    
+    
     var costAcceptOrderTab = $('#costAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 
@@ -118,7 +145,16 @@ $(document).ready(function() {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}
             },
-            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},  
+            {"mDataProp":"TOTAL_AMOUNT",
+            	"sClass":"pay_amount",
+           	 	"fnRender": function(obj) {
+        		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
+        			 return '<p style="color:red">0<p>';
+        		 }else{
+        			 return obj.aData.TOTAL_AMOUNT;
+        		 }
+        	 }
+            },  
             {"mDataProp":"CNAME", 
             	"sClass": "cname"
             },  
@@ -171,13 +207,17 @@ $(document).ready(function() {
         ]      
     });
     
-    
+    //已复核列表
     var ids = [];
 	var cnames = [];
 	var payee_names = [];
     // 未选中列表
 	$("#costAccept-table").on('click', '.invoice', function(e){
 		if($(this).prop("checked") == true){
+			if($(this).parent().siblings('.pay_amount')[0].textContent == 0){
+				$.scojs_message('申请金额不能为0!', $.scojs_message.TYPE_FALSE);
+				return false;
+			}
 			ids.push($(this).attr('id'));
 			if(ids.length>0){
 				$("#confirmBtn").attr("disabled",false);
