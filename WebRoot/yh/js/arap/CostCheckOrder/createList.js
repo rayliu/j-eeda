@@ -104,6 +104,9 @@ $(document).ready(function() {
     var ids = [];
     var orderNos = [];
     var amount = [];
+    var j_amount = [];
+    var sum = 0;
+    var j_sum = 0;
     // 未选中列表
 	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
@@ -111,10 +114,11 @@ $(document).ready(function() {
 			ids.push($(this).attr('id'));
 			orderNos.push($(this).attr('order_no'));
 			amount.push($(this).attr('amount'));
-			var sum =eval(amount.join("+"));//求和
+			sum =eval(amount.join("+"));//求和
+			var x_sum=parseInt(sum)-parseInt(j_sum);
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
-			$("#amount").html(sum);
+			$("#amount").html(x_sum);
 			if(ids.length>0){
 				$("#saveBtn").attr("disabled",false);
 			}
@@ -125,6 +129,11 @@ $(document).ready(function() {
 	$("#checkedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == false){
 			$(this).parent().parent().appendTo($("#uncheckedCostCheckList"));
+			j_amount.push($(this).attr('amount'));
+			j_sum =eval(j_amount.join("+"));
+			var xj_sum=parseInt(sum)-parseInt(j_sum);
+			//amount=parseInt(a);
+			$("#amount").html(xj_sum);
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
 				$("#checkedOrderId").val(ids);
