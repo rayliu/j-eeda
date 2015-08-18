@@ -397,7 +397,6 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("payee_name",arapAuditInvoiceApplication.get("payee_name"));
 		setAttr("bank_name",arapAuditInvoiceApplication.get("bank_name"));
 		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
-		setAttr("company_name",company_name);
 		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
 		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
 		setAttr("approval_stamp",
@@ -411,6 +410,9 @@ public class CostPreInvoiceOrderController extends Controller {
 					.toString());
 			setAttr("customer", contact);
 		}
+		}
+		else{
+			setAttr("company_name",company_name);
 		}
 		UserLogin userLogin = UserLogin.dao
 				.findById(arapAuditInvoiceApplication.get("create_by"));
