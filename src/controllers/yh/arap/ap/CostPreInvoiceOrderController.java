@@ -399,6 +399,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
 		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
 		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
+		setAttr("bill_type",arapAuditInvoiceApplication.get("bill_type"));
 		setAttr("approval_stamp",
 				arapAuditInvoiceApplication.get("approval_stamp"));
 		setAttr("noInvoice", arapAuditInvoiceApplication.get("noInvoice"));

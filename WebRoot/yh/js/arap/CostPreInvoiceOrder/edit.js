@@ -614,6 +614,11 @@ $(document).ready(function() {
 	    	}
 		}
 	 }); 
+    $("input[name='payment']").each(function(){
+		if($("#paymentRadio").val() == $(this).val()){
+			$(this).attr('checked', true);
+		}
+	 }); 
     
     $("#paymentMethods").on('click', 'input', function(){
     	if($(this).val() == 'cash'){
