@@ -31,15 +31,16 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/returnOrder/transferOrderItemList?order_id="+returnOrderId+"&id="+transferOrderId,
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('ID', aData.TID);
+			return nRow;
+		},
         "aoColumns": [ 
 			{
 				"mDataProp":null,            	
 				"sWidth": "80px",
 				"fnRender":function(obj){
-					var str = "";
-            		if(obj.aData.SERIAL_NO != undefined && obj.aData.SERIAL_NO != null && obj.aData.SERIAL_NO != ""){
-            			str = obj.aData.SERIAL_NO;
-            		}
+					var str = "<input type='text' name='serial_no' id='serial_no' value='"+obj.aData.SERIAL_NO+"'/>";
             		return str;
 				}
 			},
@@ -245,6 +246,14 @@ $(document).ready(function() {
 		
 		detailDataTable.fnSettings().sAjaxSource = "/returnOrder/transferOrderDetailList2?item_id="+itemId;
 		detailDataTable.fnDraw();  			
+	});
+	//修改序列号
+	$("#transferOrderTable").on('blur', 'input', function(e){
+		var ids = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		 $.post('/returnOrder/updateReturnOrder', {ids:ids, name:name, value:value}, function(data){
+	    	},'json');
 	});
 	// 删除货品
 	$("#transferOrderTable").on('click', '.deleteItem', function(e){

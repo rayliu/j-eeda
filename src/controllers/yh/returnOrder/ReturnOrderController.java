@@ -23,6 +23,7 @@ import models.InsuranceOrder;
 import models.Location;
 import models.OrderAttachmentFile;
 import models.Party;
+import models.Product;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
@@ -984,7 +985,7 @@ public class ReturnOrderController extends Controller {
 					+ "left join product p on toi.product_id = p.id where r.id ="
 					+ returnOrderId;
 
-			sql = "select distinct count(*) as amount ,item_no,item_name,width,size,weight,height,volume,unit,remark,tid,serial_no,pieces from ( "
+			sql = "select distinct count(*) as amount ,id,tid,item_no,item_name,width,size,weight,height,volume,unit,remark,tid,serial_no,pieces from ( "
 					+ "select toi.id as id, "
 					+ "toid.id as tid, "
 					+ "toid.serial_no serial_no, "
@@ -1444,6 +1445,19 @@ public class ReturnOrderController extends Controller {
 		}
 		file.update();
         renderJson(file);
+    }
+    public void updateReturnOrder(){
+    	String id =getPara("ids");
+    	String name =getPara("name");
+    	String value =getPara("value");
+    	TransferOrderItemDetail transferorderutemdetail =TransferOrderItemDetail.dao.findById(id);
+    	if(transferorderutemdetail.get("serial_no")!=null){
+    		transferorderutemdetail.set(name,value);
+    		transferorderutemdetail.update();
+    	}
+
+    	
+        renderJson("{\"success\":true}");
     }
     
 }
