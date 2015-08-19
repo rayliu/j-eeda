@@ -127,6 +127,7 @@ $(document).ready(function() {
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.DID);
 			$(nRow).attr('ids', aData.ID);
+			$(nRow).attr('order_ty', aData.BUSINESS_TYPE);
 			return nRow;
 		},
         "sAjaxSource": "/costCheckOrder/costConfirmListById",
@@ -212,12 +213,13 @@ $(document).ready(function() {
 		var ids=$("#orderIds").val();
 		var paymentId = $(this).parent().parent().attr("id");
 		var departId = $(this).parent().parent().attr("ids");
+		var ty = $(this).parent().parent().attr("order_ty");
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		 if(isNaN(value)){      
 			 alert("调整金额为数字类型");
 		 }else{
-			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,departId:departId,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
+			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,ty:ty,departId:departId,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
 				 $("#debitAmount").html(data.changeAmount);
 				 $("#costAmount").html(data.actualAmount); 
 				 $("#total_amount").val(data.changeAmount);

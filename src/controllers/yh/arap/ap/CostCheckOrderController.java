@@ -131,9 +131,9 @@ public class CostCheckOrderController extends Controller {
             	//这是保险单的应付
             	rec = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
             	totalAmount = totalAmount + rec.getDouble("sum_amount");
-            	rec1 = Db.findFirst("select sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",orderIdsArr[i]);
+            	rec1 = Db.findFirst("select sum(change_amount) change_amount from insurance_fin_item ifi where ifi.insurance_order_id = ?",orderIdsArr[i]);
             	if(rec1.getDouble("change_amount")!=null){
-            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            	changeAmount = changeAmount + rec1.getDouble("change_amount");
             	}else{
             		changeAmount=totalAmount;
             	}
@@ -358,6 +358,23 @@ public class CostCheckOrderController extends Controller {
 	            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
 	            	departOrder.set("audit_status", "对账中");
 	            	departOrder.update();
+	            	double amount=0.0;
+	            	List<Record> BillingOrders = Db.find("select id,amount,change_amount from depart_order_fin_item where depart_order_id=?",orderIdsArr[i]);
+	            	for(int j=0;j<BillingOrders.size();j++){
+	            		Record b=BillingOrders.get(j);
+	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            		 amount = b.getDouble("AMOUNT");
+	            		}
+	            		else{
+	            			amount=b.getDouble("CHANGE_AMOUNT");
+	            		}
+	            		Long id= b.getLong("ID");
+	            		DecimalFormat df = new DecimalFormat("0.00");
+	            		String num = df.format(amount);
+	            		DepartOrderFinItem departorfinitem =DepartOrderFinItem.dao.findById(id);
+	            		departorfinitem.set("change_amount", num);
+	            		departorfinitem.update();
+	            	}
 	            }else if("零担".equals(orderNoArr[i])){
 	            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
 	            	departOrder.set("audit_status", "对账中");
@@ -1013,6 +1030,7 @@ public class CostCheckOrderController extends Controller {
 		String value = getPara("value");
 		String orderNos = getPara("orderNos");
 		String orderIds= getPara("ids");
+		String type=getPara("ty");
 		String[] orderIdsArr = orderIds.split(",");
     	String[] orderNoArr = orderNos.split(",");
     	Record rec = null;
@@ -1021,30 +1039,12 @@ public class CostCheckOrderController extends Controller {
     	double totalAmount = 0.0;
     	double changeAmount=0.0;
     	double changeAmount1=0.0;
-    	double c=0.0;
-    	int n=0;
  		for(int i=0;i<orderIdsArr.length;i++){
             if("提货".equals(orderNoArr[i])){
-            	PickupOrderFinItem pickuporderfinitem =PickupOrderFinItem.dao.findById(paymentId);
-            	if(value.equals("")){
-            		value=null;
-            	}
-            	pickuporderfinitem.set(name, value);
-            	pickuporderfinitem.update();
             	rec1 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
-            	rec = Db.findFirst("select sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?", orderIdsArr[i]);
-            	if(rec.getDouble("change_amount")!=null){
-            		changeAmount = changeAmount + rec.getDouble("change_amount");
-            	}
-            }else if("零担".equals(orderNoArr[i])){
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
-            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
-            	c=rec1.getDouble("sum_amount");
-            	rec2 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", tId);
-            	changeAmount1 = rec2.getDouble("sum_amount");
             	List<Record> BillingOrders = Db.find("select id,amount from depart_order_fin_item where depart_order_id=?",tId);
-            	if(n==0){for(int j=0;j<BillingOrders.size();j++){
+            	if("提货".equals(type)){for(int j=0;j<BillingOrders.size();j++){
             		Record b=BillingOrders.get(j);
             		double amount = b.getDouble("AMOUNT");
             		Long id= b.getLong("ID");
@@ -1055,7 +1055,32 @@ public class CostCheckOrderController extends Controller {
             		DepartOrderFinItem departorfinitem =DepartOrderFinItem.dao.findById(id);
             		departorfinitem.set("change_amount", num);
             		departorfinitem.update();
-            		n=1;
+            	}
+            	}
+            	rec = Db.findFirst("select sum(amount) amount,sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?", orderIdsArr[i]);
+            	if(rec.getDouble("change_amount")!=null){
+            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            	else{
+            		changeAmount = changeAmount + rec.getDouble("amount");
+            	}
+            }else if("零担".equals(orderNoArr[i])){
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	rec2 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", tId);
+            	changeAmount1 = rec2.getDouble("sum_amount");
+            	List<Record> BillingOrders = Db.find("select id,amount from depart_order_fin_item where depart_order_id=?",tId);
+            	if("零担".equals(type)){for(int j=0;j<BillingOrders.size();j++){
+            		Record b=BillingOrders.get(j);
+            		double amount = b.getDouble("AMOUNT");
+            		Long id= b.getLong("ID");
+            		double dd = Double.valueOf(value);
+            		double amount1= amount/changeAmount1*dd;
+            		DecimalFormat df = new DecimalFormat("0.00");
+            		String num = df.format(amount1);
+            		DepartOrderFinItem departorfinitem =DepartOrderFinItem.dao.findById(id);
+            		departorfinitem.set("change_amount", num);
+            		departorfinitem.update();
             	}
             	}
             		
@@ -1078,7 +1103,7 @@ public class CostCheckOrderController extends Controller {
             	rec1 = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", orderIdsArr[i]);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
             	List<Record> BillingOrders = Db.find("select id,amount from delivery_order_fin_item where order_id=?",tId);
-            	if(n==0){for(int j=0;j<BillingOrders.size();j++){
+            	if("配送".equals(type)){for(int j=0;j<BillingOrders.size();j++){
             		Record b=BillingOrders.get(j);
             		double amount = b.getDouble("AMOUNT");
             		Long id= b.getLong("ID");
@@ -1089,19 +1114,21 @@ public class CostCheckOrderController extends Controller {
             		DeliveryOrderFinItem deliveryfinitem =DeliveryOrderFinItem.dao.findById(id);
             		deliveryfinitem.set("change_amount", num);
             		deliveryfinitem.update();
-            		n=1;
             	}
             	}
-            	rec = Db.findFirst("select sum(change_amount) change_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ?", orderIdsArr[i]);
+            	rec = Db.findFirst("select sum(amount) amount, sum(change_amount) change_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ?", orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
-            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            	else{
+            		changeAmount = changeAmount + rec.getDouble("amount");
             	}
             }else if("成本单".equals(orderNoArr[i])){
             	ArapMiscCostOrderItem misccostorderitem =ArapMiscCostOrderItem.dao.findById(paymentId);
             	rec1 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
             	List<Record> BillingOrders = Db.find("select id,amount from arap_misc_cost_order_item amcoi where misc_order_id=?",tId);
-            	if(n==0){for(int j=0;j<BillingOrders.size();j++){
+            	if("成本单".equals(type)){for(int j=0;j<BillingOrders.size();j++){
             		Record b=BillingOrders.get(j);
             		double amount = b.getDouble("AMOUNT");
             		Long id= b.getLong("ID");
@@ -1112,7 +1139,6 @@ public class CostCheckOrderController extends Controller {
             		ArapMiscCostOrderItem ArapMiscOrderItem =ArapMiscCostOrderItem.dao.findById(id);
             		ArapMiscOrderItem.set("change_amount", num);
             		ArapMiscOrderItem.update();
-            		n=1;
             	}
             	}
             	
@@ -1120,7 +1146,7 @@ public class CostCheckOrderController extends Controller {
             	if(rec.getDouble("change_amount")!=null){
             	changeAmount = changeAmount + rec.getDouble("change_amount");
             	}
-            }else{
+            }else if("保险".equals(orderNoArr[i])){
             	InsuranceFinItem insurancefinitem =InsuranceFinItem.dao.findById(paymentId);
             	if(value.equals("")){
             		value=null;
@@ -1129,9 +1155,12 @@ public class CostCheckOrderController extends Controller {
             	insurancefinitem.update();
             	rec1 = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
-            	rec = Db.findFirst("select sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",orderIdsArr[i]);
+            	rec = Db.findFirst("select sum(insurance_amount) amount,sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
-            	changeAmount = changeAmount + rec.getDouble("change_amount");
+            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            	}
+            	else{
+            		changeAmount = changeAmount + rec.getDouble("amount");
             	}
             }
     	}
