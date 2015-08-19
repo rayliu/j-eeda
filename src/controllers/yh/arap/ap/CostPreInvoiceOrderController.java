@@ -394,27 +394,16 @@ public class CostPreInvoiceOrderController extends Controller {
 		Long customerId = arapAuditInvoiceApplication.get("payee_id");
 		setAttr("payee_unit",arapAuditInvoiceApplication.get("payee_unit"));
 		setAttr("billing_unit",arapAuditInvoiceApplication.get("billing_unit"));
-		setAttr("payee_name",arapAuditInvoiceApplication.get("payee_name"));
-		setAttr("bank_name",arapAuditInvoiceApplication.get("bank_name"));
-		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
 		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
 		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
 		setAttr("bill_type",arapAuditInvoiceApplication.get("bill_type"));
 		setAttr("approval_stamp",
 				arapAuditInvoiceApplication.get("approval_stamp"));
 		setAttr("noInvoice", arapAuditInvoiceApplication.get("noInvoice"));
-		if(company_name==""||"".equals(arapAuditInvoiceApplication.get("payee_name"))||"".equals(arapAuditInvoiceApplication.get("bank_name"))||"".equals(arapAuditInvoiceApplication.get("bank_no"))){
-		if (!"".equals(customerId) && customerId != null) {
-			Party party = Party.dao.findById(customerId);
-			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id")
-					.toString());
-			setAttr("customer", contact);
-		}
-		}
-		else{
-			setAttr("company_name",company_name);
-		}
+		setAttr("company_name",company_name);
+		setAttr("payee_name",arapAuditInvoiceApplication.get("payee_name"));
+		setAttr("bank_name",arapAuditInvoiceApplication.get("bank_name"));
+		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
 		UserLogin userLogin = UserLogin.dao
 				.findById(arapAuditInvoiceApplication.get("create_by"));
 		setAttr("userLogin", userLogin);
