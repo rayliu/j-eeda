@@ -158,14 +158,14 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 
 			// 获取当前页的数据
-			sql = "select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to,lo2.name to_name,ifnull(tor.address,'') address,"
-					+ " ifnull(c3.contact_person, '') receipt_person,"
-					+ " ifnull(c3.phone,'') receipt_phone,"
+			sql = "select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address,'') address,"
+					+ " ifnull(c3.contact_person, c4.contact_person) receipt_person, "
+					+ " ifnull(c3.phone, c4.phone) receipt_phone,"
 					+ " ifnull(tor.receiving_unit,ifnull(c3.company_name,IFNULL(tor2.receiving_unit,c4.company_name))) receiving_unit,"
-					+ " ifnull(c3.address, '') receipt_address,"
+					+ " ifnull(c3.address, c4.address) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " ifnull(toid.item_no, '') item_no,"
-					+ " ifnull((SELECT sum(toi.amount) FROM transfer_order_item toi WHERE toi.order_id = tor.id), '') amount,"
+					+ " (SELECT sum(toi.amount) FROM transfer_order_item toi WHERE toi.order_id = tor.id) a_amount,"
 					+ " toid.serial_no, ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
