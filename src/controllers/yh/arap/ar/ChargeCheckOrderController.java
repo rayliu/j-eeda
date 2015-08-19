@@ -64,10 +64,11 @@ public class ChargeCheckOrderController extends Controller {
 		}
 		if (ids != null && !"".equals(ids)) {
 			String[] idArray = ids.split(",");
+			String[] orderArray = order.split(",");
 			logger.debug(String.valueOf(idArray.length));
 			Double totalAmount = 0.0;
 			for (int i = 0; i < idArray.length; i++) {
-				if (order.equals("收入单")) {
+				if (orderArray[i].equals("收入单")) {
 					ArapMiscChargeOrder arapmiscchargeorder = ArapMiscChargeOrder.dao
 							.findById(idArray[i]);
 					Record record = Db
@@ -87,7 +88,7 @@ public class ChargeCheckOrderController extends Controller {
 				}
 			}
 			setAttr("totalAmount", totalAmount);
-			if (order.equals("收入单")) {
+			if (orderArray[1].equals("收入单")) {
 				ArapMiscChargeOrder arapmiscchargeorder = ArapMiscChargeOrder.dao
 						.findById(idArray[0]);
 				Long customerId = arapmiscchargeorder.getLong("customer_id");
@@ -100,7 +101,7 @@ public class ChargeCheckOrderController extends Controller {
 					setAttr("type", "CUSTOMER");
 					setAttr("classify", "");
 				}
-			} else if (order.equals("回单")) {
+			} else if (orderArray[1].equals("回单")) {
 				ReturnOrder returnOrder = ReturnOrder.dao.findById(idArray[0]);
 				Long customerId = returnOrder.getLong("customer_id");
 				if (!"".equals(customerId) && customerId != null) {
@@ -366,10 +367,14 @@ public class ChargeCheckOrderController extends Controller {
 
 			String returnOrderIds = getPara("returnOrderIds");
 			String[] returnOrderIdsArr = returnOrderIds.split(",");
+			String returnOrderArr=getPara("order");
+	    	String[] orderNoArr = returnOrderArr.split(",");
 			for (int i = 0; i < returnOrderIdsArr.length; i++) {
 				ArapChargeItem arapAuditItem = new ArapChargeItem();
 				// arapAuditItem.set("ref_order_type", );
+				
 				arapAuditItem.set("ref_order_id", returnOrderIdsArr[i]);
+				arapAuditItem.set("ref_order_type", orderNoArr[i]);
 				arapAuditItem.set("charge_order_id", arapAuditOrder.get("id"));
 				// arapAuditItem.set("item_status", "");
 				arapAuditItem.set("create_by", getPara("create_by"));
@@ -420,13 +425,18 @@ public class ChargeCheckOrderController extends Controller {
 			endTime = simpleDateFormat.format(endTimeDate);
 		}
 		String returnOrderIds = "";
+		String orderNos = "";
 		List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find(
-				"select * from arap_charge_item where charge_order_id = ?", id);
+				"select * from arap_charge_item where charge_order_id = ?", arapAuditOrder.get("id"));
 		for (ArapChargeItem arapAuditItem : arapAuditItems) {
 			returnOrderIds += arapAuditItem.get("ref_order_id") + ",";
+			orderNos += arapAuditItem.get("ref_order_type") + ",";
 		}
 		returnOrderIds = returnOrderIds.substring(0,
 				returnOrderIds.length() - 1);
+		orderNos = orderNos.substring(0,
+				orderNos.length() - 1);
+		setAttr("orders", orderNos);
 		setAttr("returnOrderIds", returnOrderIds);
 		setAttr("beginTime", beginTime);
 		setAttr("endTime", endTime);
@@ -443,6 +453,8 @@ public class ChargeCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
+		Double totalAmount = 0.0;
 		Map orderMap = new HashMap();
 		// 获取总条数
 		String totalWhere = "";
@@ -451,7 +463,9 @@ public class ChargeCheckOrderController extends Controller {
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 	if(order!=null){
-		if (order.equals("回单")) {
+		String[] orderArray = order.split(",");
+		for (int i = 0; i < orderArray.length; i++) {
+		if (orderArray[i].equals("回单")) {
 			// 获取当前页的数据 + sLimit;
 			List<Record> orders = Db
 					.find("select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
@@ -485,7 +499,7 @@ public class ChargeCheckOrderController extends Controller {
 			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 			orderMap.put("aaData", orders);
 		}
-		if (order.equals("收入单")) {
+		if (orderArray[i].equals("收入单")) {
 			// 获取当前页的数据 + sLimit;
 			List<Record> orders = Db
 					.find("SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,NULL receipt_date,amco. STATUS transaction_status,NULL order_type,"
@@ -505,7 +519,11 @@ public class ChargeCheckOrderController extends Controller {
 			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 			orderMap.put("aaData", orders);
 		}
+		}
+		
+		
 	}
+	
 		/*
 		 * orderMap.put("sEcho", pageIndex); orderMap.put("iTotalRecords",
 		 * rec.getLong("total")); orderMap.put("iTotalDisplayRecords",

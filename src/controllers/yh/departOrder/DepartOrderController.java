@@ -484,9 +484,10 @@ public class DepartOrderController extends Controller {
 					+ sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
+		long startMi = Calendar.getInstance().getTimeInMillis();
 		List<Record> departOrders = Db.find(sql);
-
+		long endMi = Calendar.getInstance().getTimeInMillis();
+		logger.debug("get result cost:" + (endMi - startMi));
 		Map map = new HashMap();
 		map.put("sEcho", pageIndex);
 		map.put("iTotalRecords", rec.getLong("total"));
