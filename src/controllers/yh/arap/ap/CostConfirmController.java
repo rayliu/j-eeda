@@ -13,7 +13,9 @@ import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
 import models.ArapCostPayConfirmOrder;
 import models.ArapCostPayConfirmOrderDtail;
+import models.ArapCostPayConfirmOrderDtailLog;
 import models.ArapCostPayConfirmOrderLog;
+import models.CostApplicationOrderRel;
 import models.DepartOrder;
 import models.InsuranceOrder;
 import models.yh.arap.ArapMiscCostOrder;
@@ -26,6 +28,9 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -143,6 +148,7 @@ public class CostConfirmController extends Controller {
    	}
 	
 	public void saveConfirmLog(){
+		String confirmId = getPara("confirmId");
 		String pay_type = getPara("pay_type");
    		String pay_bank = getPara("pay_bank");
    		String pay_account_no = getPara("pay_account_no");
@@ -150,10 +156,28 @@ public class CostConfirmController extends Controller {
    		String nopay_amount = getPara("nopay_amount");
    		String total_amount = getPara("total_amount");
    		String invoiceApplicationOrderIds = getPara("invoiceApplicationOrderIds");
+   		String detailJson = getPara("detailJson");
+   		String applicationId = "";
+   		String value = "";
+   		
+   		Gson gson = new Gson();
+		List<LinkedTreeMap> list = gson.fromJson(detailJson, new TypeToken<List<LinkedTreeMap>>(){}.getType());
+		for (Map obj: list) {
+			logger.debug(obj.get("id").toString());
+			logger.debug(obj.get("value").toString());
+			applicationId = obj.get("id").toString();
+			value = obj.get("value").toString();
+			String sql = "select * from arap_cost_pay_confirm_order_detail where application_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
+			ArapCostPayConfirmOrderDtail detail = ArapCostPayConfirmOrderDtail.dao.findFirst(sql);
+			ArapCostPayConfirmOrderDtailLog arapCostPayConfirmOrderDtailLog = new ArapCostPayConfirmOrderDtailLog();
+			arapCostPayConfirmOrderDtailLog.set("order_id", confirmId);
+			arapCostPayConfirmOrderDtailLog.set("detail_id", detail.getLong("id"));
+			arapCostPayConfirmOrderDtailLog.set("pay_amount", value);
+			arapCostPayConfirmOrderDtailLog.set("create_date", new Date());
+			arapCostPayConfirmOrderDtailLog.save();
+		}
 		
 		ArapCostPayConfirmOrderLog arapCostPayConfirmOrderLog = null;
-   		String confirmId = getPara("confirmId");
-   		
    		Account account = Account.dao.findFirst("select * from fin_account where account_no = '"+pay_account_no+"'");
 		//创建付款LOG记录表
 		arapCostPayConfirmOrderLog = new ArapCostPayConfirmOrderLog();
@@ -204,7 +228,7 @@ public class CostConfirmController extends Controller {
 	        auditLog.set("misc_order_id", confirmId);
 	        auditLog.set("invoice_order_id", null);
 	        auditLog.set("account_id", account.get("id"));
-	        auditLog.set("source_order", "应付开票申请单");
+	        auditLog.set("source_order", "应付确认单");
 	        auditLog.save();
 	        
 	        if("cash".equals(pay_type)){
@@ -215,7 +239,7 @@ public class CostConfirmController extends Controller {
 	        }
 		
 		Map BillingOrderListMap = new HashMap();
-   		BillingOrderListMap.put("arapCostPayConfirmOrderLog", arapCostPayConfirmOrderLog);
+   		BillingOrderListMap.put("arapCostPayConfirmOrder", arapCostPayConfirmOrder);
    		BillingOrderListMap.put("re", re);
    		renderJson(BillingOrderListMap);
 	}
@@ -283,11 +307,20 @@ public class CostConfirmController extends Controller {
 					+ " ( SELECT sum(caor.pay_amount) "
 					+ " FROM "
 					+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
-					+ " ON caor.cost_order_id = aco.id"
+					+ " ON caor.cost_order_id = aco.id "
 					+ " WHERE caor.application_order_id = aci.id ) pay_amount,"
+					+ " IFNULL(( SELECT sum(caor.pay_amount) FROM arap_cost_order aco "
+					+ " LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id "
+					+ " WHERE caor.application_order_id = aci.id )- ( select sum(acpcodl.pay_amount) from arap_cost_pay_confirm_order_detail_log acpcodl "
+					+ " where acpcodl.order_id = acpcod.order_id and acpcodl.detail_id = acpcod.id ),( SELECT sum(caor.pay_amount) "
+					+ " FROM "
+					+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
+					+ " ON caor.cost_order_id = aco.id "
+					+ " WHERE caor.application_order_id = aci.id )) nopay_amount,"
 					+ " aco.create_stamp cost_stamp FROM arap_cost_invoice_application_order aci "
 	        		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id "
 	        		+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
+	        		+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.application_order_id=aci.id "
 	        		+ " where aci.id in(" + invoiceApplicationOrderIds + ") GROUP BY aci.id " ;
 			record = Db.find(sql);			
 		}
@@ -301,6 +334,29 @@ public class CostConfirmController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
+	
+	
+	
+	
+
+	// 更新支付金额信息
+	public void updateMoney() {
+		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
+		String costOrderId = getPara("costOrderId");
+		String sql = "select * from cost_application_order_rel where application_order_id = '"+costPreInvoiceOrderId+"' and cost_order_id = '"+costOrderId+"'";
+		CostApplicationOrderRel costApplicationOrderRel = CostApplicationOrderRel.dao.findFirst(sql);
+		String name = getPara("name");
+		String value = getPara("value");
+		
+		if ("pay_amount".equals(name) && "".equals(value)) {
+			value = "0";
+		}
+		costApplicationOrderRel.set(name, value);
+		costApplicationOrderRel.update();
+		
+		renderJson(costApplicationOrderRel);
+	}
+
 	
 	
 	

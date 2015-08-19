@@ -15,6 +15,7 @@
             			<input id='status' name='status' type="hidden" value="${arapCostPayConfirmOrder.status!''}">
             			<input id='total_pay' name='total_pay' type="hidden" value="${total_pay!'0'}" >
             			<input id='total_amount' name='total_amount' type="hidden" >
+            			<input id='detailJson' name='detailJson' type="hidden" >
             			
                             <div class="col-lg-4">
                                 <div class="form-group">
@@ -63,6 +64,8 @@
                                     <tr>
                                         <th>申请单号</th>
                                         <th>申请金额</th>
+                                        <th>待付金额</th>
+                                        <th>支付金额</th>
                                         <th>对账日期</th>
                                         <th>创建人</th>
                                         <th>审核人</th>
@@ -76,6 +79,8 @@
                                 		<th>合计</th>
                                         <!-- <th colspan="4"></th> -->
                                         <th><span id="total"></span></th>
+                                        <th><span id="nopay_total"></span></th>
+                                        <th><span id="total_pays" >0</span></th>
                                         <th></th>
                                         <th></th>
                                         <th></th>
@@ -117,11 +122,11 @@
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="search-label">本次支付金额</label>
-                                    <input type="text" class="form-control search-control pay_amount" id="pay_amount" name="pay_amount">
+                                    <input type="text" class="form-control search-control pay_amount" readonly="readonly" id="pay_amount" name="pay_amount" value="0">
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">待付金额</label>
-                                	<input type="text" class="form-control search-control nopay_amount" id="nopay_amount" name="nopay_amount">
+                                	<input type="text" class="form-control search-control nopay_amount" readonly="readonly" id="nopay_amount" name="nopay_amount">
                                 </div>
                             </div>
                         </div>
@@ -168,3 +173,4 @@
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/arap/CostConfirm/edit.js"></script>
+<script src="/yh/js/eeda-common.js"></script>
