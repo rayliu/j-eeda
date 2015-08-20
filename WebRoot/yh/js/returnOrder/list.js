@@ -87,13 +87,13 @@
             			return obj.aData.ORDER_NO;
         		}
    			},
-   			{ "mDataProp": "PLANNING_TIME","sWidth":"150px" },
+   			{ "mDataProp": "PLANNING_TIME","sWidth":"100px" },
+   			{ "mDataProp": "ITEM_NO","sWidth":"80px"},
    			{ "mDataProp": "RECEIPT_PERSON","sWidth":"60px"},
-            { "mDataProp": "RECEIPT_PHONE","sWidth":"120px"},
+            { "mDataProp": "RECEIPT_PHONE","sWidth":"80px"},
             { "mDataProp": "RECEIVING_UNIT","sWidth":"120px"},
-            { "mDataProp": "RECEIPT_ADDRESS","sWidth":"220px"},
-            { "mDataProp": "WAREHOUSE_NAME","sWidth":"100px"},
-   		    { "mDataProp": "ITEM_NO","sWidth":"80px"},
+            { "mDataProp": "RECEIPT_ADDRESS","sWidth":"100px"},
+            { "mDataProp": "WAREHOUSE_NAME","sWidth":"80px"},
    		    { "mDataProp": "A_AMOUNT","sWidth":"30px"},
             { "mDataProp": "CNAME","sWidth":"80px"},
             { "mDataProp": "TRANSFER_ORDER_NO","sWidth":"120px"},
@@ -104,7 +104,7 @@
             /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
-            { "mDataProp": "CREATE_DATE","sWidth":"150px"},
+            { "mDataProp": "CREATE_DATE","sWidth":"100px"},
             { "mDataProp": "TRANSACTION_STATUS","sWidth":"40px",
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new')
@@ -116,7 +116,7 @@
                     return obj.aData.TRANSACTION_STATUS;
                  }
             },
-            { "mDataProp": "IMGAUDIT","sWidth":"60px" },
+            { "mDataProp": "IMGAUDIT","sWidth":"70px" },
             { "mDataProp": "REMARK"}
          ]
 	});
