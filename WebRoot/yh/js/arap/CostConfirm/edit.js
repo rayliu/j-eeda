@@ -19,6 +19,7 @@
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
 			$(nRow).attr({nopay_amount: aData.NOPAY_AMOUNT}); 
+			$(nRow).attr({total_amount: aData.PAY_AMOUNT}); 
 			return nRow;
 		},
         "aoColumns": [   
@@ -51,16 +52,19 @@
         	},
         	{"mDataProp":"NOPAY_AMOUNT",
         		"fnRender": function(obj) {
+        			$("#nopay_one").val(obj.aData.NOPAY_AMOUNT);
         			nopay = nopay + parseInt(obj.aData.NOPAY_AMOUNT) ;
-    				$("#nopay_total").html(nopay);
+    				//$("#nopay_total").html(nopay);
     				$("#nopay_amount").val(nopay);
     				$("#pay_amount").val(nopay);
-    				return obj.aData.NOPAY_AMOUNT;
+    				$("#nopay_total").html(0);
+    				$("#total_pays").html(nopay);
+    				return "<span name='nopay_amounts'>"+0+"</span>";
         		}
         	},
         	{"mDataProp":null,
   	            "fnRender": function(obj) {
-  	            	return	"<input type='text' name='pay_amounts' value='"+obj.aData.NOPAY_AMOUNT+"'>";
+  	            	return	"<input type='text' name='pay_amounts' value='"+$("#nopay_one").val()+"'>";
   	            }
             },
             {"mDataProp":"COST_STAMP"},
@@ -74,13 +78,32 @@
     $("#InvorceApplication-table").on('input', 'input', function(e){
 		e.preventDefault();
 		var value = 0.00;
+		var currentValue = $(this).val();
+		if(currentValue==''){
+			return ;
+		}
+		
+		var row = $(this).parent().parent();
+		var $leftAmountObj = $(row.find("span[name='nopay_amounts']")[0]);
+		//var $totalAmount = $(this).parent().parent().attr('total_amount');
+		var $totalAmount = $("#nopay_one").val();
+		if(parseInt($totalAmount)-parseInt(currentValue)<0){
+			$(this).val(0);
+			$.scojs_message('支付金额不能大于待付金额', $.scojs_message.TYPE_FALSE);
+			return false;
+		}else{
+			$leftAmountObj.text(parseInt($totalAmount)-parseInt(currentValue));
+		}
+		
+		
 		$("input[name='pay_amounts']").each(function(){
 			if($(this).val()!=null&&$(this).val()!=''){
-				if(parseInt($(this).val())>parseInt($(this).parent().parent().attr('nopay_amount'))){
+				/*if(parseInt($(this).val())>parseInt($(this).parent().parent().attr('nopay_amount'))){
 					$.scojs_message('支付金额不能大于待付金额', $.scojs_message.TYPE_FALSE);
 					$(this).val(0);
 					return false;
-				}
+				}*/
+				
 				value = value + parseInt($(this).val());
 	    		$("#total_pays").html(value);
 	    		$("#pay_amount").val(value);
@@ -92,6 +115,19 @@
 	    		$("#pay_amount").val(value);
 			}
 	    });		
+	});	
+    
+    
+    
+    //异步技术待付金额总额
+    $("#InvorceApplication-table").on('input', 'input', function(e){
+		e.preventDefault();
+		var value = 0.00;
+		$("span[name='nopay_amounts']").each(function(){
+				value = value + parseInt($(this).html());
+				$("#nopay_total").html(value);
+				$("#nopay_amount").val(value);
+	    });	
 	});	
     
   
@@ -180,11 +216,10 @@
 	
 	//付款确认
 	$("#savePayConfirmBtn").on('click',function(){
-		if(parseInt($("#pay_amount").val())>parseInt($("#nopay_amount").val())){
+		/*if(parseInt($("#pay_amount").val())>parseInt($("#nopay_amount").val())){
 			$.scojs_message('付款金额不可以大于待付金额！！', $.scojs_message.TYPE_FALSE);
 			return false;
-		}
-		
+		}*/
 		var array=[];
 		$("#InvorceApplication-table input[name='pay_amounts']").each(function(){
 			var obj={};
@@ -200,8 +235,6 @@
 			if(data.arapCostPayConfirmOrder.ID>0){
 				logTable.fnSettings().sAjaxSource="/costConfirm/logList?confirmId="+$("#confirmId").val();
 				logTable.fnDraw();
-				//$("#pay_amount").val($("#total_amount").val()-data.re.TOTAL);
-				//$("#nopay_amount").val($("#total_amount").val()-data.re.TOTAL);
 				if($("#nopay_amount").val()<=0){
 					$("#savePayConfirmBtn").attr("disabled", true);
 				}else{
@@ -214,10 +247,11 @@
 			}else{
 				$.scojs_message('确认失败', $.scojs_message.TYPE_FALSE);
 			}
-			total = 0.00;
+			$("#nopay_one").val($("#nopay_amount").val());
+			/*total = 0.00;
 		    nopay = 0.00;
 		    $("#total_pays").html(0)
-			datatable.fnDraw();
+			datatable.fnDraw();*/
 		},'json');
 		
 	});
