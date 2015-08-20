@@ -124,7 +124,7 @@ public class ReturnOrderController extends Controller {
 					+ " left join contact c3 ON c3.id = p3.contact_id"
 					+ " LEFT JOIN contact c4 ON c4.id = p4.contact_id"
 					+ " where r_o.transaction_status = '"+status
-					+ "' and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit;
 		} else {
@@ -154,6 +154,7 @@ public class ReturnOrderController extends Controller {
 					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
 					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
 					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
+					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 
@@ -197,6 +198,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
 					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 " + sLimit;
 		}
 		Record rec = Db.findFirst(sqlTotal);
