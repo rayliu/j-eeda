@@ -1040,6 +1040,7 @@ public class ReturnOrderController extends Controller {
 						+ returnOrderId + ") toid " + sLimit;						
 			} else {
 				sql = "select toi.id,"
+						+ " ifnull(p.serial_no, '') serial_no,"
 						+ " ifnull(p.item_no, toi.item_no) item_no, "
 						+ " ifnull(p.item_name, toi.item_name) item_name,"
 						+ " ifnull(p.size, toi.size) size, "
@@ -1450,12 +1451,13 @@ public class ReturnOrderController extends Controller {
     	String id =getPara("ids");
     	String name =getPara("name");
     	String value =getPara("value");
+    	if(id!=null){
     	TransferOrderItemDetail transferorderutemdetail =TransferOrderItemDetail.dao.findById(id);
     	if(transferorderutemdetail.get("serial_no")!=null){
     		transferorderutemdetail.set(name,value);
     		transferorderutemdetail.update();
     	}
-
+    	}
     	
         renderJson("{\"success\":true}");
     }
