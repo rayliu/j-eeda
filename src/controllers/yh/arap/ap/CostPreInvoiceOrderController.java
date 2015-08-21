@@ -705,7 +705,14 @@ public class CostPreInvoiceOrderController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 
-		String sqlTotal = "select count(aco.id) total from arap_cost_invoice_application_order appl_order left join arap_cost_order aco on aco.application_order_id = appl_order.id";
+		String sqlTotal = "select count(aco.id) total from arap_cost_invoice_application_order appl_order"
+				+ " LEFT JOIN cost_application_order_rel caor on caor.application_order_id = appl_order.id "
+				+ " LEFT JOIN arap_cost_order aco on aco.id = caor.cost_order_id"
+				+ " left join party p on p.id = aco.payee_id left join contact c on c.id = p.contact_id"
+				+ " left join user_login ul on ul.id = aco.create_by"
+				+ " where appl_order.id = "
+				+ costPreInvoiceOrderId
+				+ " order by aco.create_stamp desc " + sLimit;
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
