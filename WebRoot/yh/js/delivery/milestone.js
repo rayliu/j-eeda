@@ -70,7 +70,7 @@ $(document).ready(function() {
                 	if(obj.aData.STATUS=="已签收"){
                 		return "已送达";
                 	}else{
-                		return "<a class='btn  btn-primary confirmDelivery' code='"+obj.aData.ID+"'>"+
+                		return "<a class='btn  btn-primary confirmDelivery' id='arriveBtn' code='"+obj.aData.ID+"'>"+
                 		"到达确认"+
                 		"</a>";
                 	}
@@ -80,13 +80,16 @@ $(document).ready(function() {
     });	
     //签收完成
     $("#eeda-table").on('click', '.confirmDelivery', function(e){
-    	$(this).hide();
     	var delivery_id =$(this).attr("code");
+    	var $text = $(this).parent();
+		$text.find('#arriveBtn').attr('disabled',true);
     	if(confirm("到达确认 吗？")){
     		$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
     			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
-    			detailTable.fnDraw(); 
+    			//detailTable.fnDraw(); 
+    			$text.find('a').html('已到达');
+    			
     		},'json');
         }
     });
