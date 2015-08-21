@@ -477,12 +477,6 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
-            {"mDataProp":null},
-            {"mDataProp":"DEBIT_AMOUNT"},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
             {"mDataProp":"COST_AMOUNT"},
             {"mDataProp":"YUFU_AMOUNT"
             	/*"sClass": "yufu",
@@ -500,14 +494,20 @@ $(document).ready(function() {
   	            "fnRender": function(obj) {
   	            	var str;
   	            	if(obj.aData.PAY_AMOUNT == null){
-  	            		str = "<input type='text' name='pay_amount'>";
+  	            		str = "<input type='text' name='pay_amount' style='width:100px'>";
   	            		//str = "<input type='text' name='pay_amount' value='"+(obj.aData.COST_AMOUNT - obj.aData.TOTAL_PAY)+"'>";
   	            	}else{
-  	            		str = "<input type='text' name='pay_amount' value='"+obj.aData.PAY_AMOUNT+"'>";
+  	            		str = "<input type='text' name='pay_amount' style='width:100px' value='"+obj.aData.PAY_AMOUNT+"'>";
   	            	}
   	            	return str;
   	            }
             },
+            {"mDataProp":null},
+            {"mDataProp":"DEBIT_AMOUNT"},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
+            {"mDataProp":null},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"}                        
