@@ -40,7 +40,9 @@ $(document).ready(function() {
             },
             {"mDataProp":"C_STAMP"},
             {"mDataProp":"ONAME", "sWidth":"150px"},
-            {"mDataProp":"CNAME", "sWidth":"150px"},
+            {"mDataProp":"CNAME",
+            	'sClass':"cname",
+            	"sWidth":"150px"},
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
@@ -93,9 +95,26 @@ $(document).ready(function() {
     });
     
     var ids = [];
+    var cnames = [];
     // 未选中列表
 	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
+			var cname = $(this).parent().siblings('.cname')[0].textContent;
+			cnames.push($(this).parent().siblings('.cname')[0].textContent);
+			if(cnames.length>1){
+				if(cnames[0]!=cname){
+					$.scojs_message('供应商不一致！！！', $.scojs_message.TYPE_FALSE);
+					var tmpArr = [];
+					for(id in cnames){
+						if(cnames[id] != cname){
+							tmpArr.push(cnames[id]);
+						}
+					}
+					cnames = tmpArr;
+					return false;
+				}
+			}
+			
 			$(this).parent().parent().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
 			$("#costCheckedOrderIds").val(ids);
