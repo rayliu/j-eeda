@@ -532,15 +532,17 @@ $(document).ready(function() {
 		var yufu_amount = $(this).parent().parent().attr("yufu_amount");
 		var name = $(this).attr("name");
 		var value = $(this).val();
-		$("#tpayment").html(value);
+
 		if(parseInt(yufu_amount) < parseInt(value)){
 			$.scojs_message('注意：此次付款金额已超过应付金额！！', $.scojs_message.FALSE);
 			return;
 		}else{
 			$.post('/costPreInvoiceOrder/updateArapCostOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId ,costOrderId:costOrderId, name:name, value:value}, function(data){
-				if(data.ID > 0){	
+				if(data.costApplicationOrderRel.ID > 0){
+					$("#tpayment").html(data.pay_amount_a);
 					costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
 					costPreInvoiceOrderTable.fnDraw();
+					
 					$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
 				}else{
 					$.scojs_message('更新失败', $.scojs_message.TYPE_ERROR);

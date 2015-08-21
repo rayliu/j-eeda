@@ -187,22 +187,27 @@ public class CostPreInvoiceOrderController extends Controller {
 						.toString());
 				setAttr("customer", contact);
 			}
+			Double paidAmount=0.0;
 			for (int i = 0; i < idArray.length; i++) {
+				Record rec = Db.findFirst("SELECT(SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
+						+ " WHERE caor.cost_order_id = aco.id) total_pay FROM arap_cost_order aco"
+						+ " LEFT JOIN arap_cost_order_invoice_no acoo ON acoo.cost_order_id = aco.id"
+						+ " where aco.id=?",idArray[i]);
+				paidAmount=rec.getDouble("total_pay")+paidAmount;
+				setAttr("paidAmount", paidAmount);
 				arapCostOrder = ArapCostOrder.dao.findById(idArray[i]);
 				Double costCheckAmount = arapCostOrder.getDouble("cost_amount") == null
 						? 0.0
 						: arapCostOrder.getDouble("cost_amount");
 				totalAmount = totalAmount + costCheckAmount;
+				
 			}
 		}
-		Record rec = Db.findFirst("SELECT(SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
-				+ " WHERE caor.cost_order_id = aco.id) total_pay FROM arap_cost_order aco"
-				+ " LEFT JOIN arap_cost_order_invoice_no acoo ON acoo.cost_order_id = aco.id"
-				+ " where aco.id=?",ids);
-		Double paidAmount=rec.getDouble("total_pay");
+		
+		
 		setAttr("saveOK", false);
 		setAttr("totalAmount", totalAmount);
-		setAttr("paidAmount", paidAmount);
+		
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
@@ -408,12 +413,7 @@ public class CostPreInvoiceOrderController extends Controller {
 				.findById(arapAuditInvoiceApplication.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
-		Record rec = Db.findFirst("SELECT(SELECT caor.pay_amount this_pay FROM cost_application_order_rel caor"
-				+ " WHERE caor.cost_order_id = aco.id AND caor.application_order_id = appl_order.id ) pay_amount"
-				+ " FROM arap_cost_invoice_application_order appl_order"
-				+ " LEFT JOIN cost_application_order_rel caor ON caor.application_order_id = appl_order.id"
-				+ " LEFT JOIN arap_cost_order aco ON aco.id = caor.cost_order_id"
-				+ " WHERE appl_order.id =?",id);
+		Record rec = Db.findFirst("SELECT sum(caor.pay_amount) pay_amount_a FROM arap_cost_order aco LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id WHERE caor.application_order_id=?",id);
 		Record rec1 = Db.findFirst("SELECT(SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
 				+ " WHERE caor.cost_order_id = aco.id) paid_Amount"
 				+ " FROM arap_cost_invoice_application_order appl_order"
@@ -426,7 +426,7 @@ public class CostPreInvoiceOrderController extends Controller {
 //		Double cost_amount = arapAuditInvoiceApplication.getDouble("total_amount");
 //		Double payAmount = cost_amount - totalpay;
 //		setAttr("payAmount", payAmount);
-		setAttr("tpayment", rec.getDouble("pay_amount"));
+		setAttr("tpayment", rec.getDouble("pay_amount_a"));
 		setAttr("paidAmount", rec1.getDouble("paid_Amount"));
 		String costCheckOrderIds = "";
 		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
@@ -561,6 +561,7 @@ public class CostPreInvoiceOrderController extends Controller {
 //				.findById(costOrderId);
 		String sql = "select * from cost_application_order_rel where application_order_id = '"+costPreInvoiceOrderId+"' and cost_order_id = '"+costOrderId+"'";
 		CostApplicationOrderRel costApplicationOrderRel = CostApplicationOrderRel.dao.findFirst(sql);
+		//SELECT sum(caor.pay_amount) FROM arap_cost_order acom 	LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id WHERE caor.application_order_id = aaia.id
 		String name = getPara("name");
 		String value = getPara("value");
 		
@@ -569,8 +570,12 @@ public class CostPreInvoiceOrderController extends Controller {
 		}
 		costApplicationOrderRel.set(name, value);
 		costApplicationOrderRel.update();
-		
-		renderJson(costApplicationOrderRel);
+		CostApplicationOrderRel costApplicationOrderRel1 = CostApplicationOrderRel.dao.findFirst("SELECT sum(caor.pay_amount) pay_amount_a FROM arap_cost_order aco 	LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id WHERE caor.application_order_id=?",costPreInvoiceOrderId);
+		Double  pay_amount_a = costApplicationOrderRel1.getDouble("pay_amount_a");
+		Map map = new HashMap();
+		map.put("pay_amount_a", pay_amount_a);
+		map.put("costApplicationOrderRel", costApplicationOrderRel);
+		renderJson(map);
 	}
 
 		
