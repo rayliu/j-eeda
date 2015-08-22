@@ -12,7 +12,7 @@
                             <i class="fa fa-list fa-fw"></i>回单列表
                         </div>
                         <div class="panel-body">
-                         <form role="form" style="margin: 0 15px;">
+                         <form role="form" style="margin: 0 15px;" id='searchForm'>
                             <div class="row search_panel">
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -23,6 +23,9 @@
                                         <label class="search-label">运输单号</label>
                                         <input type="text" class="form-control search-control address_filter" id="tr_order_no">
                                     </div>
+                                    <div class="form-group">
+                                        <button id="resetBtn" class="btn  btn-primary" type="button">清空条件</button>
+                                    </div> 
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -39,7 +42,7 @@
                                             </span>  
                                         </div>
                                     </div>   
-                                    <!--  下单时间<input type="text" class="beginTime_filter" id="beginTime_filter"> - 到达时间<input type="text" class="endTime_filter" id="endTime_filter" -->
+                                    
                                 </div>
                                 <div class="col-lg-4">
                                 	<div class="form-group">
@@ -58,30 +61,7 @@
                                 </div>
                             </div>
                          </form>
-                         <!--  <div class="">
-                        		 <div class="form-group">
-                        		
-                                        <label class="input-inline">回单号</label> <input class=" input-inline input-small" type="text" id="order_no">
-                                         <label class="input-inline">运输单号</label> <input class=" input-inline input-small" type="text" id="tr_order_no">
-                                         <label class="input-inline">配送单号</label> <input class=" input-inline input-small" type="text" id="de_order_no">
-                                         <label class="input-inline">创建人</label> <input class=" input-inline input-small" type="text" id="stator">
-                                         <label class="input-inline">状态</label> <input class=" input-inline input-small" type="text" id="status">
-                                          <label class="input-inline">时间段</label> <div  class="input-append input-inline input-small date" id="datetimepicker">  
-							    <input id="time_one" type="text" class="input-inline input-small" >
-							    <span class="add-on">  
-						        <i data-date-icon="icon-calendar" data-time-icon="icon-time" class="icon-calendar"></i>  
-						    	</span>  
-							</div>
-							
-							&nbsp至
-                            <div id="datetimepicker2" class="input-append input-inline date ">  
-							    <input id="time_two" class="input-inline input-small" type="text"></input>
-							    <span class="add-on">  
-						        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-						    	</span>  
-							</div>
-                                    </div>  
-                    		</div> -->
+                         
                     		<div class="col-lg-12">
                     			<div class="form-group"></div>
 	                    		<ul id="orderTabs" class="nav nav-tabs">
@@ -101,7 +81,7 @@
 					                                        <tr>
 					                                            <th>回单编号</th>
 					                                            <th>计划时间</th>
-					                                            <th>机器型号</th>
+					                                            <th>货品型号</th>
 					                                            <th>收货人</th>
 					                                            <th>收货人电话</th>
 					                                            <th>收货单位</th>
@@ -142,7 +122,7 @@
 					                                        <tr>
 					                                            <th>回单编号</th>
 					                                            <th>中转仓</th>
-					                                            <th>机器型号</th>
+					                                            <th>货品型号</th>
 					                                            <th>数量</th>
 					                                            <th>收货单位</th>
 					                                            <th>收货地址</th>
@@ -191,6 +171,8 @@
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+ 
 <script>
 	<%
 		var returnOrderUpdate = shiro.hasPermission("ReturnOrder.update");

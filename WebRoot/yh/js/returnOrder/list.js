@@ -213,29 +213,8 @@
     $("#cancel").click(function(){
     	$("#routeItemFormDiv").hide();
     });
-    
-    var findData = function(){
-    	var order_no = $("#order_no").val();
-    	var tr_order_no = $("#tr_order_no").val();
-    	var de_order_no = $("#de_order_no").val();
-    	var time_one = $("#time_one").val();
-    	var time_two = $("#time_two").val();
-    	var inputStr =$("#customer_filter").val();
-    	
-    	if(clickTabId == "createTab"){
-    		createDataTable.fnSettings().oFeatures.bServerSide = true; 
-        	createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=新建&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
-        	createDataTable.fnDraw();
-    	}else{
-    		finishDataTable.fnSettings().oFeatures.bServerSide = true; 
-    		finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=已签收&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
-    		finishDataTable.fnDraw();
-    	}
-    };
-    
-    //初始化查询新建回单
-    findData();
-    
+
+        
     //点击tab选项卡查询
     $("#createTab ,#finishTab").on('click', function (e) { 
     	clickTabId = e.target.getAttribute("id");
@@ -243,21 +222,11 @@
     	findData();
     });
 
-//    $('#customer_filter').on('keyup click', function(){
-//       var inputStr = $('#customer_filter').val();
-//       var companyList =$("#companyList");
-//       $.get("/customerContract/search", {locationName:inputStr}, function(data){
-//           companyList.empty();
-//           for(var i = 0; i < data.length; i++)
-//               companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
-//       },'json');
-//       companyList.show();
-//    });
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
         
         $.get("/customerContract/search", {locationName:inputStr}, function(data){
-            console.log(data);
+            //console.log(data);
             var companyList =$("#companyList");
             companyList.empty();
             for(var i = 0; i < data.length; i++)
@@ -314,4 +283,64 @@
 	    $('#time_two').trigger('keyup');
 	});
    
+
+  var conditions_name="query_return_order_list";
+  var saveConditions=function(){
+      var conditions={
+          order_no:$("#order_no").val(),
+          tr_order_no :$("#tr_order_no").val(),
+          de_order_no:$("#de_order_no").val(),
+          time_one:$("#time_one").val(),
+          time_two : $("#time_two").val(),
+          customer : $("#customer_filter").val()
+      }
+      if(!!window.localStorage){//查询条件处理
+          localStorage.setItem(conditions_name, JSON.stringify(conditions));
+      }
+  };
+  
+  var loadConditions=function(){
+      if(!!window.localStorage){//查询条件处理
+          var query_to = localStorage.getItem(conditions_name);
+          if(!query_to)
+              return;
+
+          var conditions = JSON.parse(localStorage.getItem(conditions_name));
+          $("#order_no").val(conditions.order_no);
+          $("#tr_order_no").val(conditions.tr_order_no);
+          $("#de_order_no").val(conditions.de_order_no);
+          $("#time_one").val(conditions.time_one);
+          $("#time_two").val(conditions.time_two);
+          $("#customer_filter").val(conditions.customer);
+      }
+  };
+
+  var findData = function(){
+      var order_no = $("#order_no").val();
+      var tr_order_no = $("#tr_order_no").val();
+      var de_order_no = $("#de_order_no").val();
+      var time_one = $("#time_one").val();
+      var time_two = $("#time_two").val();
+      var inputStr =$("#customer_filter").val();
+      
+      if(clickTabId == "createTab"){
+        createDataTable.fnSettings().oFeatures.bServerSide = true; 
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=新建&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
+        createDataTable.fnDraw();
+      }else{
+        finishDataTable.fnSettings().oFeatures.bServerSide = true; 
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=已签收&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
+        finishDataTable.fnDraw();
+      }
+      saveConditions();
+    };
+
+  loadConditions(); 
+  findData();
+
+  $("#resetBtn").click(function(){
+      $('#searchForm')[0].reset();
+      saveConditions();
+      findData();
+  });
 });
