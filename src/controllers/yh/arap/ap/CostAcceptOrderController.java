@@ -36,6 +36,50 @@ public class CostAcceptOrderController extends Controller {
     	setAttr("classify", "receivable");
     	    render("/yh/arap/CostAcceptOrder/CostAcceptOrderList.html");
     }
+    
+    
+    
+    public void edit2() {
+    	
+    	String id = getPara("id");
+    	String sql = "SELECT ul.c_name,c.abbr cname,aciao.* FROM arap_cost_invoice_application_order aciao "
+    			+ " LEFT JOIN party p ON p.id = aciao.payee_id "
+    			+ " LEFT JOIN contact c ON c.id = p.contact_id "
+    			+ " LEFT JOIN user_login ul on ul.id = aciao.create_by "
+    			+ " where aciao.id = '"+id+"'";
+    	Record re = Db.findFirst(sql);
+    	setAttr("invoiceApplication", re);
+    	
+    	render("/yh/arap/CostPreInvoiceOrder/invoiceEdit.html");
+    }
+    
+    
+    public void costOrderList() {
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        String id = getPara("id");
+        String sqlTotal = "";
+        String sql = "";
+        List<Record> record = null;
+        Record re = null;
+        if (id != null && !"".equals(id)) {
+			//String[] idArray = id.split(",");
+			sql = "SELECT '对账单' type,caor.pay_amount,(aco.cost_amount - (select sum(caor1.pay_amount) from cost_application_order_rel caor1 where caor1.cost_order_id = aco.id)) daifu,aco.* FROM arap_cost_invoice_application_order aciao "
+					+ " LEFT JOIN cost_application_order_rel caor on caor.application_order_id = aciao.id "
+					+ " LEFT JOIN arap_cost_order aco on aco.id = caor.cost_order_id "
+					+ " where aciao.id ='"+id+"'";
+			record = Db.find(sql);			
+		}
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", record.size());
+        BillingOrderListMap.put("iTotalDisplayRecords", record.size());
+
+        BillingOrderListMap.put("aaData", record);
+
+        renderJson(BillingOrderListMap);
+    }
 
     public void unlist() {
         String sLimit = "";

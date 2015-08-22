@@ -33,7 +33,7 @@ $(document).ready(function() {
             }, 
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}
             },
             {"mDataProp":"TOTAL_AMOUNT",
