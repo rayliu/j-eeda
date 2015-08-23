@@ -122,11 +122,11 @@ public class ReturnOrderController extends Controller {
 					+ " (SELECT CASE"
 					+ " WHEN tor.cargo_nature ='ATM' THEN ("
 					+ " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
-					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id"
+					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id and toi.order_id = tor.id"
 		            + " )"
 		            + " WHEN tor.cargo_nature ='cargo' THEN ("
 					+ " 	select sum(toi.amount) from transfer_order_item toi"
-					+ " 		where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id)"
+					+ " 		where (toi.order_id = r_o.transfer_order_id)"
 		            + " )"
 		            + " END ) a_amount,"
 					+ " toid.serial_no, ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
@@ -171,7 +171,7 @@ public class ReturnOrderController extends Controller {
 					+ " (SELECT CASE"
 					+ " WHEN tor.cargo_nature ='ATM' THEN ("
 					+ " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
-					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id"
+					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id and toi.order_id = tor.id"
 		            + " )"
 		            + " WHEN tor.cargo_nature ='cargo' THEN ("
 					+ " 	select sum(toi.amount) from transfer_order_item toi"
@@ -195,9 +195,13 @@ public class ReturnOrderController extends Controller {
 					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 " + sLimit;
 		}
+		long startTime = Calendar.getInstance().getTimeInMillis();
 		Record rec = Db.findFirst(sqlTotal);
-		List<Record> orders = Db.find(sql);
 		logger.debug("total records:" + rec.getLong("total"));
+		
+		List<Record> orders = Db.find(sql);
+		long endTime = Calendar.getInstance().getTimeInMillis();
+		logger.debug("time cost:" + (endTime - startTime));
 		
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

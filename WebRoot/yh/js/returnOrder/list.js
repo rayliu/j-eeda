@@ -71,12 +71,12 @@
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-        "bServerSide": false,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
 		
-        "sAjaxSource": "/returnOrder/list?status=新建",
+        //"sAjaxSource": "/returnOrder/list?status=新建",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
    				"sWidth":"100px",
@@ -126,7 +126,7 @@
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-        "bServerSide": false,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -324,11 +324,9 @@
       var inputStr =$("#customer_filter").val();
       
       if(clickTabId == "createTab"){
-        createDataTable.fnSettings().oFeatures.bServerSide = true; 
         createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=新建&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
         createDataTable.fnDraw();
       }else{
-        finishDataTable.fnSettings().oFeatures.bServerSide = true; 
         finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=已签收&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
         finishDataTable.fnDraw();
       }
