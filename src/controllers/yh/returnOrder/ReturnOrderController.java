@@ -107,8 +107,10 @@ public class ReturnOrderController extends Controller {
 				 && (time_one == null|| time_one == "")  && (time_two == null || time_two == "") && (customer == null || customer == "")) {
 			// 获取总条数
 			sqlTotal = "select count(1) total "+fromSql
-					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
+					+ " where r_o.transaction_status = '"+status
+					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
 			// 获取当前页的数据
 			sql = "select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address,'') address,"
 					+ " ifnull(c3.contact_person, c4.contact_person) receipt_person, "
@@ -117,7 +119,16 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(c3.address, c4.address) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " ifnull(toid.item_no, (select item_no from transfer_order_item toi where toi.id = doi.transfer_item_id)) item_no,"
-					+ " (SELECT sum(toi.amount) FROM transfer_order_item toi WHERE toi.order_id = tor.id) a_amount,"
+					+ " (SELECT CASE"
+					+ " WHEN tor.cargo_nature ='ATM' THEN ("
+					+ " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
+					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id"
+		            + " )"
+		            + " WHEN tor.cargo_nature ='cargo' THEN ("
+					+ " 	select sum(toi.amount) from transfer_order_item toi"
+					+ " 		where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id)"
+		            + " )"
+		            + " END ) a_amount,"
 					+ " toid.serial_no, ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
@@ -137,17 +148,7 @@ public class ReturnOrderController extends Controller {
 			}
 
 			// 获取总条数
-			sqlTotal = "select count(distinct r_o.id) total from return_order r_o "
-					+ " left join transfer_order tor on tor.id = r_o.transfer_order_id "
-					+ " left join party p on p.id = tor.customer_id "
-					+ " left join contact c on c.id = p.contact_id  "
-					+ " left join delivery_order d_o on r_o.delivery_order_id = d_o.id "
-					+ " left join delivery_order_item doi on doi.delivery_id = d_o.id "
-					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
-					+ " left join party p2 on p2.id = tor2.customer_id "
-					+ " left join contact c2 on c2.id = p2.contact_id  "
-					+ " left join user_login  usl on usl.id=r_o.creator "
-					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
+			sqlTotal = "select count(distinct r_o.id) total "+fromSql
 					+ " where ifnull(r_o.order_no,'')  like'%" + order_no + "%' "
 					+ " and ifnull(tor.order_no,tor2.order_no)  like'%" + tr_order_no + "%'"
 					+ " and ifnull(d_o.order_no,'')  like'%" + de_order_no + "%'"
@@ -155,8 +156,8 @@ public class ReturnOrderController extends Controller {
 					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
 					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
 					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
-					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 
 			// 获取当前页的数据
@@ -167,31 +168,22 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(c3.address, c4.address) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " ifnull(toid.item_no, '') item_no,"
-					+ " (SELECT sum(toi.amount) FROM transfer_order_item toi WHERE toi.order_id = tor.id) a_amount,"
+					+ " (SELECT CASE"
+					+ " WHEN tor.cargo_nature ='ATM' THEN ("
+					+ " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
+					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id"
+		            + " )"
+		            + " WHEN tor.cargo_nature ='cargo' THEN ("
+					+ " 	select sum(toi.amount) from transfer_order_item toi"
+					+ " 		where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id)"
+		            + " )"
+		            + " END ) a_amount,"
 					+ " toid.serial_no, ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-					+ " from return_order r_o "
-					+ " LEFT JOIN delivery_order d_o ON r_o.delivery_order_id = d_o.id"
-					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id"
-					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
-					+ " LEFT JOIN party p ON p.id = tor.customer_id"
-					+ " LEFT JOIN contact c ON c.id = p.contact_id"
-					+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
-					+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id and toi.order_id = tor.id"
-					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
-					+ " left join party p2 on p2.id = tor2.customer_id "
-					+ " left join contact c2 on c2.id = p2.contact_id  "
-					+ " left join user_login  usl on usl.id=r_o.creator "
-					+ " left join warehouse w on d_o.from_warehouse_id = w.id "
-					+ " left join location lo on ifnull(tor.route_from,tor2.route_from) = lo.code "
-					+ " left join location lo2 on ifnull(tor.route_to,tor2.route_to) = lo2.code "
-					+ " left join party p3 ON p3.id = tor.notify_party_id "
-					+ " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
-					+ " left join contact c3 ON c3.id = p3.contact_id "
-					+ " LEFT JOIN contact c4 ON c4.id = p4.contact_id"
+					+ fromSql
 					+ " where ifnull(r_o.order_no,'')  like'%" + order_no + "%' "
 					+ " and ifnull(tor.order_no,tor2.order_no)  like'%" + tr_order_no + "%'"
 					+ " and ifnull(d_o.order_no,'')  like'%" + de_order_no + "%'"
@@ -1003,7 +995,7 @@ public class ReturnOrderController extends Controller {
 					+ "ifnull(p.volume, toi.volume) volume,"
 					+ "ifnull(p.unit, toi.unit) unit, "
 					+ "toi.remark "
-					+ "from transfer_order_item_detail toid "
+					+ "from transfer_order_item_detail toid "//TODO: 这里性能有问题，用了大表关联小表
 					+ "left join transfer_order_item toi ON toid.item_id = toi.id "
 					+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 					+ "left join product p on toi.product_id = p.id where r.id ="
@@ -1016,7 +1008,7 @@ public class ReturnOrderController extends Controller {
 					+ " where r.id = '" + returnOrderId + "'";
 			if (transferOrder.get("cargo_nature_detail").equals("cargoNatureDetailYes")) {
 				sqlTotal = "select distinct count(1) total "
-						+ "from transfer_order_item_detail toid "
+						+ "from transfer_order_item_detail toid " //TODO: 这里性能有问题，用了大表关联小表
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
 						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 						+ "left join product p on toi.product_id = p.id where r.id ="
@@ -1037,7 +1029,7 @@ public class ReturnOrderController extends Controller {
 						+ "ifnull(p.unit, toi.unit) unit, "
 						+ "toi.sum_weight, "
 						+ "toi.remark "
-						+ "from transfer_order_item_detail toid "
+						+ "from transfer_order_item_detail toid " //TODO: 这里性能有问题，用了大表关联小表
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
 						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 						+ "left join product p on toi.product_id = p.id where r.id ="
@@ -1056,7 +1048,7 @@ public class ReturnOrderController extends Controller {
 						+ " toi.sum_weight, "
 						+ " toi.amount amount, "
 						+ " toi.remark "
-						+ " from transfer_order_item toi "
+						+ " from transfer_order_item toi " //TODO: 这里性能有问题，用了大表关联小表
 						+ " left join return_order r on r.transfer_order_id = toi.order_id "
 						+ " left join product p on toi.product_id = p.id "
 						+ " where r.id = '" + returnOrderId + "' " + sLimit;
