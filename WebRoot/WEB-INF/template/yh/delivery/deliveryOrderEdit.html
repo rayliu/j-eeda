@@ -58,6 +58,7 @@
 	                  						<input id='productIds' name='productIds' type="hidden" value="${productIds!''}">
 	                  						<!-- 收货单位-->
 	                  						<input id='receivingunit' name='receivingunit' type="hidden">
+	                  						<input id='sign_document_no' name='sign_document_no' type="hidden"  value="${deliveryOrder.ref_no!''}">
 		                                 <div class="form-group">
 		                                    <h3> <label>客户信息</label></h3>
 			                                   <input id="customer_id" name="customer_id" type="hidden" value="${customer.cid!''}">
@@ -77,6 +78,10 @@
 							                      <div class="form-group">
 								                      <label class="control-label" for="inputSuccess">客户配送单号</label> 
 	        										  <input class="form-control" type="text" name="customerDelveryNo" id ="customerDelveryNo" value="${deliveryOrder.customer_delivery_no!''}">
+							                      </div>
+							                      <div class="form-group">
+								                      <label class="control-label" for="inputSuccess">签收单据号</label> 
+	        										  <input class="form-control" type="text" name="SignNo" id ="sign_no" value="${deliveryOrder.ref_no!''}">
 							                      </div>
 					                    </div>
 					                     <div class="panel-body"> </div>
@@ -579,7 +584,7 @@
 </script>
 
 <script src="/yh/js/delivery/delivery.js"></script>
-
+<script src="/yh/js/eeda-common.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <!-- 二维码图像 -->

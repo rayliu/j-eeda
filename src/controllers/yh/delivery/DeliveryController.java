@@ -1065,6 +1065,7 @@ public class DeliveryController extends Controller {
 		String deliveryid = getPara("delivery_id");
 		DeliveryOrder deliveryOrder = null;
 		String notifyId = getPara("notify_id");
+		String sign_document_no = getPara("sign_document_no");//签收单据号
 		String spId = getPara("sp_id");
 		String cargoNature = getPara("cargoNature");
 		String idlist3 = getPara("localArr");
@@ -1126,6 +1127,7 @@ public class DeliveryController extends Controller {
 					.set("from_warehouse_id", warehouseId)
 					.set("cargo_nature", cargoNature)
 					.set("receivingunit", receivingunit)
+					.set("ref_no", sign_document_no)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
@@ -1235,7 +1237,8 @@ public class DeliveryController extends Controller {
 					.set("receivingunit", receivingunit)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
-					.set("customer_delivery_no", getPara("customerDelveryNo"));
+					.set("customer_delivery_no", getPara("customerDelveryNo"))
+					.set("ref_no", sign_document_no);
 			
 			if(!"".equals(businessStamp) && businessStamp != null)
 				deliveryOrder.set("business_stamp", businessStamp);

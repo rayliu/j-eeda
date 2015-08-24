@@ -200,6 +200,7 @@ $(document).ready(function() {
 			
 	var saveDelivery = function(){
 		var spMessage = $("#spMessage").val();
+		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
 		var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
@@ -229,6 +230,7 @@ $(document).ready(function() {
             	// $("#style").show();
             	$("#ConfirmationBtn").attr("disabled", false);
             	$("#order_no").text(data.ORDER_NO);
+            	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
             }else{
                 alert('数据保存失败。');
