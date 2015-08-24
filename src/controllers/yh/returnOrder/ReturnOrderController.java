@@ -23,7 +23,6 @@ import models.InsuranceOrder;
 import models.Location;
 import models.OrderAttachmentFile;
 import models.Party;
-import models.Product;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
@@ -136,7 +135,7 @@ public class ReturnOrderController extends Controller {
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
 					+ " where r_o.transaction_status = '"+status
-					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-1')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit;
 		} else {
@@ -192,7 +191,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
 					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光')"
+					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-1')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 " + sLimit;
 		}
 		long startTime = Calendar.getInstance().getTimeInMillis();
