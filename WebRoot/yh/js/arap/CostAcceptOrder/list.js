@@ -432,4 +432,93 @@ $(document).ready(function() {
     $('#customer_filter1').on('blur', function(){
         $('#companyList1').hide();
     });
+    
+    var costAcceptPayedOrderTab = $('#costAcceptPayed-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "bServerSide": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+			return nRow;
+		},
+        "sAjaxSource": "/costAcceptOrder/list?status=payed",
+        "aoColumns": [
+			{ "mDataProp": null, "sWidth":"20px",
+			    "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='付款确认中' || obj.aData.STATUS=='已付款确认'){
+                        return '';
+                    }
+			        return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
+			    }
+			},
+            {"mDataProp":"ORDER_NO","sWidth":"80px",
+            	"fnRender": function(obj) {
+        			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+        		}
+            },
+            {"mDataProp":"TOTAL_AMOUNT",
+            	"sClass":"pay_amount",
+           	 	"fnRender": function(obj) {
+        		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
+        			 return '<p style="color:red">0<p>';
+        		 }else{
+        			 return obj.aData.TOTAL_AMOUNT;
+        		 }
+        	 }
+            },  
+            {"mDataProp":"CNAME", 
+            	"sClass": "cname"
+            },  
+            {"mDataProp":"PAYEE_NAME", 
+            	"sClass": "payee_name"},
+            {"mDataProp":"INVOICE_NO", "sWidth":"80px" },
+            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
+                "fnRender": function(obj) {
+                    if(obj.aData.PAYMENT_METHOD == 'cash')
+                        return '现金';
+                    else if(obj.aData.PAYMENT_METHOD == 'transfers')
+                        return '转账';
+                    else
+                    	return '';
+                }
+            },
+            {"mDataProp":"STATUS",
+                "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.STATUS;
+                }
+            },
+            /*{"mDataProp":"COST_ORDER_NO"},
+            {"mDataProp":"OFFICE_NAME"},
+            {"mDataProp":"CNAME"},*/            
+            {"mDataProp":null},     
+            {"mDataProp":null},   
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},    
+            {"mDataProp":"REMARK"},
+            {"mDataProp":null},     
+            {"mDataProp":null}                        
+        ]      
+    });
 } );

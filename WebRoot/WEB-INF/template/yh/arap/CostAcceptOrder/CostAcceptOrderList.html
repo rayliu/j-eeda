@@ -17,10 +17,15 @@
                 <div class="col-lg-12">
                 
                 	<ul id="orderTabs" class="nav nav-tabs">
-                        <li class="active"><a href="#unaudit" data-toggle="tab" data-src="create" id="costCheckOrderbasic">未复核单据</a>
+                        <li class="active">
+                        	<a href="#unaudit" data-toggle="tab" data-src="create" id="costCheckOrderbasic">未复核单据</a>
                         </li>
-                        <li class=""><a href="#audit" data-toggle="tab" id="costCheckOrderItem">已复核单据</a>
-                        </li>                               
+                        <li class="">
+                        	<a href="#audit" data-toggle="tab" id="costCheckOrderItem">已复核单据</a>
+                        </li>
+                        <li class="">
+                        	<a href="#payed" data-toggle="tab" id="costPayedOrder">已付款单据</a>
+                        </li>
                     </ul>
                 
                     
@@ -239,7 +244,7 @@
 		                                            <th>对账单号</th>
 		                                            <th>网点</th>
 		                                            <th>合计运费</th>
-		                                            <th>对账金额</th>                                            
+		                                            <th>对账金额</th>
 		                                            <th>差异金额</th>
 		                                            <th>扣款金额</th>
 		                                            <th>代收货款</th>
@@ -263,6 +268,106 @@
 		                        <!-- /.panel-body -->
 		                    </div>
                         </div>
+
+                        <div class="tab-pane fade" id="payed">
+                            <div class="panel panel-default">
+		                        
+		                        <!-- /.panel-heading -->
+		                        <div class="panel-body">
+		                        <form role="form" style="margin: 0 15px;">
+                                <div class="row search_panel">
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label class="search-label">付款确认单号</label>
+                                            <input type="text" class="form-control search-control" id="order_no_filter">
+                                        </div> 
+                                        <div class="form-group">
+                                            <label class="search-label">供应商</label>
+                                            <input type="text" class="form-control search-control" id="sp_filter"  placeholder="请输入或者选择供应商">
+                                            <ul id="spList" class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 62px; left: 118px; display: none;"></ul>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="search-label">收款人</label>
+                                            <input type="text" class="form-control search-control" id="receiver_filter">
+                                        </div>
+                                        <div class ="form-group">
+                                            <button id='query_btn' type="button" class="btn btn-primary btn-sm" >
+                                                查询  
+                                            </button>
+                                            <button type="button" class="btn btn-primary btn-sm">
+                                                清空条件  
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- end of col-lg-6-->
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label class="search-label">付款申请单号</label>
+                                            <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
+                                        </div>
+                                        <div class="form-group">                                        
+                                            <div id="datetimepicker" class="input-append date "> 
+                                                <label class="search-label">开始时间</label> 
+                                                <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
+                                                <span class="add-on">  
+                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                                </span>  
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    <div class="col-lg-4">                                       
+                                        <div class="form-group">
+                                            <label class="search-label">状态</label>
+                                            <select id="status_filter" class="form-control search-control status_filter">               
+                                                <option value=""></option>
+                                                <option value="新建">新建</option>
+                                                <option value="部分已付款">部分已付款</option>
+                                                <option value="已付款">已付款</option>     
+                                            </select>
+                                        </div>
+                                        <div class="form-group">                                                    
+                                            <span id="datetimepicker2" class="input-append date search-control "> 
+                                                <label class="search-label">结束时间</label> 
+                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
+                                                <span class="add-on">  
+                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                                </span>  
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- end of col-lg-6-->
+                                </div><!-- end of row-->
+                            </form>
+                        
+                            
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover" id="costConfirm_table" style="width: 1200px;">
+                                        <thead>
+                                            <tr>
+                                                <th>付款确认单号</th>
+                                                <th>付款申请单号</th>
+                                                <th>状态</th>
+                                                <th>供应商</th>
+                                                <th>收款人</th>
+                                                <th>付款金额</th>                                            
+                                                <th>已付金额</th>
+                                                <th>未付金额</th>
+                                                <th>备注</th>
+                                                <th>创建人</th>
+                                                <th>创建时间</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
+
+                                </div>
+		                             
+		                        </div>
+		                        <!-- /.panel-body -->
+		                    </div>
+                        </div>
                     </div>                                
                     <!-- /.panel -->
                 </div>
@@ -281,3 +386,4 @@
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/arap/CostAcceptOrder/list.js"></script>
+<script src="/yh/js/arap/CostConfirm/list.js"></script>

@@ -50,7 +50,7 @@
     				return obj.aData.PAY_AMOUNT;
     			}
         	},
-        	{"mDataProp":"NOPAY_AMOUNT",
+        	{"mDataProp":"NOPAY_AMOUNT", bVisible: false,
         		"fnRender": function(obj) {
         			$("#nopay_one").val(obj.aData.NOPAY_AMOUNT);
         			nopay = nopay + parseInt(obj.aData.NOPAY_AMOUNT) ;
