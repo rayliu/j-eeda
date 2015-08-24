@@ -144,14 +144,14 @@ public class CostAcceptOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
       
-        String statusStr = "in ('已复核','已付款确认')";
+        String statusStr = " ('已复核','已付款确认')";
         if(status!=null && status.equals("payed")){
-            statusStr = " in ('付款确认中','已付款确认')";
+            statusStr = " ('付款确认中','已付款确认')";
         };
         String sqlTotal = "select count(1) total"
 		        		+ " from arap_cost_invoice_application_order aci "
 		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status "+statusStr;
+		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in "+statusStr;
         
         String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,cao.pay_amount total_amount,c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
