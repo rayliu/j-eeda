@@ -335,7 +335,7 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
     	
-    	//"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
+    	"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
         "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
