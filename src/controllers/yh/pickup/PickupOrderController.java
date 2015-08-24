@@ -322,7 +322,7 @@ public class PickupOrderController extends Controller {
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
                     + " left join office o on o.id = tor.office_id "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车','已投保') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL 
                     + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
@@ -340,7 +340,7 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code " 
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id = tor.office_id "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车','已投保') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" 
                     + " and tor.status!='手动删除'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
@@ -359,7 +359,7 @@ public class PickupOrderController extends Controller {
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on tor.office_id = o.id "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车','已投保') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL+ "'"
                     + " and ifnull(l1.name, '') like '%"
                     + routeFrom
@@ -394,7 +394,7 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code " 
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id= tor.office_id"
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车','已投保') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " and ifnull(l1.name, '') like '%"
@@ -577,7 +577,7 @@ public class PickupOrderController extends Controller {
         
         String sql = "";
         if(!"".equals(pickId) && pickId != null){
-        	 sql = "select * from (select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
+        	 sql = " select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
              		 + " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,c.abbr customer,tor.order_no,toi.remark,"
              		 + " ifnull((select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id = '"+pickId+"'), 0) atmamount,"
                      + " ifnull((select ifnull(dt.amount, 0)  from depart_transfer dt where dt.order_item_id = toi.id and dt.pickup_id = '"+pickId+"'), 0) cargoamount,"
@@ -590,9 +590,9 @@ public class PickupOrderController extends Controller {
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
                      + " left join product pd on pd.id = toi.product_id"
-                     + " where toi.order_id in(" + orderId + ")  order by c.id) a where atmamount > 0" + sLimit;
+                     + " where toi.order_id in(" + orderId + ")  order by c.id " + sLimit;
         }else{
-        	 sql = "select * from (select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
+        	 sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
              		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
              		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and depart_id = "+departOrderId+") atmamount,"
                      + " ifnull(toi.amount, 0) cargoamount,ifnull(toi.volume, 0) cargovolume,ifnull(toi.sum_weight, 0) cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
@@ -600,7 +600,7 @@ public class PickupOrderController extends Controller {
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
                      + " left join product pd on pd.id = toi.product_id"
-                     + " where toi.order_id in(" + orderId + ")  order by c.id) a where atmamount > 0 " + sLimit;
+                     + " where toi.order_id in(" + orderId + ")  order by c.id " + sLimit;
         }
       
         List<Record> departOrderitem = Db.find(sql);

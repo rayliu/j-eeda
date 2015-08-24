@@ -235,18 +235,6 @@ $(document).ready(function() {
  		}
 	});
 	
- 	// 查看货品
-	$("#transferOrderTable").on('click', '.dateilEdit', function(e){
-		e.preventDefault();
-		
-		$("#transferOrderItemDateil").show();
-		var code = $(this).attr('code');
-		var itemId = code.substring(code.indexOf('=')+1);
-		$("#item_id").val(itemId);
-		
-		detailDataTable.fnSettings().sAjaxSource = "/returnOrder/transferOrderDetailList2?item_id="+itemId;
-		detailDataTable.fnDraw();  			
-	});
 	//修改序列号
 	$("#transferOrderTable").on('blur', 'input', function(e){
 		var ids = $(this).parent().parent().attr("id");
@@ -278,16 +266,13 @@ $(document).ready(function() {
 	$('#message_trigger_err').on('click', function(e) {
 		e.preventDefault();
 	});
-	var parentId = "chargeCheckOrderbasic";
 	
 	$("#returnOrderItemList").click(function(e){
 		e.preventDefault();
 		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-		parentId = e.target.getAttribute("id");
 	});
 	$("#returnOrderPayment").click(function(e){
 		e.preventDefault();
-		parentId = e.target.getAttribute("id");
 		
 		receipttable.fnDraw(); 
 	});
@@ -296,7 +281,6 @@ $(document).ready(function() {
 		/*if(bool){
 			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 		}*/
-		parentId = e.target.getAttribute("id");
 	});
 
 	
@@ -305,6 +289,7 @@ $(document).ready(function() {
  	$("#saveReturnOrderBtn").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
+		$("#sign_document_no").val($("#sign_no").val());
 		//异步向后台提交数据
     	$.post('/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
 			if(returnOrder.ID>0){

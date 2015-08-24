@@ -55,7 +55,8 @@ $(document).ready(function() {
 			  	$("#remark").val(data.REMARK);
 				$("#costPreInvoiceOrderId").val(data.ID);
 				$("#auditBtn").attr("disabled",false);
-				$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+				$("#saveCostPreInvoiceOrderBtn").attr("disabled",false);
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -264,8 +265,9 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveCostPreInvoiceOrderBtn").click(function(e){
+ 		$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
  		saveCostPreInvoiceOrder(e);
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		
 	});
 	
 	$("#costPreInvoiceOrderItem").click(function(e){

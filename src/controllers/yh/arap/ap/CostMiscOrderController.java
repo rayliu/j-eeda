@@ -234,7 +234,7 @@ public class CostMiscOrderController extends Controller {
 		// 获取总条数
 		String totalWhere = "";
 		String sql = "select count(1) total from arap_misc_cost_order_item amcoi "
-					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id where amco.id = "+costMiscOrderId;
+					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id where amco.id = '"+costMiscOrderId +"'";
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
@@ -247,7 +247,7 @@ public class CostMiscOrderController extends Controller {
 					+ " left join party p on p.id = aco.payee_id"
 					+ " left join contact c on c.id = p.contact_id"
 					+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
-					+ " where amco.id = "+ costMiscOrderId +" " + sLimit);
+					+ " where amco.id = '"+ costMiscOrderId +"' " + sLimit);
 
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
