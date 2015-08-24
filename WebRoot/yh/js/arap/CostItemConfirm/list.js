@@ -15,7 +15,7 @@ $(document).ready(function() {
     var costConfiremTable = $('#costConfirem-table').dataTable({
     	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
         "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
+        "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -24,16 +24,16 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/costConfirmList/list",
         "aoColumns": [ 
-            { "mDataProp": null, "sWidth":"10px",
+            { "mDataProp": null, "sWidth":"10px", "bSortable": false,
                 "fnRender": function(obj) {
 	              return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.BUSINESS_TYPE+'">';	
                 }
             },
-            {"mDataProp":"BUSINESS_TYPE", "sWidth":"75px"},            	
-            {"mDataProp":"SPNAME", "sWidth":"160px"},
+            {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px", "bSortable": false},            	
+            {"mDataProp":"SPNAME", "sWidth":"160px", "bSortable": false},
            
             	
-            {"mDataProp":null, "sWidth":"75px",//托运单号
+            {"mDataProp":null, "sWidth":"100px", "bSortable": false,//托运单号
             	"fnRender":function(obj){
             		var number = obj.aData.BOOKING_NOTE_NUMBER;
             		if(number == ""){
@@ -42,11 +42,11 @@ $(document).ready(function() {
             			return number;
             	}		
             }}, 
-            {"mDataProp":"PAY_AMOUNT", "sWidth":"50px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
-            {"mDataProp":"AMOUNT", "sWidth":"35px"},
-            {"mDataProp":"CNAME", "sWidth":"80px"},
-            {"mDataProp":null, "sWidth":"100px",
+            {"mDataProp":"PAY_AMOUNT", "sWidth":"80px", "bSortable": false},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px", "bSortable": false},
+            {"mDataProp":"AMOUNT", "sWidth":"55px", "bSortable": false},
+            {"mDataProp":"CNAME", "sWidth":"100px", "bSortable": false},
+            {"mDataProp":null, "sWidth":"130px", 
             	"fnRender":function(obj){
             		var timeStamp = obj.aData.DEPART_TIME;
             		if(timeStamp==null){
@@ -60,7 +60,7 @@ $(document).ready(function() {
             		}
             		
             	}},
-            {"mDataProp":null, "sWidth": "70px", 
+            {"mDataProp":null, "sWidth": "100px", "bSortable": false, 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -76,14 +76,14 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },   
-            {"mDataProp":"ROUTE_FROM", "sWidth":"75px"},
-            {"mDataProp":"ROUTE_TO", "sWidth":"75px"},                      
-            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"75px"},  
-		    {"mDataProp":null, "sWidth":"75px",
+            {"mDataProp":"ROUTE_FROM", "sWidth":"75px", "bSortable": false},
+            {"mDataProp":"ROUTE_TO", "sWidth":"75px", "bSortable": false},                      
+            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"75px", "bSortable": false},  
+		    {"mDataProp":null, "sWidth":"75px", "bSortable": false,
                 "fnRender": function(obj) {
                     return "未确认";
             }},
-            {"mDataProp":"ORDER_NO", "sWidth":"140px", 
+            {"mDataProp":"ORDER_NO", "sWidth":"140px", "bSortable": false, 
                 "fnRender": function(obj) {
                 	var str = "";
                     if(obj.aData.ORDER_NO.indexOf("PS") > -1){
@@ -100,9 +100,9 @@ $(document).ready(function() {
                     return str;
                 }
             },                         
-            {"mDataProp":"VOLUME", "sWidth":"35px"},                        
-            {"mDataProp":"WEIGHT", "sWidth":"40px"}, 
-            {"mDataProp":null, "sWidth":"50px",
+            {"mDataProp":"VOLUME", "sWidth":"35px", "bSortable": false},                        
+            {"mDataProp":"WEIGHT", "sWidth":"40px", "bSortable": false}, 
+            {"mDataProp":null, "sWidth":"50px", "bSortable": false,
             	"fnRender":function(obj){
             		if(obj.aData.TRANSPORT_COST == null){
             			return "";
@@ -110,17 +110,17 @@ $(document).ready(function() {
             			return obj.aData.TRANSPORT_COST;
             		}
             	}}, 
-            {"mDataProp":"CARRY_COST", "sWidth":"50px"},
-            {"mDataProp":"CLIMB_COST", "sWidth":"50px"}, 
-            {"mDataProp":"TAKE_COST", "sWidth":"50px"}, 
-            {"mDataProp":"INSURANCE_COST", "sWidth":"50px"}, 
-            {"mDataProp":"ANZHUANG_COST", "sWidth":"50px"},
-            {"mDataProp":"CANGCHU_COST", "sWidth":"50px"}, 
-            {"mDataProp":"OTHER_COST", "sWidth":"80px"}, 
+            {"mDataProp":"CARRY_COST", "sWidth":"50px", "bSortable": false},
+            {"mDataProp":"CLIMB_COST", "sWidth":"50px", "bSortable": false}, 
+            {"mDataProp":"TAKE_COST", "sWidth":"50px", "bSortable": false}, 
+            {"mDataProp":"INSURANCE_COST", "sWidth":"50px", "bSortable": false}, 
+            {"mDataProp":"ANZHUANG_COST", "sWidth":"50px", "bSortable": false},
+            {"mDataProp":"CANGCHU_COST", "sWidth":"50px", "bSortable": false}, 
+            {"mDataProp":"OTHER_COST", "sWidth":"80px", "bSortable": false}, 
             
-            {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
-            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},
-            {"mDataProp":"REMARK", "sWidth":"150px"}                         
+            {"mDataProp":"CREATE_STAMP", "sWidth":"100px", "bSortable": false}, 
+            {"mDataProp":"OFFICE_NAME", "sWidth":"80px", "bSortable": false},
+            {"mDataProp":"REMARK", "sWidth":"150px", "bSortable": false}                         
         ]      
     });	
     

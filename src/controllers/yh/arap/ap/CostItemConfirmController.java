@@ -57,7 +57,7 @@ public class CostItemConfirmController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        
+        String orderBy=getPara("sSortDir_0");
         String orderNo = getPara("orderNo");
         String sp = getPara("sp");
         String no = getPara("no");
@@ -396,7 +396,7 @@ public class CostItemConfirmController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
-        List<Record> BillingOrders = Db.find(sql + condition + " order by create_stamp desc" + sLimit);
+        List<Record> BillingOrders = Db.find(sql + condition + " order by create_stamp desc, depart_time " +orderBy+ sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
