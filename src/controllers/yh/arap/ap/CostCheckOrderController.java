@@ -736,7 +736,7 @@ public class CostCheckOrderController extends Controller {
 							+ " left join location lo2 on lo2.code = dpr.route_to "
 							+ " left join office oe on oe.id = w.office_id where dor.audit_status='已确认' group by dor.id "
 							+ " union"
-							+ " select distinct dpr.id, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,sum(toi.amount) amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount,"
+							+ " select distinct dpr.id, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,(SELECT COUNT(0) from transfer_order_item_detail where depart_id=dpr.id) amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount,"
 							+ " ((select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id  and fi.type = '应付')-(select sum(tofi.amount)"
 							+ " from transfer_order tor"
 							+ " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
