@@ -377,6 +377,9 @@ public class ReturnOrderController extends Controller {
 					deliveryOrder.set("customer_delivery_no", getPara("customer_delivery_no"));
 				}
 			}
+			if(!"".equals(getPara("sign_document_no")) && getPara("sign_document_no") != null){
+					deliveryOrder.set("ref_no", getPara("sign_document_no"));
+			}
 			deliveryOrder.update();
 			notifyPartyId = deliveryOrder.get("notify_party_id");
 			if (notifyPartyId != null) {
