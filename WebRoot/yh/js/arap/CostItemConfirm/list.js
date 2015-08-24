@@ -351,7 +351,7 @@ $(document).ready(function() {
        };
        /*=====================条件过滤=======================*/
         //过滤客户
-        $('#route_to,#route_from,#customer_name,#orderNo_filter,#operation number,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
+        $('#route_to,#operation_number,#route_from,#customer_name,#orderNo_filter,#operation number,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
         	refreshData();
      	} );
         $('#order_type_filter,#order_status_filter').on( 'change', function () {
