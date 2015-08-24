@@ -189,8 +189,8 @@ public class DeliveryController extends Controller {
 			logger.debug("total records:" + rec.getLong("total"));
 
 			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(d.receivingunit,IFNULL(trid.notify_party_company,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, trid.pieces amount, toi.amount cargoamount, tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
-					+ "( SELECT group_concat( DISTINCT doi.transfer_no SEPARATOR ' [java] ' ) FROM delivery_order_item doi WHERE delivery_id = d.id ) AS transfer_order_no,"
-					+ " ( SELECT group_concat( trid.serial_no SEPARATOR '  [java] ' )"
+					+ "( SELECT group_concat( DISTINCT doi.transfer_no SEPARATOR '\r\n' ) FROM delivery_order_item doi WHERE delivery_id = d.id ) AS transfer_order_no,"
+					+ " ( SELECT group_concat( trid.serial_no SEPARATOR '\r\n' )"
 					+ " FROM "
 					+ " delivery_order_item doi LEFT JOIN transfer_order_item_detail trid ON trid.id = doi.transfer_item_detail_id"
 					+ " WHERE doi.delivery_id = d.id ) AS serial_no FROM delivery_order d"
