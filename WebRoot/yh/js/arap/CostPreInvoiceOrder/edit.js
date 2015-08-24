@@ -713,8 +713,25 @@ $(document).ready(function() {
    	}else{
    		$("#accountTypeDiv").show();    		
    	}
-   });    
-    
-    
+   });
+   $("input[name=paymentMethod]").on('click', function(){
+	   var paymentMethod = $('input[name="paymentMethod"]:checked').val();
+	   if(paymentMethod=="transfers"){
+		   $("#acc").show();
+	   }
+	   else{
+		   $("#acc").hide();
+	   }
+   });
+   $(document).ready(function(){
+	   var paymentMethod = $('input[name="paymentMethod"]:checked').val();
+	   if(paymentMethod=="transfers"){
+		   $("#acc").show();
+	   }
+	   else{
+		   
+		   $("#acc").hide();
+	   } 
+   }); 
     
 } );
