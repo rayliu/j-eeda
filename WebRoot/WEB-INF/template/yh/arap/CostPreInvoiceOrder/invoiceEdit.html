@@ -37,7 +37,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">发票类型</label>
-                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="${invoiceApplication.bill_type!''}">
+                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="<% if(invoiceApplication.bill_type!''=="mbill")%>自开发票<%else%>${invoiceApplication.bill_type!''}">
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">开票单位</label>
