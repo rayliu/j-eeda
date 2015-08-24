@@ -16,7 +16,9 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [   
-            {"mDataProp":"ORDER_NO", "sWidth":"80px"},
+            {"mDataProp":"ORDER_NO", "sWidth":"90px"},
+            {"mDataProp":"AMOUNT", "sWidth":"30px"},
+            {"mDataProp":"ORDER_STATUS", "sWidth":"60px"},
             {"mDataProp":"ORDER_CATEGORY", "sWidth":"60px"},
             {"mDataProp":"DEPART_NO", "sWidth":"100px"},
             {"mDataProp":"ORDER_TYPE", "sWidth":"60px",
@@ -45,8 +47,7 @@ $(document).ready(function() {
             {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
             {"mDataProp":"DEPARTURE_TIME", "sWidth":"80px"},
             {"mDataProp":"ROUTE_FROM", "sWidth":"80px"},
-            {"mDataProp":"ROUTE_TO", "sWidth":"80px"},
-            {"mDataProp":"ORDER_STATUS", "sWidth":"80px"}
+            {"mDataProp":"ROUTE_TO", "sWidth":"80px"}
         ]  
     });	
     

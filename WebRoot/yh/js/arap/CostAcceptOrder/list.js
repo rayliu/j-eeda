@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-	document.title = '付款复核| '+document.title;
+	document.title = '复核付款| '+document.title;
     $('#menu_finance').addClass('active').find('ul').addClass('in');
    
     var paymentMethod = "";

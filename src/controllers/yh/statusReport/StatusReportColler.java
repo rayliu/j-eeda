@@ -216,7 +216,17 @@ public class StatusReportColler extends Controller{
 					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
 					+ " when tor.depart_assign_status = 'ALL' and (dor.status = '已入库' or dor.status = '已收货') then '到达签收' "
 					+ " when tor.depart_assign_status = 'ALL' and dor.status = '已发车' then '运输在途' "
-					+ " when tor.depart_assign_status = 'PARTIAL' and dor.status = '已发车' then '部分在途' else '新建运输' end) as order_status "
+					+ " when tor.depart_assign_status = 'PARTIAL' and dor.status = '已发车' then '部分在途' else '新建运输' end) as order_status, "
+					+" (SELECT CASE"
+                    + " WHEN tor.cargo_nature ='ATM' THEN ("
+                    + " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
+                    + "     where toid.item_id = toi.id and toi.order_id = tor.id"
+                    + " )"
+                    + " WHEN tor.cargo_nature ='cargo' THEN ("
+                    + "     select sum(toi.amount) from transfer_order_item toi"
+                    + "         where toi.order_id = tor.id"
+                    + " )"
+                    + " END ) amount "
 					+ " from transfer_order tor"
 					+ " left join depart_transfer tr on tr.order_id = tor.id "
 					+ " left join depart_order dor on dor.id = tr.depart_id"
@@ -299,7 +309,7 @@ public class StatusReportColler extends Controller{
 			//Record rec = Db.findFirst(totalSql + sLimit);
 			//logger.debug("total records:" + rec.getLong("total"));
 			// 获取当前页的数据
-			List<Record> orders =Db.find(sql + sLimit);
+			List<Record> orders =Db.find(sql + "order by tor.planning_time desc "+sLimit);
 			orderMap.put("sEcho", pageIndex);
 			//orderMap.put("iTotalRecords", rec.getLong("total"));
 			//orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
@@ -330,7 +340,15 @@ public class StatusReportColler extends Controller{
 					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
 					+ " when ror.id is not null and ror.transaction_status = '新建' then '配送到达'"
 					+ " when deo.status = '已发车' then '配送在途' "
-					+ " when deo.status = '新建' then '新建配送' end ) as order_status "
+					+ " when deo.status = '新建' then '新建配送' end ) as order_status, "
+					+ " (SELECT CASE"
+					+ "  WHEN tor.cargo_nature ='ATM' THEN ("
+		            + " select sum(doi1.amount) from delivery_order_item doi1 where doi1.delivery_id = deo.id "
+			        + " )"
+			        + " WHEN tor.cargo_nature ='cargo' THEN ("
+		            + " select sum(doi2.amount) from delivery_order_item doi2 where doi2.delivery_id = deo.id"
+			        + " )"
+			        + " END ) amount "
 					+ " from delivery_order deo"
 					+ " left join delivery_order_item doi on doi.delivery_id = deo.id"
 					+ " left join delivery_order_milestone dom on dom.delivery_id = deo.id"
@@ -409,7 +427,7 @@ public class StatusReportColler extends Controller{
 			//Record rec = Db.findFirst(totalSql + sLimit);
 			//logger.debug("total records:" + rec.getLong("total"));
 			// 获取当前页的数据
-			List<Record> orders =Db.find(sql + sLimit);
+			List<Record> orders =Db.find(sql + "order by tor.planning_time desc "+sLimit);
 			orderMap.put("sEcho", pageIndex);
 			//orderMap.put("iTotalRecords", rec.getLong("total"));
 			//orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
