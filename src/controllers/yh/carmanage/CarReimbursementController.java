@@ -62,7 +62,7 @@ public class CarReimbursementController extends Controller {
         	sqlTotal = "select count(0) total from reimbursement_order ro "
         			+ " left join user_login l1 on l1.id = ro.create_id"
         			+ " left join office o on o.id = l1.office_id"
-        			+ " where o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')";
+        			+ " where ro.order_no like 'XCBX%' and o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')";
         	sql = "select ro.id, ro.order_no,ro.status,ro.create_stamp,ro.audit_stamp,l1.c_name creator, l2.c_name auditor, "
         			+ " (select group_concat(order_no separator '<br>' ) from car_summary_order cso where cso.reimbursement_order_id = ro.id) cso_order_no,"
         			+ " (select sum(cso.next_start_car_amount + cso.month_refuel_amount) from car_summary_order cso where cso.id in "
@@ -76,13 +76,13 @@ public class CarReimbursementController extends Controller {
         			+ " left join user_login l1 on l1.id = ro.create_id"
         			+ " left join user_login l2 on l2.id = ro.audit_id"
         			+ " left join office o on o.id = l1.office_id"
-        			+ " where o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')"
+        			+ " where ro.order_no like 'XCBX%' and o.id in (select office_id from user_office where user_name = '"+currentUser.getPrincipal()+"')"
         			+ " order by ro.create_stamp desc " + sLimit;
         }else{
         	sqlTotal = "select count(0) total from reimbursement_order ro"
         			+ " left join user_login l1 on l1.id = ro.create_id"
         			+ " left join user_login l2 on l2.id = ro.audit_id"
-        			+ " where ifnull(ro.order_no, '') like '%" + carReimbursementNo + "%'"
+        			+ " where ro.order_no like 'XCBX%' and ifnull(ro.order_no, '') like '%" + carReimbursementNo + "%'"
         			+ " and ifnull(ro.status, '') like '%" + carReimbursementStatus + "%'"
         			+ " and ifnull(l2.c_name, '') like '%" + acditorName + "%'";
         	sql = "select ro.id, ro.order_no,ro.status,ro.create_stamp,ro.audit_stamp,l1.c_name creator, l2.c_name auditor, "
@@ -93,7 +93,7 @@ public class CarReimbursementController extends Controller {
         			+ " (select id from	car_summary_order cso where	cso.reimbursement_order_id = ro.id) ) deduct_cost,    "
         			+ " (SELECT round(sum(cso.next_start_car_amount+cso.month_refuel_amount) -sum(cso.deduct_apportion_amount),2)"
         			+ " FROM car_summary_order cso"
-        			+ " WHERE cso.id IN ( SELECT id FROM car_summary_order cso WHERE cso.reimbursement_order_id = ro.id)) actual_cost"
+        			+ " WHERE ro.order_no like 'XCBX%' and cso.id IN ( SELECT id FROM car_summary_order cso WHERE cso.reimbursement_order_id = ro.id)) actual_cost"
         			+ " from reimbursement_order ro "
         			+ " left join user_login l1 on l1.id = ro.create_id"
         			+ " left join user_login l2 on l2.id = ro.audit_id"

@@ -68,8 +68,18 @@
                                             </div>                               
                                     </div>
                                     <!-- /.col-lg-6 (nested) -->
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-6">
                                         <h2>应收信息</h2>
+                                        <div class="form-group" id="paymentMethods">
+                                            <label class="label-margin">业务类型</label>
+                                                <input id="paymentMethodRadio" type="hidden" value="${arapMiscChargeOrder.payment_method!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="biz_type" id="paymentMethod1" value="biz" checked="">业务(流转到对账)
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="biz_type" id="paymentMethod2" value="non_biz">非业务(流转到财务)
+                                                </label>
+                                        </div> 
                                         <!-- <div class="form-group">
                                             <label>客户</label>
                                             <label class="radio-inline" id="company">${customer.company_name!''}</label>
@@ -88,17 +98,8 @@
                                             <label>收款金额</label>
                                             <span id="totalAmountSpan">${arapMiscChargeOrder.total_amount!''}</span>
                                         </div>
-                                        <!--div class="form-group" id="paymentMethods">
-                                            <label class="label-margin">收款方式</label>
-                                            	<input id="paymentMethodRadio" type="hidden" value="${arapMiscChargeOrder.payment_method!''}"/>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="paymentMethod" id="paymentMethod1" value="cash" checked="">现金
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账
-                                                </label>
-                                        </div> 
-                                        <div class="form-group" style="display: none;" id="accountTypeDiv">
+                                        
+                                        <!--div class="form-group" style="display: none;" id="accountTypeDiv">
                                             <label>银行账户</label>
                                             <input id="hideAccountId" type="hidden" value="${arapMiscChargeOrder.account_id!''}" />   
                                             <select id="accountTypeSelect" class="form-control" name="accountTypeSelect"></select> 

@@ -115,18 +115,18 @@ public class CostReimbursementOrder extends Controller {
         String sqlTotal = "";
         String sql = "";
         if(orderNo == null && status == null && auditName == null){
-	        sqlTotal = "select count(1) total from reimbursement_order";
+	        sqlTotal = "select count(1) total from reimbursement_order ro where ro.order_no like 'YFBX%'";
 	    	 
 	        sql = "select ro.*,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select user_name from user_login where id = ro.create_id) createName,"
 	        		+ " (select user_name from user_login where id = ro.audit_id) auditName,"
 	        		+ " (select user_name from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
-	        		+ " group by ro.id order by ro.create_stamp desc " + sLimit;
+	        		+ " where ro.order_no like 'YFBX%'  group by ro.id order by ro.create_stamp desc " + sLimit;
         }else{
         	sqlTotal = "select count(1) total from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
         			+ " left join user_login u on u.id  = ro.audit_id "
-	        		+ " where ro.order_no like '%" + orderNo + "%'"
+	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'";
 	    	 
@@ -136,7 +136,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " (select user_name from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " left join user_login u on u.id  = ro.audit_id "
-	        		+ " where ro.order_no like '%" + orderNo + "%'"
+	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'"
 	        		+ " group by ro.id order by ro.create_stamp desc " + sLimit;

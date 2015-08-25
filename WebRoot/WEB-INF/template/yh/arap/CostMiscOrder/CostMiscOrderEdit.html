@@ -71,6 +71,16 @@
                                     <!-- /.col-lg-6 (nested) -->
                                     <div class="col-lg-6">
                                         <h2></h2>
+                                        <div class="form-group" id="paymentMethods">
+                                            <label class="label-margin">业务类型</label>
+                                                <input id="paymentMethodRadio" type="hidden" value="${arapMiscChargeOrder.payment_method!''}"/>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="biz_type" id="paymentMethod1" value="biz" checked="">业务(流转到对账)
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="biz_type" id="paymentMethod2" value="non_biz">非业务(流转到财务)
+                                                </label>
+                                        </div>
 		                                        <div class="form-group">
 		                                            <label class="search-label">客户名称</label>
 		                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择客户" value="${customerContact.company_name!''}">
