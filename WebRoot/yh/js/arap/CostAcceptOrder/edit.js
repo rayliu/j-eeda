@@ -55,7 +55,7 @@
     
     
     $("#checkBtn").on('click',function(){
-		$.get("/costAcceptOrder/checkStatus", {ids:id,order:$("#type").val()}, function(data){
+		$.get("/costAcceptOrder/checkStatus", {ids:id,order:$("#attribute").val()}, function(data){
 			if(data.success){
 				$.scojs_message('复核成功', $.scojs_message.TYPE_OK);
 				$("#checkBtn").attr("disabled", true);

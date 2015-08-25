@@ -42,6 +42,7 @@ public class CostAcceptOrderController extends Controller {
     public void edit2() {
     	
     	String id = getPara("id");
+    	String attribute = getPara("attribute");
     	String sql = "SELECT ul.c_name,c.abbr cname,aciao.* FROM arap_cost_invoice_application_order aciao "
     			+ " LEFT JOIN party p ON p.id = aciao.payee_id "
     			+ " LEFT JOIN contact c ON c.id = p.contact_id "
@@ -49,8 +50,9 @@ public class CostAcceptOrderController extends Controller {
     			+ " where aciao.id = '"+id+"'";
     	Record re = Db.findFirst(sql);
     	setAttr("invoiceApplication", re);
+    	setAttr("attribute", attribute);
     	
-    	render("/yh/arap/CostPreInvoiceOrder/invoiceEdit.html");
+    	render("/yh/arap/CostAcceptOrder/invoiceEdit.html");
     }
     
     
