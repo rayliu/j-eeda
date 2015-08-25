@@ -88,6 +88,7 @@
         		}
    			},
    			{ "mDataProp": "PLANNING_TIME","sWidth":"100px" },
+   			{ "mDataProp": "SERIAL_NO","sWidth":"60px"},
    			{ "mDataProp": "ITEM_NO","sWidth":"80px"},
    			{ "mDataProp": "RECEIPT_PERSON","sWidth":"60px"},
             { "mDataProp": "RECEIPT_PHONE","sWidth":"80px"},
@@ -99,8 +100,7 @@
             { "mDataProp": "TRANSFER_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "FROM_NAME","sWidth":"80px"},
             { "mDataProp": "TO_NAME","sWidth":"80px"},
-            { "mDataProp": "ADDRESS","sWidth":"120px"},
-            { "mDataProp": "SERIAL_NO","sWidth":"60px"},
+            { "mDataProp": "ADDRESS","sWidth":"120px"}, 
             /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
@@ -142,6 +142,7 @@
         		}
    			},
    		    { "mDataProp": "WAREHOUSE_NAME","sWidth":"100px"},
+   		    { "mDataProp": "SERIAL_NO","sWidth":"120px"},
    		    { "mDataProp": "ITEM_NO","sWidth":"80px"},
    		    { "mDataProp": "A_AMOUNT","sWidth":"30px"},
    		    { "mDataProp": "RECEIVING_UNIT","sWidth":"100px"},
@@ -153,7 +154,6 @@
             { "mDataProp": "FROM_NAME","sWidth":"120px"},
             { "mDataProp": "TO_NAME","sWidth":"120px"},
             { "mDataProp": "ADDRESS","sWidth":"120px"},
-            { "mDataProp": "SERIAL_NO","sWidth":"120px"},
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
             { "mDataProp": "CREATE_DATE","sWidth":"140px" },
