@@ -306,15 +306,15 @@ public class StatusReportColler extends Controller{
 			}
 			
 			// 获取总条数
-			//Record rec = Db.findFirst(totalSql + sLimit);
-			//logger.debug("total records:" + rec.getLong("total"));
+			Record rec = Db.findFirst(totalSql);
+			logger.debug("total records:" + rec.getLong("total"));
 			// 获取当前页的数据
 			List<Record> orders =Db.find(sql + "order by tor.planning_time desc "+sLimit);
 			orderMap.put("sEcho", pageIndex);
-			//orderMap.put("iTotalRecords", rec.getLong("total"));
-			//orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-			orderMap.put("iTotalRecords", orders.size());
-			orderMap.put("iTotalDisplayRecords", orders.size());
+			orderMap.put("iTotalRecords", rec.getLong("total"));
+			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+			//orderMap.put("iTotalRecords", rec.size());
+			//orderMap.put("iTotalDisplayRecords", orders.size());
 			orderMap.put("aaData", orders);
 		}else if("deliveryOrder".equals(orderNoType) && "deliveryStatus".equals(orderStatusType)){
 			// 获取总条数
