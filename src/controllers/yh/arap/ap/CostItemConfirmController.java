@@ -397,7 +397,7 @@ public class CostItemConfirmController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
-        List<Record> BillingOrders = Db.find(sql + condition + " order by create_stamp desc, depart_time " +orderBy+ sLimit);
+        List<Record> BillingOrders = Db.find(sql + condition + " order by depart_time "+ orderBy + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
