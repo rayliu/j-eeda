@@ -134,13 +134,14 @@ $(document).ready(function() {
       	var endTime_filter = $("#endTime_filter").val();
       	var warehouse = $("#warehouse").val();
       	var serial_no = $("#serial_no").val();
-      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no;
+      	var delivery_no = $("#delivery_no").val();
+      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
       	dataTable.fnDraw();
     };
     
     
     //条件筛选
-	$("#orderNo_filter ,#transfer_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no").on('keyup', function () {    	 	
+	$("#orderNo_filter,#delivery_no,#transfer_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no").on('keyup', function () {    	 	
 		refreshData();
       });
 	$("#status_filter").on('change',function(){

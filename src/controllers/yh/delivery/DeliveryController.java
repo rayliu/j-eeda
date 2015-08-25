@@ -80,6 +80,7 @@ public class DeliveryController extends Controller {
 		String endTime_filter = getPara("endTime_filter");
 		String warehouse = getPara("warehouse");
 		String serial_no = getPara("serial_no");
+		String delivery_no = getPara("delivery_no");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -195,6 +196,8 @@ public class DeliveryController extends Controller {
 					+ status_filter
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer_filter
+					+ "%' and ifnull(d.order_no,'') like '%"
+					+ delivery_no
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transfer_filter
 					+ "%' and ifnull(c2.abbr,'') like'%"
@@ -251,6 +254,8 @@ public class DeliveryController extends Controller {
 					+ status_filter
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer_filter
+					+ "%' and ifnull(d.order_no,'') like '%"
+					+ delivery_no
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transfer_filter
 					+ "%' and ifnull(c2.abbr,'') like'%"
