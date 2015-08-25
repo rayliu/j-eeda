@@ -365,6 +365,13 @@
 	//transferOrderForm 不需要提交	
  	$("#saveTransferOrderBtn").click(function(e){
  		e.preventDefault();
+ 		var mode=$("input[name='pickupMode']:checked").val();
+ 		if(mode=="routeSP"||mode=="pickupSP"){
+ 			if($("#sp_id").val()==""){
+ 				$("#acc").show();
+ 				return false;
+ 			}
+ 		}
  		clickSavePickupOrder(e);
 	});
    
