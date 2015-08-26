@@ -27,16 +27,8 @@ $(document).ready(function() {
             {"mDataProp":"CUSTOMER" , "sWidth":"70px"},//客户
             {"mDataProp":"SERIAL_NO", "sWidth":"100px"},//序列号
             {"mDataProp":"ITEM_NO","sWidth":"90px"},//型号
-            {"mDataProp":null,//件数
-            	"sWidth":"50px",
-            	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == 'cargo'){
-            			return obj.aData.CARGOAMOUNT;
-            		}else{
-            			return obj.aData.AMOUNT;
-            		}	
-            	}
-            },
+            {"mDataProp":"AMOUNT","sWidth":"50px"},//数量
+            {"mDataProp":"PCS_AMOUNT", "sWidth":"50px"},//件数
             {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
             {"mDataProp":"COMPANY"},//地址
             {"mDataProp":"DRIVER","sWidth":"70px"},//联系人
