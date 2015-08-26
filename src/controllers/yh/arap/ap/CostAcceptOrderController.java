@@ -107,7 +107,8 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " where ro.STATUS='audit') as a";
         
         String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
-        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) total_amount, "
+        		+ " aci.total_amount total_amount, "
+        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
         		+ " c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
@@ -117,6 +118,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " ro.STATUS,'报销单' attribute,null as invoice_no,ro.create_stamp create_time,ro.remark,"
         		+ " (SELECT round(sum(cso.next_start_car_amount + cso.month_refuel_amount) - sum(cso.deduct_apportion_amount),2)"
         		+ " FROM car_summary_order cso WHERE cso.id IN (SELECT id FROM car_summary_order cso WHERE cso.reimbursement_order_id = ro.id)) actual_cost,"
+        		+ " null as application ,"
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
@@ -157,8 +159,9 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in "+statusStr;
         
         String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
-        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) total_amount, "
-        		+ "c.abbr cname "
+        		+ " aci.total_amount total_amount, "
+        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
+        		+ " c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in "+statusStr+" group by aci.id "
@@ -167,6 +170,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,ro.remark,"
         		+ " (SELECT round(sum(cso.next_start_car_amount + cso.month_refuel_amount) - sum(cso.deduct_apportion_amount),2)"
         		+ " FROM car_summary_order cso WHERE cso.id IN (SELECT id FROM car_summary_order cso WHERE cso.reimbursement_order_id = ro.id)) actual_cost,"
+        		+ " null as application ,"
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"

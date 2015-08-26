@@ -50,6 +50,20 @@ $(document).ready(function() {
             			 return obj.aData.TOTAL_AMOUNT;
             		 }
             	 }
+            },
+            {"mDataProp":"APPLICATION_AMOUNT",
+            	"sClass": "pay_amount",
+            	 "fnRender": function(obj) {
+            		 if(obj.aData.APPLICATION_AMOUNT == null || obj.aData.APPLICATION_AMOUNT == '' ){
+            			 if(obj.aData.ATTRIBUTE =='对账单'){
+            				 return '<p style="color:red">0<p>';
+            			 }else{
+            				 return '';
+            			 }
+            		 }else{
+            			 return obj.aData.APPLICATION_AMOUNT;
+            		 }
+            	 }
             },  
             {"mDataProp":"CNAME", "sWidth":"150px"},   
             {"mDataProp":"PAYEE_NAME", "sWidth":"150px"},
@@ -159,6 +173,16 @@ $(document).ready(function() {
         			 return obj.aData.TOTAL_AMOUNT;
         		 }
         	 }
+            },  
+            {"mDataProp":"APPLICATION_AMOUNT",
+            	"sClass": "pay_amount",
+            	 "fnRender": function(obj) {
+            		 if(obj.aData.APPLICATION_AMOUNT == null || obj.aData.APPLICATION_AMOUNT == '' ){
+            			 return '<p>0<p>';
+            		 }else{
+            			 return obj.aData.APPLICATION_AMOUNT;
+            		 }
+            	 }
             },  
             {"mDataProp":"CNAME", 
             	"sClass": "cname"
