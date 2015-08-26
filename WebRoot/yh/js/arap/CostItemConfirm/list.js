@@ -58,8 +58,20 @@ $(document).ready(function() {
             		}else{
             			return subtimeStamp;
             		}
-            		
             	}},
+            	{"mDataProp":null, "sWidth":"130px", "bSortable": false,
+                	"fnRender":function(obj){
+                		var timeStamp = obj.aData.PLANNING_TIME1;
+                		if(timeStamp==null || typeof(timeStamp) =="object"){
+                			return "";
+                		}
+                		var subtimeStamp=timeStamp;
+                		if(timeStamp == ""){
+                			return "";
+                		}else{
+                			return subtimeStamp;
+                		}
+                	}},
             	{"mDataProp":"ORDER_NO", "sWidth":"140px", "bSortable": false, 
                     "fnRender": function(obj) {
                     	var str = "";
@@ -118,7 +130,20 @@ $(document).ready(function() {
             {"mDataProp":"CANGCHU_COST", "sWidth":"50px", "bSortable": false}, 
             {"mDataProp":"OTHER_COST", "sWidth":"80px", "bSortable": false}, 
             
-            {"mDataProp":"CREATE_STAMP", "sWidth":"100px", "bSortable": false}, 
+            {"mDataProp":null, "sWidth":"100px", "bSortable": false,
+            	"fnRender":function(obj){
+            		var timeStamp = obj.aData.CREATE_STAMP;
+            		if(timeStamp==null || typeof(timeStamp) =="object"){
+            			return "";
+            		}
+            		var subtimeStamp=timeStamp.substring(0,10);
+            		if(timeStamp == ""){
+            			return "";
+            		}else{
+            			return subtimeStamp;
+            		}
+            	}
+            }, 
             {"mDataProp":"OFFICE_NAME", "sWidth":"80px", "bSortable": false},
             {"mDataProp":"REMARK", "sWidth":"150px", "bSortable": false}                         
         ]      
@@ -139,8 +164,7 @@ $(document).ready(function() {
         var orderNos = orderNoArr.join(",");
         $.post("/costConfirmList/costConfiremReturnOrder", {ids:ids, orderNos:orderNos}, function(data){
         	if(data.success){
-        		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list";
-        		costConfiremTable.fnDraw(); 
+        		refreshData();
         	}
         },'json');
     });
