@@ -69,6 +69,7 @@
        /* "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  */    	  
 		"bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
+        "bProcessing": true,
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -126,6 +127,7 @@
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
+        "bProcessing": true,
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
