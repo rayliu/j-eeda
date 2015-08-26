@@ -106,10 +106,11 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
 		        		+ " where ro.STATUS='audit') as a";
         
-        String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,cao.pay_amount total_amount,c.abbr cname "
+        String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) total_amount, "
+        		+ " c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
-        		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id "
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id "
         		+ " UNION"
         		+ " SELECT ro.id, ro.order_no,null as payment_method,null as payee_name,null as account_id,"
