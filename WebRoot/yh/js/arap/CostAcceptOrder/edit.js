@@ -1,5 +1,5 @@
 ﻿$(document).ready(function() {
-	document.title = '付款申请单| '+document.title;
+	document.title = '付款申请复核单| '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 
