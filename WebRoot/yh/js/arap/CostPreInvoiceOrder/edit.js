@@ -40,6 +40,7 @@ $(document).ready(function() {
 		$("#billing").val($("#billing_unit").val());
 		$("#paymentMethod").val($("input[name='paymentMethod']:checked").val());
 		$("#billtype").val($("input[name='payment']:checked").val());
+		$("#num_name").val($("#num_name1").val());
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -145,6 +146,7 @@ $(document).ready(function() {
 	
 	//开票单位
 	$('#billing_unit').on('keyup click', function(){
+		payment();
 		var inputStr = $('#billing_unit').val();
 		var billingList =$("#billingList");
 		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
@@ -179,6 +181,7 @@ $(document).ready(function() {
 		var message = $(this).text();
 		$('#billing_unit').val(message.substring(0, message.indexOf(" ")));
         $('#billingList').hide();
+        payment();
     });
 	
 	// 审核
@@ -252,7 +255,31 @@ $(document).ready(function() {
 	$('#message_trigger_err').on('click', function(e) {
 		e.preventDefault();
 	});
-	
+	$("input[name='payment']").on('click', function(e) {
+		payment();
+	});
+	payment=function() {
+		var payment=$("input[name='payment']:checked").val();
+		if(payment=="mbill"){
+			$("#make_collections").attr("readonly","readonly");
+			$("#make_collections").val($("#sp_filter").val());
+			$("#num_name1").val($("#sp_filter").val());
+			$("#payeename").attr("readonly","readonly");
+			$("#payeename").val("");
+		}
+		else if(payment=="dbill"){
+			$("#make_collections").attr("readonly","readonly");
+			$("#make_collections").val($("#billing_unit").val());
+			$("#num_name1").val($("#billing_unit").val());
+			$("#payeename").attr("readonly","readonly");
+			$("#payeename").val("");
+		}
+		else{
+			$("#make_collections").removeAttr("readonly");
+			$("#payeename").removeAttr("readonly");
+			$("#num_name1").val("");
+		}
+	};
 	//设置一个变量值，用来保存当前的ID
 	var parentId = "costPreInvoiceOrderbasic";
 	$("#transferOrderMilestoneList").click(function(e){
@@ -724,6 +751,7 @@ $(document).ready(function() {
 	   }
    });
    $(document).ready(function(){
+	   payment();
 	   var paymentMethod = $('input[name="paymentMethod"]:checked').val();
 	   if(paymentMethod=="transfers"){
 		   $("#acc").show();

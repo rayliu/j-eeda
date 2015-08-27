@@ -47,6 +47,7 @@
                                         	<input type="hidden" id="paymentMethod">
                                         	<input type="hidden" id="billing" name="billing" value="">
                                         	<input type="hidden" id="billtype" name="billtype" value="">
+                                        	<input type="hidden" id="num_name" name="num_name" value="">
                                         	<input id="sp_id" type="hidden" name="sp_id" >
                                         	<input type="hidden" id="payee_unit" name="payee_unit" />
 		                                    <h2>申请信息</h2>
@@ -114,7 +115,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>收&nbsp;&nbsp;款&nbsp;&nbsp;人</label>
-                                            <input  class="form-control search-control" name="payeename" type="text" value="${customer.receiver!''}${payee_name!''}">
+                                            <input  class="form-control search-control" id="payeename" name="payeename" type="text" value="${customer.receiver!''}${payee_name!''}">
                                         </div>
                                         
                                         <div>
@@ -136,8 +137,10 @@
                                                 <div id="acc">
                                                   <p> <label>账&nbsp;&nbsp;&nbsp;&nbsp;号</label>
                                                <input  class="form-control search-control" id="bank_no1" name="payeenumber" type="text" value="${customer.bank_no!''}${bank_no!''}"></p>    
-											    <label>开户行</label>
-                                              <input  class="form-control search-control" id="bank_name1" name=“bankname" type="text" value="${customer.bank_name!''}${bank_name!''}">
+											    <p><label>开户行</label>
+                                              <input  class="form-control search-control" id="bank_name1" name=“bankname" type="text" value="${customer.bank_name!''}${bank_name!''}"></p> 
+                                               <label>账户名</label>
+                                              <input  class="form-control search-control" readonly="ture" id="num_name1" name=“numname" type="text" value="${customer.receiver!''}${num_name!''}">
                                                </div>
                                         </div>
                                             注意事项：收款单位是用来打印PDF"付款申请单"里的收款单位 
