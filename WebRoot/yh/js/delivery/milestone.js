@@ -82,15 +82,19 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.confirmDelivery', function(e){
     	var delivery_id =$(this).attr("code");
     	var $text = $(this).parent();
-		$text.find('#arriveBtn').attr('disabled',true);
+    	var status = $(this).parent().parent().find('td')[1];
+    	$text.find('#arriveBtn').attr('disabled',true);
     	if(confirm("到达确认 吗？")){
     		$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
     			var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
     			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
     			//detailTable.fnDraw(); 
-    			$text.find('a').html('已到达');
+    			$(status).html('已送达');
+    			$text.find('a').html('已送达');
     			
     		},'json');
+        }else{
+        	$text.find('#arriveBtn').attr('disabled',false);
         }
     });
     $('#milestone_table').dataTable({
@@ -214,10 +218,8 @@ $(document).ready(function() {
 	
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
-	
- 
     
-    $('#endTime_filter ,#beginTime_filter  ,#deliveryNo_filter  ,#transferorderNo_filter').on( 'keyup click', function () {
+    $('#endTime_filter ,#beginTime_filter  ,#deliveryNo_filter  ,#transferorderNo_filter, #status').on('keyup click', function(){
     	//console.log($("#sp_filter").val());
     	var deliveryNo = $("#deliveryNo_filter").val();
     	var customer = $("#customer_filter").val();
@@ -225,9 +227,10 @@ $(document).ready(function() {
     	var sp = $("#sp_filter").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
+    	var status  = $("#status").val();
+    	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status;
     	detailTable.fnDraw();
-    } );
+    });
 	
     $('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  

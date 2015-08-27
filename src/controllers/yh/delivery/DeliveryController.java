@@ -287,6 +287,17 @@ public class DeliveryController extends Controller {
 		String sp = getPara("sp");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String status = getPara("status");
+		if(status != null && status != ""){
+			if(status.equals("ok")){
+				status = "已签收";
+			}else{
+				status = "新建";
+			}
+		}else{
+			status = "";
+		}
+		
 
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -347,6 +358,8 @@ public class DeliveryController extends Controller {
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
+					+ "%' and ifnull(d.status,'') like '%"
+					+ status
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo
 					+ "%' and ifnull(c2.abbr,'') like'%"
@@ -376,6 +389,8 @@ public class DeliveryController extends Controller {
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
+					+ "%' and ifnull(d.status,'') like '%"
+					+ status
 					+ "%' and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo
 					+ "%' and ifnull(c2.abbr,'') like'%"
