@@ -53,7 +53,7 @@ public class ChargeCheckOrderController extends Controller {
 		String ids = getPara("ids");
 		String order = getPara("order");
 		setAttr("returnOrderIds", ids);
-		setAttr("order", order);
+		setAttr("orders", order);
 		String beginTime = getPara("beginTime");
 		if (beginTime != null && !"".equals(beginTime)) {
 			setAttr("beginTime", beginTime);
