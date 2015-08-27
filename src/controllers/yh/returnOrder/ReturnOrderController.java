@@ -100,22 +100,24 @@ public class ReturnOrderController extends Controller {
                 + " LEFT JOIN location lo2 ON ifnull(tor.route_to, tor2.route_to) = lo2. CODE"
                 + " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
                 + " LEFT JOIN party p3 ON p3.id = tor.notify_party_id"
-                + " LEFT JOIN contact c3 ON c3.id = p3.contact_id";
+                + " LEFT JOIN contact c3 ON c3.id = p3.contact_id"
+                + " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
+                + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
 		
 		if ((order_no == null || order_no == "") && (tr_order_no == null || tr_order_no == "") && (de_order_no == null || de_order_no == "")
 				 && (time_one == null|| time_one == "")  && (time_two == null || time_two == "") && (customer == null || customer == "")) {
 			// 获取总条数
 			sqlTotal = "select count(1) total "+fromSql
 					+ " where r_o.transaction_status = '"+status
-					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
 			// 获取当前页的数据
 			sql = "select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
-					+ " ifnull(c3.contact_person, c2.contact_person) receipt_person, "
-					+ " ifnull(c3.phone, c2.phone) receipt_phone,"
+					+ " ifnull(c4.contact_person, '') receipt_person, "
+					+ " ifnull(c4.phone, '') receipt_phone,"
 					+ " ifnull(tor.receiving_unit, tor2.receiving_unit) receiving_unit,"
-					+ " ifnull(c3.address, c2.address) receipt_address,"
+					+ " ifnull(c4.address, '') receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " ifnull(toid.item_no, (select item_no from transfer_order_item toi where toi.id = doi.transfer_item_id)) item_no,"
 					+ " (SELECT CASE"
@@ -135,7 +137,7 @@ public class ReturnOrderController extends Controller {
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
 					+ " where r_o.transaction_status = '"+status
-					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-1')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit;
 		} else {
@@ -156,7 +158,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
 					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-30')and ifnull(c.abbr, c2.abbr)='江苏国光')"
+					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
 
 			// 获取当前页的数据
@@ -164,11 +166,11 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor.route_from,tor2.route_from) route_from,"
 	                +" lo. NAME from_name,ifnull(tor.route_to, tor2.route_to) route_to,"
 	                +" lo2. NAME to_name,ifnull(tor.address, tor2.address) address,"
-                    +" ifnull(c3.contact_person, c2.contact_person) receipt_person,"
-	                +" ifnull(c3.phone, c2.phone) receipt_phone,"
+                    +" ifnull(c4.contact_person, '') receipt_person,"
+	                +" ifnull(c4.phone, '') receipt_phone,"
 	                + "ifnull(w.warehouse_name, '') warehouse_name,"
 	                +" ifnull(tor.receiving_unit, tor2.receiving_unit) receiving_unit,"
-	                +" ifnull(c3.address, c2.address) receipt_address,toid.serial_no,toid.item_no,"
+	                +" ifnull(c4.address, '') receipt_address,toid.serial_no,toid.item_no,"
                     +" (SELECT sum(toi.amount) FROM transfer_order_item toi where toi.order_id = tor.id) amount,"
 	                +" tor.planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark,"
                     +" ifnull(nullif(usl.c_name, ''),usl.user_name) AS creator_name,"
@@ -196,7 +198,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
 					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
 					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
-					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-1')and ifnull(c.abbr, c2.abbr)='江苏国光')"
+					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 " + sLimit;
 		}
 		long startTime = Calendar.getInstance().getTimeInMillis();
