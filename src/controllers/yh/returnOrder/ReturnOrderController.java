@@ -398,7 +398,7 @@ public class ReturnOrderController extends Controller {
 				// 计算配送单的触发的应收
 				List<Record> transferOrderItemDetailList = Db.
 						find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryOrder.get("id"));
-		        calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
+		        calculateCharge(users.get(0).getLong("id"), deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
 			}
 		}
 		returnOrder.set("remark", getPara("remark"));
@@ -486,21 +486,37 @@ public class ReturnOrderController extends Controller {
 			deliveryOrder.set("sign_status", "已回单");
 			deliveryOrder.update();
 
-			DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
-			transferOrderMilestone.set("status", "已签收");
+			DeliveryOrderMilestone doMilestone = new DeliveryOrderMilestone();
+			doMilestone.set("status", "已签收");
 			String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			transferOrderMilestone.set("create_by", users.get(0).get("id"));
-			transferOrderMilestone.set("location", "");
+			doMilestone.set("create_by", users.get(0).get("id"));
+			doMilestone.set("location", "");
 			utilDate = new java.util.Date();
 			sqlDate = new java.sql.Timestamp(utilDate.getTime());
-			transferOrderMilestone.set("create_stamp", sqlDate);
-			transferOrderMilestone.set("delivery_id", deliveryOrder.get("id"));
-			// transferOrderMilestone.set("type",
-			// TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-			transferOrderMilestone.save();
+			doMilestone.set("create_stamp", sqlDate);
+			doMilestone.set("delivery_id", deliveryOrder.get("id"));
+
+			doMilestone.save();
+			
+			//更新运输单状态
+			String toSql= "select transfer_order_id from delivery_order_item where delivery_id='"+deliveryId+"'";//找到运输单
+			List<Record> toList = Db.find(toSql);
+			for (Record to : toList) {
+				Long orderId = to.getLong("transfer_order_id");
+				TransferOrder tOrder = TransferOrder.dao.findById(orderId);
+	    		String leftAmountSql= "select sum(amount)-ifnull(sum(complete_amount),0) left_amount from transfer_order_item toi where order_id='"+orderId+"'";
+	    		Record rec = Db.findFirst(leftAmountSql);
+	    		if(rec!=null && rec.getDouble("left_amount")>0){
+	    			tOrder.set("status", "部分已签收");
+				}else{
+					tOrder.set("status", "已签收");
+				}
+	    		tOrder.update();
+			}
+			
 
 		} else {
 			TransferOrder transferOrder = TransferOrder.dao.findById(returnOrder.get("transfer_order_id"));
@@ -528,7 +544,7 @@ public class ReturnOrderController extends Controller {
 		renderJson("{\"success\":true}");
 	}
 	//计算ATM合同费用
-	public void calculateCharge(List<UserLogin> users, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemDetailList) {
+	public void calculateCharge(Long userId, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemDetailList) {
 		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
 		//String chargeType = "perUnit";
 		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
@@ -558,7 +574,7 @@ public class ReturnOrderController extends Controller {
 	}
 	
 	//计算普货合同费用
-	public void calculateChargeGeneral(List<UserLogin> users, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemList) {
+	public void calculateChargeGeneral(Long userId, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemList) {
 		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
 		//String chargeType = "perUnit";
 		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
@@ -582,7 +598,7 @@ public class ReturnOrderController extends Controller {
         	genFinPerCar(customerContract, chargeType, deliveryOrder, transferOrder, returnOrderId);
         } else if ("perCargo".equals(chargeType)) {
         	//每次都新生成一个helper来处理计算，防止并发问题。
-            ReturnOrderPaymentHelper.getInstance().genFinPerCargo(users, deliveryOrder, transferOrderItemList, customerContract, chargeType, returnOrderId, transferOrder);
+            ReturnOrderPaymentHelper.getInstance().genFinPerCargo(userId, deliveryOrder, transferOrderItemList, customerContract, chargeType, returnOrderId, transferOrder);
         } 
 	}
 
@@ -988,7 +1004,7 @@ public class ReturnOrderController extends Controller {
 		//判断是否为ATM机
 		if (transferOrder.get("cargo_nature").equals("ATM")) {
 			sqlTotal = "select distinct count(1) total "
-					+ "from transfer_order_item_detail toid "
+					+ "from transfer_order_item_detail toid "//TODO 这里性能有问题，用了大表关联小表
 					+ "left join transfer_order_item toi on toid.item_id = toi.id "
 					+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
 					+ "left join product p on toi.product_id = p.id where r.id ="

@@ -1058,7 +1058,7 @@ public class DeliveryController extends Controller {
 	public void orderList2() {
 		String idlist = getPara("localArr");
 		String idlist2 = getPara("localArr2");
-		if (idlist == null || idlist.equals("")) {
+		if (idlist2 == null || idlist2.equals("")) {
 			Map Map = new HashMap();
 			Map.put("sEcho", 0);
 			Map.put("iTotalRecords", 0);

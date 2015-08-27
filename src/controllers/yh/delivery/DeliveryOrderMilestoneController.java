@@ -29,6 +29,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -68,6 +69,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 发车确认
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_COMPLETED})
+    //TODO 这里需要事务控制
     public void departureConfirmation() {
     	
     	String warehouseId = getPara("warehouseId");
@@ -88,8 +90,38 @@ public class DeliveryOrderMilestoneController extends Controller {
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         
-        //货品属性：一站式普通货品，还有普通货品配送没做
-  		if("cargo".equals(cargoNature)){
+        logger.debug("test.....");
+        if("ATM".equals(cargoNature)){
+        	//有可能勾选多个运输单做配送单
+        	String sql ="select toi.amount, ifnull(toi.complete_amount,0) complete_amount, toid.* "
+					+ " from delivery_order_item doi, transfer_order_item_detail toid, transfer_order_item toi"
+					+ " where doi.transfer_item_detail_id = toid.id and toid.item_id = toi.id"
+					+ " and doi.delivery_id = '"+delivery_id+"'";
+        	List<Record> list = Db.find(sql);
+        	for (Record record : list) {//循环 更新运输单中的已配送数量				
+				Long toItemId= record.getLong("item_id");
+				TransferOrderItem toi = TransferOrderItem.dao.findById(toItemId);
+				double c_amount = record.getDouble("complete_amount");
+				toi.set("complete_amount", c_amount+1).update();
+			}
+        	String toSql ="select distinct toid.order_id "
+					+ " from delivery_order_item doi, transfer_order_item_detail toid, transfer_order_item toi"
+					+ " where doi.transfer_item_detail_id = toid.id and toid.item_id = toi.id"
+					+ " and doi.delivery_id = '"+delivery_id+"'";
+        	List<Record> toList = Db.find(sql);
+        	for (Record record : toList) {//循环 更新运输单中的已配送数量
+        		Long orderId = record.getLong("order_id");
+        		TransferOrder tOrder = TransferOrder.dao.findById(orderId);
+        		String leftAmountSql= "select sum(amount)-ifnull(sum(complete_amount),0) left_amount from transfer_order_item toi where order_id='"+orderId+"'";
+        		Record rec = Db.findFirst(leftAmountSql);
+        		if(rec!=null && rec.getDouble("left_amount")>0){
+        			tOrder.set("status", "部分配送中");
+				}else{
+					tOrder.set("status", "配送中");
+				}
+        		tOrder.update();
+        	}
+        }else if("cargo".equals(cargoNature)){//货品属性：一站式普通货品，还有普通货品配送没做
   			for (int i = 0; i < productId.length; i++) {
   				//修改实际库存
   				//InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
@@ -114,7 +146,7 @@ public class DeliveryOrderMilestoneController extends Controller {
   			}
   		}
         
-        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+        transferOrderMilestone.set("create_by", LoginUserController.getLoginUserId(this));
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -122,12 +154,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("delivery_id", getPara("delivery_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-        String username = userLogin.get("c_name");
-        if(username==null||"".equals(username)){
-        	username=userLogin.get("user_name");
-        }
-        map.put("username", username);
+        map.put("username", LoginUserController.getLoginUserName(this));
         
         renderJson(map);
         // 扣库存
@@ -361,7 +388,6 @@ public class DeliveryOrderMilestoneController extends Controller {
     }
 
     // 配送单  到达确认
-
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
     public void receipt() {
         long delivery_id = getParaToLong("delivery_id");
@@ -373,9 +399,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已签收");
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+        Long userId = LoginUserController.getLoginUserId(this);
+        transferOrderMilestone.set("create_by", userId);
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -423,7 +448,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 		            returnOrder.set("transfer_order_id", transferOrderId);
 		            returnOrder.set("order_type", "应收");
 		            returnOrder.set("transaction_status", "新建");
-		            returnOrder.set("creator", users.get(0).get("id"));
+		            returnOrder.set("creator", LoginUserController.getLoginUserId(this));
 		            returnOrder.set("create_date", createDate);
 		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
 		            returnOrder.save();
@@ -435,7 +460,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 		            TransferOrder order = TransferOrder.dao.findById(transferOrderId);
 		            if(!order.getBoolean("no_contract_revenue")){
 		            	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
-		            	roController.calculateChargeGeneral(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
+		            	roController.calculateChargeGeneral(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
 		            }
 				}
 			}
@@ -447,7 +472,7 @@ public class DeliveryOrderMilestoneController extends Controller {
             returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
             returnOrder.set("order_type", "应收");
             returnOrder.set("transaction_status", "新建");
-            returnOrder.set("creator", users.get(0).get("id"));
+            returnOrder.set("creator", userId);
             returnOrder.set("create_date", createDate);
             returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
             returnOrder.save();
@@ -457,7 +482,7 @@ public class DeliveryOrderMilestoneController extends Controller {
             //if("ATM".equals(deliveryOrder.get("cargo_nature"))){
     	        ReturnOrderController roController= new ReturnOrderController();
     	        List<Record> transferOrderItemDetailList = Db.find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
-    	        roController.calculateCharge(users, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
+    	        roController.calculateCharge(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
     	        
             //}
         }
