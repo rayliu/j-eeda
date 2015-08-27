@@ -194,7 +194,7 @@ public class StatusReportColler extends Controller{
 		
 		if("transferOrder".equals(orderNoType) && "transferOrderStatus".equals(orderStatusType)){
 			// 获取总条数
-			String totalSql = "select count(0) total from transfer_order tor"
+			String totalSql = "select count(distinct tor.id) total from transfer_order tor"
 					+ " left join depart_transfer tr on tr.order_id = tor.id "
 					+ " left join depart_order dor on dor.id = tr.depart_id"
 					+ " left join delivery_order_item doi on doi.transfer_order_id = tor.id"
@@ -212,7 +212,7 @@ public class StatusReportColler extends Controller{
 					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
-			String sql = "select tor.order_no,'运输单' as order_category,dor.depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,dor.departure_time,l1.name route_from,l2.name route_to,"
+			String sql = "select DISTINCT tor.order_no,'运输单' as order_category,dor.depart_no,tor.order_type,c1.abbr,o.office_name,tor.planning_time,dor.departure_time,l1.name route_from,l2.name route_to,"
 					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
 					+ " when tor.depart_assign_status = 'ALL' and (dor.status = '已入库' or dor.status = '已收货') then '到达签收' "
 					+ " when tor.depart_assign_status = 'ALL' and dor.status = '已发车' then '运输在途' "
@@ -258,20 +258,20 @@ public class StatusReportColler extends Controller{
 			
 			//有运输单号时
 			if(!"".equals(orderNo) && orderNo != null){
-				totalSql = totalSql + " and tor.order_no = '" + orderNo + "'";
-				sql = sql + " and tor.order_no = '" + orderNo + "'";
+				totalSql = totalSql + " and tor.order_no like '%" + orderNo + "%'";
+				sql = sql + " and tor.order_no like '%" + orderNo + "%'";
 			}
 			
 			//始发地
 			if(!"".equals(routeFrom) && routeFrom != null){
-				totalSql = totalSql + " and l1.name = '" + routeFrom + "'";
-				sql = sql + " and l1.name = '" + routeFrom + "'";
+				totalSql = totalSql + " and l1.name like '%" + routeFrom + "%'";
+				sql = sql + " and l1.name like '%" + routeFrom + "%'";
 			}
 			
 			//目的地
 			if(!"".equals(routeTo) && routeTo != null){
-				totalSql = totalSql + " and l2.name = '" + routeTo + "'";
-				sql = sql + " and l2.name = '" + routeTo + "'";
+				totalSql = totalSql + " and l2.name like '%" + routeTo + "%'";
+				sql = sql + " and l2.name like '%" + routeTo + "%'";
 			}
 			
 			//有供应商
