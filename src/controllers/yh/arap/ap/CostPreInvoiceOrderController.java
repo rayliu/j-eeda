@@ -294,7 +294,9 @@ public class CostPreInvoiceOrderController extends Controller {
 					getPara("paymentMethod"));
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
 			arapAuditInvoiceApplication.set("bank_name", bank_name);
-			arapAuditInvoiceApplication.set("num_name", numname);
+			if(numname != null){
+				arapAuditInvoiceApplication.set("num_name", numname);
+			}
 			if (getPara("total_amount") != null
 					&& !"".equals(getPara("total_amount"))) {
 				arapAuditInvoiceApplication.set("total_amount",
