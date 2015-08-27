@@ -2,6 +2,7 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -277,7 +278,10 @@ public class CostItemConfirmController extends Controller {
 				+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
 				+ " left join office oe on oe.id = tor.office_id "
 				+ " left join transfer_order_milestone tom on tom.pickup_id = dpr.id "
-				+ " where unix_timestamp(tom.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' and p.party_type='SERVICE_PROVIDER' AND toid.item_id = toi.id and pofi.id is not null and dpr.combine_type='PICKUP' and tom.status ='已入货场' and tom.type='PICKUPORDERMILESTONE' group by dpr.id"
+				+ " where unix_timestamp(tom.create_stamp) > unix_timestamp('2015-06-01 10:34:36') "
+				+ " and (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' "
+				+ " and p.party_type='SERVICE_PROVIDER' and pofi.id is not null and dpr.combine_type='PICKUP' "
+				+ " and tom.status in( '已入货场', '新建') and tom.type='PICKUPORDERMILESTONE' group by dpr.id"
 				+ " union "
 				+ " select distinct ior.id,"
 				+ " ior.order_no order_no,"
@@ -401,8 +405,11 @@ public class CostItemConfirmController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
+        long sTime = Calendar.getInstance().getTimeInMillis();
         List<Record> BillingOrders = Db.find(sql + condition + " order by depart_time "+ orderBy + sLimit);
-
+        long eTime = Calendar.getInstance().getTimeInMillis();
+        logger.debug("time cost:" + (eTime-sTime));
+        
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
         BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
