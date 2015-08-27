@@ -144,11 +144,11 @@ public class PickupOrderController extends Controller {
         String departNo = getPara("departNo");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
-        String carNo = getPara("carNo");
         String take = getPara("take");
         String status = getPara("status");
         String office = getPara("office");
         String customerId = getPara("customer_filter");
+        String sp_filter = getPara("sp_filter");
         
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -158,8 +158,8 @@ public class PickupOrderController extends Controller {
         String sql = "";
         String sqlTotal = "";
         if ((orderNo == null || "".equals(orderNo)) && (departNo == null || "".equals(departNo)) && (beginTime == null || "".equals(beginTime))
-        		&& (endTime == null || "".equals(endTime)) && (carNo == null || "".equals(carNo)) && (take == null || "".equals(take)) && 
-				 (status == null || "".equals(status)) && (office == null || "".equals(office)) &&  customerId == null) {
+        		&& (endTime == null || "".equals(endTime)) &&  (take == null || "".equals(take)) && 
+				 (status == null || "".equals(status)) && (office == null || "".equals(office)) && (sp_filter == null || "".equals(sp_filter))&&  customerId == null ) {
             sqlTotal = "select count(distinct dor.id) total "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
@@ -183,7 +183,8 @@ public class PickupOrderController extends Controller {
             		+ " round((select sum(ifnull(volume,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmvolume,"
             		+ " round((select sum(ifnull(weight,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmweight,"
             		+ " (select group_concat( distinct dt.transfer_order_no separator '<br/>')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no,"
-            		+ " (select group_concat(distinct c1.abbr separator '<br/>') from depart_transfer dt left join transfer_order t_o on t_o.id = dt.order_id left join party p1 on t_o.customer_id = p1.id left join contact c1 on p1.contact_id = c1.id where dt.pickup_id = dor.id) customernames  "
+            		+ " (select group_concat(distinct c1.abbr separator '<br/>') from depart_transfer dt left join transfer_order t_o on t_o.id = dt.order_id left join party p1 on t_o.customer_id = p1.id left join contact c1 on p1.contact_id = c1.id where dt.pickup_id = dor.id) customernames,  "
+            		+ " c2.abbr sp_name "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
@@ -192,6 +193,8 @@ public class PickupOrderController extends Controller {
                     + " left join depart_transfer dtf on dtf.pickup_id = dor.id "
                     + " left join transfer_order t_o on t_o.id = dtf.order_id "
                     + " left join office o on o.id = t_o.office_id "
+                    + " LEFT JOIN party p2 on p2.id = dor.sp_id "
+                    + " LEFT JOIN contact c2 on c2.id = p2.id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
             		+ " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
@@ -214,11 +217,13 @@ public class PickupOrderController extends Controller {
                     + " left join office o on o.id = t_o.office_id "
                     + " left join party p1 on t_o.customer_id = p1.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
+                    + " LEFT JOIN party p2 on p2.id = dor.sp_id "
+                    + " LEFT JOIN contact c2 on c2.id = p2.id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
             		+ " and ifnull(depart_no,'') like '%"+ departNo + "%' "
+            		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter + "%' "
             		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
-					+ " and ifnull(dor.car_no,'') like '%"+carNo+ "%' "
 					+ " and ifnull(dor.status,'') like '%"+status+ "%' "
 					+ " and ifnull(o.office_name,'') like '%"+office+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "
@@ -234,7 +239,8 @@ public class PickupOrderController extends Controller {
             		+ " round((select sum(ifnull(volume,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmvolume,"
             		+ " round((select sum(ifnull(weight,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmweight,"
             		+ " (select group_concat( distinct dt.transfer_order_no separator '<br/>')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no,  "
-            		+ " (select group_concat(distinct c1.abbr separator '<br/>') from depart_transfer dt left join transfer_order t_o on t_o.id = dt.order_id left join party p1 on t_o.customer_id = p1.id left join contact c1 on p1.contact_id = c1.id where dt.pickup_id = dor.id) customernames  "
+            		+ " (select group_concat(distinct c1.abbr separator '<br/>') from depart_transfer dt left join transfer_order t_o on t_o.id = dt.order_id left join party p1 on t_o.customer_id = p1.id left join contact c1 on p1.contact_id = c1.id where dt.pickup_id = dor.id) customernames , "
+            		+ " c2.abbr sp_name"
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
                     + " left join party p on dor.driver_id = p.id "
@@ -245,11 +251,13 @@ public class PickupOrderController extends Controller {
                     + " left join office o on o.id = t_o.office_id "
                     + " left join party p1 on t_o.customer_id = p1.id "
                     + " left join contact c1 on p1.contact_id = c1.id"
+                    + " LEFT JOIN party p2 on p2.id = dor.sp_id "
+                    + " LEFT JOIN contact c2 on c2.id = p2.id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
             		+ " and ifnull(depart_no,'') like '%"+ departNo + "%' "
+            		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter + "%' "
             		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
-					+ " and ifnull(dor.car_no,'') like '%"+carNo+ "%' "
 					+ " and ifnull(dor.status,'') like '%"+status+ "%' "
 					+ " and ifnull(o.office_name,'') like '%"+office+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "
