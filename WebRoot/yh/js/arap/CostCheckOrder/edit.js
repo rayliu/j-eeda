@@ -178,7 +178,12 @@ $(document).ready(function() {
                         
                     }
                     else {
+                    	if(obj.aData.PAY_AMOUNT!=null){
                         return "<input type='text' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+                    	}
+                    	else{
+                    		return "<input type='text' name='change_amount' value='0'/>";
+                    	}
                     }
             		}
                 }

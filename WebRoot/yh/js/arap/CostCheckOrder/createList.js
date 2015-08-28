@@ -12,11 +12,27 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        
         "sAjaxSource": "/costCheckOrder/costConfirmOrderList",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
                 "fnRender": function(obj) {
-                  return '<input type="checkbox" name="order_check_box" amount="'+obj.aData.PAY_AMOUNT+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';
+                	var amount = 0;
+	               	 if(obj.aData.PAY_AMOUNT!=null){
+	               		 amount = obj.aData.PAY_AMOUNT;
+	               	 }
+                	var strcheck='<input  type="checkbox" name="order_check_box" amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';;
+                	//判断obj.aData.ID 是否存在 list id 
+                	console.log(ids);
+                	 for(var i=0;i<ids.length;i++){
+                		 console.log(i + ":"+ids[i]);
+                		 console.log("obj.aData.ID="+obj.aData.ID);
+                         if(ids[i]==obj.aData.ID){                        	 
+                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
+                        	
+                         }
+                     }
+                	 return strcheck;
                 }
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px"},            	
@@ -69,7 +85,7 @@ $(document).ready(function() {
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                                           
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
-        ]      
+        ]     
     });		
 
     var checkedCostCheckTable = $('#checkedCostCheck-table').dataTable({
@@ -84,58 +100,86 @@ $(document).ready(function() {
     	"sAjaxSource": "/chargeCheckOrder/createList2",
     	"aoColumns": [ 
 			  {"mDataProp":null, "sWidth":"20px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"200px"}                      
-		]          
+			  {"mDataProp":null, "sWidth":"80px"},                        
+			  {"mDataProp":null, "sWidth":"200px"},                        
+			  {"mDataProp":null, "sWidth":"200px"},                        
+			  {"mDataProp":null, "sWidth":"200px"},                        
+			  {"mDataProp":null, "sWidth":"40px"},                        
+			  {"mDataProp":null, "sWidth":"60px"},                        
+			  {"mDataProp":null, "sWidth":"90px"},                        
+			  {"mDataProp":null, "sWidth":"200px"},                        
+			  {"mDataProp":null, "sWidth":"180px"},                        
+			  {"mDataProp":null, "sWidth":"180px"},                        
+			  {"mDataProp":null, "sWidth":"90px"},                        
+			  {"mDataProp":null, "sWidth":"90px"},                        
+			  {"mDataProp":null, "sWidth":"160px"},
+			  {"mDataProp":null, "sWidth":"150px"},
+			  {"mDataProp":null, "sWidth":"150px"},
+			  {"mDataProp":null, "sWidth":"50px"},
+			  {"mDataProp":null, "sWidth":"40px"},
+			  {"mDataProp":null, "sWidth":"150px"}                      
+		] 
+    	
     });
     
     var ids = [];
     var orderNos = [];
     var amount = [];
-    var j_amount = [];
+    //var j_amount = [];
     var sum = 0;
     var j_sum = 0;
     // 未选中列表
-	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
+	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){	
 		if($(this).prop("checked") == true){
-			$(this).parent().parent().appendTo($("#checkedCostCheckList"));
+			$(this).parent().parent().clone().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
 			orderNos.push($(this).attr('order_no'));
 			amount.push($(this).attr('amount'));
 			sum =eval(amount.join("+"));//求和
-			var x_sum=parseInt(sum)-parseInt(j_sum);
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
-			$("#amount").html(x_sum);
+			$("#amount").html(sum);
 			if(ids.length>0){
 				$("#saveBtn").attr("disabled",false);
 			}
-		}			
+		}
+		else{
+			ids.splice($.inArray($(this).attr('id'),ids),1);
+			amount.splice($.inArray($(this).attr('amount'),amount),1);
+			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+			//$("#checkedCostCheckList").remove("tbody",$(this).parent().parent());
+			//$("#checkedCostCheckList").$(this).parent().parent().remove();
+			var id=$(this)[0].id;
+			for(var i=0; i<$("#checkedCostCheckList").children().length;i++){
+				if(id=$("#checkedCostCheckList").children().children().children()[i].id){
+					$("#checkedCostCheckList").children()[i].remove();
+				}
+			}
+			var sum_f = $(this).attr('amount');
+			var x_sum=parseInt(sum)-parseInt(sum_f);
+			sum=parseInt(sum)-parseInt(sum_f);
+			$("#checkedOrderId").val(ids);
+			$("#checkedOrderNo").val(orderNos);
+			$("#amount").html(x_sum);
+			if(ids.length<=0){
+				$("#saveBtn").attr("disabled",true);
+			}
+		}
 	});
-	
 	// 已选中列表
 	$("#checkedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
+        $(this).parent().parent().appendTo($("#uncheckedCostCheckList"));
 		if($(this).prop("checked") == false){
-			$(this).parent().parent().appendTo($("#uncheckedCostCheckList"));
-			j_amount.push($(this).attr('amount'));
-			j_sum =eval(j_amount.join("+"));
+			//j_amount.push($(this).attr('amount'));
+			j_sum =$(this).attr('amount');//eval(j_amount.join("+"));
 			var xj_sum=parseInt(sum)-parseInt(j_sum);
+			sum=parseInt(sum)-parseInt(j_sum);
 			//amount=parseInt(a);
 			$("#amount").html(xj_sum);
+			//j_amount.splice($.inArray($(this).attr('id'),j_amount),1);
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
+				amount.splice($.inArray($(this).attr('amount'),amount),1);
 				$("#checkedOrderId").val(ids);
 				if(ids.length<=0){
 					$("#saveBtn").attr("disabled",true);
@@ -145,7 +189,7 @@ $(document).ready(function() {
 				orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
 				$("#checkedOrderNo").val(orderNos);
 			}
-		}			
+		}
 	});
 	
 	$('#saveBtn').click(function(e){
@@ -155,10 +199,9 @@ $(document).ready(function() {
 	
 	$("#checkedCostCheckOrder").click(function(){
 		$("#checked").show();
-		$("#amount_st").show();
 	});
 	$("#uncheckedCostCheckOrder").click(function(){
-		$("#amount_st").hide();
+		uncheckedCostCheckTable.fnDraw();;
 	});
 	
 	
