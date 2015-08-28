@@ -1439,13 +1439,8 @@ public class DepartOrderController extends Controller {
 		UserLogin users = UserLogin.dao
 				.findFirst("select * from user_login where user_name='" + name
 						+ "'");
-		DepartOrder departOrder = DepartOrder.dao.findById(Integer
-				.parseInt(depart_id));
-		// if ("已入库".equals(order_state)) {
-		// productInWarehouse(depart_id);// 产品入库
-		// }
-		// if ("已发车".equals(order_state)) {
-
+		DepartOrder departOrder = DepartOrder.dao.findById(Integer.parseInt(depart_id));
+		
 		// 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
 		// 计件/整车/零担 生成发车单中供应商的应付，要算 item 的数量 * 合同中定义的价格
 		// Depart_Order_fin_item 提货单/发车单应付明细表
@@ -1466,16 +1461,17 @@ public class DepartOrderController extends Controller {
 
 		if (transferIds.length() > 0)
 			transferIds = transferIds.substring(0, transferIds.length() - 1);
-		String transferIds1 = "";
+		
+		String finItemOrderIds1 = "";
 		for (DepartOrderFinItem dofi1 : dofi) {
-			transferIds1 += dofi1.get("depart_order_id") + ",";
+			finItemOrderIds1 += dofi1.get("depart_order_id") + ",";
 		}
 		List<Record> transferOrderItemList = Db
 				.find("select toi.*, t_o.route_from, t_o.route_to,t_o.cargo_nature from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
 						+ transferIds + ") order by pickup_seq desc");
-		// TODO:生成应付
-		if (transferIds1.length() > 0) {
-			
+		
+		if (finItemOrderIds1.length() > 0) {
+			// 如果已生成应付，就不再生成应付
 		} else {
 			calcCost(departOrder, transferOrderItemList);
 		}

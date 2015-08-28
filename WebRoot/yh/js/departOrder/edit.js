@@ -664,11 +664,6 @@
     	    	}
     	    	// 保存单品
     	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
-    	    		$.post('/departOrder/saveupdatestate', $("#orderForm").serialize(), function(){	
- 	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
- 	                	paymenttable.fnDraw(); 
- 	                });
-    				$("#departOrderId").val(data.ID);
     				if(data.ID>0){
     					$("#departOrderId").val(data.ID);
     					$("#depart_id").val(data.ID);
@@ -678,7 +673,12 @@
     				  	//$("#style").show();	
     		    	    $("#departureConfirmationBtn").attr("disabled", false);
     		    	    contactUrl("edit?id",data.ID);
-    		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+    		    	    $.post('/departOrder/saveupdatestate', $("#orderForm").serialize(), function(){	
+     	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
+     	                	paymenttable.fnDraw(); 
+     	                	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+     	                });
+    		    	    
     				}else{
     					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
     				}
@@ -716,12 +716,6 @@
     			e.preventDefault();	
     			//异步向后台提交数据
     			saveDepartOrderFunction();
-    			$.post('/departOrder/saveupdatestate', $("#orderForm").serialize(), function(){
-                	//$("#warehousingConfirmBtn").attr("disabled",false);
-                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
-                	paymenttable.fnDraw(); 
-                });
-    	       
     	    }; 
     	    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
     	        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
