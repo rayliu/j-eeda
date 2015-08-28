@@ -318,8 +318,8 @@ public class EedaConfig extends JFinalConfig {
     	me.add(new ShiroPlugin(routes));
     	
     	//job启动
-        QuartzPlugin quartzPlugin = new QuartzPlugin("job.properties");
-    	me.add(quartzPlugin);
+//        QuartzPlugin quartzPlugin = new QuartzPlugin("job.properties");
+//    	me.add(quartzPlugin);
     	
     	//quartzPlugin.add("*/5 * * * * ?", new YourJob());//通过API增加任务
     	//quartzPlugin.version(QuartzPlugin);//指定Quartz版本
