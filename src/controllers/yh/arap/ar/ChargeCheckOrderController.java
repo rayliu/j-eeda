@@ -62,6 +62,9 @@ public class ChargeCheckOrderController extends Controller {
 		if (endTime != null && !"".equals(endTime)) {
 			setAttr("endTime", endTime);
 		}
+		
+		ArapMiscChargeOrder arapmiscchargeorder = null;
+		ReturnOrder rOrder = null;
 		if (ids != null && !"".equals(ids)) {
 			String[] idArray = ids.split(",");
 			String[] orderArray = order.split(",");
@@ -69,28 +72,27 @@ public class ChargeCheckOrderController extends Controller {
 			Double totalAmount = 0.0;
 			for (int i = 0; i < idArray.length; i++) {
 				if (orderArray[i].equals("收入单")) {
-					ArapMiscChargeOrder arapmiscchargeorder = ArapMiscChargeOrder.dao
-							.findById(idArray[i]);
+					arapmiscchargeorder = ArapMiscChargeOrder.dao.findById(idArray[i]);
 					Record record = Db
 							.findFirst(
 									"select round(sum(total_amount),2) as total_amount from arap_misc_charge_order where id = ?",
 									arapmiscchargeorder.get("id"));
 					totalAmount = totalAmount
 							+ record.getDouble("total_amount");
-				} else {
-					ReturnOrder rOrder = ReturnOrder.dao.findById(idArray[i]);
+				} else if(orderArray[i].equals("回单")){
+					rOrder = ReturnOrder.dao.findById(idArray[i]);
 					Record record = Db
 							.findFirst(
 									"select round(sum(amount),2) as total_amount from return_order_fin_item where return_order_id = ?",
 									rOrder.get("id"));
 					totalAmount = totalAmount
 							+ record.getDouble("total_amount");
-				}
+				}	
 			}
-			setAttr("totalAmount", totalAmount);
-			if (orderArray[1].equals("收入单")) {
-				ArapMiscChargeOrder arapmiscchargeorder = ArapMiscChargeOrder.dao
-						.findById(idArray[0]);
+			setAttr("totalAmount", totalAmount);//应收总额
+			
+			//客户信息回显
+			if (orderArray[0].equals("收入单")) {
 				Long customerId = arapmiscchargeorder.getLong("customer_id");
 				if (!"".equals(customerId) && customerId != null) {
 					Party party = Party.dao.findById(customerId);
@@ -101,9 +103,8 @@ public class ChargeCheckOrderController extends Controller {
 					setAttr("type", "CUSTOMER");
 					setAttr("classify", "");
 				}
-			} else if (orderArray[1].equals("回单")) {
-				ReturnOrder returnOrder = ReturnOrder.dao.findById(idArray[0]);
-				Long customerId = returnOrder.getLong("customer_id");
+			} else if (orderArray[0].equals("回单")) {
+				Long customerId = rOrder.getLong("customer_id");
 				if (!"".equals(customerId) && customerId != null) {
 					Party party = Party.dao.findById(customerId);
 					setAttr("party", party);
@@ -114,7 +115,6 @@ public class ChargeCheckOrderController extends Controller {
 					setAttr("classify", "");
 				}
 			}
-
 		}
 
 		setAttr("saveOK", false);
