@@ -26,16 +26,18 @@ $(document).ready(function() {
         if(!$("#chargeCheckOrderForm").valid()){
 	       	return;
         }
+        //数据响应之前回调按钮
+        $('#saveChargeCheckOrderBtn').attr('disabled', true);
 		//异步向后台提交数据
 		$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
 				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
 				$('#auditBtn').attr('disabled', false);
-				
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				contactUrl("edit?id",data.ID);
 				$("#arap_order_no").text(data.ORDER_NO);
+				$('#saveChargeCheckOrderBtn').attr('disabled', false);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -47,11 +49,11 @@ $(document).ready(function() {
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
+		$('#saveChargeCheckOrderBtn').attr('disabled', true);
 		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
 		$.post('/chargeCheckOrder/auditChargeCheckOrder', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
 			$('#auditBtn').attr('disabled', true);
 			$("#chargeCheckOrderStatus").html(data.STATUS);
-			$('#saveChargeCheckOrderBtn').attr('disabled', true);
 		},'json');
 	});
 	
