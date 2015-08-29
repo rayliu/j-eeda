@@ -135,6 +135,7 @@ $(document).ready(function() {
 			ids.push($(this).attr('id'));
 			orderNos.push($(this).attr('order_no'));
 			amount.push($(this).attr('amount'));
+			$("#checkedCostCheckList").children().length++;
 			sum =eval(amount.join("+"));//求和
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
@@ -151,8 +152,9 @@ $(document).ready(function() {
 			//$("#checkedCostCheckList").$(this).parent().parent().remove();
 			var id=$(this)[0].id;
 			for(var i=0; i<$("#checkedCostCheckList").children().length;i++){
-				if(id=$("#checkedCostCheckList").children().children().children()[i].id){
+				if(id==$("#checkedCostCheckList").children().children().children()[i].id){
 					$("#checkedCostCheckList").children()[i].remove();
+					//$("#checkedCostCheckList").children().splice(i,1);
 				}
 			}
 			var sum_f = $(this).attr('amount');
