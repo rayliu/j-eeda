@@ -362,7 +362,8 @@ public class StatusReportColler extends Controller{
 					+ " left join location l2 on deo.route_to = l2.code"
 					+ " left join office o on o.id = tor.office_id"
 					+ " left join warehouse w on deo.from_warehouse_id = w.id "
-					+ " where p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"'"
+					+ " where p1.party_type = '"+Party.PARTY_TYPE_CUSTOMER+"' "
+					+ " and dom.STATUS = '已发车'"
 					+ " and p2.party_type = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and deo.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
 				
@@ -426,7 +427,7 @@ public class StatusReportColler extends Controller{
 			}
 			
 			// 获取总条数
-			Record rec = Db.findFirst(totalSql + sLimit);
+			Record rec = Db.findFirst(totalSql);
 			logger.debug("total records:" + rec.getLong("total"));
 			logger.debug("total records:" + rec.getDouble("total_amount"));
 			total_amount = rec.getDouble("total_amount");
@@ -471,8 +472,8 @@ public class StatusReportColler extends Controller{
 			orderMap.put("sEcho", pageIndex);
 			//orderMap.put("iTotalRecords", rec.getLong("total"));
 			//orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-			orderMap.put("iTotalRecords", orders.size());
-			orderMap.put("iTotalDisplayRecords", orders.size());
+			orderMap.put("iTotalRecords", rec.getLong("total"));
+			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 			orderMap.put("aaData", orders);
 		}else{
 			orderMap.put("sEcho", 0);
