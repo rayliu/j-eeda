@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="checkOrder_subreport_item" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="260e40d5-dc30-467f-97e2-8f3420a6c940">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="order_id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select @rownum:=ifnull(@rownum,0)+1 as seq_no, costCheckOrder.*,ifnull(ul.c_name,ul.user_name) as create_name,ifnull(u.c_name,u.user_name) as confirm_name from
+	(select
+		aci.ref_order_no,
+		aci.ref_order_id,
+		aci.cost_order_id,
+		dor.order_no as order_no,
+		dor.appointment_stamp as create_date,
+		'' as sp_order_no,
+		c.abbr as customer_name,
+		r_f.`name` as route_from,
+		r_t.`name` as route_to,
+		'配送' as service_type,
+		(select count(*) from delivery_order_item doit where doit.delivery_id = dor.id) as quantity,
+		IFNULL(
+		dor.receivingunit,
+		IFNULL(
+			trid.notify_party_company,
+			''
+		)
+	) as address,
+		(select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') as amount,
+		IFNULL((select sum(change_amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付'),(select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付')) as confirm_amount,
+		'' as remark
+	from
+		arap_cost_item aci
+	left join delivery_order dor on dor.id = aci.ref_order_id
+  LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = dor.id
+  LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id
+	left join party p on dor.customer_id = p.id
+	left join contact c on c.id = p.contact_id
+	left join location r_f on r_f.`code` = dor.route_from
+	left join location r_t on r_t.`code` = dor.route_to
+	where
+		aci.cost_order_id = $P{order_id}
+		and aci.ref_order_no='配送'
+union
+ select
+		aci.ref_order_no,
+		aci.ref_order_id,
+		aci.cost_order_id,
+		dto.depart_no  as order_no,
+	  dto.departure_time as create_date,
+		dto.booking_note_number as sp_order_no,
+		c.abbr as customer_name,
+		r_f.`name` as route_from,
+		r_t.`name` as route_to,
+		'零担' as service_type,
+		(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id = dto.id )) as quantity,
+		(
+SELECT group_concat(DISTINCT c.address SEPARATOR '\r\n')
+from contact c
+left join transfer_order t on t.notify_party_id=c.id
+LEFT JOIN depart_transfer dt on t.id = dt.order_id
+left join depart_order dto on dto.id =dt.depart_id
+where dto.id = aci.ref_order_id
+ ) as address,
+		(select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付') as amount,
+		ifnull((select sum(change_amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付'),(select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付')) as confirm_amount,
+		'' as remark
+	from
+		arap_cost_item aci
+	left join depart_order dto on dto.id = aci.ref_order_id
+	left join depart_transfer dt on dt.depart_id = dto.id
+	left join transfer_order t on t.id = dt.order_id
+            LEFT JOIN warehouse w on t.warehouse_id=w.id
+            left join location lc on lc.code = w.location
+	left join party p on t.customer_id = p.id
+	left join contact c on p.contact_id = c.id
+	left join location r_f on r_f.`code` = t.route_from
+	left join location r_t on r_t.`code` = t.route_to
+	where
+		aci.cost_order_id = $P{order_id}
+		and aci.ref_order_no='零担'
+union
+	select
+		aci.ref_order_no,
+		aci.ref_order_id,
+		aci.cost_order_id,
+	  doer.depart_no as order_no,
+		doer.departure_time  as create_date,
+		doer.booking_note_number as sp_order_no,
+		c.abbr as customer_name,
+		r_f.`name` as route_from,
+		r_t.`name` as route_to,
+		'提货' as service_type,
+		(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id = doer.id )) as quantity,
+		doer.address as address,
+		(select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付') as amount,
+		IFNULL((select sum(change_amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),(select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付')) as confirm_amount,
+		'' as remark
+	from
+		arap_cost_item aci
+	left join depart_order doer on doer.id = aci.ref_order_id
+	left join depart_transfer dt on dt.depart_id = doer.id
+	left join transfer_order t on t.id = dt.order_id
+	left join party p on t.customer_id = p.id
+	left join contact c on p.contact_id = c.id
+	left join location r_f on r_f.`code` = t.route_from
+	left join location r_t on r_t.`code` = t.route_to
+	where
+		aci.cost_order_id = $P{order_id}
+		and aci.ref_order_no='提货'
+union
+	select
+		aci.ref_order_no,
+		aci.ref_order_id,
+		aci.cost_order_id,
+	  io.order_no  as order_no,
+		tor.planning_time as create_date,
+		'' as sp_order_no,
+		c.abbr as customer_name,
+		r_f.`name` as route_from,
+		r_t.`name` as route_to,
+		'保险' as service_type,
+		(select sum(amount) from transfer_order_item where order_id in (select id from transfer_order where insurance_id = io.id)) as quantity,
+		'' as address,
+		(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付') as amount,
+		IFNULL((select sum(change_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付')) as confirm_amount,
+		'' as remark
+	from
+		arap_cost_item aci
+	left join  insurance_order io on io.id = aci.ref_order_id
+	left join transfer_order tor on tor.insurance_id = io.id
+	left join party p on tor.customer_id = p.id
+	left join contact c on p.contact_id = c.id
+	left join location r_f on r_f.`code` = tor.route_from
+	left join location r_t on r_t.`code` = tor.route_to
+	where
+		aci.cost_order_id = $P{order_id}
+		and aci.ref_order_no='保险'
+union
+SELECT
+            aci.ref_order_no,
+            aci.ref_order_id,
+            aci.cost_order_id,
+	'' AS order_no,
+	amco.create_stamp AS create_date,
+	'' AS sp_order_no,
+	c.abbr AS customer_name,
+	r_f.`name` AS route_from,
+	r_t.`name` AS route_to,
+	'成本单' AS service_type,
+	0 AS quantity,
+	'' AS address,
+	(SELECT sum(total_amount) FROM arap_misc_cost_order WHERE	 id IN (SELECT ref_order_id FROM arap_cost_order WHERE id = aci.cost_order_id)) AS amount,
+	IFNULL((SELECT sum(change_amount) FROM arap_misc_cost_order_item WHERE  misc_order_id IN (SELECT ref_order_id FROM arap_cost_order WHERE id = aci.cost_order_id)),(SELECT sum(total_amount) FROM arap_misc_cost_order WHERE	 id IN (SELECT ref_order_id FROM arap_cost_order WHERE id = aci.cost_order_id))) AS confirm_amount,
+	'' AS remark
+       FROM
+	arap_cost_item aci
+	LEFT JOIN arap_misc_cost_order amco ON amco.id = aci.ref_order_id
+	LEFT JOIN arap_cost_order aco ON aco.id = aci.cost_order_id
+	LEFT JOIN party p ON amco.customer_id = p.id
+	LEFT JOIN contact c ON p.contact_id = c.id
+	LEFT JOIN location r_f ON r_f.`code` = amco.route_from
+	LEFT JOIN location r_t ON r_t.`code` = amco.route_to
+	WHERE
+	aci.cost_order_id = $P{order_id}
+            AND aci.ref_order_no = '成本单'
+   union
+    select
+        aci.ref_order_no,
+        aci.ref_order_id,
+        aci.cost_order_id,
+      io.order_no  as order_no,
+        tor.planning_time as create_date,
+        '' as sp_order_no,
+        c.abbr as customer_name,
+        r_f.`name` as route_from,
+        r_t.`name` as route_to,
+        '保险' as service_type,
+        (select sum(amount) from transfer_order_item where order_id in (select id from transfer_order where insurance_id = io.id)) as quantity,
+        '' as address,
+        round((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),2) as amount,
+        round(IFNULL((select sum(change_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付')),2) as confirm_amount,
+        '' as remark
+    from
+        arap_cost_item aci
+    left join  insurance_order io on io.id = aci.ref_order_id
+    left join transfer_order tor on tor.insurance_id = io.id
+    left join party p on tor.customer_id = p.id
+    left join contact c on p.contact_id = c.id
+    left join location r_f on r_f.`code` = tor.route_from
+    left join location r_t on r_t.`code` = tor.route_to
+    where
+ aci.ref_order_no='保险'
+)as costCheckOrder left join arap_cost_order acor on acor.id = costCheckOrder.cost_order_id
+	left join user_login ul on  ul.id = acor.create_by left join  user_login u on  u.id = acor.confirm_by]]>
+	</queryString>
+	<field name="seq_no" class="java.lang.Double"/>
+	<field name="ref_order_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ref_order_id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cost_order_id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="order_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="create_date" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sp_order_no" class="java.lang.String"/>
+	<field name="customer_name" class="java.lang.String"/>
+	<field name="route_from" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="route_to" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="service_type" class="java.lang.String"/>
+	<field name="quantity" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="address" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="confirm_amount" class="java.lang.Double"/>
+	<field name="remark" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="create_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="confirm_name" class="java.lang.String"/>
+	<variable name="sum_amount" class="java.lang.Double" incrementType="Report" calculation="Sum">
+		<variableExpression><![CDATA[new Double($F{confirm_amount}.doubleValue()+$V{sum_amount}.doubleValue())]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0.0)]]></initialValueExpression>
+	</variable>
+	<variable name="count" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$V{count}.valueOf( 1 )]]></variableExpression>
+		<initialValueExpression><![CDATA[1]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="table_TD" x="0" y="0" width="35" height="20" uuid="6d5682c2-0192-4525-9882-450787805622"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[序号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="35" y="0" width="75" height="20" uuid="4f85bb1b-b6e5-4ea8-9e27-da5d69284070"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[操作日期]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="110" y="0" width="82" height="20" uuid="9f7ce009-359b-41fc-a081-f9a17faa50dc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[业务单号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="192" y="0" width="61" height="20" uuid="ff139d1b-b6c0-4435-80ee-6870701f6bbf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[供应商单号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="253" y="0" width="85" height="20" uuid="fa6c7d2d-aab2-41c6-ae5c-ce5beef56c1a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[客户名称]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="338" y="0" width="48" height="20" uuid="d8e8fb21-18ec-4a9b-a1ea-882e4129446e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[始发地]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="386" y="0" width="49" height="20" uuid="7cacd080-e7d4-43e6-8ba4-558b1d9bf556"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[目的地]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="435" y="0" width="43" height="20" uuid="380036f8-31b8-414c-9bca-dd27edea64c4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[服务分类]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="478" y="0" width="48" height="20" uuid="1747a3d4-d91f-4674-9542-11a5b87946d3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[数量]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="526" y="0" width="84" height="20" uuid="ec648a5d-6898-48c2-9e09-f9a3b7013779"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[送货地址]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="610" y="0" width="61" height="20" uuid="649b475d-5038-4d9e-be39-73c873a608d3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[对账金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="671" y="0" width="61" height="20" uuid="f90e6fee-299d-4682-ba13-138b5285eb15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[确认金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="732" y="0" width="70" height="20" uuid="b5694ae9-4ded-44c4-8731-e6f2e9af0041"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[备注]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="610" y="0" width="61" height="20" uuid="28a5c139-14b0-4693-949f-ee4bc18ac0b5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="671" y="0" width="61" height="20" uuid="270fce27-eaf9-41d4-bb68-145ecbef6c68"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{confirm_amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="732" y="0" width="70" height="20" uuid="3644e81d-b238-4b0e-8fe5-04470d92cda4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="0" y="0" width="35" height="20" uuid="2ea600f1-8ddc-4d35-b206-253f78a8941f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{count}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="35" y="0" width="75" height="20" uuid="b06a53d5-ef87-4a5d-89e0-bd521a599fc2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{create_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="110" y="0" width="82" height="20" uuid="50aabb5a-ea6a-430a-94f4-d62496d87782"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{order_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="192" y="0" width="61" height="20" uuid="3bb4e32a-5f79-4365-8273-93933652d8ae"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sp_order_no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="253" y="0" width="85" height="20" uuid="74d8e288-a2da-473c-b8fb-2355c19bc764"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customer_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="338" y="0" width="48" height="20" uuid="db594186-3346-4e6f-b814-a30fe8c2d571"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{route_from}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="386" y="0" width="49" height="20" uuid="9ac42607-f814-4ec7-b645-86b39ee91c85"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{route_to}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="435" y="0" width="43" height="20" uuid="8f29c321-daa5-441d-9cd1-ebf49f30179b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{service_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="478" y="0" width="48" height="20" uuid="c3523210-f424-4cc2-996e-74faa72c84f5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="526" y="0" width="84" height="20" uuid="02bf43b7-763c-4331-8ef4-19e451ee6f5e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="62" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="20" width="804" height="42" uuid="31fb06b3-cd5f-4554-9f7e-1f17381ce23d"/>
+				<textField isBlankWhenNull="true">
+					<reportElement x="35" y="8" width="189" height="25" uuid="7393ec20-852c-4ce8-b9e1-bca5ef6cff7f"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{create_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="305" y="8" width="54" height="25" uuid="b7227509-ea06-4ef7-91fa-f941f736cfd8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[部门经理:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="359" y="8" width="167" height="25" uuid="c4eba178-8cc0-41f8-b4b5-3ab40011b66e"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="590" y="8" width="55" height="25" uuid="61f1f11c-8bba-45a4-8649-f7511201c5c2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[主管领导:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="645" y="8" width="157" height="25" uuid="29928367-d88d-4301-9c98-d6126ff5c5b1"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement x="0" y="28" width="35" height="25" uuid="15413868-7712-4d5c-91ca-4d53a716992c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[制单:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="732" y="0" width="70" height="20" uuid="8f6094f1-976c-49e1-915c-8f69babe90c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="0" y="0" width="671" height="20" uuid="86d8c89a-8857-49c1-8bfd-f62e82744681"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="671" y="0" width="61" height="20" uuid="44dd0914-c84c-42e4-8fd5-1eca399ebfe3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="672" y="0" width="61" height="20" uuid="c64e8a61-7118-4691-a146-7ec93d2edf6a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sum_amount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="644" y="-3" width="35" height="25" uuid="6fddac8a-19e4-4cb5-bab2-a1fa66ff07ae"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[合计:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>
