@@ -23,6 +23,7 @@ $(document).ready(function() {
             {"mDataProp":"DEPART_NO", "sWidth":"100px"},
             {"mDataProp":"ORDER_TYPE", "sWidth":"60px",
             	"fnRender": function(obj) {
+            		$("#total_amount").html(obj.aData.TOTAL_AMOUNT);
             		if(obj.aData.ORDER_TYPE == "salesOrder"){
             			return "销售订单";
             		}else if(obj.aData.ORDER_TYPE == "replenishmentOrder"){
@@ -80,13 +81,14 @@ $(document).ready(function() {
     	var sp_id = $("#sp_id").val();
     	var routeTo = $("#routeTo").val();
     	var endTime = $("#endTime").val();
-
-			statusTable.fnSettings().oFeatures.bServerSide = true;
-			statusTable.fnSettings()._iDisplayStart = 0;
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/orderStatusReport?beginTime="+beginTime+"&endTime="+endTime+"&setOutTime="+setOutTime
-	    		+"&order_no_type="+order_no_type+"&order_no="+order_no+"&order_status_type="+order_status_type+"&transferOrder_status="+transferOrder_status
-	    		+"&delivery_status="+delivery_status+"&customer_id="+customer_id+"&routeFrom="+routeFrom+"&sp_id="+sp_id+"&routeTo="+routeTo;
-	    	statusTable.fnDraw(); 
+    	$("#total_amount").html('0');
+    	
+		statusTable.fnSettings().oFeatures.bServerSide = true;
+		statusTable.fnSettings()._iDisplayStart = 0;
+    	statusTable.fnSettings().sAjaxSource = "/statusReport/orderStatusReport?beginTime="+beginTime+"&endTime="+endTime+"&setOutTime="+setOutTime
+    		+"&order_no_type="+order_no_type+"&order_no="+order_no+"&order_status_type="+order_status_type+"&transferOrder_status="+transferOrder_status
+    		+"&delivery_status="+delivery_status+"&customer_id="+customer_id+"&routeFrom="+routeFrom+"&sp_id="+sp_id+"&routeTo="+routeTo;
+    	statusTable.fnDraw(); 
     });
     
     //获取客户的list，选中信息在下方展示其他信息
