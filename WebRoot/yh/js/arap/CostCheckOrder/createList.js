@@ -151,9 +151,11 @@ $(document).ready(function() {
 			//$("#checkedCostCheckList").remove("tbody",$(this).parent().parent());
 			//$("#checkedCostCheckList").$(this).parent().parent().remove();
 			var id=$(this)[0].id;
-			for(var i=0; i<$("#checkedCostCheckList").children().length;i++){
-				if(id==$("#checkedCostCheckList").children().children().children()[i].id){
-					$("#checkedCostCheckList").children()[i].remove();
+			var rows = $("#checkedCostCheckList").children();
+			for(var i=0; i<rows.length;i++){
+				var row = rows[i];
+				if(id==$(row).find('input').attr('id')){
+					row.remove();
 					//$("#checkedCostCheckList").children().splice(i,1);
 				}
 			}
