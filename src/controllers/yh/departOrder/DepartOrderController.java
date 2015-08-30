@@ -1297,67 +1297,7 @@ public class DepartOrderController extends Controller {
 		}
 	}
 
-	// 将数据保存进中间表
-	private void saveDepartTransfer(DepartOrder departOrder, String param,
-			String checkedDetail, String uncheckedDetailId, String pickupIds) {
-		DepartTransferOrder departTransferOrder = null;
-		String[] params = param.split(",");
-		if (checkedDetail == null || "".equals(checkedDetail)) {
-			for (int i = 0; i < params.length; i++) {
-
-				TransferOrder transferOrder = TransferOrder.dao
-						.findById(params[i]);
-				transferOrder.set("depart_assign_status",
-						transferOrder.get("pickup_assign_status"));
-				transferOrder.update();
-
-				departTransferOrder = new DepartTransferOrder();
-				departTransferOrder.set("depart_id", departOrder.get("id"));
-				departTransferOrder.set("order_id", params[i]);
-				departTransferOrder.set("transfer_order_no",
-						transferOrder.get("order_no"));
-				departTransferOrder.save();
-
-				List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
-						.find("select * from transfer_order_item_detail where order_id = ?",
-								params[i]);
-				for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-					if (transferOrderItemDetail.get("depart_id") == null) {
-						transferOrderItemDetail.set("depart_id",
-								departOrder.get("id"));
-						transferOrderItemDetail.update();
-					}
-				}
-			}
-		} else {
-			for (int i = 0; i < params.length; i++) {
-				departTransferOrder = new DepartTransferOrder();
-				departTransferOrder.set("depart_id", departOrder.get("id"));
-				departTransferOrder.set("order_id", params[i]);
-				TransferOrder transferOrder = TransferOrder.dao
-						.findById(params[i]);
-				transferOrder.update();
-				departTransferOrder.set("transfer_order_no",
-						transferOrder.get("order_no"));
-				departTransferOrder.save();
-			}
-			String[] checkedDetailIds = checkedDetail.split(",");
-			for (int j = 0; j < checkedDetailIds.length; j++) {
-				TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
-						.findById(checkedDetailIds[j]);
-				transferOrderItemDetail.set("depart_id", departOrder.get("id"));
-				transferOrderItemDetail.update();
-			}
-
-			String[] uncheckedDetailIds = uncheckedDetailId.split(",");
-			for (int j = 0; j < uncheckedDetailIds.length; j++) {
-				TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
-						.findById(uncheckedDetailIds[j]);
-				transferOrderItemDetail.set("depart_id", "");
-				transferOrderItemDetail.update();
-			}
-		}
-	}
+	
 
 	// 修改发车单状态
 	public void updatestate() {
