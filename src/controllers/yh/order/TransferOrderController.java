@@ -623,65 +623,6 @@ public class TransferOrderController extends Controller {
 		}
 	}
 
-	// 创建发车单
-	private void createDepartOrder(TransferOrder transferOrder) {
-		String orderNo = OrderNoGenerator.getNextOrderNo("FC"); 
-		
-		String name = (String) currentUser.getPrincipal();
-		UserLogin users = UserLogin.dao
-				.findFirst("select * from user_login where user_name='" + name
-						+ "'");
-		String creat_id = users.get("id").toString();
-		Date createDate = Calendar.getInstance().getTime();
-		DepartOrder departOrder = new DepartOrder();
-		departOrder.set("create_by", Integer.parseInt(creat_id))
-				.set("create_stamp", createDate).set("combine_type", "DEPART")
-				.set("depart_no", orderNo)
-				.set("car_no", transferOrder.get("car_no"))
-				.set("car_type", transferOrder.get("car_type"))
-				.set("car_size", transferOrder.get("car_size"));
-		departOrder.set("driver_id", transferOrder.get("driver_id"));
-		departOrder.save();
-
-		DepartTransferOrder departTransferOrder = new DepartTransferOrder();
-		departTransferOrder.set("depart_id", departOrder.get("id"));
-		departTransferOrder.set("order_id", transferOrder.get("id"));
-		departTransferOrder.set("transfer_order_no",
-				transferOrder.get("order_no"));
-		departTransferOrder.save();
-	}
-
-	// 更新发车单
-	private void updateDepartOrder(TransferOrder transferOrder,
-			DepartTransferOrder departTransferOrder) {
-		
-		String orderNo = OrderNoGenerator.getNextOrderNo("FC");
-		
-		String name = (String) currentUser.getPrincipal();
-		UserLogin users = UserLogin.dao
-				.findFirst("select * from user_login where user_name='" + name
-						+ "'");
-		String creat_id = users.get("id").toString();
-		Date createDate = Calendar.getInstance().getTime();
-		DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder
-				.get("depart_id"));
-		departOrder.set("create_by", Integer.parseInt(creat_id))
-				.set("create_stamp", createDate).set("combine_type", "DEPART")
-				.set("depart_no", orderNo)
-				.set("car_no", transferOrder.get("car_no"))
-				.set("car_type", transferOrder.get("car_type"))
-				.set("car_size", transferOrder.get("car_size"));
-		departOrder.set("driver_id", transferOrder.get("driver_id"));
-		departOrder.update();
-
-		departTransferOrder.set("depart_id", departOrder.get("id"));
-		departTransferOrder.set("order_id", transferOrder.get("id"));
-		departTransferOrder.set("transfer_order_no",
-				transferOrder.get("order_no"));
-		departTransferOrder.update();
-	}
-
-
 	// 保存运输里程碑
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE,PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
 	private void saveTransferOrderMilestone(TransferOrder transferOrder) {

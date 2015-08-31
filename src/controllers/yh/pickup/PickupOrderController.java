@@ -1056,57 +1056,6 @@ public class PickupOrderController extends Controller {
         }
     }
 
-    // 将数据保存进中间表
-    private void saveDepartTransfer(DepartOrder pickupOrder, String param, String checkedDetail, String uncheckedDetailId) {
-        DepartTransferOrder departTransferOrder = null;
-        String[] params = param.split(",");
-        if (checkedDetail == null || "".equals(checkedDetail)) {
-            for (int i = 0; i < params.length; i++) {
-                departTransferOrder = new DepartTransferOrder();
-                departTransferOrder.set("pickup_id", pickupOrder.get("id"));
-                departTransferOrder.set("order_id", params[i]);
-                TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
-                transferOrder.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
-                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
-                transferOrder.update();
-                departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
-                departTransferOrder.save();
-
-                /*List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find(
-                        "select * from transfer_order_item_detail where order_id = ?", params[i]);
-                for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-                    if (transferOrderItemDetail.get("pickup_id") == null) {
-                        transferOrderItemDetail.set("pickup_id", pickupOrder.get("id"));
-                        transferOrderItemDetail.update();
-                    }
-                }*/
-            }
-        } else {
-            for (int i = 0; i < params.length; i++) {
-                departTransferOrder = new DepartTransferOrder();
-                departTransferOrder.set("pickup_id", pickupOrder.get("id"));
-                departTransferOrder.set("order_id", params[i]);
-                TransferOrder transferOrder = TransferOrder.dao.findById(params[i]);
-                transferOrder.set("pickup_mode", pickupOrder.get("pickup_mode"));
-                transferOrder.update();
-                departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
-                departTransferOrder.save();
-            }
-            /*String[] checkedDetailIds = checkedDetail.split(",");
-            for (int j = 0; j < checkedDetailIds.length; j++) {
-                TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(checkedDetailIds[j]);
-                transferOrderItemDetail.set("pickup_id", pickupOrder.get("id"));
-                transferOrderItemDetail.update();
-            }
-
-            String[] uncheckedDetailIds = uncheckedDetailId.split(",");
-            for (int j = 0; j < uncheckedDetailIds.length; j++) {
-                TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao.findById(uncheckedDetailIds[j]);
-                transferOrderItemDetail.set("pickup_id", "");
-                transferOrderItemDetail.update();
-            }*/
-        }
-    }
 
     //问题解决:    select group_concat(  cast(id as char)   ) funIds from fun
     //使用时取：   pickupOrder.getStr("funIds")
