@@ -40,6 +40,7 @@
 			                                   		<input id="reimbursementId" name="reimbursementId" type="hidden" value="${rei.id!''}">
 			                                   		<input id="invoicePayment" name="invoicePayment" type="hidden" value="${rei.invoice_payment!''}">
 			                                   		<input id="paymentType" name="paymentType" type="hidden" value="${rei.payment_type!''}">
+			                                   		<input id="accId" name="accId" type="hidden">
 					                                <div class="col-lg-6">
 					                                	<div class="form-group">
 				                                          	<label class="search-label">有发票报销</label>
@@ -67,7 +68,7 @@
 				                                          	<label class="search-label">创建时间</label> 
 				                                          	<input id="create_stamp" name="create_stamp" class="form-control search-control beginTime_filter" type="text" value="${rei.create_stamp!''}" readonly="true" >
 			                                            </div>
-			                                            <div class="form-group">
+			                                            <!-- <div class="form-group">
 			                                                <label class="search-label">审核人</label>
 			                                                <input type="hidden" class="form-control search-control orderNo_filter" id="audit_id" name="audit_id"  value="${rei.audit_id!''}">
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="audit_name" name="audit_name"  value="${auditName!''}" readonly="true">
@@ -75,7 +76,7 @@
 			                                            <div class="form-group">
 				                                          	<label class="search-label">审核时间</label> 
 				                                          	<input id="audit_stamp" name="audit_stamp" class="form-control search-control beginTime_filter" type="text" value="${rei.audit_stamp!''}" readonly="true">
-			                                            </div>
+			                                            </div> -->
 			                                        </div> 
 			                                  
 				                                   <div class="col-lg-6">
@@ -90,7 +91,12 @@
 			                                                	<option></option>
 			                                                	<option>现金</option>
 			                                                	<option>转账</option>
-			                                                	<option>冲账</option>
+			                                                </select>
+			                                            </div>
+			                                            <div class="form-group">
+				                                   			<label class="search-label">付款账户信息</label>
+			                                                <select id="payment_info" disabled="true"; class="form-control search-control officeName_filter" name="payment_type">
+			                                                <option>${acc.bank_name!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.account_no!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.bank_person!''}</option>
 			                                                </select>
 			                                            </div>
 				                                   		
@@ -102,7 +108,7 @@
 				                                   			<label class="search-label">报销金额</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="amount" name="amount"  value="${rei.amount!''}" readonly="true">
 			                                            </div>
-			                                            <div class="form-group">
+			                                            <!-- <div class="form-group">
 			                                                <label class="search-label">审批人</label>
 			                                                <input type="hidden" class="form-control search-control orderNo_filter" id="approval_id" name="approval_id"  value="${rei.approval_id!''}">
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="approval_name" name="approval_name" value="${approvalName!''}" readonly="true">
@@ -112,7 +118,7 @@
 					                                          	<label class="search-label">审批时间</label> 
 					                                          	<input id="approval_stamp" name="approval_stamp" name="create_stamp" class="form-control search-control beginTime_filter" type="text" value="${rei.approval_stamp!''}" readonly="true">
 					                                      	</div>
-			                                            </div>
+			                                            </div> -->
 				                                   </div>
 				                                   <div class="col-lg-12">
 				                                   		<div class="form-group">
@@ -194,10 +200,10 @@
                             <hr/>
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
 		               		<button id="saveExpenseAccount" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
-		               		<button id="auditBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button>
+		               		<!-- <button id="auditBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button>
 		               		<button id="cancelAuditBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">取消审核</button>
 		               		<button id="approvalBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">审批</button>
-		               		<button id="cancelApprovalBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">取消审批</button>
+		               		<button id="cancelApprovalBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">取消审批</button> -->
 		               		<a class="btn  btn-primary" href="/costReimbursement">返回</a>
                         </div>                       
                     </div>

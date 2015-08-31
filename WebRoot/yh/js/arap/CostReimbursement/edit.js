@@ -55,6 +55,7 @@ $(document).ready(function() {
         if(!$("#expenseAccountForm").valid()){
 	       	return false;
         }
+        $("#accId").val($("#payment_info").val());
 		$.post('/costReimbursement/saveReimbursementOrder', $("#expenseAccountForm").serialize(), function(data){
  			if(data != null){
  				$("#reimbursementId").val(data.ID);
@@ -81,7 +82,46 @@ $(document).ready(function() {
 	$("#carmanagebasic").click(function(e){
 		clickTabId = e.target.getAttribute("id");
     });
-    
+	
+	if($("#payment_type").val()=="现金"||$("#payment_type").val()==""){
+		$("#payment_info").val("");
+		$('#payment_info').attr("disabled",true);
+	}
+	if($("#payment_type").val()=="转账"){
+		$('#payment_info').attr("disabled",false);
+	}	
+	$("#payment_type").change(function () {
+		var selectTxt=$("#payment_type").val();
+		if(selectTxt=="现金"||selectTxt==""){
+			$("#payment_info").val("");
+			$('#payment_info').attr("disabled",true);
+		}
+		if(selectTxt=="转账"){
+			$("#payment_info").val("");
+			$('#payment_info').attr("disabled",false);
+		}	
+		$.post('/costReimbursement/getFinAccount', function(data){
+			var payment_info = $("#payment_info");
+			payment_info.empty();
+			payment_info.append("<option></option>");
+			for(var i = 0; i < data.length; i++){
+				var bank_name = data[i].BANK_NAME;
+				var account_no = data[i].ACCOUNT_NO;
+				var bank_person = data[i].BANK_PERSON;
+				var acc_id = data[i].ID;
+				if(bank_name == null){
+					bank_name='';
+				}
+				if(account_no == null){
+					account_no='';
+				}
+				if(bank_person == null){
+					bank_person='';
+				}
+				payment_info.append("<option value="+acc_id+">"+bank_name+"&nbsp&nbsp&nbsp&nbsp"+account_no+"&nbsp&nbsp&nbsp&nbsp"+bank_person+"</option>");
+			}
+		},'json');
+	});
 	//点击审核、审批、取消审核、取消审批
 	$("#auditBtn,#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").click(function(e){
 		$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
@@ -91,9 +131,8 @@ $(document).ready(function() {
 		$.post('/costReimbursement/updateReimbursement', {reimbursementId:reimbursementId,btntTxt:btntTxt}, function(data){
 			$("#status").val(data.STATUS);
 			$("#audit_stamp").val(data.AUDIT_STAMP);
-			$("#approval_stamp").val(data.APPROVAL_STAMP);
-				
-			if(data.AUDIT_ID != "" && data.AUDIT_ID != null){
+			$("#approval_stamp").val(data.APPROVAL_STAMP);			
+			/*if(data.AUDIT_ID != "" && data.AUDIT_ID != null){
 				$.post('/costReimbursement/findUser', {"userId":data.CREATE_ID}, function(data){
 					$("#audit_name").val(data.USER_NAME);
 				});
@@ -122,7 +161,7 @@ $(document).ready(function() {
 				$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
 				$("#approvalBtn").show();
 				$("#cancelAuditBtn").show();
-			}
+			}*/
 			num = 1;
 			reimbursementOrderFinItemTbody.fnSettings().oFeatures.bServerSide = true;
 			reimbursementOrderFinItemTbody.fnSettings().sAjaxSource = "/costReimbursement/accountPayable/"+reimbursementId;   

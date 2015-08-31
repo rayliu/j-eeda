@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.Account;
 import models.DeliveryOrderMilestone;
 import models.DepartOrderFinItem;
 import models.FinItem;
@@ -50,9 +51,14 @@ public class CostReimbursementOrder extends Controller {
         setAttr("attributionItemList", attributionItemList);
 		render("/yh/arap/CostReimbursement/CostReimbursementEdit.html");
 	}
+	public void getFinAccount() {
+			List<Record> locationList= Db.find("SELECT * from fin_account where type='ALL' or type='PAY'");
+			renderJson(locationList);
+	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 	public void saveReimbursementOrder() {
 		String id = getPara("reimbursementId");
+		String accId = getPara("accId");
 		//String status = getPara("status");
 		String accountName = getPara("account_name");
 		String accountNo = getPara("account_no");
@@ -81,7 +87,7 @@ public class CostReimbursementOrder extends Controller {
 			rei = new ReimbursementOrder();
 			rei.set("order_no", orderNo).set("status", "新建")
 					.set("account_name", accountName).set("account_no", accountNo)
-					.set("create_id", users.get("id"))
+					.set("create_id", users.get("id")).set("acc_id", accId)
 					.set("create_stamp", new Date()).set("remark", remark)
 					.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 					.save();
@@ -157,23 +163,12 @@ public class CostReimbursementOrder extends Controller {
 		String id = getPara("id");
 		ReimbursementOrder rei = ReimbursementOrder.dao.findById(id);
 		setAttr("rei", rei);
+		Account acc=Account.dao.findById(rei.get("acc_id"));
+		setAttr("acc",acc);
 		//创建人
 		UserLogin create = UserLogin.dao
 				.findFirst("select * from user_login where id='" + rei.get("create_id") + "'");
 		setAttr("createName", create.get("user_name"));
-		//审核人
-		if(rei.get("audit_id") != null && !"".equals(rei.get("audit_id"))){
-			UserLogin audit = UserLogin.dao
-					.findFirst("select * from user_login where id='" + rei.get("audit_id") + "'");
-			setAttr("auditName", audit.get("user_name"));
-		}
-		//审批人
-		if(rei.get("approval_id") != null && !"".equals(rei.get("approval_id"))){
-			UserLogin approval = UserLogin.dao
-					.findFirst("select * from user_login where id='" + rei.get("approval_id") + "'");
-			setAttr("approvalName", approval.get("user_name"));
-		}
-		
 		List<Record> paymentItemList  = Db.find("select * from fin_item where type='应付'");
         setAttr("paymentItemList", paymentItemList);
 		
