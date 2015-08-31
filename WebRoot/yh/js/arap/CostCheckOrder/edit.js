@@ -19,6 +19,7 @@ $(document).ready(function() {
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
+		$("#saveCostCheckOrderBtn").attr("disabled",true);
 		$.post('/costCheckOrder/save', $("#costCheckOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#sorder_no").html('<strong>'+data.ORDER_NO+'<strong>');
@@ -34,7 +35,7 @@ $(document).ready(function() {
 			  	contactUrl("edit?id",data.ID);
 			  	//if("costCheckOrderbasic" == parentId){
 			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			  	$("#saveCostCheckOrderBtn").attr("disabled",true);
+			  	
 			  	$("#auditBtn").attr("disabled",false);
 			  	//}
 			}else{
