@@ -93,33 +93,26 @@ public class DeliveryController extends Controller {
 				&& status_filter == null && customer_filter == null
 				&& sp_filter == null && beginTime_filter == null
 				&& endTime_filter == null ) {
-			String sqlTotal = "select count(1) total from delivery_order d "
-					+ " left join party p on d.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on d.sp_id = p2.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " where d.status != '初始化' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+			String sqlTotal = "select count(1) total "
+					+ " FROM delivery_order d"
+					+ " LEFT JOIN party p ON d.customer_id = p.id"
+					+ " LEFT JOIN contact c ON p.contact_id = c.id"
+					+ " LEFT JOIN party p2 ON d.sp_id = p2.id"
+					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
+					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
+					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
+					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
+					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
+					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+					+ " LEFT JOIN office o ON o.id = tor.office_id"
+					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
+					+ " where d.status != '初始化' "
+					+ " AND (unix_timestamp(tor.planning_time) > unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ " and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
-//原来的sql有重复问题
-//			String sql = "select distinct toi.item_no item_no,trid.pieces amount, tor.planning_time plan_time ,d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
-//					+ " (select group_concat(trid.serial_no separator '\r\n') from delivery_order_item doi left join transfer_order_item_detail trid on trid.id = doi.transfer_item_detail_id where doi.delivery_id = d.id) as serial_no"
-//					+ " from delivery_order d "
-//					+ " left join party p on d.customer_id = p.id "
-//					+ " left join contact c on p.contact_id = c.id "
-//					+ " left join party p2 on d.sp_id = p2.id "
-//					+ " left join warehouse w on d.from_warehouse_id = w.id "
-//					+ " left join contact c2 on p2.contact_id = c2.id "
-//					+ " left join delivery_order_item doi on doi.delivery_id = d.id "
-//					+ " left join transfer_order tor on tor.id = doi.transfer_order_id "
-//					+ " left join transfer_order_item toi on toi.order_id = tor.id "
-//					+ " left join transfer_order_item_detail trid ON trid.id = doi.transfer_item_detail_id"
-//					+ " where d.status != '初始化' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-//					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-//					+ " order by d.create_stamp desc "
-//					+ sLimit;
+
 			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(d.receivingunit,IFNULL(trid.notify_party_company,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
@@ -145,7 +138,8 @@ public class DeliveryController extends Controller {
 					+ " ( SELECT group_concat( trid.serial_no SEPARATOR ' ' )"
 					+ " FROM "
 					+ " delivery_order_item doi LEFT JOIN transfer_order_item_detail trid ON trid.id = doi.transfer_item_detail_id"
-					+ " WHERE doi.delivery_id = d.id ) AS serial_no FROM delivery_order d"
+					+ " WHERE doi.delivery_id = d.id ) AS serial_no "
+					+ " FROM delivery_order d"
 					+ " LEFT JOIN party p ON d.customer_id = p.id"
 					+ " LEFT JOIN contact c ON p.contact_id = c.id"
 					+ " LEFT JOIN party p2 ON d.sp_id = p2.id"
@@ -159,8 +153,9 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " WHERE"
 					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
-					+ " AND w.office_id IN ( SELECT office_id FROM user_office WHERE user_name = 'admin@eeda123.com' )"
-					+ "AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = 'admin@eeda123.com' )"
+					+ " AND (unix_timestamp(tor.planning_time) > unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ " AND w.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+					+ "AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' )"
 					+ " GROUP BY d.id ORDER BY d.create_stamp DESC "
 					+ sLimit;
 
@@ -206,7 +201,9 @@ public class DeliveryController extends Controller {
 					+ serial_no
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
-					+ "' and '" + endTime_filter + "' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ "' and '" + endTime_filter + "' "
+					+ " AND (unix_timestamp(tor.planning_time) > unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ "and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" ;
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
@@ -264,7 +261,9 @@ public class DeliveryController extends Controller {
 					+ serial_no
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
-					+ "' and '" + endTime_filter + "' and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ "' and '" + endTime_filter + "' "
+					+ " AND (unix_timestamp(tor.planning_time) > unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ "and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				    + " group by d.id " + sLimit;
 
