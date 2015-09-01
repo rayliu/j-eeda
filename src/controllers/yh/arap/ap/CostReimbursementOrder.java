@@ -85,9 +85,12 @@ public class CostReimbursementOrder extends Controller {
 					.findFirst("select * from user_login where user_name='" + name + "'");
 			
 			rei = new ReimbursementOrder();
+			if(accId!=null&&!accId.equals("")){
+				rei.set("fin_account_id", accId);
+			}
 			rei.set("order_no", orderNo).set("status", "新建")
 					.set("account_name", accountName).set("account_no", accountNo)
-					.set("create_id", users.get("id")).set("acc_id", accId)
+					.set("create_id", users.get("id"))
 					.set("create_stamp", new Date()).set("remark", remark)
 					.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 					.save();
@@ -100,6 +103,9 @@ public class CostReimbursementOrder extends Controller {
 		} else {
 
 			rei = ReimbursementOrder.dao.findById(id);
+			if(accId!=null&&!accId.equals("")){
+				rei.set("fin_account_id", accId);
+			}
 			rei.set("account_name", accountName).set("account_no", accountNo)
 				.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 				.set("remark", remark).update();
