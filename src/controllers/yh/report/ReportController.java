@@ -44,6 +44,15 @@ public class ReportController extends Controller {
     	String file = PrintPatterns.getInstance().print(fileName, outFileName + order_no, hm);
     	return file;
     }
+    public void printReimburse(){
+    	String order_no = getPara("order_no");
+    	String fileName ="report/reimburse.jasper";
+    	String outFileName = "WebRoot/download/报销单";
+    	HashMap<String, Object> hm = new HashMap<String, Object>();
+    	hm.put("order_no", order_no);
+    	String file = PrintPatterns.getInstance().print(fileName, outFileName + order_no, hm);
+    	renderText(file.substring(7));
+    }
    public void printPayMent(){
 	   String order_no = getPara("order_no");
 	   ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findFirst("select * from arap_cost_invoice_application_order where order_no = ?",order_no);
