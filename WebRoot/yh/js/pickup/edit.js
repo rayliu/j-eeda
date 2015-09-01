@@ -748,8 +748,8 @@
             		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
                 		pickupOrderMilestone();	
                     	var pickupOrderId = $("#pickupOrderId").val();
-                    	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;/*/"+pickupOrderId;
-*/                		paymenttable.fnDraw(); 
+                    	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;
+                    	paymenttable.fnDraw(); 
                 		routeTable.fnDraw(); 
                 		$("#finishBtn").attr('disabled', true);	
                     	$("#saveTransferOrderBtn").attr('disabled', true);	
@@ -1431,13 +1431,18 @@
     			$.scojs_message('对不起，当前单据(已入货场/已入库)或有下级单据(发车单/回单)，不能撤销', $.scojs_message.TYPE_ERROR);
     		}else{
     			$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
-    			 $("#finishBtn").attr('disabled', true);
-    			 $("#saveTransferOrderBtn").attr('disabled', true);
-    			 $("#cancelBtn").attr('disabled', true);
+    			$("#finishBtn").attr('disabled', true);
+    			$("#saveTransferOrderBtn").attr('disabled', true);
+    			$("#cancelBtn").attr('disabled', true);
     		}
     	});
     	
     });
     
-    
+    //初次进来页面初始化按钮状态
+    if($("#tstatus").val() == "已入库" ||$("#tstatus").val() == "已收货" || $("#tstatus").val() == "已签收"){
+    	$("#finishBtn").attr('disabled', true);
+    	$("#saveTransferOrderBtn").attr('disabled', true);
+    	$("#cancelBtn").attr('disabled', true);
+    }
 });
