@@ -1,0 +1,87 @@
+<%layout("/yh/layout.html"){%>
+ <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/yh/css/ui/jquery-ui.css">
+    <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">   
+
+ <div id="page-wrapper">
+    
+    <div class="row">
+        <div class="col-lg-12 panel-body">
+          
+            <div class="btn-header"style="font-size: 32px">编辑条目</div>
+           
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+ <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                           	条目基本信息
+                        </div>
+                        <div class="panel-body">
+                           <div class="row">
+                                <form role="form" id="reimbursementAccountForm" >
+                                    <input id="id" name="id" type="hidden" value="${finItem.id!''}">
+                                    <input id="typeId" name="typeId" type="hidden" >
+                                    
+                                    <div class="col-lg-6">
+	                                    <div class="form-group">
+	                                    	<label class="search-label">费用类别</label>
+	                                        <input type="text" name="account_type" class="form-control form-group account_type" id="account_type" value="${account_type!''}" placeholder="请选择费用类别">
+	                                       	<ul id='typeList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 22%; left: 33%;">
+	                                       	</ul>
+		                                </div>
+		                                
+		                                
+		                                <div class="form-group">
+                                            <label>条目名称</label>
+                                            <input class="form-control" id="name" name="name" type="text" value="${finItem.name!''}">
+                                        </div> 
+                                        
+                                        
+                                         <div class="form-group">
+                                            <label>条目代码</label>
+                                            <input class="form-control" id="code" type="text" name="code" value="${finItem.code!''}">
+                                        </div>
+                                            
+                                            
+                                        <div class="form-group">
+                                            <label>备注</label>
+                                            <textarea class="form-control" rows="3" name="remark">${finItem.remark!''}</textarea>
+                                        </div>
+	                                </div>   
+	                                
+                                    
+        
+                                </form>
+                                
+                                <div class="col-lg-8"> <hr/>
+                                        <button type="submit" id="saveBtn" class="btn  btn-primary">保存</button>
+                                        <a class="btn  btn-primary" href="/reimbursementAccount">返回</a>
+                                </div>
+                             </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+           </div>
+            <!-- /.row -->      
+</div>
+
+<%}%>
+
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/profile/reimbursementAccount/edit.js"></script>
+
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+<script src="/yh/js/eeda-common.js"></script>

@@ -1,0 +1,127 @@
+<%layout("/yh/layout.html"){%>
+
+        
+ <div id="page-wrapper">
+
+        <div id="row">
+           		<div class="col-lg-12">
+	                <div class="btn-header"></div>
+                </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                 	<% if(shiro.hasPermission("Toll.create")){%>
+					            <div class="btn-header">
+					            	<a  class="btn  btn-primary" href="/reimbursementAccount/Edit">添加条目</a>
+					            </div>
+				      <%}%>
+                    <div class="panel panel-default">
+                       
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="toll_example" style="width: 1237px;">
+                                    <thead>
+                                        <tr>
+                                            <th>条目类型</th>
+                                            <th>报销类别</th>
+                                            <th>收费条目名称</th>
+                                            <th>收费条目代码</th>
+                                            <th>备注</th>                                           
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                                                                                            
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <%}%>
+    <!-- /#wrapper -->
+
+
+
+    <!-- Page-Level Plugin Scripts - Tables -->
+    <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+    <%
+    	var tollUpdate = shiro.hasPermission("Toll.update");
+    	var tollDel = shiro.hasPermission("Toll.delete");
+    %>
+    var Toll={};
+    Toll.isUpdate = ${tollUpdate};
+    Toll.isDel = ${tollDel};
+    
+    $(document).ready(function() {
+    	document.title = '报销费用查询 | '+document.title;
+      $('#menu_profile').addClass('active').find('ul').addClass('in');
+   	 $("#del").click(function(){
+       		//alert("waerwerwee");
+       });
+    	 $("#query").click(function(){
+   	    	//alert("123");
+   	    });
+   	 $('#toll_example').dataTable( {
+   		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+         	"bFilter": false, //不需要默认的搜索框
+   	        "iDisplayLength": 10,
+   	    	"oLanguage": {
+   	            "sUrl": "/eeda/dataTables.ch.txt"
+   	        },
+   	        "sAjaxSource": "/reimbursementAccount/list",
+   			"aoColumns": [
+   				{ "mDataProp": "TYPE" },
+   				{ "mDataProp": "ACCOUNT_TYPE" },
+   	            { "mDataProp": "NAME" },
+   	            { "mDataProp": "CODE" },
+   	            { "mDataProp": "REMARK" },
+   	            { "mDataProp": null,
+   	         		"sWidth": "8%", 
+   	         		"bVisible":(Toll.isUpdate || Toll.isDel),
+   	        	 "fnRender": function(obj) { 
+   	        		 var str = "<nobr>";
+   	        		 if(Toll.isUpdate){
+   	        			 str += "<a class='btn  btn-primary btn-sm' href='/reimbursementAccount/Edit/"+obj.aData.ID+"' target='_blank'>"+
+			                    "<i class='fa fa-edit fa-fw'></i> "+
+			                    "编辑"+
+				                " </a> ";
+   	        		 }
+   	        		 if(Toll.isDel){
+   	        			if(obj.aData.IS_STOP != true ){
+   		   	        		str += "<a class='btn btn-danger  btn-sm' href='/reimbursementAccount/delete/"+obj.aData.ID+"'>"+
+   					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
+   					                    "停用"+
+   					                "</a>";
+   		   	        	 }else{
+   		   	        		str += "<a class='btn btn-success  btn-sm' href='/reimbursementAccount/delete/"+obj.aData.ID+"'>"+
+   					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
+   					                    "启用"+
+   					                "</a>";
+   		   	        	 } 
+   	        		 }
+   	        		str += "</nobr>"
+                 return str;
+   	         	
+   	        	}
+   	 		}
+             
+   	     ]
+   	});
+   		
+
+   });
+   
+
+    </script>

@@ -112,7 +112,6 @@ import com.jfinal.config.Interceptors;
 import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
-import com.jfinal.ext.plugin.quartz.QuartzPlugin;
 import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -288,6 +287,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/costConfirm", controllers.yh.arap.ap.CostConfirmController.class, contentPath);
         //应付报销单
         me.add("/costReimbursement", controllers.yh.arap.ap.CostReimbursementOrder.class, contentPath);
+        me.add("/reimbursementAccount", controllers.yh.ReimbursementAccountController.class, contentPath);
         
         me.add("/costMiscOrder", controllers.yh.arap.ap.CostMiscOrderController.class, contentPath);
         
