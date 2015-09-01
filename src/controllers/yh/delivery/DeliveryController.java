@@ -294,9 +294,9 @@ public class DeliveryController extends Controller {
 		String status = getPara("status");
 		if(status != null && status != ""){
 			if(status.equals("ok")){
-				status = "已签收";
+				status = "('已送达', '已签收')";
 			}else{
-				status = "新建";
+				status = "('新建','已发车')";
 			}
 		}else{
 			status = "";
@@ -314,10 +314,27 @@ public class DeliveryController extends Controller {
 		String sqlTotal = "";
 		
 
-		String sql = " select d.*,toid.id toid,toid.item_no item_no,toid.pieces pieces,"
+		String sql = " select d.*," 
+				+ " ("
+				+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
+				+ " from delivery_order_item doi "
+				+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
+				+ " WHERE doi.delivery_id = d.id"
+				+ " ) item_no,"
+				+ " ("
+				+ "  select sum(toid.pieces) from delivery_order_item doi "
+				+ " 	LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
+				+ " WHERE doi.delivery_id = d.id"
+				+ " ) pieces,"
 				+ " c.abbr as customer,"
 				+ " c2.company_name as c2,"
-				+ " toid.serial_no serial_no,"
+				+ " ("
+				+ "  select group_concat("
+				+ " 			DISTINCT toid.serial_no SEPARATOR ' '"
+				+ " 	)  from delivery_order_item doi "
+				+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
+				+ " WHERE doi.delivery_id = d.id"
+				+ " ) serial_no,"
 				+ " (select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
 				+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 				+ " from delivery_order d "
@@ -326,8 +343,6 @@ public class DeliveryController extends Controller {
 				+ " left join party p2 on d.sp_id = p2.id "			
 				+ " left join contact c2 on p2.contact_id = c2.id "
 				+ " left join warehouse w on d.from_warehouse_id = w.id "
-				+ " left join delivery_order_item doi on doi.delivery_id = d.id"
-				+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id"
 				+ " where w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				+ " order by d.create_stamp desc" + sLimit;
@@ -362,9 +377,9 @@ public class DeliveryController extends Controller {
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
-					+ "%' and ifnull(d.status,'') like '%"
+					+ "%' and ifnull(d.status,'') in "
 					+ status
-					+ "%' and ifnull(dt2.transfer_no,'') like '%"
+					+ " and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo
 					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp
@@ -374,10 +389,27 @@ public class DeliveryController extends Controller {
 					+ endTime + "' "
 					+ " and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
-			String sql_seach = "select distinct d.*,toid.id toid,toid.item_no item_no,toid.pieces pieces,"
+			String sql_seach = "select distinct d.*,"
+					+ " ("
+					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
+					+ " from delivery_order_item doi "
+					+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
+					+ " WHERE doi.delivery_id = d.id"
+					+ " ) item_no,"
+					+ " ("
+					+ "  select sum(toid.pieces) from delivery_order_item doi "
+					+ " 	LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
+					+ " WHERE doi.delivery_id = d.id"
+					+ " ) pieces,"
 					+ " c.abbr as customer,"
 					+ " c2.company_name as c2,"
-					+ " toid.serial_no serial_no,"
+					+ " ("
+					+ "  select group_concat("
+					+ " 			DISTINCT toid.serial_no SEPARATOR ' '"
+					+ " 	)  from delivery_order_item doi "
+					+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
+					+ " WHERE doi.delivery_id = d.id"
+					+ " ) serial_no,"
 					+ " (select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
 					+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 					+ " from delivery_order d "
@@ -387,15 +419,13 @@ public class DeliveryController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " left join delivery_order_item doi on doi.delivery_id = d.id"
-					+ " left join transfer_order_item_detail toid on toid.id = doi.transfer_item_detail_id"
 					+ " where ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
-					+ "%' and ifnull(d.status,'') like '%"
+					+ "%' and ifnull(d.status,'') in "
 					+ status
-					+ "%' and ifnull(dt2.transfer_no,'') like '%"
+					+ " and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo
 					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp

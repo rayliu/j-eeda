@@ -24,7 +24,7 @@ $(document).ready(function() {
 	var parentId="chargeCheckOrderbasic";
 	
 	var deliveryStatus=$("#deliveryOrder_status").text();
-	if(deliveryStatus=="已签收"||deliveryStatus=="已发车"){
+	if(deliveryStatus=="已送达"||deliveryStatus=="已签收"||deliveryStatus=="已发车"){//“已签收” 这个状态是“已送达”的旧数据
 		$("#saveBtn").attr("disabled",true);
 	}else{
 		$("#saveBtn").attr("disabled",false);
@@ -393,7 +393,7 @@ $(document).ready(function() {
 			$("#ConfirmationBtn").attr("disabled", true);
 			$("#receiptBtn").attr("disabled", false);
 		}
-		if($("#deliverystatus").val()=='已签收'){
+		if($("#deliverystatus").val()=='已签收'||$("#deliverystatus").val()=='已送达'){
 			$("#receiptBtn").attr("disabled", true);
 		}
 	}) ;

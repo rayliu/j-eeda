@@ -392,13 +392,13 @@ public class DeliveryOrderMilestoneController extends Controller {
     public void receipt() {
         long delivery_id = getParaToLong("delivery_id");
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
-        deliveryOrder.set("status", "已签收");
+        deliveryOrder.set("status", "已送达");
         deliveryOrder.update();
 
         //String transferId = deliveryOrder.get("transfer_order_id");
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
-        transferOrderMilestone.set("status", "已签收");
+        transferOrderMilestone.set("status", "已送达");
         Long userId = LoginUserController.getLoginUserId(this);
         transferOrderMilestone.set("create_by", userId);
         transferOrderMilestone.set("location", "");

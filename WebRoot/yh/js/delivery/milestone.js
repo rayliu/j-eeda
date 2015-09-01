@@ -40,7 +40,7 @@ $(document).ready(function() {
                 		if(obj.aData.STATUS==null){
                     		obj.aData.STATUS="";
                     	}
-                    	if(obj.aData.STATUS=='已签收'){
+                    	if(obj.aData.STATUS=='已送达' || obj.aData.STATUS=='已签收'){
                     		//return obj.aData.STATUS;
                     		return "已送达";
                     	}else{
@@ -67,7 +67,7 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "bVisible":DeliveryOnTrip.isComplete,
                 "fnRender": function(obj) {   
-                	if(obj.aData.STATUS=="已签收"){
+                	if(obj.aData.STATUS=="已送达"||obj.aData.STATUS=="已签收"){
                 		return "已送达";
                 	}else{
                 		return "<a class='btn  btn-primary confirmDelivery' id='arriveBtn' code='"+obj.aData.ID+"'>"+
