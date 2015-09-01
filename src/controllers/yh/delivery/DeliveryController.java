@@ -299,7 +299,7 @@ public class DeliveryController extends Controller {
 				status = "('新建','已发车')";
 			}
 		}else{
-			status = "";
+			status = "('新建','已发车','已送达', '已签收')";
 		}
 		
 
