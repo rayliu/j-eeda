@@ -578,14 +578,14 @@ public class PickupOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(1) total from transfer_order_item tof" + " where tof.order_id in(" + orderId + ")";
+        String sqlTotal = "SELECT COUNT(0) total FROM(SELECT(SELECT count(0) total FROM	transfer_order_item_detail WHERE order_id = tor.id	AND item_id = toi.id AND depart_id = 1632) atmamount FROM transfer_order_item toi LEFT JOIN transfer_order tor ON tor.id = toi.order_id WHERE toi.order_id IN (" + orderId + ")) a WHERE atmamount > 0";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
         String sql = "";
         if(!"".equals(pickId) && pickId != null){
-        	 sql = " select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
+        	 sql = " SELECT * FROM(select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
              		 + " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,c.abbr customer,tor.order_no,toi.remark,"
              		 + " ifnull((select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id = '"+pickId+"'), 0) atmamount,"
                      + " ifnull((select ifnull(dt.amount, 0)  from depart_transfer dt where dt.order_item_id = toi.id and dt.pickup_id = '"+pickId+"'), 0) cargoamount,"
@@ -598,9 +598,9 @@ public class PickupOrderController extends Controller {
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
                      + " left join product pd on pd.id = toi.product_id"
-                     + " where toi.order_id in(" + orderId + ")  order by c.id " + sLimit;
+                     + " where toi.order_id in(" + orderId + ")  order by c.id ) a where atmamount>0" + sLimit;
         }else{
-        	 sql = "select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
+        	 sql = "SELECT * FROM(select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
              		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
              		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and depart_id = "+departOrderId+") atmamount,"
                      + " ifnull(toi.amount, 0) cargoamount,ifnull(toi.volume, 0) cargovolume,ifnull(toi.sum_weight, 0) cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
@@ -608,7 +608,7 @@ public class PickupOrderController extends Controller {
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
                      + " left join product pd on pd.id = toi.product_id"
-                     + " where toi.order_id in(" + orderId + ")  order by c.id " + sLimit;
+                     + " where toi.order_id in(" + orderId + ")  order by c.id ) a where atmamount>0" + sLimit;
         }
       
         List<Record> departOrderitem = Db.find(sql);
