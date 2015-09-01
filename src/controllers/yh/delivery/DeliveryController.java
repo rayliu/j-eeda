@@ -296,10 +296,10 @@ public class DeliveryController extends Controller {
 			if(status.equals("ok")){
 				status = "('已送达', '已签收')";
 			}else{
-				status = "('新建','已发车')";
+				status = "('已发车')";
 			}
 		}else{
-			status = "('新建','已发车','已送达', '已签收')";
+			status = "('已发车','已送达', '已签收')";
 		}
 		
 
