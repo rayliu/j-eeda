@@ -62,6 +62,7 @@ public class CostReimbursementOrder extends Controller {
 		//String status = getPara("status");
 		String accountName = getPara("account_name");
 		String accountNo = getPara("account_no");
+		String account_bank = getPara("account_bank");
 		/*
 		String amount = getPara("amount");
 		String createId = getPara("create_id");
@@ -90,7 +91,7 @@ public class CostReimbursementOrder extends Controller {
 			}
 			rei.set("order_no", orderNo).set("status", "新建")
 					.set("account_name", accountName).set("account_no", accountNo)
-					.set("create_id", users.get("id"))
+					.set("create_id", users.get("id")).set("account_bank", account_bank)
 					.set("create_stamp", new Date()).set("remark", remark)
 					.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 					.save();
@@ -106,7 +107,7 @@ public class CostReimbursementOrder extends Controller {
 			if(accId!=null&&!accId.equals("")){
 				rei.set("fin_account_id", accId);
 			}
-			rei.set("account_name", accountName).set("account_no", accountNo)
+			rei.set("account_name", accountName).set("account_no", accountNo).set("account_bank", account_bank)
 				.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 				.set("remark", remark).update();
 		}
@@ -169,7 +170,7 @@ public class CostReimbursementOrder extends Controller {
 		String id = getPara("id");
 		ReimbursementOrder rei = ReimbursementOrder.dao.findById(id);
 		setAttr("rei", rei);
-		Account acc=Account.dao.findById(rei.get("acc_id"));
+		Account acc=Account.dao.findById(rei.get("fin_account_id"));
 		setAttr("acc",acc);
 		//创建人
 		UserLogin create = UserLogin.dao

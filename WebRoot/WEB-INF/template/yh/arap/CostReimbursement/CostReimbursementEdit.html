@@ -41,6 +41,7 @@
 			                                   		<input id="invoicePayment" name="invoicePayment" type="hidden" value="${rei.invoice_payment!''}">
 			                                   		<input id="paymentType" name="paymentType" type="hidden" value="${rei.payment_type!''}">
 			                                   		<input id="accId" name="accId" type="hidden">
+			                                   		<input id="account_bank" name="account_bank" type="hidden" value="${rei.account_bank!''}">
 					                                <div class="col-lg-6">
 					                                	<div class="form-group">
 				                                          	<label class="search-label">有发票报销</label>
@@ -58,6 +59,20 @@
 			                                            <div class="form-group">
 			                                                <label class="search-label">状态</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="status" name="status" value="${rei.status!''}" readonly="true">
+			                                            </div>
+			                                            <div class="form-group">
+				                                   			<label class="search-label">付款方式</label>
+			                                                <select id="payment_type" class="form-control search-control officeName_filter" name="payment_type">
+			                                                	<option></option>
+			                                                	<option>现金</option>
+			                                                	<option>转账</option>
+			                                                </select>
+			                                            </div>
+			                                            <div class="form-group">
+				                                   			<label class="search-label">付款账户信息</label>
+			                                                <select id="payment_info" disabled="true"; class="form-control search-control officeName_filter" name="payment_type">
+			                                                <option>${acc.bank_name!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.account_no!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.bank_person!''}</option>
+			                                                </select>
 			                                            </div>
 			                                            <div class="form-group">
 			                                                <label class="search-label">创建人</label>
@@ -82,27 +97,17 @@
 				                                   <div class="col-lg-6">
 				                                   		<br><br>
 				                                   		<div class="form-group">
-			                                                <label class="search-label">报销人</label>
+			                                                <label class="search-label">收款单位</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="account_name" name="account_name"  value="${rei.account_name!''}">
-			                                            </div>
-			                                            <div class="form-group">
-				                                   			<label class="search-label">付款方式</label>
-			                                                <select id="payment_type" class="form-control search-control officeName_filter" name="payment_type">
-			                                                	<option></option>
-			                                                	<option>现金</option>
-			                                                	<option>转账</option>
-			                                                </select>
-			                                            </div>
-			                                            <div class="form-group">
-				                                   			<label class="search-label">付款账户信息</label>
-			                                                <select id="payment_info" disabled="true"; class="form-control search-control officeName_filter" name="payment_type">
-			                                                <option>${acc.bank_name!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.account_no!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.bank_person!''}</option>
-			                                                </select>
-			                                            </div>
+			                                            </div> 
 				                                   		
 			                                            <div class="form-group">
-			                                                <label class="search-label">收款账户</label>
+			                                                <label class="search-label">收款账号</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="account_no" name="account_no"  value="${rei.account_no!''}">
+			                                            </div>
+			                                            <div class="form-group">
+			                                                <label class="search-label">收款账户银行</label>
+			                                                <input type="text" class="form-control search-control orderNo_filter" id="account_bank1" name="account_bank1"  value="${rei.account_bank!''}">
 			                                            </div>
 			                                            <div class="form-group">
 				                                   			<label class="search-label">报销金额</label>
@@ -200,8 +205,8 @@
                             <hr/>
                         	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>                            
 		               		<button id="saveExpenseAccount" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
-		               		<!-- <button id="auditBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">审核</button>
-		               		<button id="cancelAuditBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">取消审核</button>
+		               		<button id="printBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">打印</button>
+		               		<!-- <button id="cancelAuditBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">取消审核</button>
 		               		<button id="approvalBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">审批</button>
 		               		<button id="cancelApprovalBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">取消审批</button> -->
 		               		<a class="btn  btn-primary" href="/costReimbursement">返回</a>

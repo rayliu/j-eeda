@@ -56,6 +56,7 @@ $(document).ready(function() {
 	       	return false;
         }
         $("#accId").val($("#payment_info").val());
+        $("#account_bank").val($("#account_bank1").val());
 		$.post('/costReimbursement/saveReimbursementOrder', $("#expenseAccountForm").serialize(), function(data){
  			if(data != null){
  				$("#reimbursementId").val(data.ID);
@@ -77,7 +78,17 @@ $(document).ready(function() {
 	$("#saveExpenseAccount").click(function(e){
 		saveCarSummaryData();
     });
-	
+	 $("#printBtn").on('click',function(){
+	    	var order_no = $("#order_no").val();
+	    	if(order_no != null && order_no != ""){
+	    		$.post('/report/printReimburse', {order_no:order_no}, function(data){
+	        		window.open(data);
+	        	});
+	    	}else{
+	    		$.scojs_message('当前单号为空', $.scojs_message.TYPE_ERROR);
+	    	}
+	    	
+	    });
 	//tab - 基本信息
 	$("#carmanagebasic").click(function(e){
 		clickTabId = e.target.getAttribute("id");
