@@ -130,18 +130,22 @@ public class CostMiscOrderController extends Controller {
 	public void save() {
 		ArapMiscCostOrder arapMiscCostOrder = null;
 		String costMiscOrderId = getPara("costMiscOrderId");
-		//String paymentMethod = getPara("paymentMethod");
+		String type= getPara("biz_type");
+		String cost_to_type = getPara("cost_to_type");
 		String customerId = getPara("customer_id").equals("")?null:getPara("customer_id");
 		String spId=getPara("sp_id").equals("")?null:getPara("sp_id");
 		String routeFrom=getPara("route_from");
 		String routeTo=getPara("route_to");
+		String others_name=getPara("others_name");
 		
 		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {
 			//TODO: 如果已经应付确认过，就不能修改了
 			arapMiscCostOrder = ArapMiscCostOrder.dao.findById(costMiscOrderId);
 			arapMiscCostOrder.set("customer_id",customerId);
 			arapMiscCostOrder.set("sp_id",spId);
-			//arapMiscCostOrder.set("type", getPara("type"));普通收款
+			arapMiscCostOrder.set("others_name",others_name);
+			arapMiscCostOrder.set("type", type);
+			arapMiscCostOrder.set("cost_to_type", cost_to_type);
 			arapMiscCostOrder.set("route_from", routeFrom);
 			arapMiscCostOrder.set("route_to", routeTo);
 			arapMiscCostOrder.set("remark", getPara("remark"));
@@ -152,12 +156,15 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("status", "新建");
 			arapMiscCostOrder.set("customer_id",customerId);
 			arapMiscCostOrder.set("sp_id",spId);
+			arapMiscCostOrder.set("others_name",others_name);
+			arapMiscCostOrder.set("type", type);
+			arapMiscCostOrder.set("cost_to_type", cost_to_type);
 			arapMiscCostOrder.set("route_from", routeFrom);
 			arapMiscCostOrder.set("route_to", routeTo);
+			arapMiscCostOrder.set("remark", getPara("remark"));
 			arapMiscCostOrder.set("audit_status", "新建");
 			arapMiscCostOrder.set("create_by", getPara("create_by"));
 			arapMiscCostOrder.set("create_stamp", new Date());
-			arapMiscCostOrder.set("remark", getPara("remark"));
 			
 			arapMiscCostOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGFK"));
 						
