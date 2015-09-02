@@ -57,7 +57,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[发票金额]]></text>
+				<text><![CDATA[条目名称]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="table_TD" x="20" y="1" width="88" height="20" uuid="15a677fe-7191-47b2-8eb2-5f60f6f91a92"/>
@@ -71,7 +71,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[费用项目]]></text>
+				<text><![CDATA[费用类别]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="table_TD" x="308" y="1" width="113" height="20" uuid="7b474f8c-a93b-4779-9dc5-b6de760960bf"/>
