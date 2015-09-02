@@ -40,7 +40,7 @@
 			                                   		<input id="reimbursementId" name="reimbursementId" type="hidden" value="${rei.id!''}">
 			                                   		<input id="invoicePayment" name="invoicePayment" type="hidden" value="${rei.invoice_payment!''}">
 			                                   		<input id="paymentType" name="paymentType" type="hidden" value="${rei.payment_type!''}">
-			                                   		<input id="accId" name="accId" type="hidden">
+			                                   		<input id="accId" name="accId" type="hidden" value="${rei.fin_account_id!''}">
 			                                   		<input id="account_bank" name="account_bank" type="hidden" value="${rei.account_bank!''}">
 					                                <div class="col-lg-6">
 					                                	<div class="form-group">
@@ -70,7 +70,7 @@
 			                                            </div>
 			                                            <div class="form-group">
 				                                   			<label class="search-label">付款账户信息</label>
-			                                                <select id="payment_info" disabled="true"; class="form-control search-control officeName_filter" name="payment_type">
+			                                                <select id="payment_info" disabled="true"; class="form-control search-control officeName_filter" name="payment_type"  >
 			                                                <option>${acc.bank_name!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.account_no!''}&nbsp;&nbsp;&nbsp;&nbsp;${acc.bank_person!''}</option>
 			                                                </select>
 			                                            </div>
@@ -152,7 +152,8 @@
 			                                            <thead>
 			                                                <tr>
 			                                                	<th>序号</th>
-			                                                    <th>费用项目</th>
+			                                                    <th>费用类别</th>
+			                                                    <th>费用条目</th>
 			                                                    <th>发票金额</th>
 			                                                    <th>报销金额</th>
 			                                                    <th>备注</th>
@@ -161,9 +162,17 @@
 			                                            </thead>
 			                                            <tbody>
 			                                            </tbody>
+			                                            
+			                                            <div id="parentItemList" style="display:none;">
+			                                            <option>--请选择--</option>
+			                                            	<%for(parentItem in parentItemList){ %>
+           	   														<option value='${parentItem.ID!''}'>${parentItem.NAME!''}</option>
+           	   												<%}%>
+		                                            	</div>
 			                                            <div id="paymentItemList" style="display:none;">
-			                                            	<%for(paymentItem in paymentItemList){ %>
-           	   														<option value='${paymentItem.ID!''}'>${paymentItem.NAME!''}</option>
+			                                            <option>--请选择--</option>
+			                                            	<%for(item in itemList){ %>
+           	   														<option value='${item.ID!''}'>${item.NAME!''}</option>
            	   												<%}%>
 		                                            	</div>
 		                                            	
@@ -233,6 +242,7 @@
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/arap/CostReimbursement/edit.js"></script>
+<script src="/yh/js/eeda-common.js"></script>
 <script>
 	var order_no = '${rei.order_no!''}';
 </script>

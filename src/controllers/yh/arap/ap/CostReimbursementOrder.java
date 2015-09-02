@@ -3,7 +3,6 @@ package controllers.yh.arap.ap;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 import models.Account;
 import models.DeliveryOrderMilestone;
-import models.DepartOrderFinItem;
 import models.FinItem;
 import models.UserLogin;
 import models.yh.arap.ReimbursementOrder;
@@ -29,8 +27,8 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -45,10 +43,10 @@ public class CostReimbursementOrder extends Controller {
 	}
 	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 	public void create() {
-		List<Record> paymentItemList  = Db.find("select * from fin_item where type='报销'");
-        setAttr("paymentItemList", paymentItemList);
-        List<Record> attributionItemList  = Db.find("select * from fin_item where type='报销分类'");
-        setAttr("attributionItemList", attributionItemList);
+		List<Record> itemList  = Db.find("select * from fin_item where type='报销费用' and parent_id !=0 ");
+        setAttr("itemList", itemList);
+        List<Record> parentItemList  = Db.find("select * from fin_item where type='报销费用' and parent_id =0 ");
+        setAttr("parentItemList", parentItemList);
 		render("/yh/arap/CostReimbursement/CostReimbursementEdit.html");
 	}
 	public void getFinAccount() {
@@ -84,29 +82,30 @@ public class CostReimbursementOrder extends Controller {
 			String name = (String) currentUser.getPrincipal();
 			UserLogin users = UserLogin.dao
 					.findFirst("select * from user_login where user_name='" + name + "'");
-			
+			Long userId = LoginUserController.getLoginUserId(this);
 			rei = new ReimbursementOrder();
-			if(accId!=null&&!accId.equals("")){
-				rei.set("fin_account_id", accId);
-			}
+			
+//			if(accId!=null&&!accId.trim().equals("")){
+//				rei.set("fin_account_id", accId);
+//			}
 			rei.set("order_no", orderNo).set("status", "新建")
 					.set("account_name", accountName).set("account_no", accountNo)
-					.set("create_id", users.get("id")).set("account_bank", account_bank)
+					.set("create_id", userId).set("account_bank", account_bank)
 					.set("create_stamp", new Date()).set("remark", remark)
 					.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 					.save();
 			
 			DeliveryOrderMilestone milestone = new DeliveryOrderMilestone();
-			milestone.set("status", "新建").set("create_by", users.get("id"))
-					.set("create_stamp", new Date()).set("reimbursement_id", rei.get("id"))
+			milestone.set("status", "新建").set("create_by", userId)
+					.set("create_stamp", new Date()).set("reimbursement_id", rei.getLong("id"))
 					.save();
 			
 		} else {
 
 			rei = ReimbursementOrder.dao.findById(id);
-			if(accId!=null&&!accId.equals("")){
-				rei.set("fin_account_id", accId);
-			}
+//			if(accId!=null&&!accId.equals("")){
+//				rei.set("fin_account_id", accId);
+//			}
 			rei.set("account_name", accountName).set("account_no", accountNo).set("account_bank", account_bank)
 				.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 				.set("remark", remark).update();
@@ -176,8 +175,11 @@ public class CostReimbursementOrder extends Controller {
 		UserLogin create = UserLogin.dao
 				.findFirst("select * from user_login where id='" + rei.get("create_id") + "'");
 		setAttr("createName", create.get("user_name"));
-		List<Record> paymentItemList  = Db.find("select * from fin_item where type='应付'");
-        setAttr("paymentItemList", paymentItemList);
+		List<Record> itemList  = Db.find("select * from fin_item where type='报销费用' and parent_id != 0");
+        setAttr("itemList", itemList);
+        
+        List<Record> parentItemList  = Db.find("select * from fin_item where type='报销费用' and parent_id = 0");
+        setAttr("parentItemList", parentItemList);
 		
 		render("/yh/arap/CostReimbursement/CostReimbursementEdit.html");
 	}
@@ -243,9 +245,9 @@ public class CostReimbursementOrder extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*, f1.name item,f2.name attribution from reimbursement_order_fin_item d "
+        List<Record> orders = Db.find("select d.*, f1.name item,f2.name parentItem from reimbursement_order_fin_item d "
         		+ " left join fin_item f1 on d.fin_item_id = f1.id"
-        		+ " left join fin_item f2 on d.fin_attribution_id  = f2.id"
+        		+ " left join fin_item f2 on f2.id = f1.parent_id"
                 + " where d.order_id =" + id);
 
         Map orderMap = new HashMap();

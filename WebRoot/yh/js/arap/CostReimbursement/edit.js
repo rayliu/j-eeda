@@ -55,6 +55,7 @@ $(document).ready(function() {
         if(!$("#expenseAccountForm").valid()){
 	       	return false;
         }
+        
         $("#accId").val($("#payment_info").val());
         $("#account_bank").val($("#account_bank1").val());
 		$.post('/costReimbursement/saveReimbursementOrder', $("#expenseAccountForm").serialize(), function(data){
@@ -68,6 +69,7 @@ $(document).ready(function() {
  				});
  				$("#auditBtn,#approvalBtn").prop("disabled",false);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 				contactUrl("edit?id",data.ID);
  			}else{
  				$.scojs_message('保存失败', $.scojs_message.TYPE_OK);
  			}
@@ -95,7 +97,7 @@ $(document).ready(function() {
     });
 	
 	if($("#payment_type").val()=="现金"||$("#payment_type").val()==""){
-		$("#payment_info").val("");
+		//$("#payment_info").val("");
 		$('#payment_info').attr("disabled",true);
 	}
 	if($("#payment_type").val()=="转账"){
@@ -104,11 +106,11 @@ $(document).ready(function() {
 	$("#payment_type").click(function () {
 		var selectTxt=$("#payment_type").val();
 		if(selectTxt=="现金"||selectTxt==""){
-			$("#payment_info").val("");
+			//$("#payment_info").val("");
 			$('#payment_info').attr("disabled",true);
 		}
 		if(selectTxt=="转账"){
-			$("#payment_info").val("");
+			//$("#payment_info").val("");
 			$('#payment_info').attr("disabled",false);
 		}	
 		
@@ -202,6 +204,37 @@ $(document).ready(function() {
 					return num++;
 				}
 			}, 
+			{"mDataProp":"PARENTITEM",
+			    "fnRender": function(obj) {
+			        if(obj.aData.PARENTITEM!='' && obj.aData.PARENTITEM != null){
+			        	var str="";
+			        	if($("#saveExpenseAccount").prop("disabled")){
+				        	$("#parentItemList").children().each(function(){
+				        		if(obj.aData.PARENTITEM == $(this).text())
+				        			str+=$(this).text();
+				        	});
+				        	return str;
+			        	}else{
+			        		$("#parentItemList").children().each(function(){
+				        		if(obj.aData.PARENTITEM == $(this).text()){
+				        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";
+				        		}else{
+				        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+				        		}
+				        	});
+				        	return "<select name='fin_item_id'>"+str+"</select>";
+			        	}
+			        }else{
+			        	var str="";
+			        	$("#parentItemList").children().each(function(){
+			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
+			        	});
+			        	if($("#saveExpenseAccount").prop("disabled"))
+			        		return "";
+			        	else
+			        		return "<select name='fin_item_id'>"+str+"</select>";
+			        }
+			 }},
 			{"mDataProp":"ITEM",
 			    "fnRender": function(obj) {
 			        if(obj.aData.ITEM!='' && obj.aData.ITEM != null){
