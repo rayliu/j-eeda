@@ -39,6 +39,8 @@ $(document).ready(function() {
             {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
+            {"mDataProp":"SERIAL_NO", "sWidth":"200px"},
+            {"mDataProp":"REF_NO", "sWidth":"200px"},
             {"mDataProp":"AMOUNT", "sWidth":"40px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
