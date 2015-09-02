@@ -101,7 +101,7 @@ $(document).ready(function() {
 	if($("#payment_type").val()=="转账"){
 		$('#payment_info').attr("disabled",false);
 	}	
-	$("#payment_type").change(function () {
+	$("#payment_type").click(function () {
 		var selectTxt=$("#payment_type").val();
 		if(selectTxt=="现金"||selectTxt==""){
 			$("#payment_info").val("");
@@ -111,28 +111,28 @@ $(document).ready(function() {
 			$("#payment_info").val("");
 			$('#payment_info').attr("disabled",false);
 		}	
-		$.post('/costReimbursement/getFinAccount', function(data){
-			var payment_info = $("#payment_info");
-			payment_info.empty();
-			payment_info.append("<option></option>");
-			for(var i = 0; i < data.length; i++){
-				var bank_name = data[i].BANK_NAME;
-				var account_no = data[i].ACCOUNT_NO;
-				var bank_person = data[i].BANK_PERSON;
-				var acc_id = data[i].ID;
-				if(bank_name == null){
-					bank_name='';
-				}
-				if(account_no == null){
-					account_no='';
-				}
-				if(bank_person == null){
-					bank_person='';
-				}
-				payment_info.append("<option value="+acc_id+">"+bank_name+"&nbsp&nbsp&nbsp&nbsp"+account_no+"&nbsp&nbsp&nbsp&nbsp"+bank_person+"</option>");
-			}
-		},'json');
+		
 	});
+		$.post('/costReimbursement/getFinAccount', function(data){
+		var payment_info = $("#payment_info");
+		for(var i = 0; i < data.length; i++){
+			var bank_name = data[i].BANK_NAME;
+			var account_no = data[i].ACCOUNT_NO;
+			var bank_person = data[i].BANK_PERSON;
+			var acc_id = data[i].ID;
+			if(bank_name == null){
+				bank_name='';
+			}
+			if(account_no == null){
+				account_no='';
+			}
+			if(bank_person == null){
+				bank_person='';
+			}
+			
+			payment_info.append("<option value="+acc_id+">"+bank_name+"&nbsp&nbsp&nbsp&nbsp"+account_no+"&nbsp&nbsp&nbsp&nbsp"+bank_person+"</option>");
+		}
+	},'json');
 	//点击审核、审批、取消审核、取消审批
 	$("#auditBtn,#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").click(function(e){
 		$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
