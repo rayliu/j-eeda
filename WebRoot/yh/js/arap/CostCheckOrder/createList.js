@@ -47,7 +47,7 @@ $(document).ready(function() {
                 	var str = "";
                     if(obj.aData.ORDER_NO.indexOf("PS") > -1){
                         str = "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else if(obj.aData.ORDER_NO.indexOf("PC") > -1){
+                    }else if(obj.aData.ORDER_NO.indexOf("PC") > -1||obj.aData.ORDER_NO.indexOf("DC") > -1){
                         str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
                     }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
                         str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
