@@ -4,7 +4,7 @@ $(document).ready(function() {
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
-	var saveChargeMiscOrder = function(e,callback){
+	var saveChargeMiscOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -18,9 +18,9 @@ $(document).ready(function() {
 				$("#create_stamp").html(data.CREATE_STAMP);
 				$("#chargeMiscOrderId").val(data.ID);
 				contactUrl("edit?id",data.ID);
-				callback(data.ID);
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
-				alert('数据保存失败。');
+				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
 		},'json');
 	};
@@ -49,8 +49,6 @@ $(document).ready(function() {
 	//transferOrderForm 不需要提交	
  	$("#saveChargeMiscOrderBtn").click(function(e){
  		saveChargeMiscOrder(e);
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
- 		
 	});
 	
 	$("#chargeMiscOrderItem").click(function(e){
@@ -82,7 +80,7 @@ $(document).ready(function() {
 	$('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
-		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
+		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 			spList.empty();
 			for(var i = 0; i < data.length; i++){
 				var company_name = data[i].COMPANY_NAME;
@@ -174,14 +172,14 @@ $(document).ready(function() {
 			 }},
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
-			    	 if(obj.aData.CREATE_NAME == 'system'){
+			    	 if($("#chargeMiscOrderStatus").text()!='新建'){
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
 				             return obj.aData.AMOUNT;
 				         }else{
 				         	 return "";
 				         }
 			    	 }else{
-			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null ){
 				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"' class='form-control search-control'>";
 				         }else{
 				         	 return "<input type='text' name='amount' class='form-control search-control'>";
@@ -191,22 +189,13 @@ $(document).ready(function() {
 			{"mDataProp":"STATUS","sClass": "status"},
             {"mDataProp": null,"sWidth": "80px",
                 "fnRender": function(obj) {
-                        return    "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'><i class='fa fa-trash-o fa-fw'> </i>删除明细</a>";
+                	if($("#chargeMiscOrderStatus").text()!='新建'){
+                		return "";
+                	}
+                    return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+                	
                 }
-            }   
-
-			/* TODO 由于暂时未处理,所以先注释
-			 * {
-				"mDataProp": null, 
-                "sWidth": "60px",  
-            	"sClass": "remark",              
-                "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-              		"<i class='fa fa-trash-o fa-fw'> </i> "+
-              		"删除"+
-              		"</a>";
-                }
-			}*/                    
+            }    
         ]      
     });
     
@@ -412,4 +401,10 @@ $(document).ready(function() {
     	chargeCheckListTab.fnSettings().sAjaxSource = "/chargeMiscOrder/chargeCheckList?chargeCheckOrderIds="+$("#chargeCheckOrderIds").val();
     	chargeCheckListTab.fnDraw();  
     });
+
+    //初始化按钮
+    if($("#chargeMiscOrderStatus").text()!='新建'){
+    	$('#addFee').hide();    	
+    	$('#saveChargeMiscOrderBtn').attr('disabled', true);
+    }
 } );

@@ -30,6 +30,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -126,53 +127,53 @@ public class ChargeMiscOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
 	public void save() {
 		ArapMiscChargeOrder arapMiscChargeOrder = null;
-		String chargeMiscOrderId = getPara("chargeMiscOrderId");
-		String paymentMethod = getPara("paymentMethod");
+		String chargeMiscOrderId = getPara("chargeMiscOrderId")==null?"0":getPara("chargeMiscOrderId");
+		String biz_type = getPara("biz_type")==null?"":getPara("biz_type");
+		String charge_from_type = getPara("charge_from_type")==null?"":getPara("charge_from_type");
 		String customer_id = getPara("customer_id");
 		String sp_id = getPara("sp_id");
+		String others_name = getPara("others_name");
+		String remark = getPara("remark");
+		
 		if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {
 			arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(chargeMiscOrderId);
-			arapMiscChargeOrder.set("type", getPara("type"));
-			arapMiscChargeOrder.set("customer_id", getPara("customer_id"));
-			arapMiscChargeOrder.set("remark", getPara("remark"));
-			arapMiscChargeOrder.set("payment_method", getPara("paymentMethod"));
-			if(getPara("sp_id") != null && !"".equals(getPara("sp_id"))){
-				arapMiscChargeOrder.set("payee_id", getPara("sp_id"));
+			arapMiscChargeOrder.set("type", biz_type);
+			arapMiscChargeOrder.set("charge_from_type", charge_from_type);
+			if(sp_id != null && !"".equals(sp_id)){
+				arapMiscChargeOrder.set("sp_id", sp_id);
 			}
-			if("transfers".equals(paymentMethod)){
-				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
-					arapMiscChargeOrder.set("account_id", getPara("accountTypeSelect"));
-				}
-			}else{
-				arapMiscChargeOrder.set("account_id", null);				
+			if(customer_id != null && !"".equals(customer_id)){
+				arapMiscChargeOrder.set("customer_id", customer_id);
 			}
+			
+			arapMiscChargeOrder.set("others_name", others_name);
+			arapMiscChargeOrder.set("remark", remark);
 			arapMiscChargeOrder.update();
 		} else {
 			arapMiscChargeOrder = new ArapMiscChargeOrder();
 			arapMiscChargeOrder.set("status", "新建");
-			arapMiscChargeOrder.set("type", getPara("type"));
+			arapMiscChargeOrder.set("type", biz_type);
+			arapMiscChargeOrder.set("charge_from_type", charge_from_type);
+			
 			if(!"".equals(customer_id) && customer_id != null){
-				arapMiscChargeOrder.set("customer_id", getPara("customer_id"));
+				arapMiscChargeOrder.set("customer_id", customer_id);
 			}
-			arapMiscChargeOrder.set("create_by", getPara("create_by"));
-			arapMiscChargeOrder.set("create_stamp", new Date());
-			arapMiscChargeOrder.set("remark", getPara("remark"));
-			if(getPara("sp_id") != null && !"".equals(getPara("sp_id"))){
-				arapMiscChargeOrder.set("payee_id", getPara("sp_id"));
+			if(sp_id != null && !"".equals(sp_id)){
+				arapMiscChargeOrder.set("sp_id", sp_id);
 			}
+			
 			String sql = "select * from arap_misc_charge_order order by id desc limit 0,1";
 			arapMiscChargeOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGSK") );
 			if(getPara("chargeCheckOrderIds") != null && !"".equals(getPara("chargeCheckOrderIds"))){
 				arapMiscChargeOrder.set("charge_order_id", getPara("chargeCheckOrderIds"));
 			}
-			arapMiscChargeOrder.set("payment_method", getPara("paymentMethod"));
-			if("transfers".equals(paymentMethod)){
-				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
-					arapMiscChargeOrder.set("account_id", getPara("accountTypeSelect"));
-				}
-			}else{
-				arapMiscChargeOrder.set("account_id", null);				
-			}
+			
+			arapMiscChargeOrder.set("others_name", others_name);
+			UserLogin user = LoginUserController.getLoginUser(this);
+			arapMiscChargeOrder.set("create_by", user.getLong("id"));
+			arapMiscChargeOrder.set("create_stamp", new Date());
+			arapMiscChargeOrder.set("office_id", user.getLong("office_id"));
+			arapMiscChargeOrder.set("remark", getPara("remark"));
 			arapMiscChargeOrder.save();
 		}
 		renderJson(arapMiscChargeOrder);
@@ -213,21 +214,24 @@ public class ChargeMiscOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
 	public void edit() throws ParseException {
 		String id = getPara("id");
-		List<Record> receivableItemList = Collections.EMPTY_LIST;
+		List<Record> receivableItemList = Collections.emptyList();
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		
 		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
 		UserLogin userLogin = UserLogin.dao.findById(arapMiscChargeOrder.get("create_by"));
+		
 		setAttr("userLogin", userLogin);
 		setAttr("arapMiscChargeOrder", arapMiscChargeOrder);
-		setAttr("sp_id", arapMiscChargeOrder.get("payee_id"));
+		
+		
 		Record r = Db.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"+arapMiscChargeOrder.getLong("customer_id")+"'" );
 		if(r!=null)
-			setAttr("customer_id", r.get("company_name"));
-		Record q = Db.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"+arapMiscChargeOrder.getLong("payee_id")+"'" );
+			setAttr("customer_name", r.get("company_name"));
+		Record q = Db.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"+arapMiscChargeOrder.getLong("sp_id")+"'" );
 		if(q!=null)
 			setAttr("sp_name", q.get("company_name"));
+		
 		render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
 	}
     

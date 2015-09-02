@@ -198,7 +198,19 @@
                                             <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请输入或者选择客户">
                                             <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="search-label">供应商</label>
+                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请输入或者选择客户">
+                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 25%; left: 21.5%;"></ul>
+                                        </div>
                                         
+                                    </div>
+                                    <!-- end of col-lg-6-->
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label class="search-label">收入单号</label>
+                                            <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
+                                        </div>
                                         <div class="form-group">                                        
                                             <div id="datetimepicker3" class="input-append date "> 
                                                 <label class="search-label">开始时间</label> 
@@ -208,12 +220,17 @@
                                                 </span>  
                                             </div>
                                         </div> 
+                                        
                                     </div>
-                                    <!-- end of col-lg-6-->
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label class="search-label">申请单号</label>
-                                            <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
+                                    	<div class="form-group">
+                                            <label class="search-label">业务类型</label>
+                                            <select id="status_filter" class="form-control search-control status_filter">
+                                                <option value=""></option>
+                                                <option value="业务收款">业务收款</option>
+                                                <option value="非业务收款">非业务收款</option>                                              
+                                            </select>
+                                            <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
                                         </div>
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker4" class="input-append date search-control "> 
@@ -223,21 +240,6 @@
                                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                                 </span>  
                                             </span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                    	<div class="form-group">
-                                            <label class="search-label">状态</label>
-                                            <select id="status_filter" class="form-control search-control status_filter">
-                                                <option value=""></option>
-                                                <option value="新建">新建</option>
-                                                <option value="已发车">已发车</option>
-                                                <option value="在途">在途</option>                                                
-                                                <option value="已入货场">已入货场</option>                                                
-                                                <option value="已入库">已入库</option>                                                
-                                                <option value="已签收">已签收</option>                                                
-                                            </select>
-                                            <!-- <input type="text" class="form-control search-control status_filter" id="status_filter"> -->
                                         </div>
                                     </div>
                                     <!-- end of col-lg-6-->
@@ -250,10 +252,11 @@
                                     <thead>
                                         <tr>
                                             <th>手工收款单号</th>
-                                            <th>类型</th>
+                                            <th>收款对象</th>
+                                            <th>业务类型</th>
+                                            <th>金额</th>
                                             <th>状态</th>
                                             <th>创建时间</th>
-                                            <th>对账单号</th>
                                             <th>备注</th>
                                         </tr>
                                     </thead>
