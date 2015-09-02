@@ -26,19 +26,19 @@ import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
-public class ReimbursementAccountController extends Controller {
-	private Logger logger = Logger.getLogger(ReimbursementAccountController.class);
+public class ReimbursementItemController extends Controller {
+	private Logger logger = Logger.getLogger(ReimbursementItemController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 	ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_LIST})
 	public void index() {
-		render("/yh/profile/reimbursementAccount/ReimbursementAccountList.html");
+		render("/yh/profile/reimbursementItem/ReimbursementItemList.html");
 	}
 	
 	
-	public void searchAccountType(){
+	public void searchItemType(){
 		String name = getPara("input");
 		List<FinItem> finItem = FinItem.dao.find("select * from fin_item fi where type = '报销费用' and parent_id = 0 and name like '%"+name+"%'");
 		renderJson(finItem);
@@ -51,22 +51,21 @@ public class ReimbursementAccountController extends Controller {
 		String typeId = getPara("typeId");
 		String name = getPara("name");
 		String type = "报销费用";
-		String code = getPara("code");
 		String remark = getPara("remark");
 		Long parentID = pom.getParentOfficeId();
 
 		FinItem f = new FinItem();
 		//唯一校验
-		Record r = Db.findFirst("select * from fin_item where type='报销费用' and parent_id = '"+typeId+"' and name ='"+name+"'");
+		Record r = Db.findFirst("select * from fin_item where type='报销费用' and parent_id = '"+typeId+"' and name ='"+name+"' and id !='"+id+"'" );
 			if (id == "") {
 				if(r == null){
-					f.set("name", name).set("code", code).set("type", type).set("parent_id", typeId).set("office_id",parentID)
+					f.set("name", name).set("type", type).set("parent_id", typeId).set("office_id",parentID)
 					.set("remark", remark).save();
 				}
 			} else {
 				if(r == null){
 					f = FinItem.dao.findById(id);
-					f.set("name", name).set("code", code).set("type", type).set("parent_id", typeId).set("office_id",parentID)
+					f.set("name", name).set("type", type).set("parent_id", typeId).set("office_id",parentID)
 							.set("remark", remark).update();
 				}
 			}
@@ -106,23 +105,25 @@ public class ReimbursementAccountController extends Controller {
 
 	// 编辑条目按钮
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_T_CREATE,PermissionConstant.PERMSSION_T_UPDATE},logical=Logical.OR)
-	public void Edit() {
-		String id = getPara();
+	public void edit() {
+		String id = getPara("id");
 		if (id != null) {
 			FinItem f = FinItem.dao.findById(id);
 			setAttr("finItem", f);
 			f = FinItem.dao.findById(f.getLong("parent_id"));
 			setAttr("account_type", f.get("name"));
-			render("/yh/profile/reimbursementAccount/ReimbursementAccountEdit.html");
+			render("/yh/profile/reimbursementItem/ReimbursementItemEdit.html");
 		} else {
-			render("/yh/profile/reimbursementAccount/ReimbursementAccountEdit.html");
+			List<Record> categoryList  = Db.find("select * from fin_item where type='报销费用' and parent_id=0");
+	        setAttr("categoryList", categoryList);
+			render("/yh/profile/reimbursementItem/ReimbursementItemEdit.html");
 		}
 	}
 
 	// 删除条目
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_T_DELETE})
 	public void delete() {
-		String id = getPara();
+		String id = getPara("id");
 		if (id != null) {
 			FinItem l = FinItem.dao.findById(id);
 			Object obj = l.get("is_stop");
@@ -133,7 +134,7 @@ public class ReimbursementAccountController extends Controller {
             }
             l.update();
 		}
-		redirect("/reimbursementAccount");
+		redirect("/reimbursementItem");
 	}
 
 }

@@ -12,7 +12,7 @@
                 <div class="col-lg-12">
                  	<% if(shiro.hasPermission("Toll.create")){%>
 					            <div class="btn-header">
-					            	<a  class="btn  btn-primary" href="/reimbursementAccount/Edit">添加条目</a>
+					            	<a  class="btn  btn-primary" href="/reimbursementItem/edit">添加条目</a>
 					            </div>
 				      <%}%>
                     <div class="panel panel-default">
@@ -26,7 +26,6 @@
                                             <th>条目类型</th>
                                             <th>报销类别</th>
                                             <th>收费条目名称</th>
-                                            <th>收费条目代码</th>
                                             <th>备注</th>                                           
                                             <th></th>
                                         </tr>
@@ -80,12 +79,11 @@
    	    	"oLanguage": {
    	            "sUrl": "/eeda/dataTables.ch.txt"
    	        },
-   	        "sAjaxSource": "/reimbursementAccount/list",
+   	        "sAjaxSource": "/reimbursementItem/list",
    			"aoColumns": [
    				{ "mDataProp": "TYPE" },
    				{ "mDataProp": "ACCOUNT_TYPE" },
    	            { "mDataProp": "NAME" },
-   	            { "mDataProp": "CODE" },
    	            { "mDataProp": "REMARK" },
    	            { "mDataProp": null,
    	         		"sWidth": "8%", 
@@ -93,19 +91,19 @@
    	        	 "fnRender": function(obj) { 
    	        		 var str = "<nobr>";
    	        		 if(Toll.isUpdate){
-   	        			 str += "<a class='btn  btn-primary btn-sm' href='/reimbursementAccount/Edit/"+obj.aData.ID+"' target='_blank'>"+
+   	        			 str += "<a class='btn  btn-primary btn-sm' href='/reimbursementItem/edit?id="+obj.aData.ID+"' target='_blank'>"+
 			                    "<i class='fa fa-edit fa-fw'></i> "+
 			                    "编辑"+
 				                " </a> ";
    	        		 }
    	        		 if(Toll.isDel){
    	        			if(obj.aData.IS_STOP != true ){
-   		   	        		str += "<a class='btn btn-danger  btn-sm' href='/reimbursementAccount/delete/"+obj.aData.ID+"'>"+
+   		   	        		str += "<a class='btn btn-danger  btn-sm' href='/reimbursementItem/delete?id="+obj.aData.ID+"'>"+
    					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
    					                    "停用"+
    					                "</a>";
    		   	        	 }else{
-   		   	        		str += "<a class='btn btn-success  btn-sm' href='/reimbursementAccount/delete/"+obj.aData.ID+"'>"+
+   		   	        		str += "<a class='btn btn-success  btn-sm' href='/reimbursementItem/delete?id="+obj.aData.ID+"'>"+
    					                    "<i class='fa fa-trash-o fa-fw'></i> "+ 
    					                    "启用"+
    					                "</a>";

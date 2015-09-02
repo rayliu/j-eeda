@@ -4,8 +4,8 @@ $(document).ready(function() {
     		$("#code").attr("disabled",true);
     	}
     	
-        $('#reimbursementAccountForm').addClass('active').find('ul').addClass('in');
-        $('#reimbursementAccountForm').validate({
+        $('#reimbursementItemForm').addClass('active').find('ul').addClass('in');
+        $('#reimbursementItemForm').validate({
             rules: {
               account_type: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
                     required: true
@@ -13,18 +13,13 @@ $(document).ready(function() {
             	name: {//form 中company_name为必填, 注意input 中定义的id, name都要为company_name
                 required: true
               },
-              code:{//form 中 name为必填
-                required: true
-              },
               type:{//form 中 name为必填
                   required: true
                 },
-//                remark:{//form 中 name为必填
-//                    required: true
-//                  },
+
                 
             },
-            highlight: function(element) {
+            fail: function(element) {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
             },
             success: function(element) {
@@ -40,7 +35,7 @@ $(document).ready(function() {
             var inputStr = $('#account_type').val();
             var typeList =$("#typeList");
             typeList.empty();
-            $.get("/reimbursementAccount/searchAccountType", {input:inputStr}, function(data){
+            $.get("/reimbursementItem/searchItemType", {input:inputStr}, function(data){
                 typeList.empty();
                 for(var i = 0; i < data.length; i++)
                 	typeList.append("<li><a tabindex='-1' class='fromFinItem' typeId='"+data[i].ID+"' name='"+data[i].NAME+"' >"+data[i].NAME+"</a></li>");
@@ -72,9 +67,10 @@ $(document).ready(function() {
         
         
         $("#saveBtn").on('click',function(){
-        	$.get('/reimbursementAccount/save',$("#reimbursementAccountForm").serialize(), function(data){
+        	$.get('/reimbursementItem/save',$("#reimbursementItemForm").serialize(), function(data){
         		if(data.ID>0){
         			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        			$("#id").val(data.ID);
         			contactUrl("edit?id",data.ID);
         		}else{
         			$.scojs_message('保存失败,请检查下条目是否已存在', $.scojs_message.TYPE_FALSE);
