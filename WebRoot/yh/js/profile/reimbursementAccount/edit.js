@@ -75,8 +75,9 @@ $(document).ready(function() {
         	$.get('/reimbursementAccount/save',$("#reimbursementAccountForm").serialize(), function(data){
         		if(data.ID>0){
         			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        			contactUrl("edit?id",data.ID);
         		}else{
-        			$.scojs_message('保存失败', $.scojs_message.TYPE_FALSE);
+        			$.scojs_message('保存失败,请检查下条目是否已存在', $.scojs_message.TYPE_FALSE);
         		}	
         	});
         });

@@ -54,21 +54,22 @@ public class ReimbursementAccountController extends Controller {
 		String code = getPara("code");
 		String remark = getPara("remark");
 		Long parentID = pom.getParentOfficeId();
-		
-		
+
 		FinItem f = new FinItem();
-		if (id == "") {
-			//Record r = Db.findFirst("select * from fin_item where type='报销费用' and name ='"+name+"'");
-			//if(r==null){
-				f.set("name", name).set("code", code).set("type", type).set("parent_id", typeId).set("office_id",parentID)
-				.set("remark", remark).save();
-			//}
-			
-		} else {
-			f = FinItem.dao.findById(id);
-			f.set("name", name).set("code", code).set("type", type).set("parent_id", typeId).set("office_id",parentID)
-					.set("remark", remark).update();
-		}
+		//唯一校验
+		Record r = Db.findFirst("select * from fin_item where type='报销费用' and parent_id = '"+typeId+"' and name ='"+name+"'");
+			if (id == "") {
+				if(r == null){
+					f.set("name", name).set("code", code).set("type", type).set("parent_id", typeId).set("office_id",parentID)
+					.set("remark", remark).save();
+				}
+			} else {
+				if(r == null){
+					f = FinItem.dao.findById(id);
+					f.set("name", name).set("code", code).set("type", type).set("parent_id", typeId).set("office_id",parentID)
+							.set("remark", remark).update();
+				}
+			}
 		renderJson(f);
 	}
 	
