@@ -88,16 +88,20 @@ public class InsuranceOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        
+        String fromSql= " from transfer_order tor "
+                + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
+                + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
+                + " left join user_login ul on ul.id = tor.create_by "  
+                + " left join office o on o.id = tor .office_id";
+        
+        
         if (orderNo == null &&  customer == null && routeFrom == null && routeTo == null
                 && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total  from transfer_order tor "
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-            		+ " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code "
-                    + " left join office o on o.id = tor .office_id"
-                    + " where (tor.status = '已发车' or tor.status='部分已发车' or tor.status = '新建') and tor.insurance_id is null and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+            sqlTotal = "select count(1) total "
+            		+ fromSql
+                    + " where tor.insurance_id is null and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ "	(SELECT l.NAME FROM location l where l.code = tor.route_from) route_from,"
             		+ " (SELECT	l.NAME FROM location l where l.code = tor.route_to) route_to,"
@@ -107,31 +111,23 @@ public class InsuranceOrderController extends Controller {
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ifnull(nullif(ul.c_name,''),ul.user_name) create_by,tor.customer_order_no,"
                     + " tor.create_stamp,tor.pickup_assign_status,"
                     + " tor.create_stamp start_create_stamp "
-                    + " from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
-                    + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join user_login ul on ul.id = tor.create_by "    
-                    + " left join office o on o.id = tor .office_id" 
+                    + fromSql
                     + " where tor.insurance_id is null "    
-                    + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.create_stamp desc" + sLimit;
-        } else if ("".equals(routeFrom) && "".equals(routeTo)) {
+        } else{
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
             }
             if (endTime == null || "".equals(endTime)) {
                 endTime = "9999-12-31";
             }
-            sqlTotal = "select count(1) total from transfer_order tor " 
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-            		+ " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code "
-                    + " left join office o on o.id = tor .office_id"
-                    + "  where (tor.status = '已发车' or tor.status='部分已发车' or tor.status = '新建') and ifnull(l1.name, '') like '%"
+            sqlTotal = "select count(1) total "
+            		+ fromSql
+                    + " where  tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder' and ifnull((SELECT l. NAME FROM location l WHERE l. CODE = tor.route_from), '') like '%"
                     + routeFrom
-                    + "%' and ifnull(l2.name, '') like '%"
+                    + "%' and ifnull((SELECT l. NAME FROM location l WHERE l. CODE = tor.route_to), '') like '%"
                     + routeTo
                     + "%'"
                     + "and ifnull(tor.order_no,'') like '%"
@@ -145,23 +141,19 @@ public class InsuranceOrderController extends Controller {
                     + "')  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature,tor.order_type,"
-                	+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
+            		+ "	(SELECT l.NAME FROM location l where l.code = tor.route_from) route_from,"
+            		+ " (SELECT	l.NAME FROM location l where l.code = tor.route_to) route_to,"
                     + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
                     + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
                     + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                     + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ifnull(nullif(ul.c_name,''),ul.user_name) create_by,tor.customer_order_no,"
                     + " tor.create_stamp,tor.pickup_assign_status,"
-                    + " dor.departure_time start_create_stamp "
-                    + " from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
-                    + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join user_login ul on ul.id = tor.create_by "  
-                    + " left join depart_transfer dt on dt.order_id = tor.id "
-                    + " left join office o on o.id = tor .office_id"
-                    + " left join depart_order dor on dor.id = dt.depart_id "
-                    + " where (tor.status = '已发车' or tor.status='部分已发车' or tor.status = '新建') and ifnull((select name from location l where l.code = dor.route_from), '') like '%"
+                    + " tor.create_stamp start_create_stamp "
+                    + fromSql
+                    + " where  tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder'"
+                    + " and  ifnull((SELECT l. NAME FROM location l WHERE l. CODE = tor.route_from), '') like '%"
                     + routeFrom
-                    + "%' and ifnull((select name from location l where l.code = dor.route_to), '') like '%"
+                    + "%' and ifnull((SELECT	l. NAME	FROM location l WHERE l. CODE = tor.route_to), '') like '%"
                     + routeTo
                     + "%' and ifnull(tor.order_no,'') like '%"
                     + orderNo
@@ -174,67 +166,7 @@ public class InsuranceOrderController extends Controller {
                     + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + "  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.CREATE_STAMP desc" + sLimit;
-        } else {
-            if (beginTime == null || "".equals(beginTime)) {
-                beginTime = "1-1-1";
-            }
-            if (endTime == null || "".equals(endTime)) {
-                endTime = "9999-12-31";
-            }
-
-            sqlTotal = "select count(1) total from transfer_order tor "
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-                    + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code  "
-                    + " left join office o on o.id = tor .office_id"
-                    + " where (tor.status = '已发车' or tor.status='部分已发车') and ifnull(l1.name, '') like '%"
-                    + routeFrom
-                    + "%' and ifnull(l2.name, '') like '%"
-                    + routeTo
-                    + "%'"
-                    + "and tor.order_no like '%"
-                    + orderNo
-                    + "%'  and ifnull(c.abbr,'') like '%"
-                    + customer
-                    + "%' and tor.create_stamp between '"
-                    + beginTime
-                    + "' and '"
-                    + endTime
-                    + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-
-            sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,"
-                	+ "	(select name from location l where l.code = dor.route_from) route_from,(select name from location l where l.code = dor.route_to) route_to, "
-                    + " case (select sum(tori.weight)*sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) when 0 then (select sum(pd.weight)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.weight)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_weight, "
-                    + " case ifnull((select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id),0) when 0 then (select sum(pd.volume)*sum(tori.amount) from transfer_order_item tori left join product pd on pd.id  = tori.product_id where tor.id = tori.order_id)  else (select sum(tori.volume)*sum(tori.amount)  from transfer_order_item tori where tori.order_id = tor.id) end as total_volume, "
-                    + " (select sum(tori.amount) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,c2.abbr spname,ifnull(nullif(ul.c_name,''),ul.user_name) create_by,tor.customer_order_no,"
-                    + " tor.create_stamp,tor.pickup_assign_status,"
-                    + " dor.departure_time start_create_stamp "
-                    + " from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
-                    + " left join party p2 on tor.sp_id = p2.id " + " left join contact c2 on p2.contact_id = c2.id "
-                    + " left join user_login ul on ul.id = tor.create_by "  
-                    + " left join depart_transfer dt on dt.order_id = tor.id "  
-                    + " left join office o on o.id = tor .office_id"
-                    + " left join depart_order dor on dor.id = dt.depart_id where (tor.status = '已发车' or tor.status='部分已发车') and dor.combine_type = '"+DepartOrder.COMBINE_TYPE_DEPART+"' and ifnull((select name from location l where l.code = dor.route_from), '') like '%"
-                    + routeFrom
-                    + "%' and ifnull((select name from location l where l.code = dor.route_to), '') like '%"
-                    + routeTo
-                    + "%' and tor.order_no like '%"
-                    + orderNo
-                    + "%'  and ifnull(c.abbr,'') like '%"
-                    + customer
-                    + "%' and tor.create_stamp between '"
-                    + beginTime
-                    + "' and '"
-                    + endTime
-                    + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + "  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.create_stamp desc" + sLimit;
-
-        }
+        } 
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         List<Record> transferOrders = Db.find(sql);
