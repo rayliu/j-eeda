@@ -133,6 +133,7 @@ public class ChargeMiscOrderController extends Controller {
 		String customer_id = getPara("customer_id");
 		String sp_id = getPara("sp_id");
 		String others_name = getPara("others_name");
+		String ref_no = getPara("ref_no");
 		String remark = getPara("remark");
 		
 		if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {
@@ -147,6 +148,7 @@ public class ChargeMiscOrderController extends Controller {
 			}
 			
 			arapMiscChargeOrder.set("others_name", others_name);
+			arapMiscChargeOrder.set("ref_no", ref_no);
 			arapMiscChargeOrder.set("remark", remark);
 			arapMiscChargeOrder.update();
 		} else {
@@ -169,6 +171,8 @@ public class ChargeMiscOrderController extends Controller {
 			}
 			
 			arapMiscChargeOrder.set("others_name", others_name);
+			arapMiscChargeOrder.set("ref_no", ref_no);
+			
 			UserLogin user = LoginUserController.getLoginUser(this);
 			arapMiscChargeOrder.set("create_by", user.getLong("id"));
 			arapMiscChargeOrder.set("create_stamp", new Date());

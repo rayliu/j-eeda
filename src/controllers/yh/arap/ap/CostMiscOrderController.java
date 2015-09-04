@@ -137,6 +137,7 @@ public class CostMiscOrderController extends Controller {
 		String routeFrom=getPara("route_from");
 		String routeTo=getPara("route_to");
 		String others_name=getPara("others_name");
+		String ref_no=getPara("ref_no");
 		
 		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {
 			//TODO: 如果已经应付确认过，就不能修改了
@@ -144,6 +145,7 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("customer_id",customerId);
 			arapMiscCostOrder.set("sp_id",spId);
 			arapMiscCostOrder.set("others_name",others_name);
+			arapMiscCostOrder.set("ref_no",ref_no);
 			arapMiscCostOrder.set("type", type);
 			arapMiscCostOrder.set("cost_to_type", cost_to_type);
 			arapMiscCostOrder.set("route_from", routeFrom);
@@ -157,6 +159,7 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("customer_id",customerId);
 			arapMiscCostOrder.set("sp_id",spId);
 			arapMiscCostOrder.set("others_name",others_name);
+			arapMiscCostOrder.set("ref_no",ref_no);
 			arapMiscCostOrder.set("type", type);
 			arapMiscCostOrder.set("cost_to_type", cost_to_type);
 			arapMiscCostOrder.set("route_from", routeFrom);

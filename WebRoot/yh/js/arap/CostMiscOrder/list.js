@@ -19,16 +19,27 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            {"mDataProp":"TYPE","sWidth": "100px",
-            	"fnRender": function(obj) {
-                    if(obj.aData.TYPE=='ordinary_receivables'){
-                        return '普通收款';
-                    }else if(obj.aData.TYPE=='offset_payment'){
-                        return '抵销货款';
+            {"mDataProp":"COST_TO_TYPE","sWidth": "100px",
+                "fnRender": function(obj) {
+                    if(obj.aData.COST_TO_TYPE=='customer'){
+                        return '客户';
+                    }else if(obj.aData.COST_TO_TYPE=='sp'){
+                        return '供应商';
+                    }else{
+                        return '其他';
                     }
-                    return obj.aData.TYPE;
                 }
             },
+            {"mDataProp":"TYPE","sWidth": "100px",
+                "fnRender": function(obj) {
+                    if(obj.aData.TYPE=='biz'){
+                        return '业务收款';
+                    }else{
+                        return '非业务收款';
+                    }
+                }
+            },
+            {"mDataProp":"TOTAL_AMOUNT","sWidth": "100px"},
             {"mDataProp":"STATUS","sWidth": "100px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -46,7 +57,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CREATE_STAMP","sWidth": "150px"},
-            {"mDataProp":"COST_ORDER_NO","sWidth": "150px"},
+            {"mDataProp":"REF_NO","sWidth": "150px"},
             {"mDataProp":"REMARK","sWidth": "150px"}                       
         ]      
     });	 

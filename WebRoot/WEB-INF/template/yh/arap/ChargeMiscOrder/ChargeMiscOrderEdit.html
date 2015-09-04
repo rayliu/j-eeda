@@ -122,12 +122,16 @@
 		                                </div>
 		                                <div class="form-group">
 		                                            <label class="search-label">供应商</label>
-		                                            <input type="text" class="form-control search-control customer_filter" id="sp_filter" placeholder="请选择供应商" value="${sp_name!''}"">
+		                                            <input type="text" class="form-control search-control customer_filter" id="sp_filter" placeholder="请选择供应商" value="${sp_name!''}">
 		                                        	<ul id='spList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 22%; left: 33%;"></ul>
 		                                </div>
                                         <div class="form-group">
                                                     <label class="search-label">收款人</label>
                                                     <input type="text" class="form-control search-control others_name" name="others_name" value="${arapMiscChargeOrder.others_name!''}">
+                                        </div>
+                                        <div class="form-group">
+                                                    <label class="search-label">业务单号</label>
+                                                    <input type="text" class="form-control search-control others_name" name="ref_no" value="${arapMiscChargeOrder.ref_no!''}">
                                         </div>
                                         <div class="form-group">
                                             <label>收款金额</label>
