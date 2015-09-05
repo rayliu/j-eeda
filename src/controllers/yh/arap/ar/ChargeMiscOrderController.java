@@ -24,11 +24,13 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.google.gson.Gson;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
@@ -121,20 +123,32 @@ public class ChargeMiscOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "new");
-			render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
+		
+		 List<Record> itemList = Collections.emptyList();
+		setAttr("itemList", itemList);
+		
+		render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
 	}
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
+    @Before(Tx.class)
 	public void save() {
-		ArapMiscChargeOrder arapMiscChargeOrder = null;
-		String chargeMiscOrderId = getPara("chargeMiscOrderId")==null?"0":getPara("chargeMiscOrderId");
-		String biz_type = getPara("biz_type")==null?"":getPara("biz_type");
-		String charge_from_type = getPara("charge_from_type")==null?"":getPara("charge_from_type");
-		String customer_id = getPara("customer_id");
-		String sp_id = getPara("sp_id");
-		String others_name = getPara("others_name");
-		String ref_no = getPara("ref_no");
-		String remark = getPara("remark");
+    	String jsonStr=getPara("params");
+    	logger.debug(jsonStr);
+    	 Gson gson = new Gson();  
+         Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
+         
+		ArapMiscChargeOrder arapMiscChargeOrder = new ArapMiscChargeOrder();
+		String chargeMiscOrderId = (String) dto.get("chargeMiscOrderId");
+		String biz_type = (String) dto.get("biz_type");
+		String charge_from_type = (String) dto.get("charge_from_type");
+		String customer_id = (String) dto.get("customer_id");
+		String sp_id = (String) dto.get("sp_id");
+		String others_name = (String) dto.get("others_name");
+		String ref_no = (String) dto.get("ref_no");
+		String remark = (String) dto.get("remark");
+		
+		UserLogin user = LoginUserController.getLoginUser(this);
 		
 		if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {
 			arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(chargeMiscOrderId);
@@ -152,7 +166,6 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrder.set("remark", remark);
 			arapMiscChargeOrder.update();
 		} else {
-			arapMiscChargeOrder = new ArapMiscChargeOrder();
 			arapMiscChargeOrder.set("status", "新建");
 			arapMiscChargeOrder.set("type", biz_type);
 			arapMiscChargeOrder.set("charge_from_type", charge_from_type);
@@ -173,12 +186,29 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrder.set("others_name", others_name);
 			arapMiscChargeOrder.set("ref_no", ref_no);
 			
-			UserLogin user = LoginUserController.getLoginUser(this);
+			
 			arapMiscChargeOrder.set("create_by", user.getLong("id"));
 			arapMiscChargeOrder.set("create_stamp", new Date());
 			arapMiscChargeOrder.set("office_id", user.getLong("office_id"));
 			arapMiscChargeOrder.set("remark", getPara("remark"));
 			arapMiscChargeOrder.save();
+		}
+		
+		Db.update("delete from arap_misc_charge_order_item where misc_order_id = ?", chargeMiscOrderId);
+		
+		List<Map> items =  (List<Map>) dto.get("items");
+		for(Map item : items){
+			ArapMiscChargeOrderItem arapMiscChargeOrderItem = new ArapMiscChargeOrderItem();
+			
+			arapMiscChargeOrderItem.set("status", "新建");
+			arapMiscChargeOrderItem.set("creator", user.get("id"));
+			arapMiscChargeOrderItem.set("create_date", new Date());
+			arapMiscChargeOrderItem.set("customer_order_no", item.get("CUSTOMER_ORDER_NO"));
+			arapMiscChargeOrderItem.set("item_desc", item.get("ITEM_DESC"));
+			arapMiscChargeOrderItem.set("fin_item_id", item.get("NAME"));
+			arapMiscChargeOrderItem.set("amount", item.get("AMOUNT"));
+			arapMiscChargeOrderItem.set("misc_order_id", arapMiscChargeOrder.getLong("id"));
+			arapMiscChargeOrderItem.save();
 		}
 		renderJson(arapMiscChargeOrder);
 	}
@@ -236,6 +266,16 @@ public class ChargeMiscOrderController extends Controller {
 		if(q!=null)
 			setAttr("sp_name", q.get("company_name"));
 		
+		//获取从表
+		List<Record> itemList = Db
+				.find("select amcoi.*,amco.order_no charge_order_no,c.abbr cname,fi.name name from arap_misc_charge_order_item amcoi"
+					+ " left join arap_misc_charge_order amco on amco.id = amcoi.misc_order_id"
+					+ " left join arap_charge_order aco on aco.id = amco.charge_order_id"
+					+ " left join party p on p.id = aco.payee_id"
+					+ " left join contact c on c.id = p.contact_id"
+					+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
+					+ " where amco.id =?", id );
+		setAttr("itemList", itemList);
 		render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderEdit.html");
 	}
     
