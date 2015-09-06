@@ -141,14 +141,19 @@ public class CostPreInvoiceOrderController extends Controller {
 			}
 			condition = " where ifnull(aco.order_no ,'') like '%" + orderNo
 					+ "%' " + " and aaia.create_stamp between '" + beginTime
-					+ "' and '" + endTime + "' ";
+					+ "' and '" + endTime + "' "
+					+ "and ifnull(c.company_name, '') like '%"+customer+"%'"
+					+ "and ifnull(c.abbr, '') like '%"+sp+"%'" ;
 
 		}
 
 		sqlTotal = "select count(1) total from arap_cost_invoice_application_order aaia "
-				+ " left join user_login ul on ul.id = aaia.create_by "
-				+ " left join user_login ul2 on ul2.id = aaia.audit_by "
-				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
+				+ " left join user_login ul on ul.id = aaia.create_by"
+				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
+				+ " left join user_login ul3 on ul3.id = aaia.approver_by"
+				+ " left join party p on p.id = aaia.payee_id "
+				+ " left join office o ON o.id = p.office_id"
+				+ " left join contact c on c.id = p.contact_id"
 				+ " left join cost_application_order_rel caor on caor.application_order_id = aaia.id"
 				+ " LEFT JOIN arap_cost_order aco on aco.id = caor.cost_order_id ";
 
