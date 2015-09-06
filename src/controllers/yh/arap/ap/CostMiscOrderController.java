@@ -27,12 +27,14 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.google.gson.Gson;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.LocationUtil;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
@@ -123,21 +125,46 @@ public class CostMiscOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "new");
+		
+		List<Record> itemList = Collections.emptyList();
+		setAttr("itemList", itemList);
+		
 			render("/yh/arap/CostMiscOrder/CostMiscOrderEdit.html");
 	}
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
 	public void save() {
-		ArapMiscCostOrder arapMiscCostOrder = null;
-		String costMiscOrderId = getPara("costMiscOrderId");
-		String type= getPara("biz_type");
-		String cost_to_type = getPara("cost_to_type");
-		String customerId = getPara("customer_id").equals("")?null:getPara("customer_id");
-		String spId=getPara("sp_id").equals("")?null:getPara("sp_id");
-		String routeFrom=getPara("route_from");
-		String routeTo=getPara("route_to");
-		String others_name=getPara("others_name");
-		String ref_no=getPara("ref_no");
+		//ArapMiscCostOrder arapMiscCostOrder = null;
+//		String costMiscOrderId = getPara("costMiscOrderId");
+//		String type= getPara("biz_type");
+//		String cost_to_type = getPara("cost_to_type");
+//		String customerId = getPara("customer_id").equals("")?null:getPara("customer_id");
+//		String spId=getPara("sp_id").equals("")?null:getPara("sp_id");
+//		String routeFrom=getPara("route_from");
+//		String routeTo=getPara("route_to");
+//		String others_name=getPara("others_name");
+//		String ref_no=getPara("ref_no");
+		
+		
+		String jsonStr=getPara("params");
+    	logger.debug(jsonStr);
+    	 Gson gson = new Gson();  
+         Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
+         
+        ArapMiscCostOrder arapMiscCostOrder = new ArapMiscCostOrder();
+		String costMiscOrderId = (String) dto.get("costMiscOrderId");
+		String biz_type = (String) dto.get("biz_type");
+		String customerId = (String) dto.get("customer_id");
+		String spId = (String) dto.get("sp_id");
+		String routeFrom = (String) dto.get("route_from");
+		String routeTo = (String) dto.get("route_to");
+		String others_name = (String) dto.get("others_name");
+		String ref_no = (String) dto.get("ref_no");
+		String remark = (String) dto.get("remark");
+		Double amount = (Double) dto.get("amount");
+		String cost_to_type = (String) dto.get("cost_to_type");
+		
+		
 		
 		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {
 			//TODO: 如果已经应付确认过，就不能修改了
@@ -146,11 +173,11 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("sp_id",spId);
 			arapMiscCostOrder.set("others_name",others_name);
 			arapMiscCostOrder.set("ref_no",ref_no);
-			arapMiscCostOrder.set("type", type);
+			arapMiscCostOrder.set("type", biz_type);
 			arapMiscCostOrder.set("cost_to_type", cost_to_type);
 			arapMiscCostOrder.set("route_from", routeFrom);
 			arapMiscCostOrder.set("route_to", routeTo);
-			arapMiscCostOrder.set("remark", getPara("remark"));
+			arapMiscCostOrder.set("remark", remark);
 			
 			arapMiscCostOrder.update();
 		} else {
@@ -160,19 +187,35 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("sp_id",spId);
 			arapMiscCostOrder.set("others_name",others_name);
 			arapMiscCostOrder.set("ref_no",ref_no);
-			arapMiscCostOrder.set("type", type);
+			arapMiscCostOrder.set("type", biz_type);
 			arapMiscCostOrder.set("cost_to_type", cost_to_type);
 			arapMiscCostOrder.set("route_from", routeFrom);
 			arapMiscCostOrder.set("route_to", routeTo);
 			arapMiscCostOrder.set("remark", getPara("remark"));
 			arapMiscCostOrder.set("audit_status", "新建");
-			arapMiscCostOrder.set("create_by", getPara("create_by"));
+			arapMiscCostOrder.set("create_by", LoginUserController.getLoginUserId(this));
 			arapMiscCostOrder.set("create_stamp", new Date());
 			
 			arapMiscCostOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGFK"));
 						
 			arapMiscCostOrder.save();
 		}
+		
+		
+		List<Map> items =  (List<Map>) dto.get("items");
+		for(Map item : items){
+			ArapMiscCostOrderItem arapMiscCostOrderItem = new ArapMiscCostOrderItem();
+			arapMiscCostOrderItem.set("status", "新建");
+			arapMiscCostOrderItem.set("fin_item_id", item.get("NAME"));
+			arapMiscCostOrderItem.set("amount", item.get("AMOUNT"));
+			arapMiscCostOrderItem.set("creator", LoginUserController.getLoginUserId(this));
+			arapMiscCostOrderItem.set("create_date", new Date());
+			arapMiscCostOrderItem.set("customer_order_no", item.get("CUSTOMER_ORDER_NO"));
+			arapMiscCostOrderItem.set("item_desc", item.get("ITEM_DESC"));
+			arapMiscCostOrderItem.set("misc_order_id", arapMiscCostOrder.getLong("id"));
+			arapMiscCostOrderItem.save();
+		}
+		
 		renderJson(arapMiscCostOrder);;
 	}
 	
@@ -227,6 +270,20 @@ public class CostMiscOrderController extends Controller {
 		UserLogin userLogin = UserLogin.dao.findById(arapMiscCostOrder.get("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapMiscCostOrder", arapMiscCostOrder);
+		
+		
+		// 获取当前页的数据
+				List<Record> orders = Db
+						.find("select amcoi.id, amcoi.create_date, amcoi.status, amcoi.item_desc, amcoi.customer_order_no, amcoi.amount,amcoi.change_amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amco.order_no cost_order_no,c.abbr cname,fi.name name "
+							+ " from arap_misc_cost_order_item amcoi"
+							+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
+							+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
+							+ " left join party p on p.id = aco.payee_id"
+							+ " left join contact c on c.id = p.contact_id"
+							+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
+							+ " where amco.id = '"+ id +"' ");
+				setAttr("itemList", orders);
+		
 			render("/yh/arap/CostMiscOrder/CostMiscOrderEdit.html");
 	}
     
@@ -432,5 +489,7 @@ public class CostMiscOrderController extends Controller {
 					+ " and (o.id = " + parentID + " or o.belong_office = " + parentID + ");");	
 		renderJson(recordList);
 	}
+	
+	
 	
 }

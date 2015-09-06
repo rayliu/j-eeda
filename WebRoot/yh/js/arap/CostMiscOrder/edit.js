@@ -4,6 +4,9 @@ $(document).ready(function() {
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
+	
+	
+	
 	var saveCostMiscOrder = function(e, callback){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -11,8 +14,50 @@ $(document).ready(function() {
         if(!$("#costMiscOrderForm").valid()){
 	       	return;
         }
+        
+        
+        var tableRows = $("#feeItemList-table tr");
+        var itemsArray=[];
+        for(var index=0; index<tableRows.length; index++){
+        	if(index==0)
+        		continue;
+
+        	var row = tableRows[index];
+        	var item={
+        		CUSTOMER_ORDER_NO: $(row.children[0]).find('input').val(), 
+			 	ITEM_DESC: $(row.children[1]).find('input').val(),
+			 	NAME: $(row.children[2]).find('select').val(),
+			 	AMOUNT: $(row.children[4]).find('input').val(),
+			 	STATUS: '新建'
+        	};
+        	itemsArray.push(item);
+        }
+
+		var amount = 0;
+        for(var i=0; i<itemsArray.length; i++){
+        	amount+=Number(itemsArray[i].AMOUNT);
+        	$('#totalAmountSpan').html(amount);
+        }
+
+        var order={
+        	costMiscOrderId: $('#costMiscOrderId').val(),
+        	biz_type: $('input[name="biz_type"]:checked').val(),
+        	cost_to_type: $('input[name="cost_to_type"]:checked').val(),
+        	customer_id: $('#customer_id').val(),
+        	sp_id: $('#sp_id').val(),
+        	route_from: $('#locationForm').val(),
+        	route_to: $('#locationTo').val(),
+        	others_name: $('#others_name').val(),
+        	ref_no: $('#ref_no').val(),
+        	remark: $('#remark').val(),
+        	amount: amount,
+        	items: itemsArray
+        };
+        console.log(order);
+        
+        
 		//异步向后台提交数据
-		$.post('/costMiscOrder/save', $("#costMiscOrderForm").serialize(), function(data){
+		$.post('/costMiscOrder/save',{params:JSON.stringify(order)}, function(data){
 			if(data.ID>0){
 				$("#arapMiscCostOrderNo").html(data.ORDER_NO);
 				$("#create_time").html(data.CREATE_STAMP);
@@ -329,13 +374,15 @@ $(document).ready(function() {
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
-    	"bServerSide": true,
+    	//"iDisplayLength": 20,
+    	//"bServerSide": true,
+    	"bPaginate": false, //翻页功能
+        "bInfo": false,//页脚信息
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
     	
-    	"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
+    	//"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
         "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
@@ -397,6 +444,13 @@ $(document).ready(function() {
             }   
         ]      
     });
+    
+    var items = feeTable.fnGetData();
+    for(var index in items){
+    	console.log(items[index]);
+    }
+    
+    
 
 	//不知道为什么，直接定义dataTable里定义sAjaxSource不起作用，需要在这里重新load
 	var costMiscOrderId =$("#costMiscOrderId").val();
@@ -405,28 +459,42 @@ $(document).ready(function() {
 		feeTable.fnDraw(); 
 	} 
     	
-	//应收
-	$("#addFee").click(function(){	
-		 var insertNewFee = function(costMiscOrderId){
-		 	$.post('/costMiscOrder/addNewFee?costMiscOrderId='+costMiscOrderId,function(data){
-				console.log(data);
-				if(data.ID > 0){
-					feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
-					feeTable.fnDraw();  
-				}
-			});
-		 };
-		 var costMiscOrderId =$("#costMiscOrderId").val();
-		 if(costMiscOrderId=="" || costMiscOrderId==null){
-		 	saveCostMiscOrder(event, insertNewFee); //save 主表
-		 }else{
-		 	insertNewFee(costMiscOrderId);
-		 }
-
+//	//应收
+//	$("#addFee").click(function(){	
+//		 var insertNewFee = function(costMiscOrderId){
+//		 	$.post('/costMiscOrder/addNewFee?costMiscOrderId='+costMiscOrderId,function(data){
+//				console.log(data);
+//				if(data.ID > 0){
+//					feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
+//					feeTable.fnDraw();  
+//				}
+//			});
+//		 };
+//		 var costMiscOrderId =$("#costMiscOrderId").val();
+//		 if(costMiscOrderId=="" || costMiscOrderId==null){
+//		 	saveCostMiscOrder(event, insertNewFee); //save 主表
+//		 }else{
+//		 	insertNewFee(costMiscOrderId);
+//		 }
+//
+//	});	
+	
+	//添加一行
+	$("#addFee").click(function(){
+		 feeTable.fnAddData({
+		 	CUSTOMER_ORDER_NO:'',
+		 	ITEM_DESC:'',
+		 	NAME:'',
+		 	AMOUNT: '0',
+		 	CHANGE_AMOUNT: '',
+		 	STATUS: '新建'
+		 });
+		 feeTable.fnDraw(); 
 	});	
 	
+	
 	//保存修改费用明细的方法
-	var savaUpdataMethod = function(evt){
+	/*var savaUpdataMethod = function(evt){
 		var inputThis = $(evt);
 		var costMiscOrderId = $("#costMiscOrderId").val();
 		var paymentId = inputThis.parent().parent().attr("id");
@@ -443,18 +511,18 @@ $(document).ready(function() {
 				alert("修改失败!");
 			}
     	},'json');
-	};
+	};*/
 	
 	//费用明细列表修改（成本单据类型），当单据改变值时，单据号值为空
-	$("#feeItemList-table").on('change', 'select[name="order_type"]', function(e){
+	/*$("#feeItemList-table").on('change', 'select[name="order_type"]', function(e){
 		savaUpdataMethod(this);
 		$(this).parent().parent().find("td").find("input[name='order_no']").val("");
-	});
+	});*/
 	
 	//费用明细列表修改(单据号，费用类型，金额，备注，日期)
-	$("#feeItemList-table").on('blur', 'input, select', function(e){
+	/*$("#feeItemList-table").on('blur', 'input, select', function(e){
 		savaUpdataMethod(this);
-	});
+	});*/
 	
 		
 	$("#costMiscOrderItem").click(function(e){

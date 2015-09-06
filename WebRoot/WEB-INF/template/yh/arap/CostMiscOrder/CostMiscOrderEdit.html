@@ -87,7 +87,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>备注</label>
-                                            <textarea class="form-control" rows="3" name="remark">${arapMiscCostOrder.remark!''}</textarea>
+                                            <textarea class="form-control" rows="3" id="remark" name="remark">${arapMiscCostOrder.remark!''}</textarea>
                                         </div>
                                     </div>
                                     <!-- /.col-lg-6 (nested) -->
@@ -144,10 +144,10 @@
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">收款人</label>
-                                            <input type="text" class="form-control search-control" name="others_name" value="${arapMiscCostOrder.others_name!''}"></div>
+                                            <input type="text" class="form-control search-control" id="others_name" name="others_name" value="${arapMiscCostOrder.others_name!''}"></div>
                                         <div class="form-group">
                                             <label class="search-label">业务单号</label>
-                                            <input type="text" class="form-control search-control others_name" name="ref_no" value="${arapMiscCostOrder.ref_no!''}"></div>
+                                            <input type="text" class="form-control search-control others_name" id="ref_no" name="ref_no" value="${arapMiscCostOrder.ref_no!''}"></div>
                                         <div class="form-group">
                                             <label>收款金额</label>
                                             <span id="totalAmountSpan">${arapMiscCostOrder.total_amount!''}</span>
@@ -180,7 +180,20 @@
                                                 <th>撤销</th>
                                             </tr>
                                         </thead>
-                                        <tbody></tbody>
+                                        <tbody>
+                                        	<%
+                                    	for(item in itemList){ %>
+	                                        <tr class="odd">
+	                                            <td class="">${item.CUSTOMER_ORDER_NO!''}</td>
+	                                            <td class="">${item.ITEM_DESC!''}</td>
+	                                            <td class="">${item.NAME!''}</td>
+	                                            <td class="">${item.AMOUNT!''}</td>
+	                                            <td class=""></td>
+	                                            <td class="">${item.STATUS!''}</td>
+	                                            <td class=""></td>
+	                                        </tr>
+                                    	<% }%></div>
+                                        </tbody>
                                     </table>
                                 </div>
 
