@@ -106,11 +106,12 @@ $(document).ready(function() {
 	$("#payment_type").click(function () {
 		var selectTxt=$("#payment_type").val();
 		if(selectTxt=="现金"||selectTxt==""){
-			//$("#payment_info").val("");
+			$("#payment_info").val("");
+			$("#accId").val("");
 			$('#payment_info').attr("disabled",true);
 		}
 		if(selectTxt=="转账"){
-			//$("#payment_info").val("");
+			$("#payment_info").val("");
 			$('#payment_info').attr("disabled",false);
 		}	
 		

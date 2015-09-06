@@ -85,9 +85,9 @@ public class CostReimbursementOrder extends Controller {
 			Long userId = LoginUserController.getLoginUserId(this);
 			rei = new ReimbursementOrder();
 			
-//			if(accId!=null&&!accId.trim().equals("")){
-//				rei.set("fin_account_id", accId);
-//			}
+			if(accId!=null&&!accId.trim().equals("")){
+				rei.set("fin_account_id", accId);
+			}
 			rei.set("order_no", orderNo).set("status", "新建")
 					.set("account_name", accountName).set("account_no", accountNo)
 					.set("create_id", userId).set("account_bank", account_bank)
@@ -103,9 +103,12 @@ public class CostReimbursementOrder extends Controller {
 		} else {
 
 			rei = ReimbursementOrder.dao.findById(id);
-//			if(accId!=null&&!accId.equals("")){
-//				rei.set("fin_account_id", accId);
-//			}
+			if(accId!=null){
+				if(accId==""){
+					accId=null;
+				}
+				rei.set("fin_account_id", accId);
+			}
 			rei.set("account_name", accountName).set("account_no", accountNo).set("account_bank", account_bank)
 				.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
 				.set("remark", remark).update();
