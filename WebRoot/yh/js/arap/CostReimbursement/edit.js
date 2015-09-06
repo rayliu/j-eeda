@@ -204,25 +204,25 @@ $(document).ready(function() {
 					return num++;
 				}
 			}, 
-			{"mDataProp":"PARENTITEM",
+			{"mDataProp":"PARENT_ITEM",
 			    "fnRender": function(obj) {
-			        if(obj.aData.PARENTITEM!='' && obj.aData.PARENTITEM != null){
+			        if(obj.aData.PARENT_ITEM!='' && obj.aData.PARENT_ITEM != null){
 			        	var str="";
 			        	if($("#saveExpenseAccount").prop("disabled")){
 				        	$("#parentItemList").children().each(function(){
-				        		if(obj.aData.PARENTITEM == $(this).text())
+				        		if(obj.aData.PARENT_ITEM == $(this).text())
 				        			str+=$(this).text();
 				        	});
 				        	return str;
 			        	}else{
 			        		$("#parentItemList").children().each(function(){
-				        		if(obj.aData.PARENTITEM == $(this).text()){
+				        		if(obj.aData.PARENT_ITEM == $(this).text()){
 				        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";
 				        		}else{
 				        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
 				        		}
 				        	});
-				        	return "<select name='fin_item_id'>"+str+"</select>";
+				        	return "<select name='parent_item_id'>"+str+"</select>";
 			        	}
 			        }else{
 			        	var str="";
@@ -232,10 +232,11 @@ $(document).ready(function() {
 			        	if($("#saveExpenseAccount").prop("disabled"))
 			        		return "";
 			        	else
-			        		return "<select name='fin_item_id'>"+str+"</select>";
+			        		return "<select name='parent_item_id'>"+str+"</select>";
 			        }
 			 }},
 			{"mDataProp":"ITEM",
+				"sClass": "fin_item",
 			    "fnRender": function(obj) {
 			        if(obj.aData.ITEM!='' && obj.aData.ITEM != null){
 			        	var str="";
@@ -369,9 +370,11 @@ $(document).ready(function() {
 		}
 	});
 	//应付修改
-	$("#reimbursementOrderFinItemTbody").on('blur', 'input,select', function(e){
+	$("#reimbursementOrderFinItemTbody").on('keyup click', 'input,select', function(e){
 		if(!$("#saveExpenseAccount").prop("disabled")){
 			var paymentId = $(this).parent().parent().attr("id");
+			//var fin_item=$(".fin_item");
+			var fin_item =  $(this).parent().parent().find('.fin_item').children();
 			var name = $(this).attr("name");
 			var value = $(this).val();
 			if(name == "amount" && isNaN(value)){
@@ -380,6 +383,26 @@ $(document).ready(function() {
 				$(this).focus();
 				return false;
 			}
+			
+			if(name == 'parent_item_id'){
+				$.post('/costReimbursement/findItem', {name:name, value:value}, function(data){
+					fin_item.empty();
+					fin_item.append("<option >--请选择--</option>");
+					for(var i = 0; i < data.length; i++){
+						var id = data[i].ID;
+						var name = data[i].NAME;
+						if(id == null){
+							id='';
+						}
+						if(name == null){
+							name='';
+						}
+						fin_item.append("<option value ='"+id+"' >"+name+"</option>");
+					}
+		    	},'json');
+				return;
+			}
+			
 			if(value != "" && value != null){
 				$.post('/costReimbursement/updateReimbursementOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 					$("#amount").val(data.AMOUNT);

@@ -245,7 +245,7 @@ public class CostReimbursementOrder extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         // 获取当前页的数据
-        List<Record> orders = Db.find("select d.*, f1.name item,f2.name parentItem from reimbursement_order_fin_item d "
+        List<Record> orders = Db.find("select d.*, f1.name item,f2.name parent_item, f2.id parent_item_id from reimbursement_order_fin_item d "
         		+ " left join fin_item f1 on d.fin_item_id = f1.id"
         		+ " left join fin_item f2 on f2.id = f1.parent_id"
                 + " where d.order_id =" + id);
@@ -337,5 +337,15 @@ public class CostReimbursementOrder extends Controller {
         orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
         orderMap.put("aaData", orders);
         renderJson(orderMap);
+        
     }
+    
+    public void findItem(){
+    	String name = getPara("name");
+    	String value = getPara("value");
+    	
+    	List<Record> parentItemList  = Db.find("select * from fin_item where type='报销费用' and parent_id !=0 and parent_id = '"+value+"'");
+    	renderJson(parentItemList);
+    }
+    
 }
