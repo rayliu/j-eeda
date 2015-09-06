@@ -264,13 +264,12 @@ public class CostReimbursementOrder extends Controller {
     public void addNewRow() {
         List<FinItem> items = new ArrayList<FinItem>();
         String orderId = getPara();
-        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
-        
-        if(item != null){
+       FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
+       if(item != null){
         	ReimbursementOrderFinItem dFinItem = new ReimbursementOrderFinItem();
-	        dFinItem.set("fin_item_id", item.get("id"))
-	        .set("fin_attribution_id", null)
-	        .set("order_id", orderId)
+	        //dFinItem.set("fin_item_id", item.get("id"))
+	        //.set("fin_attribution_id", null)
+	        dFinItem.set("order_id", orderId)
 	        .save();
         }
         items.add(item);
