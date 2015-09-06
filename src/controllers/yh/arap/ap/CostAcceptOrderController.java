@@ -103,8 +103,7 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "'"
 		        		+ " UNION"
 		        		+ " SELECT  ro.order_no FROM reimbursement_order ro"
-		        		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
-		        		+ " where ro.STATUS='audit') as a";
+		        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%') as a";//TODO audit是旧数据，10月后可以去掉
         
         String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
         		+ " aci.total_amount total_amount, "
@@ -114,15 +113,13 @@ public class CostAcceptOrderController extends Controller {
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status='" + status + "' group by aci.id "
         		+ " UNION"
-        		+ " SELECT ro.id, ro.order_no,null as payment_method,null as payee_name,null as account_id,"
+        		+ " SELECT ro.id, ro.order_no,null as payment_method,ro.account_name as payee_name,null as account_id,"
         		+ " ro.STATUS,'报销单' attribute,null as invoice_no,ro.create_stamp create_time,ro.remark,"
-        		+ " (SELECT round(sum(cso.next_start_car_amount + cso.month_refuel_amount) - sum(cso.deduct_apportion_amount),2)"
-        		+ " FROM car_summary_order cso WHERE cso.id IN (SELECT id FROM car_summary_order cso WHERE cso.reimbursement_order_id = ro.id)) actual_cost,"
+        		+ " ro.amount actual_cost,"
         		+ " null as application ,"
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
-        		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
-        		+ " where ro.STATUS='audit') A"
+        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%') A"
         		+ " order by A.create_time desc " + sLimit;
         
         

@@ -36,7 +36,7 @@ $(document).ready(function() {
             		if(obj.aData.ATTRIBUTE == '对账单')
             			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ATTRIBUTE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else if(obj.aData.ATTRIBUTE == '报销单')
-            			return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else
             			return obj.aData.ORDER_NO;
         		} 
