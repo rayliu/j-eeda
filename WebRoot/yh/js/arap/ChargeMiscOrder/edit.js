@@ -30,7 +30,11 @@ $(document).ready(function() {
         	itemsArray.push(item);
         }
 
-
+		var amount = 0;
+        for(var i=0; i<itemsArray.length; i++){
+        	amount+=Number(itemsArray[i].AMOUNT);
+        	$('#totalAmountSpan').text(amount);
+        }
 
         var order={
         	chargeMiscOrderId: $('#chargeMiscOrderId').val(),
@@ -41,6 +45,7 @@ $(document).ready(function() {
         	others_name: $('#others_name').val(),
         	ref_no: $('#ref_no').val(),
         	remark: $('#remark').val(),
+        	amount: amount,
         	items: itemsArray
         };
         console.log(order);

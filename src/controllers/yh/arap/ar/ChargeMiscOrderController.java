@@ -146,6 +146,7 @@ public class ChargeMiscOrderController extends Controller {
 		String sp_id = (String) dto.get("sp_id");
 		String others_name = (String) dto.get("others_name");
 		String ref_no = (String) dto.get("ref_no");
+		Double amount = (Double) dto.get("amount");
 		String remark = (String) dto.get("remark");
 		
 		UserLogin user = LoginUserController.getLoginUser(this);
@@ -160,7 +161,7 @@ public class ChargeMiscOrderController extends Controller {
 			if(customer_id != null && !"".equals(customer_id)){
 				arapMiscChargeOrder.set("customer_id", customer_id);
 			}
-			
+			arapMiscChargeOrder.set("total_amount", amount);
 			arapMiscChargeOrder.set("others_name", others_name);
 			arapMiscChargeOrder.set("ref_no", ref_no);
 			arapMiscChargeOrder.set("remark", remark);
@@ -183,9 +184,9 @@ public class ChargeMiscOrderController extends Controller {
 				arapMiscChargeOrder.set("charge_order_id", getPara("chargeCheckOrderIds"));
 			}
 			
+			arapMiscChargeOrder.set("total_amount", amount);
 			arapMiscChargeOrder.set("others_name", others_name);
 			arapMiscChargeOrder.set("ref_no", ref_no);
-			
 			
 			arapMiscChargeOrder.set("create_by", user.getLong("id"));
 			arapMiscChargeOrder.set("create_stamp", new Date());
