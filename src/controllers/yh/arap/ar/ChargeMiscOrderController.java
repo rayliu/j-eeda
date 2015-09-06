@@ -2,6 +2,7 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
@@ -18,6 +19,7 @@ import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -132,7 +134,7 @@ public class ChargeMiscOrderController extends Controller {
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
     @Before(Tx.class)
-	public void save() {
+	public void save() throws IllegalAccessException, InvocationTargetException {
     	String jsonStr=getPara("params");
     	logger.debug(jsonStr);
     	 Gson gson = new Gson();  
@@ -178,7 +180,7 @@ public class ChargeMiscOrderController extends Controller {
 				arapMiscChargeOrder.set("sp_id", sp_id);
 			}
 			
-			String sql = "select * from arap_misc_charge_order order by id desc limit 0,1";
+			
 			arapMiscChargeOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGSK") );
 			if(getPara("chargeCheckOrderIds") != null && !"".equals(getPara("chargeCheckOrderIds"))){
 				arapMiscChargeOrder.set("charge_order_id", getPara("chargeCheckOrderIds"));
@@ -211,6 +213,31 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrderItem.set("misc_order_id", arapMiscChargeOrder.getLong("id"));
 			arapMiscChargeOrderItem.save();
 		}
+		
+//		if("non_biz".equals(biz_type)){
+//			if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {
+//					//update
+//				}else{
+//					//new
+//					long originId = arapMiscChargeOrder.getLong("id");
+//					
+//					ArapMiscChargeOrder orderCopy = new ArapMiscChargeOrder();
+//					BeanUtils.copyProperties(orderCopy, arapMiscChargeOrder);
+//					orderCopy.set("order_no", OrderNoGenerator.getNextOrderNo("SGSK") );
+//					orderCopy.set("ref_order_id", originId);
+//					orderCopy.save();
+//					
+//					List<ArapMiscChargeOrderItem> originItems = ArapMiscChargeOrderItem.dao.find("select * from arap_misc_charge_order_item where misc_order_id = ?", originId);
+//					
+//					for(ArapMiscChargeOrderItem originItem : originItems){
+//						ArapMiscChargeOrderItem newItem = new ArapMiscChargeOrderItem();
+//						BeanUtils.copyProperties(newItem, originItem);
+//						newItem.set("amount", 0 - originItem.getDouble("AMOUNT"));
+//						newItem.save();
+//					}
+//				}
+//			}
+				
 		renderJson(arapMiscChargeOrder);
 	}
 	
