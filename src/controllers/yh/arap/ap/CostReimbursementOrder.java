@@ -84,8 +84,11 @@ public class CostReimbursementOrder extends Controller {
 					.findFirst("select * from user_login where user_name='" + name + "'");
 			Long userId = LoginUserController.getLoginUserId(this);
 			rei = new ReimbursementOrder();
-			
-			if(accId!=null&&!accId.trim().equals("")){
+			String a =accId.replaceAll(" ", "");
+			if(accId!=null){
+				if(accId==""){
+					accId = null;
+				}
 				rei.set("fin_account_id", accId);
 			}
 			rei.set("order_no", orderNo).set("status", "新建")

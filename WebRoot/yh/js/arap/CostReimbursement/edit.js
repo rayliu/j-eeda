@@ -97,7 +97,8 @@ $(document).ready(function() {
     });
 	
 	if($("#payment_type").val()=="现金"||$("#payment_type").val()==""){
-		//$("#payment_info").val("");
+		$("#payment_info").val("");
+		$("#accId").val("");
 		$('#payment_info').attr("disabled",true);
 	}
 	if($("#payment_type").val()=="转账"){
