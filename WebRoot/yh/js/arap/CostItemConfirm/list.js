@@ -42,6 +42,7 @@ $(document).ready(function() {
             			return number;
             	}		
             }}, 
+            {"mDataProp":"REF_NO", "sWidth":"80px", "bSortable": false},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"80px", "bSortable": false},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px", "bSortable": false},
             {"mDataProp":"AMOUNT", "sWidth":"55px", "bSortable": false},
@@ -72,6 +73,7 @@ $(document).ready(function() {
                 			return subtimeStamp;
                 		}
                 	}},
+                {"mDataProp":"SERIAL_NO", "sWidth":"100px", "bSortable": false},
             	{"mDataProp":"ORDER_NO", "sWidth":"140px", "bSortable": false, 
                     "fnRender": function(obj) {
                     	var str = "";
