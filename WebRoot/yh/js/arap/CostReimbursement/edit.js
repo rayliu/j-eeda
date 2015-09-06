@@ -403,7 +403,7 @@ $(document).ready(function() {
 				return;
 			}
 			
-			if(value != "" && value != null){
+			if(value != "" && value != null&&value!="--请选择--"){
 				$.post('/costReimbursement/updateReimbursementOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
 					$("#amount").val(data.AMOUNT);
 		    	},'json');
