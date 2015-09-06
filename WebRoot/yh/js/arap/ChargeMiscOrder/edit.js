@@ -5,6 +5,7 @@ $(document).ready(function() {
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
 	var saveChargeMiscOrder = function(e){
+		$('#saveChargeMiscOrderBtn').attr('disabled', true);
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -57,6 +58,7 @@ $(document).ready(function() {
 				$("#chargeMiscOrderId").val(data.ID);
 				contactUrl("edit?id",data.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				$('#saveChargeMiscOrderBtn').attr('disabled', false);
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
