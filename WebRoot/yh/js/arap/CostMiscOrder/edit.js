@@ -27,13 +27,13 @@ $(document).ready(function() {
         		CUSTOMER_ORDER_NO: $(row.children[0]).find('input').val(), 
 			 	ITEM_DESC: $(row.children[1]).find('input').val(),
 			 	NAME: $(row.children[2]).find('select').val(),
-			 	AMOUNT: $(row.children[4]).find('input').val(),
+			 	AMOUNT: $(row.children[3]).find('input').val(),
 			 	STATUS: '新建'
         	};
         	itemsArray.push(item);
         }
 
-		var amount = 0;
+		var amount = 0.00;
         for(var i=0; i<itemsArray.length; i++){
         	amount+=Number(itemsArray[i].AMOUNT);
         	$('#totalAmountSpan').html(amount);
@@ -53,7 +53,7 @@ $(document).ready(function() {
         	amount: amount,
         	items: itemsArray
         };
-        console.log(order);
+        //console.log(order);
         
         
 		//异步向后台提交数据
@@ -65,7 +65,7 @@ $(document).ready(function() {
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				contactUrl("edit?id", data.ID);
 
-				callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
+				//callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
@@ -374,14 +374,11 @@ $(document).ready(function() {
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	//"iDisplayLength": 20,
-    	//"bServerSide": true,
     	"bPaginate": false, //翻页功能
         "bInfo": false,//页脚信息
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	
     	//"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
         "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 			$(nRow).attr('id', aData.ID);
@@ -444,20 +441,15 @@ $(document).ready(function() {
             }   
         ]      
     });
-    
-    var items = feeTable.fnGetData();
-    for(var index in items){
-    	console.log(items[index]);
-    }
-    
+   
     
 
 	//不知道为什么，直接定义dataTable里定义sAjaxSource不起作用，需要在这里重新load
-	var costMiscOrderId =$("#costMiscOrderId").val();
+	/*var costMiscOrderId =$("#costMiscOrderId").val();
     if(costMiscOrderId!=""){
 		feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
 		feeTable.fnDraw(); 
-	} 
+	} */
     	
 //	//应收
 //	$("#addFee").click(function(){	
@@ -478,6 +470,12 @@ $(document).ready(function() {
 //		 }
 //
 //	});	
+    
+  //删除一行
+	$("#feeItemList-table").on('click', '.finItemdel', function(e){
+		e.preventDefault();
+		$(this).parent().parent().remove();
+	});	
 	
 	//添加一行
 	$("#addFee").click(function(){
@@ -525,7 +523,7 @@ $(document).ready(function() {
 	});*/
 	
 		
-	$("#costMiscOrderItem").click(function(e){
+	/*$("#costMiscOrderItem").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -544,10 +542,10 @@ $(document).ready(function() {
 		}
 		
 		parentId = e.target.getAttribute("id");
-	});
+	});*/
 	
 	//异步删除应付
-	$("#feeItemList-table").on('click', '.finItemdel', function(e){
+	/*$("#feeItemList-table").on('click', '.finItemdel', function(e){
 		var id = $(this).attr('code');
 		e.preventDefault();
 		$.post('/costMiscOrder/finItemdel/'+id,function(data){
@@ -556,7 +554,7 @@ $(document).ready(function() {
              feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val();
      		 feeTable.fnDraw();  
         },'text');
-	});	
+	});	*/
 	    
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){

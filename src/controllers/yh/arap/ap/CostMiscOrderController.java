@@ -169,8 +169,12 @@ public class CostMiscOrderController extends Controller {
 		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {
 			//TODO: 如果已经应付确认过，就不能修改了
 			arapMiscCostOrder = ArapMiscCostOrder.dao.findById(costMiscOrderId);
-			arapMiscCostOrder.set("customer_id",customerId);
-			arapMiscCostOrder.set("sp_id",spId);
+			if (!"".equals(customerId) && customerId != null) {
+				arapMiscCostOrder.set("customer_id",customerId);
+			}
+			if (spId != null && !"".equals(spId)) {
+				arapMiscCostOrder.set("sp_id",spId);
+			}
 			arapMiscCostOrder.set("others_name",others_name);
 			arapMiscCostOrder.set("ref_no",ref_no);
 			arapMiscCostOrder.set("type", biz_type);
@@ -178,13 +182,20 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("route_from", routeFrom);
 			arapMiscCostOrder.set("route_to", routeTo);
 			arapMiscCostOrder.set("remark", remark);
+			if (amount != null && !"".equals(amount)) {
+				arapMiscCostOrder.set("total_amount", amount);
+			}
 			
 			arapMiscCostOrder.update();
 		} else {
 			arapMiscCostOrder = new ArapMiscCostOrder();
 			arapMiscCostOrder.set("status", "新建");
-			arapMiscCostOrder.set("customer_id",customerId);
-			arapMiscCostOrder.set("sp_id",spId);
+			if (!"".equals(customerId) && customerId != null) {
+				arapMiscCostOrder.set("customer_id",customerId);
+			}
+			if (spId != null && !"".equals(spId)) {
+				arapMiscCostOrder.set("sp_id",spId);
+			}
 			arapMiscCostOrder.set("others_name",others_name);
 			arapMiscCostOrder.set("ref_no",ref_no);
 			arapMiscCostOrder.set("type", biz_type);
@@ -195,8 +206,11 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("audit_status", "新建");
 			arapMiscCostOrder.set("create_by", LoginUserController.getLoginUserId(this));
 			arapMiscCostOrder.set("create_stamp", new Date());
-			
 			arapMiscCostOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGFK"));
+			if (amount != null && !"".equals(amount)) {
+				arapMiscCostOrder.set("total_amount", amount);
+			}
+			
 						
 			arapMiscCostOrder.save();
 		}
@@ -273,55 +287,54 @@ public class CostMiscOrderController extends Controller {
 		
 		
 		// 获取当前页的数据
-				List<Record> orders = Db
-						.find("select amcoi.id, amcoi.create_date, amcoi.status, amcoi.item_desc, amcoi.customer_order_no, amcoi.amount,amcoi.change_amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amco.order_no cost_order_no,c.abbr cname,fi.name name "
-							+ " from arap_misc_cost_order_item amcoi"
-							+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
-							+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
-							+ " left join party p on p.id = aco.payee_id"
-							+ " left join contact c on c.id = p.contact_id"
-							+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
-							+ " where amco.id = '"+ id +"' ");
-				setAttr("itemList", orders);
-		
+			List<Record> itemList = Db
+					.find("select amcoi.id, amcoi.create_date, amcoi.status, amcoi.item_desc, amcoi.customer_order_no, amcoi.amount,amcoi.change_amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amco.order_no cost_order_no,c.abbr cname,fi.name name "
+						+ " from arap_misc_cost_order_item amcoi"
+						+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
+						+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
+						+ " left join party p on p.id = aco.payee_id"
+						+ " left join contact c on c.id = p.contact_id"
+						+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
+						+ " where amco.id = '"+ id +"' ");
+			setAttr("itemList", itemList);
 			render("/yh/arap/CostMiscOrder/CostMiscOrderEdit.html");
 	}
     
 	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
-	public void costMiscOrderItemList() {
-		String costMiscOrderId = getPara("costMiscOrderId");
-		String sLimit = "";
-		String pageIndex = getPara("sEcho");
-		if (getPara("iDisplayStart") != null
-				&& getPara("iDisplayLength") != null) {
-			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-					+ getPara("iDisplayLength");
-		}
-		Map orderMap = new HashMap();
-		// 获取总条数
-		String totalWhere = "";
-		String sql = "select count(1) total from arap_misc_cost_order_item amcoi "
-					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id where amco.id = '"+costMiscOrderId +"'";
-		Record rec = Db.findFirst(sql + totalWhere);
-		logger.debug("total records:" + rec.getLong("total"));
-
-		// 获取当前页的数据
-		List<Record> orders = Db
-				.find("select amcoi.id, amcoi.create_date, amcoi.status, amcoi.item_desc, amcoi.customer_order_no, amcoi.amount,amcoi.change_amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amco.order_no cost_order_no,c.abbr cname,fi.name name "
-					+ " from arap_misc_cost_order_item amcoi"
-					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
-					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
-					+ " left join party p on p.id = aco.payee_id"
-					+ " left join contact c on c.id = p.contact_id"
-					+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
-					+ " where amco.id = '"+ costMiscOrderId +"' " + sLimit);
-
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-		orderMap.put("aaData", orders);
-		renderJson(orderMap);
-	}
+//	public void costMiscOrderItemList() {
+//		String costMiscOrderId = getPara("costMiscOrderId");
+//		String sLimit = "";
+//		String pageIndex = getPara("sEcho");
+//		if (getPara("iDisplayStart") != null
+//				&& getPara("iDisplayLength") != null) {
+//			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+//					+ getPara("iDisplayLength");
+//		}
+//		Map orderMap = new HashMap();
+//		// 获取总条数
+//		String totalWhere = "";
+//		String sql = "select count(1) total from arap_misc_cost_order_item amcoi "
+//					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id where amco.id = '"+costMiscOrderId +"'";
+//		Record rec = Db.findFirst(sql + totalWhere);
+//		logger.debug("total records:" + rec.getLong("total"));
+//
+//		// 获取当前页的数据
+//		List<Record> orders = Db
+//				.find("select amcoi.id, amcoi.create_date, amcoi.status, amcoi.item_desc, amcoi.customer_order_no, amcoi.amount,amcoi.change_amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amco.order_no cost_order_no,c.abbr cname,fi.name name "
+//					+ " from arap_misc_cost_order_item amcoi"
+//					+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
+//					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
+//					+ " left join party p on p.id = aco.payee_id"
+//					+ " left join contact c on c.id = p.contact_id"
+//					+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
+//					+ " where amco.id = '"+ costMiscOrderId +"' " + sLimit);
+//
+//		orderMap.put("sEcho", pageIndex);
+//		orderMap.put("iTotalRecords", rec.getLong("total"));
+//		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+//		orderMap.put("aaData", orders);
+//		renderJson(orderMap);
+//	}
 	
 	public void searchAllAccount(){
 		List<Account> accounts = Account.dao.find("select * from fin_account where type != 'REC' and bank_name != '现金'");
