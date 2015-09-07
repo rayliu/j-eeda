@@ -343,7 +343,7 @@ public class DeliveryController extends Controller {
 				+ " left join warehouse w on d.from_warehouse_id = w.id "
 				+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 				+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-				+ " where ifnull(d. STATUS, '') IN "+status+" AND w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d. STATUS, '') IN "+status+" AND  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				+ " order by d.create_stamp desc" + sLimit;
 
@@ -365,9 +365,9 @@ public class DeliveryController extends Controller {
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where ifnull(d.status,'') in "
+					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.status,'') in "
 					+ status
-					+"AND ifnull(d.create_stamp,'') BETWEEN '1-1-1'AND '9999-12-31'"
+					+" AND ifnull(d.create_stamp,'') BETWEEN '1-1-1'AND '9999-12-31'"
 					+ " and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
 			depart = Db.find(sql);
@@ -393,7 +393,7 @@ public class DeliveryController extends Controller {
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where ifnull(d.order_no,'') like '%"
+					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
@@ -441,7 +441,7 @@ public class DeliveryController extends Controller {
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where ifnull(d.order_no,'') like '%"
+					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
