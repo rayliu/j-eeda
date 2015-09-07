@@ -371,12 +371,12 @@ $(document).ready(function() {
     	$("#costMiscOrderStatus").text('新建');
 	}
     
-    var feeTable = $('#feeItemList-table').dataTable({
-    	"bFilter": false, //不需要默认的搜索框
-    	"bSort": false, // 不要排序
+    var feeTable = $('#feeItemList-table').dataTable({    	
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"bPaginate": false, //翻页功能
         "bInfo": false,//页脚信息
+        "bFilter": false, //不需要默认的搜索框
+    	"bSort": false, // 不要排序
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -386,7 +386,7 @@ $(document).ready(function() {
 			return nRow;
 		},		
         "aoColumns": [ 
-          	{"mDataProp":null, "sWidth": "100px",
+          	{"mDataProp":"CUSTOMER_ORDER_NO", "sWidth": "100px",
           	 "fnRender": function(obj) {
 		        if(obj.aData.CUSTOMER_ORDER_NO!='' && obj.aData.CUSTOMER_ORDER_NO != null){
 		            return "<input type='text' name='customer_order_no' value='"+obj.aData.CUSTOMER_ORDER_NO+"' class='form-control search-control'>";
@@ -395,7 +395,7 @@ $(document).ready(function() {
 		        }
 		     }
             },
-            {"mDataProp":null,"sWidth": "130px",
+            {"mDataProp":"ITEM_DESC","sWidth": "130px",
         	    "fnRender": function(obj) {
 			        if(obj.aData.ITEM_DESC!='' && obj.aData.ITEM_DESC != null){
 			            return "<input type='text' name='item_desc' value='"+obj.aData.ITEM_DESC+"'  class='form-control search-control'>";
@@ -404,7 +404,7 @@ $(document).ready(function() {
 			        }
 			    }
         	},
-			{"mDataProp":null,"sWidth": "70px",
+			{"mDataProp":"NAME","sWidth": "70px",
 			    "fnRender": function(obj) {
 			        if(obj.aData.NAME!='' && obj.aData.NAME != null){
 			        	var str="";
@@ -425,7 +425,7 @@ $(document).ready(function() {
 			        	return "<select name='fin_item_id' class='form-control search-control'>"+str+"</select>";
 			        }
 			 }},
-			 {"mDataProp":null,
+			 {"mDataProp":"AMOUNT",
 			    "fnRender": function(obj) {
 			        if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
 			            return "<input type='text' name='amount' value="+obj.aData.AMOUNT+" class='form-control search-control'>";

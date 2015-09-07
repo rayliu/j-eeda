@@ -165,7 +165,7 @@ $(document).ready(function() {
         "bPaginate": false, //翻页功能
         "bInfo": false,//页脚信息
         "bSort": false,
-    	  "oLanguage": {
+    	 "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {

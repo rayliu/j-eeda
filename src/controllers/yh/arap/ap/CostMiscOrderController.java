@@ -208,19 +208,7 @@ public class CostMiscOrderController extends Controller {
     
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
-	public void save() throws Exception {
-		//ArapMiscCostOrder arapMiscCostOrder = null;
-//		String costMiscOrderId = getPara("costMiscOrderId");
-//		String type= getPara("biz_type");
-//		String cost_to_type = getPara("cost_to_type");
-//		String customerId = getPara("customer_id").equals("")?null:getPara("customer_id");
-//		String spId=getPara("sp_id").equals("")?null:getPara("sp_id");
-//		String routeFrom=getPara("route_from");
-//		String routeTo=getPara("route_to");
-//		String others_name=getPara("others_name");
-//		String ref_no=getPara("ref_no");
-		
-		
+	public void save() {		
 		String jsonStr=getPara("params");
     	logger.debug(jsonStr);
     	 Gson gson = new Gson();  
@@ -289,6 +277,9 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.save();
 		}
 		
+		Db.update(
+				"delete from arap_misc_cost_order_item where misc_order_id = ?",
+				costMiscOrderId);
 		
 		List<Map> items =  (List<Map>) dto.get("items");
 		for(Map item : items){
@@ -390,14 +381,11 @@ public class CostMiscOrderController extends Controller {
 		
 		// 获取当前页的数据
 			List<Record> itemList = Db
-					.find("select amcoi.id, amcoi.create_date, amcoi.status, amcoi.item_desc, amcoi.customer_order_no, amcoi.amount,amcoi.change_amount,amcoi.order_type,amcoi.order_no,amcoi.order_stamp,amco.order_no cost_order_no,c.abbr cname,fi.name name "
+					.find("select amcoi.*,"
+							+ "fi.name name "
 						+ " from arap_misc_cost_order_item amcoi"
-						+ " left join arap_misc_cost_order amco on amco.id = amcoi.misc_order_id"
-						+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
-						+ " left join party p on p.id = aco.payee_id"
-						+ " left join contact c on c.id = p.contact_id"
 						+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
-						+ " where amco.id = '"+ id +"' ");
+						+ " where amcoi.misc_order_id = '"+ id +"' ");
 			setAttr("itemList", itemList);
 			render("/yh/arap/CostMiscOrder/CostMiscOrderEdit.html");
 	}
