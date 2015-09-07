@@ -67,6 +67,24 @@ public class ChargeMiscOrderController extends Controller {
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_LIST })
 	public void list() {
+		String orderNo = getPara("orderNo");
+		String status = getPara("status");
+		String customer = getPara("customer");
+		String sp = getPara("sp");
+		String beginTime = getPara("beginTime");
+		String endTime = getPara("endTime");
+		
+		String conditions = "";
+		if (orderNo == null && status == null 
+				&& customer == null && sp == null && beginTime == null && endTime==null){
+			
+		}else{
+			conditions = " and order_no like '%"+ orderNo 
+			+ "%' and status like '%" + status
+			+ "%' and customer_name like '%" + customer
+			+ "%' and sp_name like '%" + sp+"%'";
+		}
+			
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -74,13 +92,18 @@ public class ChargeMiscOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-
-		String sqlTotal = "select count(1) total from arap_misc_charge_order";
+		String sqlFrom =" from(select amco.*, "
+				+ " (select c.abbr from party p left join contact c on p.contact_id = c.id where p.id = amco.customer_id) customer_name, "
+				+ " (select c.abbr from party p left join contact c on p.contact_id = c.id where p.id = amco.sp_id) sp_name "
+				+ " from arap_misc_charge_order amco) A";
+		
+		String sqlTotal = "select count(1) total "+sqlFrom + " where 1=1 " +conditions;
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select amco.*,aco.order_no charge_order_no from arap_misc_charge_order amco"
-				+ " left join arap_charge_order aco on aco.id = amco.charge_order_id order by amco.create_stamp desc "
+		String sql = "select * " + sqlFrom
+				+ " where 1=1 " +conditions
+				+ " order by create_stamp desc "
 				+ sLimit;
 
 		logger.debug("sql:" + sql);
@@ -247,7 +270,8 @@ public class ChargeMiscOrderController extends Controller {
 				deleteRefOrder(chargeMiscOrderId);
 			}
 		} else {// new
-			destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
+			if("non_biz".equals(biz_type))
+				destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
 		}
 
 		if(destOrder!=null){

@@ -10,6 +10,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
+        "bSort": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -30,7 +31,7 @@ $(document).ready(function() {
                     }
                 }
             },
-            {"mDataProp":"TYPE","sWidth": "100px",
+            {"mDataProp":"TYPE","sWidth": "120px",
             	"fnRender": function(obj) {
                     if(obj.aData.TYPE=='biz'){
                         return '业务收款';
@@ -39,6 +40,9 @@ $(document).ready(function() {
                     }
                 }
             },
+            {"mDataProp":"CUSTOMER_NAME","sWidth": "100px"},
+            {"mDataProp":"SP_NAME","sWidth": "130px"},
+            {"mDataProp":"OTHERS_NAME","sWidth": "100px"},
             {"mDataProp":"TOTAL_AMOUNT","sWidth": "100px"},
             {"mDataProp":"STATUS","sWidth": "100px",
                 "fnRender": function(obj) {
@@ -56,9 +60,33 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"CREATE_STAMP","sWidth": "150px"},
+            {"mDataProp":"CREATE_STAMP","sWidth": "100px",
+                "fnRender":function(obj){
+                    var create_stamp=obj.aData.CREATE_STAMP;
+                    var str=create_stamp.substr(0,10);
+                    return str;
+                }
+            },
             
             {"mDataProp":"REMARK","sWidth": "150px"}                       
         ]      
     });	 
+
+
+    $("#customer_filter,  #customer_filter, #orderNo_filter, #status_filter, #beginTime_filter, #endTime_filter").on( 'keyup click', function () {
+        refreshData();
+    });
+
+    var refreshData=function(){
+        var customer=$("#customer_filter").val();
+        var sp=$("#sp_filter").val();
+        var orderNo = $("#orderNo_filter").val();
+        var status = $("#status_filter").val();
+        var beginTime = $("#beginTime_filter").val();
+        var endTime = $("#endTime_filter").val();
+        datatable.fnSettings().sAjaxSource = "/chargeMiscOrder/list?orderNo="+orderNo +"&status="+status
+                                                +"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
+                                                +"&endTime="+endTime;
+        datatable.fnDraw();
+    };
 } );
