@@ -311,7 +311,7 @@ public class DeliveryController extends Controller {
 		String sqlTotal = "";
 		
 
-		String sql = " select d.*," 
+		String sql = " select d.*,tor.planning_time planning_time," 
 				+ " ("
 				+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 				+ " from delivery_order_item doi "
@@ -409,7 +409,7 @@ public class DeliveryController extends Controller {
 					+ endTime + "' "
 					+ " and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
-			String sql_seach = "select distinct d.*,"
+			String sql_seach = "select distinct d.*,tor.planning_time planning_time,"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 					+ " from delivery_order_item doi "

@@ -61,7 +61,8 @@ $(document).ready(function() {
             {"mDataProp":"ITEM_NO","sWidth":"100px"},
             {"mDataProp":"PIECES","sWidth":"70px"},
             {"mDataProp":"C2","sWidth":"70px"},
-            {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"CREATE_STAMP","sWidth":"95px"},
+            {"mDataProp":"PLANNING_TIME","sWidth":"95px"},
             {"mDataProp":"TRANSFER_ORDER_NO"},          
             { 
                 "mDataProp": null, 
