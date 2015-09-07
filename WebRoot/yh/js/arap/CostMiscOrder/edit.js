@@ -59,6 +59,7 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/costMiscOrder/save',{params:JSON.stringify(order)}, function(data){
 			if(data.ID>0){
+				$("#ref_order_no").text(data.REF_ORDER_NO);
 				$("#arapMiscCostOrderNo").html(data.ORDER_NO);
 				$("#create_time").html(data.CREATE_STAMP);
 				$("#costMiscOrderId").val(data.ID);
