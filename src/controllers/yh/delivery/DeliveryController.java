@@ -93,7 +93,7 @@ public class DeliveryController extends Controller {
 				&& status_filter == null && customer_filter == null
 				&& sp_filter == null && beginTime_filter == null
 				&& endTime_filter == null ) {
-			String sqlTotal = "select count(1) total from delivery_order d "
+			String sqlTotal = "SELECT count(1) total from (select count(1) total from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "
@@ -104,9 +104,8 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 					+ " where "
 					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
-					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ " and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') GROUP BY d.id ORDER BY d.create_stamp DESC ) atotal";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -150,9 +149,8 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " WHERE"
 					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
-					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ " AND w.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
-					+ "AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ "AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
 					+ " GROUP BY d.id ORDER BY d.create_stamp DESC "
 					+ sLimit;
 
@@ -173,7 +171,7 @@ public class DeliveryController extends Controller {
 				endTime_filter = "9999-12-31";
 			}
 
-			String sqlTotal = "select count(1) total from delivery_order d "
+			String sqlTotal = "SELECT count(1) total from (select count(1) total from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "
@@ -199,9 +197,8 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
-					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ "and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')" ;
+					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') GROUP BY d.id ORDER BY d.create_stamp DESC ) atotal" ;
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -259,8 +256,7 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
-					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ "and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				    + " group by d.id " + sLimit;
 
@@ -311,7 +307,7 @@ public class DeliveryController extends Controller {
 		String sqlTotal = "";
 		
 
-		String sql = " select d.*,tor.planning_time planning_time," 
+		String sql = " select DISTINCT d.*,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time," 
 				+ " ("
 				+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 				+ " from delivery_order_item doi "
@@ -343,7 +339,7 @@ public class DeliveryController extends Controller {
 				+ " left join warehouse w on d.from_warehouse_id = w.id "
 				+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 				+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d. STATUS, '') IN "+status+" AND  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d. STATUS, '') IN "+status+""
 				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				+ " order by d.create_stamp desc" + sLimit;
 
@@ -365,10 +361,9 @@ public class DeliveryController extends Controller {
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.status,'') in "
+					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.status,'') in "
 					+ status
 					+" AND ifnull(d.create_stamp,'') BETWEEN '1-1-1'AND '9999-12-31'"
-					+ " and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
 			depart = Db.find(sql);
 		} else {
@@ -393,7 +388,7 @@ public class DeliveryController extends Controller {
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
+					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
@@ -407,9 +402,8 @@ public class DeliveryController extends Controller {
 					+ beginTime
 					+ "' and '"
 					+ endTime + "' "
-					+ " and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
-			String sql_seach = "select distinct d.*,tor.planning_time planning_time,"
+			String sql_seach = "select distinct d.*,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 					+ " from delivery_order_item doi "
@@ -441,7 +435,7 @@ public class DeliveryController extends Controller {
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-06-30')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
+					+ " where  !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d.order_no,'') like '%"
 					+ deliveryNo
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer
@@ -454,7 +448,7 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
-					+ endTime + "'  and w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ endTime + "'"
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')order by d.create_stamp desc" + sLimit;
 			depart = Db.find(sql_seach);
 		}
