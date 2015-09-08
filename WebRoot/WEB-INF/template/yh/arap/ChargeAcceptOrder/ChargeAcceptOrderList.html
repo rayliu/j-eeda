@@ -3,131 +3,77 @@
 <%layout("/yh/layout.html"){%>
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
-        <div id="page-wrapper">
-            
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="btn-header">
-                    	 <!-- 收款确认确认 -->
-                    </div>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
+<div id="page-wrapper">
 
-           <!-- /.row -->
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="fa fa-list fa-fw"></i>收款确认列表
-                        </div>
-                        <!-- /.panel-heading -->
-                        <div class="panel-body">
-                        <form role="form" style="margin: 0 15px;">
-                                <div class="row search_panel">
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label class="search-label">客户</label>
-                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
-                                            <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 28%; left: 32%;"></ul>
-                                        </div>            
-                                        <div class="form-group">
-                                            <label class="search-label">开票记录单号</label>
-                                            <input type="text" class="form-control search-control officeName_filter" id="officeName_filter">
-                                        </div> 
-                                    </div>
-                                    <!-- end of col-lg-6-->
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label class="search-label">收款申请单号</label>
-                                            <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
-                                        </div>
-                                        <div class="form-group">                                        
-                                            <div id="datetimepicker" class="input-append date "> 
-                                                <label class="search-label">开始时间</label> 
-                                                <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="btn-header">
+                <!-- 收款确认确认 --> </div>
+        </div>
+        <!-- /.col-lg-12 --> </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="box box-element ui-draggable" style="display: block; position: relative; opacity: 1; z-index: 0;">
+                
+                
+                    <div class="tabbable" id="tabs-880737">
+                        <!-- Only required for left/right tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a data-toggle="tab" href="#panel-1">未复核单据</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" href="#panel-2">已复核单据</a>
+                            </li>
+                            <li class="">
+                                <a data-toggle="tab" href="#panel-3">已收款单据</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content"  style="margin: 15px 15px;">
+                            <div class="tab-pane active" contenteditable="true" id="panel-1">
+                                <div class="row clearfix">
+                                    <div class="col-lg-12 column ui-sortable">
+                                        
+                                            <div class="view">
+                                                <div class="row clearfix">
+                                                    <div class="col-lg-4">
+                                                        <fieldset class="form-group">
+                                                            <label contenteditable="true">表签名</label>
+                                                            <input type="text" class="form-control search-control"  placeholder="Type something…">
+                                                            <span class="help-block" contenteditable="true"></span>
+                                                            <label contenteditable="true">表签名</label>
+                                                            <input type="text" class="form-control search-control" placeholder="Type something…">
+                                                            <span class="help-block" contenteditable="true"></span>
+                                                            <button type="button" id="checkBtn" class="btn  btn-primary" data-toggle="modal" data-backdrop="static" data-target="#myModal">
+                                                                  复核
+                                                                </button>
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-lg-4 column ui-sortable">
+                                                        <fieldset class="form-inline">
+                                                            <label contenteditable="true">表签名</label>
+                                                            <input type="text" class="form-control search-control" placeholder="Type something…">
+                                                            <span class="help-block" contenteditable="true"></span>
+                                                            <label contenteditable="true">表签名</label>
+                                                            <input type="text" class="form-control search-control" placeholder="Type something…"></fieldset>
+                                                    </div>
+                                                    <div class="col-lg-4 column ui-sortable">
+                                                        <fieldset class="form-inline">
+                                                            <label contenteditable="true">表签名</label>
+                                                            <input type="text" class="form-control search-control" placeholder="Type something…">
+                                                            <span class="help-block" contenteditable="true"></span>
+                                                            <label contenteditable="true">表签名</label>
+                                                            <input type="text" class="form-control search-control" placeholder="Type something…"></fieldset>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div> 
+                                        
                                     </div>
-                                    <div class="col-lg-4">                                       
-                                        <div class="form-group">
-                                            <label class="search-label">状态</label>
-                                            <select id="status_filter" class="form-control search-control status_filter">               
-                                                <option value=""></option>
-                                                <option value="已审批">已审批</option>
-                                                <option value="已收款确认">已收款确认</option>                                            
-                                            </select>
-                                        </div>
-                                        <div class="form-group">                                                    
-                                            <span id="datetimepicker2" class="input-append date search-control "> 
-                                                <label class="search-label">结束时间</label> 
-                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <!-- end of col-lg-6-->
-                                </div><!-- end of row-->
-                                <!-- <div class="row">
-                                    <br/>
-                                    <div class="col-lg-6">
-                                        <div class="form-group">                                                    
-                                            <span id="datetimepicker2" class="input-append date search-control "> 
-                                                <button id="chargeConfiremBtn" class="btn btn-primary" data-toggle="modal" data-target="#myModal">确认</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>-->                            
-                        </form>
-                        <div class ="form-group">
-							<button type="button" class="btn btn-primary" data-toggle="modal" data-backdrop="static" data-target="#myModal">
-							  确认
-							</button>
-						</div>
-						<!-- Modal -->
-						<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-						  <div class="modal-dialog">
-						    <div class="modal-content">
-						      <div class="modal-header">
-						        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-						        <h4 class="modal-title" id="myModalLabel">确认账户信息</h4>
-						      </div>
-						      <div class="modal-body">
-						      <form action="/chargeAcceptOrder/save">
-						           <div class="form-group" id="paymentMethods">
-						           <input id="chargeIds" name="chargeIds" type="hidden"/>
-                                       <label class="label-margin">收款方式</label>
-                                       <input id="paymentMethodRadio" type="hidden" value="${arapMiscChargeOrder.payment_method!''}"/>
-                                          <label class="radio-inline">
-                                              <input type="radio" name="paymentMethod" id="paymentMethod1" value="cash" checked="">现金
-                                          </label>
-                                          <label class="radio-inline">
-                                              <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账
-                                          </label>
-                                   </div> 
-                                   <div class="form-group" style="display: none;" id="accountTypeDiv">
-                                       <label>银行账户</label>
-                                       <input id="hideAccountId" name='accountId' type="hidden" value="${arapMiscChargeOrder.account_id!''}" />   
-                                       <select id="accountTypeSelect" class="form-control" name="accountTypeSelect"></select> 
-                                   </div>   
-						      </div>
-						      <div class="modal-footer">
-						        <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
-						        <button type="submit" class="btn  btn-primary">收款确认</button>
-						        <!-- <button type="button" class="btn  btn-primary">保存</button> -->
-						      </div>
-						      </form>
-						    </div>
-						  </div>
-						</div>
-						
-                        <input type="hidden" value="" id="type">
-                            <div class="table-responsive">
+                                </div>
+
+                               
                                 <table class="table table-striped table-bordered table-hover" id="chargeAccept-table" style="width: 2800px;">
                                     <thead>
                                         <tr>
@@ -139,7 +85,7 @@
                                             <th>网点</th>
                                             <th>客户</th>
                                             <th>合计运费</th>
-                                            <th>对账金额</th>                                            
+                                            <th>对账金额</th>
                                             <th>差异金额</th>
                                             <th>扣款金额</th>
                                             <th>代收货款</th>
@@ -153,24 +99,151 @@
                                             <th>对账时间</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
 
+                            
+
                             </div>
-                             
+
+                            <div class="tab-pane" contenteditable="true" id="panel-2">
+                                <p>第二部分内容.</p>
+                            </div>
+
+                            <div class="tab-pane" contenteditable="true" id="panel-3">
+                                <p>第3部分内容.</p>
+                            </div>
                         </div>
-                        <!-- /.panel-body -->
                     </div>
-                    
-                    <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-12 -->
+                
             </div>
-          
         </div>
-       
+    </div>
+
+    <!-- /.row -->
+    <div class="row" style="display: none;">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-list fa-fw"></i>
+                    收款确认列表
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <form role="form" style="margin: 0 15px;">
+                        <div class="row search_panel">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label class="search-label">客户</label>
+                                    <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
+                                    <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 28%; left: 32%;"></ul>
+                                </div>
+                                <div class="form-group">
+                                    <label class="search-label">开票记录单号</label>
+                                    <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"></div>
+                            </div>
+                            <!-- end of col-lg-6-->
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label class="search-label">收款申请单号</label>
+                                    <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value=""></div>
+                                <div class="form-group">
+                                    <div id="datetimepicker" class="input-append date ">
+                                        <label class="search-label">开始时间</label>
+                                        <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
+                                        <span class="add-on">
+                                            <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label class="search-label">状态</label>
+                                    <select id="status_filter" class="form-control search-control status_filter">
+                                        <option value=""></option>
+                                        <option value="已审批">已审批</option>
+                                        <option value="已收款确认">已收款确认</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <span id="datetimepicker2" class="input-append date search-control ">
+                                        <label class="search-label">结束时间</label>
+                                        <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
+                                        <span class="add-on">
+                                            <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <!-- end of col-lg-6--> </div>
+                        <!-- end of row-->
+                        <!-- <div class="row">
+                        <br/>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <span id="datetimepicker2" class="input-append date search-control ">
+                                    <button id="chargeConfiremBtn" class="btn btn-primary" data-toggle="modal" data-target="#myModal">确认</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+                </form>
+                <div class ="form-group">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-backdrop="static" data-target="#myModal">确认</button>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="sr-only">Close</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">确认账户信息</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/chargeAcceptOrder/save">
+                                    <div class="form-group" id="paymentMethods">
+                                        <input id="chargeIds" name="chargeIds" type="hidden"/>
+                                        <label class="label-margin">收款方式</label>
+                                        <input id="paymentMethodRadio" type="hidden" value="${arapMiscChargeOrder.payment_method!''}"/>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="paymentMethod" id="paymentMethod1" value="cash" checked="">现金</label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="paymentMethod" id="paymentMethod2" value="transfers">转账</label>
+                                    </div>
+                                    <div class="form-group" style="display: none;" id="accountTypeDiv">
+                                        <label>银行账户</label>
+                                        <input id="hideAccountId" name='accountId' type="hidden" value="${arapMiscChargeOrder.account_id!''}" />
+                                        <select id="accountTypeSelect" class="form-control" name="accountTypeSelect"></select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+                                    <button type="submit" class="btn  btn-primary">收款确认</button>
+                                    <!-- <button type="button" class="btn  btn-primary">保存</button>
+                                -->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" value="" id="type">
+            
+
+        </div>
+        <!-- /.panel-body --> </div>
+
+    <!-- /.panel -->
+</div>
+<!-- /.col-lg-12 -->
+</div>
+
+</div>
 
 <%}%>
 
