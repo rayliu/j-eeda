@@ -13,7 +13,6 @@ import java.util.Map;
 import models.Account;
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
-import models.ArapMiscChargeOrder;
 import models.DepartOrder;
 import models.Location;
 import models.ParentOfficeModel;
@@ -140,17 +139,17 @@ public class CostMiscOrderController extends Controller {
     
     
     private void deleteRefOrder(String originOrderId) throws Exception {
-		ArapMiscChargeOrder refOrder = ArapMiscChargeOrder.dao.findFirst(
-				"select * from arap_misc_charge_order where ref_order_id=?",
+		ArapMiscCostOrder refOrder = ArapMiscCostOrder.dao.findFirst(
+				"select * from arap_misc_cost_order where ref_order_id=?",
 				originOrderId);
 		if (refOrder == null)
 			return;
 		if (!"新建".equals(refOrder.getStr("status"))) {
-			throw new Exception("对应的手工收入单已不是“新建”，不能修改本张单据。");
+			throw new Exception("对应的手工成本单已不是“新建”，不能修改本张单据。");
 		}
 		long refOrderId = refOrder.getLong("id");
 		Db.update(
-				"delete from arap_misc_charge_order_item where misc_order_id = ?",
+				"delete from arap_misc_cost_order_item where misc_order_id = ?",
 				refOrderId);
 		refOrder.delete();
 	}
@@ -185,6 +184,7 @@ public class CostMiscOrderController extends Controller {
 			orderDest.set("total_amount", 0-originOrder.getDouble("total_amount"));
 		}
 		orderDest.set("ref_order_no", originOrder.getStr("order_no"));
+		orderDest.set("ref_order_id", originOrder.getLong("id"));
 		orderDest.save();
 
 		List<ArapMiscCostOrderItem> originItems = ArapMiscCostOrderItem.dao
@@ -208,7 +208,7 @@ public class CostMiscOrderController extends Controller {
     
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
-	public void save() {		
+	public void save() throws Exception {		
 		String jsonStr=getPara("params");
     	logger.debug(jsonStr);
     	 Gson gson = new Gson();  
@@ -228,10 +228,12 @@ public class CostMiscOrderController extends Controller {
 		String cost_to_type = (String) dto.get("cost_to_type");
 		UserLogin user = LoginUserController.getLoginUser(this);
 		
-		
+		String old_biz_type = "";
 		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {
 			//TODO: 如果已经应付确认过，就不能修改了
 			arapMiscCostOrder = ArapMiscCostOrder.dao.findById(costMiscOrderId);
+			old_biz_type = arapMiscCostOrder.getStr("type");
+			
 			if (!"".equals(customerId) && customerId != null) {
 				arapMiscCostOrder.set("customer_id",customerId);
 			}
@@ -296,17 +298,18 @@ public class CostMiscOrderController extends Controller {
 		}
 		
 		ArapMiscCostOrder destOrder = null;
+		
 		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {// update
 			// 1. 是从biz->non_biz, 新生成对应往来单
-			if ("biz".equals(cost_to_type) && "non_biz".equals(biz_type)) {
+			if ("biz".equals(old_biz_type) && "non_biz".equals(biz_type)) {
 				destOrder = buildNewCostMiscOrder(arapMiscCostOrder, user);
-			} else if ("non_biz".equals(cost_to_type)
+			} else if ("non_biz".equals(old_biz_type)
 					&& "non_biz".equals(biz_type)) {
 				// non_biz 不变，update 对应的信息，判断对应往来单状态是否是“新建”，
 				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
 				deleteRefOrder(costMiscOrderId);
 				destOrder = buildNewCostMiscOrder(arapMiscCostOrder, user);
-			} else if ("non_biz".equals(cost_to_type) && "biz".equals(biz_type)) {
+			} else if ("non_biz".equals(old_biz_type) && "biz".equals(biz_type)) {
 				// non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
 				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
 				deleteRefOrder(costMiscOrderId);
@@ -318,8 +321,10 @@ public class CostMiscOrderController extends Controller {
 
 		if(destOrder!=null){
 			arapMiscCostOrder.set("ref_order_no", destOrder.getStr("order_no"));
+			arapMiscCostOrder.set("ref_order_id", destOrder.getLong("id"));
+			arapMiscCostOrder.update();
 		}
-		renderJson(arapMiscCostOrder);;
+		renderJson(arapMiscCostOrder);
 	}
     
     
