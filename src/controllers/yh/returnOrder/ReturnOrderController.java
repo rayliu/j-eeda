@@ -110,8 +110,8 @@ public class ReturnOrderController extends Controller {
 				&& (return_type == null|| return_type == "")&& (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "") && (time_two == null || time_two == "") && (customer == null || customer == "")) {
 			// 获取总条数
 			sqlTotal = "select count(DISTINCT r_o.id) total "+fromSql
-					+ " where r_o.transaction_status = '"+status
-					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " where r_o.transaction_status in ("+status
+					+ ") and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
 			// 获取当前页的数据
@@ -146,8 +146,8 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
-					+ " where r_o.transaction_status = '"+status
-					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " where r_o.transaction_status in ("+status
+					+ ") and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit;
 		} else {
@@ -196,7 +196,7 @@ public class ReturnOrderController extends Controller {
 					+ " where ifnull(order_no,'')  like'%" + order_no + "%' "
 					+ " and ifnull(transfer_order_no,'')  like'%" + tr_order_no + "%'"
 					+ " and ifnull(delivery_order_no,'')  like'%" + de_order_no + "%'"
-					+ " and ifnull(transaction_status ,'')  like'%" + status + "%'"
+					+ " and ifnull(transaction_status ,'') in ("+status+")"
 					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
@@ -242,7 +242,7 @@ public class ReturnOrderController extends Controller {
 					+ " where ifnull(order_no,'')  like'%" + order_no + "%' "
 					+ " and ifnull(transfer_order_no,'')  like'%" + tr_order_no + "%'"
 					+ " and ifnull(delivery_order_no,'')  like'%" + de_order_no + "%'"
-					+ " and ifnull(transaction_status ,'')  like'%" + status + "%'"
+					+ " and ifnull(transaction_status ,'') in ("+status+")"
 					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"

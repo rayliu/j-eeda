@@ -133,7 +133,7 @@
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/returnOrder/list?status=已签收",
+        "sAjaxSource": "/returnOrder/list?status='已签收','已确认','对账中','对账已确认'",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
    				"sWidth":"100px",
@@ -333,10 +333,10 @@
       var inputStr =$("#customer_filter").val();
       
       if(clickTabId == "createTab"){
-        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=新建&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
         createDataTable.fnDraw();
       }else{
-        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=已签收&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
         finishDataTable.fnDraw();
       }
       saveConditions();
