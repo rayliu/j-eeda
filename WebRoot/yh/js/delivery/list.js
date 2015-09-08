@@ -9,6 +9,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
+        "bSort": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -30,12 +31,12 @@ $(document).ready(function() {
             {"mDataProp":"AMOUNT","sWidth":"50px"},//数量
             {"mDataProp":"PCS_AMOUNT", "sWidth":"50px"},//件数
             {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
-            {"mDataProp":"COMPANY"},//地址
+            {"mDataProp":"COMPANY","sWidth":"150px"},//地址
             {"mDataProp":"DRIVER","sWidth":"70px"},//联系人
             {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
             {"mDataProp":"OFFICE_NAME","sWidth":"80px"},//网点
             {"mDataProp":"PLAN_TIME","sWidth":"100px"},//计划时间
-            {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO","sWidth":"100px"},//客户订单号
             {"mDataProp":"STATUS","sWidth":"70px"},//状态
             {"mDataProp":"CARGO_NATURE",

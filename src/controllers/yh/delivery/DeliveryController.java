@@ -258,7 +258,7 @@ public class DeliveryController extends Controller {
 					+ "' and '" + endTime_filter + "' "
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-				    + " group by d.id " + sLimit;
+				    + " group by d.id  ORDER BY d.create_stamp DESC" + sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 

@@ -33,6 +33,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.returnOrder.ReturnOrderController;
@@ -69,7 +70,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 发车确认
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_COMPLETED})
-    //TODO 这里需要事务控制
+    @Before(Tx.class)
     public void departureConfirmation() {
     	
     	String warehouseId = getPara("warehouseId");
