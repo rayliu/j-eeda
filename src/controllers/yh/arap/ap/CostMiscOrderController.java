@@ -195,6 +195,7 @@ public class CostMiscOrderController extends Controller {
 			ArapMiscCostOrderItem newItem = new ArapMiscCostOrderItem();
 		    newItem.set("status", "新建");
 			newItem.set("fin_item_id", originItem.get("fin_item_id"));
+			if(originItem.getDouble("AMOUNT")!=null)
 			newItem.set("amount", 0-originItem.getDouble("AMOUNT"));
 			newItem.set("creator", user.getLong("id"));
 			newItem.set("create_date", new Date());
