@@ -35,7 +35,7 @@
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label class="search-label">发票类型</label>
-                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="${arapCostPayConfirmOrder.invoice_type!''}<% if(invoiceApplicationOrder.bill_type!''=="mbill")%>自开发票<%else%>${invoiceApplicationOrder.bill_type!''}">
+                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="${arapCostPayConfirmOrder.invoice_type!''}<% if(invoiceApplicationOrder.bill_type!''=="mbill")%>自开发票<%else if(invoiceApplicationOrder.bill_type!''=="wbill")%>无发票">
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">收款人</label>
