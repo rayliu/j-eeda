@@ -110,7 +110,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " FROM arap_misc_charge_order amco"
 					+ " LEFT JOIN arap_misc_charge_order_item amcoi ON amcoi.misc_order_id = amco.id"
 					+ " LEFT JOIN contact c ON c.id=amco.customer_id"
-					+ " where amco. STATUS='新建')"
+					+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )"
 					+ " order by create_date desc " + sLimit;
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
@@ -230,7 +230,7 @@ public class ChargeItemConfirmController extends Controller {
 			+ " FROM arap_misc_charge_order amco"
 			+ " LEFT JOIN arap_misc_charge_order_item amcoi ON amcoi.misc_order_id = amco.id"
 			+ " LEFT JOIN contact c ON c.id=amco.customer_id"
-			+ " where amco. STATUS='新建')) a"
+			+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )) a"
 			+ " where ifnull(order_no,'') like '%"+orderNo+"%' and ifnull(cname,'')like '%"+customer+"%'"
 		    + " and ifnull(route_from,'') like '%"+start+"%'  and ifnull(customer_order_no,'')like '%"+customerNo+"%'"
 		    + " and IFNULL(transfer_order_no,'') like '%"+orderNo+"%' and IFNULL(planning_time,'1-1-1')  between '"
