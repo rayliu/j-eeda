@@ -8,16 +8,30 @@ $(document).ready(function() {
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
         "bFilter": false, //不需要默认的搜索框
         //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-    	"oLanguage": {
+        "bSort": false,
+    	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/delivery/deliveryMilestone",
-        "aoColumns": [   
-            {"mDataProp":null,
+        "aoColumns": [ 
+            { 
+                "mDataProp": null, 
+                "bVisible":DeliveryOnTrip.isComplete,
+                "fnRender": function(obj) {   
+                  if(obj.aData.STATUS=="已送达"||obj.aData.STATUS=="已签收"){
+                    return "已送达";
+                  }else{
+                    return "<a class='btn  btn-primary confirmDelivery' id='arriveBtn' code='"+obj.aData.ID+"'>"+
+                    "到达确认"+
+                    "</a>";
+                  }
+                }
+            },  
+            {"mDataProp":null, "sWidth": "80px",
             	"fnRender": function(obj) {
             		if(Delivery.isUpdate || Delivery.isComplete){
             			return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -61,22 +75,16 @@ $(document).ready(function() {
             {"mDataProp":"ITEM_NO","sWidth":"100px"},
             {"mDataProp":"PIECES","sWidth":"70px"},
             {"mDataProp":"C2","sWidth":"70px"},
-            {"mDataProp":"CREATE_STAMP","sWidth":"95px"},
-            {"mDataProp":"PLANNING_TIME","sWidth":"95px"},
-            {"mDataProp":"TRANSFER_ORDER_NO"},          
-            { 
-                "mDataProp": null, 
-                "bVisible":DeliveryOnTrip.isComplete,
-                "fnRender": function(obj) {   
-                	if(obj.aData.STATUS=="已送达"||obj.aData.STATUS=="已签收"){
-                		return "已送达";
-                	}else{
-                		return "<a class='btn  btn-primary confirmDelivery' id='arriveBtn' code='"+obj.aData.ID+"'>"+
-                		"到达确认"+
-                		"</a>";
-                	}
+            {"mDataProp":"CREATE_STAMP","sWidth":"95px",
+                "fnRender":function(obj){
+                    var create_stamp=obj.aData.CREATE_STAMP;
+                    var str=create_stamp.substr(0,10);
+                    return str;
                 }
-            }    
+            },
+            {"mDataProp":"PLANNING_TIME","sWidth":"95px"},
+            {"mDataProp":"TRANSFER_ORDER_NO"}          
+            
         ]  
     });	
     //签收完成
