@@ -9,6 +9,7 @@ import java.util.Map;
 
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
 
 import org.apache.shiro.SecurityUtils;
@@ -176,7 +177,12 @@ public class CostAcceptOrderController extends Controller {
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
-        		+ " where ro.STATUS='已复核') A"
+        		+ " where ro.STATUS='已复核'"
+        		+ " UNION SELECT amco.id, amco.order_no, NULL AS payment_method, null AS payee_name, NULL AS account_id, amco. STATUS, "
+        		+ "  NULL AS invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount total_amount, "
+        		+ " NULL AS application_amount, c.abbr AS cname FROM arap_misc_cost_order amco LEFT JOIN party p ON p.id = amco.customer_id "
+        		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE amco.STATUS= '已复核' and amco.type = 'non_biz'"
+        		+ ") A"
         		+ " order by A.create_time desc "  + sLimit;
         
         
@@ -209,6 +215,10 @@ public class CostAcceptOrderController extends Controller {
         		ReimbursementOrder reimbursementorder =ReimbursementOrder.dao.findById(orderArrId[i]);
         		reimbursementorder.set("status", "已复核");
         		reimbursementorder.update();
+        	}else if(orderArr[i].equals("成本单")){
+        		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(orderArrId[i]);
+        		arapMiscCostOrder.set("status", "已复核");
+        		arapMiscCostOrder.update();
         	}
             renderJson("{\"success\":true}");
         }
