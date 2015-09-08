@@ -2,6 +2,8 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,11 +87,13 @@ public class ChargeCheckOrderController extends Controller {
 							.findFirst(
 									"select round(sum(amount),2) as total_amount from return_order_fin_item where return_order_id = ?",
 									rOrder.get("id"));
-					totalAmount = totalAmount
-							+ record.getDouble("total_amount");
+					totalAmount = totalAmount + record.getDouble("total_amount");
+
 				}	
 			}
-			setAttr("totalAmount", totalAmount);//应收总额
+			BigDecimal bg = new BigDecimal(totalAmount);  
+            double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+			setAttr("totalAmount", f1);//应收总额
 			
 			//客户信息回显
 			if (orderArray[0].equals("收入单")) {
