@@ -136,7 +136,7 @@ $(document).ready(function() {
 	});
     
     
-    $("#oname_filter,#orderNo_filter,#customer_order_no_filter").on( 'keyup click', function () {
+    $("#oname_filter,#orderNo_filter,#order_no_filter").on( 'keyup click', function () {
     	refreshData();
     });
 
@@ -376,7 +376,7 @@ $(document).ready(function() {
             order_type:$("#order_type_filter").val(),
             plantime :$("#plantime").val(),
             arrivarltime:$("#arrivaltime").val(),
-            customer_order_no:$("#customer_order_no_filter").val(),
+            customer_order_no:$("#order_no_filter").val(),
             orderNo : $("#orderNo_filter").val(),
             status : $("#status_filter").val(),
             address : $("#address_filter").val(),
@@ -396,7 +396,7 @@ $(document).ready(function() {
         var order_type=$("#order_type_filter").val();
         var plantime=$("#plantime").val();
         var arrivarltime=$("#arrivaltime").val();
-        var customer_order_no=$("#customer_order_no_filter").val();
+        var customer_order_no=$("#order_no_filter").val();
         var orderNo = $("#orderNo_filter").val();
         var status = $("#status_filter").val();
         var address = $("#address_filter").val();
@@ -427,7 +427,7 @@ $(document).ready(function() {
             $("#order_type_filter").val(conditions.order_type);
             $("#plantime").val(conditions.plantime);
             $("#arrivaltime").val(conditions.arrivarltime);
-            $("#customer_order_no_filter").val(conditions.customer_order_no);
+            $("#order_no_filter").val(conditions.customer_order_no);
             $("#orderNo_filter").val(conditions.orderNo);
             $("#status_filter").val(conditions.status);
             $("#address_filter").val(conditions.address);
