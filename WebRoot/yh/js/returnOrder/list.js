@@ -4,7 +4,7 @@
 	var clickTabId = "createTab";
 	
 	//条件查询
-    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two").on('keyup click', function () {    	 	
+    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no").on('keyup click', function () {    	 	
     	findData();
     });
     
@@ -294,7 +294,8 @@
           de_order_no:$("#de_order_no").val(),
           time_one:$("#time_one").val(),
           time_two : $("#time_two").val(),
-          customer : $("#customer_filter").val()
+          customer : $("#customer_filter").val(),
+          serial_no: $("#serial_no").val()
       }
       if(!!window.localStorage){//查询条件处理
           localStorage.setItem(conditions_name, JSON.stringify(conditions));
@@ -314,11 +315,13 @@
           $("#time_one").val(conditions.time_one);
           $("#time_two").val(conditions.time_two);
           $("#customer_filter").val(conditions.customer);
+          $("#serial_no").val(conditions.serial_no);
       }
   };
 
   var findData = function(){
       var order_no = $("#order_no").val();
+      var serial_no = $("#serial_no").val();
       var tr_order_no = $("#tr_order_no").val();
       var de_order_no = $("#de_order_no").val();
       var time_one = $("#time_one").val();
@@ -326,10 +329,10 @@
       var inputStr =$("#customer_filter").val();
       
       if(clickTabId == "createTab"){
-        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=新建&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=新建&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
         createDataTable.fnDraw();
       }else{
-        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=已签收&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status=已签收&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr;
         finishDataTable.fnDraw();
       }
       saveConditions();
