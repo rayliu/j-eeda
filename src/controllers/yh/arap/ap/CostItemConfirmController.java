@@ -318,7 +318,7 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN contact c ON p.contact_id = c.id"
 				+ " LEFT JOIN location l ON amco.route_from=l.code"
 				+ " LEFT JOIN location l1 ON amco.route_to=l1.code"
-				+ " where amco.audit_status = '新建' and amcoi.amount IS NOT NULL"
+				+ " where amco.audit_status = '新建' and amco.type = 'biz' and amco.total_amount!=0"
 				+ " GROUP BY amco.id) as A ";
         String condition = "";
       
