@@ -72,6 +72,7 @@ public class ReturnOrderController extends Controller {
 		String time_one = getPara("time_one");
 		String time_two = getPara("time_two");
 		String customer = getPara("customer");
+		String return_type = getPara("return_type");
 		String serial_no = getPara("serial_no");
 		String pageIndex = getPara("sEcho");
 		String sLimit = "";
@@ -106,9 +107,9 @@ public class ReturnOrderController extends Controller {
                 + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
 		
 		if ((order_no == null || order_no == "") && (tr_order_no == null || tr_order_no == "") && (de_order_no == null || de_order_no == "")
-				 && (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "") && (time_two == null || time_two == "") && (customer == null || customer == "")) {
+				&& (return_type == null|| return_type == "")&& (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "") && (time_two == null || time_two == "") && (customer == null || customer == "")) {
 			// 获取总条数
-			sqlTotal = "select count(1) total "+fromSql
+			sqlTotal = "select count(DISTINCT r_o.id) total "+fromSql
 					+ " where r_o.transaction_status = '"+status
 					+ "' and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
@@ -141,6 +142,7 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
+					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' WHEN 'delivery' THEN '运输' ELSE '配送' end) return_type,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
@@ -157,20 +159,49 @@ public class ReturnOrderController extends Controller {
 			}
 
 			// 获取总条数
-			sqlTotal = "select count(distinct r_o.id) total "
+			sqlTotal = "SELECT count(*) total from(select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
+					+ " ifnull(c4.contact_person, c3.contact_person) receipt_person, "
+					+ " ifnull(c4.phone, c3.phone) receipt_phone,"
+					+ " ifnull(tor.receiving_unit, tor2.receiving_unit) receiving_unit,"
+					+ " ifnull(c4.address, c3.address) receipt_address,"
+					+ " ifnull(w.warehouse_name, '') warehouse_name,"
+					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
+					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
+					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
+					+ " WHERE d_o.id = r_o.delivery_order_id), (select item_no from transfer_order_item toi where toi.id = doi.transfer_item_id)) item_no,"
+					+ " (SELECT CASE"
+					+ " WHEN tor.cargo_nature ='ATM' THEN ("
+					+ " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
+					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id and toi.order_id = tor.id"
+		            + " )"
+		            + " WHEN tor.cargo_nature ='cargo' THEN ("
+					+ " 	select sum(toi.amount) from transfer_order_item toi"
+					+ " 		where (toi.order_id = r_o.transfer_order_id)"
+		            + " )"
+		            + " END ) a_amount,"
+					+ " (SELECT group_concat(DISTINCT toid.serial_no SEPARATOR '\r\n') from transfer_order_item_detail toid"
+					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
+					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
+					+ " where d_o.id = r_o.delivery_order_id) serial_no, "
+					+ " ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
+					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
+					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' WHEN 'delivery' THEN '运输' ELSE '配送' end) return_type,"
+					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
+					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
-					+ " where"
-					+ " ifnull(r_o.order_no,'')  like'%" + order_no + "%' "
-					+ " and ifnull(tor.order_no,tor2.order_no)  like'%" + tr_order_no + "%'"
-					+ " and ifnull(d_o.order_no,'')  like'%" + de_order_no + "%'"
-					+ " and ifnull(r_o.transaction_status ,'')  like'%" + status + "%'"
-					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
-					+ " and ifnull(c.abbr,c2.abbr) like '%" + customer + "%'"
-					+ " and ifnull(toid2.serial_no,'') like '%" + serial_no + "%'"
-					+ " and r_o.create_date between '" + time_one + "' and '" + time_two + "' "
-					+ " and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " where ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光')"
-					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ";
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') or ifnull(r_o.import_ref_num,0) > 0 ) a "
+					+ " where ifnull(order_no,'')  like'%" + order_no + "%' "
+					+ " and ifnull(transfer_order_no,'')  like'%" + tr_order_no + "%'"
+					+ " and ifnull(delivery_order_no,'')  like'%" + de_order_no + "%'"
+					+ " and ifnull(transaction_status ,'')  like'%" + status + "%'"
+					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
+					+ " and ifnull(cname,'') like '%" + customer + "%'"
+					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
+					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
+					+ " and create_date between '" + time_one + "' and '" + time_two + "' ";
 					
 
 			// 获取当前页的数据
@@ -201,6 +232,7 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
+					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' WHEN 'delivery' THEN '运输' ELSE '配送' end) return_type,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
@@ -214,6 +246,7 @@ public class ReturnOrderController extends Controller {
 					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
+					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
 					+ " and create_date between '" + time_one + "' and '" + time_two + "' "
 					 + sLimit;
 		}
