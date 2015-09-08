@@ -119,7 +119,12 @@ public class CostAcceptOrderController extends Controller {
         		+ " null as application ,"
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
-        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%') A"
+        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%'"
+        		+ " UNION SELECT amco.id, amco.order_no, NULL AS payment_method, null AS payee_name, NULL AS account_id, amco. STATUS, "
+        		+ " '成本单' attribute, NULL AS invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount total_amount, "
+        		+ " NULL AS application_amount, c.abbr AS cname FROM arap_misc_cost_order amco LEFT JOIN party p ON p.id = amco.customer_id "
+        		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE amco.STATUS= '新建' and amco.type = 'non_biz'"
+        		+ " ) A"
         		+ " order by A.create_time desc " + sLimit;
         
         
