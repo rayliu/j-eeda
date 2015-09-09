@@ -181,6 +181,7 @@ public class CostConfirmController extends Controller {
    		Account account = Account.dao.findFirst("select * from fin_account where account_no = '"+pay_account_no+"'");
 		//创建付款LOG记录表
 		arapCostPayConfirmOrderLog = new ArapCostPayConfirmOrderLog();
+		if(account!=null)
 		arapCostPayConfirmOrderLog.set("pay_out_bank_id", account.getLong("id"));
 		arapCostPayConfirmOrderLog.set("pay_type", pay_type);
 		arapCostPayConfirmOrderLog.set("pay_out_bank_name", pay_bank);
@@ -227,6 +228,7 @@ public class CostConfirmController extends Controller {
 	        auditLog.set("create_date", new Date());
 	        auditLog.set("misc_order_id", confirmId);
 	        auditLog.set("invoice_order_id", null);
+	        if(account!=null)
 	        auditLog.set("account_id", account.get("id"));
 	        auditLog.set("source_order", "应付确认单");
 	        auditLog.save();

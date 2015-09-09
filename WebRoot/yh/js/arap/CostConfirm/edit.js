@@ -37,8 +37,6 @@
 //    					$("#pay_amount").val(total);
     				}else{
     					if($("#status").val()=='部分已付款'){
-//    						$("#pay_amount").val($("#total_amount").val()-$("#total_pay").val());
-//    						$("#nopay_amount").val($("#total_amount").val()-$("#total_pay").val());
     						$("#saveBtn").attr("disabled", true);
     						$("#savePayConfirmBtn").attr("disabled", false);
     					}else if($("#status").val()=='已付款'){
@@ -46,25 +44,29 @@
     						$("#savePayConfirmBtn").attr("disabled", true);
     					}
     				}
-    				
     				return obj.aData.PAY_AMOUNT;
     			}
         	},
-        	{"mDataProp":"NOPAY_AMOUNT", bVisible: false,
+        	/*{"mDataProp":"NOPAY_AMOUNT", bVisible: false,
         		"fnRender": function(obj) {
         			$("#nopay_one").val(obj.aData.NOPAY_AMOUNT);
         			nopay = nopay + parseInt(obj.aData.NOPAY_AMOUNT) ;
     				//$("#nopay_total").html(nopay);
     				$("#nopay_amount").val(nopay);
     				$("#pay_amount").val(nopay);
-    				$("#nopay_total").html(0);
+    				//$("#nopay_total").html(0);
     				$("#total_pays").html(nopay);
     				return "<span name='nopay_amounts'>"+0+"</span>";
         		}
-        	},
+        	},*/
         	{"mDataProp":null,
   	            "fnRender": function(obj) {
-  	            	return	"<input type='text' name='pay_amounts' value='"+$("#nopay_one").val()+"'>";
+  	            	nopay = nopay + parseInt(obj.aData.NOPAY_AMOUNT) ;
+  	            	$("#total_pays").html(nopay);
+  	            	$("#pay_amount").val(nopay);
+  	            	$("#total_nopay").val(nopay);
+  	            	$("#nopay_amount").val(0);
+  	            	return	"<input type='text' name='pay_amounts' value='"+obj.aData.NOPAY_AMOUNT+"'>";
   	            }
             },
             {"mDataProp":"COST_STAMP"},
@@ -79,21 +81,21 @@
 		e.preventDefault();
 		var value = 0.00;
 		var currentValue = $(this).val();
-		if(currentValue==''){
-			return ;
-		}
-		
-		var row = $(this).parent().parent();
-		var $leftAmountObj = $(row.find("span[name='nopay_amounts']")[0]);
-		//var $totalAmount = $(this).parent().parent().attr('total_amount');
-		var $totalAmount = $("#nopay_one").val();
+//		if(currentValue==''){
+//			return ;
+//		}
+		//var row = $(this).parent().parent();
+		//var $leftAmountObj = $(row.find("span[name='nopay_amounts']")[0]);
+		var $totalAmount = $(this).parent().parent().attr('total_amount');
+		//var $totalAmount = $("#nopay_one").val();
 		if(parseInt($totalAmount)-parseInt(currentValue)<0){
 			$(this).val(0);
 			$.scojs_message('支付金额不能大于待付金额', $.scojs_message.TYPE_FALSE);
 			return false;
-		}else{
+		}/*else{
 			$leftAmountObj.text(parseInt($totalAmount)-parseInt(currentValue));
-		}
+			$("#nopay_amount").text(parseInt($totalAmount)-parseInt(currentValue));
+		}*/
 		
 		
 		$("input[name='pay_amounts']").each(function(){
@@ -105,30 +107,34 @@
 				}*/
 				
 				value = value + parseInt($(this).val());
-	    		$("#total_pays").html(value);
-	    		$("#pay_amount").val(value);
+//	    		$("#total_pays").html(value);
+//	    		$("#pay_amount").val(value);
+//	    		$("#nopay_amount").val(parseInt($("#total_amount").val())-parseInt(value));
 			}else{
 				$("#InvorceApplication-table").on('blur', 'input', function(e){
 					$(this).val(0);
 				});
-				$("#total_pays").html(value);
-	    		$("#pay_amount").val(value);
+//				$("#total_pays").html(value);
+//	    		$("#pay_amount").val(value);
 			}
+			$("#total_pays").html(value);
+    		$("#pay_amount").val(value);
+    		$("#nopay_amount").val(parseInt($("#total_nopay").val())-parseInt(value));
 	    });		
 	});	
     
     
     
     //异步技术待付金额总额
-    $("#InvorceApplication-table").on('input', 'input', function(e){
-		e.preventDefault();
-		var value = 0.00;
-		$("span[name='nopay_amounts']").each(function(){
-				value = value + parseInt($(this).html());
-				$("#nopay_total").html(value);
-				$("#nopay_amount").val(value);
-	    });	
-	});	
+//    $("#InvorceApplication-table").on('input', 'input', function(e){
+//		e.preventDefault();
+//		var value = 0.00;
+//		$("span[name='nopay_amounts']").each(function(){
+//				value = value + parseInt($(this).html());
+//				$("#nopay_total").html(value);
+//				$("#nopay_amount").val(value);
+//	    });	
+//	});	
     
   
     
@@ -200,9 +206,9 @@
 		
 	//付款保存
 	$("#saveBtn").on('click',function(){
+		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 		$.get('/costConfirm/save',$("#confirmForm").serialize(), function(data){
 			if(data.ID>0){
-				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$("#confirmId").val(data.ID);
 				contactUrl("edit?id",data.ID);
 				$("#saveBtn").attr("disabled", true);
@@ -216,10 +222,6 @@
 	
 	//付款确认
 	$("#savePayConfirmBtn").on('click',function(){
-		/*if(parseInt($("#pay_amount").val())>parseInt($("#nopay_amount").val())){
-			$.scojs_message('付款金额不可以大于待付金额！！', $.scojs_message.TYPE_FALSE);
-			return false;
-		}*/
 		var array=[];
 		$("#InvorceApplication-table input[name='pay_amounts']").each(function(){
 			var obj={};
@@ -231,27 +233,28 @@
 		console.log(str_JSON);
 		$("#detailJson").val(str_JSON);
 		
+		if($("#nopay_amount").val()=='0'){
+			$("#savePayConfirmBtn").attr("disabled", true);
+		}else{
+			$("#savePayConfirmBtn").attr("disabled", false);
+		}
+
 		$.get('/costConfirm/saveConfirmLog',$("#confirmForm").serialize(), function(data){
 			if(data.arapCostPayConfirmOrder.ID>0){
 				logTable.fnSettings().sAjaxSource="/costConfirm/logList?confirmId="+$("#confirmId").val();
 				logTable.fnDraw();
-				if($("#nopay_amount").val()<=0){
-					$("#savePayConfirmBtn").attr("disabled", true);
-				}else{
-					$("#savePayConfirmBtn").attr("disabled", false);
-				}
-				if(data.arapCostPayConfirmOrder.STATUS=='已付款'){
-					$("#savePayConfirmBtn").attr("disabled", true);
-				}
 				$.scojs_message('确认成功', $.scojs_message.TYPE_OK);
+				if(data.arapCostPayConfirmOrder.STATUS=='已付款'){
+				    $("#savePayConfirmBtn").attr("disabled", true);
+			    }
 			}else{
 				$.scojs_message('确认失败', $.scojs_message.TYPE_FALSE);
 			}
-			$("#nopay_one").val($("#nopay_amount").val());
-			/*total = 0.00;
+			//$("#nopay_one").val($("#nopay_amount").val());
+			total = 0.00;
 		    nopay = 0.00;
-		    $("#total_pays").html(0)
-			datatable.fnDraw();*/
+		    $("#total_pays").html(0);
+			datatable.fnDraw();
 		},'json');
 		
 	});
