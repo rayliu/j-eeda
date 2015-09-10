@@ -125,8 +125,8 @@ $(document).ready(function() {
 		]          
     });
     
-    var ids = [];
-    var order =[]
+    var returnIds = [];
+    var miscOrderIds =[]
     // 未选中列表
 	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		var cname = $(this).parent().siblings('.cname')[0].textContent;		
@@ -138,11 +138,16 @@ $(document).ready(function() {
 					return false;
 				}
 			}
+
 			$(this).parent().parent().appendTo($("#checkedChargeCheckList"));
-			ids.push($(this).val());
-			order.push($(this).attr('tporder'));
-			$("#checkedReturnOrder").val(ids);
-			$("#order").val(order);
+
+			if($(this).attr('tporder') == "收入单"){
+				miscOrderIds.push($(this).val());
+				$("#checkedMiscOrder").val(miscOrderIds);
+			}else{
+				returnIds.push($(this).val());
+				$("#checkedReturnOrder").val(returnIds);
+			}
 			$('#saveBtn').attr('disabled', false);
 		}			
 	});
@@ -151,19 +156,27 @@ $(document).ready(function() {
 	$("#checkedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == false){
 			$(this).parent().parent().appendTo($("#uncheckedChargeCheckList"));
-			if(ids.length != 0){
-				ids.splice($.inArray($(this).val(),ids),1);
-				$("#checkedReturnOrder").val(ids);
-				if(ids.length == 0){
-					$('#saveBtn').attr('disabled', true);
+
+			if($(this).attr('tporder') == "收入单"){
+				if(miscOrderIds.length != 0){
+					miscOrderIds.splice($.inArray($(this).val(), miscOrderIds), 1);
+					$("#checkedMiscOrder").val(miscOrderIds);
 				}
+			}else{
+				if(returnIds.length != 0){
+					returnIds.splice($.inArray($(this).val(), returnIds), 1);
+					$("#checkedReturnOrder").val(returnIds);
+				}
+			}
+			if(returnIds.length == 0 && miscOrderIds.length == 0){
+				$('#saveBtn').attr('disabled', true);
 			}
 		}			
 	});
 	
 	$('#saveBtn').click(function(e){
         e.preventDefault();
-        if(ids.length>0){
+        if(returnIds.length>0 || miscOrderIds){
         	$('#createForm').submit();
         }else{
         	$.scojs_message('对不起，当前你没有选择需要对账的单据', $.scojs_message.TYPE_ERROR);

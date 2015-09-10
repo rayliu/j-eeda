@@ -28,20 +28,58 @@ $(document).ready(function() {
         }
         //数据响应之前回调按钮
         $('#saveChargeCheckOrderBtn').attr('disabled', true);
+
+        var tableRows = $("#chargeConfirem-table tr");
+        var itemsArray=[];
+        for(var index=0; index<tableRows.length; index++){
+            if(index==0)
+                continue;
+
+            var row = tableRows[index];
+            var item={
+                ID: $(row.children[0]).find('input').val(), 
+                ORDER_TYPE: $(row.children[0]).find('input').val(),
+                AMOUNT: $(row.children[3]).find('input').val(),
+                STATUS: '新建'
+            };
+            itemsArray.push(item);
+        }
+
+        var amount = 0.00;
+        for(var i=0; i<itemsArray.length; i++){
+            amount+=Number(itemsArray[i].AMOUNT);
+            $('#chargeAmount').html(amount);
+        }
+
+        var order={
+            chargeCheckOrderId: $('#chargeCheckOrderId').val(),
+            biz_type: $('input[name="biz_type"]:checked').val(),
+            cost_to_type: $('input[name="cost_to_type"]:checked').val(),
+            customer_id: $('#customer_id').val(),
+            sp_id: $('#sp_id').val(),
+            route_from: $('#locationForm').val(),
+            route_to: $('#locationTo').val(),
+            others_name: $('#others_name').val(),
+            ref_no: $('#ref_no').val(),
+            remark: $('#remark').val(),
+            amount: amount,
+            items: itemsArray
+        };
+
 		//异步向后台提交数据
-		$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
-			if(data.ID>0){
-				$("#chargeCheckOrderId").val(data.ID);
-				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
-				$('#auditBtn').attr('disabled', false);
-				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				contactUrl("edit?id",data.ID);
-				$("#arap_order_no").text(data.ORDER_NO);
-				$('#saveChargeCheckOrderBtn').attr('disabled', false);
-			}else{
-				alert('数据保存失败。');
-			}
-		},'json');
+		// $.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
+		// 	if(data.ID>0){
+		// 		$("#chargeCheckOrderId").val(data.ID);
+		// 		$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
+		// 		$('#auditBtn').attr('disabled', false);
+		// 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		// 		contactUrl("edit?id",data.ID);
+		// 		$("#arap_order_no").text(data.ORDER_NO);
+		// 		$('#saveChargeCheckOrderBtn').attr('disabled', false);
+		// 	}else{
+		// 		alert('数据保存失败。');
+		// 	}
+		// },'json');
 	};
     
 	// 审核
@@ -86,64 +124,100 @@ $(document).ready(function() {
  		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
-	$("#chargeCheckOrderItem").click(function(e){
-		//阻止a 的默认响应行为，不需要跳转
-		e.preventDefault();
-		//提交前，校验数据
-        if(!$("#chargeCheckOrderForm").valid()){
-	       	return;
-        }
-		//异步向后台提交数据
-		$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
-			if(data.ID>0){
-				$("#chargeCheckOrderId").val(data.ID);
-			  	//$("#style").show();
-			  	$("#departureConfirmationBtn").attr("disabled", false);
-			  	if("chargeCheckOrderbasic" == parentId){
-			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-			  	}
-			}else{
-				alert('数据保存失败。');
-			}
-		},'json');
-		parentId = e.target.getAttribute("id");
-	});
+	// $("#chargeCheckOrderItem").click(function(e){
+	// 	//阻止a 的默认响应行为，不需要跳转
+	// 	e.preventDefault();
+	// 	//提交前，校验数据
+ //        if(!$("#chargeCheckOrderForm").valid()){
+	//        	return;
+ //        }
+	// 	//异步向后台提交数据
+	// 	$.post('/chargeCheckOrder/save', $("#chargeCheckOrderForm").serialize(), function(data){
+	// 		if(data.ID>0){
+	// 			$("#chargeCheckOrderId").val(data.ID);
+	// 		  	//$("#style").show();
+	// 		  	$("#departureConfirmationBtn").attr("disabled", false);
+	// 		  	if("chargeCheckOrderbasic" == parentId){
+	// 		  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	// 		  	}
+	// 		}else{
+	// 			alert('数据保存失败。');
+	// 		}
+	// 	},'json');
+	// 	parentId = e.target.getAttribute("id");
+	// });
 	
     if($("#chargeCheckOrderStatus").text() == 'new'){
     	$("#chargeCheckOrderStatus").text('新建');
 	}
    
     var chargeConfiremTable = $('#chargeConfirem-table').dataTable({
+        //"bPaginate": false, //翻页功能
+        //"bInfo": false,//页脚信息
         "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
+        "bSort": false, // 不要排序
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-        "bServerSide": true,
-    	  "oLanguage": {
+        //"bServerSide": true,
+    	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeCheckOrder/returnOrderList",
+        //"sAjaxSource": "/chargeCheckOrder/returnOrderList",
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+            $(nRow).attr('id', aData.ID);
+            $(nRow).attr('order_type', aData.ORDER_TYPE);
+            return nRow;
+        },
         "aoColumns": [  
-            {"mDataProp":"ID", "bVisible": false},
-            {"mDataProp":"ORDER_NO",
+            
+            {"mDataProp":"ORDER_NO", "sWidth":"100px",
             	"fnRender": function(obj) {
             		if(Return.isUpdate || Return.isComplete){
-            			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/returnOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		}else{
             			return obj.aData.ORDER_NO;
             		}
-        			
         		}},
-		    {"mDataProp":null, "sWidth":"120px",
+		    {"mDataProp":null, "sWidth":"100px",
                 "fnRender": function(obj) {
                     return "未收款";
-            }},
+                }
+            },
+            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px",
+                "fnRender": function(obj) {
+                    // return "<input style='width: 100%;' type='text' name='change_amount' value='0'/>";
+                    if($("#chargeCheckOrderStatus").text()=="已确认"||$("#chargeCheckOrderStatus").text()=="收款申请中"
+                        ||$("#chargeCheckOrderStatus").text()=="收款确认中"||$("#chargeCheckOrderStatus").text()=="已收款确认"){
+                        if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+                            return obj.aData.CHANGE_AMOUNT;  
+                        }
+                        else {
+                            return obj.aData.CHARGE_TOTAL_AMOUNT;
+                        }
+                    }
+                    else{
+                        if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+                            return "<input style='width: 100%;' type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                            
+                        }
+                        else {
+                            if(obj.aData.CHARGE_TOTAL_AMOUNT!=null){
+                                return "<input style='width: 100%;' type='text' name='change_amount' value='"+obj.aData.CHARGE_TOTAL_AMOUNT+"'/>";
+                            }
+                            else{
+                                return "<input style='width: 100%;' type='text' name='change_amount' value='0'/>";
+                            }
+                        }
+                    }
+                }
+            },
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":null, "sWidth":"150px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},        	
-            {"mDataProp":null, "sWidth": "120px", 
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
+            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"},        	
+            {"mDataProp":"TRANSACTION_STATUS", "sWidth": "120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new'){
                         return '新建';
@@ -175,9 +249,7 @@ $(document).ready(function() {
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":null, "sWidth":"100px"},                        
             {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":null, "sWidth":"100px"},                        
-            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px"},                        
+            {"mDataProp":null, "sWidth":"100px"}, 
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":null, "sWidth":"200px"}                       
         ]      
@@ -251,7 +323,7 @@ $(document).ready(function() {
 	        }, 
             {"mDataProp":"ORDER_NO","sWidth": "80px",
             	"fnRender": function(obj) {
-        			return "<a href='/chargeMiscOrder/edit?id="+obj.aData.ID+"'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargeMiscOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"TYPE","sWidth": "100px",
             	"fnRender": function(obj) {
