@@ -163,21 +163,21 @@ where  appl_order.id = $P{order_id}]]>
 			<textField isBlankWhenNull="true">
 				<reportElement style="table_TD" mode="Opaque" x="56" y="0" width="100" height="26" uuid="c1bafe3d-3dc9-4a79-ab37-75b93394fdc1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{order_no}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
 				<reportElement style="table_TD" mode="Opaque" x="156" y="0" width="66" height="26" uuid="ab85de4c-7294-448c-8820-53a6d91e1455"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{create_stamp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MM" isBlankWhenNull="true">
 				<reportElement style="table_TD" mode="Opaque" x="222" y="0" width="57" height="26" uuid="82223789-934f-459d-9486-6efb0593b693"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{confirm_stamp}]]></textFieldExpression>
 			</textField>
@@ -319,7 +319,7 @@ where  appl_order.id = $P{order_id}]]>
 				<text><![CDATA[审批:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="69" y="0" width="100" height="33" uuid="d4bee3d1-2c51-4ddb-9334-06f722b0228d"/>
+				<reportElement x="69" y="0" width="296" height="33" uuid="d4bee3d1-2c51-4ddb-9334-06f722b0228d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="14" isBold="true" isItalic="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
