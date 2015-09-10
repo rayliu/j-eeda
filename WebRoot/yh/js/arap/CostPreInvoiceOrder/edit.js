@@ -266,6 +266,14 @@ $(document).ready(function() {
 			$("#num_name1").val($("#sp_filter").val());
 			$("#payeename").attr("readonly","readonly");
 			$("#payeename").val("");
+			
+			var paymentMethod = $('input[name="paymentMethod"]:checked').val();
+			   if(paymentMethod=="cash"){
+				   $("#payeename").removeAttr("readonly");	   
+			   }
+			   else{
+				   $("#payeename").val(""); 
+			   }
 		}
 		else if(payment=="dbill"){
 			$("#make_collections").attr("readonly","readonly");
@@ -742,6 +750,7 @@ $(document).ready(function() {
    	}
    });
    $("input[name=paymentMethod]").on('click', function(){
+	   payment();
 	   var paymentMethod = $('input[name="paymentMethod"]:checked').val();
 	   if(paymentMethod=="transfers"){
 		   $("#acc").show();
