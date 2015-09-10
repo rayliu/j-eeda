@@ -147,6 +147,7 @@ $(document).ready(function() {
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
+			$(nRow).attr({order_type: aData.ORDER_TYPE}); 
 			return nRow;
 		},
         "sAjaxSource": "/costAcceptOrder/list",
@@ -275,6 +276,7 @@ $(document).ready(function() {
 				}
 				cnames.push($(this).parent().siblings('.cname')[0].textContent);
 				payee_names.push($(this).parent().siblings('.payee_name')[0].textContent);
+				$("#order_type").val($(this).parent().parent().attr('order_type'));
 			}
 		}else if($(this).prop("checked") == false){
 			var tmpArr = [];

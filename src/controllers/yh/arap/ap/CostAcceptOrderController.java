@@ -161,7 +161,7 @@ public class CostAcceptOrderController extends Controller {
 		        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
 		        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in "+statusStr;
         
-        String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+        String sql = "select * from(select aci.id, aci.order_no,'申请单' as order_type, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
         		+ " aci.total_amount total_amount, "
         		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
         		+ " c.abbr cname "
@@ -169,7 +169,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in "+statusStr+" group by aci.id "
         		+ " UNION"
-        		+ " SELECT ro.id, ro.order_no,null as payment_method,null as payee_name,null as account_id,"
+        		+ " SELECT ro.id, ro.order_no,'报销单' as order_type,null as payment_method,null as payee_name,null as account_id,"
         		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,ro.remark,"
         		+ " (SELECT round(sum(cso.next_start_car_amount + cso.month_refuel_amount) - sum(cso.deduct_apportion_amount),2)"
         		+ " FROM car_summary_order cso WHERE cso.id IN (SELECT id FROM car_summary_order cso WHERE cso.reimbursement_order_id = ro.id)) actual_cost,"
@@ -178,7 +178,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
         		+ " where ro.STATUS='已复核'"
-        		+ " UNION SELECT amco.id, amco.order_no, NULL AS payment_method, null AS payee_name, NULL AS account_id, amco. STATUS, "
+        		+ " UNION SELECT amco.id, amco.order_no,'成本单' as order_type, NULL AS payment_method, null AS payee_name, NULL AS account_id, amco. STATUS, "
         		+ "  NULL AS invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount total_amount, "
         		+ " NULL AS application_amount, c.abbr AS cname FROM arap_misc_cost_order amco LEFT JOIN party p ON p.id = amco.customer_id "
         		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE amco.STATUS= '已复核' and amco.type = 'non_biz'"
