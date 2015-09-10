@@ -4,7 +4,7 @@
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 
 	//datatable, 动态处理
-    var invoiceApplicationOrderIds = $("#invoiceApplicationOrderIds").val();
+    var orderIds = $("#orderIds").val();
     var total = 0.00;
     var nopay = 0.00;
     var datatable=$('#InvorceApplication-table').dataTable({
@@ -15,7 +15,7 @@
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costConfirm/applicationList?invoiceApplicationOrderIds="+invoiceApplicationOrderIds,
+        "sAjaxSource": "/costConfirm/applicationList?orderIds="+orderIds+"&order_type="+$("#order_type").val(),
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
 			$(nRow).attr({nopay_amount: aData.NOPAY_AMOUNT}); 
@@ -206,9 +206,10 @@
 		
 	//付款保存
 	$("#saveBtn").on('click',function(){
-		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		
 		$.get('/costConfirm/save',$("#confirmForm").serialize(), function(data){
-			if(data.ID>0){
+			if(data.ID >=0){
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$("#confirmId").val(data.ID);
 				contactUrl("edit?id",data.ID);
 				$("#saveBtn").attr("disabled", true);

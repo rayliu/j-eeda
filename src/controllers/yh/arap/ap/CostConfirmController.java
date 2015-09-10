@@ -36,6 +36,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
@@ -53,7 +54,9 @@ public class CostConfirmController extends Controller {
     
    	public void edit() {
    		String id = getPara("id");
+   		String order_type = getPara("order_type");
    		setAttr("confirmId", id);
+   		setAttr("order_type", order_type);
    		ArapCostPayConfirmOrder arapCostPayConfirmOrder = ArapCostPayConfirmOrder.dao.findById(id);
    		setAttr("arapCostPayConfirmOrder", arapCostPayConfirmOrder);
    		
@@ -80,6 +83,7 @@ public class CostConfirmController extends Controller {
    	
    	
 	@SuppressWarnings("null")
+	@Before(Tx.class)
 	public void save() {
    		String pay_type = getPara("pay_type");
    		String pay_bank = getPara("pay_bank");
@@ -90,7 +94,7 @@ public class CostConfirmController extends Controller {
 		ArapCostPayConfirmOrder arapCostPayConfirmOrder = null;
 		Record re = null;
    		String confirmId = getPara("confirmId");
-   		String invoiceApplicationOrderIds = getPara("invoiceApplicationOrderIds");
+   		String orderIds = getPara("orderIds");
    		
    		String sp_filter = getPara("sp_filter");       //供应商
    		String payee_unit = getPara("payee_unit");    //收款单位
@@ -99,7 +103,8 @@ public class CostConfirmController extends Controller {
    		String payee_name = getPara("payee_name");    //收款人
    		String deposit_bank = getPara("deposit_bank");//开户行
    		String billing_unit = getPara("billing_unit"); //开票单位
-   		String bank_no = getPara("bank_no");           //账号
+   		String bank_no = getPara("bank_no");   
+   		String order_type = getPara("order_type"); //单据类型
    		
    		if(confirmId != ""&& confirmId != null){
 			//更新主表
@@ -127,26 +132,35 @@ public class CostConfirmController extends Controller {
 			arapCostPayConfirmOrder.save();		
 			
 			//新建字表
-			String[] idArray = invoiceApplicationOrderIds.split(",");
+			String[] idArray = orderIds.split(",");
 			for (int i = 0; i < idArray.length; i++) {
 				ArapCostPayConfirmOrderDtail arapCostPayConfirmOrderDtail =new ArapCostPayConfirmOrderDtail();
 				arapCostPayConfirmOrderDtail.set("order_id", arapCostPayConfirmOrder.getLong("id"));
-				arapCostPayConfirmOrderDtail.set("application_order_id", idArray[i]);
+				if(order_type.equals("成本单")){
+					arapCostPayConfirmOrderDtail.set("misc_cost_order_id", idArray[i]);
+				}else{
+					arapCostPayConfirmOrderDtail.set("application_order_id", idArray[i]);
+				}
 				arapCostPayConfirmOrderDtail.save();
 				
 				//更新申请单状态
-				ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
-				arapCostInvoiceApplication.set("status", "付款确认中").update();
-				List<ArapCostOrder> arapcostorderList = ArapCostOrder.dao.find("select id, status from arap_cost_order where application_order_id = ?",idArray[i]);
-				for(ArapCostOrder arapCostorder : arapcostorderList){
-					arapCostorder.set("status", "付款确认中").update();
-		    	}
+				if(order_type.equals("成本单")){
+					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(idArray[i]);
+					arapMiscCostOrder.set("status", "付款确认中").update();
+				}else{
+					ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
+					arapCostInvoiceApplication.set("status", "付款确认中").update();
+					List<ArapCostOrder> arapcostorderList = ArapCostOrder.dao.find("select id, status from arap_cost_order where application_order_id = ?",idArray[i]);
+					for(ArapCostOrder arapCostorder : arapcostorderList){
+						arapCostorder.set("status", "付款确认中").update();
+			    	}
+				}
 			}
-			
 		}
    		renderJson(arapCostPayConfirmOrder);
    	}
 	
+	@Before(Tx.class)
 	public void saveConfirmLog(){
 		String confirmId = getPara("confirmId");
 		String pay_type = getPara("pay_type");
@@ -155,11 +169,12 @@ public class CostConfirmController extends Controller {
    		String pay_amount = getPara("pay_amount");
    		String nopay_amount = getPara("nopay_amount");
    		String total_amount = getPara("total_amount");
-   		String invoiceApplicationOrderIds = getPara("invoiceApplicationOrderIds");
+   		String orderIds = getPara("orderIds");
+   		String order_type = getPara("order_type"); //单据类型
    		String detailJson = getPara("detailJson");
    		String applicationId = "";
    		String value = "";
-   		
+   		String sql = "";
    		Gson gson = new Gson();
 		List<LinkedTreeMap> list = gson.fromJson(detailJson, new TypeToken<List<LinkedTreeMap>>(){}.getType());
 		for (Map obj: list) {
@@ -167,7 +182,12 @@ public class CostConfirmController extends Controller {
 			logger.debug(obj.get("value").toString());
 			applicationId = obj.get("id").toString();
 			value = obj.get("value").toString();
-			String sql = "select * from arap_cost_pay_confirm_order_detail where application_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
+			if(order_type.equals("成本单")){
+				sql = "select * from arap_cost_pay_confirm_order_detail where misc_cost_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
+			}else{
+				sql = "select * from arap_cost_pay_confirm_order_detail where application_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
+			}
+			
 			ArapCostPayConfirmOrderDtail detail = ArapCostPayConfirmOrderDtail.dao.findFirst(sql);
 			ArapCostPayConfirmOrderDtailLog arapCostPayConfirmOrderDtailLog = new ArapCostPayConfirmOrderDtailLog();
 			arapCostPayConfirmOrderDtailLog.set("order_id", confirmId);
@@ -193,31 +213,41 @@ public class CostConfirmController extends Controller {
 		arapCostPayConfirmOrderLog.save();
 		
 		//获取已付款金额
-   		String sql = "select sum(acp.amount) total from arap_cost_pay_confirm_order_log acp "
+   		sql = "select sum(acp.amount) total from arap_cost_pay_confirm_order_log acp "
 				+ "  where acp.order_id = '"+confirmId+"'";
 		Record re = Db.findFirst(sql);
 		
 		
 		ArapCostPayConfirmOrder arapCostPayConfirmOrder = ArapCostPayConfirmOrder.dao.findById(confirmId);
 		
-		String[] idArray = invoiceApplicationOrderIds.split(",");
-		if(re.getDouble("total") == Double.parseDouble(total_amount)){
-			//更新确认表状态
-			arapCostPayConfirmOrder.set("status", "已付款").update();
-			
-			//更新申请单状态
-			for (int i = 0; i < idArray.length; i++) {
-				ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
-				arapCostInvoiceApplication.set("status", "已付款确认").update();
-				//List<Record> list= Db.find("SELECT STATUS from arap_cost_order where application_order_id =?",idArray[i]);
-				List<ArapCostOrder> arapcostorderList = ArapCostOrder.dao.find("select id,status from arap_cost_order where application_order_id = ?",idArray[i]);
-				for(ArapCostOrder arapCostorder : arapcostorderList){
-					arapCostorder.set("status", "已付款确认").update();
-		    	}
+		String[] idArray = orderIds.split(",");
+		if(order_type.equals("成本单")){
+			ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(confirmId);
+			if(re.getDouble("total") == Double.parseDouble(total_amount)){
+				arapMiscCostOrder.set("status", "已付款").update();
+			}else{
+				arapMiscCostOrder.set("status", "部分已付款").update();
 			}
 		}else{
-			arapCostPayConfirmOrder.set("status", "部分已付款").update();
+			if(re.getDouble("total") == Double.parseDouble(total_amount)){
+				//更新确认表状态
+				arapCostPayConfirmOrder.set("status", "已付款").update();
+				
+				//更新申请单状态
+				for (int i = 0; i < idArray.length; i++) {
+					ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
+					arapCostInvoiceApplication.set("status", "已付款确认").update();
+					//List<Record> list= Db.find("SELECT STATUS from arap_cost_order where application_order_id =?",idArray[i]);
+					List<ArapCostOrder> arapcostorderList = ArapCostOrder.dao.find("select id,status from arap_cost_order where application_order_id = ?",idArray[i]);
+					for(ArapCostOrder arapCostorder : arapcostorderList){
+						arapCostorder.set("status", "已付款确认").update();
+			    	}
+				}
+			}else{
+				arapCostPayConfirmOrder.set("status", "部分已付款").update();
+			}
 		}
+		
 		
 		//新建日记账表数据
 		 ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
@@ -226,11 +256,18 @@ public class CostConfirmController extends Controller {
 	        auditLog.set("amount", pay_amount);
 	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
 	        auditLog.set("create_date", new Date());
-	        auditLog.set("misc_order_id", confirmId);
-	        auditLog.set("invoice_order_id", null);
 	        if(account!=null)
-	        auditLog.set("account_id", account.get("id"));
-	        auditLog.set("source_order", "应付确认单");
+	        	auditLog.set("account_id", account.get("id"));
+	        else
+	        	auditLog.set("account_id", 4);
+	        if(order_type.equals("成本单")){
+	        	auditLog.set("misc_order_id", confirmId);
+	        	auditLog.set("source_order", "成本单");
+	        }
+	        else{
+	        	auditLog.set("invoice_order_id", confirmId);
+	        	auditLog.set("source_order", "应付开票申请单");
+	        }
 	        auditLog.save();
 	        
 	        if("cash".equals(pay_type)){
@@ -268,19 +305,40 @@ public class CostConfirmController extends Controller {
 	
     
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
+	
 	public void create() {
 		String ids = getPara("ids");
-		setAttr("invoiceApplicationOrderIds", ids);
+		String order_type = getPara("order_type");
+		setAttr("orderIds", ids);
+		setAttr("order_type", order_type);
+		String sql = "";
 		if(ids != null && !"".equals(ids)){
 			String[] idArray = ids.split(",");
 			logger.debug(String.valueOf(idArray.length));
-			String sql = "SELECT c.abbr,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
-					+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
-					+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
-					+ " LEFT JOIN party p ON p.id = aci.payee_id "
-					+ " LEFT JOIN office o ON o.id = p.office_id "
-					+ " LEFT JOIN contact c ON c.id = p.contact_id"
-					+ " where aci.id = '"+idArray[0]+"'";
+			if(order_type.equals("成本单")){
+				sql = " SELECT c.abbr FROM arap_misc_cost_order amco "
+						+ " LEFT JOIN party p ON p.id = amco.sp_id "
+						+ " LEFT JOIN office o ON o.id = p.office_id "
+						+ " LEFT JOIN contact c ON c.id = p.contact_id "
+						+ " WHERE amco.id = '"+idArray[0]+"'";
+			}else if(order_type.equals("报销单")){
+				sql = "SELECT c.abbr,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
+						+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
+						+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
+						+ " LEFT JOIN party p ON p.id = aci.payee_id "
+						+ " LEFT JOIN office o ON o.id = p.office_id "
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " where aci.id = '"+idArray[0]+"'";
+			}else{
+				sql = "SELECT c.abbr,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
+						+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
+						+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
+						+ " LEFT JOIN party p ON p.id = aci.payee_id "
+						+ " LEFT JOIN office o ON o.id = p.office_id "
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " where aci.id = '"+idArray[0]+"'";
+			}
+			
 			Record record = Db.findFirst(sql);
 			setAttr("invoiceApplicationOrder", record);
 			setAttr("userName", LoginUserController.getLoginUserName(this));
@@ -290,40 +348,53 @@ public class CostConfirmController extends Controller {
 	
 	
 	public void applicationList() {
-        String sLimit = "";
+        
         String pageIndex = getPara("sEcho");
-        String invoiceApplicationOrderIds = getPara("invoiceApplicationOrderIds");
-        String sqlTotal = "";
+        String orderIds = getPara("orderIds");
+        String order_type = getPara("order_type");
+       
         String sql = "";
         List<Record> record = null;
         Record re = null;
-        if (invoiceApplicationOrderIds != null && !"".equals(invoiceApplicationOrderIds)) {
-			String[] idArray = invoiceApplicationOrderIds.split(",");
-			sql = "SELECT aci.*,"
-					+ "( SELECT group_concat( DISTINCT aco.order_no SEPARATOR '<br/>' ) "
-					+ " FROM "
-					+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
-					+ " ON caor.cost_order_id = aco.id"
-					+ " WHERE "
-					+ " caor.application_order_id = aci.id ) cost_order_no,"
-					+ " ( SELECT sum(caor.pay_amount) "
-					+ " FROM "
-					+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
-					+ " ON caor.cost_order_id = aco.id "
-					+ " WHERE caor.application_order_id = aci.id ) pay_amount,"
-					+ " IFNULL(( SELECT sum(caor.pay_amount) FROM arap_cost_order aco "
-					+ " LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id "
-					+ " WHERE caor.application_order_id = aci.id )- ( select sum(acpcodl.pay_amount) from arap_cost_pay_confirm_order_detail_log acpcodl "
-					+ " where acpcodl.order_id = acpcod.order_id and acpcodl.detail_id = acpcod.id ),( SELECT sum(caor.pay_amount) "
-					+ " FROM "
-					+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
-					+ " ON caor.cost_order_id = aco.id "
-					+ " WHERE caor.application_order_id = aci.id )) nopay_amount,"
-					+ " aco.create_stamp cost_stamp FROM arap_cost_invoice_application_order aci "
-	        		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id "
-	        		+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
-	        		+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.application_order_id=aci.id "
-	        		+ " where aci.id in(" + invoiceApplicationOrderIds + ") GROUP BY aci.id " ;
+        if (orderIds != null && !"".equals(orderIds)) {
+			String[] idArray = orderIds.split(",");
+			if(order_type.equals("成本单")){
+				sql = " SELECT amco.id,amco.order_no,amco.create_stamp cost_stamp,amco.total_amount pay_amount,"
+						+ " ifnull(amco.total_amount-( select sum(acpcodl.pay_amount) from arap_cost_pay_confirm_order_detail_log acpcodl  "
+						+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.id = acpcodl.detail_id "
+						+ " where acpcod.misc_cost_order_id = amco.id ),amco.total_amount) nopay_amount "
+						+ " FROM arap_misc_cost_order amco "
+						+ " WHERE amco.id in(" + orderIds + ")";
+				
+			}else if(order_type.equals("报销单")){
+				sql = "";
+			}else{
+				sql = "SELECT aci.*,"
+						+ "( SELECT group_concat( DISTINCT aco.order_no SEPARATOR '<br/>' ) "
+						+ " FROM "
+						+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
+						+ " ON caor.cost_order_id = aco.id"
+						+ " WHERE "
+						+ " caor.application_order_id = aci.id ) cost_order_no,"
+						+ " ( SELECT sum(caor.pay_amount) "
+						+ " FROM "
+						+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
+						+ " ON caor.cost_order_id = aco.id "
+						+ " WHERE caor.application_order_id = aci.id ) pay_amount,"
+						+ " IFNULL(( SELECT sum(caor.pay_amount) FROM arap_cost_order aco "
+						+ " LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id "
+						+ " WHERE caor.application_order_id = aci.id )- ( select sum(acpcodl.pay_amount) from arap_cost_pay_confirm_order_detail_log acpcodl "
+						+ " where acpcodl.order_id = acpcod.order_id and acpcodl.detail_id = acpcod.id ),( SELECT sum(caor.pay_amount) "
+						+ " FROM "
+						+ " arap_cost_order aco LEFT JOIN cost_application_order_rel caor "
+						+ " ON caor.cost_order_id = aco.id "
+						+ " WHERE caor.application_order_id = aci.id )) nopay_amount,"
+						+ " aco.create_stamp cost_stamp FROM arap_cost_invoice_application_order aci "
+		        		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id "
+		        		+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
+		        		+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.application_order_id=aci.id "
+		        		+ " where aci.id in(" + orderIds + ") GROUP BY aci.id " ;
+			}
 			record = Db.find(sql);			
 		}
 
