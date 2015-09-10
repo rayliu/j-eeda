@@ -169,8 +169,8 @@ SELECT
 	'成本单' AS service_type,
 	0 AS quantity,
 	'' AS address,
-	(SELECT sum(total_amount) FROM arap_misc_cost_order WHERE	 id IN (SELECT ref_order_id FROM arap_cost_order WHERE id = aci.cost_order_id)) AS amount,
-	IFNULL((SELECT sum(change_amount) FROM arap_misc_cost_order_item WHERE  misc_order_id IN (SELECT ref_order_id FROM arap_cost_order WHERE id = aci.cost_order_id)),(SELECT sum(total_amount) FROM arap_misc_cost_order WHERE	 id IN (SELECT ref_order_id FROM arap_cost_order WHERE id = aci.cost_order_id))) AS confirm_amount,
+	(SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付') AS amount,
+	IFNULL((SELECT sum(change_amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付'),(SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付')) AS confirm_amount,
 	'' AS remark
        FROM
 	arap_cost_item aci
