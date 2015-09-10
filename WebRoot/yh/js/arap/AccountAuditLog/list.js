@@ -37,9 +37,9 @@ $(document).ready(function() {
                     if(obj.aData.PAYMENT_TYPE == "CHARGE"){
                         paymentType='<span style="color:green;">+ ';
                     }else{
-                        paymentType='<span style="color:red;">- ';
+                        paymentType='<span style="color:red;">';
                     }
-                    return paymentType + obj.aData.AMOUNT+'</span>';
+                    return paymentType + (0.00-Number(obj.aData.AMOUNT))+'</span>';
                 }
                  
             },
