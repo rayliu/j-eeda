@@ -263,7 +263,22 @@ $(document).ready(function() {
 		var productIds = $("#productIds").val();
 		var shippingNumbers = $("#shippingNumbers").val();
 		var cargoNature =$("#cargoNature").val();
-		
+		var spMessage = $("#spMessage").val();
+		$("#sign_document_no").val($("#sign_no").val());
+		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
+		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
+		if(spMessage == ""){
+			alert("请输入供应商名称");
+			return false;
+		}
+		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
+			alert("请输入目的地省份");
+			return false;
+		}
+		if(cmbCityTo == "--请选择城市--" || cmbCityTo == ""){
+			alert("请输入目的地城市");
+			return false;
+		}
 		
 		$.post('/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType,
 			warehouseId:warehouseId,customerId:customerId,transferItemIds:transferItemIds,
