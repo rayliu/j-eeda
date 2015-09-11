@@ -64,6 +64,7 @@ $(document).ready(function() {
 				$("#create_time").html(data.CREATE_STAMP);
 				$("#costMiscOrderId").val(data.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				$("#saveCostMiscOrderBtn").attr("disabled",false);
 				contactUrl("edit?id", data.ID);
 
 				//callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
@@ -364,6 +365,7 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveCostMiscOrderBtn").click(function(e){
+ 		$("#saveCostMiscOrderBtn").attr("disabled", true);
  		saveCostMiscOrder(e);
 	});
 	
@@ -653,4 +655,13 @@ function datetimepicker(data){
 				$(data).parent().prev("input").focus();
 		});
 	}
+}
+
+
+//按钮控制
+var status = $("#status").val();
+if(status == '新建' || status == 'new'){
+	$("#saveCostMiscOrderBtn").attr("disabled",false);
+}else{
+	$("#saveCostMiscOrderBtn").attr("disabled",true);
 }
