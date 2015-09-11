@@ -314,15 +314,13 @@ public class InsuranceOrderController extends Controller {
         		+ " round(ifi.amount * toi.amount,2) total_amount,ifi.insurance_amount,ifnull(toi.item_no, pd.item_no) item_no,"
         		+ " ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.volume, pd.volume) * toi.amount volume,"
         		+ " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
-        		+ " ifnull((select name from location l where l.code = dor.route_from),'') route_from,ifnull((select name from location l where l.code = dor.route_to),'') route_to "
+        		+ " ifnull((select name from location l where l.code = tor.route_from),'') route_from,ifnull((select name from location l where l.code = tor.route_to),'') route_to "
         		+ " from insurance_fin_item  ifi "
         		+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
         		+ " left join transfer_order tor on tor.id = toi.order_id"
         		+ " left join party p on p.id = tor.customer_id"
         		+ " left join contact c on c.id = p.contact_id"
         		+ " left join product pd ON pd.id = toi.product_id"
-        		+ " left join depart_transfer dt on dt.order_id = tor.id"
-        		+ " left join depart_order dor on dor.id = dt.depart_id"
         		+ " where ifi.insurance_order_id = '" + insuranceOrderId + "'"
 				+ " order by ifi.create_stamp desc " + sLimit;
         List<Record> departOrderitem = Db.find(sql);
