@@ -159,7 +159,7 @@ public class InsuranceOrderController extends Controller {
                     + orderNo
                     + "%' and ifnull(c.abbr,'') like '%"
                     + customer
-                    + "%' and tor.create_stamp between '"
+                    + "%' and tor.planning_time between '"
                     + beginTime
                     + "' and '"
                     + endTime
