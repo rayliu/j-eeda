@@ -77,9 +77,9 @@ public class ChargePreInvoiceOrderController extends Controller {
         String sqlTotal = "";
         String sql = "select aaia.*,"
         		+ " c.abbr cname,"
-        		+ " ul.user_name as create_by,"
-        		+ " ul2.user_name audit_by,"
-        		+ " ul3.user_name approval_by ,"
+        		+ " ifnull(ul.c_name, ul.user_name) as create_by,"
+        		+ " ifnull(ul2.c_name, ul2.user_name) audit_by,"
+        		+ " ifnull(ul3.c_name, ul3.user_name) approval_by ,"
         		+ " (select case "
         		+ "	when aci.status = '已收款确认' then aci.status "
         		+ " when aci.status ='已审批' then '已记录'"
@@ -332,7 +332,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String office = getPara("office");
 		String status = getPara("status");
 		String orderNo = getPara("orderNo");
-		String sql ="select distinct aao.*, usl.user_name as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp"
+		String sql ="select distinct aao.*, ifnull(usl.c_name, usl.user_name) as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp"
 					+ " from arap_charge_order aao "
 					+ " left join party p on p.id = aao.payee_id "
 					+ " left join contact c on c.id = p.contact_id"
