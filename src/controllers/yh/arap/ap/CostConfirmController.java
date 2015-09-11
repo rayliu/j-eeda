@@ -54,22 +54,43 @@ public class CostConfirmController extends Controller {
     
    	public void edit() {
    		String id = getPara("id");
-   		String order_type = getPara("order_type");
+   		String order_type = "";
    		setAttr("confirmId", id);
-   		setAttr("order_type", order_type);
+   		
+   		List<ArapCostPayConfirmOrderDtail> list = ArapCostPayConfirmOrderDtail.dao.find("select * from arap_cost_pay_confirm_order_detail where order_id in(?)",id);
+   		for(ArapCostPayConfirmOrderDtail a: list){
+   			if(a.getLong("application_order_id")!=null){
+   				order_type = "申请单";
+   				setAttr("order_type", "申请单");
+   			}else if(a.getLong("misc_cost_order_id")!=null){
+   				order_type = "成本单";
+   				setAttr("order_type", "成本单");
+   			}
+   		}
+   		//setAttr("order_type", order_type);
    		ArapCostPayConfirmOrder arapCostPayConfirmOrder = ArapCostPayConfirmOrder.dao.findById(id);
    		setAttr("arapCostPayConfirmOrder", arapCostPayConfirmOrder);
    		
-   		String sql1 = "select * from  party p LEFT JOIN office o ON o.id = p.office_id where p.id = '"+arapCostPayConfirmOrder.getLong("sp_id")+"'";
-   		Record re1 = Db.findFirst(sql1);
-   		setAttr("abbr", re1.getStr("abbr"));
+   		if(arapCostPayConfirmOrder.getLong("sp_id")!= null){
+	   		String sql1 = "select * from  party p LEFT JOIN office o ON o.id = p.office_id where p.id = '"+arapCostPayConfirmOrder.getLong("sp_id")+"'";
+	   		Record re1 = Db.findFirst(sql1);
+	   		setAttr("abbr", re1.getStr("abbr"));
+   		}
+   		String sql = "";
+   		if(order_type.equals("成本单")){
+   			sql = "SELECT "
+   	   				+ " (SELECT group_concat(cast(misc_cost_order_id as char) SEPARATOR ',' ) "
+   	   				+ "FROM arap_cost_pay_confirm_order_detail where order_id = acp.id ) ids "
+   	   				+ "FROM arap_cost_pay_confirm_order acp WHERE acp.id = '"+id+"'";
+   		}else if(order_type.equals("申请单")){
+   			sql = "SELECT "
+   	   				+ " (SELECT group_concat(cast(application_order_id as char) SEPARATOR ',' ) "
+   	   				+ "FROM arap_cost_pay_confirm_order_detail where order_id = acp.id ) ids "
+   	   				+ "FROM arap_cost_pay_confirm_order acp WHERE acp.id = '"+id+"'";
+   		}
    		
-   		String sql = "SELECT "
-   				+ " (SELECT group_concat(cast(application_order_id as char) SEPARATOR ',' ) "
-   				+ "FROM arap_cost_pay_confirm_order_detail where order_id = acp.id ) ids "
-   				+ "FROM arap_cost_pay_confirm_order acp WHERE acp.id = '"+id+"'";
 		Record re = Db.findFirst(sql);
-		setAttr("invoiceApplicationOrderIds", re.get("ids"));
+		setAttr("orderIds", re.get("ids"));
 		
 		
 		//获取已付款金额
@@ -118,7 +139,9 @@ public class CostConfirmController extends Controller {
 	      //创建主表
 			arapCostPayConfirmOrder = new ArapCostPayConfirmOrder();
 			arapCostPayConfirmOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YFQR"));
-			arapCostPayConfirmOrder.set("sp_id",contact.getLong("id"));
+			if(sp_filter!=null&&!sp_filter.equals("")){
+				arapCostPayConfirmOrder.set("sp_id",contact.getLong("id"));
+			}
 			arapCostPayConfirmOrder.set("status", "新建");
 			arapCostPayConfirmOrder.set("invoice_type",invoice_type);
 			arapCostPayConfirmOrder.set("invoice_company", billing_unit);
@@ -222,10 +245,12 @@ public class CostConfirmController extends Controller {
 		
 		String[] idArray = orderIds.split(",");
 		if(order_type.equals("成本单")){
-			ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(confirmId);
+			ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(applicationId);
 			if(re.getDouble("total") == Double.parseDouble(total_amount)){
+				arapCostPayConfirmOrder.set("status", "已付款").update();
 				arapMiscCostOrder.set("status", "已付款").update();
 			}else{
+				arapCostPayConfirmOrder.set("status", "部分已付款").update();
 				arapMiscCostOrder.set("status", "部分已付款").update();
 			}
 		}else{
@@ -468,11 +493,15 @@ public class CostConfirmController extends Controller {
         		+ " (select group_concat( DISTINCT cao.order_no SEPARATOR '<br/>' ) "
         		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
 				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) fksq_no,"
-				+ " ( SELECT ifnull(sum(caor.pay_amount), 0) FROM cost_application_order_rel caor "
-				+ " where caor.application_order_id in  "
-				+ " (select acpcod.application_order_id from arap_cost_pay_confirm_order cpco1 "
-				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.order_id = cpco1.id  "
-				+ " where cpco1.id = cpco.id) ) pay_amount,"
+				+ " (SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' )"
+				+ " FROM arap_cost_pay_confirm_order_detail co, arap_misc_cost_order amco"
+				+ " WHERE co.misc_cost_order_id = amco.id AND co.order_id = cpco.id ) misc_no,"
+				+ " ( SELECT ifnull(sum(caor.pay_amount), "
+				+ " (SELECT  amco.total_amount FROM arap_cost_pay_confirm_order_detail co,"
+				+ "  arap_misc_cost_order amco WHERE co.misc_cost_order_id = amco.id AND co.order_id = cpco.id )) "
+				+ " FROM cost_application_order_rel caor WHERE caor.application_order_id "
+				+ " IN (SELECT acpcod.application_order_id FROM arap_cost_pay_confirm_order cpco1 LEFT JOIN arap_cost_pay_confirm_order_detail acpcod "
+				+ " ON acpcod.order_id = cpco1.id WHERE cpco1.id = cpco.id)) pay_amount,"
 //				+ " (select sum(cao.total_amount) "
 //        		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
 //				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) pay_amount,"

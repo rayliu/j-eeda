@@ -22,7 +22,15 @@ $(document).ready(function() {
     				$("#total_amount").val(total);
         		}
             },
-            {"mDataProp":"FKSQ_NO", "sWidth": "100px"}, //付款申请单号
+            {"mDataProp": null , "sWidth": "100px",//付款申请单号
+            	"fnRender": function(obj) {
+            		if(obj.aData.FKSQ_NO != null){
+            			return obj.aData.FKSQ_NO;
+            		}else{
+            			return obj.aData.MISC_NO;
+            		}
+            	}
+            }, 
             {"mDataProp":"STATUS", "sWidth": "60px"},//状态
             {"mDataProp":"SP_NAME", "sWidth": "100px"},//供应商
             {"mDataProp":"RECEIVE_PERSON","sWidth": "80px"},//收款人
