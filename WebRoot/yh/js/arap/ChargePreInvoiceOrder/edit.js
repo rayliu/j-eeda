@@ -23,6 +23,7 @@ $(document).ready(function() {
 	}
 	
 	var savechargePreInvoiceOrder = function(e){
+		$("#savechargePreInvoiceOrderBtn").attr('disabled', true);
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
@@ -36,11 +37,17 @@ $(document).ready(function() {
 				$("#chargePreInvoiceOrderId").val(data.ID);
 				$("#arapAudit_order_no").text(data.ORDER_NO);
 				$("#createData").text(data.CREATE_STAMP);
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+				$("#savechargePreInvoiceOrderBtn").attr('disabled', false);
+				contactUrl("edit?id",data.ID);
 				$('#auditBtn').attr('disabled', false);
 			}else{
-				alert('数据保存失败。');
+				 $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
-		},'json');
+		},'json').fail(function() {
+            $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+            $("#savechargePreInvoiceOrderBtn").attr('disabled', false);
+        });
 	};
     
 	// 审核
@@ -116,10 +123,7 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#savechargePreInvoiceOrderBtn").click(function(e){
- 		
  		savechargePreInvoiceOrder(e);
-
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	
 	$("#chargePreInvoiceOrderItem").click(function(e){

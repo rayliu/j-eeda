@@ -27,6 +27,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.OrderNoUtil;
@@ -179,7 +180,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 		setAttr("status", "new");
 			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
+    @Before(Tx.class)
 	public void save() {
 		ArapChargeInvoiceApplication arapAuditInvoiceApplication = null;
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
