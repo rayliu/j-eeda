@@ -30,10 +30,11 @@ $(document).ready(function() {
             		}
         			
         		}},
-		    {"mDataProp":null, "sWidth":"120px",
+		        {"mDataProp":null, "sWidth":"120px",
                 "fnRender": function(obj) {
                     return "未收款";
             }},
+            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"}, 
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"130px"}, 
             {"mDataProp":"DEPART_TIME", "sWidth":"130px"},
@@ -73,8 +74,7 @@ $(document).ready(function() {
             {"mDataProp":"LOAD_AMOUNT", "sWidth":"150px"},                        
             {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
             {"mDataProp":"WAIT_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"OTHER_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},                        
+            {"mDataProp":"OTHER_AMOUNT", "sWidth":"100px"},  
             {"mDataProp":null, "sWidth":"150px"},                        
             {"mDataProp":"ADDRESS", "sWidth":"150px"},                        
             {"mDataProp":"REMARK", "sWidth":"200px"}                       

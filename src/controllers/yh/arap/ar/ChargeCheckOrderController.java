@@ -290,11 +290,13 @@ public class ChargeCheckOrderController extends Controller {
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
 				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
-				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,amcoi.customer_order_no customer_order_no,"
+				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
+				+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
+				+ " 	from arap_misc_charge_order_item amcoi "
+				+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
 				+ " NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
 				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,amco.total_amount charge_total_amount"
 				+ " FROM arap_misc_charge_order amco"
-				+ " LEFT JOIN arap_misc_charge_order_item amcoi ON amcoi.misc_order_id = amco.id"
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
 				+ " WHERE amco. STATUS = '已确认' ";
 		sql3 = " ) order by create_date desc ";

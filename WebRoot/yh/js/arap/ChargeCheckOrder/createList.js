@@ -35,6 +35,7 @@ $(document).ready(function() {
 	                "fnRender": function(obj) {
 	                    return "未收款";
 	          }},
+	          {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},
 	          {"mDataProp":"CNAME","sClass": "cname", "sWidth":"200px"},
 	          {"mDataProp":null, "sWidth":"150px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
@@ -71,7 +72,7 @@ $(document).ready(function() {
 	          {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
 	          {"mDataProp":null, "sWidth":"100px"},                        
 	          {"mDataProp":null, "sWidth":"100px"},                        
-	          {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},                        
+	                                  
 	          {"mDataProp":null, "sWidth":"150px"},                        
 	          {"mDataProp":null, "sWidth":"150px"},                        
 	          {"mDataProp":null, "sWidth":"150px"},                        
