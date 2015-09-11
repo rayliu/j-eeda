@@ -150,7 +150,22 @@ $(document).ready(function() {
             {"mDataProp":"REMARK", "sWidth":"150px", "bSortable": false}                         
         ]      
     });	
-    
+    $('#plandatetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#plantime').trigger('keyup');
+    });
+    $('#arrivaldatetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#arrivaltime').trigger('keyup');
+    });
     $("#costConfiremBtn").click(function(e){
         e.preventDefault();
     	var idArr=[];
@@ -361,6 +376,8 @@ $(document).ready(function() {
     		var route_from =$("#route_from").val();
     		var route_to = $("#route_to").val();
     		var customer_name = $("#customer_name").val();
+    		var plantime = $("#plantime").val();
+    		var arrivaltime = $("#arrivaltime").val();
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
 											    		+"&sp="+sp
 											    		+"&no="+no
@@ -371,16 +388,18 @@ $(document).ready(function() {
 											    		+"&booking_note_number="+booking_note_number
     		                                            +"&route_from="+route_from
     		                                            +"&route_to="+route_to
-    		                                            +"&customer_name="+customer_name;     
+    		                                            +"&customer_name="+customer_name
+    													+"&plantime="+plantime
+    													+"&arrivaltime="+arrivaltime;
     	
     		costConfiremTable.fnDraw();
        };
        /*=====================条件过滤=======================*/
         //过滤客户
-        $('#route_to,#operation_number,#route_from,#customer_name,#orderNo_filter,#operation number,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
+        $('#plantime,#arrivaltime,#route_to,#operation_number,#route_from,#customer_name,#orderNo_filter,#operation number,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
         	refreshData();
      	} );
-        $('#order_type_filter,#order_status_filter').on( 'change', function () {
+        $('#order_type_filter,#arrivaltime,#order_status_filter').on( 'change', function () {
         	refreshData();
      	} );
 } );

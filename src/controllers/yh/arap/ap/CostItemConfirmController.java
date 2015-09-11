@@ -63,6 +63,8 @@ public class CostItemConfirmController extends Controller {
         String sp = getPara("sp");
         String no = getPara("no");
         String beginTime = getPara("beginTime");
+        String plantime = getPara("plantime");
+        String arrivaltime = getPara("arrivaltime");
         String endTime = getPara("endTime");
         String status = getPara("status");
         String type = getPara("type");
@@ -149,7 +151,7 @@ public class CostItemConfirmController extends Controller {
 				+ " dpr.sign_status return_order_collection,"
 				+ " dpr.remark,"
 				+ " DATE(dpr.departure_time) as depart_time, "
-				+ " group_concat( distinct(select tor.planning_time from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') planning_time,"
+				+ " group_concat( distinct(select cast(tor.planning_time AS CHAR) from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') planning_time,"
 				+ " oe.office_name office_name,"
 				+ " c1.abbr cname,"
 				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='运输费' and fi.type = '应付') transport_cost, "
@@ -198,7 +200,7 @@ public class CostItemConfirmController extends Controller {
 				+ " dpr.sign_status return_order_collection,"
 				+ " dpr.remark,"
 				+ " DATE(tom.create_stamp) as depart_time,"
-				+ " group_concat(distinct(select tor.planning_time from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') planning_time,"
+				+ " group_concat(distinct(select cast(tor.planning_time AS CHAR) from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') planning_time,"
 				+ " oe.office_name office_name,"
 				+ " c1.abbr cname,"
 				+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='运输费') as transport_cost,"
@@ -248,7 +250,7 @@ public class CostItemConfirmController extends Controller {
 				+ " ior.sign_status return_order_collection,"
 				+ " ior.remark,"
 				+ " ior.create_stamp as depart_time,"
-				+ " tor.planning_time,"
+				+ " cast(tor.planning_time AS CHAR) planning_time,"
 				+ " oe.office_name office_name,"
 				+ " c1.abbr cname,"
 				+ " (select sum(ifi.amount) from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id where ifi.insurance_order_id = ior.id and fi.name='运输费') as transport_cost,"
@@ -330,6 +332,12 @@ public class CostItemConfirmController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
+			if (plantime == null || "".equals(plantime)) {
+				plantime = "1-1-1";
+			}
+			if (arrivaltime == null || "".equals(arrivaltime)) {
+				arrivaltime = "9999-12-31";
+			}
 			 
         	condition =  " where ifnull(order_no,'') like '%" + no + "%' "
         			+ " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
@@ -340,6 +348,7 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(route_from,'') like '%" + route_from + "%'"
         			+ " and ifnull(route_to,'') like '%" + route_to + "%'"
         			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'"
+        			+ " and planning_time between '" + plantime + "' and '" + arrivaltime + "' "
         	        + " and ifnull(cname,'') like '%" + customer_name + "%'"
         	        + " and ifnull(status, '') != '手动删除'";
         }

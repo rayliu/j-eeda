@@ -41,6 +41,15 @@
                                             <label class="search-label">始发城市</label>
                                             <input type="text" class="form-control search-control customer_filter" id="route_from">
                                        	</div>
+                                       	 <div class="form-group">                                                    
+                                            <span id="plandatetimepicker" class="input-append date search-control "> 
+                                                <label class="search-label">计划时间</label> 
+                                                <input id="plantime" class="form-control search-control beginTime_filter" type="text">
+                                                <span class="add-on">  
+                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                                </span>  
+                                            </span>
+                                        </div>  	
                                     </div>
                                     <!-- end of col-lg-6-->
                                     <div class="col-lg-4">
@@ -58,6 +67,16 @@
                                             <label class="search-label">目的城市</label>
                                             <input type="text" class="form-control search-control customer_filter" id="route_to">
                                        	</div>
+                                       <div class="form-group">                                                    
+                                            <span id="arrivaldatetimepicker" class="input-append date search-control "> 
+                                                <label class="search-label">计划截止时间</label> 
+                                                <input id="arrivaltime" class="form-control search-control endTime_filter" type="text">
+                                                <span class="add-on">  
+                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+                                                </span>  
+                                            </span>
+                                        </div>
+                                       	
                                     </div>
                                     <div class="col-lg-4">
                                     	
@@ -101,6 +120,7 @@
                                         </div>    
                                     </div>
                                     <!-- end of col-lg-6-->
+                                    
                                     <div class="col-lg-4">
                                         <div class="form-group">                                                    
                                             <span id="datetimepicker2" class="input-append date search-control "> 
