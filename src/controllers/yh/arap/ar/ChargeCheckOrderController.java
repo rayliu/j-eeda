@@ -20,6 +20,7 @@ import models.Party;
 import models.ReturnOrder;
 import models.UserLogin;
 import models.yh.profile.Contact;
+import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -28,6 +29,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
 
+import com.google.gson.Gson;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -35,6 +37,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -154,7 +157,8 @@ public class ChargeCheckOrderController extends Controller {
 				+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount"
 				+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount"
 				+ " ,(select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
-				+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as charge_total_amount"
+				+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as charge_total_amount,"
+				+ " (select sum(rofi.change_amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as change_amount"
 				+ " from return_order ror"
 				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
 				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
@@ -168,11 +172,15 @@ public class ChargeCheckOrderController extends Controller {
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
 				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
-				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,amcoi.customer_order_no customer_order_no,"
+				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
+				+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
+				+ " 	from arap_misc_charge_order_item amcoi "
+				+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
 				+ " NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
-				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,amco.total_amount charge_total_amount"
+				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,"
+				+ " amco.total_amount charge_total_amount,"
+				+ " amco.total_amount change_amount"
 				+ " FROM arap_misc_charge_order amco"
-				+ " LEFT JOIN arap_misc_charge_order_item amcoi ON amcoi.misc_order_id = amco.id"
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
 				+ " WHERE amco.id in ("+ miscOrderIds +")"
 				+ " )  ";
@@ -361,21 +369,27 @@ public class ChargeCheckOrderController extends Controller {
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE,
 			PermissionConstant.PERMSSION_CCO_CREATE }, logical = Logical.OR)
+	@Before(Tx.class)
 	public void save() {
+		String jsonStr=getPara("params");
+    	logger.debug(jsonStr);
+    	Gson gson = new Gson();  
+        Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class); 
+         
 		ArapChargeOrder arapChargeOrder = null;
-		String chargeCheckOrderId = getPara("chargeCheckOrderId");
-		// String order = getPara("order");
-		String total_amount = getPara("total_amount");
-		String debit_amount = getPara("debit_amount") == "" ? "0"
-				: getPara("debit_amount");
+		String chargeCheckOrderId = (String)dto.get("chargeCheckOrderId");
+		Double total_amount = (Double)dto.get("total_amount");
+		Double change_amount = (Double)dto.get("change_amount");
+
+		
+		UserLogin user = LoginUserController.getLoginUser(this);
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapChargeOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
-			// arapAuditOrder.set("status", "new");
-			arapChargeOrder.set("create_by", getPara("create_by"));
-			arapChargeOrder.set("create_stamp", new Date());
+			
 			arapChargeOrder.set("remark", getPara("remark"));
-			arapChargeOrder.set("last_modified_by", getPara("create_by"));
+			arapChargeOrder.set("last_modified_by", user.getLong("id"));
 			arapChargeOrder.set("last_modified_stamp", new Date());
+			
 			if (getParaToDate("begin_time") != null) {
 				arapChargeOrder.set("begin_time", getPara("begin_time"));
 			}
@@ -383,32 +397,19 @@ public class ChargeCheckOrderController extends Controller {
 				arapChargeOrder.set("end_time", getPara("end_time"));
 			}
 			arapChargeOrder.set("total_amount", total_amount);
-			if (total_amount != null && !"".equals(total_amount)
-					&& debit_amount != null && !"".equals(debit_amount)) {
-				arapChargeOrder.set(
-						"charge_amount",
-						Double.parseDouble(total_amount)
-								- Double.parseDouble(debit_amount));
-			}
+			arapChargeOrder.set("charge_amount", change_amount);
+			
 			arapChargeOrder.update();
 
-			List<ArapChargeItem> orderItems = ArapChargeItem.dao.find(
-					"select * from arap_charge_item where charge_order_id = ?",
-					arapChargeOrder.get("id"));
-			for (ArapChargeItem item : orderItems) {
-				// arapAuditItem.set("ref_order_type", );
-				// arapAuditItem.set("item_status", "");
-				item.set("create_by", getPara("create_by"));
-				item.set("create_stamp", new Date());
-				item.update();
-			}
+			boolean isCreate = false;
+			updateItems(arapChargeOrder.getLong("id"), dto, change_amount, isCreate);
 		} else {
 			arapChargeOrder = new ArapChargeOrder();
 			arapChargeOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapChargeOrder.set("status", "新建");
 			arapChargeOrder.set("payee_id", getPara("customer_id"));
-			arapChargeOrder.set("create_by", getPara("create_by"));
+			arapChargeOrder.set("create_by", user.getLong("id"));
 			arapChargeOrder.set("create_stamp", new Date());
 			arapChargeOrder.set("remark", getPara("remark"));
 			arapChargeOrder.set("order_no",
@@ -421,45 +422,56 @@ public class ChargeCheckOrderController extends Controller {
 				arapChargeOrder.set("end_time", getPara("end_time"));
 			}
 			arapChargeOrder.set("total_amount", total_amount);
-			if (total_amount != null && !"".equals(total_amount)
-					&& debit_amount != null && !"".equals(debit_amount)) {
-				arapChargeOrder.set(
-						"charge_amount",
-						Double.parseDouble(total_amount)
-								- Double.parseDouble(debit_amount));
-			}
+			arapChargeOrder.set("charge_amount", change_amount);
 			arapChargeOrder.save();
 
-			String returnOrderIds = getPara("returnOrderIds");
-			String[] returnOrderIdsArr = returnOrderIds.split(",");
-			String returnOrderArr = getPara("order");
-			String[] orderNoArr = returnOrderArr.split(",");
-			for (int i = 0; i < returnOrderIdsArr.length; i++) {
-				ArapChargeItem item = new ArapChargeItem();
-				// arapAuditItem.set("ref_order_type", );
-
-				item.set("ref_order_id", returnOrderIdsArr[i]);
-				item.set("ref_order_type", orderNoArr[i]);
-				item.set("charge_order_id", arapChargeOrder.get("id"));
-				// arapAuditItem.set("item_status", "");
-				item.set("create_by", getPara("create_by"));
-				item.set("create_stamp", new Date());
-				item.save();
-				// if (order.equals("收入单")) {
-				// ArapMiscChargeOrder arapmiscchargeorder =
-				// ArapMiscChargeOrder.dao
-				// .findById(returnOrderIdsArr[i]);
-				// arapmiscchargeorder.set("status", "对账中");
-				// arapmiscchargeorder.update();
-				// } else if (order.equals("回单")) {
-				// ReturnOrder returnOrder = ReturnOrder.dao
-				// .findById(returnOrderIdsArr[i]);
-				// returnOrder.set("transaction_status", "对账中");
-				// returnOrder.update();
-				// }
-			}
+			boolean isCreate = true;
+			updateItems(arapChargeOrder.getLong("id"), dto, change_amount, isCreate);
 		}
 		renderJson(arapChargeOrder);
+	}
+
+	private void updateItems(Long orderId, Map<String, ?> dto, Double change_amount, boolean isCreate) {
+		List<Map> items =  (List<Map>) dto.get("items");
+		for(Map item : items){
+			String str_ref_order_id = (String)item.get("ORDER_ID");
+			Long ref_order_id = Long.parseLong(str_ref_order_id);
+			if("回单".equals(item.get("ORDER_TYPE"))){
+				ReturnOrder ro = ReturnOrder.dao.findById(ref_order_id);
+				ro.set("transaction_status", "对账中").update();
+				
+				//按比例分摊改后金额
+				List<ReturnOrderFinItem> ordeItems = ReturnOrderFinItem.dao.find("select * from return_order_fin_item where return_order_id=?", ref_order_id);
+				Double originTotal = 0.0;
+				for(ReturnOrderFinItem orderItem : ordeItems){
+					originTotal += orderItem.getDouble("amount");
+				}
+				
+				for(ReturnOrderFinItem orderItem : ordeItems){
+					Double newAmount = change_amount * (orderItem.getDouble("amount")/originTotal);
+					orderItem.set("status", "对账中");
+					orderItem.set("change_amount", newAmount).update();
+				}
+				if(isCreate){
+					ArapChargeItem chargeItem = new ArapChargeItem();
+					chargeItem.set("charge_order_id", orderId);
+					chargeItem.set("ref_order_type", "回单");
+					chargeItem.set("ref_order_id", ref_order_id);
+					chargeItem.save();
+				}
+			}else{
+				//手工单就不允许改确认金额了
+				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(item.get("ORDER_ID"));
+				arapMiscChargeOrder.set("status", "对账中").update();
+				if(isCreate){
+					ArapChargeItem chargeItem = new ArapChargeItem();
+					chargeItem.set("charge_order_id", orderId);
+					chargeItem.set("ref_order_type", "收入单");
+					chargeItem.set("ref_order_id", ref_order_id);
+					chargeItem.save();
+				}
+			}
+		}
 	}
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE })

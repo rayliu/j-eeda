@@ -67,7 +67,7 @@
                                             
                                             <div class="form-group">
                                                 <label>备注</label>
-                                                <textarea class="form-control" rows="7" name="remark">${arapAuditOrder.remark!''}</textarea>
+                                                <textarea class="form-control" rows="7" name="remark" id="remark">${arapAuditOrder.remark!''}</textarea>
                                             </div>                               
                                     </div>
                                     <!-- /.col-lg-6 (nested) -->
@@ -142,6 +142,7 @@
 			                                <table class="table table-striped table-bordered table-hover" id="chargeConfirem-table" style="width: 2800px;">
 			                                    <thead>
 			                                        <tr>
+                                                        <th></th>
 			                                            <th>回单号/收入单号</th>
 			                                            <th>收入状态</th>
                                                         <th>合计收入</th>
@@ -176,7 +177,9 @@
 			                                    <tbody>
 			                                        <%
                                                     for(item in itemList){ %>
-                                                        <tr class="odd">
+                                                        <tr class="odd" id="${item.ID!''}" order_type="${item.TPORDER!''}">
+                                                            <td class="">${item.ID!''}</td>
+                                                            <td class="">${item.TPORDER!''}</td>
                                                             <td class="">${item.ORDER_NO!''}</td>
                                                             <td class=""></td>
                                                             <td class="">${item.CHARGE_TOTAL_AMOUNT!''}</td>
