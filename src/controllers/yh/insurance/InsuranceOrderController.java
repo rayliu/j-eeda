@@ -115,7 +115,7 @@ public class InsuranceOrderController extends Controller {
                     + " where tor.insurance_id is null "    
                     + " and tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.create_stamp desc" + sLimit;
+                    + " order by tor.planning_time asc" + sLimit;
         } else{
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -165,7 +165,7 @@ public class InsuranceOrderController extends Controller {
                     + endTime
                     + "'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + "  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.CREATE_STAMP desc" + sLimit;
+                    + " order by tor.planning_time asc" + sLimit;
         } 
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
