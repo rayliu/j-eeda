@@ -86,7 +86,7 @@ $(document).ready(function() {
 			}
 		},'json').fail(function() {
             $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-        });;
+        });
 	};
     
 	// 审核

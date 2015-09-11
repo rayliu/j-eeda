@@ -48,7 +48,7 @@ $(document).ready(function() {
 	        {"mDataProp":"C_STAMP","sWidth":"80px"},
 	        {"mDataProp":"ONAME","sWidth":"80px"},
 	        {"mDataProp":"CNAME","sWidth":"200px"},
-	        {"mDataProp":null,"sWidth":"80px"},
+	        {"mDataProp":"CHARGE_AMOUNT","sWidth":"80px"},
 	        {"mDataProp":"TOTAL_AMOUNT","sWidth":"80px"},
 	        {"mDataProp":null,"sWidth":"80px"},
 	        {"mDataProp":"DEBIT_AMOUNT","sWidth":"80px"},
@@ -56,7 +56,7 @@ $(document).ready(function() {
 	        {"mDataProp":null,"sWidth":"80px"},
 	        {"mDataProp":null,"sWidth":"80px"},
 	        {"mDataProp":null,"sWidth":"80px"},
-	        {"mDataProp":"CHARGE_AMOUNT","sWidth":"80px"},
+	        {"mDataProp":null,"sWidth":"80px"},
 	        {"mDataProp":"REMARK","sWidth":"200px"},
 	        {"mDataProp":"CREATOR_NAME","sWidth":"80px"},        	
 	        {"mDataProp":"CREATE_STAMP","sWidth":"80px"}                         
