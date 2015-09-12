@@ -11,9 +11,9 @@ import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
-import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeOrder;
 import models.ArapMiscChargeOrder;
+import models.yh.arap.ReimbursementOrder;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -45,15 +45,21 @@ public class ChargeAcceptOrderController extends Controller {
     // billing order 列表
     public void list() {
         String sLimit = "";
+        String status = getPara("status");
+        if(status.equals("unCheck")){
+        	status = "已审批";
+        }else{
+        	status = "已复核";
+        }
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
         String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark "
-        		+ "from arap_charge_invoice aci left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id "
-				+ "union all "
-				+ "select id, order_no, status, '' invoice_no, create_stamp create_time, remark  from arap_misc_charge_order where status='新建') tab";
+        		+ " from arap_charge_invoice_application_order aci left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.STATUS= '"+status+"' group by aci.id "
+				+ " union all "
+				+ " select id, order_no, status, '' invoice_no, create_stamp create_time, remark  from arap_misc_charge_order where status='"+status+"') tab";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -67,13 +73,13 @@ public class ChargeAcceptOrderController extends Controller {
 				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
 				+ " where amco.status='新建' "
 				+ " order by create_time desc " + sLimit;*/
-        String status = "已审批";
-        String status_filter = getPara("status");
-        if(status_filter != null && !"".equals(status_filter)){
-        	status = status_filter;
-        }
-        String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
-        		+ " from arap_charge_invoice aci "
+        //String status = "已审批";
+        //String status_filter = getPara("status");
+//        if(status_filter != null && !"".equals(status_filter)){
+//        	status = status_filter;
+//        }
+        String sql = "select aci.id, '申请单' order_type,aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_charge_invoice_application_order aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status = '" + status + "' ";
         
@@ -210,5 +216,32 @@ public class ChargeAcceptOrderController extends Controller {
         auditLog.set("account_id", account.get("id"));
         auditLog.set("source_order", sourceOrder);
         auditLog.save();
+    }
+    
+    
+    
+    public void checkOrder(){
+        String all=getPara("ids");
+        String[] alls=all.split(",");
+        
+        for(int i=0;i< alls.length;i++){
+        	String[] one = alls[i].split(":");
+			String id = one[0];
+			String order_type = one[1];
+			if(order_type.equals("申请单")){
+	            ArapChargeInvoiceApplication arapChargeInvoiceApplication= ArapChargeInvoiceApplication.dao.findById(id);
+	            arapChargeInvoiceApplication.set("status","已复核");
+	            arapChargeInvoiceApplication.update();
+	        }else if(order_type.equals("报销单")){
+        		ReimbursementOrder reimbursementorder =ReimbursementOrder.dao.findById(id);
+        		reimbursementorder.set("status", "已复核");
+        		reimbursementorder.update();
+	        }else if(order_type.equals("收入单")){
+        		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
+        		arapMiscChargeOrder.set("status", "已复核");
+        		arapMiscChargeOrder.update();
+	        }
+	        renderJson("{\"success\":true}");	 	 
+        }
     }
 }

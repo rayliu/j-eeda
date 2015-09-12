@@ -1,11 +1,11 @@
 
 $(document).ready(function() {
-	document.title = '收款确认 | '+document.title;
+	document.title = '复核收款 | '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
    
 	//datatable, 动态处理
-    var chargeAcceptOrderTab = $('#chargeAccept-table').dataTable({
+    var chargeNoAcceptOrderTab = $('#chargeNoAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -17,7 +17,7 @@ $(document).ready(function() {
 			$(nRow).attr({id: aData.ID}); 
 			return nRow;
 		},
-        "sAjaxSource": "/chargeAcceptOrder/list",
+        "sAjaxSource": "/chargeAcceptOrder/list?status=unCheck",
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
@@ -33,6 +33,9 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
+            {"mDataProp":"ORDER_TYPE",
+        			"sClass":"order_type"
+        	},   
             {"mDataProp":"INVOICE_NO"},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
@@ -98,27 +101,162 @@ $(document).ready(function() {
    
     var ids = [];
     // 未选中列表
-	$("#chargeAccept-table").on('click', '.checkedOrUnchecked', function(e){
+	$("#chargeNoAccept-table").on('click', '.checkedOrUnchecked', function(e){
+		$("#checkBtn").attr('disabled',false);
 		if($(this).prop("checked") == true){
-            var orderNo = $(this).parent().parent().find('a').text();
+            var orderNo = $(this).parent().parent().find('.order_type').text();
             var orderObj=$(this).val()+":"+orderNo;
             //var order = ids.pop();
 			ids.push(orderObj);
-
-			$("#chargeIds").val(ids);
 		}else{
-			if(ids.length != 0){
-				ids.splice($.inArray($(this).val(),ids),1);
-				$("#chargeIds").val(ids);
+//			if(ids.length != 0){
+//				ids.splice($.inArray($(this).val(),ids),1);
+//				$("#chargeIds").val(ids);
+//			}
+			var array = [];
+			for(id in ids){
+				if($(this).val()+":"+$(this).parent().parent().find('.order_type').text()!= ids[id]){
+					array.push(ids[id]);
+				}
 			}
-		}			
+			ids = array;
+		}	
+		$("#chargeIds").val(ids);
+		if(ids.length != 0 ){
+			$("#checkBtn").attr('disabled',false);
+		}else{
+			$("#checkBtn").attr('disabled',true);
+		}
 	});	
+	
+	
+	$("#checkBtn").on('click', function(){
+		$("#checkBtn").attr('disabled',true);
+		$.post('chargeAcceptOrder/checkOrder?ids='+$("#chargeIds").val(),function(){
+			chargeNoAcceptOrderTab.fnDraw();
+		});
+	});
+	
 	
 	$("#status_filter").on('change',function(){
 		var status = $("#status_filter").val();
-		
-		chargeAcceptOrderTab.fnSettings().sAjaxSource = "/chargeAcceptOrder/list?status="+status;
-		
-		chargeAcceptOrderTab.fnDraw(); 
+		chargeNoAcceptOrderTab.fnSettings().sAjaxSource = "/chargeAcceptOrder/list?status="+status;
+		chargeNoAcceptOrderTab.fnDraw(); 
 	});
+	
+	
+	//**
+	//*****
+	//*********
+	//*************已复核
+	//*********
+	//*****
+	//**
+	
+	
+	//datatable, 动态处理
+    var chargeAcceptOrderTab = $('#chargeAccept-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "bSort": false, 
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "bServerSide": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+			return nRow;
+		},
+        "sAjaxSource": "/chargeAcceptOrder/list?status=check",
+        "aoColumns": [   
+	        { "mDataProp": null, "sWidth":"20px",
+	            "fnRender": function(obj) {
+	            	if(obj.aData.STATUS =="已收款确认"){
+	            		return "";
+	            	}else{
+	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            	}
+	              
+	            }
+            }, 
+            {"mDataProp":"ORDER_NO",
+            	"fnRender": function(obj) {
+        			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+        		}},
+            {"mDataProp":"ORDER_TYPE",
+        			"sClass":"order_type"
+        	},   
+            {"mDataProp":"INVOICE_NO"},
+            {"mDataProp":"STATUS",
+                "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.STATUS;
+                }
+            },
+            /*{"mDataProp":"CHARGE_ORDER_NO"},
+            {"mDataProp":"OFFICE_NAME"},
+            {"mDataProp":"CNAME"},*/            
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":"CNAME"},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":null},     
+            {"mDataProp":"TOTAL_AMOUNT"},     
+            {"mDataProp":"REMARK"},
+            {"mDataProp":null},     
+            {"mDataProp":null}                        
+        ]      
+    });
+	
+	
+    var ids = [];
+    // 未选中列表
+	$("#chargeAccept-table").on('click', '.checkedOrUnchecked', function(e){
+		$("#confirmBtn").attr('disabled',false);
+		if($(this).prop("checked") == true){
+            var orderNo = $(this).parent().parent().find('.order_type').text();
+            var orderObj=$(this).val()+":"+orderNo;
+            //var order = ids.pop();
+			ids.push(orderObj);
+		}else{
+			var array = [];
+			for(id in ids){
+				if($(this).val()+":"+$(this).parent().parent().find('.order_type').text()!= ids[id]){
+					array.push(ids[id]);
+				}
+			}
+			ids = array;
+		}	
+		$("#chargeIds2").val(ids);
+		if(ids.length != 0 ){
+			$("#confirmBtn").attr('disabled',false);
+		}else{
+			$("#confirmBtn").attr('disabled',true);
+		}
+	});	
+	
+	
+	$('#confirmBtn').click(function(e){
+		$("#checkBtn").attr('disabled',true);
+        e.preventDefault();
+        $('#confirmForm').submit();
+    });
+	
 } );
