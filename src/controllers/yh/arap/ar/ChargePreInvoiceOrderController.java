@@ -30,7 +30,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -208,7 +207,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
 			arapAuditInvoiceApplication.set("order_no", OrderNoGenerator.getNextOrderNo("YSSQ"));
 			arapAuditInvoiceApplication.set("status", "新建");
-			arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
+			if(!getPara("customer_id").equals("") && getPara("customer_id")!= null){
+				arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
+			}
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("total_amount", getPara("total_amount"));
@@ -218,8 +219,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
 					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
 				}
-			}else{
-				arapAuditInvoiceApplication.set("account_id", null);				
 			}
 			arapAuditInvoiceApplication.save();
 
