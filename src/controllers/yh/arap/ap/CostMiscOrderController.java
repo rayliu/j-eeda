@@ -69,21 +69,61 @@ public class CostMiscOrderController extends Controller {
 
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
     public void list() {
+    	String sp = getPara("sp");
+        String customer = getPara("companyName");
+        String spName = getPara("spName");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+        String orderNo = getPara("orderNo");
+        String status = getPara("status");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_misc_cost_order";
+        String sqlTotal = "select count(1) total from arap_misc_cost_order amco"
+        		+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
+        		+ " left join party p1 on amco.customer_id = p1.id"
+				+ " left join party p2 on amco.sp_id = p2.id"
+				+ " left join contact c1 on p1.contact_id = c1.id"
+				+ " left join contact c2 on p2.contact_id = c2.id";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
+        
         String sql = "select amco.*,aco.order_no cost_order_no from arap_misc_cost_order amco"
-					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id order by amco.create_stamp desc " + sLimit;
-
+					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id "
+					+ " left join party p1 on amco.customer_id = p1.id"
+					+ " left join party p2 on amco.sp_id = p2.id"
+					+ " left join contact c1 on p1.contact_id = c1.id"
+					+ " left join contact c2 on p2.contact_id = c2.id";
         logger.debug("sql:" + sql);
-        List<Record> BillingOrders = Db.find(sql);
+        String condition = "";
+        //TODO 始发地和目的地 客户没有做
+        if(sp != null || customer != null || spName != null
+        		|| status != null || beginTime != null || endTime != null|| orderNo != null){
+        	if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1970-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "2037-12-31";
+			}
+			if (status == "业务收款" || "业务收款".equals(status)) {
+				status = "biz";
+			}
+			if (status == "非业务收款" || "非业务收款".equals(status)) {
+				status = "non_biz";
+			}
+			condition = " where "
+					+ " ifnull(c2.abbr,'') like '%" + sp + "%' "
+					+ " and ifnull(c1.abbr,'') like '%" + customer + "%' "
+					+ " and ifnull(amco.type,'') like '%" + status + "%' "
+					+ " and ifnull(amco.order,'') like '%" + orderNo + "%' "
+					+ " and aco.create_stamp between '" + beginTime + "' and '" + endTime+ "' ";
+			
+			
+        }
+        List<Record> BillingOrders = Db.find(sql+ condition + " order by amco.create_stamp desc " +sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
