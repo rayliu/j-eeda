@@ -270,6 +270,7 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("route_to", routeTo);
 			arapMiscCostOrder.set("remark", remark);
 			arapMiscCostOrder.set("audit_status", "新建");
+			arapMiscCostOrder.set("office_id", user.getLong("office_id"));
 			arapMiscCostOrder.set("create_by", user.getLong("id"));
 			arapMiscCostOrder.set("create_stamp", new Date());
 			arapMiscCostOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGFK"));
