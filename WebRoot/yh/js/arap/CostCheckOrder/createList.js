@@ -36,14 +36,16 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px"},            	
-            {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"SERIAL_NO", "sWidth":"200px"},
             {"mDataProp":"REF_NO", "sWidth":"200px"},
+            {"mDataProp":"TO_NAME", "sWidth":"150px"},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"180px"},
             {"mDataProp":"AMOUNT", "sWidth":"40px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
+            {"mDataProp":"SPNAME", "sWidth":"200px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"ORDER_NO", "sWidth":"200px", 
                 "fnRender": function(obj) {
                 	var str = "";
@@ -59,8 +61,7 @@ $(document).ready(function() {
                     return str;
                 }
             },
-            {"mDataProp":"CREATE_STAMP", "sWidth":"180px"},
-            {"mDataProp":"PLANNING_TIME", "sWidth":"180px"},  
+            {"mDataProp":"CREATE_STAMP", "sWidth":"180px"}, 
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"90px"},  
 		    {"mDataProp":null, "sWidth":"90px",
                 "fnRender": function(obj) {
@@ -82,8 +83,7 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },                        
-            {"mDataProp":"FROM_NAME", "sWidth":"150px"},  
-            {"mDataProp":"TO_NAME", "sWidth":"150px"},  
+            {"mDataProp":"FROM_NAME", "sWidth":"150px"},   
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                                           
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
