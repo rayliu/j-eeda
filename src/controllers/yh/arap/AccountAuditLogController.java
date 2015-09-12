@@ -38,10 +38,10 @@ public class AccountAuditLogController extends Controller {
     		ids = "-1";
     	}
     	if(beginTime == null || "".equals(beginTime)){
-    		beginTime = "1-1-1";
+    		beginTime = "1970-01-01";
     	}
     	if(endTime == null || "".equals(endTime)){
-    		endTime = "9999-12-31";
+    		endTime = "2037-12-31";
     	}
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -56,10 +56,10 @@ public class AccountAuditLogController extends Controller {
         	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id "
-        			+ " where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + "' order by aaal.create_date desc " + sLimit;        	
+        			+ " where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;        	
         }else{
-        	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.create_date between  '" + beginTime + "' and '" + endTime + "'";
-        	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name, fa.bank_name,"
+        	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59'";
+        	sql = "select aaal.*,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
         			+ " if(aaal.payment_type='CHARGE', "
         			+ "	   (select order_no from arap_charge_invoice where id = aaal.misc_order_id),"
         			+ "    (select order_no from arap_cost_invoice_application_order where id = aaal.misc_order_id) "
@@ -67,7 +67,7 @@ public class AccountAuditLogController extends Controller {
         			+ " left join user_login ul on ul.id = aaal.creator"
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id "
         			+ " left join fin_account fa on aaal.account_id = fa.id "
-        			+ " where aaal.create_date between  '" + beginTime + "' and '" + endTime + "' order by aaal.create_date desc " + sLimit;  
+        			+ " where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;  
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));

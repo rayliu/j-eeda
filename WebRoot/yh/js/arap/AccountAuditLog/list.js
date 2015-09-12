@@ -30,22 +30,29 @@ $(document).ready(function() {
 	            	return str;
 	            }
             },
-            {"mDataProp":null,
+            {"mDataProp":null, "sWidth":"80px",
+                "fnRender": function(obj) {
+                    var paymentType='';
+                    if(obj.aData.PAYMENT_TYPE == "CHARGE"){
+                        paymentType='<span style="color:green;">'+ (Number(obj.aData.AMOUNT))+'</span>';
+                    }
+                    return paymentType ;
+                }
+                 
+            },
+            {"mDataProp":null, "sWidth":"80px",
                 "fnRender": function(obj) {
                     var paymentType='';
                     console.log()
-                    if(obj.aData.PAYMENT_TYPE == "CHARGE"){
-                        paymentType='<span style="color:green;">+ ';
-                    }else{
-                        paymentType='<span style="color:red;">';
+                    if(obj.aData.PAYMENT_TYPE == "COST"){
+                        paymentType='<span style="color:red;">'+ (Number(obj.aData.AMOUNT))+'</span>';
                     }
-                    return paymentType + (0.00-Number(obj.aData.AMOUNT))+'</span>';
+                    return paymentType ;
                 }
                  
             },
             {"mDataProp":"REMARK"},           
-            {"mDataProp":"USER_NAME"},        	
-            {"mDataProp":"CREATE_DATE"}
+            {"mDataProp":"USER_NAME"}
         ]      
     });
     
