@@ -79,10 +79,21 @@ public class ChargeMiscOrderController extends Controller {
 				&& customer == null && sp == null && beginTime == null && endTime==null){
 			
 		}else{
-			conditions = " and order_no like '%"+ orderNo 
-			+ "%' and type = '" + type
-			+ "' and customer_name like '%" + customer
-			+ "%' and sp_name like '%" + sp+"%'";
+			if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1970-01-01";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "2037-12-31";
+			}
+			
+			conditions = " and ifnull(order_no, '') like '%"+ orderNo 
+			+ "%' and ifnull(customer_name,'') like '%" + customer
+			+ "%' and ifnull(sp_name,'') like '%" + sp+"%' "
+			+ " and create_stamp between "
+			+ " '"+beginTime+"' and '"+endTime+" 23:59:59' ";
+			if(type!=null && type.length()>0){
+				conditions += ("and type = '" + type + "' ");
+			}
 		}
 			
 		String sLimit = "";

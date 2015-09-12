@@ -194,6 +194,25 @@ $(document).ready(function() {
         $('#spList').hide();
         refreshData();
     });
+
+    //时间控件
+    $('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();   
+        $('#beginTime_filter').trigger('keyup');
+    });
+
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter').trigger('keyup');
+    });
     
     $("#customer_filter,  #customer_filter, #orderNo_filter, #beginTime_filter, #endTime_filter").on( 'keyup click', function () {
         refreshData();
