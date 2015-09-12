@@ -41,7 +41,7 @@ $(document).ready(function() {
             			return obj.aData.ORDER_NO;
         		} 
             },
-            {"mDataProp":"TOTAL_AMOUNT",
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px",
             	"sClass": "pay_amount",
             	 "fnRender": function(obj) {
             		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
@@ -51,7 +51,7 @@ $(document).ready(function() {
             		 }
             	 }
             },
-            {"mDataProp":"APPLICATION_AMOUNT",
+            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"80px",
             	"sClass": "pay_amount",
             	 "fnRender": function(obj) {
             		 if(obj.aData.APPLICATION_AMOUNT == null || obj.aData.APPLICATION_AMOUNT == '' ){
@@ -66,7 +66,7 @@ $(document).ready(function() {
             	 }
             },  
             {"mDataProp":"CNAME", "sWidth":"150px"},   
-            {"mDataProp":"PAYEE_NAME", "sWidth":"150px"},
+            {"mDataProp":"PAYEE_NAME", "sWidth":"100px"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
             {"mDataProp":"PAYMENT_METHOD", "sWidth":"80px",
                 "fnRender": function(obj) {
@@ -165,7 +165,7 @@ $(document).ready(function() {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}
             },
-            {"mDataProp":"TOTAL_AMOUNT",
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px",
             	"sClass":"pay_amount",
            	 	"fnRender": function(obj) {
         		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
@@ -175,7 +175,7 @@ $(document).ready(function() {
         		 }
         	 }
             },  
-            {"mDataProp":"APPLICATION_AMOUNT",
+            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"80px",
             	"sClass": "pay_amount",
             	 "fnRender": function(obj) {
             		 if(obj.aData.APPLICATION_AMOUNT == null || obj.aData.APPLICATION_AMOUNT == '' ){
@@ -185,10 +185,10 @@ $(document).ready(function() {
             		 }
             	 }
             },  
-            {"mDataProp":"CNAME", 
+            {"mDataProp":"CNAME",  "sWidth":"120px",
             	"sClass": "cname"
             },  
-            {"mDataProp":"PAYEE_NAME", 
+            {"mDataProp":"PAYEE_NAME", "sWidth":"100px",
             	"sClass": "payee_name"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px" },
             {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
@@ -201,7 +201,7 @@ $(document).ready(function() {
                     	return '';
                 }
             },
-            {"mDataProp":"STATUS",
+            {"mDataProp":"STATUS", "sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';

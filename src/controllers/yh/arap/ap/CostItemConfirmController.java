@@ -278,7 +278,7 @@ public class CostItemConfirmController extends Controller {
 				+ " amco.create_stamp,ul.user_name creator,null as ref_no,'成本单' business_type,"
 				+ " NULL as booking_note_number,null as customer_delivery_no,ifnull(amco.total_amount,0) pay_amount,"
 				+ " NULL as transfer_order_no,NULL as return_order_collection,amco.remark remark,"
-				+ " NULL as depart_time, NULL as planning_time, NULL as office_name,c1.abbr cname,"
+				+ " NULL as depart_time, NULL as planning_time, o.office_name,c1.abbr cname,"
 				+ " (SELECT sum(amcoi.amount) FROM arap_misc_cost_order_item amcoi"
 				+ " LEFT JOIN fin_item fi ON amcoi.fin_item_id = fi.id"
 				+ " WHERE amcoi.misc_order_id = amco.id"
@@ -312,7 +312,6 @@ public class CostItemConfirmController extends Controller {
 				+ " WHERE amcoi.misc_order_id = amco.id"
 				+ " AND fi.NAME = '其他费用') other_cost"
 				+ " FROM arap_misc_cost_order amco"
-				+ " LEFT JOIN arap_misc_cost_order_item amcoi ON amcoi.misc_order_id = amco.id"
 				+ " LEFT JOIN user_login ul ON ul.id = amco.create_by"
 				+ " LEFT JOIN party p1 ON amco.customer_id = p1.id"
 				+ " LEFT JOIN contact c1 ON p1.contact_id = c1.id"
@@ -320,6 +319,7 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN contact c ON p.contact_id = c.id"
 				+ " LEFT JOIN location l ON amco.route_from=l.code"
 				+ " LEFT JOIN location l1 ON amco.route_to=l1.code"
+				+ " LEFT JOIN office o ON o.id=amco.office_id"
 				+ " where amco.audit_status = '新建' and amco.type = 'biz' and amco.total_amount!=0"
 				+ " GROUP BY amco.id) as A ";
         String condition = "";
@@ -343,12 +343,12 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
         			+ " and ifnull(status,'') like '%" + status + "%' "
         			+ " and ifnull(spname,'') like '%" + sp + "%' "
-        			+ " and depart_time between '" + beginTime + "' and '" + endTime + "' "
+        			+ " and ifnull(depart_time, '1-1-1') between '" + beginTime + "' and '" + endTime + "' "
         			+ " and ifnull(business_type,'') like '%" + type + "%'"
         			+ " and ifnull(route_from,'') like '%" + route_from + "%'"
         			+ " and ifnull(route_to,'') like '%" + route_to + "%'"
         			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'"
-        			+ " and planning_time between '" + plantime + "' and '" + arrivaltime + "' "
+        			+ " and ifnull(planning_time, '1-1-1') between '" + plantime + "' and '" + arrivaltime + "' "
         	        + " and ifnull(cname,'') like '%" + customer_name + "%'"
         	        + " and ifnull(status, '') != '手动删除'";
         }
