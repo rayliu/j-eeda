@@ -15,7 +15,7 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/accountAuditLog/list",
         "aoColumns": [   
-            {"mDataProp":"CREATE_DATE"},
+            {"mDataProp":"CREATE_DATE", "sWidth":"80px"},
             {"mDataProp":"SOURCE_ORDER"},
             {"mDataProp":"ORDER_NO"},
             {"mDataProp":"BANK_NAME"},
@@ -59,6 +59,8 @@ $(document).ready(function() {
     var accountTable = $('#account-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, 
+        // "bPaginate": false, //翻页功能
+        "bInfo": false,//页脚信息
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"bServerSide": true,
     	"oLanguage": {
@@ -77,14 +79,16 @@ $(document).ready(function() {
             },
 	        {"mDataProp":"BANK_NAME"},
 	        {"mDataProp":null},
-	        {"mDataProp":"AMOUNT"},        	
-	        {"mDataProp":null},
+            {"mDataProp":null},
+	        {"mDataProp":"AMOUNT"},
+            {"mDataProp":null},
 	        {"mDataProp":"REMARK"}           
 	     ]      
     });
     
     $('#datetimepicker').datetimepicker({  
-        format: 'yyyy-MM-dd',  
+        format: 'yyyy-MM',  
+        viewMode: "months",
         language: 'zh-CN'
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
@@ -92,15 +96,15 @@ $(document).ready(function() {
     });
 
 
-    $('#datetimepicker2').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN', 
-        autoclose: true,
-        pickerPosition: "bottom-left"
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
-        $('#endTime_filter').trigger('keyup');
-    });
+    // $('#datetimepicker2').datetimepicker({  
+    //     format: 'yyyy-MM-dd',  
+    //     language: 'zh-CN', 
+    //     autoclose: true,
+    //     pickerPosition: "bottom-left"
+    // }).on('changeDate', function(ev){
+    //     $(".bootstrap-datetimepicker-widget").hide();
+    //     $('#endTime_filter').trigger('keyup');
+    // });
     
     $("#searchBtn").click(function(e){
     	e.preventDefault();
