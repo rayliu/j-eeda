@@ -164,6 +164,7 @@ $(document).ready(function() {
     $('#companyList').on('mousedown', function(){
         return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
+  //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter').on('input click', function(){
     	var me = this;

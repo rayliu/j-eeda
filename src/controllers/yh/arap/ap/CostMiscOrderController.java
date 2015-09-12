@@ -108,19 +108,20 @@ public class CostMiscOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
-			if (status == "业务收款" || "业务收款".equals(status)) {
+			if (status!=null && "业务收款".equals(status)) {
 				status = "biz";
 			}
-			if (status == "非业务收款" || "非业务收款".equals(status)) {
+			if (status!=null && "非业务收款".equals(status)) {
 				status = "non_biz";
 			}
 			condition = " where "
-					+ " ifnull(c2.abbr,'') like '%" + sp + "%' "
+					+ " ifnull(c2.abbr,'') like '%" + spName + "%' "
 					+ " and ifnull(c1.abbr,'') like '%" + customer + "%' "
-					+ " and ifnull(amco.type,'') like '%" + status + "%' "
-					+ " and ifnull(amco.order,'') like '%" + orderNo + "%' "
-					+ " and aco.create_stamp between '" + beginTime + "' and '" + endTime+ "' ";
-			
+					+ " and amco.order_no like '%" + orderNo + "%' "
+					+ " and amco.create_stamp between '" + beginTime + "' and '" + endTime+ " 23:59:59' ";
+			if(status!=null && status.length()>0){
+				condition  += " and amco.type = '" + status + "' ";
+			}
 			
         }
         List<Record> BillingOrders = Db.find(sql+ condition + " order by amco.create_stamp desc " +sLimit);
