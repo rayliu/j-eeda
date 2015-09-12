@@ -285,9 +285,13 @@
 		$(".bootstrap-datetimepicker-widget").hide();
 	    $('#time_two').trigger('keyup');
 	});
-   
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+        saveConditions();
+        findData();
+    });
 
-  var conditions_name="query_return_order_list";
+  //var conditions_name="query_return_order_list";
   var saveConditions=function(){
       var conditions={
           order_no:$("#order_no").val(),
@@ -300,17 +304,17 @@
           return_type: $("#return_type").val()
       }
       if(!!window.localStorage){//查询条件处理
-          localStorage.setItem(conditions_name, JSON.stringify(conditions));
+          localStorage.setItem("query_return_order_list", JSON.stringify(conditions));
       }
   };
   
   var loadConditions=function(){
       if(!!window.localStorage){//查询条件处理
-          var query_to = localStorage.getItem(conditions_name);
+          var query_to = localStorage.getItem("query_return_order_list");
           if(!query_to)
               return;
 
-          var conditions = JSON.parse(localStorage.getItem(conditions_name));
+          var conditions = JSON.parse(localStorage.getItem("query_return_order_list"));
           $("#order_no").val(conditions.order_no);
           $("#tr_order_no").val(conditions.tr_order_no);
           $("#de_order_no").val(conditions.de_order_no);
@@ -344,10 +348,4 @@
 
   loadConditions(); 
   findData();
-
-  $("#resetBtn").click(function(){
-      $('#searchForm')[0].reset();
-      saveConditions();
-      findData();
-  });
 });
