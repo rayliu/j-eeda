@@ -96,21 +96,6 @@ $(document).ready(function() {
         $('#insuranceOrder_message').val(tableArr);
         $('#createForm').submit();
     });
-    function refresh(){
-    	var orderNo = $("#orderNo_filter").val();
-    	//var status = $("#status_filter").val();
-    	//var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var routeFrom = $("#routeFrom_filter").val();
-    	var routeTo = $("#routeTo_filter").val();
-    	//var orderType = $("#orderType_filter").val();
-    	
-    	
-    	insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/createList?orderNo="+orderNo+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
-    	insuranceOrder.fnDraw(); 
-    };
     $('#orderNo_filter,  #customer_filter, #beginTime_filter, #endTime_filter, #routeTo_filter, #routeFrom_filter').on( 'keyup click', function () {
     	refresh();
     } );
@@ -245,4 +230,50 @@ $(document).ready(function() {
 	    $('#companyList').on('mousedown', function(){
 	        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	    });
+	    $("#resetBtn").click(function(){
+	        $('#searchForm')[0].reset();
+	        saveConditions();
+	        refresh();
+	    });
+	    function refresh(){
+	    	var orderNo = $("#orderNo_filter").val();
+	    	var customer = $("#customer_filter").val();
+	    	var beginTime = $("#beginTime_filter").val();
+	    	var endTime = $("#endTime_filter").val();
+	    	var routeFrom = $("#routeFrom_filter").val();
+	    	var routeTo = $("#routeTo_filter").val(); 	
+	    	insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/createList?orderNo="+orderNo+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
+	    	insuranceOrder.fnDraw(); 
+	    	saveConditions();
+	    };
+	    var saveConditions=function(){
+	        var conditions={
+	        	orderNo:$("#orderNo_filter").val(),//订单号
+	        	customer:$("#customer_filter").val(),//客户
+	        	routeFrom:$("#routeFrom_filter").val(),//始发城市
+	        	routeTo:$("#routeTo_filter").val(),//目的城市
+	        	beginTime:$("#beginTime_filter").val(),//计划开始时间
+	        	endTime:$("#endTime_filter").val()//计划结束时间
+	        }
+	        if(!!window.localStorage){//查询条件处理
+	            localStorage.setItem("query_to_insurance", JSON.stringify(conditions));
+	        }
+	    };
+	    var loadConditions=function(){
+	        if(!!window.localStorage){//查询条件处理
+	            var query_to = localStorage.getItem('query_to_insurance');
+	            if(!query_to)
+	                return;
+
+	            var conditions = JSON.parse(localStorage.getItem('query_to_insurance'));
+	            $("#orderNo_filter").val(conditions.orderNo);
+	            $("#customer_filter").val(conditions.customer);
+	            $("#routeFrom_filter").val(conditions.routeFrom);
+	            $("#routeTo_filter").val(conditions.routeTo);
+	            $("#beginTime_filter").val(conditions.beginTime);
+	            $("#endTime_filter").val(conditions.endTime);
+	        }
+	    };
+	    loadConditions();
+	    refresh();
 } );

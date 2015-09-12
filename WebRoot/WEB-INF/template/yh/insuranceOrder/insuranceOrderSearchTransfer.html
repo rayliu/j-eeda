@@ -58,7 +58,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <form role="form" style="margin: 0 15px;">
+                            <form role="form" style="margin: 0 15px;" id='searchForm'>
                             <div class="row search_panel">
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -110,9 +110,12 @@
                                         </span>
                                     </div>
                                 </div>
+                                 
                                 <!-- end of col-lg-6-->
                             </div><!-- end of row-->
-                            
+                            <div class="form-group">
+                             <button id="resetBtn" class="btn  btn-primary" type="button">清空条件</button>
+                            </div>
                             </form>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table">
