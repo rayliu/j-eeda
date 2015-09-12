@@ -2,11 +2,8 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +24,6 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.CollectionUtils;
 
 import com.google.gson.Gson;
 import com.jfinal.aop.Before;
@@ -78,7 +74,10 @@ public class ChargeCheckOrderController extends Controller {
 		ArapMiscChargeOrder arapMiscChargeOrder = null;
 		ReturnOrder rOrder = null;
 		Long customerId =null;
-		String[] returnOrderIdArray = returnOrderIds.split(",");
+		String[] returnOrderIdArray = new String[]{};
+		if(!returnOrderIds.equals("")){
+			returnOrderIdArray = returnOrderIds.split(",");
+		}
 		Double totalAmount = 0.0;
 		for (int i = 0; i < returnOrderIdArray.length; i++) {
 			rOrder = ReturnOrder.dao.findById(returnOrderIdArray[i]);
@@ -99,8 +98,12 @@ public class ChargeCheckOrderController extends Controller {
 				setAttr("classify", "");
 			}
 		}
+		
+		String[] miscOrderIdArray = new String[]{};
+		if(!miscOrderIds.equals("")){
+			miscOrderIdArray = miscOrderIds.split(",");
+		}
 
-		String[] miscOrderIdArray = miscOrderIds.split(",");
 		for (int i = 0; i < miscOrderIdArray.length; i++) {
 			arapMiscChargeOrder = ArapMiscChargeOrder.dao
 					.findById(miscOrderIdArray[i]);
