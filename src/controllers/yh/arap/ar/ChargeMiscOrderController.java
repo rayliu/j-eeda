@@ -68,20 +68,20 @@ public class ChargeMiscOrderController extends Controller {
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_LIST })
 	public void list() {
 		String orderNo = getPara("orderNo");
-		String status = getPara("status");
+		String type = getPara("type");
 		String customer = getPara("customer");
 		String sp = getPara("sp");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		
 		String conditions = "";
-		if (orderNo == null && status == null 
+		if (orderNo == null && type == null 
 				&& customer == null && sp == null && beginTime == null && endTime==null){
 			
 		}else{
 			conditions = " and order_no like '%"+ orderNo 
-			+ "%' and status like '%" + status
-			+ "%' and customer_name like '%" + customer
+			+ "%' and type = '" + type
+			+ "' and customer_name like '%" + customer
 			+ "%' and sp_name like '%" + sp+"%'";
 		}
 			
