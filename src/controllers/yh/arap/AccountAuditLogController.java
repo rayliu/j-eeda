@@ -84,6 +84,7 @@ public class AccountAuditLogController extends Controller {
         renderJson(BillingOrderListMap);
     }
     
+    //出纳日记帐：所有账户的按月期初期末总计
     public void accountList() {
     	String sLimit = "";
     	String pageIndex = getPara("sEcho");
@@ -95,7 +96,8 @@ public class AccountAuditLogController extends Controller {
     	Record rec = Db.findFirst(sqlTotal);
     	logger.debug("total records:" + rec.getLong("total"));
     	
-    	String sql = "select * from fin_account order by id desc " + sLimit;
+    	String sql = "select fa.*, aas.* from fin_account fa "
+    			+ "left join arap_account_audit_summary aas on fa.id = aas.account_id order by fa.id desc " + sLimit;
     	
     	logger.debug("sql:" + sql);
     	List<Record> BillingOrders = Db.find(sql);
@@ -109,4 +111,6 @@ public class AccountAuditLogController extends Controller {
     	
     	renderJson(BillingOrderListMap);
     }
+    
+    
 }
