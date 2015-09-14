@@ -37,9 +37,11 @@ public class ChargeAcceptOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_COLLECTIONCONFIRM_LIST})
     public void index() {
+    	String page = getPara("page");
+    	setAttr("page", page);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
-    	    render("/yh/arap/ChargeAcceptOrder/ChargeAcceptOrderList.html");
+    	render("/yh/arap/ChargeAcceptOrder/ChargeAcceptOrderList.html");
     }
 
     // billing order 列表

@@ -1,7 +1,11 @@
 
 $(document).ready(function() {
 	document.title = '复核收款 | '+document.title;
-
+	
+	if($("#page").val()=='return'){
+    	$('a[href="#audit"]').tab('show');
+    }
+	
     $('#menu_finance').addClass('active').find('ul').addClass('in');
    
 	//datatable, 动态处理
