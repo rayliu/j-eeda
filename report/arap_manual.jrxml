@@ -24,7 +24,7 @@
 		</box>
 	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["D:\\jamWork\\jfinal-eeda\\report\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="order_no" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
