@@ -490,7 +490,7 @@ $(document).ready(function() {
     });
   //供应商查询
     //获取未审核供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('input click', function(){
+    $('#sp_filter').on('click input', function(){
         var me = this;
         var inputStr = $('#sp_filter').val();
         var spList =$("#spList");
@@ -520,7 +520,7 @@ $(document).ready(function() {
                 left:$(me).position().left+"px", 
                 top:$(me).position().top+28+"px" 
             }); 
-            
+            refreshData1();
             spList.show();
             
         },'json');
@@ -601,7 +601,7 @@ $(document).ready(function() {
                 left:$(me).position().left+"px", 
                 top:$(me).position().top+28+"px" 
             }); 
-            
+            refreshData();
             spList.show();
             
         },'json');
