@@ -5,6 +5,10 @@ $(document).ready(function() {
    
     var paymentMethod = "";
     
+    if($("#page").val()=='return'){
+    	$('a[href="#audit"]').tab('show');
+    }
+    
 	//datatable, 动态处理
     var uncostAcceptOrderTab = $('#uncostAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
