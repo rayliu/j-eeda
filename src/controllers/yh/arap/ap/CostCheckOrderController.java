@@ -857,10 +857,10 @@ public class CostCheckOrderController extends Controller {
     	if(orderNo != null || sp != null || no != null || beginTime != null
     			|| endTime != null || type != null || status != null){
     		if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
+				beginTime = "1970-01-01";
 			}
 			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
+				endTime = "2037-12-31";
 			}
     		
     		condition = " where ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
@@ -869,7 +869,7 @@ public class CostCheckOrderController extends Controller {
     					+ " and status like '%" + status + "%' "
     					+ " and spname like '%" + sp + "%' "
     					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
-    					+ " and create_stamp between '" + beginTime + "' and '" + endTime + "' ";
+    					+ " and planning_time between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
     	}
     	
         sqlTotal = "select count(1) total from (" + sql + condition + ") as B";  
@@ -878,7 +878,7 @@ public class CostCheckOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         
         logger.debug("sql:" + sql);
-        List<Record> BillingOrders = Db.find(sql + condition + "order by create_stamp desc"+sLimit);
+        List<Record> BillingOrders = Db.find(sql + condition + "order by planning_time"+sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
