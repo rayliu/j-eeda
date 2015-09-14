@@ -158,7 +158,17 @@ $(document).ready(function() {
     if($("#chargeMiscOrderStatus").text() == 'new'){
     	$("#chargeMiscOrderStatus").text('新建');
 	}
-
+    $("#printBtn").on('click',function(){
+    	var order_no = $.trim($("#miscChargeOrderNo").text());
+    	if(order_no != null && order_no != ""){
+    		$.post('/report/printManualOrder', {order_no:order_no}, function(data){
+        		window.open(data);
+        	});
+    	}else{
+    		$.scojs_message('当前单号为空', $.scojs_message.TYPE_ERROR);
+    	}
+    	
+    });
     var feeTable = $('#feeItemList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
