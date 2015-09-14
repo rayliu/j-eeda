@@ -14,6 +14,7 @@ $(document).ready(function() {
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
+        "iDisplayLength": 100,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -164,6 +165,7 @@ $(document).ready(function() {
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
+        "iDisplayLength": 100,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
