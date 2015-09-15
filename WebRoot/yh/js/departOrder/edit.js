@@ -1153,6 +1153,7 @@
     			var value = $(this).val();
     			$.post('/departOrder/updateDepartOrderFinItem', {paymentId:paymentId, name:name, value:value}, function(data){
     				if(data.success){
+    					$.scojs_message('金额修改成功', $.scojs_message.TYPE_OK);
     				}else{
     					alert("修改失败!");
     				}
