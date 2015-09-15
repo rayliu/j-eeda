@@ -5,6 +5,7 @@
 
 	//datatable, 动态处理
     var orderIds = $("#orderIds").val();
+    var order_type = $("#order_type").val();
     var total = 0.00;
     var nopay = 0.00;
     var datatable=$('#InvorceApplication-table').dataTable({
@@ -25,7 +26,12 @@
         "aoColumns": [   
              {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if(order_type == '报销单')
+            			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(order_type == '成本单')
+            			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else
+            			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"PAY_AMOUNT",
     			"fnRender": function(obj) {
