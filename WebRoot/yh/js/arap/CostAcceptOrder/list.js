@@ -46,6 +46,7 @@ $(document).ready(function() {
             			return obj.aData.ORDER_NO;
         		} 
             },
+            {"mDataProp":"ATTRIBUTE", "sWidth":"80px"},   
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px",
             	"sClass": "pay_amount",
             	 "fnRender": function(obj) {
@@ -80,7 +81,7 @@ $(document).ready(function() {
                     else if(obj.aData.PAYMENT_METHOD == 'transfers')
                         return '转账';
                     else
-                    	return '';
+                    	return obj.aData.PAYMENT_METHOD;
                 }
             },
             {"mDataProp":"STATUS",
@@ -171,6 +172,7 @@ $(document).ready(function() {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}
             },
+            {"mDataProp":"ORDER_TYPE", "sWidth":"80px"},
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px",
             	"sClass":"pay_amount",
            	 	"fnRender": function(obj) {
@@ -204,7 +206,7 @@ $(document).ready(function() {
                     else if(obj.aData.PAYMENT_METHOD == 'transfers')
                         return '转账';
                     else
-                    	return '';
+                    	return obj.aData.PAYMENT_METHOD;
                 }
             },
             {"mDataProp":"STATUS", "sWidth":"80px",
