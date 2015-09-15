@@ -21,7 +21,6 @@ $(document).ready(function() {
             {"mDataProp":"C_STAMP"},
             {"mDataProp":"ONAME"},
             {"mDataProp":"CNAME"},
-            {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":null},
@@ -128,10 +127,11 @@ $(document).ready(function() {
     				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
     			}
     			$("#spList").css({ 
-	               	left:$(me).position().left+"px", 
-	               	top:$(me).position().top+32+"px" 
-               }); 
-               $('#spList').show();
+           	left:$(me).position().left+"px", 
+           	top:$(me).position().top+28+"px" 
+          }); 
+          $('#spList').show();
+
        		},'json');
 
        		
@@ -202,13 +202,17 @@ $(document).ready(function() {
             $('#jieshu_filter').trigger('keyup');
         });
         var refreshList = function(){
+          var order_no = $("#order_no").val();
+          var status = $("#order_status_filter").val();
         	var sp = $("#sp_filter").val();
         	var shifadi = $("#shifadi_filter").val();
         	var customer = $("#customer_filter").val();
         	var mudidi = $("#mudidi_filter").val();
         	var beginTime = $("#kaishi_filter").val();
         	var endTime = $("#jieshu_filter").val();
-        	datatable.fnSettings().sAjaxSource = "/costCheckOrder/list?sp="+sp
+        	datatable.fnSettings().sAjaxSource = "/costCheckOrder/list?order_no="+order_no
+                                +"&status="+status
+                                +"&sp="+sp
 																+"&shifadi="+shifadi
 																+"&customer="+customer
 																+"&mudidi="+mudidi
@@ -216,7 +220,12 @@ $(document).ready(function() {
 																+"&endTime="+endTime;
         	datatable.fnDraw();
         };
-        $("#sp_filter,#shifadi_filter,#customer_filter,#mudidi_filter,#kaishi_filter,#jieshu_filter").on('keyup',function(){
+
+        $("#order_no, #sp_filter, #shifadi_filter, #customer_filter, #mudidi_filter, #kaishi_filter, #jieshu_filter").on('keyup',function(){
         	refreshList();
+        });
+
+        $("#order_status_filter").on('change',function(){
+          refreshList();
         });
 } );

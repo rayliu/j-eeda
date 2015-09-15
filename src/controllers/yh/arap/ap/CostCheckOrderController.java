@@ -247,6 +247,7 @@ public class CostCheckOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
+        String orderNo = getPara("order_no");
         String sp = getPara("sp");
         String shifadi = getPara("shifadi");
         String customer = getPara("customer");
@@ -255,7 +256,7 @@ public class CostCheckOrderController extends Controller {
         String endTime = getPara("endTime");
         
         String sqlTotal = "";
-        String sql = "select aco.*,MONTH(aco.begin_time) as c_stamp,o.office_name oname,c.company_name as company_name,"
+        String sql = "select aco.*,MONTH(aco.begin_time) as c_stamp,o.office_name oname, '' as company_name,"
         		+ " group_concat(acoo.invoice_no separator ',') invoice_no,"
         		+ " c.abbr cname,"
         		+ " ifnull(ul.c_name,ul.user_name) creator_name,"
@@ -272,7 +273,7 @@ public class CostCheckOrderController extends Controller {
         		+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id ";
         String condition = "";
         //TODO 始发地和目的地 客户没有做
-        if(sp != null || shifadi != null || customer != null
+        if(orderNo!=null || sp != null || shifadi != null || customer != null
         		|| mudidi != null || beginTime != null || endTime != null){
         	if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -280,8 +281,9 @@ public class CostCheckOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			condition = " where ifnull(c.abbr,'') like '%" + sp + "%' "
-						+ " and aco.create_stamp between '" + beginTime + "' and '" + endTime+ "' ";
+			condition = " where aco.order_no like '%" + orderNo + "%' "
+					+ " and ifnull(c.abbr,'') like '%" + sp + "%' "
+					+ " and aco.create_stamp between '" + beginTime + "' and '" + endTime+ "' ";
 			
 			
         }
