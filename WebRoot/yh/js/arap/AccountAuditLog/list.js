@@ -8,6 +8,7 @@ $(document).ready(function() {
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
         "bSort": false, 
+        "iDisplayLength": 100,
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
     	"oLanguage": {
@@ -19,42 +20,29 @@ $(document).ready(function() {
             {"mDataProp":"SOURCE_ORDER"},
             {"mDataProp":"ORDER_NO"},
             {"mDataProp":"BANK_NAME"},
-            {"mDataProp":null, "sWidth":"80px", 
-	            "fnRender": function(obj) {
-	            	var str = "";
-	            	if(obj.aData.PAYMENT_METHOD == "transfers"){
-	            		str = "转账";
-	            	}else{
-	            		str = "现金";
-	            	}
-	            	return str;
-	            }
-            },
             {"mDataProp":null, "sWidth":"80px",
                 "fnRender": function(obj) {
-                    var paymentType='';
                     if(obj.aData.PAYMENT_TYPE == "CHARGE"){
-                        paymentType='<span style="color:green;">'+ (Number(obj.aData.AMOUNT))+'</span>';
+                         return (Number(obj.aData.AMOUNT));
                     }
-                    return paymentType ;
+                    return '' ;
                 }
                  
             },
             {"mDataProp":null, "sWidth":"80px",
                 "fnRender": function(obj) {
-                    var paymentType='';
-                    console.log()
                     if(obj.aData.PAYMENT_TYPE == "COST"){
-                        paymentType='<span style="color:red;">'+ (Number(obj.aData.AMOUNT))+'</span>';
+                        return (Number(obj.aData.AMOUNT));
                     }
-                    return paymentType ;
+                    return '' ;
                 }
                  
-            },
-            {"mDataProp":"REMARK"},           
+            },         
             {"mDataProp":"USER_NAME"}
         ]      
     });
+
+    //accountAuditLogTable.fnSetColumnVis(4, false );
     
     var accountTable = $('#account-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
