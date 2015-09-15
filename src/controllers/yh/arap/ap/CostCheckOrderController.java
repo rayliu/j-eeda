@@ -856,20 +856,25 @@ public class CostCheckOrderController extends Controller {
     	
     	if(orderNo != null || sp != null || no != null || beginTime != null
     			|| endTime != null || type != null || status != null){
+    		String time ="";
+			if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
+				time = "1970-01-01";
+			}
     		if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1970-01-01";
 			}
+    		
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
-    		
     		condition = " where ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
     					+ " and order_no like '%" + no + "%' "
     					+ " and business_type like '%" + type + "%' "
     					+ " and status like '%" + status + "%' "
     					+ " and spname like '%" + sp + "%' "
     					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
-    					+ " and planning_time between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+    					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+    		
     	}
     	
         sqlTotal = "select count(1) total from (" + sql + condition + ") as B";  
