@@ -2,6 +2,7 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import models.ArapCostPayConfirmOrderLog;
 import models.CostApplicationOrderRel;
 import models.DepartOrder;
 import models.InsuranceOrder;
+import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.delivery.DeliveryOrder;
@@ -323,16 +325,41 @@ public class CostConfirmController extends Controller {
 	        auditLog.save();
 	        
 	        if("cash".equals(pay_type)){
-	        	Account cash = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
-	        	cash.set("amount", (cash.getDouble("amount")==null?0.0:cash.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
+	        	Account cashAccount = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
+	        	cashAccount.set("amount", (cashAccount.getDouble("amount")==null?0.0:cashAccount.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
+	        	
+	        	updateAccountSummary(pay_amount, cashAccount.getLong("id"));
+	        	
 	        }else{
 	        	account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
+	        	
+	        	updateAccountSummary(pay_amount, account.getLong("id"));
 	        }
 		
 		Map BillingOrderListMap = new HashMap();
    		BillingOrderListMap.put("arapCostPayConfirmOrder", arapCostPayConfirmOrder);
    		BillingOrderListMap.put("re", re);
    		renderJson(BillingOrderListMap);
+	}
+
+	//更新日记账的账户期初结余
+	//本期结余 = 期初结余 + 本期总收入 - 本期总支出
+	private void updateAccountSummary(String pay_amount, Long acountId) {
+		Calendar cal = Calendar.getInstance();  
+		int year = cal.get(Calendar.YEAR);  
+		int month = cal.get(Calendar.MONTH)+1;  
+		ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+				"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+				, acountId, year, month);
+		if(aaas!=null){
+			aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
+			aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+			aaas.update();
+		}else{//add a new
+			//1.该账户没有记录
+			//2.该月份没有，从上月拷贝一条，考虑：上月也没有（跨1-N月）， 跨年
+			ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
+		}
 	}
 	
    	

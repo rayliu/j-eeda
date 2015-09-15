@@ -69,6 +69,7 @@ import models.eeda.Leads;
 import models.eeda.Order;
 import models.eeda.OrderItem;
 import models.eeda.ServiceProvider;
+import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.BillingOrder;
 import models.yh.arap.BillingOrderItem;
 import models.yh.arap.ReimbursementOrder;
@@ -410,6 +411,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_misc_charge_order", ArapMiscChargeOrder.class);
         arp.addMapping("arap_misc_charge_order_item", ArapMiscChargeOrderItem.class);
         arp.addMapping("arap_account_audit_log", ArapAccountAuditLog.class);
+        arp.addMapping("arap_account_audit_summary", ArapAccountAuditSummary.class);
         // 应付对账单
         arp.addMapping("arap_cost_order", ArapCostOrder.class);
         arp.addMapping("arap_cost_item", ArapCostItem.class);
