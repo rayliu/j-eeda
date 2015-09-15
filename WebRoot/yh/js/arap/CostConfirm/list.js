@@ -26,6 +26,8 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.FKSQ_NO != null){
             			return obj.aData.FKSQ_NO;
+            		}else if(obj.aData.REIMBURSEMENT_NO != null){
+            			return obj.aData.REIMBURSEMENT_NO;
             		}else{
             			return obj.aData.MISC_NO;
             		}
