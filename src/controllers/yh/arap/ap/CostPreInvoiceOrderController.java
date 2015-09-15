@@ -110,6 +110,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String status = getPara("status");
+		String selectOrderNO = getPara("selectOrderNO");
 
 		String sqlTotal = "";
 		String sql = "select DISTINCT "
@@ -145,7 +146,8 @@ public class CostPreInvoiceOrderController extends Controller {
 					+ "' and '" + endTime + "' "
 					+ "and ifnull(c.company_name, '') like '%"+customer+"%'"
 					+ "and ifnull(c.abbr, '') like '%"+sp+"%'"
-					+ "and ifnull(aaia.status, '') like '%"+status+"%'" ;
+					+ "and ifnull(aaia.status, '') like '%"+status+"%'"
+			        + "and ifnull(aaia.order_no, '') LIKE '%"+selectOrderNO+"%'" ;
 
 		}
 

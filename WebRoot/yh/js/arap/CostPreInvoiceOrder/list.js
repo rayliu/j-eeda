@@ -268,16 +268,17 @@ $(document).ready(function() {
       var beginTime = $("#kaishi_filter").val();
       var endTime = $("#jieshu_filter").val();
       var status = $("#status_filter").val();
-      
+      var selectOrderNO = $("#orderNo").val(); 
       datatable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/list?orderNo="+orderNo       
 												      +"&customer="+customer
 												      +"&sp="+sp
 												      +"&beginTime="+beginTime
 												      +"&endTime="+endTime
-												      +"&status="+status;
+												      +"&status="+status
+												      +"&selectOrderNO="+selectOrderNO;
       datatable.fnDraw();
    	};
-   	$("#sp_filter,#customer_filter2,#select_orderNo_filter,#kaishi_filter,#jieshu_filter,#status_filter").on('keyup input',function(){
+   	$("#sp_filter,#orderNo,#customer_filter2,#select_orderNo_filter,#kaishi_filter,#jieshu_filter,#status_filter").on('keyup input',function(){
    		refreshList();
    	});
   
