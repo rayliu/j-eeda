@@ -22,7 +22,7 @@ $(document).ready(function() {
             	"fnRender":function(obj){
             		return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             	}},
-            {"mDataProp":"STATUS",
+            {"mDataProp":"STATUS","sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -39,10 +39,9 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"C_STAMP"},
-            {"mDataProp":"ONAME", "sWidth":"150px"},
+            {"mDataProp":"ONAME"},
             {"mDataProp":"CNAME",
-            	'sClass':"cname",
-            	"sWidth":"150px"},
+            	'sClass':"cname"},
             {"mDataProp":"COMPANY_NAME"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
