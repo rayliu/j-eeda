@@ -100,35 +100,35 @@ WHERE aciao.order_no = $P{order_no}]]>
 				<reportElement x="18" y="53" width="506" height="1" uuid="02de44d3-7e94-497e-b387-1f39c8ee3330"/>
 			</line>
 			<staticText>
-				<reportElement x="364" y="17" width="67" height="17" uuid="5cb6366f-8f56-4c96-8c96-f726baa7adc3"/>
+				<reportElement x="348" y="17" width="67" height="17" uuid="5cb6366f-8f56-4c96-8c96-f726baa7adc3"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[打印日期：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="364" y="34" width="67" height="17" uuid="a125a084-519e-4003-8efb-d8cdf4ca865c"/>
+				<reportElement x="348" y="34" width="67" height="17" uuid="a125a084-519e-4003-8efb-d8cdf4ca865c"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[打印次数：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="431" y="0" width="94" height="17" uuid="99a7d58e-6db8-4568-92ef-cdc4fcf2d802"/>
+				<reportElement x="415" y="0" width="140" height="17" uuid="99a7d58e-6db8-4568-92ef-cdc4fcf2d802"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{order_no}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd" isBlankWhenNull="false">
-				<reportElement x="431" y="17" width="94" height="17" uuid="f0d178b7-8b1f-4081-919f-89a29cf2ce93"/>
+				<reportElement x="415" y="17" width="140" height="17" uuid="f0d178b7-8b1f-4081-919f-89a29cf2ce93"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[java.util.Calendar.getInstance().getTime()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="431" y="34" width="94" height="17" uuid="9f30dc5c-1875-4418-86da-e670ccff36d2"/>
+				<reportElement x="415" y="34" width="140" height="17" uuid="9f30dc5c-1875-4418-86da-e670ccff36d2"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -149,7 +149,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 				<textFieldExpression><![CDATA["广州源鸿物流有限公司"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="364" y="0" width="67" height="17" uuid="bd0f76e8-ee73-4afe-ba09-bf8a072d13ed"/>
+				<reportElement x="348" y="0" width="67" height="17" uuid="bd0f76e8-ee73-4afe-ba09-bf8a072d13ed"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
