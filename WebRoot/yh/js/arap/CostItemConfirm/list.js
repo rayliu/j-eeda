@@ -73,7 +73,7 @@ $(document).ready(function() {
                 			return subtimeStamp;
                 		}
                 	}},
-                {"mDataProp":"SERIAL_NO", "sWidth":"100px", "bSortable": false},
+                {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
             	{"mDataProp":"ORDER_NO", "sWidth":"140px", "bSortable": false, 
                     "fnRender": function(obj) {
                     	var str = "";

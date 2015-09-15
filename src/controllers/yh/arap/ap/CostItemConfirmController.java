@@ -72,8 +72,15 @@ public class CostItemConfirmController extends Controller {
         String route_from =getPara("route_from");
         String route_to=getPara("route_to");
         String customer_name = getPara("customer_name");
-        
-        
+        String orderCol=getPara("iSortCol_0");
+        if(orderCol=="9"||orderCol.equals("9")){
+        	orderCol="depart_time ";
+        }
+        if(orderCol=="11"||orderCol.equals("11")){
+        	orderCol="serial_no ";
+        }if(orderCol=="0"||orderCol.equals("0")){
+        	orderCol="depart_time ";
+        }
         String sqlTotal = "";
         String sql = "select cast(planning_time as CHAR) planning_time1, A.* from (select distinct dor.id,"
         		+ " dor.order_no order_no,"
@@ -387,7 +394,7 @@ public class CostItemConfirmController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         
         long sTime = Calendar.getInstance().getTimeInMillis();
-        List<Record> BillingOrders = Db.find(sql + condition + " order by depart_time "+ orderBy + sLimit);
+        List<Record> BillingOrders = Db.find(sql + condition + " order by "+orderCol + orderBy + sLimit);
         long eTime = Calendar.getInstance().getTimeInMillis();
         logger.debug("time cost:" + (eTime-sTime));
         
