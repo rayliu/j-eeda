@@ -71,8 +71,8 @@ $(document).ready(function() {
             		 }
             	 }
             },  
-            {"mDataProp":"CNAME", "sWidth":"150px"},   
-            {"mDataProp":"PAYEE_NAME", "sWidth":"100px"},
+            {"mDataProp":"CNAME", "sWidth":"200px"},   
+            {"mDataProp":"PAYEE_NAME", "sWidth":"170px"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px"},
             {"mDataProp":"PAYMENT_METHOD", "sWidth":"80px",
                 "fnRender": function(obj) {
@@ -193,10 +193,10 @@ $(document).ready(function() {
             		 }
             	 }
             },  
-            {"mDataProp":"CNAME",  "sWidth":"120px",
+            {"mDataProp":"CNAME",  "sWidth":"200px",
             	"sClass": "cname"
             },  
-            {"mDataProp":"PAYEE_NAME", "sWidth":"100px",
+            {"mDataProp":"PAYEE_NAME", "sWidth":"170px",
             	"sClass": "payee_name"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px" },
             {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",

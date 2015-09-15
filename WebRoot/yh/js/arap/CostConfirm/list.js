@@ -32,7 +32,7 @@ $(document).ready(function() {
             	}
             }, 
             {"mDataProp":"STATUS", "sWidth": "60px"},//状态
-            {"mDataProp":"SP_NAME", "sWidth": "100px"},//供应商
+            {"mDataProp":"SP_NAME", "sWidth": "180px"},//供应商
             {"mDataProp":"RECEIVE_PERSON","sWidth": "80px"},//收款人
             {"mDataProp":"PAY_AMOUNT","sWidth": "60px"},//付款金额  
             {"mDataProp":"ALREADY_PAY","sWidth": "60px"},//已付金额
