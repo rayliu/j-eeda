@@ -109,6 +109,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String orderNo = getPara("orderNo");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String status = getPara("status");
 
 		String sqlTotal = "";
 		String sql = "select DISTINCT "
@@ -143,7 +144,8 @@ public class CostPreInvoiceOrderController extends Controller {
 					+ "%' " + " and aaia.create_stamp between '" + beginTime
 					+ "' and '" + endTime + "' "
 					+ "and ifnull(c.company_name, '') like '%"+customer+"%'"
-					+ "and ifnull(c.abbr, '') like '%"+sp+"%'" ;
+					+ "and ifnull(c.abbr, '') like '%"+sp+"%'"
+					+ "and ifnull(aaia.status, '') like '%"+status+"%'" ;
 
 		}
 

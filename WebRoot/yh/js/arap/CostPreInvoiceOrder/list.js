@@ -19,7 +19,7 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
         			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-            {"mDataProp":"STATUS",
+            {"mDataProp":"STATUS", "sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -267,15 +267,17 @@ $(document).ready(function() {
       var orderNo = $("#select_orderNo_filter").val();
       var beginTime = $("#kaishi_filter").val();
       var endTime = $("#jieshu_filter").val();
+      var status = $("#status_filter").val();
       
       datatable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/list?orderNo="+orderNo       
 												      +"&customer="+customer
 												      +"&sp="+sp
 												      +"&beginTime="+beginTime
-												      +"&endTime="+endTime;
+												      +"&endTime="+endTime
+												      +"&status="+status;
       datatable.fnDraw();
    	};
-   	$("#sp_filter,#customer_filter2,#select_orderNo_filter,#kaishi_filter,#jieshu_filter").on('keyup',function(){
+   	$("#sp_filter,#customer_filter2,#select_orderNo_filter,#kaishi_filter,#jieshu_filter,#status_filter").on('keyup input',function(){
    		refreshList();
    	});
   

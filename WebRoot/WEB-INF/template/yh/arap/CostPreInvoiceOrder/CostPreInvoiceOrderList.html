@@ -216,7 +216,6 @@
 	                                        <label class="search-label">对账单号</label>
 	                                        <input type="text" class="form-control search-control orderNo_filter" id="select_orderNo_filter" value="">
 	                                    </div>
-	                                
 	                                </div>
 	                                <!-- end of col-lg-6-->
 	                            </div><!-- end of row-->
@@ -244,11 +243,33 @@
 	                                        </span>
 	                                    </div>
 	                                </div>
+	                                <!-- <div class="col-lg-4">
+	                                	<div class="form-group">
+	                                        <label class="search-label">申请单号</label>
+	                                        <input type="text" class="form-control search-control invoiceOrderNo_filter" id="invoiceOrderNo_filter" value="">
+	                                    </div>
+	                                </div> -->
+	                                <div class="col-lg-4">
+		                                <div class="form-group">
+	                                            <label class="search-label">单据状态</label>
+	                                            <select id="status_filter" class="form-control search-control status_filter">
+	                                                <option value=""></option>
+	                                                <option value="新建">新建</option>
+	                                                <option value="已审批">已审批</option>
+	                                                <option value="已审核">已审核</option>                                                
+	                                                <option value="已复核">已复核</option>                                                
+	                                                <option value="已付款确认">已付款确认</option>                                               
+	                                            </select>
+		                                </div> 
+                                 </div>
                                     <!-- end of col-lg-6-->
                                 </div><!-- end of row-->
+                                
+                                	
+                               
                             </form>
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="costPreInvoiceOrderList-table" style="width: 2000px;">
+                                <table class="table table-striped table-bordered table-hover" id="costPreInvoiceOrderList-table" style="width: 2500px;">
                                     <thead>
                                         <tr>
                                             <th>申请单号</th>
