@@ -3,7 +3,6 @@ package controllers.yh.arap.ap;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,15 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import models.Account;
-import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
-import models.DepartOrder;
 import models.Location;
-import models.ParentOfficeModel;
 import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ArapMiscCostOrderItem;
+import models.yh.arap.prePayOrder.ArapPrePayOrder;
+import models.yh.arap.prePayOrder.ArapPrePayOrderItem;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -34,11 +32,11 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.LocationUtil;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -54,62 +52,42 @@ public class PrePayOrderController extends Controller {
 
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PrePayOrder_LIST})
     public void list() {
-    	String sp = getPara("sp");
-        String customer = getPara("companyName");
         String spName = getPara("spName");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
         String orderNo = getPara("orderNo");
-        String status = getPara("status");
+//        String status = getPara("status");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-
-        String sqlTotal = "select count(1) total from arap_misc_cost_order amco"
-        		+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
-        		+ " left join party p1 on amco.customer_id = p1.id"
-				+ " left join party p2 on amco.sp_id = p2.id"
-				+ " left join contact c1 on p1.contact_id = c1.id"
-				+ " left join contact c2 on p2.contact_id = c2.id";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
         
-        String sql = "select amco.*,aco.order_no cost_order_no from arap_misc_cost_order amco"
-					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id "
-					+ " left join party p1 on amco.customer_id = p1.id"
-					+ " left join party p2 on amco.sp_id = p2.id"
-					+ " left join contact c1 on p1.contact_id = c1.id"
-					+ " left join contact c2 on p2.contact_id = c2.id";
+        String sql = "select appo.*, c.abbr as sp_name, ifnull(ul.c_name, ul.user_name) creator_name from arap_pre_pay_order appo"
+        		+ " left join user_login ul on appo.creator = ul.id"
+				+ " left join party p on appo.sp_id = p.id"
+				+ " left join contact c on p.contact_id = c.id";
         logger.debug("sql:" + sql);
         String condition = "";
-        //TODO 始发地和目的地 客户没有做
-        if(sp != null || customer != null || spName != null
-        		|| status != null || beginTime != null || endTime != null|| orderNo != null){
+        if(spName != null || beginTime != null || endTime != null|| orderNo != null){
         	if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1970-1-1";
 			}
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
-			if (status!=null && "业务收款".equals(status)) {
-				status = "biz";
-			}
-			if (status!=null && "非业务收款".equals(status)) {
-				status = "non_biz";
-			}
-			condition = " where "
-					+ " ifnull(c2.abbr,'') like '%" + spName + "%' "
-					+ " and ifnull(c1.abbr,'') like '%" + customer + "%' "
-					+ " and amco.order_no like '%" + orderNo + "%' "
-					+ " and amco.create_stamp between '" + beginTime + "' and '" + endTime+ " 23:59:59' ";
-			if(status!=null && status.length()>0){
-				condition  += " and amco.type = '" + status + "' ";
-			}
 			
+			condition = " where "
+					+ " ifnull(c.abbr,'') like '%" + spName + "%' "
+					+ " and appo.order_no like '%" + orderNo + "%' "
+					+ " and appo.create_date between '" + beginTime + "' and '" + endTime+ " 23:59:59' ";
         }
-        List<Record> BillingOrders = Db.find(sql+ condition + " order by amco.create_stamp desc " +sLimit);
+
+        String sqlTotal = "select count(1) total from ("+sql+ condition+") A";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        
+        List<Record> BillingOrders = Db.find(sql+ condition + " order by appo.create_date desc " +sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
@@ -228,124 +206,96 @@ public class PrePayOrderController extends Controller {
     
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PrePayOrder_CREATE,PermissionConstant.PERMSSION_PrePayOrder_UPDATE},logical=Logical.OR)
+    @Before(Tx.class)
 	public void save() throws Exception {		
 		String jsonStr=getPara("params");
     	logger.debug(jsonStr);
     	 Gson gson = new Gson();  
          Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
          
-        ArapMiscCostOrder arapMiscCostOrder = new ArapMiscCostOrder();
-		String costMiscOrderId = (String) dto.get("costMiscOrderId");
-		String biz_type = (String) dto.get("biz_type");
-		String customerId = (String) dto.get("customer_id");
+        ArapPrePayOrder arapPrePayOrder = new ArapPrePayOrder();
+		String orderId = (String) dto.get("orderId");
 		String spId = (String) dto.get("sp_id");
-		String routeFrom = (String) dto.get("route_from");
-		String routeTo = (String) dto.get("route_to");
-		String others_name = (String) dto.get("others_name");
 		String ref_no = (String) dto.get("ref_no");
 		String remark = (String) dto.get("remark");
 		Double amount = (Double) dto.get("amount");
-		String cost_to_type = (String) dto.get("cost_to_type");
 		UserLogin user = LoginUserController.getLoginUser(this);
 		
-		String old_biz_type = "";
-		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {
-			//TODO: 如果已经应付确认过，就不能修改了
-			arapMiscCostOrder = ArapMiscCostOrder.dao.findById(costMiscOrderId);
-			old_biz_type = arapMiscCostOrder.getStr("type");
-			
-			if (!"".equals(customerId) && customerId != null) {
-				arapMiscCostOrder.set("customer_id",customerId);
-			}
-			if (spId != null && !"".equals(spId)) {
-				arapMiscCostOrder.set("sp_id",spId);
-			}
-			arapMiscCostOrder.set("others_name",others_name);
-			arapMiscCostOrder.set("ref_no",ref_no);
-			arapMiscCostOrder.set("type", biz_type);
-			arapMiscCostOrder.set("cost_to_type", cost_to_type);
-			arapMiscCostOrder.set("route_from", routeFrom);
-			arapMiscCostOrder.set("route_to", routeTo);
-			arapMiscCostOrder.set("remark", remark);
-			if (amount != null && !"".equals(amount)) {
-				arapMiscCostOrder.set("total_amount", amount);
-			}
-			
-			arapMiscCostOrder.update();
-		} else {
-			arapMiscCostOrder = new ArapMiscCostOrder();
-			arapMiscCostOrder.set("status", "新建");
-			if (!"".equals(customerId) && customerId != null) {
-				arapMiscCostOrder.set("customer_id",customerId);
-			}
-			if (spId != null && !"".equals(spId)) {
-				arapMiscCostOrder.set("sp_id",spId);
-			}
-			arapMiscCostOrder.set("others_name",others_name);
-			arapMiscCostOrder.set("ref_no",ref_no);
-			arapMiscCostOrder.set("type", biz_type);
-			arapMiscCostOrder.set("cost_to_type", cost_to_type);
-			arapMiscCostOrder.set("route_from", routeFrom);
-			arapMiscCostOrder.set("route_to", routeTo);
-			arapMiscCostOrder.set("remark", remark);
-			arapMiscCostOrder.set("audit_status", "新建");
-			arapMiscCostOrder.set("office_id", user.getLong("office_id"));
-			arapMiscCostOrder.set("create_by", user.getLong("id"));
-			arapMiscCostOrder.set("create_stamp", new Date());
-			arapMiscCostOrder.set("order_no", OrderNoGenerator.getNextOrderNo("SGFK"));
-			
-			if (amount != null && !"".equals(amount)) {
-				arapMiscCostOrder.set("total_amount", amount);
-			}	
-			arapMiscCostOrder.save();
-		}
 		
-		Db.update(
-				"delete from arap_misc_cost_order_item where misc_order_id = ?",
-				costMiscOrderId);
+		if (!"".equals(orderId) && orderId != null) {
+			arapPrePayOrder = ArapPrePayOrder.dao.findById(orderId);
+			
+			if (spId != null && !"".equals(spId)) {
+				arapPrePayOrder.set("sp_id",spId);
+			}
+			arapPrePayOrder.set("ref_no",ref_no);
+			arapPrePayOrder.set("remark", remark);
+			if (amount != null && !"".equals(amount)) {
+				arapPrePayOrder.set("total_amount", amount);
+			}
+			
+			arapPrePayOrder.update();
+		} else {
+			arapPrePayOrder = new ArapPrePayOrder();
+			arapPrePayOrder.set("status", "新建");
+			if (spId != null && !"".equals(spId)) {
+				arapPrePayOrder.set("sp_id",spId);
+			}
+			
+			arapPrePayOrder.set("ref_no",ref_no);
+			arapPrePayOrder.set("remark", remark);
+			arapPrePayOrder.set("office_id", user.getLong("office_id"));
+			arapPrePayOrder.set("creator", user.getLong("id"));
+			arapPrePayOrder.set("create_date", new Date());
+			arapPrePayOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YF"));
+			
+			if (amount != null && !"".equals(amount)) {
+				arapPrePayOrder.set("total_amount", amount);
+			}	
+			arapPrePayOrder.save();
+		}
 		
 		List<Map> items =  (List<Map>) dto.get("items");
 		for(Map item : items){
-			ArapMiscCostOrderItem arapMiscCostOrderItem = new ArapMiscCostOrderItem();
-			arapMiscCostOrderItem.set("status", "新建");
-			arapMiscCostOrderItem.set("fin_item_id", item.get("NAME"));
-			arapMiscCostOrderItem.set("amount", item.get("AMOUNT"));
-			arapMiscCostOrderItem.set("creator", user.getLong("id"));
-			arapMiscCostOrderItem.set("create_date", new Date());
-			arapMiscCostOrderItem.set("customer_order_no", item.get("CUSTOMER_ORDER_NO"));
-			arapMiscCostOrderItem.set("item_desc", item.get("ITEM_DESC"));
-			arapMiscCostOrderItem.set("misc_order_id", arapMiscCostOrder.getLong("id"));
-			arapMiscCostOrderItem.save();
+			String itemId = (String) item.get("ID");
+			String action = (String) item.get("ACTION");
+			if("".equals(itemId)){
+				ArapPrePayOrderItem arapPrePayOrderItem = new ArapPrePayOrderItem();
+				arapPrePayOrderItem.set("order_id", arapPrePayOrder.getLong("id"));
+				arapPrePayOrderItem.set("status", "新建");
+				arapPrePayOrderItem.set("fin_item_id", item.get("FIN_ITEM_ID"));
+				arapPrePayOrderItem.set("amount", item.get("AMOUNT"));
+				arapPrePayOrderItem.set("item_desc", item.get("ITEM_DESC"));
+				arapPrePayOrderItem.save();
+			}else{
+				ArapPrePayOrderItem arapPrePayOrderItem = ArapPrePayOrderItem.dao.findById(itemId);
+				if("DELETE".equals(action)){
+					arapPrePayOrderItem.delete();
+				}else{
+					arapPrePayOrderItem.set("fin_item_id", item.get("FIN_ITEM_ID"));
+					arapPrePayOrderItem.set("amount", item.get("AMOUNT"));
+					arapPrePayOrderItem.set("item_desc", item.get("ITEM_DESC"));
+					arapPrePayOrderItem.update();
+				}
+			}
 		}
 		
-		ArapMiscCostOrder destOrder = null;
+		ArapPrePayOrder destOrder = null;
 		
-		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {// update
-			// 1. 是从biz->non_biz, 新生成对应往来单
-			if ("biz".equals(old_biz_type) && "non_biz".equals(biz_type)) {
-				destOrder = buildNewPrePayOrder(arapMiscCostOrder, user);
-			} else if ("non_biz".equals(old_biz_type)
-					&& "non_biz".equals(biz_type)) {
-				// non_biz 不变，update 对应的信息，判断对应往来单状态是否是“新建”，
-				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
-				deleteRefOrder(costMiscOrderId);
-				destOrder = buildNewPrePayOrder(arapMiscCostOrder, user);
-			} else if ("non_biz".equals(old_biz_type) && "biz".equals(biz_type)) {
-				// non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
-				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
-				deleteRefOrder(costMiscOrderId);
-			}
+		if (!"".equals(orderId) && orderId != null) {// update
+			// 是就删除整张单，不是则提示应为往来单已复核，不能改变
+//			deleteRefOrder(costMiscOrderId);
+//			destOrder = buildNewPrePayOrder(arapPrePayOrder, user);
 		} else {// new
-			if("non_biz".equals(biz_type))
-				destOrder = buildNewPrePayOrder(arapMiscCostOrder, user);
+//			destOrder = buildNewPrePayOrder(arapPrePayOrder, user);
 		}
 
 		if(destOrder!=null){
-			arapMiscCostOrder.set("ref_order_no", destOrder.getStr("order_no"));
-			arapMiscCostOrder.set("ref_order_id", destOrder.getLong("id"));
-			arapMiscCostOrder.update();
+			arapPrePayOrder.set("ref_order_no", destOrder.getStr("order_no"));
+			arapPrePayOrder.set("ref_order_id", destOrder.getLong("id"));
+			arapPrePayOrder.update();
 		}
-		renderJson(arapMiscCostOrder);
+		renderJson(arapPrePayOrder);
 	}
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PrePayOrder_UPDATE})
@@ -355,43 +305,27 @@ public class PrePayOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("receivableItemList", receivableItemList);
 		
-		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
-		Long spId = arapMiscCostOrder.get("sp_id");
+		ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+		Long spId = arapPrePayOrder.get("sp_id");
 		if (!"".equals(spId) && spId != null) {
-			Party party = Party.dao.findById(spId);
-			setAttr("spParty", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-			setAttr("spContact", contact); 
+			Record rec = Db.findFirst("select c.company_name from party p, contact c where"
+					+ " p.contact_id = c.id and p.id=? ", spId); 
+			
+			setAttr("sp_name", rec.getStr("company_name")); 
 		}
 		
-		Long customerId = arapMiscCostOrder.get("customer_id");
-		if (!"".equals(customerId) && customerId != null) {
-			Party party = Party.dao.findById(customerId);
-			setAttr("customerparty", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-			setAttr("customerContact", contact); 
-		}
+			
+		UserLogin userLogin = UserLogin.dao.findById(arapPrePayOrder.get("creator"));
+		setAttr("creator_name", userLogin.getStr("c_name"));
 		
-		String routeFrom = arapMiscCostOrder.get("route_from");
-		Location locationFrom = LocationUtil.getLocation(routeFrom);
-		setAttr("locationFrom", locationFrom);
-		
-		String routeTo = arapMiscCostOrder.get("route_to");
-		Location locationTo = LocationUtil.getLocation(routeTo);
-		setAttr("locationTo", locationTo);
-				
-		UserLogin userLogin = UserLogin.dao.findById(arapMiscCostOrder.get("create_by"));
-		setAttr("userLogin", userLogin);
-		setAttr("arapMiscCostOrder", arapMiscCostOrder);
+		setAttr("arapPrePayOrder", arapPrePayOrder);
 		
 		
 		// 获取当前页的数据
-		List<Record> itemList = Db
-				.find("select amcoi.*,"
-						+ "fi.name name "
-					+ " from arap_misc_cost_order_item amcoi"
-					+ " left join fin_item fi on amcoi.fin_item_id = fi.id"
-					+ " where amcoi.misc_order_id = '"+ id +"' ");
+		List<Record> itemList = Db.find("select appoi.*, fi.name name "
+					+ " from arap_pre_pay_order_item appoi"
+					+ " left join fin_item fi on appoi.fin_item_id = fi.id"
+					+ " where appoi.order_id = '"+ id +"' ");
 		setAttr("itemList", itemList);
 		render("/yh/arap/PrePayOrder/PrePayOrderEdit.html");
 	}

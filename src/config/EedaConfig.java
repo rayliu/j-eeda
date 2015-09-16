@@ -74,6 +74,8 @@ import models.yh.arap.BillingOrder;
 import models.yh.arap.BillingOrderItem;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.ReimbursementOrderFinItem;
+import models.yh.arap.prePayOrder.ArapPrePayOrder;
+import models.yh.arap.prePayOrder.ArapPrePayOrderItem;
 import models.yh.carmanage.CarSummaryDetail;
 import models.yh.carmanage.CarSummaryDetailOilFee;
 import models.yh.carmanage.CarSummaryDetailOtherFee;
@@ -430,6 +432,9 @@ public class EedaConfig extends JFinalConfig {
         //应付报销单
         arp.addMapping("reimbursement_order", ReimbursementOrder.class);
         arp.addMapping("reimbursement_order_fin_item", ReimbursementOrderFinItem.class);
+        //预付单
+        arp.addMapping("arap_pre_pay_order", ArapPrePayOrder.class);
+        arp.addMapping("arap_pre_pay_order_item", ArapPrePayOrderItem.class);
         // yh mapping
         //行车单
         arp.addMapping("car_summary_order", CarSummaryOrder.class);

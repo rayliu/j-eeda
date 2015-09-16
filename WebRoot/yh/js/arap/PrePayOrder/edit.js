@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	if(order_no){
 		document.title = order_no +' | '+document.title;
+	}else{
+		document.title = "创建预付单" +' | '+document.title;
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
@@ -8,7 +10,7 @@ $(document).ready(function() {
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//提交前，校验数据
-        if(!$("#costMiscOrderForm").valid()){
+        if(!$("#orderForm").valid()){
 	       	return;
         }
         
@@ -20,12 +22,17 @@ $(document).ready(function() {
         		continue;
 
         	var row = tableRows[index];
+        	var id = $(row).attr('id');
+        	if(!id){
+        		id='';
+        	}
+
         	var item={
-        		CUSTOMER_ORDER_NO: $(row.children[0]).find('input').val(), 
-			 	ITEM_DESC: $(row.children[1]).find('input').val(),
-			 	NAME: $(row.children[2]).find('select').val(),
-			 	AMOUNT: $(row.children[3]).find('input').val(),
-			 	STATUS: '新建'
+        		ID: id,
+			 	ITEM_DESC: $(row.children[0]).find('input').val(),
+			 	FIN_ITEM_ID: $(row.children[1]).find('select').val(),
+			 	AMOUNT: $(row.children[2]).find('input').val(),
+			 	ACTION: 'create'
         	};
         	itemsArray.push(item);
         }
@@ -33,42 +40,37 @@ $(document).ready(function() {
 		var amount = 0.00;
         for(var i=0; i<itemsArray.length; i++){
         	amount+=Number(itemsArray[i].AMOUNT);
-        	$('#totalAmountSpan').html(amount);
         }
+        $('#totalAmountSpan').html(amount);
 
         var order={
-        	costMiscOrderId: $('#costMiscOrderId').val(),
-        	biz_type: $('input[name="biz_type"]:checked').val(),
-        	cost_to_type: $('input[name="cost_to_type"]:checked').val(),
-        	customer_id: $('#customer_id').val(),
+        	orderId: $('#orderId').val(),
         	sp_id: $('#sp_id').val(),
-        	route_from: $('#locationForm').val(),
-        	route_to: $('#locationTo').val(),
-        	others_name: $('#others_name').val(),
         	ref_no: $('#ref_no').val(),
         	remark: $('#remark').val(),
         	amount: amount,
         	items: itemsArray
         };
-        //console.log(order);
-        
+        console.log(order);
         
 		//异步向后台提交数据
-		$.post('/costMiscOrder/save',{params:JSON.stringify(order)}, function(data){
+		$.post('/costPrePayOrder/save',{params:JSON.stringify(order)}, function(data){
 			if(data.ID>0){
+				$("#orderNo").html(data.ORDER_NO);
 				$("#ref_order_no").text(data.REF_ORDER_NO);
-				$("#arapMiscCostOrderNo").html(data.ORDER_NO);
 				$("#create_time").html(data.CREATE_STAMP);
 				$("#costMiscOrderId").val(data.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				$("#saveCostMiscOrderBtn").attr("disabled",false);
+				$("#saveOrderBtn").attr("disabled",false);
 				contactUrl("edit?id", data.ID);
 
 				//callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
-		},'json');
+		},'json').fail(function(){
+			$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+		});
 	};
    
 	/*--------------------------------------------------------------------*/
@@ -85,8 +87,8 @@ $(document).ready(function() {
 	/*--------------------------------------------------------------------*/
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
- 	$("#saveCostMiscOrderBtn").click(function(e){
- 		$("#saveCostMiscOrderBtn").attr("disabled", true);
+ 	$("#saveOrderBtn").click(function(e){
+ 		$("#saveOrderBtn").attr("disabled", true);
  		saveCostMiscOrder(e);
 	});
 	
@@ -147,7 +149,7 @@ $(document).ready(function() {
 			        	return "<input type='text' name='amount' class='form-control search-control'>";
 			        }
 			}},
-			{"mDataProp":"CHANGE_AMOUNT"},
+			{"mDataProp":"CHANGE_AMOUNT","sWidth": "120px",},
 			{"mDataProp":"STATUS"},
 			{"mDataProp": null,
                 "fnRender": function(obj) {
@@ -220,7 +222,6 @@ $(document).ready(function() {
 		var provider = $(this).attr('partyId');
 		$('#sp_id').val(provider);
         $('#spList').hide();
-        savePartyInfo(provider,"SERVICE_PROVIDER");
     });
     
 });
@@ -242,8 +243,8 @@ function datetimepicker(data){
 
 //按钮控制
 var status = $("#status").val();
-if(status == '新建' || status == 'new'){
-	$("#saveCostMiscOrderBtn").attr("disabled",false);
+if(status == '' || status == '新建' || status == 'new'){
+	$("#saveOrderBtn").attr("disabled",false);
 }else{
-	$("#saveCostMiscOrderBtn").attr("disabled",true);
+	$("#saveOrderBtn").attr("disabled",true);
 }
