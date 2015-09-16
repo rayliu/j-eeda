@@ -15,7 +15,12 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/accountAuditLog/list",
-        "aoColumns": [   
+        "aoColumns": [
+            {"mDataProp":null, "sWidth":"20px",
+                "fnRender": function(obj) {
+                    return '<input type="checkbox"/>' ;
+                }
+            },
             {"mDataProp":"CREATE_DATE", "sWidth":"80px"},
             {"mDataProp":"SOURCE_ORDER"},
             {"mDataProp":"ORDER_NO"},
