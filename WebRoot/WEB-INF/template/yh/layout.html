@@ -335,9 +335,10 @@
                 	var costConfirmListPermission = map.CostItemConfirm_affirm;
                 	var costCheckListPermission = map.CostCheckOrder_list;
                 	var costPreInvoiceListPermission = map.CostPreInvoiceOrder_list;
+                	var costPrePayOrderListPermission = map.CostPrePayOrder_list;
                 	
-                	
-               		if(costConfirmListPermission != '' || costCheckListPermission != '' || costPreInvoiceListPermission != ''){
+               		if(costConfirmListPermission != '' || costCheckListPermission != '' || costPreInvoiceListPermission != ''
+                        || costPrePayOrderListPermission != ''){
                 %>
                     <li id="menu_cost">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应付管理<span class="fa arrow"></span></a>
@@ -356,13 +357,12 @@
 	                            <li>
 	                                <a href="/costPreInvoiceOrder">付款申请</a>
 	                            </li>
-	                            <li>
-	                                <a href="/costAdjustOrder">预付单</a>
-	                            </li>
 							<%}%>
-                            
-	                            
-	                        
+                            <% if(costPrePayOrderListPermission != ''){%>
+                                <li>
+                                    <a href="/costPrePayOrder">预付单</a>
+                                </li>
+                            <%}%>
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>

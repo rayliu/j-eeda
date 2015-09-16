@@ -289,9 +289,10 @@ public class EedaConfig extends JFinalConfig {
         //应付报销单
         me.add("/costReimbursement", controllers.yh.arap.ap.CostReimbursementOrder.class, contentPath);
         me.add("/reimbursementItem", controllers.yh.ReimbursementItemController.class, contentPath);
-        
+        //手工成本单
         me.add("/costMiscOrder", controllers.yh.arap.ap.CostMiscOrderController.class, contentPath);
-        
+        //预付单
+        me.add("/costPrePayOrder", controllers.yh.arap.ap.PrePayOrderController.class, contentPath);
         //audit log
         me.add("/accountAuditLog", controllers.yh.arap.AccountAuditLogController.class, contentPath);
         //insuranceOrder

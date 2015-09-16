@@ -110,6 +110,12 @@ public class PermissionConstant {
 	public static final String PERMSSION_CPO_APPROVAL = "CostPreInvoiceOrder.approval";
 	public static final String PERMSSION_CPO_CONFIRMATION = "CostPreInvoiceOrder.confirmation";
 	
+	/*预付单 PrePayOrder*/
+	public static final String PERMSSION_PrePayOrder_LIST = "PrePayOrder.list";
+	public static final String PERMSSION_PrePayOrder_CREATE = "PrePayOrder.create";
+	public static final String PERMSSION_PrePayOrder_UPDATE = "PrePayOrder.update";
+	public static final String PERMSSION_PrePayOrder_CANCEL = "PrePayOrder.cancel";
+	
 	
 	/*出纳日记账权限*/
 	public static final String PERMSSION_PCO_LIST = "PaymentCheckOrder.list";
