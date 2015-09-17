@@ -94,6 +94,11 @@ public class CostAcceptOrderController extends Controller {
         String endTime = getPara("endTime");
         String orderNo = getPara("orderNo");
         String status1 = getPara("status");
+        
+        String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+        
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
@@ -192,7 +197,12 @@ public class CostAcceptOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal+condition);
         logger.debug("total records:" + rec.getLong("total"));
 
-        List<Record> BillingOrders = Db.find(sql+condition+ " order by A.create_time desc " + sLimit);
+        String orderByStr = " order by A.create_time desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+        
+        List<Record> BillingOrders = Db.find(sql + condition + orderByStr + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
@@ -213,6 +223,12 @@ public class CostAcceptOrderController extends Controller {
         String endTime = getPara("endTime");
         String orderNo = getPara("orderNo");
         String status = getPara("status");
+        
+		
+		String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+        
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
@@ -304,7 +320,11 @@ public class CostAcceptOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal+condition);
         logger.debug("total records:" + rec.getLong("total"));
 
-        List<Record> BillingOrders = Db.find(sql+ condition + " order by A.create_time desc " +sLimit);
+        String orderByStr = " order by A.create_time desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+        List<Record> BillingOrders = Db.find(sql+ condition + orderByStr +sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

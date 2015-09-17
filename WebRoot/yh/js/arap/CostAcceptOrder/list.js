@@ -12,7 +12,7 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var uncostAcceptOrderTab = $('#uncostAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
+        "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
         "iDisplayLength": 100,
@@ -145,7 +145,7 @@ $(document).ready(function() {
     
     var costAcceptOrderTab = $('#costAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
+        "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
         "iDisplayLength": 100,
