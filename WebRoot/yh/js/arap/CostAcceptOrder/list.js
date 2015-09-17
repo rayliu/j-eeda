@@ -700,6 +700,7 @@ $(document).ready(function() {
         uncostAcceptOrderTab.fnSettings().sAjaxSource = "/costAcceptOrder/unlist?status="+status+"&beginTime="+beginTime+"&endTime="+endTime+"&orderNo="+orderNo+"&sp="+sp;
         uncostAcceptOrderTab.fnDraw(); 
     };
+    
     var costAcceptPayedOrderTab = $('#costAcceptPayed-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 

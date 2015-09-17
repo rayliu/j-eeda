@@ -517,7 +517,7 @@ public class CostConfirmController extends Controller {
 		renderJson(accounts);
 	}
 
-    // 付款确认单列表
+    // 付款复核， 已付款确认单列表
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void list() {
     	String orderNo = getPara("orderNo")==null?null:getPara("orderNo").trim();
@@ -536,14 +536,18 @@ public class CostConfirmController extends Controller {
 					+ getPara("iDisplayLength");
 		}
                
+		String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
         String fromSql = " from arap_cost_pay_confirm_order cpco "
         			+ " left join party p1 on cpco.sp_id = p1.id "
 					+ " left join contact c1 on p1.contact_id = c1.id"
 					+ " left join user_login ul on ul.id=cpco.creator";
         
-        String totalSql = "select count(1) total" + fromSql;
+       
         
-        String columsSql = "select cpco.*, "
+        String columsSql = "select * from(select cpco.*, "
         		+ " (select group_concat( DISTINCT cao.order_no SEPARATOR '<br/>' ) "
         		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
 				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) fksq_no,"
@@ -566,46 +570,54 @@ public class CostConfirmController extends Controller {
         		+ " c1.abbr sp_name,"
         		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
         		+ fromSql;
-        String orderBy= " order by cpco.create_date desc ";
         
-        String conditions=" where 1=1 ";
+        
+        String conditions=") A where 1=1 ";
+        
         if (StringUtils.isNotEmpty(orderNo)){
-        	conditions+=" and UPPER(cpco.order_no) like '%"+orderNo.toUpperCase()+"%'";
+        	conditions+=" and UPPER(order_no) like '%"+orderNo.toUpperCase()+"%'";
         }
 //        if (appOrderNo != null){
 //        	conditions+=" fksq_no like'%"+appOrderNo+"%'";
 //        }
         if (StringUtils.isNotEmpty(status)){
-        	conditions+=" and cpco.status = '"+status+"'";
+        	conditions+=" and status = '"+status+"'";
         }
         if (StringUtils.isNotEmpty(spName)){
-        	conditions+=" and c1.abbr like '%"+spName+"%'";
+        	conditions+=" and sp_name like '%"+spName+"%'";
         }
         if (StringUtils.isNotEmpty(receiverName)){
-        	conditions+=" and cpco.receive_person like '%"+receiverName+"%'";
+        	conditions+=" and receive_person like '%"+receiverName+"%'";
         }
         
         if (StringUtils.isNotEmpty(beginTime)){
-        	beginTime = " and cpco.create_date between'"+beginTime+"'";
+        	beginTime = " and create_date between'"+beginTime+"'";
         }else{
-        	beginTime =" and cpco.create_date between '1970-1-1'";
+        	beginTime =" and create_date between '1970-1-1'";
         }
         
         if (StringUtils.isNotEmpty(endTime)){
-        	endTime =" and '"+endTime+"'";
+        	endTime =" and '"+endTime+" 23:59:59'";
         }else{
-        	endTime =" and '3000-1-1'";
+        	endTime =" and '2037-12-31'";
         }
         conditions+=beginTime+endTime;
         
         
-        totalSql+=conditions;
+        
+        String orderByStr= " order by create_date desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+        columsSql+=conditions + orderByStr;
+        
+        String totalSql = "select count(1) total from ( " + columsSql + ") B";
+        
         Record recTotal = Db.findFirst(totalSql);
         Long total = recTotal.getLong("total");
         logger.debug("total records:" + total);
         
-        columsSql+=conditions + orderBy + sLimit;
-        List<Record> costPayConfirmOrders = Db.find(columsSql);
+        List<Record> costPayConfirmOrders = Db.find(columsSql + sLimit);
 
         Map orderListMap = new HashMap();
         orderListMap.put("sEcho", pageIndex);
