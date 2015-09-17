@@ -55,7 +55,8 @@ public class AccountAuditLogController extends Controller {
         	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + "'";
         	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
-        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id "
+        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id and aaal.source_order='应付开票申请单'"
+        			+ " left join transfer_accounts_order tao ON tao.id = aaal.invoice_order_id and aaal.source_order='转账单' "
         			+ " where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;        	
         }else{
         	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59'";
@@ -68,7 +69,8 @@ public class AccountAuditLogController extends Controller {
 				    + "  where d.id = dl.detail_id and dl.order_id=aaal.invoice_order_id )) "
 					+ ") order_no from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
-        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id "
+        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id and aaal.source_order='应付开票申请单'"
+        			+ " left join transfer_accounts_order tao ON tao.id = aaal.invoice_order_id and aaal.source_order='转账单' "
         			+ " left join fin_account fa on aaal.account_id = fa.id "
         			+ " where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;  
         }

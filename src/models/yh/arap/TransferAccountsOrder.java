@@ -2,8 +2,8 @@ package models.yh.arap;
 
 import com.jfinal.plugin.activerecord.Model;
 
-public class TransferAccounts extends Model<TransferAccounts> {
+public class TransferAccountsOrder extends Model<TransferAccountsOrder> {
 	public static final String ORDER_STATUS_NEW = "new";
 	public static final String ORDER_STATUS_CONFIRM = "confirm";
-	public static final TransferAccounts dao = new TransferAccounts();
+	public static final TransferAccountsOrder dao = new TransferAccountsOrder();
 }

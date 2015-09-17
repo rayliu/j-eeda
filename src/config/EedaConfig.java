@@ -75,7 +75,7 @@ import models.yh.arap.BillingOrder;
 import models.yh.arap.BillingOrderItem;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.ReimbursementOrderFinItem;
-import models.yh.arap.TransferAccounts;
+import models.yh.arap.TransferAccountsOrder;
 import models.yh.arap.prePayOrder.ArapPrePayOrder;
 import models.yh.arap.prePayOrder.ArapPrePayOrderItem;
 import models.yh.carmanage.CarSummaryDetail;
@@ -293,7 +293,7 @@ public class EedaConfig extends JFinalConfig {
         //应付报销单
         me.add("/costReimbursement", controllers.yh.arap.ap.CostReimbursementOrder.class, contentPath);
         //财务转账单
-        me.add("/TransferAccounts", controllers.yh.arap.ap.TransferAccountsController.class, contentPath);
+        me.add("/transferAccountsOrder", controllers.yh.arap.ap.TransferAccountsController.class, contentPath);
         me.add("/reimbursementItem", controllers.yh.ReimbursementItemController.class, contentPath);
         //手工成本单
         me.add("/costMiscOrder", controllers.yh.arap.ap.CostMiscOrderController.class, contentPath);
@@ -435,7 +435,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_cost_pay_confirm_order", ArapCostPayConfirmOrder.class);
         arp.addMapping("arap_cost_pay_confirm_order_log", ArapCostPayConfirmOrderLog.class);
         //财务转账单
-        arp.addMapping("TransferAccounts", TransferAccounts.class);
+        arp.addMapping("transfer_accounts_order", TransferAccountsOrder.class);
         //应付报销单
         arp.addMapping("reimbursement_order", ReimbursementOrder.class);
         arp.addMapping("reimbursement_order_fin_item", ReimbursementOrderFinItem.class);

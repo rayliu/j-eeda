@@ -12,7 +12,7 @@ import models.ArapAccountAuditLog;
 import models.ArapCostInvoiceApplication;
 import models.UserLogin;
 import models.yh.arap.ReimbursementOrder;
-import models.yh.arap.TransferAccounts;
+import models.yh.arap.TransferAccountsOrder;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -36,7 +36,7 @@ public class TransferAccountsController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_LIST})
 	public void index() {
-		render("/yh/arap/TransferAccounts/TransferAccountsList.html");
+		render("/yh/arap/TransferAccountsOrder/TransferAccountsOrderList.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 		public void create() {
@@ -44,7 +44,7 @@ public class TransferAccountsController extends Controller {
 	        setAttr("itemList", itemList);
 	        List<Record> parentItemList  = Db.find("select * from fin_item where type='报销费用' and parent_id =0 ");
 	        setAttr("parentItemList", parentItemList);
-			render("/yh/arap/TransferAccounts/TransferAccountsEdit.html");
+			render("/yh/arap/TransferAccountsOrder/TransferAccountsOrderEdit.html");
 		}
 	public void findUser(){
 		String userId = getPara("userId");
@@ -63,18 +63,18 @@ public class TransferAccountsController extends Controller {
         }
         String sqlTotal = " SELECT count(1) total"
         			+ " FROM"
-        			+ " transferaccounts tfa"
-        			+ " LEFT JOIN fin_account fain ON fain.id = tfa.bank_in"
-        			+ " LEFT JOIN fin_account faout ON faout.id = tfa.bank_out"
-        			+ " LEFT JOIN user_login ul ON ul.id = tfa.create_id";
-        String sql=" SELECT tfa.id id,tfa.order_no order_no,tfa.transfer_stamp transfer_stamp,tfa.`STATUS` transfer_status,"
-        			+ " tfa.transfer_method transfer_method,fain.account_no account_in,"
-        			+ " faout.account_no account_out,tfa.amount,ul.c_name c_name,tfa.remark remark"
+        			+ " transfer_accounts_order tao"
+        			+ " LEFT JOIN fin_account fain ON fain.id = tao.bank_in"
+        			+ " LEFT JOIN fin_account faout ON faout.id = tao.bank_out"
+        			+ " LEFT JOIN user_login ul ON ul.id = tao.create_id";
+        String sql=" SELECT tao.id id,tao.order_no order_no,tao.transfer_stamp transfer_stamp,tao.`STATUS` transfer_status,"
+        			+ " tao.transfer_method transfer_method,fain.account_no account_in,"
+        			+ " faout.account_no account_out,tao.amount,ul.c_name c_name,tao.remark remark"
         			+ " FROM"
-        			+ " transferaccounts tfa"
-        			+ " LEFT JOIN fin_account fain ON fain.id = tfa.bank_in"
-        			+ " LEFT JOIN fin_account faout ON faout.id = tfa.bank_out"
-        			+ " LEFT JOIN user_login ul ON ul.id = tfa.create_id";
+        			+ " transfer_accounts_order tao"
+        			+ " LEFT JOIN fin_account fain ON fain.id = tao.bank_in"
+        			+ " LEFT JOIN fin_account faout ON faout.id = tao.bank_out"
+        			+ " LEFT JOIN user_login ul ON ul.id = tao.create_id";
         String condition = "";
         
         /*if(orderNo != null || sp != null || no != null || beginTime != null
@@ -120,17 +120,26 @@ public class TransferAccountsController extends Controller {
 	}
 	public void edit(){
 			String id = getPara("id");
-			TransferAccounts transferaccounts = TransferAccounts.dao.findById(id);
+			TransferAccountsOrder transferaccounts = TransferAccountsOrder.dao.findById(id);
 			setAttr("transferaccounts", transferaccounts);
 			Account in_acc=Account.dao.findById(transferaccounts.get("bank_in"));
 			Account out_acc=Account.dao.findById(transferaccounts.get("bank_out"));
 			setAttr("in_acc",in_acc);
 			setAttr("out_acc",out_acc);
 			//创建人
-			UserLogin create = UserLogin.dao
+			if(!"".equals(transferaccounts.get("create_id")) &&transferaccounts.get("create_id")!=null){
+			UserLogin create1 = UserLogin.dao
 					.findFirst("select * from user_login where id='" + transferaccounts.get("create_id") + "'");
-			setAttr("createName", create.get("c_name"));
-		render("/yh/arap/TransferAccounts/TransferAccountsEdit.html");
+			setAttr("createName", create1.get("c_name"));
+		   }
+			if(!"".equals(transferaccounts.get("confirm_id")) &&transferaccounts.get("confirm_id")!=null){
+				UserLogin create1 = UserLogin.dao
+						.findFirst("select * from user_login where id='" + transferaccounts.get("confirm_id") + "'");
+				setAttr("confirmName", create1.get("c_name"));
+				setAttr("confirmStamp", transferaccounts.get("confirm_stamp"));
+			}
+			
+		render("/yh/arap/TransferAccountsOrder/TransferAccountsOrderEdit.html");
 	}
 		@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 		public void getFinAccount() {
@@ -144,15 +153,29 @@ public class TransferAccountsController extends Controller {
 			String out_filter =getPara("out_filter");
 			String amount =getPara("amount");
 			String remark =getPara("remark");
-			TransferAccounts transferaccounts =TransferAccounts.dao.findById(transferOrderId);
-			transferaccounts.set("STATUS","已确认");
 			String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name + "'");
+			TransferAccountsOrder transferaccounts =TransferAccountsOrder.dao.findById(transferOrderId);
+			if(!"".equals(transferOrderId) && transferOrderId != null){
+			    transferaccounts =TransferAccountsOrder.dao.findById(transferOrderId);
+			    transferaccounts.set("STATUS","已确认");
+				transferaccounts.set("confirm_id",users.get(0).get("id"));
+				transferaccounts.set("confirm_stamp",new Date());
+				transferaccounts.update();
+			}
+			
 			//更新账户金额
 			if(!"".equals(in_filter) && in_filter != null){
 				Account account= Account.dao.findById(in_filter);
-				double account_aounmt =account.getDouble("amount");
+				double account_aounmt=0.0;
+				if(account.getDouble("amount")!=null){
+					 account_aounmt =account.getDouble("amount");
+				}
+				else{
+					account_aounmt=0;
+				}
+				
 				double change_aounmt=account_aounmt+Double.parseDouble(amount);
 				account.set("amount", change_aounmt);
 				account.update();
@@ -165,12 +188,19 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", in_filter);
+				arapaccountauditlog.set("invoice_order_id", transferOrderId);
 				arapaccountauditlog.save();
 			}
 			if(!"".equals(out_filter) && in_filter != null){
 				ArapAccountAuditLog arapaccountauditlog = new ArapAccountAuditLog();
 				Account account= Account.dao.findById(out_filter);
-				double account_aounmt =account.getDouble("amount");
+				double account_aounmt=0.0;
+				if(account.getDouble("amount")!=null){
+					 account_aounmt =account.getDouble("amount");
+				}
+				else{
+					account_aounmt=0;
+				}
 				double change_aounmt=account_aounmt-Double.parseDouble(amount);
 				account.set("amount", change_aounmt);
 				account.update();
@@ -182,13 +212,14 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", out_filter);
+				arapaccountauditlog.set("invoice_order_id", transferOrderId);
 				arapaccountauditlog.save();
 			}
 			renderJson(transferaccounts);
 		}
 		@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 		public void save() {
-			TransferAccounts transferaccounts =null;
+			TransferAccountsOrder transferaccounts =null;
 			String method =getPara("transfer_filter");
 			String in_filter =getPara("in_filter");
 			String out_filter =getPara("out_filter");
@@ -200,7 +231,7 @@ public class TransferAccountsController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name + "'");
 			if(!"".equals(transferOrderId) && transferOrderId != null){
-			    transferaccounts =TransferAccounts.dao.findById(transferOrderId);
+			    transferaccounts =TransferAccountsOrder.dao.findById(transferOrderId);
 				transferaccounts.set("create_id",users.get(0).get("id"));
 				transferaccounts.set("create_stamp",new Date());
 				transferaccounts.set("transfer_method",method);
@@ -212,7 +243,7 @@ public class TransferAccountsController extends Controller {
 				transferaccounts.update();
 			}
 			else{
-			    transferaccounts= new TransferAccounts();
+			    transferaccounts= new TransferAccountsOrder();
 				transferaccounts.set("order_no", OrderNoGenerator.getNextOrderNo("ZZSQ"));
 				transferaccounts.set("STATUS","新建");
 				transferaccounts.set("create_id",users.get(0).get("id"));

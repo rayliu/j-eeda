@@ -4,7 +4,7 @@ $(document).ready(function() {
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 	
-	$.post('/TransferAccounts/getFinAccount', function(data){
+	$.post('/transferAccountsOrder/getFinAccount', function(data){
 		var in_filter = $("#in_filter");
 		var out_filter = $("#out_filter");
 		var in_hidden=$("#in_hidden").val();
@@ -57,6 +57,13 @@ $(document).ready(function() {
 	        	$(this).attr('selected', true);
 	        }
 	 });
+	 order_status=$("#costPreInvoiceOrderStatus").html();
+	 if(order_status=='新建'){
+			$("#saveBtn").attr("disabled",false);
+		}else if(order_status=='已确认'){
+			$("#saveBtn").attr("disabled",true);
+			$("#confiremBtn").attr("disabled",true);
+		}
 	 $("#confiremBtn").click(function(e){
 			$("#saveBtn").attr("disabled",true);
 			$("#confiremBtn").attr("disabled",true);
@@ -65,18 +72,14 @@ $(document).ready(function() {
 		//确认异步向后台提交数据
         var confiremBtnTransferOrder = function(e){
     		//异步向后台提交数据
-    		$.post('/TransferAccounts/confirem',$("#expenseAccountForm").serialize(), function(data){
+    		$.post('/transferAccountsOrder/confirem',$("#expenseAccountForm").serialize(), function(data){
     			if(data.ID>0){	
     				contactUrl("edit?id",data.ID);
-    				$("#sorder_no").html('<strong>'+data.ORDER_NO+'<strong>');
-    			  	$("#create_stamp").html(data.CREATE_STAMP);
-    			  	$.post('/TransferAccounts/findUser', {"userId":data.CREATE_ID}, function(data){
-     					$("#create_name").html('<strong>'+data.C_NAME+'<strong>');
+    			  	$("#confirm_stamp").html(data.CREATE_STAMP);
+    			  	$.post('/transferAccountsOrder/findUser', {"userId":data.CREATE_ID}, function(data){
+     					$("#confirm_name").html('<strong>'+data.C_NAME+'<strong>');
      				});
     			  	$("#costPreInvoiceOrderStatus").html(data.STATUS);
-    			  	$("#remark").val(data.REMARK);
-    			  	$("#transferOrderId").val(data.ID);
-    				$("#saveBtn").attr("disabled",false);
     				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
     			}else{
     				alert('数据保存失败。');
@@ -85,12 +88,12 @@ $(document).ready(function() {
     	};
     	//保存异步向后台提交数据
         var saveTransferOrder = function(e){
-    		$.post('/TransferAccounts/save',$("#expenseAccountForm").serialize(), function(data){
+    		$.post('/transferAccountsOrder/save',$("#expenseAccountForm").serialize(), function(data){
     			if(data.ID>0){	
     				contactUrl("edit?id",data.ID);
     				$("#sorder_no").html('<strong>'+data.ORDER_NO+'<strong>');
     			  	$("#create_stamp").html(data.CREATE_STAMP);
-    			  	$.post('/TransferAccounts/findUser', {"userId":data.CREATE_ID}, function(data){
+    			  	$.post('/transferAccountsOrder/findUser', {"userId":data.CREATE_ID}, function(data){
      					$("#create_name").html('<strong>'+data.C_NAME+'<strong>');
      				});
     			  	$("#costPreInvoiceOrderStatus").html(data.STATUS);

@@ -13,11 +13,11 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/TransferAccounts/list",
+        "sAjaxSource": "/transferAccountsOrder/list",
         "aoColumns": [ 
 			{"mDataProp":null,"sWidth":"120px",
 				"fnRender": function(obj) {
-					return "<a href='/TransferAccounts/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+					return "<a href='/transferAccountsOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 				}
 			},
             {"mDataProp":"TRANSFER_STATUS", "sWidth":"200px"},
