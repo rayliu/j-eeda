@@ -27,6 +27,7 @@ import models.ArapCostPayConfirmOrderLog;
 import models.ArapMiscChargeOrder;
 import models.ArapMiscChargeOrderItem;
 import models.Category;
+import models.ChargeApplicationOrderRel;
 import models.CostApplicationOrderRel;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
@@ -411,6 +412,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("arap_charge_invoice_application_item", ArapChargeInvoiceApplicationItem.class);
         arp.addMapping("arap_charge_invoice_item_invoice_no", ArapChargeInvoiceItemInvoiceNo.class);
         arp.addMapping("arap_charge_application_invoice_no", ArapChargeApplicationInvoiceNo.class);
+        arp.addMapping("charge_application_order_rel", ChargeApplicationOrderRel.class);
         arp.addMapping("arap_misc_charge_order", ArapMiscChargeOrder.class);
         arp.addMapping("arap_misc_charge_order_item", ArapMiscChargeOrderItem.class);
         arp.addMapping("arap_account_audit_log", ArapAccountAuditLog.class);
