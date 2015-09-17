@@ -41,6 +41,7 @@
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditInvoiceApplication.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditInvoiceApplication.endTime!''}"/>
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}"/>
+                                        	<input type="hidden" name="total_receives" value="${total_receives!''}"/>
 		                                    <h2>开票申请单信息</h2>
 		                                    <div class="form-group">
 		                                        <label>开票申请单号</label> <strong id="arapAudit_order_no">${order_no!''}${arapAuditInvoiceApplication.order_no!''}</strong>
@@ -80,7 +81,19 @@
                                         </div>
                                         <div class="form-group">
                                         	<label>应收总金额:</label>
-                                        	<label class="radio-inline">${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</label>
+                                        	<label class="radio-inline"><span id="total_amount">${total_amount!''}</span></label>
+                                        </div>
+                                        <div class="form-group">
+                                        	<label>已收总金额:</label>
+                                        	<label class="radio-inline"><span id="total_receive">${total_receive!''}</span></label>
+                                        </div>
+                                        <div class="form-group">
+                                        	<label>未收总金额:</label>
+                                        	<label class="radio-inline"><span id="total_noreceive">${total_noreceive!''}</span></label>
+                                        </div>
+                                        <div class="form-group">
+                                        	<label>此次收款金额:</label>
+                                        	<label class="radio-inline"><span id="receive_amount">${receive_amount!''}</span></label>
                                         </div>
                                         <!-- <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">收款方式</label>
@@ -188,13 +201,15 @@
 			                                            <th>客户名称</th>
 			                                            <th>合计运费</th>
 			                                            <th>对账金额</th>
+			                                            <th>应收金额</th>
+			                                            <th>未收金额</th>
+			                                            <th>收款金额</th>
 			                                            <th>差异金额</th>
 			                                            <th>扣款金额</th>
 			                                            <th>代收货款</th>
 			                                            <th>返款金额</th>
 			                                            <th>罚款金额</th>
 			                                            <th>奖励金额</th>
-			                                            <th>应收金额</th>
 			                                            <th>备注</th>
 			                                            <th>对账人</th>
 			                                            <th>对账时间</th>

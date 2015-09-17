@@ -10,8 +10,8 @@ import java.util.Map;
 
 import models.Account;
 import models.ArapChargeInvoiceApplication;
-import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeOrder;
+import models.ChargeApplicationOrderRel;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -148,12 +148,18 @@ public class ChargePreInvoiceOrderController extends Controller {
 			String[] idArray = ids.split(",");
 			logger.debug(String.valueOf(idArray.length));
 			Double totalAmount = 0.0;
+			Double totalReceive = 0.0;
 			for(int i=0;i<idArray.length;i++){
 				ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
 				Double chargeTotalAmount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
 				totalAmount = totalAmount + chargeTotalAmount;
+				ChargeApplicationOrderRel c = ChargeApplicationOrderRel.dao.findFirst("select sum(receive_amount) totalReceive from charge_application_order_rel where charge_order_id = ?",idArray[i]);
+				Double chargeTotalReceive = c.getDouble("totalReceive")==null?0.0:c.getDouble("totalReceive");
+				totalReceive = totalReceive + chargeTotalReceive;
 			}
-			setAttr("totalAmount", totalAmount);
+			setAttr("total_amount", totalAmount);
+			setAttr("total_receive", totalReceive);
+			setAttr("total_noreceive",totalAmount-totalReceive);
 			
 			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
 			Long customerId = arapChargeOrder.get("payee_id");
@@ -212,7 +218,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 			}
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
-			arapAuditInvoiceApplication.set("total_amount", getPara("total_amount"));
 			arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
 			if("transfers".equals(paymentMethod)){
@@ -222,19 +227,33 @@ public class ChargePreInvoiceOrderController extends Controller {
 			}
 			arapAuditInvoiceApplication.save();
 
+//			String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
+//			String[] chargeCheckOrderIdsArr = chargeCheckOrderIds.split(",");
+//			for (int i = 0; i < chargeCheckOrderIdsArr.length; i++) {
+//				ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem = new ArapChargeInvoiceApplicationItem();
+//				arapAuditInvoiceApplicationItem.set("invoice_application_id", arapAuditInvoiceApplication.get("id"));
+//				arapAuditInvoiceApplicationItem.set("charge_order_id", chargeCheckOrderIdsArr[i]);
+//				arapAuditInvoiceApplicationItem.save();
+//				
+//				ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIdsArr[i]);
+//				arapAuditOrder.set("status", "开票申请中");
+//				arapAuditOrder.update();
+//			}
 			String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
 			String[] chargeCheckOrderIdsArr = chargeCheckOrderIds.split(",");
 			for (int i = 0; i < chargeCheckOrderIdsArr.length; i++) {
-				ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem = new ArapChargeInvoiceApplicationItem();
-				arapAuditInvoiceApplicationItem.set("invoice_application_id", arapAuditInvoiceApplication.get("id"));
-				arapAuditInvoiceApplicationItem.set("charge_order_id", chargeCheckOrderIdsArr[i]);
-				arapAuditInvoiceApplicationItem.save();
-				
+				//更新中间表
+				ChargeApplicationOrderRel chargeApplicationOrderRel = new ChargeApplicationOrderRel();
+				chargeApplicationOrderRel.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
+				chargeApplicationOrderRel.set("charge_order_id", chargeCheckOrderIdsArr[i]);
+				chargeApplicationOrderRel.save();
+				//更新对账单表
 				ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIdsArr[i]);
-				arapAuditOrder.set("status", "开票申请中");
+				arapAuditOrder.set("status", "收款申请中");
 				arapAuditOrder.update();
 			}
 		}
+
 		renderJson(arapAuditInvoiceApplication);;
 	}
 	
@@ -290,12 +309,33 @@ public class ChargePreInvoiceOrderController extends Controller {
 			setAttr("customer", contact);
 		}
 		String chargeCheckOrderIds = "";
-		List<ArapChargeInvoiceApplicationItem> arapAuditInvoiceApplicationItems = ArapChargeInvoiceApplicationItem.dao.find("select * from arap_charge_invoice_application_item where invoice_application_id = ?", id);
-		for(ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem : arapAuditInvoiceApplicationItems){
-			chargeCheckOrderIds += arapAuditInvoiceApplicationItem.get("charge_order_id") + ",";
+		List<ChargeApplicationOrderRel> list = ChargeApplicationOrderRel.dao.find("select * from charge_application_order_rel where application_order_id = ?", id);
+		for(ChargeApplicationOrderRel chargeApplicationOrderRel : list){
+			chargeCheckOrderIds += chargeApplicationOrderRel.get("charge_order_id") + ",";
 		}
 		chargeCheckOrderIds = chargeCheckOrderIds.substring(0, chargeCheckOrderIds.length() - 1);
 		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
+		
+		//计算应收总金额
+		String[] idArray = chargeCheckOrderIds.split(",");
+		Double totalAmount = 0.0;
+		Double totalReceive = 0.0;
+		for(int i=0;i<idArray.length;i++){
+			ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
+			Double chargeTotalAmount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
+			totalAmount = totalAmount + chargeTotalAmount;
+			ChargeApplicationOrderRel c = ChargeApplicationOrderRel.dao.findFirst("select sum(receive_amount) totalReceive from charge_application_order_rel where charge_order_id = ?",idArray[i]);
+			Double chargeTotalReceive = c.getDouble("totalReceive")==null?0.0:c.getDouble("totalReceive");
+			totalReceive = totalReceive + chargeTotalReceive;
+		}
+		ChargeApplicationOrderRel chargeApplicationOrderRel1 = ChargeApplicationOrderRel.dao.findFirst("SELECT sum(caor.receive_amount) this_receive FROM charge_application_order_rel caor  WHERE caor.application_order_id=?",id);
+	    Double receive_amount = chargeApplicationOrderRel1.getDouble("this_receive");
+		Double total_noreceive =  totalAmount - totalReceive;
+		setAttr("total_amount", totalAmount);
+	    setAttr("total_receive", totalReceive);
+		setAttr("total_noreceive", total_noreceive);
+		setAttr("receive_amount", receive_amount);
+	    
 		UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication.get("create_by"));
 		setAttr("userLogin", userLogin);
 		if(!"".equals(arapAuditInvoiceApplication.get("audit_by")) && arapAuditInvoiceApplication.get("audit_by") != null){
@@ -308,8 +348,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 			setAttr("approvalName", approvalName);
 			setAttr("approvalData", arapAuditInvoiceApplication.get("approval_stamp"));
 		}
+		
 		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
-			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
+		render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
 	}
     
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
@@ -331,18 +372,32 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String office = getPara("office");
 		String status = getPara("status");
 		String orderNo = getPara("orderNo");
-		String sql ="select distinct aao.*, ifnull(usl.c_name, usl.user_name) as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp"
+		String sql ="select distinct aao.*,  ( SELECT ifnull(sum(caor.receive_amount), 0) total_receive"
+				    + " FROM charge_application_order_rel caor"
+				    + " WHERE caor.charge_order_id = aao.id ) total_receive,"
+				    + " aao.total_amount - ( SELECT ifnull(sum(caor.receive_amount), 0) total_receive"
+				    + " FROM charge_application_order_rel caor"
+				    + " WHERE caor.charge_order_id = aao.id ) total_noreceive,"
+				    + " ifnull(usl.c_name, usl.user_name) as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp"
 					+ " from arap_charge_order aao "
 					+ " left join party p on p.id = aao.payee_id "
 					+ " left join contact c on c.id = p.contact_id"
 					+ " left join office o on o.id = p.office_id"
 					+ " left join user_login usl on usl.id=aao.create_by"
-					+ " where aao.status = '已确认' ";
+					+ " where aao.status = '已确认' "
+					+ " OR ( aao. STATUS = '收款申请中' AND ( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
+					+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.total_amount "
+					+ " AND ( SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor "
+					+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL )";
 		String sqlTotal ="";
 		String condition = "";
 		//TODO 网点与对账单状态未做
 		
-		sqlTotal = "select count(1) total from arap_charge_order where status = '已确认'";
+		sqlTotal = "select count(1) total from arap_charge_order where status = '已确认'"
+				+ " OR ( aao. STATUS = '收款申请中' AND ( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
+				+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.total_amount "
+				+ " AND ( SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor "
+				+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL )";
 		if(customer == null && beginTime == null && endTime == null 
 				&& office == null && status == null && orderNo == null ){
 			condition = " order by aao.create_stamp desc ";
@@ -381,6 +436,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void chargeOrderListByIds() {
+		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
 		String sLimit = "";
 		if(chargeCheckOrderIds == null || "".equals(chargeCheckOrderIds)){
@@ -400,13 +456,22 @@ public class ChargePreInvoiceOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 		
 		// 获取当前页的数据
-		List<Record> orders = Db
-				.find("select distinct aao.*, usl.user_name as creator_name,c.abbr cname"
-						+ " from arap_charge_order aao "
-						+ " left join party p on p.id = aao.payee_id "
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join user_login usl on usl.id=aao.create_by"
-						+ " where aao.id in("+chargeCheckOrderIds+") order by aao.create_stamp desc " + sLimit);
+		sql = "SELECT aco.*, c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name,  "
+				+ " ( SELECT ifnull(sum(caor.receive_amount), 0) total_receive FROM charge_application_order_rel caor"
+				+ " WHERE caor.charge_order_id = aco.id ) total_receive,"
+				+ " ( SELECT caor.receive_amount FROM charge_application_order_rel caor"
+				+ " WHERE caor.charge_order_id = aco.id AND caor.application_order_id = appl_order.id ) receive_amount,"
+				+ " ( aco.charge_amount - ( 	SELECT 	ifnull(sum(caor.receive_amount), 0) "
+				+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aco.id ) ) noreceive_amount"
+				+ " FROM"
+				+ " arap_charge_invoice_application_order appl_order"
+				+ " LEFT JOIN charge_application_order_rel caor ON caor.application_order_id = appl_order.id"
+				+ " LEFT JOIN arap_charge_order aco ON aco.id = caor.charge_order_id"
+				+ " LEFT JOIN party p ON p.id = aco.payee_id"
+				+ " LEFT JOIN contact c ON c.id = p.contact_id"
+				+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
+				+ " WHERE appl_order.id = '"+chargePreInvoiceOrderId+"'";
+				List<Record> orders = Db.find(sql);
 		
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -445,4 +510,48 @@ public class ChargePreInvoiceOrderController extends Controller {
 		List<Account> accounts = Account.dao.find("select * from fin_account where type != 'PAY'");
 		renderJson(accounts);
 	}
+	
+	
+	
+	// 更新ArapChargeOrder信息
+	public void updateArapChargeOrder() {
+		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
+		String chargeOrderId = getPara("chargeOrderId");
+		String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
+		
+		String[] idArray = chargeCheckOrderIds.split(",");
+		Double totalAmount = 0.0;
+		Double totalReceive = 0.0;
+		String sql = "select * from charge_application_order_rel where application_order_id = '"+chargePreInvoiceOrderId+"' and charge_order_id = '"+chargeOrderId+"'";
+		ChargeApplicationOrderRel chargeApplicationOrderRel = ChargeApplicationOrderRel.dao.findFirst(sql);
+		String name = getPara("name");
+		String value = getPara("value");
+		if ("receive_amount".equals(name) && "".equals(value)) {
+			value = "0";
+		}
+		chargeApplicationOrderRel.set(name, value);
+		chargeApplicationOrderRel.update();
+		
+		
+		for(int i=0;i<idArray.length;i++){
+			ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
+			Double chargeTotalAmount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
+			totalAmount = totalAmount + chargeTotalAmount;
+			
+			ChargeApplicationOrderRel c = ChargeApplicationOrderRel.dao.findFirst("select sum(receive_amount) totalReceive from charge_application_order_rel where charge_order_id = ?",idArray[i]);
+			Double chargeTotalReceive = c.getDouble("totalReceive")==null?0.0:c.getDouble("totalReceive");
+			totalReceive = totalReceive + chargeTotalReceive;
+		}
+		//ChargeApplicationOrderRel chargeApplicationOrderRel1 = ChargeApplicationOrderRel.dao.findFirst("SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor  WHERE caor.application_order_id=?",chargePreInvoiceOrderId);
+		//Double total_receive = chargeApplicationOrderRel1.getDouble("total_receive");
+		//ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId).set("total_amount", total_receive).update();
+		//Double total_amount = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId).getDouble("total_amount");
+		Double total_noreceive = totalAmount - totalReceive;
+		Map map = new HashMap();
+		map.put("total_receive", totalReceive);
+		map.put("total_noreceive", total_noreceive);
+		map.put("chargeApplicationOrderRel", chargeApplicationOrderRel);
+		renderJson(map);
+	}
+	
 }

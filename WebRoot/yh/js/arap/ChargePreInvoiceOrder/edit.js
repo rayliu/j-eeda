@@ -134,24 +134,31 @@ $(document).ready(function() {
 	       	return;
         }
 		//异步向后台提交数据
+        parentId = e.target.getAttribute("id");
 		$.post('/chargePreInvoiceOrder/save', $("#chargePreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
 				$("#chargePreInvoiceOrderId").val(data.ID);
-			  	//$("#style").show();
-			  	$("#departureConfirmationBtn").attr("disabled", false);
+				$("#arapAudit_order_no").text(data.ORDER_NO);
+				$("#createData").text(data.CREATE_STAMP);
+				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	contactUrl("edit?id",data.ID);
+			  	loadItem(data.ID);
 			  	if("chargePreInvoiceOrderbasic" == parentId){
-			  		
 			  		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			  	}
 			}else{
 				alert('数据保存失败。');
 			}
 		},'json');
-		parentId = e.target.getAttribute("id");
 		
-		chargeCheckListTab.fnSettings().sAjaxSource = "/chargePreInvoiceOrder/chargeOrderListByIds?chargeCheckOrderIds="+$("#chargeCheckOrderIds").val();
-		chargeCheckListTab.fnDraw(); 
+		
+		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
+		var loadItem = function(chargePreInvoiceOrderId){
+			chargeCheckListTab.fnSettings().sAjaxSource = "/chargePreInvoiceOrder/chargeOrderListByIds?chargeCheckOrderIds="+$("#chargeCheckOrderIds").val()+'&chargePreInvoiceOrderId='+chargePreInvoiceOrderId;
+			chargeCheckListTab.fnDraw(); 
+		};
+		
+		
 	});
 	
     if($("#chargePreInvoiceOrderStatus").text() == 'new'){
@@ -166,7 +173,13 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargePreInvoiceOrder/chargeOrderListByIds",
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			$(nRow).attr('charge_amount', aData.CHARGE_AMOUNT);
+			$(nRow).attr('noreceive_amount', aData.NORECEIVE_AMOUNT);
+			return nRow;
+		},
+        "sAjaxSource": "/chargePreInvoiceOrder/chargeOrderListByIds?chargePreInvoiceOrderId="+$("#chargePreInvoiceOrderId").val(),
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
@@ -199,18 +212,61 @@ $(document).ready(function() {
             {"mDataProp":"CNAME"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
+            {"mDataProp":"CHARGE_AMOUNT"},
+            {"mDataProp":"NORECEIVE_AMOUNT"},
+            {"mDataProp":null,
+            	"fnRender": function(obj) {
+  	            	var str;
+  	            	if(obj.aData.RECEIVE_AMOUNT == 0){
+  	            		str = "<input type='text' name='receive_amount'>";
+  	            	}else{
+  	            		str = "<input type='text' name='receive_amount' value='"+obj.aData.RECEIVE_AMOUNT+"'>";
+  	            	}
+  	            	return str;
+  	            }	
+            },
             {"mDataProp":null},
             {"mDataProp":"DEBIT_AMOUNT"},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":null},
-            {"mDataProp":"CHARGE_AMOUNT"},
+            
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATOR_NAME"},        	
             {"mDataProp":"CREATE_STAMP"}                       
         ]      
     });
+    
+    
+    
+    $("#chargeCheckList-table").on('blur', 'input', function(e){
+		e.preventDefault();
+		var chargePreInvoiceOrderId = $("#chargePreInvoiceOrderId").val();
+		var chargeOrderId = $(this).parent().parent().attr("id");
+		var ids = $("#chargeCheckOrderIds").val();
+		var noreceive_amount = $(this).parent().parent().attr("noreceive_amount");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+
+		if(parseInt(noreceive_amount) < parseInt(value)){
+			$.scojs_message('注意：此次收款金额已超过应收金额！！', $.scojs_message.FALSE);
+			return;
+		}else{
+			$.post('/chargePreInvoiceOrder/updateArapChargeOrder', {chargePreInvoiceOrderId:chargePreInvoiceOrderId,chargeCheckOrderIds:ids ,chargeOrderId:chargeOrderId, name:name, value:value}, function(data){
+				if(data.chargeApplicationOrderRel.ID > 0){
+					$("#total_receive").html(data.total_receive);
+					$("#total_noreceive").html(data.total_noreceive);
+					$("#receive_amount").html(value);
+					$.scojs_message('更新金额成功', $.scojs_message.TYPE_OK);
+				}else{
+					$.scojs_message('更新金额失败', $.scojs_message.TYPE_ERROR);
+				}
+	    	},'json');
+		}	
+	});	
+    
+    
     
     $.post('/chargePreInvoiceOrder/searchAllAccount',function(data){
 		 if(data.length > 0){
