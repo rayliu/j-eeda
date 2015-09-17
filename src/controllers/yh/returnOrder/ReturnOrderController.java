@@ -63,8 +63,7 @@ public class ReturnOrderController extends Controller {
 	}
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_LIST})
-	public void list() {
-		String order_no = getPara("order_no");
+	public void list() {		String order_no = getPara("order_no");
 		String tr_order_no = getPara("tr_order_no");
 		String de_order_no = getPara("de_order_no");
 		String stator = getPara("stator");
@@ -74,6 +73,7 @@ public class ReturnOrderController extends Controller {
 		String customer = getPara("customer");
 		String return_type = getPara("return_type");
 		String serial_no = getPara("serial_no");
+		String sign_no = getPara("sign_no");
 		String pageIndex = getPara("sEcho");
 		String sLimit = "";
 		String sqlTotal = "";
@@ -106,7 +106,8 @@ public class ReturnOrderController extends Controller {
                 + " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
                 + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
 		
-		if ((order_no == null || order_no == "") && (tr_order_no == null || tr_order_no == "") && (de_order_no == null || de_order_no == "")
+		if ((sign_no == null || sign_no == "") && (order_no == null || order_no == "") 
+				&& (tr_order_no == null || tr_order_no == "") && (de_order_no == null || de_order_no == "")
 				&& (return_type == null|| return_type == "")&& (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "") && (time_two == null || time_two == "") && (customer == null || customer == "")) {
 			// 获取总条数
 			sqlTotal = "select count(DISTINCT r_o.id) total "+fromSql
@@ -121,6 +122,7 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor2.receiving_unit, tor.receiving_unit) receiving_unit,"
 					+ " ifnull(c4.address, (select c.address from contact c LEFT JOIN party p on p.id = c.id  where p.id = tor.notify_party_id)) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
+					+ " d_o.ref_no sign_no,"
 					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
 					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
 					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
@@ -152,10 +154,10 @@ public class ReturnOrderController extends Controller {
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc " + sLimit;
 		} else {
 			if (time_one == null || "".equals(time_one)) {
-				time_one = "1-1-1";
+				time_one = "1970-01-01";
 			}
 			if (time_two == null || "".equals(time_two)) {
-				time_two = "9999-12-31";
+				time_two = "2037-12-31";
 			}
 
 			// 获取总条数
@@ -165,6 +167,7 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor2.receiving_unit, tor.receiving_unit) receiving_unit,"
 					+ " ifnull(c4.address, (select c.address from contact c LEFT JOIN party p on p.id = c.id  where p.id = tor.notify_party_id)) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
+					+ " d_o.ref_no sign_no,"
 					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
 					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
 					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
@@ -197,20 +200,23 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(transfer_order_no,'')  like'%" + tr_order_no + "%'"
 					+ " and ifnull(delivery_order_no,'')  like'%" + de_order_no + "%'"
 					+ " and ifnull(transaction_status ,'') in ("+status+")"
-					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
+					+ " and ifnull(sign_no ,'')  like'%" + sign_no + "%'"
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
 					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
-					+ " and create_date between '" + time_one + "' and '" + time_two + "' ";
+					+ " and create_date between '" + time_one + "' and '" + time_two + " 23:59:59' ";
 					
 
 			// 获取当前页的数据
-			sql = "SELECT * from(select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
+			sql = "SELECT * from(select distinct ifnull(tor.route_from,tor2.route_from) route_from ,"
+					+ " lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, "
+					+ " ifnull(tor.address, tor2.address) address,"
 					+ " ifnull(c4.contact_person, c3.contact_person) receipt_person, "
 					+ " ifnull(c4.phone, c3.phone) receipt_phone,"
 					+ " ifnull(tor2.receiving_unit, tor.receiving_unit) receiving_unit,"
 					+ " ifnull(c4.address, (select c.address from contact c LEFT JOIN party p on p.id = c.id  where p.id = tor.notify_party_id)) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
+					+ " d_o.ref_no sign_no,"
 					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
 					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
 					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
@@ -243,11 +249,11 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(transfer_order_no,'')  like'%" + tr_order_no + "%'"
 					+ " and ifnull(delivery_order_no,'')  like'%" + de_order_no + "%'"
 					+ " and ifnull(transaction_status ,'') in ("+status+")"
-					//+ " and ifnull(usl.user_name ,'')  like'%" + stator + "%'"
+					+ " and ifnull(sign_no ,'')  like'%" + sign_no + "%'"
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
 					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
-					+ " and create_date between '" + time_one + "' and '" + time_two + "' "
+					+ " and create_date between '" + time_one + "' and '" + time_two + " 23:59:59' "
 					 + sLimit;
 		}
 		long startTime = Calendar.getInstance().getTimeInMillis();
