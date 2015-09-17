@@ -721,12 +721,17 @@ public class CostCheckOrderController extends Controller {
         renderJson(BillingOrderListMap);
 	}
 	
-	public void costConfirmOrderList() {
+	public void unSelectedList() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        
+        String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+        
         String booking_id= getPara("booking_id");;
         String orderNo = getPara("orderNo");
     	String sp = getPara("sp");
@@ -852,7 +857,7 @@ public class CostCheckOrderController extends Controller {
 							+ " LEFT JOIN location l ON amco.route_from = l. CODE"
 							+ " LEFT JOIN location l1 ON amco.route_to = l1. CODE"
 							+ " WHERE	amco.audit_status = '已确认'"
-							+ " GROUP BY amco.id) as newView " ;
+							+ " GROUP BY amco.id) as A " ;
     	String condition = "";
     	
     	
@@ -884,8 +889,12 @@ public class CostCheckOrderController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
-        logger.debug("sql:" + sql);
-        List<Record> BillingOrders = Db.find(sql + condition + "order by planning_time"+sLimit);
+        String orderByStr = " order by A.planning_time asc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+
+        List<Record> BillingOrders = Db.find(sql + condition + orderByStr +sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

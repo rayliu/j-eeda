@@ -5,7 +5,7 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var uncheckedCostCheckTable = $('#uncheckedCostCheck-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
+        "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -13,9 +13,9 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         
-        "sAjaxSource": "/costCheckOrder/costConfirmOrderList",
+        "sAjaxSource": "/costCheckOrder/unSelectedList",
         "aoColumns": [ 
-            { "mDataProp": null, "sWidth":"20px",
+            { "mDataProp": null, "sWidth":"20px", "bSortable": false,
                 "fnRender": function(obj) {
                 	var amount = 0;
 	               	 if(obj.aData.PAY_AMOUNT!=null){
@@ -95,11 +95,11 @@ $(document).ready(function() {
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 25,
-    	"bServerSide": true,
+    	//"bServerSide": true,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	"sAjaxSource": "/chargeCheckOrder/createList2",
+    	//"sAjaxSource": "/chargeCheckOrder/createList2",
     	"aoColumns": [ 
 			  {"mDataProp":null, "sWidth":"20px"},                        
 			  {"mDataProp":null, "sWidth":"80px"},                        
