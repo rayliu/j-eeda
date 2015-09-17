@@ -28,6 +28,7 @@ $(document).ready(function() {
 				$("#chargeInvoiceOrderId").val(data.ID);
 				$("#arapAuditInvoice_order_no").text(data.ORDER_NO);
 			  	$("#departureConfirmationBtn").attr("disabled", false);
+			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
 				alert('数据保存失败。');
 			}
@@ -38,8 +39,6 @@ $(document).ready(function() {
 	//transferOrderForm 不需要提交	
  	$("#saveChargeInvoiceOrderBtn").click(function(e){
  		saveChargeCheckOrder(e);
-
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});
 	$("#departureConfirmationBtn").click(function(){
 		$(this).attr("disabled", true);
@@ -207,7 +206,7 @@ $(document).ready(function() {
 		},'json');
 	});
 	
-	$("#invoiceItemNo").click(function(){	
+	$("#invoiceItemNo").click(function(e){	
 		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
 		$.post('/chargeInvoiceOrder/findAllInvoiceItemNo', {chargeInvoiceOrderId:chargeInvoiceOrderId}, function(data){
 			if(data.length > 0){
@@ -223,6 +222,8 @@ $(document).ready(function() {
 				//chargePreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
+		
+		saveChargeCheckOrder(e);
 			
 	    invoiceItemTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
 	    invoiceItemTable.fnDraw();		    
@@ -230,7 +231,7 @@ $(document).ready(function() {
 		chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val();   
 		chargePreInvoiceOrderTable.fnDraw();
 
- 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});	
 
 	$("#chargePreInvoiceOrder-table").on('blur', 'select', function(e){
