@@ -257,7 +257,7 @@ $(document).ready(function() {
 				if(data.chargeApplicationOrderRel.ID > 0){
 					$("#total_receive").html(data.total_receive);
 					$("#total_noreceive").html(data.total_noreceive);
-					$("#receive_amount").html(value);
+					$("#receive_amount").html(data.receive_amount);
 					$.scojs_message('更新金额成功', $.scojs_message.TYPE_OK);
 				}else{
 					$.scojs_message('更新金额失败', $.scojs_message.TYPE_ERROR);

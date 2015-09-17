@@ -542,13 +542,18 @@ public class ChargePreInvoiceOrderController extends Controller {
 			Double chargeTotalReceive = c.getDouble("totalReceive")==null?0.0:c.getDouble("totalReceive");
 			totalReceive = totalReceive + chargeTotalReceive;
 		}
-		//ChargeApplicationOrderRel chargeApplicationOrderRel1 = ChargeApplicationOrderRel.dao.findFirst("SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor  WHERE caor.application_order_id=?",chargePreInvoiceOrderId);
-		//Double total_receive = chargeApplicationOrderRel1.getDouble("total_receive");
-		//ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId).set("total_amount", total_receive).update();
+		
+		//这张单收入的总金额
+		ChargeApplicationOrderRel chargeApplicationOrderRel1 = ChargeApplicationOrderRel.dao.findFirst("SELECT sum(caor.receive_amount) receive_amount FROM charge_application_order_rel caor  WHERE caor.application_order_id=?",chargePreInvoiceOrderId);
+		Double receive_amount = chargeApplicationOrderRel1.getDouble("receive_amount");
+		
+		//更新主表金额数据
+		ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId).set("total_amount", receive_amount).update();
 		//Double total_amount = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId).getDouble("total_amount");
 		Double total_noreceive = totalAmount - totalReceive;
 		Map map = new HashMap();
 		map.put("total_receive", totalReceive);
+		map.put("receive_amount", receive_amount);
 		map.put("total_noreceive", total_noreceive);
 		map.put("chargeApplicationOrderRel", chargeApplicationOrderRel);
 		renderJson(map);
