@@ -49,6 +49,8 @@ $(document).ready(function() {
 	        {"mDataProp":"ONAME","sWidth":"80px"},
 	        {"mDataProp":"CNAME","sWidth":"200px"},
 	        {"mDataProp":"CHARGE_AMOUNT","sWidth":"80px"},
+	        {"mDataProp":"TOTAL_RECEIVE","sWidth":"80px"},
+	        {"mDataProp":"TOTAL_NORECEIVE","sWidth":"80px" },
 	        {"mDataProp":"TOTAL_AMOUNT","sWidth":"80px"},
 	        {"mDataProp":null,"sWidth":"80px"},
 	        {"mDataProp":"DEBIT_AMOUNT","sWidth":"80px"},
