@@ -58,7 +58,11 @@ public class CostItemConfirmController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String orderBy=getPara("sSortDir_0");
+        
+        String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+        
         String orderNo = getPara("orderNo");
         String sp = getPara("sp");
         String no = getPara("no");
@@ -72,15 +76,7 @@ public class CostItemConfirmController extends Controller {
         String route_from =getPara("route_from");
         String route_to=getPara("route_to");
         String customer_name = getPara("customer_name");
-        String orderCol=getPara("iSortCol_0");
-        if(orderCol=="9"||orderCol.equals("9")){
-        	orderCol="depart_time ";
-        }
-        if(orderCol=="11"||orderCol.equals("11")){
-        	orderCol="serial_no ";
-        }if(orderCol=="0"||orderCol.equals("0")){
-        	orderCol="depart_time ";
-        }
+       
         String sqlTotal = "";
         String sql = "select cast(planning_time as CHAR) planning_time1, A.* from (select distinct dor.id,"
         		+ " dor.order_no order_no,"
@@ -361,28 +357,28 @@ public class CostItemConfirmController extends Controller {
         if(orderNo != null || sp != null || no != null || beginTime != null
         	|| endTime !=null || status != null || type != null){
         	if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
+				beginTime = "1970-01-01";
 			}
 			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
+				endTime = "2037-12-31";
 			}
 			if (plantime == null || "".equals(plantime)) {
-				plantime = "1-1-1";
+				plantime = "1970-01-01";
 			}
 			if (arrivaltime == null || "".equals(arrivaltime)) {
-				arrivaltime = "9999-12-31";
+				arrivaltime = "2037-12-31";
 			}
 			 
         	condition =  " where ifnull(order_no,'') like '%" + no + "%' "
         			+ " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
         			+ " and ifnull(status,'') like '%" + status + "%' "
         			+ " and ifnull(spname,'') like '%" + sp + "%' "
-        			+ " and ifnull(depart_time, '1-1-1') between '" + beginTime + "' and '" + endTime + "' "
+        			+ " and ifnull(depart_time, '1970-01-01') between '" + beginTime + "' and '" + endTime + " 23:59:59' "
         			+ " and ifnull(business_type,'') like '%" + type + "%'"
         			+ " and ifnull(route_from,'') like '%" + route_from + "%'"
         			+ " and ifnull(route_to,'') like '%" + route_to + "%'"
         			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'"
-        			+ " and ifnull(planning_time, '1-1-1') between '" + plantime + "' and '" + arrivaltime + "' "
+        			+ " and ifnull(planning_time, '1970-01-01') between '" + plantime + "' and '" + arrivaltime + " 23:59:59' "
         	        + " and ifnull(cname,'') like '%" + customer_name + "%'"
         	        + " and ifnull(status, '') != '手动删除'";
         }
@@ -394,7 +390,12 @@ public class CostItemConfirmController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         
         long sTime = Calendar.getInstance().getTimeInMillis();
-        List<Record> BillingOrders = Db.find(sql + condition + " order by "+orderCol + orderBy + sLimit);
+        
+        String orderByStr = " order by A.depart_time desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+        List<Record> BillingOrders = Db.find(sql + condition + orderByStr + sLimit);
         long eTime = Calendar.getInstance().getTimeInMillis();
         logger.debug("time cost:" + (eTime-sTime));
         

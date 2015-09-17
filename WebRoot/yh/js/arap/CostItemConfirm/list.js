@@ -33,7 +33,7 @@ $(document).ready(function() {
             {"mDataProp":"SPNAME", "sWidth":"160px", "bSortable": false},
            
             	
-            {"mDataProp":null, "sWidth":"100px", "bSortable": false,//托运单号
+            {"mDataProp":null, "sWidth":"110px", "bSortable": false,//托运单号
             	"fnRender":function(obj){
             		var number = obj.aData.BOOKING_NOTE_NUMBER;
             		if(number == ""){
@@ -43,7 +43,7 @@ $(document).ready(function() {
             	}		
             }}, 
             {"mDataProp":"REF_NO", "sWidth":"80px", "bSortable": false},
-            {"mDataProp":"PAY_AMOUNT", "sWidth":"80px", "bSortable": false},
+            {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px", "bSortable": false},
             {"mDataProp":"AMOUNT", "sWidth":"55px", "bSortable": false},
             {"mDataProp":"CNAME", "sWidth":"100px", "bSortable": false},
