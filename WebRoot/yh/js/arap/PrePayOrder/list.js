@@ -235,7 +235,7 @@ $(document).ready(function() {
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
-        datatable.fnSettings().sAjaxSource = "/costMiscOrder/list?companyName="+customer+"&beginTime="+beginTime+"&endTime="+endTime+"&spName="+sp+"&orderNo="+orderNo+"&status="+status;
+        datatable.fnSettings().sAjaxSource = "/costPrePayOrder/list?beginTime="+beginTime+"&endTime="+endTime+"&spName="+sp+"&orderNo="+orderNo+"&status="+status;
         datatable.fnDraw();
     };
 } );

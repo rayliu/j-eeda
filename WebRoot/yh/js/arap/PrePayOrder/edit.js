@@ -43,6 +43,16 @@ $(document).ready(function() {
         }
         $('#totalAmountSpan').html(amount);
 
+        //add deleted items
+        for(var index=0; index<deletedIds.length; index++){
+        	var id = deletedIds[index];
+        	var item={
+        		ID: id,
+			 	ACTION: 'DELETE'
+        	};
+        	itemsArray.push(item);
+        }
+
         var order={
         	orderId: $('#orderId').val(),
         	sp_id: $('#sp_id').val(),
@@ -63,7 +73,7 @@ $(document).ready(function() {
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$("#saveOrderBtn").attr("disabled",false);
 				contactUrl("edit?id", data.ID);
-
+				deletedIds=[];
 				//callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
@@ -160,11 +170,13 @@ $(document).ready(function() {
     });
    
  
-    
-  //删除一行
+    var deletedIds=[];
+    //删除一行
 	$("#feeItemList-table").on('click', '.finItemdel', function(e){
 		e.preventDefault();
-		$(this).parent().parent().remove();
+		var tr = $(this).parent().parent();
+		deletedIds.push(tr.attr('id'))
+		tr.remove();
 	});	
 	
 	//添加一行
