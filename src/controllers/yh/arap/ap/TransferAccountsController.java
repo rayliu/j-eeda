@@ -53,9 +53,8 @@ public class TransferAccountsController extends Controller {
 		renderJson(approval);
 	}
 	public void list(){
-		String method =getPara("transfer_filter");
-		String in_filter =getPara("in_filter");
-		String out_filter =getPara("out_filter");
+		String orderNo =getPara("orderNo");
+		String transfer_method =getPara("transfer_method");
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -77,36 +76,15 @@ public class TransferAccountsController extends Controller {
         			+ " LEFT JOIN user_login ul ON ul.id = tao.create_id";
         String condition = "";
         
-        /*if(orderNo != null || sp != null || no != null || beginTime != null
-        	|| endTime !=null || status != null || type != null){
-			if (plantime == null || "".equals(plantime)) {
-				plantime = "1-1-1";
-			}
-			if (arrivaltime == null || "".equals(arrivaltime)) {
-				arrivaltime = "9999-12-31";
-			}*/
-			 
-        	/*condition =  " where ifnull(order_no,'') like '%" + no + "%' "
-        			+ " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
-        			+ " and ifnull(status,'') like '%" + status + "%' "
-        			+ " and ifnull(spname,'') like '%" + sp + "%' "
-        			+ " and ifnull(depart_time, '1-1-1') between '" + beginTime + "' and '" + endTime + "' "
-        			+ " and ifnull(business_type,'') like '%" + type + "%'"
-        			+ " and ifnull(route_from,'') like '%" + route_from + "%'"
-        			+ " and ifnull(route_to,'') like '%" + route_to + "%'"
-        			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'"
-        			+ " and ifnull(planning_time, '1-1-1') between '" + plantime + "' and '" + arrivaltime + "' "
-        	        + " and ifnull(cname,'') like '%" + customer_name + "%'"
-        	        + " and ifnull(status, '') != '手动删除'";
+        if(orderNo != null || transfer_method != null){
+        	condition =  " where ifnull(order_no,'') like '%" + orderNo + "%' "
+        			+ " and ifnull(transfer_method,'') like '%" + transfer_method + "%' ";
         }
-        if (condition == "" ){
-        	condition=" where ifnull(status, '') != '手动删除' ";
-        }*/
-        Record rec = Db.findFirst(sqlTotal);
+        Record rec = Db.findFirst(sqlTotal+condition);
         logger.debug("total records:" + rec.getLong("total"));
         
         long sTime = Calendar.getInstance().getTimeInMillis();
-        List<Record> BillingOrders = Db.find(sql+sLimit);
+        List<Record> BillingOrders = Db.find(sql+condition+sLimit);
         long eTime = Calendar.getInstance().getTimeInMillis();
         logger.debug("time cost:" + (eTime-sTime));
         

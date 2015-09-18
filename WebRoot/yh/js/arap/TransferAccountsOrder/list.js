@@ -41,13 +41,16 @@ $(document).ready(function() {
             {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });	
-    
-/*    $("#orderNo ,#status ,#auditName").on( 'keyup click', function () {    	 	
-    	var orderNo = $("#orderNo").val();
-    	var status = $("#status").val();
-    	var auditName = $("#auditName").val();
-    	expenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&auditName="+auditName;
-    	expenseAccountTbody.fnDraw();
-    });*/
-    
+    var refreshData=function(){
+        var orderNo=$("#orderNo").val();
+        var transfer_method=$("#transfer_method").val();
+        expenseAccountTbody.fnSettings().sAjaxSource = "/transferAccountsOrder/list?orderNo="+orderNo +"&transfer_method="+transfer_method;
+        expenseAccountTbody.fnDraw(); 
+    };
+    $("#orderNo").on('keyup click', function () {  
+    	refreshData();
+    }); 	 	
+    $('#transfer_method').on( 'change', function () {
+    	refreshData();
+    });
 });
