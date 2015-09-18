@@ -139,6 +139,7 @@ $(document).ready(function() {
 		$("#checkBtn").attr('disabled',true);
 		$.post('chargeAcceptOrder/checkOrder?ids='+$("#chargeIds").val(),function(){
 			chargeNoAcceptOrderTab.fnDraw();
+			chargeAcceptOrderTab.fnDraw();
 		});
 	});
 	

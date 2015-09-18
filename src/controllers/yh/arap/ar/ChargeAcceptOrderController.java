@@ -10,7 +10,6 @@ import java.util.Map;
 import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
-import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
 import models.ArapMiscChargeOrder;
 import models.yh.arap.ReimbursementOrder;
@@ -80,8 +79,8 @@ public class ChargeAcceptOrderController extends Controller {
 //        if(status_filter != null && !"".equals(status_filter)){
 //        	status = status_filter;
 //        }
-        String sql = "select aci.id, '申请单' order_type,aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
-        		+ " from arap_charge_invoice_application_order aci "
+        String sql = "select aci.id, '开票记录单' order_type,aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status = '" + status + "' ";
         
@@ -230,10 +229,10 @@ public class ChargeAcceptOrderController extends Controller {
         	String[] one = alls[i].split(":");
 			String id = one[0];
 			String order_type = one[1];
-			if(order_type.equals("申请单")){
-	            ArapChargeInvoiceApplication arapChargeInvoiceApplication= ArapChargeInvoiceApplication.dao.findById(id);
-	            arapChargeInvoiceApplication.set("status","已复核");
-	            arapChargeInvoiceApplication.update();
+			if(order_type.equals("开票记录单")){
+	            ArapChargeInvoice arapChargeInvoice= ArapChargeInvoice.dao.findById(id);
+	            arapChargeInvoice.set("status","已复核");
+	            arapChargeInvoice.update();
 	        }else if(order_type.equals("报销单")){
         		ReimbursementOrder reimbursementorder =ReimbursementOrder.dao.findById(id);
         		reimbursementorder.set("status", "已复核");
