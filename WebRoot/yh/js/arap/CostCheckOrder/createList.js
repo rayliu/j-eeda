@@ -367,7 +367,7 @@ $(document).ready(function() {
     	var type = $("#order_type_filter").val();
     	var status = $("#order_status_filter").val();
     	
-    	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmOrderList?sp="+sp
+    	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/unSelectedList?sp="+sp
 														+"&beginTime="+beginTime
 														+"&endTime="+endTime
 														+"&orderNo="+orderNo
