@@ -78,9 +78,10 @@ public class CostConfirmController extends Controller {
    		setAttr("arapCostPayConfirmOrder", arapCostPayConfirmOrder);
    		
    		if(arapCostPayConfirmOrder.getLong("sp_id")!= null){
-	   		String sql1 = "select * from  party p LEFT JOIN office o ON o.id = p.office_id where p.id = '"+arapCostPayConfirmOrder.getLong("sp_id")+"'";
+	   		String sql1 = "select * from contact c where c.id = '"+arapCostPayConfirmOrder.getLong("sp_id")+"'";
 	   		Record re1 = Db.findFirst(sql1);
-	   		setAttr("abbr", re1.getStr("abbr"));
+	   		String aa= re1.getStr("company_name");
+	   		setAttr("cname", re1.getStr("company_name"));
    		}
    		String sql = "";
    		if(order_type.equals("成本单")){
@@ -144,7 +145,7 @@ public class CostConfirmController extends Controller {
 			arapCostPayConfirmOrder.set("last_updator", LoginUserController.getLoginUserId(this));
 			arapCostPayConfirmOrder.set("last_update_date", new Date()).update();				
 		} else {
-			Contact contact = Contact.dao.findFirst("select * from contact where abbr = '"+sp_filter+"'");
+			Contact contact = Contact.dao.findFirst("select * from contact where company_name = '"+sp_filter+"'");
 			String name = (String) currentUser.getPrincipal();
 	        Long userId =  LoginUserController.getLoginUserId(this);
 	      //创建主表
@@ -404,7 +405,7 @@ public class CostConfirmController extends Controller {
 				sql = " SELECT  ro.account_name payee_unit, ro.account_no bank_no, ro.account_bank bank_name"
 					+ " FROM reimbursement_order ro WHERE ro.id = '"+idArray[0]+"'";
 			}else{
-				sql = "SELECT c.abbr,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
+				sql = "SELECT c.company_name,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
 						+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
 						+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
 						+ " LEFT JOIN party p ON p.id = aci.payee_id "
