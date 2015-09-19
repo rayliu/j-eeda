@@ -47,6 +47,11 @@ $(document).ready(function() {
         if(!$("#costPreInvoiceOrderForm").valid()){
 	       	return;
         }
+        if($("#tpayment").text()==0){
+        	alert("此次付款金额为0");
+        	$("#saveCostPreInvoiceOrderBtn").attr("disabled",false);
+	       	return;
+        }
 		//异步向后台提交数据
 		$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){	
