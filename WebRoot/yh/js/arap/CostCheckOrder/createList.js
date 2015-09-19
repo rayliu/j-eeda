@@ -46,6 +46,7 @@ $(document).ready(function() {
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
             {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"ORDER_NO", "sWidth":"200px", 
                 "fnRender": function(obj) {
                 	var str = "";
