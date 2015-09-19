@@ -375,7 +375,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String sql ="select distinct aao.*,  ( SELECT ifnull(sum(caor.receive_amount), 0) total_receive"
 				    + " FROM charge_application_order_rel caor"
 				    + " WHERE caor.charge_order_id = aao.id ) total_receive,"
-				    + " aao.total_amount - ( SELECT ifnull(sum(caor.receive_amount), 0) total_receive"
+				    + " aao.charge_amount - ( SELECT ifnull(sum(caor.receive_amount), 0) total_receive"
 				    + " FROM charge_application_order_rel caor"
 				    + " WHERE caor.charge_order_id = aao.id ) total_noreceive,"
 				    + " ifnull(usl.c_name, usl.user_name) as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp"
@@ -385,8 +385,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " left join office o on o.id = p.office_id"
 					+ " left join user_login usl on usl.id=aao.create_by"
 					+ " where aao.status = '已确认' "
-					+ " OR ( aao. STATUS = '收款申请中' AND ( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
-					+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.total_amount "
+					+ " OR (( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
+					+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.charge_amount "
 					+ " AND ( SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor "
 					+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL )";
 		String sqlTotal ="";
@@ -395,7 +395,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		
 		sqlTotal = "select count(1) total from arap_charge_order where status = '已确认'"
 				+ " OR ( aao. STATUS = '收款申请中' AND ( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
-				+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.total_amount "
+				+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.charge_amount "
 				+ " AND ( SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor "
 				+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL )";
 		if(customer == null && beginTime == null && endTime == null 
