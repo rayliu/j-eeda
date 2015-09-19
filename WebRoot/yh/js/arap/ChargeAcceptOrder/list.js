@@ -26,7 +26,7 @@ $(document).ready(function() {
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
-	            	if(obj.aData.STATUS =="已收款确认"){
+	            	if(obj.aData.STATUS =="已收款确认" || obj.aData.STATUS =="收款确认中"){
 	            		return "";
 	            	}else{
 	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
@@ -174,7 +174,7 @@ $(document).ready(function() {
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
-	            	if(obj.aData.STATUS =="已收款确认"){
+	            	if(obj.aData.STATUS =="已收款确认"  || obj.aData.STATUS =="收款确认中"){
 	            		return "";
 	            	}else{
 	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';

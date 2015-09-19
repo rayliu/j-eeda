@@ -48,9 +48,9 @@ public class ChargeAcceptOrderController extends Controller {
         String sLimit = "";
         String status = getPara("status");
         if(status.equals("unCheck")){
-        	status = "已审批";
+        	status = "'已审批'";
         }else{
-        	status = "已复核";
+        	status = "'已复核','已收款确认','收款确认中'";
         }
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -58,9 +58,9 @@ public class ChargeAcceptOrderController extends Controller {
         }
 
         String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark "
-        		+ " from arap_charge_invoice_application_order aci left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.STATUS= '"+status+"' group by aci.id "
+        		+ " from arap_charge_invoice_application_order aci left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.STATUS in("+status+") group by aci.id "
 				+ " union all "
-				+ " select id, order_no, status, '' invoice_no, create_stamp create_time, remark  from arap_misc_charge_order where status='"+status+"') tab";
+				+ " select id, order_no, status, '' invoice_no, create_stamp create_time, remark  from arap_misc_charge_order where status in("+status+")) tab";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
 
@@ -82,7 +82,7 @@ public class ChargeAcceptOrderController extends Controller {
         String sql = "select aci.id, '开票记录单' order_type,aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status = '" + status + "' ";
+        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in(" + status + ") ";
         
        
         List<Record> BillingOrders = Db.find(sql + " group by aci.id order by create_time desc " + sLimit);
