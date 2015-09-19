@@ -6,7 +6,7 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var invoiceApplicationOrderIds = $("#invoiceApplicationOrderIds").val();
     var total = 0.00;
-    var datatable=$('#costConfirm_table').dataTable({
+    var datatable=$('#chargeConfirm_table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -14,18 +14,18 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costConfirm/list",
+        "sAjaxSource": "/chargeConfirm/list",
         "aoColumns": [
             {"mDataProp":"ORDER_NO", "sWidth": "100px", //付款确认单号
             	"fnRender": function(obj) {
-        			return "<a href='/costConfirm/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargeConfirm/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
     				$("#total_amount").val(total);
         		}
             },
             {"mDataProp": null , "sWidth": "100px",//付款申请单号
             	"fnRender": function(obj) {
-            		if(obj.aData.FKSQ_NO != null){
-            			return obj.aData.FKSQ_NO;
+            		if(obj.aData.SKSQ_NO != null){
+            			return obj.aData.SKSQ_NO;
             		}else{
             			return obj.aData.MISC_NO;
             		}
@@ -161,7 +161,7 @@ $(document).ready(function() {
         var receiverName = $('#receiver_filter').val();
         var beginTime = $('#beginTime_filter').val();
         var endTime = $('#endTime_filter').val();
-        datatable.fnSettings().sAjaxSource = "/costConfirm/list?orderNo="+order_no
+        datatable.fnSettings().sAjaxSource = "/chargeConfirm/list?orderNo="+order_no
             +"&status="+status
             +"&sp_name="+sp_name
             +"&receiverName="+receiverName

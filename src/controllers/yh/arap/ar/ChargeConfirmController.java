@@ -478,7 +478,7 @@ public class ChargeConfirmController extends Controller {
 					+ getPara("iDisplayLength");
 		}
                
-        String fromSql = " from arap_cost_pay_confirm_order cpco "
+        String fromSql = " from arap_charge_receive_confirm_order cpco "
         			+ " left join party p1 on cpco.sp_id = p1.id "
 					+ " left join contact c1 on p1.contact_id = c1.id"
 					+ " left join user_login ul on ul.id=cpco.creator";
@@ -486,22 +486,16 @@ public class ChargeConfirmController extends Controller {
         String totalSql = "select count(1) total" + fromSql;
         
         String columsSql = "select cpco.*, "
-        		+ " (select group_concat( DISTINCT cao.order_no SEPARATOR '<br/>' ) "
-        		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
-				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) fksq_no,"
+        		+ " ( SELECT group_concat( DISTINCT aci .order_no SEPARATOR '<br/>' ) FROM arap_charge_invoice aci  "
+        		+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.invoice_order_id = aci.id "
+        		+ " WHERE acr.order_id = cpco.id ) sksq_no,"
 				+ " (SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' )"
 				+ " FROM arap_cost_pay_confirm_order_detail co, arap_misc_cost_order amco"
 				+ " WHERE co.misc_cost_order_id = amco.id AND co.order_id = cpco.id ) misc_no,"
-				+ " ( SELECT ifnull(sum(caor.pay_amount), "
-				+ " (SELECT  amco.total_amount FROM arap_cost_pay_confirm_order_detail co,"
-				+ "  arap_misc_cost_order amco WHERE co.misc_cost_order_id = amco.id AND co.order_id = cpco.id )) "
-				+ " FROM cost_application_order_rel caor WHERE caor.application_order_id "
-				+ " IN (SELECT acpcod.application_order_id FROM arap_cost_pay_confirm_order cpco1 LEFT JOIN arap_cost_pay_confirm_order_detail acpcod "
-				+ " ON acpcod.order_id = cpco1.id WHERE cpco1.id = cpco.id)) pay_amount,"
-//				+ " (select sum(cao.total_amount) "
-//        		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
-//				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) pay_amount,"
-				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_cost_pay_confirm_order_log log "
+				+ " ( SELECT ifnull(sum(aci.total_amount), 0) FROM arap_charge_invoice aci "
+				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.invoice_order_id = aci.id "
+				+ " where acr.order_id = cpco.id ) pay_amount,"
+				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_charge_receive_confirm_order_log log "
 				+ " where log.order_id = cpco.id) already_pay, "
         		+ " c1.abbr sp_name,"
         		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
