@@ -3,7 +3,7 @@ $(document).ready(function() {
 	document.title = '复核收款 | '+document.title;
 	
 	if($("#page").val()=='return'){
-    	$('a[href="#audit"]').tab('show');
+    	$('a[href="#panel-2"]').tab('show');
     }
 	
     $('#menu_finance').addClass('active').find('ul').addClass('in');
@@ -111,13 +111,8 @@ $(document).ready(function() {
 		if($(this).prop("checked") == true){
             var orderNo = $(this).parent().parent().find('.order_type').text();
             var orderObj=$(this).val()+":"+orderNo;
-            //var order = ids.pop();
 			ids.push(orderObj);
 		}else{
-//			if(ids.length != 0){
-//				ids.splice($.inArray($(this).val(),ids),1);
-//				$("#chargeIds").val(ids);
-//			}
 			var array = [];
 			for(id in ids){
 				if($(this).val()+":"+$(this).parent().parent().find('.order_type').text()!= ids[id]){
@@ -140,6 +135,7 @@ $(document).ready(function() {
 		$.post('chargeAcceptOrder/checkOrder?ids='+$("#chargeIds").val(),function(){
 			chargeNoAcceptOrderTab.fnDraw();
 			chargeAcceptOrderTab.fnDraw();
+			ids = [];
 		});
 	});
 	
@@ -264,6 +260,7 @@ $(document).ready(function() {
 		$("#checkBtn").attr('disabled',true);
         e.preventDefault();
         $('#confirmForm').submit();
+        ids = [];
     });
 	
 } );
