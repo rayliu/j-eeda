@@ -125,6 +125,26 @@ $(document).ready(function() {
     	$(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
+    
+    $('#datetimepicker3').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+    	$(".bootstrap-datetimepicker-widget").hide();
+        $('#plan_endTime_filter').trigger('keyup');
+    });
+    
+    $('#datetimepicker4').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+    	$(".bootstrap-datetimepicker-widget").hide();
+        $('#plan_endTime_filter').trigger('keyup');
+    });
 	
     var refreshData=function(){
     	var orderNo_filter = $("#orderNo_filter").val();
@@ -134,18 +154,20 @@ $(document).ready(function() {
       	var sp_filter = $("#sp_filter").val();
       	var beginTime_filter = $("#beginTime_filter").val();
       	var endTime_filter = $("#endTime_filter").val();
+      	var plan_beginTime_filter = $("#plan_beginTime_filter").val();
+      	var plan_endTime_filter = $("#plan_endTime_filter").val();
       	var warehouse = $("#warehouse").val();
       	var serial_no = $("#serial_no").val();
       	var delivery_no = $("#delivery_no").val();
       	var address_filter = $("#address_filter").val();
       	var warehouse_filter = $("#warehouse_filter").val();
-      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&warehouse_filter="+warehouse_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
+      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter+"&plan_endTime_filter="+plan_endTime_filter+"&warehouse_filter="+warehouse_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
       	dataTable.fnDraw();
     };
     
     
     //条件筛选
-	$("#orderNo_filter,#delivery_no,#transfer_filter,#warehouse_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no,#address_filter").on('keyup', function () {    	 	
+	$("#orderNo_filter,#plan_beginTime_filter,#plan_endTime_filter,#delivery_no,#transfer_filter,#warehouse_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no,#address_filter").on('keyup', function () {    	 	
 		refreshData();
       });
 	$("#status_filter").on('change',function(){

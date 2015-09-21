@@ -78,6 +78,8 @@ public class DeliveryController extends Controller {
 		String sp_filter = getPara("sp_filter");
 		String beginTime_filter = getPara("beginTime_filter");
 		String endTime_filter = getPara("endTime_filter");
+		String plan_beginTime_filter = getPara("plan_beginTime_filter");
+		String plan_endTime_filter = getPara("plan_endTime_filter");
 		String warehouse_filter = getPara("warehouse_filter");
 		String serial_no = getPara("serial_no");
 		String delivery_no = getPara("delivery_no");
@@ -174,10 +176,16 @@ public class DeliveryController extends Controller {
 			transferOrderListMap.put("aaData", transferOrders);
 		} else {
 			if (beginTime_filter == null || "".equals(beginTime_filter)) {
-				beginTime_filter = "1-1-1";
+				beginTime_filter = "1970-01-01";
 			}
 			if (endTime_filter == null || "".equals(endTime_filter)) {
-				endTime_filter = "9999-12-31";
+				endTime_filter = "2037-12-31";
+			}
+			if (plan_beginTime_filter == null || "".equals(plan_beginTime_filter)) {
+				plan_beginTime_filter = "1970-01-01";
+			}
+			if (plan_endTime_filter == null || "".equals(plan_endTime_filter)) {
+				plan_endTime_filter = "2037-12-31";
 			}
 
 			String sqlTotal = "SELECT count(1) total from (select count(1) total from delivery_order d "
@@ -208,6 +216,9 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
+					+ " and tor.planning_time between '"
+					+ plan_beginTime_filter
+					+ "' and '" + plan_endTime_filter + "' "
 					+ "and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"
 					+ address_filter
 					+ "%' AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
@@ -271,7 +282,10 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
-					+ "and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"
+					+ " and tor.planning_time between '"
+					+ plan_beginTime_filter
+					+ "' and '" + plan_endTime_filter + "' "
+					+ " and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"
 					+ address_filter
 					+ "%' AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
