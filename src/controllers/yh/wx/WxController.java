@@ -27,8 +27,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
+//import org.json.JSONObject;
 
+
+
+
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -109,17 +115,19 @@ public class WxController extends ApiController {
             try {
                 HttpEntity entity = response1.getEntity();
                 String jsonStr=EntityUtils.toString(entity);
-                JSONObject json = new JSONObject(jsonStr);
+                Gson gson = new Gson();
+        		Map<String, ?> json = gson.fromJson(jsonStr, HashMap.class);
+//                JSONObject json = new JsonObject(jsonStr);
                 logger.debug("json:"+jsonStr);
                                 
-                if(json.has("errcode")){
+                if(json.get("errcode")!=null){
                 	status="error";
                 	renderJson(jsonStr);
                 	return;
                 }
                 
-                String accessToken = json.getString("access_token");
-                String openid = json.getString("openid");
+                String accessToken = (String) json.get("access_token");
+                String openid = (String) json.get("openid");
                 //String unionid = json.getString("unionid");
                 logger.debug("accessToken:"+accessToken+", openid:"+openid);
                                
@@ -160,10 +168,12 @@ public class WxController extends ApiController {
                 HttpEntity entity = response1.getEntity();
                 
                 String jsonStr=EntityUtils.toString(entity);
-                JSONObject json = new JSONObject(jsonStr); 
+                Gson gson = new Gson();
+        		Map<String, ?> json = gson.fromJson(jsonStr, HashMap.class);
+//                JSONObject json = new JSONObject(jsonStr); 
                 logger.debug("json2:"+jsonStr);
                 
-                userName = json.getString("nickname");
+                userName = (String) json.get("nickname");
                 logger.debug("nickname:"+userName);
                 //json.append("nickname", nickname);
                 

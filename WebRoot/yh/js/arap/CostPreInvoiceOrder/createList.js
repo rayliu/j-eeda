@@ -21,7 +21,9 @@ $(document).ready(function() {
             {"mDataProp":null,
             	"fnRender":function(obj){
             		return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            	}},
+            	}
+            },
+            {"mDataProp":"ORDER_TYPE",'sClass':"order_type"},
             {"mDataProp":"STATUS","sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
@@ -38,11 +40,10 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"C_STAMP"},
+            {"mDataProp":"C_STAMP", "sWidth":"80px"},
             {"mDataProp":"ONAME"},
-            {"mDataProp":"CNAME",
-            	'sClass':"cname"},
-            {"mDataProp":"COMPANY_NAME"},
+            {"mDataProp":"SP_NAME",'sClass':"sp_name"},
+            {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"TOTAL_PAY"},
@@ -76,7 +77,8 @@ $(document).ready(function() {
     	"sAjaxSource": "/chargeCheckOrder/createList2",
     	"aoColumns": [ 
 			  {"mDataProp":null, "sWidth":"20px"},                        
-			  {"mDataProp":null, "sWidth":"100px"},                        
+			  {"mDataProp":null, "sWidth":"100px"}, 
+              {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
 			  {"mDataProp":null, "sWidth":"100px"},                        
@@ -93,47 +95,84 @@ $(document).ready(function() {
 		]          
     });
     
-    var ids = [];
-    var cnames = [];
+    var dz_ids = [];
+    var yf_ids = [];
+    var arr_sp_name = [];
     // 未选中列表
 	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			var cname = $(this).parent().siblings('.cname')[0].textContent;
-			cnames.push($(this).parent().siblings('.cname')[0].textContent);
-			if(cnames.length>1){
-				if(cnames[0]!=cname){
+			var sp_name = $(this).parent().siblings('.sp_name')[0].textContent;
+            var order_type = $(this).parent().siblings('.order_type')[0].textContent;
+			arr_sp_name.push($(this).parent().siblings('.sp_name')[0].textContent);
+			if(arr_sp_name.length>1){
+				if(arr_sp_name[0]!=sp_name){
 					$.scojs_message('供应商不一致！！！', $.scojs_message.TYPE_FALSE);
 					var tmpArr = [];
-					for(id in cnames){
-						if(cnames[id] != cname){
-							tmpArr.push(cnames[id]);
+					for(id in arr_sp_name){
+						if(arr_sp_name[id] != sp_name){
+							tmpArr.push(arr_sp_name[id]);
 						}
 					}
-					cnames = tmpArr;
+					arr_sp_name = tmpArr;
 					return false;
 				}
 			}
 			
 			$(this).parent().parent().appendTo($("#checkedCostCheckList"));
-			ids.push($(this).attr('id'));
-			$("#costCheckedOrderIds").val(ids);
-			if(ids.length>0){
+
+            
+            if(order_type == '对账单'){
+                dz_ids.push($(this).attr('id'));
+            }else{
+                yf_ids.push($(this).attr('id'));
+            }
+
+			var id_obj=[
+                {
+                    order_type: '对账单',
+                    ids: dz_ids
+                },
+                {
+                    order_type: '预付单',
+                    ids: yf_ids
+                }
+            ];
+
+			$("#costCheckedOrderIds").val(JSON.stringify(id_obj));
+			if(dz_ids.length>0 || yf_ids.length>0){
 				$("#saveBtn").attr("disabled",false);
 			}
-		}			
+		}
 	});
 	
 	// 已选中列表
 	$("#checkedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == false){
+            var order_type = $(this).parent().siblings('.order_type')[0].textContent;
 			$(this).parent().parent().appendTo($("#uncheckedCostCheckList"));
-			if(ids.length != 0){
-				ids.splice($.inArray($(this).attr('id'),ids),1);
-				$("#costCheckedOrderIds").val(ids);
-				if(ids.length<=0){
-					$("#saveBtn").attr("disabled",true);
-				}
-			}
+            if(order_type == '对账单'){
+                dz_ids.splice($.inArray($(this).attr('id'),dz_ids),1);
+            }else{
+                yf_ids.splice($.inArray($(this).attr('id'),yf_ids),1);
+            }
+
+            var id_obj=[
+                {
+                    order_type: '对账单',
+                    ids: dz_ids
+                },
+                {
+                    order_type: '预付单',
+                    ids: yf_ids
+                }
+            ];
+
+            $("#costCheckedOrderIds").val(JSON.stringify(id_obj));
+            if(dz_ids.length == 0 && yf_ids.length == 0){
+                arr_sp_name = [];
+                $("#saveBtn").attr("disabled",true);
+            }
+			
 		}			
 	});
 	
@@ -198,15 +237,6 @@ $(document).ready(function() {
            chk_value.push($(this).val());    
         }); 
 
-        var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable">'+
-                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-                        'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
-                    '</div>';
-        $('body').append(alerMsg);
-        $('#message_trigger_err').on('click', function(e) {
-            e.preventDefault();
-            
-        });
         //$(body).append(chk_value.length==0 ?'你还没有选择任何应付单据！':chk_value);
 
         $('#ids').val(chk_value);
@@ -238,7 +268,7 @@ $(document).ready(function() {
 												        +"&endTime="+endTime;
         uncheckedCostCheckTable.fnDraw();
    };
-	$("#orderNo_filter,#beginTime_filter,#endTime_filter").on('keyup',function(){
+	$("#orderNo_filter, #sp_filter2, #beginTime_filter,#endTime_filter").on('keyup',function(){
 		refreshCreateList();
 	});
     $('#datetimepicker').datetimepicker({  

@@ -119,12 +119,15 @@
                                         </div>
                                         
                                         <div>
-                                        <label>应付总金额:</label>&nbsp;&nbsp;<label class=""><strong>${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</strong></label>
-                                        &nbsp;&nbsp;<label>已付金额:</label>&nbsp;&nbsp;<label class=""><strong>${paidAmount!'0'}</strong></label>
-                                        &nbsp;&nbsp;<label>本次支付金额:</label>&nbsp;&nbsp;<label class=""><strong id="tpayment">${tpayment!'0'}</strong></label>
+                                        <label>应付总金额:</label>&nbsp;&nbsp;
+                                        <label class=""><strong>${totalAmount!''}${arapAuditInvoiceApplication.total_amount!''}</strong></label>
+                                        &nbsp;&nbsp;
+                                        <label>已付金额:</label>&nbsp;&nbsp;
+                                        <label class=""><strong>${paidAmount!'0'}</strong></label>
+                                        &nbsp;&nbsp;
+                                        <label>本次支付金额:</label>&nbsp;&nbsp;
+                                        <label class=""><strong id="tpayment">${tpayment!'0'}</strong></label>
                                         </div>
-                                       <!--  <div><label>已付总金额:</label><label class="radio-inline"><strong>${totalPay!''}</strong></label></div>
-                                        <div><label>需付金额:</label><label class="radio-inline"><strong>${payAmount!''}</strong></label></div> -->
                                         <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">付款方式</label>
                                             	<input id="paymentMethodRadio" type="hidden" value="${arapAuditInvoiceApplication.payment_method!''}"/>

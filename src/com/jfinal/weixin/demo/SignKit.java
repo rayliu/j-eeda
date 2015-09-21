@@ -18,14 +18,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
+//import org.json.JSONException;
 
 import com.jfinal.log.Logger;
 
 
 public class SignKit {
 	private static Logger logger = Logger.getLogger(SignKit.class);
-    public static void main(String[] args) throws ClientProtocolException, IOException, ParseException, JSONException {
+    public static void main(String[] args) throws ClientProtocolException, IOException, ParseException {
         /*String jsapi_ticket = "jsapi_ticket";
 
         // 注意 URL 一定要动态获取，不能 hardcode
