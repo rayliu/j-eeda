@@ -9,7 +9,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "bSort": false,
+        "bSort": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -39,7 +39,7 @@ $(document).ready(function() {
             {"mDataProp":"OFFICE_NAME","sWidth":"80px"},//网点
             {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO","sWidth":"100px"},//客户订单号
-            {"mDataProp":"STATUS","sWidth":"70px"},//状态
+            {"mDataProp":"STATU","sWidth":"70px"},//状态
             {"mDataProp":"CARGO_NATURE",
             	"sWidth":"80px",
             	"fnRender": function(obj) {

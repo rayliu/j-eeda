@@ -84,6 +84,11 @@ public class DeliveryController extends Controller {
 		String address_filter = getPara("address_filter");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
+		
+		String sortColIndex = getPara("iSortCol_0");
+	    String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
 		if (getPara("iDisplayStart") != null
 				&& getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
@@ -110,7 +115,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, "
+			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -152,12 +157,15 @@ public class DeliveryController extends Controller {
 					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 					+ "AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
-					+ " GROUP BY d.id ORDER BY d.create_stamp DESC "
-					+ sLimit;
+					+ " GROUP BY d.id ) A ";
 
+			
+			String orderByStr = " order by A.create_stamp desc ";
+	        if(colName.length()>0){
+	        	orderByStr = " order by A."+colName+" "+sortBy;
+	        }
 
-
-			List<Record> transferOrders = Db.find(sql);
+			List<Record> transferOrders = Db.find(sql + orderByStr + sLimit);
 
 			transferOrderListMap.put("sEcho", pageIndex);
 			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
@@ -205,7 +213,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, "
+			String sql = "select * from (SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.status statu,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -263,9 +271,14 @@ public class DeliveryController extends Controller {
 					+ address_filter
 					+ "%' AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-				    + " group by d.id  ORDER BY d.create_stamp DESC" + sLimit;
+				    + " group by d.id ) A";
 
-			List<Record> transferOrders = Db.find(sql);
+			String orderByStr = " order by A.create_stamp desc ";
+	        if(colName.length()>0){
+	        	orderByStr = " order by A."+colName+" "+sortBy;
+	        }
+
+			List<Record> transferOrders = Db.find(sql + orderByStr + sLimit);
 
 			transferOrderListMap.put("sEcho", pageIndex);
 			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
