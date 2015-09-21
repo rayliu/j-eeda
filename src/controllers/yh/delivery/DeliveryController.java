@@ -81,6 +81,7 @@ public class DeliveryController extends Controller {
 		String warehouse = getPara("warehouse");
 		String serial_no = getPara("serial_no");
 		String delivery_no = getPara("delivery_no");
+		String address_filter = getPara("address_filter");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -92,7 +93,7 @@ public class DeliveryController extends Controller {
 		if (orderNo_filter == null && transfer_filter == null
 				&& status_filter == null && customer_filter == null
 				&& sp_filter == null && beginTime_filter == null
-				&& endTime_filter == null ) {
+				&& endTime_filter == null && address_filter == null ) {
 			String sqlTotal = "SELECT count(1) total from (select count(1) total from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
@@ -109,7 +110,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(d.receivingunit,IFNULL(trid.notify_party_company,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, "
+			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -197,12 +198,14 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
-					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ "and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"
+					+ address_filter
+					+ "%' AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') GROUP BY d.id ORDER BY d.create_stamp DESC ) atotal" ;
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(d.receivingunit,IFNULL(trid.notify_party_company,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, "
+			String sql = "SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.`STATUS`,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -256,7 +259,9 @@ public class DeliveryController extends Controller {
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
-					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
+					+ "and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"
+					+ address_filter
+					+ "%' AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				    + " group by d.id  ORDER BY d.create_stamp DESC" + sLimit;
 
