@@ -84,7 +84,8 @@
                                 <!-- /.col-lg-6 (nested) --> </div>
                             <div class="panel-body">
                                 <h2>付款明细</h2>
-                                <% if(arapPrePayOrder.type == 'origin') { %>
+                                <% var type = arapPrePayOrder.type!'origin';
+                                if(type == 'origin') { %>
                                     <div class ="form-group">
                                         <button class="btn  btn-primary btn-sm" id="addFee">添加费用</button>
                                     </div>
@@ -147,7 +148,7 @@
                             <hr/>
                             <a style="display:none" id ="style"> <i class='fa fa-check'></i>
                             </a>
-                            <% if(arapPrePayOrder.type == 'origin') { %>
+                            <% if(type == 'origin') { %>
                                 <button id="saveOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
                             <%}%>
                             <a class="btn  btn-primary" href="/costPrePayOrder">返回</a>
