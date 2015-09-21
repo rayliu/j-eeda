@@ -25,17 +25,18 @@ $(document).ready(function() {
 					}
 				}
 			},
-            {"mDataProp":"CUSTOMER" , "sWidth":"70px"},//客户
-            {"mDataProp":"SERIAL_NO", "sWidth":"100px"},//序列号
+            {"mDataProp":"PLAN_TIME","sWidth":"100px"},//计划时间
+            {"mDataProp":"WAREHOUSE_NAME","sWidth":"100px"},//仓库
             {"mDataProp":"ITEM_NO","sWidth":"90px"},//型号
             {"mDataProp":"AMOUNT","sWidth":"50px"},//数量
-            {"mDataProp":"PCS_AMOUNT", "sWidth":"50px"},//件数
-            {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
             {"mDataProp":"COMPANY","sWidth":"150px"},//地址
             {"mDataProp":"DRIVER","sWidth":"70px"},//联系人
             {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
+            {"mDataProp":"CUSTOMER" , "sWidth":"70px"},//客户
+            {"mDataProp":"SERIAL_NO", "sWidth":"100px"},//序列号
+            {"mDataProp":"PCS_AMOUNT", "sWidth":"50px"},//件数
+            {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
             {"mDataProp":"OFFICE_NAME","sWidth":"80px"},//网点
-            {"mDataProp":"PLAN_TIME","sWidth":"100px"},//计划时间
             {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO","sWidth":"100px"},//客户订单号
             {"mDataProp":"STATUS","sWidth":"70px"},//状态
@@ -64,7 +65,7 @@ $(document).ready(function() {
             			return null;
             			
             		}}},//提货方式
-            {"mDataProp":"WAREHOUSE_NAME","sWidth":"100px"},//仓库
+            
             {"mDataProp":"TID","sWidth":"70px"},
             { 
                 "mDataProp": null,  
