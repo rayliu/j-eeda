@@ -78,7 +78,7 @@ public class DeliveryController extends Controller {
 		String sp_filter = getPara("sp_filter");
 		String beginTime_filter = getPara("beginTime_filter");
 		String endTime_filter = getPara("endTime_filter");
-		String warehouse = getPara("warehouse");
+		String warehouse_filter = getPara("warehouse_filter");
 		String serial_no = getPara("serial_no");
 		String delivery_no = getPara("delivery_no");
 		String address_filter = getPara("address_filter");
@@ -203,6 +203,8 @@ public class DeliveryController extends Controller {
 					+ sp_filter
 					+ "%' and ifnull(trid.serial_no,'') like'%"
 					+ serial_no
+					+ "%' and ifnull(w.warehouse_name,'') like'%"
+					+ warehouse_filter
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
@@ -264,6 +266,8 @@ public class DeliveryController extends Controller {
 					+ sp_filter
 					+ "%' and ifnull(trid.serial_no,'') like'%"
 					+ serial_no
+					+ "%' and ifnull(w.warehouse_name,'') like'%"
+					+ warehouse_filter
 					+ "%' and d.create_stamp between '"
 					+ beginTime_filter
 					+ "' and '" + endTime_filter + "' "
