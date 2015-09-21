@@ -18,6 +18,7 @@ $(document).ready(function() {
         "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 9999999], [10, 25, 50, "All"] ],
         "bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -153,6 +154,8 @@ $(document).ready(function() {
             {"mDataProp":"REMARK", "sWidth":"150px", "bSortable": false}                         
         ]      
     });	
+     
+    
     $('#plandatetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN', 
