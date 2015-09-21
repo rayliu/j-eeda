@@ -52,7 +52,7 @@ $(document).ready(function() {
         ]  
     });	
     
-    $("#customerMessage").on('keyup click', function () {
+    $("#customerMessage,#order_no").on('keyup click', function () {
     	/*var beginTime = $("#beginTime").val();
     	var routeTo = $("#routeTo").val();
     	var routeFrom = $("#routeFrom").val();
@@ -61,8 +61,9 @@ $(document).ready(function() {
     	var customerMessage = $("#customerMessage").val();
     	var endTime=$("#endTime").val();
     	var sp_name = $("#sp_name").val();*/
+    	var order_no = $("#order_no").val();
     	var customerMessage = $("#customerMessage").val();
-    	if(customerMessage!= ''){
+    	if(customerMessage!= '' || order_no!= ''){
     		$("#queryBtn").prop("disabled",false);
     	}else{
     		$("#queryBtn").prop("disabled",true);
