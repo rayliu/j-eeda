@@ -529,17 +529,14 @@ public class CostPreInvoiceOrderController extends Controller {
 		
 		setAttr("paidAmount", 0);
 		
-		
+		//已付总金额
 		Record rec1 = Db.findFirst("SELECT sum(ifnull(caor.pay_amount,0)) total_pay FROM cost_application_order_rel caor"
 				+ " WHERE caor.application_order_id=?",id);
-		
-		Double paidAmount=rec1.getDouble("total_pay");
-		
 		
 		setAttr("tpayment", rec1.getDouble("total_pay"));//本次支付金额
 		String costCheckOrderIds = "";
 		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
-				"SELECT * FROM `arap_cost_order` aco "
+				"SELECT aco.* FROM `arap_cost_order` aco "
 				+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id "
 				+ " where caor.application_order_id = '"+id+"'"
 				);
@@ -553,6 +550,13 @@ public class CostPreInvoiceOrderController extends Controller {
 		costCheckOrderIds = costCheckOrderIds.substring(0,
 				costCheckOrderIds.length() - 1);
 		setAttr("costCheckOrderIds", costCheckOrderIds);
+		
+		//已付总金额
+		Record re = Db.findFirst("select sum(aco.pay_amount) paid_amount from cost_application_order_rel aco where aco.cost_order_id in(?)",costCheckOrderIds);
+		Double paidAmount = re.getDouble("paid_amount");
+		setAttr("paidAmount", paidAmount);
+		
+		
 		userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication
 				.get("approver_by"));
 		if(userLogin!=null){

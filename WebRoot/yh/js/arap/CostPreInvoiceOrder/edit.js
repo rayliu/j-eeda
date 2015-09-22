@@ -586,6 +586,7 @@ $(document).ready(function() {
 			$.post('/costPreInvoiceOrder/updateArapCostOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId ,costOrderId:costOrderId, name:name, value:value}, function(data){
 				if(data.costApplicationOrderRel.ID > 0){
 					$("#tpayment").html(data.pay_amount_a);
+					$("#paidAmount").html(parseFloat($("#paidAmounts").val())+parseFloat(data.pay_amount_a));
 					costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
 					costPreInvoiceOrderTable.fnDraw();
 					
