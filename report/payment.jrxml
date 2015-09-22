@@ -189,13 +189,6 @@ WHERE aciao.order_no = $P{order_no}]]>
 					<text><![CDATA[ 转账账号:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToBandHeight" x="245" y="40" width="72" height="20" uuid="fb89adae-ecd7-4549-a062-fde7ad81e855"/>
-					<textElement>
-						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[ 开户行:]]></text>
-				</staticText>
-				<staticText>
 					<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="82" height="20" uuid="8d9a36fc-44a3-46e6-a963-e454d089a782"/>
 					<textElement>
 						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
@@ -210,14 +203,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 					<text><![CDATA[ 付款网点:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="40" width="82" height="20" uuid="c11589ad-8f7b-480b-a445-96b5d43138b1"/>
-					<textElement>
-						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[ 付款方式:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement stretchType="RelativeToBandHeight" x="0" y="60" width="82" height="20" uuid="c8892969-7863-40d1-8774-0730d1b84c94"/>
+					<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="0" y="60" width="82" height="20" uuid="c8892969-7863-40d1-8774-0730d1b84c94"/>
 					<textElement>
 						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
@@ -241,32 +227,14 @@ WHERE aciao.order_no = $P{order_no}]]>
 					<textFieldExpression><![CDATA[$F{account_no}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToBandHeight" x="244" y="60" width="73" height="20" uuid="1e08a36a-1a48-48db-b439-84fd3baa99b9"/>
+					<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="244" y="60" width="73" height="20" uuid="1e08a36a-1a48-48db-b439-84fd3baa99b9"/>
 					<textElement>
 						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<text><![CDATA[ 账户名:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="316" y="40" width="190" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="c23d70e3-50c4-44d2-a65c-ab308cf481f4">
-						<printWhenExpression><![CDATA[new Boolean($F{payment_method}=="转账")]]></printWhenExpression>
-					</reportElement>
-					<box bottomPadding="5"/>
-					<textElement>
-						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{bank_name}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement stretchType="RelativeToBandHeight" x="82" y="40" width="163" height="20" isPrintWhenDetailOverflows="true" uuid="ed3dc8d9-8017-4d0b-896b-0eba3689ee78"/>
-					<textElement>
-						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{payment_method}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement stretchType="RelativeToBandHeight" x="81" y="60" width="163" height="20" isPrintWhenDetailOverflows="true" uuid="292954d0-28e6-4db5-859b-98230c5a9a03"/>
+					<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="81" y="60" width="163" height="20" isPrintWhenDetailOverflows="true" uuid="292954d0-28e6-4db5-859b-98230c5a9a03"/>
 					<textElement>
 						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 					</textElement>
@@ -280,7 +248,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 					<textFieldExpression><![CDATA[$F{company_name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="316" y="60" width="190" height="20" isPrintWhenDetailOverflows="true" uuid="aa5c30c0-33a2-4c87-a9a6-66498d7acbeb">
+					<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="316" y="60" width="190" height="20" isPrintWhenDetailOverflows="true" uuid="aa5c30c0-33a2-4c87-a9a6-66498d7acbeb">
 						<printWhenExpression><![CDATA[new Boolean($F{payment_method}=="转账")]]></printWhenExpression>
 					</reportElement>
 					<textElement>
@@ -288,7 +256,39 @@ WHERE aciao.order_no = $P{order_no}]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{bank_person}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="246" y="40" width="72" height="20" uuid="fb89adae-ecd7-4549-a062-fde7ad81e855"/>
+					<textElement>
+						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[ 开户行:]]></text>
+				</staticText>
+				<textField>
+					<reportElement stretchType="RelativeToBandHeight" x="82" y="40" width="163" height="20" isPrintWhenDetailOverflows="true" uuid="ed3dc8d9-8017-4d0b-896b-0eba3689ee78"/>
+					<textElement>
+						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{payment_method}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="316" y="40" width="190" height="20" uuid="c23d70e3-50c4-44d2-a65c-ab308cf481f4">
+						<printWhenExpression><![CDATA[new Boolean($F{payment_method}=="转账")]]></printWhenExpression>
+					</reportElement>
+					<box bottomPadding="5"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{bank_name}]]></textFieldExpression>
+				</textField>
 			</frame>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="19" y="41" width="82" height="20" uuid="c11589ad-8f7b-480b-a445-96b5d43138b1"/>
+				<textElement>
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ 付款方式:]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
