@@ -301,19 +301,19 @@
 		                                        	<input name="notify_id" type="hidden" value="${notifyParty.pid!''}">
 		                                        	<input name="contact_id" type="hidden" value="${notifyParty.contactId!''}">
 		                                            <label>收货单位</label>
-		                                            <input name="notify_company_name" class="form-control" placeholder="请输入公司名称" value="${notifyParty.company_name!''}">
+		                                            <input name="notify_company_name" class="form-control" placeholder="请输入公司名称" value="${notifyParty.company_name!''}${notifytransferorder.receive_address!''}">
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>收货地址</label>
-		                                            <input name="notify_address" id ="notify_address" class="form-control" placeholder="请输入收货地址" value="${notifyParty.address!''}">
+		                                            <input name="notify_address" id ="notify_address" class="form-control" placeholder="请输入收货地址" value="${notifyParty.address!''}${notifytransferorder.notify_party_company!''}">
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>联系人</label>
-		                                            <input name="notify_contact_person" class="form-control" placeholder="请输入联系人" value="${notifyParty.contact_person!''}">
+		                                            <input name="notify_contact_person" class="form-control" placeholder="请输入联系人" value="${notifyParty.contact_person!''}${notifytransferorder.notify_party_name!''}">
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>电话</label>
-		                                            <input name="notify_phone" class="form-control" placeholder="请输入座机" value = "${notifyParty.phone!''}">
+		                                            <input name="notify_phone" class="form-control" placeholder="请输入座机" value = "${notifyParty.phone!''}${notifytransferorder.notify_party_phone!''}">
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>手机</label>

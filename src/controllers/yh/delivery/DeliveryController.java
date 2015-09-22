@@ -594,7 +594,12 @@ public class DeliveryController extends Controller {
 							+ "c.address,c.mobile,c.company_name, "
 							+ "p.id as pid,c.id as contactId from party p, contact c where p.contact_id=c.id and p.id =?",
 							tOrder.get("notify_party_id"));
+			setAttr("notifyParty", notifyPartyContact);
 		}
+		else{
+			TransferOrderItemDetail transferorderitemdetail =TransferOrderItemDetail.dao.findFirst("SELECT d.* FROM transfer_order_item_detail d LEFT JOIN delivery_order_item doi on doi.transfer_item_detail_id=d.id WHERE doi.delivery_id=?",id);
+			setAttr("notifytransferorder", transferorderitemdetail);
+ 		}
 		
 		//RDC
 		Warehouse warehouse = Warehouse.dao
@@ -606,8 +611,6 @@ public class DeliveryController extends Controller {
 
 		setAttr("deliveryId", tOrder);
 		setAttr("customer", customerContact);
-
-		setAttr("notifyParty", notifyPartyContact);
 		setAttr("spContact", spContact);
 		
 		String routeFrom = tOrder.get("route_from");
@@ -1234,7 +1237,6 @@ public class DeliveryController extends Controller {
 		Party party = new Party();
 		Contact contact = new Contact();
 		deliveryOrder = new DeliveryOrder();
-
 		if (notifyId == null || notifyId.equals("")) {
 			contact.set("company_name", getPara("notify_company_name"))
 					.set("contact_person", getPara("notify_contact_person"))
@@ -1252,11 +1254,11 @@ public class DeliveryController extends Controller {
 					.set("company_name", getPara("notify_company_name"))
 					.set("contact_person", getPara("notify_contact_person"))
 					.set("address", getPara("notify_address"))
-					.set("mobile", getPara("notify_phone")).update();
+					.set("mobile", getPara("notify_mobile"))
+					.set("phone", getPara("notify_phone")).update();
 		}
 
 		if (deliveryid == null || "".equals(deliveryid)) {
-
 			deliveryOrder.set("order_no", orderNo)
 					.set("customer_id", customerId)
 					.set("sp_id", spId)
@@ -1292,8 +1294,6 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("delivery_plan_type", "untreated");
 			}
 			deliveryOrder.save();
-
-			
 			if("cargo".equals(cargoNature)){
 				TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
 				for (int i = 0; i < productId.length; i++) {
@@ -1370,7 +1370,6 @@ public class DeliveryController extends Controller {
 		} else {
 
 			deliveryOrder.set("sp_id", spId)
-					.set("notify_party_id", getPara("notify_id"))
 					.set("Customer_id", customerId)
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
@@ -1380,7 +1379,11 @@ public class DeliveryController extends Controller {
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no", getPara("customerDelveryNo"))
 					.set("ref_no", sign_document_no);
-			
+			if("".equals(getPara("notify_id")) || getPara("notify_id") == null)
+				deliveryOrder.set("notify_party_id", party.get("id"));
+            else{
+            	deliveryOrder.set("notify_party_id", getPara("notify_id"));
+			}
 			if(!"".equals(businessStamp) && businessStamp != null)
 				deliveryOrder.set("business_stamp", businessStamp);
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)

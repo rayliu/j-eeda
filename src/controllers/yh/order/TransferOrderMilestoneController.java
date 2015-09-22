@@ -414,7 +414,7 @@ public class TransferOrderMilestoneController extends Controller {
         		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId;
         		rec = Db.findFirst(sqlTotal);
         		Long departTotal1 = rec.getLong("total");
-        		List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select id from transfer_order_item_detail where order_id = "+departTransferOrder.get("order_id")+" and depart_id ="+ departOrderId);
+        		List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select id,notify_party_id from transfer_order_item_detail where order_id = "+departTransferOrder.get("order_id")+" and depart_id ="+ departOrderId);
         		for (int i = 0; i < departTotal1; i++) {
         				DeliveryOrder deliveryOrder = null;
                 		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
@@ -422,6 +422,7 @@ public class TransferOrderMilestoneController extends Controller {
                 		deliveryOrder = new DeliveryOrder();
                 		deliveryOrder.set("order_no", orderNo)
         				.set("customer_id", transferOrder.get("customer_id"))
+        				.set("notify_party_id", transferorderitemdetail.get(i).get("notify_party_id"))
         				.set("create_stamp", createDate).set("status", "新建")
         				.set("route_to",transferOrder.get("route_to"))
         				.set("route_from", transferOrder.get("route_from"))
