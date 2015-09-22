@@ -78,7 +78,7 @@
         </nav>
         <!-- /.navbar-static-top -->
 
-        <nav class="navbar-default navbar-static-side" role="navigation">
+        <nav  id='left_side_bar' class="navbar-default navbar-static-side" role="navigation">
             <div class="sidebar-collapse">
                 <ul class="nav" id="side-menu">
                     <!--li class="sidebar-search">
@@ -648,7 +648,9 @@
             <!-- /.sidebar-collapse -->
         </nav>
         <!-- /.navbar-static-side -->
-
+        <a id='hide_menu_btn' href="#" style="position: absolute;left: 250px;top: 50px; z-index:1;" title="隐藏菜单">
+            <i id='hide_menu_icon' class="fa fa-angle-double-left fa-2x"></i>
+        </a>
         ${layoutContent}
 
     </div>
