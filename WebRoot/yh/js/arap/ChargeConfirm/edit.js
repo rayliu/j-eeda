@@ -29,7 +29,7 @@
         		}},
             {"mDataProp":"TOTAL_AMOUNT",
     			"fnRender": function(obj) {
-    				total = total + parseInt(obj.aData.TOTAL_AMOUNT) ;
+    				total = total + parseFloat(obj.aData.TOTAL_AMOUNT) ;
     				$("#total").html(total);
     				$("#total_amount").val(total);
     				if($("#status").val()=='' ){
@@ -47,7 +47,7 @@
         	},
         	{"mDataProp":null,
   	            "fnRender": function(obj) {
-  	            	noreceive = noreceive + parseInt(obj.aData.NORECEIVE_AMOUNT) ;
+  	            	noreceive = noreceive + parseFloat(obj.aData.NORECEIVE_AMOUNT) ;
   	            	$("#total_receives").html(noreceive);
   	            	$("#receive_amount").val(noreceive);
   	            	$("#total_noreceive").val(noreceive);
@@ -68,7 +68,7 @@
 		var value = 0.00;
 		var currentValue = $(this).val();
 		var $totalAmount = $(this).parent().parent().attr('total_amount');
-		if(parseInt($totalAmount)-parseInt(currentValue)<0){
+		if(parseFloat($totalAmount)-parseFloat(currentValue)<0){
 			$(this).val(0);
 			$.scojs_message('支付金额不能大于待付金额', $.scojs_message.TYPE_FALSE);
 			return false;
@@ -76,7 +76,7 @@
 		
 		$("input[name='receive_amounts']").each(function(){
 			if($(this).val()!=null&&$(this).val()!=''){
-				value = value + parseInt($(this).val());
+				value = value + parseFloat($(this).val());
 			}else{
 				$("#InvorceApplication-table").on('blur', 'input', function(e){
 					$(this).val(0);
@@ -84,7 +84,7 @@
 			}
 			$("#total_receives").html(value);
     		$("#receive_amount").val(value);
-    		$("#noreceive_amount").val(parseInt($("#total_noreceive").val())-parseInt(value));
+    		$("#noreceive_amount").val(parseFloat($("#total_noreceive").val())-parseFloat(value));
 	    });		
 	});	
     

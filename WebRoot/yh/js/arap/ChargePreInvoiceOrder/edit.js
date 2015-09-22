@@ -249,7 +249,7 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 
-		if(parseInt(noreceive_amount) < parseInt(value)){
+		if(parseFloat(noreceive_amount) < parseFloat(value)){
 			$.scojs_message('注意：此次收款金额已超过应收金额！！', $.scojs_message.FALSE);
 			return;
 		}else{

@@ -31,21 +31,21 @@
     		{"mDataProp":"CREATE_STAMP","sWidth": "150px"},
     		{"mDataProp":"COST_AMOUNT","sWidth": "150px",
     			"fnRender": function(obj) {
-					total = total + parseInt(obj.aData.COST_AMOUNT) ;
+					total = total + parseFloat(obj.aData.COST_AMOUNT) ;
 					$("#total").html(total);
 					return obj.aData.COST_AMOUNT;
     			}
     		},
     		{"mDataProp":"DAIFU","sWidth": "150px",
     			"fnRender": function(obj) {
-					nopay = nopay + parseInt(obj.aData.DAIFU) ;
+					nopay = nopay + parseFloat(obj.aData.DAIFU) ;
 					$("#nopay").html(nopay);
 					return obj.aData.DAIFU;
     			}
     		},
     		{"mDataProp":"PAY_AMOUNT","sWidth": "150px",
     			"fnRender": function(obj) {
-					pay = pay + parseInt(obj.aData.PAY_AMOUNT) ;
+					pay = pay + parseFloat(obj.aData.PAY_AMOUNT) ;
 					$("#pay").html(pay);
 					return obj.aData.PAY_AMOUNT;
     			}

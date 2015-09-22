@@ -579,7 +579,7 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 
-		if(parseInt(yufu_amount) < parseInt(value)){
+		if(parseFloat(yufu_amount) < parseFloat(value)){
 			$.scojs_message('注意：此次付款金额已超过应付金额！！', $.scojs_message.FALSE);
 			return;
 		}else{

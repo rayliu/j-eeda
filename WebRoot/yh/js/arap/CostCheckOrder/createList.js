@@ -163,8 +163,8 @@ $(document).ready(function() {
 				}
 			}
 			var sum_f = $(this).attr('amount');
-			var x_sum=parseInt(sum)-parseInt(sum_f);
-			sum=parseInt(sum)-parseInt(sum_f);
+			var x_sum=parseFloat(sum)-parseFloat(sum_f);
+			sum=parseFloat(sum)-parseFloat(sum_f);
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
 			$("#amount").html(x_sum);
@@ -179,9 +179,9 @@ $(document).ready(function() {
 		if($(this).prop("checked") == false){
 			//j_amount.push($(this).attr('amount'));
 			j_sum =$(this).attr('amount');//eval(j_amount.join("+"));
-			var xj_sum=parseInt(sum)-parseInt(j_sum);
-			sum=parseInt(sum)-parseInt(j_sum);
-			//amount=parseInt(a);
+			var xj_sum=parseFloat(sum)-parseFloat(j_sum);
+			sum=parseFloat(sum)-parseFloat(j_sum);
+			//amount=parseFloat(a);
 			$("#amount").html(xj_sum);
 			//j_amount.splice($.inArray($(this).attr('id'),j_amount),1);
 			if(ids.length != 0){
