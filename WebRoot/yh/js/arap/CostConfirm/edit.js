@@ -35,7 +35,7 @@
         		}},
             {"mDataProp":"PAY_AMOUNT",
     			"fnRender": function(obj) {
-    				total = total + parseInt(obj.aData.PAY_AMOUNT) ;
+    				total = total + parseFloat(obj.aData.PAY_AMOUNT) ;
     				$("#total").html(total);
     				$("#total_amount").val(total);
     				if($("#status").val()=='' ){
@@ -56,7 +56,7 @@
         	/*{"mDataProp":"NOPAY_AMOUNT", bVisible: false,
         		"fnRender": function(obj) {
         			$("#nopay_one").val(obj.aData.NOPAY_AMOUNT);
-        			nopay = nopay + parseInt(obj.aData.NOPAY_AMOUNT) ;
+        			nopay = nopay + parseFloat(obj.aData.NOPAY_AMOUNT) ;
     				//$("#nopay_total").html(nopay);
     				$("#nopay_amount").val(nopay);
     				$("#pay_amount").val(nopay);
@@ -67,7 +67,7 @@
         	},*/
         	{"mDataProp":null,
   	            "fnRender": function(obj) {
-  	            	nopay = nopay + parseInt(obj.aData.NOPAY_AMOUNT) ;
+  	            	nopay = nopay + parseFloat(obj.aData.NOPAY_AMOUNT) ;
   	            	$("#total_pays").html(nopay);
   	            	$("#pay_amount").val(nopay);
   	            	$("#total_nopay").val(nopay);
@@ -94,28 +94,28 @@
 		//var $leftAmountObj = $(row.find("span[name='nopay_amounts']")[0]);
 		var $totalAmount = $(this).parent().parent().attr('total_amount');
 		//var $totalAmount = $("#nopay_one").val();
-		if(parseInt($totalAmount)-parseInt(currentValue)<0){
+		if(parseFloat($totalAmount)-parseFloat(currentValue)<0){
 			$(this).val(0);
 			$.scojs_message('支付金额不能大于待付金额', $.scojs_message.TYPE_FALSE);
 			return false;
 		}/*else{
-			$leftAmountObj.text(parseInt($totalAmount)-parseInt(currentValue));
-			$("#nopay_amount").text(parseInt($totalAmount)-parseInt(currentValue));
+			$leftAmountObj.text(parseFloat($totalAmount)-parseFloat(currentValue));
+			$("#nopay_amount").text(parseFloat($totalAmount)-parseFloat(currentValue));
 		}*/
 		
 		
 		$("input[name='pay_amounts']").each(function(){
 			if($(this).val()!=null&&$(this).val()!=''){
-				/*if(parseInt($(this).val())>parseInt($(this).parent().parent().attr('nopay_amount'))){
+				/*if(parseFloat($(this).val())>parseFloat($(this).parent().parent().attr('nopay_amount'))){
 					$.scojs_message('支付金额不能大于待付金额', $.scojs_message.TYPE_FALSE);
 					$(this).val(0);
 					return false;
 				}*/
 				
-				value = value + parseInt($(this).val());
+				value = value + parseFloat($(this).val());
 //	    		$("#total_pays").html(value);
 //	    		$("#pay_amount").val(value);
-//	    		$("#nopay_amount").val(parseInt($("#total_amount").val())-parseInt(value));
+//	    		$("#nopay_amount").val(parseFloat($("#total_amount").val())-parseFloat(value));
 			}else{
 				$("#InvorceApplication-table").on('blur', 'input', function(e){
 					$(this).val(0);
@@ -125,7 +125,7 @@
 			}
 			$("#total_pays").html(value);
     		$("#pay_amount").val(value);
-    		$("#nopay_amount").val(parseInt($("#total_nopay").val())-parseInt(value));
+    		$("#nopay_amount").val(parseFloat($("#total_nopay").val())-parseFloat(value));
 	    });		
 	});	
     
@@ -136,7 +136,7 @@
 //		e.preventDefault();
 //		var value = 0.00;
 //		$("span[name='nopay_amounts']").each(function(){
-//				value = value + parseInt($(this).html());
+//				value = value + parseFloat($(this).html());
 //				$("#nopay_total").html(value);
 //				$("#nopay_amount").val(value);
 //	    });	
