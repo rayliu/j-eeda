@@ -485,7 +485,11 @@ public class TransferOrderController extends Controller {
 			}
 			transferOrder.set("customer_id", customerId);
 			transferOrder.set("status", getPara("status"));
-			transferOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YS"));
+			if("cargoReturnOrder".equals(getPara("orderType"))){
+				transferOrder.set("order_no", OrderNoGenerator.getNextOrderNo("TH"));
+			}else{
+				transferOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YS"));
+			}
 			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
