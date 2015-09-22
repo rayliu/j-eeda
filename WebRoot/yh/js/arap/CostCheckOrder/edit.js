@@ -226,6 +226,7 @@ $(document).ready(function() {
 			 alert("调整金额为数字类型");
 		 }else{
 			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,ty:ty,departId:departId,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
+				 $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
 				 $("#debitAmount").html(data.changeAmount);
 				 $("#costAmount").html(data.actualAmount); 
 				 $("#total_amount").val(data.changeAmount);
