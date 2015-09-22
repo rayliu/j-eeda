@@ -90,34 +90,24 @@ $(document).ready(function() {
 			}
 		});
 	}
-
-	//设置一个变量值，用来保存当前的ID
-	
-	$.editable.addInputType('autocompleteType', {
-	    element : $.editable.types.text.element,
-	    plugin: function (settings, original) {
-	      $('input', this).autocomplete({
-	        //source: "/transferOrderItem/transferOrderItemList?order_id="+order_id
-	        source: [ "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby" ]
-	      });
-	    }
-	});
 	
     //from表单验证
 	var validate = $('#transferOrderUpdateForm').validate({
         rules: {
-        	customerMessage: {
-        		required: true
-        	},
+        	customerMessage: {required: true},
         	planning_time: {required: true},
         	deliveryOfficeSelect: {required: true},
         	arrival_time: {required: true},
-        	officeSelect: {required:true}
+        	officeSelect: {required:true},
+        	route_from: {required:true},
+        	route_to: {required:true}
         },
         messages : {	             
         	customerMessage : {required:  "请选择一个客户"},
         	officeSelect: {required: "运作网点不能为空"},
-        	deliveryOfficeSelect: {required: "RDC仓不能为空"}
+        	deliveryOfficeSelect: {required: "RDC仓不能为空"},
+        	route_from: {required:"始发城市不能为空"},
+        	route_to: {required:"目的地城市不能为空"}
         }
     });
 		

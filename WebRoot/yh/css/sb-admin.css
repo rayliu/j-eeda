@@ -8,6 +8,10 @@
     line-height: 1.0;
 }
 
+/* due to font-size change to 10px */
+.radio-inline input[type=radio] {
+	margin-top: 0px;
+}
 /* Wrappers */
 
 /* ------------------------------- */
@@ -454,6 +458,12 @@ label.error {
 .huge {
     font-size: 40px;
     line-height: normal;
+}
+
+.date .add-on{
+	position: absolute;
+    right: 40px;
+    margin-top: 10px;
 }
 
 /* ray added */
