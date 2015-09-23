@@ -213,7 +213,10 @@
     var order_no = '${arapMiscChargeOrder.order_no!''}';
     var order_id = ${arapMiscChargeOrder.id!0};
     var ref_order_id = ${arapMiscChargeOrder.ref_order_id!1};
-    var is_origin = order_id<ref_order_id;
+    var type = ${arapMiscChargeOrder.type!''};
+    var is_origin = true;
+    if(type == 'non_biz')
+        order_id<ref_order_id;
 </script>
 <script src="/yh/js/eeda-common.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

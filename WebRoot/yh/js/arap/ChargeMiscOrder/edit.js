@@ -264,7 +264,7 @@ $(document).ready(function() {
 			{"mDataProp":"STATUS","sClass": "status"},
             {"mDataProp": null,"sWidth": "80px",
                 "fnRender": function(obj) {
-                	if($("#chargeMiscOrderStatus").text()!='新建' || !is_origin){
+                	if($("#chargeMiscOrderStatus").text()!='新建' || (type == 'non_biz' &&!is_origin)){
                 		return "";
                 	}
 
@@ -458,7 +458,7 @@ $(document).ready(function() {
     	$('#saveChargeMiscOrderBtn').attr('disabled', true);
     }
 
-    if(!is_origin){
+    if(type == 'non_biz' && !is_origin){
     	$('#addFee').hide();    	
     	$('#saveChargeMiscOrderBtn').attr('disabled', true);
     }

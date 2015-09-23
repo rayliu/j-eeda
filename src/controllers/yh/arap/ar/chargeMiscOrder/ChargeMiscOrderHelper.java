@@ -76,7 +76,7 @@ public class ChargeMiscOrderHelper {
 				"select * from arap_misc_cost_order where order_no=?",
 				originOrder.getStr("order_no"));
 		// 删除从表
-		Db.update("delete from arap_misc_cost_order where misc_order_id=?",
+		Db.update("delete from arap_misc_cost_order_item where misc_order_id=?",
 				arapMiscCostOrder.getLong("id"));
 		// 删除主表
 		arapMiscCostOrder.delete();
