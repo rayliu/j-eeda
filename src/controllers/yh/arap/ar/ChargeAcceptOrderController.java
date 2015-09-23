@@ -47,10 +47,13 @@ public class ChargeAcceptOrderController extends Controller {
     public void list() {
         String sLimit = "";
         String status = getPara("status");
+        String status2 = "";
         if(status.equals("unCheck")){
         	status = "'已审批'";
+        	status2 = "新建";
         }else{
         	status = "'已复核','已收款确认','收款确认中'";
+        	status2 = "已复核";
         }
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -79,13 +82,24 @@ public class ChargeAcceptOrderController extends Controller {
 //        if(status_filter != null && !"".equals(status_filter)){
 //        	status = status_filter;
 //        }
-        String sql = "select aci.id, '开票记录单' order_type,aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        String sql = "select * from( select aci.id, '开票记录单' order_type,aci.order_no, aci.status, "
+        		+ " ( select group_concat( invoice_item.invoice_no SEPARATOR '\n' )  "
+        		+ " from arap_charge_invoice_item_invoice_no invoice_item "
+        		+ " where invoice_item.invoice_id = aci.id GROUP BY aci.id ) invoice_no,"
+        		+ " aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
         		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in(" + status + ") ";
+        		+ " where aci.status in(" + status + ") "
+        	    + " UNION "
+        	    + " select amco.id,'手工收入单' order_type, amco.order_no,amco.status,"
+        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr cname "
+        	    + " from arap_misc_charge_order amco "
+        	    + " LEFT JOIN party p ON p.id = amco.customer_id "
+        	    + " LEFT JOIN contact c ON c.id = p.contact_id "
+        	    + " where amco.status = '"+status2+"' ) A";
         
        
-        List<Record> BillingOrders = Db.find(sql + " group by aci.id order by create_time desc " + sLimit);
+        List<Record> BillingOrders = Db.find(sql + " order by create_time desc " + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
@@ -237,7 +251,7 @@ public class ChargeAcceptOrderController extends Controller {
         		ReimbursementOrder reimbursementorder =ReimbursementOrder.dao.findById(id);
         		reimbursementorder.set("status", "已复核");
         		reimbursementorder.update();
-	        }else if(order_type.equals("收入单")){
+	        }else if(order_type.equals("手工收入单")){
         		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
         		arapMiscChargeOrder.set("status", "已复核");
         		arapMiscChargeOrder.update();
