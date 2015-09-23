@@ -393,7 +393,7 @@ public class CarSummaryController extends Controller {
             		.set("month_car_run_mileage", monthCarRunMileage).set("month_refuel_amount", monthRefuelAmount)
             		.set("next_start_car_amount", nextStartCarAmount).set("deduct_apportion_amount", deductApportionAmount)
             		.set("actual_payment_amount", actualPaymentAmount).set("create_data", sqlDate)
-            		.set("status", carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW).save();
+            		.set("status", "新建").save();
         	
     		long id = carSummaryOrder.getLong("id");
     		List<Long> orderIds = new ArrayList<Long>();
@@ -877,7 +877,7 @@ public class CarSummaryController extends Controller {
     	if(!"".equals(carSummaryId) && carSummaryId != null){
     		CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
     		if("审核".equals(value)){
-    			value = order.CAR_SUMMARY_SYSTEM_CHECKED;
+    			value = "已审批";
     		}else if("撤销审核".equals(value)){
     			value = order.CAR_SUMMARY_SYSTEM_REVOCATION;
     		}else if("报销".equals(value)){
@@ -936,9 +936,9 @@ public class CarSummaryController extends Controller {
 			setAttr("carNumber", carSummaryOrder.get("month_start_car_next"));
 			//是否审核 isAudit
 			String status = carSummaryOrder.get("status");
-			if(carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW.equals(status) ||carSummaryOrder.CAR_SUMMARY_SYSTEM_REVOCATION.equals(status) )
+			if("新建".equals(status) ||carSummaryOrder.CAR_SUMMARY_SYSTEM_REVOCATION.equals(status) )
 				setAttr("isAudit", "no");
-			else if(carSummaryOrder.CAR_SUMMARY_SYSTEM_CHECKED.equals(status) || carSummaryOrder.CAR_SUMMARY_SYSTEM_REIMBURSEMENT.equals(status))
+			else if("已审批".equals(status) || carSummaryOrder.CAR_SUMMARY_SYSTEM_REIMBURSEMENT.equals(status))
 				setAttr("isAudit", "yes");
 			else
 				setAttr("isAudit", "no");
