@@ -293,6 +293,11 @@ public class CostAcceptOrderController extends Controller {
                 + "         where p.id = amco.customer_id)"
                 + " end"
                 + " ) AS cname FROM arap_misc_cost_order amco WHERE amco.STATUS= '已复核' and amco.type = 'non_biz'"
+                + " UNION"
+                + " SELECT cso.id,cso.order_no,'行车单' AS order_type,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,"
+        		+ "  NULL AS invoice_no,cso.create_data create_time,'' AS remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
+        		+ " FROM car_summary_order cso"
+        		+ " WHERE cso. STATUS = '已复核' AND cso.reimbursement_order_id IS NULL"
         		+ " ) A";
         
         String sql = "select * from(select aci.id, aci.order_no,'申请单' as order_type, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
@@ -325,6 +330,11 @@ public class CostAcceptOrderController extends Controller {
                 + "         where p.id = amco.customer_id)"
                 + " end"
                 + " ) AS cname FROM arap_misc_cost_order amco WHERE amco.STATUS= '已复核' and amco.type = 'non_biz'"
+                + " UNION"
+                + " SELECT cso.id,cso.order_no,'行车单' AS order_type,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,"
+        		+ "  NULL AS invoice_no,cso.create_data create_time,'' AS remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
+        		+ " FROM car_summary_order cso"
+        		+ " WHERE cso. STATUS = '已复核' AND cso.reimbursement_order_id IS NULL"
         		+ ") A";
         
         
