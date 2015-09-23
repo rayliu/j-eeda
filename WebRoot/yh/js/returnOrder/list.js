@@ -9,41 +9,9 @@
     });
     
     
-    //获取所有客户
-    $('#customer_filter').on('keyup click', function(){
-       var inputStr = $('#customer_filter').val();
-       var companyList =$("#companyList");
-       $.get("/customerContract/search", {locationName:inputStr}, function(data){
-           companyList.empty();
-           for(var i = 0; i < data.length; i++)
-               companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
-       },'json');
-       companyList.show();
-    });
-
-	$('#companyList').on('click', '.fromLocationItem', function(e){        
-       $('#customer_filter').val($(this).text());
-       $("#companyList").hide();
-       var companyId = $(this).attr('partyId');
-       $('#customerId').val(companyId);
-       findData();
-	});
-	// 没选中客户，焦点离开，隐藏列表
-	$('#customer_filter').on('blur', function(){
-		$('#companyList').hide();
-	});
-
-	//当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
-	$('#companyList').on('blur', function(){
-		$('#companyList').hide();
-	});
-
-	$('#companyList').on('mousedown', function(){
-		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-	});
    
-    //开始-时间按钮
-    $('#datetimepicker').datetimepicker({  
+  //开始-时间按钮
+  $('#datetimepicker').datetimepicker({  
 	    format: 'yyyy-MM-dd',  
 	    language: 'zh-CN',
 	    autoclose: true,
@@ -54,7 +22,7 @@
 	});
     
     //结束-时间按钮
-    $('#datetimepicker2').datetimepicker({  
+  $('#datetimepicker2').datetimepicker({  
 	    format: 'yyyy-MM-dd',  
 	    language: 'zh-CN',
 	    autoclose: true,
@@ -65,18 +33,16 @@
 	});
     
 	
-	var createDataTable =$('#example').dataTable( {
-       /* "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  */    	  
-		"bSort": false, // 不要排序
+	var createDataTable =$('#example').dataTable( {    	  
+		    "bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
-        "bProcessing": true,
+        "bProcessing": true,//table载入数据时，是否显示‘loading...’提示  
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
-        "bServerSide": true,
-    	"oLanguage": {
+        "bServerSide": false,
+    	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-		
         //"sAjaxSource": "/returnOrder/list?status=新建",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
@@ -93,47 +59,47 @@
    			{ "mDataProp": "SERIAL_NO","sWidth":"60px"},
    			{ "mDataProp": "ITEM_NO","sWidth":"80px"},
    			{ "mDataProp": "RECEIPT_PERSON","sWidth":"60px"},
-            { "mDataProp": "RECEIPT_PHONE","sWidth":"80px"},
-            { "mDataProp": "RECEIVING_UNIT","sWidth":"120px"},
-            { "mDataProp": "RECEIPT_ADDRESS","sWidth":"100px"},
-            { "mDataProp": "WAREHOUSE_NAME","sWidth":"80px"},
-   		    { "mDataProp": "A_AMOUNT","sWidth":"30px"},
-            { "mDataProp": "CNAME","sWidth":"80px"},
-            { "mDataProp": "TRANSFER_ORDER_NO","sWidth":"120px"},
-            { "mDataProp": "FROM_NAME","sWidth":"80px"},
-            { "mDataProp": "TO_NAME","sWidth":"80px"},
-            { "mDataProp": "ADDRESS","sWidth":"120px"}, 
-            /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
-            { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
-            { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
-            { "mDataProp": "CREATE_DATE","sWidth":"100px"},
-            { "mDataProp": "TRANSACTION_STATUS","sWidth":"40px",
-                "fnRender": function(obj) {
-                    if(obj.aData.TRANSACTION_STATUS=='new')
-                        return '新建';
-                    if(obj.aData.TRANSACTION_STATUS=='confirmed')
-                        return '已确认';
-                    if(obj.aData.TRANSACTION_STATUS=='cancel')
-                        return '取消';
-                    return obj.aData.TRANSACTION_STATUS;
-                 }
-            },
-            { "mDataProp": "IMGAUDIT","sWidth":"70px" },
-            { "mDataProp": "REMARK"}
-         ]
+        { "mDataProp": "RECEIPT_PHONE","sWidth":"80px"},
+        { "mDataProp": "RECEIVING_UNIT","sWidth":"120px"},
+        { "mDataProp": "RECEIPT_ADDRESS","sWidth":"100px"},
+        { "mDataProp": "WAREHOUSE_NAME","sWidth":"80px"},
+ 		    { "mDataProp": "A_AMOUNT","sWidth":"30px"},
+        { "mDataProp": "CNAME","sWidth":"80px"},
+        { "mDataProp": "TRANSFER_ORDER_NO","sWidth":"120px"},
+        { "mDataProp": "FROM_NAME","sWidth":"80px"},
+        { "mDataProp": "TO_NAME","sWidth":"80px"},
+        { "mDataProp": "ADDRESS","sWidth":"120px"}, 
+        /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
+        { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
+        { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
+        { "mDataProp": "CREATE_DATE","sWidth":"100px"},
+        { "mDataProp": "TRANSACTION_STATUS","sWidth":"40px",
+            "fnRender": function(obj) {
+                if(obj.aData.TRANSACTION_STATUS=='new')
+                    return '新建';
+                if(obj.aData.TRANSACTION_STATUS=='confirmed')
+                    return '已确认';
+                if(obj.aData.TRANSACTION_STATUS=='cancel')
+                    return '取消';
+                return obj.aData.TRANSACTION_STATUS;
+             }
+        },
+        { "mDataProp": "IMGAUDIT","sWidth":"70px" },
+        { "mDataProp": "REMARK"}
+      ]
 	});
 	
 	var finishDataTable =$('#example2').dataTable( {
-    	"bSort": false, // 不要排序
+    	  "bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bProcessing": true,
-        "bServerSide": true,
-    	"oLanguage": {
+        "bServerSide": false,
+    	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/returnOrder/list?status='已签收','已确认','对账中','对账已确认'",
+        // "sAjaxSource": "/returnOrder/list?status='已签收','已确认','对账中','对账已确认'",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
    				"sWidth":"100px",
@@ -265,8 +231,8 @@
 		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
 	});
    
-    //开始-时间按钮
-    $('#datetimepicker').datetimepicker({  
+  //开始-时间按钮
+  $('#datetimepicker').datetimepicker({  
 	    format: 'yyyy-MM-dd',  
 	    language: 'zh-CN',
 	    autoclose: true,
@@ -277,7 +243,7 @@
 	});
     
     //结束-时间按钮
-    $('#datetimepicker2').datetimepicker({  
+  $('#datetimepicker2').datetimepicker({  
 	    format: 'yyyy-MM-dd',  
 	    language: 'zh-CN',
 	    autoclose: true,
@@ -341,9 +307,11 @@
       var inputStr =$("#customer_filter").val();
       
       if(clickTabId == "createTab"){
+        createDataTable.fnSettings().oFeatures.bServerSide = true;
         createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
         createDataTable.fnDraw();
       }else{
+        finishDataTable.fnSettings().oFeatures.bServerSide = true;
         finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
         finishDataTable.fnDraw();
       }
