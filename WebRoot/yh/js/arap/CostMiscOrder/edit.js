@@ -84,7 +84,7 @@ $(document).ready(function() {
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$("#saveCostMiscOrderBtn").attr("disabled",false);
 				contactUrl("edit?id", data.ID);
-
+				window.location.reload();
 				//callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);

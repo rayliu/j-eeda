@@ -281,7 +281,7 @@ public class CostMiscOrderController extends Controller {
 			}
 			destOrder.update();
 			
-			Db.update("delete from arap_misc_cost_order_item where order_id = ?",
+			Db.update("delete from arap_misc_cost_order_item where misc_order_id = ?",
 					destOrder.getLong("id"));
 
 			List<ArapMiscCostOrderItem> originItems = ArapMiscCostOrderItem.dao
