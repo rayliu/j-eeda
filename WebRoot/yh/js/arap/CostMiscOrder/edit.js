@@ -23,12 +23,19 @@ $(document).ready(function() {
         		continue;
 
         	var row = tableRows[index];
+        	var id = $(row).attr('id');
+        	if(!id){
+        		id='';
+        	}
+        	
         	var item={
         		CUSTOMER_ORDER_NO: $(row.children[0]).find('input').val(), 
 			 	ITEM_DESC: $(row.children[1]).find('input').val(),
 			 	NAME: $(row.children[2]).find('select').val(),
 			 	AMOUNT: $(row.children[3]).find('input').val(),
-			 	STATUS: '新建'
+			 	STATUS: '新建',
+			 	ID: id,
+			 	ACTION: 'create'
         	};
         	itemsArray.push(item);
         }
@@ -37,6 +44,17 @@ $(document).ready(function() {
         for(var i=0; i<itemsArray.length; i++){
         	amount+=Number(itemsArray[i].AMOUNT);
         	$('#totalAmountSpan').html(amount);
+        }
+        
+        
+      //add deleted items
+        for(var index=0; index<deletedIds.length; index++){
+        	var id = deletedIds[index];
+        	var item={
+        		ID: id,
+			 	ACTION: 'delete'
+        	};
+        	itemsArray.push(item);
         }
 
         var order={
@@ -475,10 +493,15 @@ $(document).ready(function() {
 //	});	
     
   //删除一行
+    var deletedIds=[];
 	$("#feeItemList-table").on('click', '.finItemdel', function(e){
 		e.preventDefault();
-		$(this).parent().parent().remove();
+		var tr = $(this).parent().parent();
+		deletedIds.push(tr.attr('id'));
+		tr.remove();
 	});	
+	
+	 
 	
 	//添加一行
 	$("#addFee").click(function(){
