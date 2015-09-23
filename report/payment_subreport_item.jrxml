@@ -58,7 +58,38 @@
     arap_cost_order aco
 LEFT JOIN cost_application_order_rel caor ON aco.id = caor.cost_order_id
 LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
-where  appl_order.id = $P{order_id}]]>
+where  appl_order.id = $P{order_id}
+and caor.order_type='对账单'
+union
+SELECT
+    '' as service_type,
+    appo.order_no as order_no,
+    appo.create_date as create_stamp,
+    '' as confirm_stamp,
+    appo.total_amount as total_amount,
+(
+		SELECT
+			sum(caor.pay_amount)
+		FROM
+			cost_application_order_rel caor
+		WHERE
+			caor.application_order_id = appl_order.id
+	) cost_amount,
+(appo.total_amount-(
+					SELECT
+						sum(caor.pay_amount) total_pay
+					FROM
+						cost_application_order_rel caor
+					WHERE
+						caor.cost_order_id = appo.id
+					AND caor.order_type = '预付单'
+)) cost_balance
+    from
+    arap_pre_pay_order appo
+LEFT JOIN cost_application_order_rel caor ON appo.id = caor.cost_order_id
+LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
+where  appl_order.id = $P{order_id}
+and caor.order_type='预付单']]>
 	</queryString>
 	<field name="service_type" class="java.lang.String"/>
 	<field name="order_no" class="java.lang.String">
@@ -67,7 +98,7 @@ where  appl_order.id = $P{order_id}]]>
 	<field name="create_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="confirm_stamp" class="java.sql.Timestamp">
+	<field name="confirm_stamp" class="java.util.Date">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="total_amount" class="java.lang.Double">
@@ -115,28 +146,21 @@ where  appl_order.id = $P{order_id}]]>
 				<text><![CDATA[挂账日期]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="222" y="0" width="57" height="20" uuid="000d2054-e746-4fd7-ab98-60b671e49116"/>
+				<reportElement style="table_TD" x="222" y="0" width="52" height="20" uuid="000d2054-e746-4fd7-ab98-60b671e49116"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[对账月份]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="279" y="0" width="50" height="20" uuid="1b600c3e-b7de-402c-823f-bbb9de305ea4"/>
+				<reportElement style="table_TD" x="274" y="0" width="55" height="20" uuid="1b600c3e-b7de-402c-823f-bbb9de305ea4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[应付金额]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="384" y="0" width="61" height="20" uuid="de7a68fe-a513-4977-8b34-58d82c72be4d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[本次付款]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_TD" x="445" y="0" width="62" height="20" uuid="eb4b853b-ee8b-44ea-9e44-218eb7f9c1e9"/>
+				<reportElement style="table_TD" x="449" y="0" width="58" height="20" uuid="eb4b853b-ee8b-44ea-9e44-218eb7f9c1e9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -148,6 +172,13 @@ where  appl_order.id = $P{order_id}]]>
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[应付余额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="384" y="0" width="65" height="20" uuid="de7a68fe-a513-4977-8b34-58d82c72be4d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[本次付款]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -175,28 +206,28 @@ where  appl_order.id = $P{order_id}]]>
 				<textFieldExpression><![CDATA[$F{create_stamp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MM" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="222" y="0" width="57" height="26" uuid="82223789-934f-459d-9486-6efb0593b693"/>
+				<reportElement style="table_TD" mode="Opaque" x="222" y="0" width="52" height="26" uuid="82223789-934f-459d-9486-6efb0593b693"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{confirm_stamp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="279" y="0" width="50" height="26" uuid="6804431f-7c69-4eed-b024-194effd30be1"/>
+				<reportElement style="table_TD" mode="Opaque" x="274" y="0" width="55" height="26" uuid="6804431f-7c69-4eed-b024-194effd30be1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="384" y="0" width="61" height="26" uuid="694f5989-3f90-4b34-b5e5-60ffdebda73c"/>
+				<reportElement style="table_TD" mode="Opaque" x="384" y="0" width="65" height="26" uuid="694f5989-3f90-4b34-b5e5-60ffdebda73c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cost_amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="445" y="0" width="62" height="26" uuid="4e153380-a8eb-4751-a300-6108c2398228"/>
+				<reportElement style="table_TD" mode="Opaque" x="449" y="0" width="58" height="26" uuid="4e153380-a8eb-4751-a300-6108c2398228"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -220,13 +251,13 @@ where  appl_order.id = $P{order_id}]]>
 				<text><![CDATA[大写金额：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="445" y="1" width="62" height="30" uuid="c86c4e57-a6ca-412b-82d6-c315fc501f7e"/>
+				<reportElement style="table_TD" mode="Opaque" x="449" y="1" width="58" height="30" uuid="c86c4e57-a6ca-412b-82d6-c315fc501f7e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="384" y="1" width="61" height="30" uuid="5e3082ae-6bfb-4fd4-9592-1e5b97f3e53f"/>
+				<reportElement style="table_TD" mode="Opaque" x="384" y="1" width="65" height="30" uuid="5e3082ae-6bfb-4fd4-9592-1e5b97f3e53f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
