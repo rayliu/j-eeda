@@ -13,8 +13,6 @@ import models.Account;
 import models.ArapCostOrder;
 import models.Party;
 import models.UserLogin;
-import models.yh.arap.ArapMiscCostOrder;
-import models.yh.arap.ArapMiscCostOrderItem;
 import models.yh.arap.prePayOrder.ArapPrePayOrder;
 import models.yh.arap.prePayOrder.ArapPrePayOrderItem;
 import models.yh.profile.Contact;
@@ -307,6 +305,7 @@ public class PrePayOrderController extends Controller {
 				ArapPrePayOrderItem arapPrePayOrderItem = ArapPrePayOrderItem.dao
 						.findById(itemId);
 				if ("DELETE".equals(action)) {
+					if(arapPrePayOrderItem != null)
 					arapPrePayOrderItem.delete();
 				} else {
 					arapPrePayOrderItem.set("fin_item_id",
