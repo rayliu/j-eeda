@@ -30,6 +30,8 @@
             			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else if(order_type == '成本单')
             			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(order_type == '行车单')
+            			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else
             			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},

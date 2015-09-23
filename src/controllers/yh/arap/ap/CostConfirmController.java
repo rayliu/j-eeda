@@ -22,6 +22,7 @@ import models.InsuranceOrder;
 import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
+import models.yh.carmanage.CarSummaryOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
@@ -175,6 +176,8 @@ public class CostConfirmController extends Controller {
 					arapCostPayConfirmOrderDtail.set("misc_cost_order_id", idArray[i]);
 				}else if(order_type.equals("报销单")){
 					arapCostPayConfirmOrderDtail.set("reimbursement_order_id", idArray[i]);
+				}else if(order_type.equals("行车单")){
+					arapCostPayConfirmOrderDtail.set("car_summary_order_id", idArray[i]);
 				}else{
 					arapCostPayConfirmOrderDtail.set("application_order_id", idArray[i]);
 				}
@@ -187,6 +190,9 @@ public class CostConfirmController extends Controller {
 				}else if(order_type.equals("报销单")){
 					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(idArray[i]);
 					reimbursementOrder.set("status", "付款确认中").update();
+				}else if(order_type.equals("行车单")){
+					CarSummaryOrder carsummaryorder = CarSummaryOrder.dao.findById(idArray[i]);
+					carsummaryorder.set("status", "付款确认中").update();
 				}else{
 					ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(idArray[i]);
 					arapCostInvoiceApplication.set("status", "付款确认中").update();
@@ -226,6 +232,8 @@ public class CostConfirmController extends Controller {
 				sql = "select * from arap_cost_pay_confirm_order_detail where misc_cost_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}else if(order_type.equals("报销单")){
 				sql = "select * from arap_cost_pay_confirm_order_detail where reimbursement_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
+			}else if(order_type.equals("行车单")){
+				sql = "select * from arap_cost_pay_confirm_order_detail where car_summary_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}else{
 				sql = "select * from arap_cost_pay_confirm_order_detail where application_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}
@@ -280,6 +288,15 @@ public class CostConfirmController extends Controller {
 			}else{
 				arapCostPayConfirmOrder.set("status", "部分已付款").update();
 				reimbursementOrder.set("status", "部分已付款").update();
+			}
+		}else if(order_type.equals("行车单")){
+			CarSummaryOrder carsummaryorder = CarSummaryOrder.dao.findById(applicationId);
+			if(carsummaryorder.getDouble("actual_payment_amount") == Double.parseDouble(total_amount)){
+				carsummaryorder.set("status", "已付款").update();
+				carsummaryorder.set("status", "已付款").update();
+			}else{
+				carsummaryorder.set("status", "部分已付款").update();
+				carsummaryorder.set("status", "部分已付款").update();
 			}
 		}else{  //应付申请单
 			if(re.getDouble("total") == Double.parseDouble(total_amount)){
@@ -404,7 +421,10 @@ public class CostConfirmController extends Controller {
 			}else if(order_type.equals("报销单")){
 				sql = " SELECT  ro.account_name payee_unit, ro.account_no bank_no, ro.account_bank bank_name"
 					+ " FROM reimbursement_order ro WHERE ro.id = '"+idArray[0]+"'";
-			}else{
+			}else if(order_type.equals("行车单")){
+				sql = " SELECT cso.main_driver_name AS payee_name FROM car_summary_order cso where id='"+idArray[0]+"'";
+				}
+			else{
 				sql = "SELECT c.company_name,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
 						+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
 						+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
@@ -448,6 +468,13 @@ public class CostConfirmController extends Controller {
 						+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.id = acpcodl.detail_id"
 						+ " WHERE acpcod.reimbursement_order_id = ro.id ), ro.amount ) nopay_amount"
 						+ " FROM reimbursement_order ro WHERE ro.id IN ("+orderIds+")";
+			}else if(order_type.equals("行车单")){
+				sql = "SELECT cso.id,cso.order_no, cso.create_data cost_stamp, cso.actual_payment_amount pay_amount,"
+						+ "ifnull( cso.actual_payment_amount - ( SELECT sum(acpcodl.pay_amount)"
+						+ "FROM arap_cost_pay_confirm_order_detail_log acpcodl"
+						+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.id = acpcodl.detail_id"
+						+ " WHERE acpcod.car_summary_order_id = cso.id ), cso.actual_payment_amount ) nopay_amount"
+						+ " FROM car_summary_order cso WHERE cso.id IN ("+orderIds+")";
 			}else{
 				sql = "SELECT aci.*,"
 						+ "( SELECT group_concat( DISTINCT aco.order_no SEPARATOR '<br/>' ) "
