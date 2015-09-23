@@ -47,11 +47,7 @@ $(document).ready(function() {
         if(!$("#costPreInvoiceOrderForm").valid()){
 	       	return;
         }
-        if($("#tpayment").text()==0){
-        	alert("此次付款金额为0");
-        	$("#saveCostPreInvoiceOrderBtn").attr("disabled",false);
-	       	return;
-        }
+
 		//异步向后台提交数据
 		$.post('/costPreInvoiceOrder/save',$("#costPreInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){	
@@ -310,6 +306,13 @@ $(document).ready(function() {
 	//transferOrderForm 不需要提交	
  	$("#saveCostPreInvoiceOrderBtn").click(function(e){
  		$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
+ 		
+ 		var pay_amount = $("#costPreInvoiceOrder-table").children().children().find('input[name="pay_amount"]').val();
+ 		if(pay_amount == 0 || pay_amount == ''){
+ 			$.scojs_message('申请金额不能为0', $.scojs_message.TYPE_FALSE);
+ 			$("#saveCostPreInvoiceOrderBtn").attr("disabled",false);
+ 			return;
+ 		}			
  		saveCostPreInvoiceOrder(e);
  		
 	});
