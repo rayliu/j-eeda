@@ -42,6 +42,8 @@ $(document).ready(function() {
             			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ATTRIBUTE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else if(obj.aData.ATTRIBUTE == '报销单')
             			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(obj.aData.ATTRIBUTE == '行车单')
+            			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else
             			return obj.aData.ORDER_NO;
         		} 

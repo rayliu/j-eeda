@@ -11,6 +11,7 @@ import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
+import models.yh.carmanage.CarSummaryOrder;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -156,6 +157,11 @@ public class CostAcceptOrderController extends Controller {
                 + " end"
                 + " ) AS cname "
         		+ " FROM arap_misc_cost_order amco WHERE amco.STATUS= '新建' and amco.type = 'non_biz'"
+        		+ " UNION"
+        		+ " SELECT cso.id , cso.order_no,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,'行车单' as attribute,"
+        		+ " null as invoice_no,cso.create_data create_time,'' as remark,cso.actual_payment_amount total_amount,'0' as application_amount,'' as cname"
+        		+ " FROM car_summary_order cso"
+        		+ " WHERE cso. STATUS = 'checked' AND cso.reimbursement_order_id IS NULL"
         		+ " ) A";
         
         String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
@@ -190,6 +196,11 @@ public class CostAcceptOrderController extends Controller {
                 + " end"
                 + " ) AS cname "
         		+ " FROM arap_misc_cost_order amco WHERE amco.STATUS= '新建' and amco.type = 'non_biz'"
+        		+ " UNION"
+        		+ " SELECT cso.id , cso.order_no,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,'行车单' as attribute,"
+        		+ " null as invoice_no,cso.create_data create_time,'' as remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
+        		+ " FROM car_summary_order cso"
+        		+ " WHERE cso. STATUS = 'checked' AND cso.reimbursement_order_id IS NULL"
         		+ " ) A";
         		
         
@@ -354,6 +365,10 @@ public class CostAcceptOrderController extends Controller {
         		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(orderArrId[i]);
         		arapMiscCostOrder.set("status", "已复核");
         		arapMiscCostOrder.update();
+        	}else if(orderArr[i].equals("行车单")){
+        		CarSummaryOrder carsummaryorder = CarSummaryOrder.dao.findById(orderArrId[i]);
+        		carsummaryorder.set("status", "已复核");
+        		carsummaryorder.update();
         	}
             renderJson("{\"success\":true}");
         }
