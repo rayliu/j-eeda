@@ -82,21 +82,13 @@ public class CostMiscOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from arap_misc_cost_order amco"
-        		+ " left join arap_cost_order aco on aco.id = amco.cost_order_id"
-        		+ " left join party p1 on amco.customer_id = p1.id"
-				+ " left join party p2 on amco.sp_id = p2.id"
-				+ " left join contact c1 on p1.contact_id = c1.id"
-				+ " left join contact c2 on p2.contact_id = c2.id";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
         
-        String sql = "select amco.*,aco.order_no cost_order_no from arap_misc_cost_order amco"
-					+ " left join arap_cost_order aco on aco.id = amco.cost_order_id "
+        String sql = "select amco.*, c1.abbr customer_name, c2.abbr sp_name from arap_misc_cost_order amco"
 					+ " left join party p1 on amco.customer_id = p1.id"
 					+ " left join party p2 on amco.sp_id = p2.id"
 					+ " left join contact c1 on p1.contact_id = c1.id"
-					+ " left join contact c2 on p2.contact_id = c2.id";
+					+ " left join contact c2 on p2.contact_id = c2.id"
+					+ " where amco.order_no not like 'SGSK%'";
         logger.debug("sql:" + sql);
         String condition = "";
         //TODO 始发地和目的地 客户没有做
@@ -114,7 +106,7 @@ public class CostMiscOrderController extends Controller {
 			if (status!=null && "非业务收款".equals(status)) {
 				status = "non_biz";
 			}
-			condition = " where "
+			condition = " and "
 					+ " ifnull(c2.abbr,'') like '%" + spName + "%' "
 					+ " and ifnull(c1.abbr,'') like '%" + customer + "%' "
 					+ " and amco.order_no like '%" + orderNo + "%' "
@@ -124,6 +116,12 @@ public class CostMiscOrderController extends Controller {
 			}
 			
         }
+        
+
+        String sqlTotal = "select count(1) total from ("+sql+ condition+") B";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        
         List<Record> BillingOrders = Db.find(sql+ condition + " order by amco.create_stamp desc " +sLimit);
 
         Map BillingOrderListMap = new HashMap();

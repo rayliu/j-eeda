@@ -40,6 +40,9 @@ $(document).ready(function() {
                     }
                 }
             },
+            {"mDataProp":"CUSTOMER_NAME","sWidth": "100px"},
+            {"mDataProp":"SP_NAME","sWidth": "100px"},
+            {"mDataProp":"OTHERS_NAME","sWidth": "100px"},
             {"mDataProp":"TOTAL_AMOUNT","sWidth": "100px"},
             {"mDataProp":"STATUS","sWidth": "100px",
                 "fnRender": function(obj) {
