@@ -70,6 +70,49 @@ public class ChargeMiscOrderHelper {
 		}
 		return orderDest;
 	}
+	
+	public ArapMiscCostOrder updateCostMiscOrder(
+			ArapMiscChargeOrder originOrder, UserLogin user)
+			throws IllegalAccessException, InvocationTargetException {
+		
+		ArapMiscCostOrder orderDest = ArapMiscCostOrder.dao.findFirst(
+				"select * from arap_misc_cost_order where order_no=?",
+				originOrder.getStr("order_no"));
+		
+		orderDest.set("type", originOrder.getStr("type"));
+		orderDest.set("cost_to_type", originOrder.getStr("charge_from_type"));
+		orderDest.set("sp_id", originOrder.getStr("sp_id"));
+		orderDest.set("customer_id", originOrder.getStr("customer_id"));
+		orderDest.set("total_amount", 0 - originOrder.getDouble("total_amount"));
+		orderDest.set("others_name", originOrder.getStr("others_name"));
+		orderDest.set("ref_no", originOrder.getStr("ref_no"));
+		
+		orderDest.update();
+		
+		Db.update("delete from arap_misc_cost_order_item where misc_order_id=?",
+				orderDest.getLong("id"));
+
+		List<ArapMiscChargeOrderItem> originItems = ArapMiscChargeOrderItem.dao
+				.find("select * from arap_misc_charge_order_item where misc_order_id = ?",
+						originOrder.getLong("id"));
+
+		for (ArapMiscChargeOrderItem originItem : originItems) {
+			ArapMiscCostOrderItem newItem = new ArapMiscCostOrderItem();
+			newItem.set("status", "新建");
+			newItem.set("creator", user.getLong("id"));
+			newItem.set("create_date", new Date());
+			newItem.set("customer_order_no",
+					originItem.get("customer_order_no"));
+			newItem.set("item_desc", originItem.get("item_desc"));
+			newItem.set("fin_item_id", originItem.get("fin_item_id"));
+
+			newItem.set("misc_order_id", orderDest.get("id"));
+			newItem.set("amount", 0 - originItem.getDouble("amount"));
+			newItem.set("change_amount", 0 - originItem.getDouble("amount"));
+			newItem.save();
+		}
+		return orderDest;
+	}
 
 	public void deleteCostMiscOrder(ArapMiscChargeOrder originOrder) {
 		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findFirst(

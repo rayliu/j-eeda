@@ -304,6 +304,7 @@ public class ChargeMiscOrderController extends Controller {
 				}
 				destOrder = updateRefChargeMiscOrder(arapMiscChargeOrder, user,
 						refOrder);
+				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
 			} else if ("non_biz".equals(old_biz_type) && "biz".equals(biz_type)) {
 				// 1. non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
 				// 2. 是就删除整张单，不是则提示应为往来单已复核，不能改变
