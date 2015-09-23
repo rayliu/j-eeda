@@ -233,7 +233,7 @@ public class CostAcceptOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
       
-        String statusStr = " ('已复核','已付款确认')";
+        String statusStr = " ('已复核')";
         if(status!=null && status.equals("payed")){
             statusStr = " ('付款确认中','已付款确认')";
         };
