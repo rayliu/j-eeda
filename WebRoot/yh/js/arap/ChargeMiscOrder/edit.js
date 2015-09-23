@@ -21,21 +21,40 @@ $(document).ready(function() {
         		continue;
 
         	var row = tableRows[index];
+        	var id = $(row).attr('id');
+        	if(!id){
+        		id='';
+        	}
+
         	var item={
+        		ID: id,
         		CUSTOMER_ORDER_NO: $(row.children[0]).find('input').val(), 
 			 	ITEM_DESC: $(row.children[1]).find('input').val(),
 			 	NAME: $(row.children[2]).find('select').val(),
 			 	AMOUNT: $(row.children[3]).find('input').val(),
-			 	STATUS: '新建'
+			 	STATUS: '新建',
+			 	ACTION: 'CREATE'
         	};
         	itemsArray.push(item);
         }
+
 
 		var amount = 0;
         for(var i=0; i<itemsArray.length; i++){
         	amount+=Number(itemsArray[i].AMOUNT);
         	$('#totalAmountSpan').text(amount);
         }
+
+        //add deleted items
+        for(var index=0; index<deletedIds.length; index++){
+        	var id = deletedIds[index];
+        	var item={
+        		ID: id,
+			 	ACTION: 'DELETE'
+        	};
+        	itemsArray.push(item);
+        }
+
 
         var order={
         	chargeMiscOrderId: $('#chargeMiscOrderId').val(),
@@ -56,10 +75,14 @@ $(document).ready(function() {
 				$("#miscChargeOrderNo").html('<strong>'+data.ORDER_NO+'</strong>');
 				$("#create_stamp").html(data.CREATE_STAMP);
 				$("#chargeMiscOrderId").val(data.ID);
-				$("#refOrderNo").html('<strong>'+data.REF_ORDER_NO+'</strong>');
+				if(data.REF_ORDER_NO)
+					$("#refOrderNo").html('<strong>'+data.REF_ORDER_NO+'</strong>');
 				contactUrl("edit?id",data.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$('#saveChargeMiscOrderBtn').attr('disabled', false);
+				deletedIds=[];
+
+				window.location.reload();
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 			}
@@ -117,6 +140,7 @@ $(document).ready(function() {
 		},'json');
 		parentId = e.target.getAttribute("id");
 	});
+
 	$('#sp_filter').on('keyup click', function(){
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
@@ -182,7 +206,7 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        // "sAjaxSource": "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+$("#chargeMiscOrderId").val(),
+        //"sAjaxSource": "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+$("#chargeMiscOrderId").val(),
         "aoColumns": [   
             {"mDataProp":"CUSTOMER_ORDER_NO",
             	"fnRender": function(obj) {
@@ -240,7 +264,7 @@ $(document).ready(function() {
 			{"mDataProp":"STATUS","sClass": "status"},
             {"mDataProp": null,"sWidth": "80px",
                 "fnRender": function(obj) {
-                	if($("#chargeMiscOrderStatus").text()!='新建' || ref_order_id>0){
+                	if($("#chargeMiscOrderStatus").text()!='新建' || !is_origin){
                 		return "";
                 	}
 
@@ -337,13 +361,13 @@ $(document).ready(function() {
 	});	
 	
 	//应收修改
-	$("#feeItemList-table").on('blur', 'input,select', function(e){
-		e.preventDefault();
-		var chargeMiscOrderId = $("#chargeMiscOrderId").val();
-		var paymentId = $(this).parent().parent().attr("id");
-		var name = $(this).attr("name");
-		var value = $(this).val();
-		var chargeCheckOrderIds = $("#chargeCheckOrderIds").val();
+	// $("#feeItemList-table").on('blur', 'input,select', function(e){
+	// 	e.preventDefault();
+	// 	var chargeMiscOrderId = $("#chargeMiscOrderId").val();
+	// 	var paymentId = $(this).parent().parent().attr("id");
+	// 	var name = $(this).attr("name");
+	// 	var value = $(this).val();
+	// 	var chargeCheckOrderIds = $("#chargeCheckOrderIds").val();
 		// $.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value, chargeMiscOrderId: chargeMiscOrderId, chargeCheckOrderIds: chargeCheckOrderIds}, function(data){
 		// 	if(data.ID > 0){
 		// 		$("#totalAmountSpan").html(data.TOTAL_AMOUNT);
@@ -351,17 +375,20 @@ $(document).ready(function() {
 		// 		alert("修改失败!");
 		// 	}
   //   	},'json');
-	});
+	// });
 	
 	$("#chargeMiscOrderItem").click(function(){
 		feeTable.fnSettings().sAjaxSource = "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+$("#chargeMiscOrderId").val();
 		feeTable.fnDraw();  
 	});
 	
+	var deletedIds=[];
 	//删除一行
 	$("#feeItemList-table").on('click', '.finItemdel', function(e){
 		e.preventDefault();
-		$(this).parent().parent().remove()
+		var tr = $(this).parent().parent();
+		deletedIds.push(tr.attr('id'))
+		tr.remove();
 	});	
 	
 	var typeRadio = $("#typeRadio").val();
@@ -431,7 +458,7 @@ $(document).ready(function() {
     	$('#saveChargeMiscOrderBtn').attr('disabled', true);
     }
 
-    if(ref_order_id>0){
+    if(!is_origin){
     	$('#addFee').hide();    	
     	$('#saveChargeMiscOrderBtn').attr('disabled', true);
     }
