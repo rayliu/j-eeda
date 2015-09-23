@@ -136,9 +136,9 @@ public class CostReimbursementOrder extends Controller {
 	        sqlTotal = "select count(1) total from reimbursement_order ro where ro.order_no like 'YFBX%'";
 	    	 
 	        sql = "select ro.*,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
-	        		+ " (select user_name from user_login where id = ro.create_id) createName,"
-	        		+ " (select user_name from user_login where id = ro.audit_id) auditName,"
-	        		+ " (select user_name from user_login where id = ro.approval_id)  approvalName"
+	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
+	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
+	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " where ro.order_no like 'YFBX%'  group by ro.id order by ro.create_stamp desc " + sLimit;
         }else{
@@ -149,9 +149,9 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'";
 	    	 
 	        sql = "select ro.*,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
-	        		+ " (select user_name from user_login where id = ro.create_id) createName,"
-	        		+ " (select user_name from user_login where id = ro.audit_id) auditName,"
-	        		+ " (select user_name from user_login where id = ro.approval_id)  approvalName"
+	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
+	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
+	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " left join user_login u on u.id  = ro.audit_id "
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
@@ -180,7 +180,7 @@ public class CostReimbursementOrder extends Controller {
 		//创建人
 		UserLogin create = UserLogin.dao
 				.findFirst("select * from user_login where id='" + rei.get("create_id") + "'");
-		setAttr("createName", create.get("user_name"));
+		setAttr("createName", create.get("c_name"));
 		List<Record> itemList  = Db.find("select * from fin_item where type='报销费用' and parent_id != 0");
         setAttr("itemList", itemList);
         
