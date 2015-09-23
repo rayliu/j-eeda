@@ -1,4 +1,4 @@
-package controllers.yh.arap.ap;
+package controllers.yh.arap.ap.costMiscOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
@@ -424,21 +424,25 @@ public class CostMiscOrderController extends Controller {
 			// 1. 是从biz->non_biz, 新生成对应往来单
 			if ("biz".equals(old_biz_type) && "non_biz".equals(biz_type)) {
 				destOrder = buildNewCostMiscOrder(arapMiscCostOrder,destOrder, user);
+				CostMiscOrderHelper.getInstance().buildNewChargeMiscOrder(destOrder, user);
 			} else if ("non_biz".equals(old_biz_type)
 					&& "non_biz".equals(biz_type)) {
 				// non_biz 不变，update 对应的信息，判断对应往来单状态是否是“新建”，
 				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
 				//deleteRefOrder(costMiscOrderId);
 				destOrder = buildNewCostMiscOrder(arapMiscCostOrder,destOrder, user);
+				CostMiscOrderHelper.getInstance().updateChargeMiscOrder(destOrder, user);
 			} else if ("non_biz".equals(old_biz_type) && "biz".equals(biz_type)) {
 				// non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
 				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
 				deleteRefOrder(costMiscOrderId);
+				CostMiscOrderHelper.getInstance().deleteChargeMiscOrder(destOrder);
 				destOrder = null;
 			}
 		} else {// new
 			if("non_biz".equals(biz_type))
 				destOrder = buildNewCostMiscOrder(arapMiscCostOrder,destOrder, user);
+			    CostMiscOrderHelper.getInstance().buildNewChargeMiscOrder(destOrder, user);
 		}
 
 		if(destOrder!=null){

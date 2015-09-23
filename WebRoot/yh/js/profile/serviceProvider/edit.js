@@ -199,6 +199,13 @@
       }
       //自动提交改为手动提交
       $("#save").click(function(){
+    	  $("#save").attr("disabled",true);
+    	  
+    	  $.post("/serviceProvider/check",$("#customerForm").serialize(),function(data){
+    		  
+    	  });
+    	  
+    	  
     	 if(!$("#customerForm").valid()){
     		  return false;
     	 }
