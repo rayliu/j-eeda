@@ -1,4 +1,4 @@
-package controllers.yh.arap.ar;
+package controllers.yh.arap.ar.chargeMiscOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
@@ -288,6 +288,7 @@ public class ChargeMiscOrderController extends Controller {
 			// 1. 是从biz->non_biz, 新生成对应往来单
 			if ("biz".equals(old_biz_type) && "non_biz".equals(biz_type)) {
 				destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
+				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
 			} else if ("non_biz".equals(old_biz_type)
 					&& "non_biz".equals(biz_type)) {
 				// non_biz 不变，update 对应的信息，判断对应往来单状态是否是“新建”，
@@ -304,13 +305,17 @@ public class ChargeMiscOrderController extends Controller {
 				destOrder = updateRefChargeMiscOrder(arapMiscChargeOrder, user,
 						refOrder);
 			} else if ("non_biz".equals(old_biz_type) && "biz".equals(biz_type)) {
-				// non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
-				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
+				// 1. non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
+				// 2. 是就删除整张单，不是则提示应为往来单已复核，不能改变
+				// 3. 并在手工成本单创建对应的单
 				deleteRefOrder(chargeMiscOrderId);
 			}
 		} else {// new
-			if ("non_biz".equals(biz_type))
+			if ("non_biz".equals(biz_type)){
 				destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
+				//在手工成本单创建对应的单
+				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
+			}
 		}
 
 		if (destOrder != null) {
@@ -330,6 +335,7 @@ public class ChargeMiscOrderController extends Controller {
 			throw new Exception("对应的手工收入单已不是“新建”，不能修改本张单据。");
 		}
 		long refOrderId = refOrder.getLong("id");
+		ChargeMiscOrderHelper.getInstance().deleteCostMiscOrder(refOrder);
 		Db.update(
 				"delete from arap_misc_charge_order_item where misc_order_id = ?",
 				refOrderId);
@@ -626,23 +632,7 @@ public class ChargeMiscOrderController extends Controller {
 		renderJson(arapMiscChargeOrder);
 	}
 
-	public void finItemdel() {
-		// ArapMiscChargeOrderItem.dao.deleteById(getPara());
-		ArapMiscChargeOrderItem arapMiscChargeOrderItem = ArapMiscChargeOrderItem.dao
-				.findById(getPara());
-		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao
-				.findById(arapMiscChargeOrderItem.getLong("misc_order_id"));
-		Double Tamount = arapMiscChargeOrder.getDouble("total_amount");
-		Double amount = arapMiscChargeOrderItem.getDouble("amount");
-		if ((Tamount != null && !Tamount.equals(""))
-				&& (amount != null && !amount.equals(""))) {
-			Double total_amount = arapMiscChargeOrder.getDouble("total_amount")
-					- arapMiscChargeOrderItem.getDouble("amount");
-			arapMiscChargeOrder.set("total_amount", total_amount).update();
-		}
-		arapMiscChargeOrderItem.delete();
-		renderJson(arapMiscChargeOrder);
-	}
+	
 
 	public void chargeCheckList() {
 		String sLimit = "";
