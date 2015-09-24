@@ -683,8 +683,12 @@ function datetimepicker(data){
 
 //按钮控制
 var status = $("#status").val();
-if(status == '新建' || status == 'new'){
-	$("#saveCostMiscOrderBtn").attr("disabled",false);
-}else{
+if(status != '新建' && status != 'new'){
+	$('#addFee').hide();  
 	$("#saveCostMiscOrderBtn").attr("disabled",true);
+}
+
+if(type == 'non_biz' && !is_origin){
+	$('#addFee').hide();    	
+	$('#saveCostMiscOrderBtn').attr('disabled', true);
 }

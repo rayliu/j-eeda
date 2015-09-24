@@ -327,5 +327,14 @@
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script>
+    var order_no = '${arapMiscCostOrder.order_no!''}';
+    var order_id = ${arapMiscCostOrder.id!0};
+    var ref_order_id = ${arapMiscCostOrder.ref_order_id!1};
+    var type = '${arapMiscCostOrder.type!''}';
+    var is_origin = true;
+    if(type == 'non_biz')
+        is_origin = order_id<ref_order_id;
+</script>
 <script src="/yh/js/arap/CostMiscOrder/edit.js"></script>
 <script src="/yh/js/eeda-common.js"></script>
