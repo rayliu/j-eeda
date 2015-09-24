@@ -9,6 +9,7 @@ import java.util.Map;
 
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
+import models.ArapMiscChargeOrder;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.carmanage.CarSummaryOrder;
@@ -156,7 +157,7 @@ public class CostAcceptOrderController extends Controller {
                 + "         where p.id = amco.customer_id)"
                 + " end"
                 + " ) AS cname "
-        		+ " FROM arap_misc_cost_order amco WHERE amco.STATUS= '新建' and amco.type = 'non_biz'"
+        		+ " FROM arap_misc_cost_order amco WHERE amco.STATUS= '新建' and amco.type = 'non_biz' and amco.total_amount>=0"
         		+ " UNION"
         		+ " SELECT cso.id , cso.order_no,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,'行车单' as attribute,"
         		+ " null as invoice_no,cso.create_data create_time,'' as remark,cso.actual_payment_amount total_amount,'0' as application_amount,'' as cname"
@@ -195,7 +196,7 @@ public class CostAcceptOrderController extends Controller {
                 + "         where p.id = amco.customer_id)"
                 + " end"
                 + " ) AS cname "
-        		+ " FROM arap_misc_cost_order amco WHERE amco.STATUS= '新建' and amco.type = 'non_biz'"
+        		+ " FROM arap_misc_cost_order amco WHERE amco.STATUS= '新建' and amco.type = 'non_biz' and amco.total_amount>=0 "
         		+ " UNION"
         		+ " SELECT cso.id , cso.order_no,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,'行车单' as attribute,"
         		+ " null as invoice_no,cso.create_data create_time,'' as remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
@@ -292,7 +293,7 @@ public class CostAcceptOrderController extends Controller {
 				+ " 		LEFT JOIN contact c ON c.id = p.contact_id"
                 + "         where p.id = amco.customer_id)"
                 + " end"
-                + " ) AS cname FROM arap_misc_cost_order amco WHERE amco.STATUS= '已复核' and amco.type = 'non_biz'"
+                + " ) AS cname FROM arap_misc_cost_order amco WHERE amco.STATUS= '已复核' and amco.type = 'non_biz' and amco.total_amount>=0 "
                 + " UNION"
                 + " SELECT cso.id,cso.order_no,'行车单' AS order_type,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,"
         		+ "  NULL AS invoice_no,cso.create_data create_time,'' AS remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
@@ -329,7 +330,7 @@ public class CostAcceptOrderController extends Controller {
 				+ " 		LEFT JOIN contact c ON c.id = p.contact_id"
                 + "         where p.id = amco.customer_id)"
                 + " end"
-                + " ) AS cname FROM arap_misc_cost_order amco WHERE amco.STATUS= '已复核' and amco.type = 'non_biz'"
+                + " ) AS cname FROM arap_misc_cost_order amco WHERE amco.STATUS= '已复核' and amco.type = 'non_biz'  and amco.total_amount>=0 "
                 + " UNION"
                 + " SELECT cso.id,cso.order_no,'行车单' AS order_type,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,"
         		+ "  NULL AS invoice_no,cso.create_data create_time,'' AS remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
@@ -375,6 +376,14 @@ public class CostAcceptOrderController extends Controller {
         		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(orderArrId[i]);
         		arapMiscCostOrder.set("status", "已复核");
         		arapMiscCostOrder.update();
+        		
+        		//更新手工收入单往来账 的附带单
+        		String order_no = arapMiscCostOrder.getStr("order_no");
+        		String order_no_head = arapMiscCostOrder.getStr("order_no").substring(0, 4);
+        		if(order_no_head.equals("SGSK")){
+        			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findFirst("select * from arap_misc_charge_order where order_no =?",order_no);
+        			arapMiscChargeOrder.set("status", "已复核").update();
+        		}
         	}else if(orderArr[i].equals("行车单")){
         		CarSummaryOrder carsummaryorder = CarSummaryOrder.dao.findById(orderArrId[i]);
         		carsummaryorder.set("status", "已复核");

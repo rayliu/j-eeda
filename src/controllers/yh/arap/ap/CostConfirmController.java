@@ -16,6 +16,7 @@ import models.ArapCostPayConfirmOrder;
 import models.ArapCostPayConfirmOrderDtail;
 import models.ArapCostPayConfirmOrderDtailLog;
 import models.ArapCostPayConfirmOrderLog;
+import models.ArapMiscChargeOrder;
 import models.CostApplicationOrderRel;
 import models.DepartOrder;
 import models.InsuranceOrder;
@@ -195,6 +196,15 @@ public class CostConfirmController extends Controller {
 				if(order_type.equals("成本单")){
 					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(idArray[i]);
 					arapMiscCostOrder.set("status", "付款确认中").update();
+					
+					//更新手工收入单往来账 的附带单
+	        		String order_no = arapMiscCostOrder.getStr("order_no");
+	        		String order_no_head = arapMiscCostOrder.getStr("order_no").substring(0, 4);
+	        		if(order_no_head.equals("SGSK")){
+	        			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findFirst("select * from arap_misc_charge_order where order_no =?",order_no);
+	        			arapMiscChargeOrder.set("status", "付款确认中").update();
+	        		}
+					
 				}else if(order_type.equals("报销单")){
 					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(idArray[i]);
 					reimbursementOrder.set("status", "付款确认中").update();
@@ -284,6 +294,15 @@ public class CostConfirmController extends Controller {
 			if(re.getDouble("total") == Double.parseDouble(total_amount)){
 				arapCostPayConfirmOrder.set("status", "已付款").update();
 				arapMiscCostOrder.set("status", "已付款").update();
+				
+				//更新手工收入单往来账 的附带单
+        		String order_no = arapMiscCostOrder.getStr("order_no");
+        		String order_no_head = arapMiscCostOrder.getStr("order_no").substring(0, 4);
+        		if(order_no_head.equals("SGSK")){
+        			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findFirst("select * from arap_misc_charge_order where order_no =?",order_no);
+        			arapMiscChargeOrder.set("status", "已付款").update();
+        		}
+				
 			}else{
 				arapCostPayConfirmOrder.set("status", "部分已付款").update();
 				arapMiscCostOrder.set("status", "部分已付款").update();
