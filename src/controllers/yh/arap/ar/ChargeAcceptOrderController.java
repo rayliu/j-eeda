@@ -52,7 +52,7 @@ public class ChargeAcceptOrderController extends Controller {
         	status = "'已审批'";
         	status2 = "新建";
         }else{
-        	status = "'已复核','已收款确认','收款确认中'";
+        	status = "'已复核'";
         	status2 = "已复核";
         }
         String pageIndex = getPara("sEcho");
@@ -65,16 +65,18 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " ( select group_concat( invoice_item.invoice_no SEPARATOR '<br/>' )  "
         		+ " from arap_charge_invoice_item_invoice_no invoice_item "
         		+ " where invoice_item.invoice_id = aci.id GROUP BY aci.id ) invoice_no,"
-        		+ " aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
+        		+ " aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr customer,null cname "
         		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " where aci.status in(" + status + ") "
         	    + " UNION "
         	    + " select amco.id,'手工收入单' order_type, amco.order_no,amco.status,"
-        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr cname "
+        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr customer,c1.company_name cname "
         	    + " from arap_misc_charge_order amco "
         	    + " LEFT JOIN party p ON p.id = amco.customer_id "
         	    + " LEFT JOIN contact c ON c.id = p.contact_id "
+        	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
+        	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
         	    + " where amco.status = '"+status2+"' ) A";
         
         String sqlTotal = "select count(1) total from ("+sql+") tab";
