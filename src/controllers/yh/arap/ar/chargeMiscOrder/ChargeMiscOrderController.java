@@ -19,7 +19,6 @@ import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -106,7 +105,7 @@ public class ChargeMiscOrderController extends Controller {
 		String sqlFrom = " from(select amco.*, "
 				+ " (select c.abbr from party p left join contact c on p.contact_id = c.id where p.id = amco.customer_id) customer_name, "
 				+ " (select c.abbr from party p left join contact c on p.contact_id = c.id where p.id = amco.sp_id) sp_name "
-				+ " from arap_misc_charge_order amco) A";
+				+ " from arap_misc_charge_order amco where amco.order_no like 'SGSK%') A";
 
 		String sqlTotal = "select count(1) total " + sqlFrom + " where 1=1 "
 				+ conditions;
