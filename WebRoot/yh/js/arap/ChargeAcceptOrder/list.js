@@ -60,7 +60,8 @@ $(document).ready(function() {
             },
             /*{"mDataProp":"CHARGE_ORDER_NO"},
             {"mDataProp":"OFFICE_NAME"},
-            {"mDataProp":"CNAME"},*/            
+            {"mDataProp":"CNAME"},*/ 
+            {"mDataProp":"TOTAL_AMOUNT"},     
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":"CNAME"},     
@@ -73,7 +74,7 @@ $(document).ready(function() {
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
-            {"mDataProp":"TOTAL_AMOUNT"},     
+            
             {"mDataProp":"REMARK"},
             {"mDataProp":null},     
             {"mDataProp":null}                        
@@ -205,7 +206,8 @@ $(document).ready(function() {
                     }
                     return obj.aData.STATUS;
                 }
-            },
+            },     
+            {"mDataProp":"TOTAL_AMOUNT"}, 
             /*{"mDataProp":"CHARGE_ORDER_NO"},
             {"mDataProp":"OFFICE_NAME"},
             {"mDataProp":"CNAME"},*/            
@@ -220,8 +222,7 @@ $(document).ready(function() {
             {"mDataProp":null},     
             {"mDataProp":null},     
             {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":"TOTAL_AMOUNT"},     
+            {"mDataProp":null},    
             {"mDataProp":"REMARK"},
             {"mDataProp":null},     
             {"mDataProp":null}                        

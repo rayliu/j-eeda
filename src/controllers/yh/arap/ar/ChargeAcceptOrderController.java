@@ -60,30 +60,9 @@ public class ChargeAcceptOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sqlTotal = "select count(1) total from (select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark "
-        		+ " from arap_charge_invoice_application_order aci left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.STATUS in("+status+") group by aci.id "
-				+ " union all "
-				+ " select id, order_no, status, '' invoice_no, create_stamp create_time, remark  from arap_misc_charge_order where status in("+status+")) tab";
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
 
-        /*String sql = "select aci.id, aci.order_no, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
-        		+ " from arap_charge_invoice aci "
-        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
-        		+ " left join arap_charge_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id group by aci.id "
-				+ " union all "
-				+ " select amco.id, amco.order_no, amco.status, '' invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount,c.abbr cname "
-				+ " from arap_misc_charge_order amco"
-				+ " left join party p on p.id = amco.payee_id left join contact c on c.id = p.contact_id"
-				+ " where amco.status='新建' "
-				+ " order by create_time desc " + sLimit;*/
-        //String status = "已审批";
-        //String status_filter = getPara("status");
-//        if(status_filter != null && !"".equals(status_filter)){
-//        	status = status_filter;
-//        }
         String sql = "select * from( select aci.id, '开票记录单' order_type,aci.order_no, aci.status, "
-        		+ " ( select group_concat( invoice_item.invoice_no SEPARATOR '\n' )  "
+        		+ " ( select group_concat( invoice_item.invoice_no SEPARATOR '<br/>' )  "
         		+ " from arap_charge_invoice_item_invoice_no invoice_item "
         		+ " where invoice_item.invoice_id = aci.id GROUP BY aci.id ) invoice_no,"
         		+ " aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr cname "
@@ -97,6 +76,10 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " LEFT JOIN party p ON p.id = amco.customer_id "
         	    + " LEFT JOIN contact c ON c.id = p.contact_id "
         	    + " where amco.status = '"+status2+"' ) A";
+        
+        String sqlTotal = "select count(1) total from ("+sql+") tab";
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
         
        
         List<Record> BillingOrders = Db.find(sql + " order by create_time desc " + sLimit);
