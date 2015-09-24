@@ -317,6 +317,10 @@ public class CostCheckOrderController extends Controller {
     	String costCheckOrderId = getPara("costCheckOrderId");
 		String total_amount = getPara("total_amount");
 		String debit_amount = getPara("debit_amount")==""?"0":getPara("debit_amount");
+		String orderIds = getPara("orderIds");
+    	String orderNos = getPara("orderNos");
+    	String[] orderIdsArr = orderIds.split(",");
+    	String[] orderNoArr = orderNos.split(",");
     	if(!"".equals(costCheckOrderId) && costCheckOrderId != null){
     		arapAuditOrder = ArapCostOrder.dao.findById(costCheckOrderId);
 	    	//arapAuditOrder.set("order_type", );
@@ -360,10 +364,7 @@ public class CostCheckOrderController extends Controller {
             }
 	    	arapAuditOrder.save();
 	    	
-	    	String orderIds = getPara("orderIds");
-	    	String orderNos = getPara("orderNos");
-	    	String[] orderIdsArr = orderIds.split(",");
-	    	String[] orderNoArr = orderNos.split(",");
+	    	
 	    	for(int i=0;i<orderIdsArr.length;i++){
 		    	ArapCostItem arapAuditItem = new ArapCostItem();
 		    	//arapAuditItem.set("ref_order_type", );
@@ -375,6 +376,7 @@ public class CostCheckOrderController extends Controller {
 		    	arapAuditItem.set("create_stamp", new Date());
 		    	arapAuditItem.save();
 	    	}
+    	}
 	    	for(int i=0;i<orderIdsArr.length;i++){
 	            if("提货".equals(orderNoArr[i])){
 	            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
@@ -385,7 +387,12 @@ public class CostCheckOrderController extends Controller {
 	            	for(int j=0;j<BillingOrders.size();j++){
 	            		Record b=BillingOrders.get(j);
 	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
 	            		 amount = b.getDouble("AMOUNT");
+	            			}
 	            		}
 	            		else{
 	            			amount=b.getDouble("CHANGE_AMOUNT");
@@ -406,7 +413,12 @@ public class CostCheckOrderController extends Controller {
 	            	for(int j=0;j<BillingOrders.size();j++){
 	            		Record b=BillingOrders.get(j);
 	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
 	            		 amount = b.getDouble("AMOUNT");
+	            			}
 	            		}
 	            		else{
 	            			amount=b.getDouble("CHANGE_AMOUNT");
@@ -427,7 +439,12 @@ public class CostCheckOrderController extends Controller {
 	            	for(int j=0;j<BillingOrders.size();j++){
 	            		Record b=BillingOrders.get(j);
 	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
 	            		 amount = b.getDouble("AMOUNT");
+	            			}
 	            		}
 	            		else{
 	            			amount=b.getDouble("CHANGE_AMOUNT");
@@ -448,7 +465,12 @@ public class CostCheckOrderController extends Controller {
 	            	for(int j=0;j<BillingOrders.size();j++){
 	            		Record b=BillingOrders.get(j);
 	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
 	            		 amount = b.getDouble("AMOUNT");
+	            			}
 	            		}
 	            		else{
 	            			amount=b.getDouble("CHANGE_AMOUNT");
@@ -469,9 +491,14 @@ public class CostCheckOrderController extends Controller {
 	            	List<Record> BillingOrders = Db.find("select id,insurance_amount,change_amount from insurance_fin_item ifi where ifi.insurance_order_id=?",orderIdsArr[i]);
 	            	for(int j=0;j<BillingOrders.size();j++){
 	            		Record b=BillingOrders.get(j);
-	            		if(b.getDouble("CHANGE_AMOUNT")==null){
-	            		 amount = b.getDouble("INSURANCE_AMOUNT");
-	            		}
+	            	if(b.getDouble("CHANGE_AMOUNT")==null){
+            			if(b.getDouble("AMOUNT")==null){
+            				amount=0.0;
+            			}
+            			else{
+            		 amount = b.getDouble("INSURANCE_AMOUNT");
+            			}
+            		}
 	            		else{
 	            			amount=b.getDouble("CHANGE_AMOUNT");
 	            		}
@@ -485,7 +512,6 @@ public class CostCheckOrderController extends Controller {
 	            	
 	            }
 	    	}
-    	}
         renderJson(arapAuditOrder);
     }
 
@@ -528,7 +554,9 @@ public class CostCheckOrderController extends Controller {
     	for(int i=0;i<orderIdsArr.length;i++){
             if("提货".equals(orderNoArr[i])){
             	rec1 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	if(rec.getDouble("change_amount")!=null){
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	}
             	rec = Db.findFirst("select sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?", orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
             	changeAmount = changeAmount + rec.getDouble("change_amount");
