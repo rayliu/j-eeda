@@ -9,14 +9,14 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Interceptor;
-import com.jfinal.core.ActionInvocation;
+import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 
 public class SetAttrLoginUserInterceptor implements Interceptor{
 	private Logger logger = Logger.getLogger(SetAttrLoginUserInterceptor.class);
 	@Override
-	public void intercept(ActionInvocation ai) {
+	public void intercept(Invocation ai) {
 		Subject currentUser = SecurityUtils.getSubject();
 		if(currentUser.isAuthenticated()){
 			UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name=?",currentUser.getPrincipal());

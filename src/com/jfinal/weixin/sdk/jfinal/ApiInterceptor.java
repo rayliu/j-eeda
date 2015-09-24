@@ -1,7 +1,7 @@
 package com.jfinal.weixin.sdk.jfinal;
 
 import com.jfinal.aop.Interceptor;
-import com.jfinal.core.ActionInvocation;
+import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
@@ -11,7 +11,7 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
  */
 public class ApiInterceptor implements Interceptor {
 	
-	public void intercept(ActionInvocation ai) {
+	public void intercept(Invocation ai) {
 		Controller controller = ai.getController();
 		if (controller instanceof ApiController == false)
 			throw new RuntimeException("控制器需要继承 ApiController");
