@@ -69,6 +69,9 @@ public class CostConfirmController extends Controller {
    			}else if(a.getLong("misc_cost_order_id")!=null){
    				order_type = "成本单";
    				setAttr("order_type", "成本单");
+   			}else if(a.getLong("car_summary_order_id")!=null){
+   				order_type = "行车单";
+   				setAttr("order_type", "行车单");
    			}else if(a.getLong("reimbursement_order_id")!=null){
    				order_type = "报销单";
    				setAttr("order_type", "报销单");
@@ -93,6 +96,11 @@ public class CostConfirmController extends Controller {
    		}else if(order_type.equals("申请单")){
    			sql = "SELECT "
    	   				+ " (SELECT group_concat(cast(application_order_id as char) SEPARATOR ',' ) "
+   	   				+ "FROM arap_cost_pay_confirm_order_detail where order_id = acp.id ) ids "
+   	   				+ "FROM arap_cost_pay_confirm_order acp WHERE acp.id = '"+id+"'";
+   		}else if(order_type.equals("行车单")){
+   			sql = "SELECT "
+   	   				+ " (SELECT group_concat(cast(car_summary_order_id as char) SEPARATOR ',' ) "
    	   				+ "FROM arap_cost_pay_confirm_order_detail where order_id = acp.id ) ids "
    	   				+ "FROM arap_cost_pay_confirm_order acp WHERE acp.id = '"+id+"'";
    		}else if(order_type.equals("报销单")){
@@ -292,10 +300,10 @@ public class CostConfirmController extends Controller {
 		}else if(order_type.equals("行车单")){
 			CarSummaryOrder carsummaryorder = CarSummaryOrder.dao.findById(applicationId);
 			if(carsummaryorder.getDouble("actual_payment_amount") == Double.parseDouble(total_amount)){
-				carsummaryorder.set("status", "已付款").update();
+				arapCostPayConfirmOrder.set("status", "已付款").update();
 				carsummaryorder.set("status", "已付款").update();
 			}else{
-				carsummaryorder.set("status", "部分已付款").update();
+				arapCostPayConfirmOrder.set("status", "部分已付款").update();
 				carsummaryorder.set("status", "部分已付款").update();
 			}
 		}else{  //应付申请单
@@ -333,6 +341,9 @@ public class CostConfirmController extends Controller {
 	        if(order_type.equals("成本单")){
 	        	auditLog.set("misc_order_id", confirmId);
 	        	auditLog.set("source_order", "成本单");
+	        }else if(order_type.equals("行车单")){
+	        	auditLog.set("car_summary_order_id", confirmId);
+	        	auditLog.set("source_order", "行车单");
 	        }else if(order_type.equals("报销单")){
 	        	auditLog.set("reimbursement_order_id", confirmId);
 	        	auditLog.set("source_order", "报销单");
@@ -582,17 +593,21 @@ public class CostConfirmController extends Controller {
 				+ " (SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' )"
 				+ " FROM arap_cost_pay_confirm_order_detail co, arap_misc_cost_order amco"
 				+ " WHERE co.misc_cost_order_id = amco.id AND co.order_id = cpco.id ) misc_no,"
+				+ " (SELECT group_concat(DISTINCT cso.order_no SEPARATOR '<br/>')"
+				+ " FROM arap_cost_pay_confirm_order_detail co,car_summary_order cso"
+				+ " WHERE co.car_summary_order_id = cso.id AND co.order_id = cpco.id) car_no,"
 				+ " (SELECT group_concat( DISTINCT ro.order_no SEPARATOR '<br/>' )"
 				+ " FROM arap_cost_pay_confirm_order_detail co, reimbursement_order ro"
 				+ " WHERE co.reimbursement_order_id = ro.id AND co.order_id = cpco.id ) reimbursement_no, "
-				+ " ( SELECT ifnull(sum(caor.pay_amount), 0) "
+				+ " ifnull(( SELECT sum(caor.pay_amount) "
 				+ " FROM cost_application_order_rel caor where caor.application_order_id in "
 				+ " (select acpcod.application_order_id from arap_cost_pay_confirm_order cpco1  "
 				+ "  LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.order_id = cpco1.id   "
-				+ "  where cpco1.id = cpco.id) ) pay_amount,"
-//				+ " (select sum(cao.total_amount) "
-//        		+ " FROM arap_cost_pay_confirm_order_detail co, arap_cost_invoice_application_order cao "
-//				+ " where co.application_order_id = cao.id and co.order_id = cpco.id) pay_amount,"
+				+ "  where cpco1.id = cpco.id) ),"
+				+ " (SELECT ifnull(sum(cso.actual_payment_amount), 0) FROM car_summary_order cso WHERE cso.id IN ("
+				+ " SELECT acpcod.car_summary_order_id FROM arap_cost_pay_confirm_order cpco1"
+				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id"
+				+ " WHERE cpco1.id = cpco.id))) pay_amount,"
 				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_cost_pay_confirm_order_log log "
 				+ " where log.order_id = cpco.id) already_pay, "
         		+ " c1.abbr sp_name,"
@@ -633,7 +648,7 @@ public class CostConfirmController extends Controller {
         
         
         
-        String orderByStr= " order by create_date desc ";
+        String orderByStr= " order by id desc ";
         if(colName.length()>0){
         	orderByStr = " order by A."+colName+" "+sortBy;
         }

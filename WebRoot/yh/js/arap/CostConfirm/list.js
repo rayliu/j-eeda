@@ -28,6 +28,8 @@ $(document).ready(function() {
             			return obj.aData.FKSQ_NO;
             		}else if(obj.aData.REIMBURSEMENT_NO != null){
             			return obj.aData.REIMBURSEMENT_NO;
+            		}else if(obj.aData.CAR_NO != null){
+            			return obj.aData.CAR_NO;
             		}else{
             			return obj.aData.MISC_NO;
             		}
