@@ -5,6 +5,7 @@
 
 	//datatable, 动态处理
     var orderIds = $("#orderIds").val();
+    var order_type = $("#order_type").val();
     var total = 0.00;
     var noreceive = 0.00;
     var datatable=$('#InvorceApplication-table').dataTable({
@@ -25,7 +26,10 @@
         "aoColumns": [   
              {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if(order_type=='手工收入单')
+            			return "<a href='/chargeMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else
+            			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
             {"mDataProp":"TOTAL_AMOUNT",
     			"fnRender": function(obj) {
