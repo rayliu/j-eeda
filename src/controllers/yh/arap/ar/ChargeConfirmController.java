@@ -152,7 +152,7 @@ public class ChargeConfirmController extends Controller {
 //			arapChargeReceiveConfirmOrder.set("invoice_type",invoice_type);
 //			arapChargeReceiveConfirmOrder.set("invoice_company", billing_unit);
 //			arapChargeReceiveConfirmOrder.set("receive_company", payee_unit);
-//			arapChargeReceiveConfirmOrder.set("receive_person", payee_name);
+			arapChargeReceiveConfirmOrder.set("receive_person", payee_name); //收款人
 //			arapChargeReceiveConfirmOrder.set("receive_bank", deposit_bank);
 //			arapChargeReceiveConfirmOrder.set("receive_bank_person_name", account_name);//账户人名
 //			arapChargeReceiveConfirmOrder.set("receive_account_no",bank_no);
@@ -176,6 +176,14 @@ public class ChargeConfirmController extends Controller {
 				if(order_type.equals("手工收入单")){
 					ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(idArray[i]);
 					arapMiscChargeOrder.set("status", "收款确认中").update();
+					
+					//更新手工成本单往来账 的附带单
+	        		String order_no = arapMiscChargeOrder.getStr("order_no");
+	        		String order_no_head = arapMiscChargeOrder.getStr("order_no").substring(0, 4);
+	        		if(order_no_head.equals("SGFK")){
+	        			ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findFirst("select * from arap_misc_cost_order where order_no =?",order_no);
+	        			arapMiscCostOrder.set("status", "收款确认中").update();
+	        		}
 				}else if(order_type.equals("开票记录单")){
 					ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(idArray[i]);
 					arapChargeInvoice.set("status", "收款确认中").update();
@@ -252,12 +260,20 @@ public class ChargeConfirmController extends Controller {
 		String[] idArray = orderIds.split(",");
 		if(order_type.equals("手工收入单")){
 			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(applicationId);
+			String order_no = arapMiscChargeOrder.getStr("order_no");
+    		String order_no_head = arapMiscChargeOrder.getStr("order_no").substring(0, 4);
+    		ArapMiscCostOrder arapMiscCostOrder = null;
 			if(re.getDouble("total") == Double.parseDouble(total_amount)){
 				arapChargeReceiveConfirmOrder.set("status", "已收款").update();
 				arapMiscChargeOrder.set("status", "已收款").update();
+				
+				//更新手工成本单往来账 的附带单
+        		if(order_no_head.equals("SGFK")){
+        			arapMiscCostOrder = ArapMiscCostOrder.dao.findFirst("select * from arap_misc_cost_order where order_no =?",order_no);
+        			arapMiscCostOrder.set("status", "已收款").update();
+        		}
 			}else{
 				arapChargeReceiveConfirmOrder.set("status", "部分已收款").update();
-				arapMiscChargeOrder.set("status", "部分已收款").update();
 			}
 		}else if(order_type.equals("开票记录单")){
 			if(re.getDouble("total") == Double.parseDouble(total_amount)){
@@ -362,7 +378,7 @@ public class ChargeConfirmController extends Controller {
         	String[] one = alls[i].split(":");
 			String id = one[0];
 			if(order_type.equals("手工收入单")){
-				sql = "SELECT c.company_name cname ,c1.company_name customer, "
+				sql = "SELECT c.company_name cname ,c1.company_name customer,amco.others_name payee_name, "
 						+ " null,null,null,null,null,null"
 						+ " FROM arap_misc_charge_order amco "
 						+ " LEFT JOIN party p on p.id = amco.sp_id"

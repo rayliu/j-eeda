@@ -12,6 +12,7 @@ import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
 import models.ArapChargeOrder;
 import models.ArapMiscChargeOrder;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
 
 import org.apache.shiro.SecurityUtils;
@@ -242,6 +243,14 @@ public class ChargeAcceptOrderController extends Controller {
         		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
         		arapMiscChargeOrder.set("status", "已复核");
         		arapMiscChargeOrder.update();
+        		
+        		//更新手工成本单往来账 的附带单
+        		String order_no = arapMiscChargeOrder.getStr("order_no");
+        		String order_no_head = arapMiscChargeOrder.getStr("order_no").substring(0, 4);
+        		if(order_no_head.equals("SGFK")){
+        			ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findFirst("select * from arap_misc_cost_order where order_no =?",order_no);
+        			arapMiscCostOrder.set("status", "已复核").update();
+        		}
 	        }
 	        renderJson("{\"success\":true}");	 	 
         }

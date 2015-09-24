@@ -41,26 +41,26 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">发票类型</label>
-                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="${arapChargeReceiveConfirmOrder.invoice_type!''}<% if(re.bill_type!''=="mbill")%>自开发票<%else if(re.bill_type!''=="wbill")%>无发票">
-                                </div>
-                                <div class="form-group">
-                                    <label class="search-label">收款人</label>
-                                    <input type="text" class="form-control search-control payee_name" id="payee_name" name="payee_name" readonly="readonly" value="${re.payee_name!''}${arapChargeReceiveConfirmOrder.receive_person!''}">
-                                </div>
-                             <div class="form-group">    
-                                    <label class="search-label">开户行</label> 
-                                    <input type="text" class="form-control search-control deposit_bank" id="deposit_bank" name="deposit_bank" readonly="readonly" value="${re.bank_name!''}${arapChargeReceiveConfirmOrder.receive_bank!''}">
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                    <label class="search-label">开票单位</label>
-                                    <input type="text" class="form-control search-control billing_unit" id="billing_unit" name="billing_unit" readonly="readonly" value="${re.billing_unit!''}${arapChargeReceiveConfirmOrder.invoice_company!''}">
+                                    <input type="text" class="form-control search-control invoice_type" id="invoice_type" name="invoice_type" readonly="readonly" value="${arapChargeReceiveConfirmOrder.invoice_type!''}">
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">收款账号</label>
                                 	<input type="text" class="form-control search-control bank_no" id="bank_no" name="bank_no" readonly="readonly" value="${re.bank_no!''}${arapChargeReceiveConfirmOrder.receive_account_no!''}">
                                 </div>
+                            </div>
+                            <div class="col-lg-4">
+                            	<div class="form-group">
+                                    <label class="search-label">收款人</label>
+                                    <input type="text" class="form-control search-control payee_name" id="payee_name" name="payee_name" readonly="readonly" value="${re.payee_name!''}${arapChargeReceiveConfirmOrder.receive_person!''}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="search-label">开票单位</label>
+                                    <input type="text" class="form-control search-control billing_unit" id="billing_unit" name="billing_unit" readonly="readonly" value="${re.billing_unit!''}${arapChargeReceiveConfirmOrder.invoice_company!''}">
+                                </div>
+                                <!-- <div class="form-group">    
+                                    <label class="search-label">开户行</label> 
+                                    <input type="text" class="form-control search-control deposit_bank" id="deposit_bank" name="deposit_bank" readonly="readonly" value="${re.bank_name!''}${arapChargeReceiveConfirmOrder.receive_bank!''}">
+                                </div> -->
                             </div>
                         </div>
                         <br/>

@@ -26,17 +26,16 @@ $(document).ready(function() {
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
-	            	if(obj.aData.STATUS =="已收款确认" || obj.aData.STATUS =="收款确认中"){
-	            		return "";
-	            	}else{
-	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
-	            	}
-	              
+	            	return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
 	            }
             }, 
             {"mDataProp":"ORDER_NO","sWidth":"100px",
             	"fnRender": function(obj) {
-        			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if(obj.aData.ORDER_TYPE == '手工收入单'){
+	            		return obj.aData.ORDER_NO;
+	            	}else{
+	            		return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+	            	}
         		}},
             {"mDataProp":"ORDER_TYPE","sWidth":"80px",
         			"sClass":"order_type"
@@ -187,7 +186,11 @@ $(document).ready(function() {
             }, 
             {"mDataProp":"ORDER_NO","sWidth":"100px",
             	"fnRender": function(obj) {
-        			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if(obj.aData.ORDER_TYPE == '手工收入单'){
+	            		return obj.aData.ORDER_NO;
+	            	}else{
+	            		return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+	            	}
         		}},
             {"mDataProp":"ORDER_TYPE","sWidth":"80px",
         			"sClass":"order_type"
