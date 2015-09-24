@@ -61,7 +61,7 @@ public class ChargeAcceptOrderController extends Controller {
         }
 
 
-        String sql = "select * from( select aci.id, '开票记录单' order_type,aci.order_no, aci.status, "
+        String sql = "select * from( select aci.id, '开票记录单' order_type,aci.order_no, aci.status, null payee, "
         		+ " ( select group_concat( invoice_item.invoice_no SEPARATOR '<br/>' )  "
         		+ " from arap_charge_invoice_item_invoice_no invoice_item "
         		+ " where invoice_item.invoice_id = aci.id GROUP BY aci.id ) invoice_no,"
@@ -70,14 +70,16 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id"
         		+ " where aci.status in(" + status + ") "
         	    + " UNION "
-        	    + " select amco.id,'手工收入单' order_type, amco.order_no,amco.status,"
+        	    + " select amco.id,'手工收入单' order_type, amco.order_no,amco.status, amco.others_name payee ,"
         	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr customer,c1.company_name cname "
         	    + " from arap_misc_charge_order amco "
         	    + " LEFT JOIN party p ON p.id = amco.customer_id "
         	    + " LEFT JOIN contact c ON c.id = p.contact_id "
         	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
-        	    + " where amco.status = '"+status2+"' ) A";
+        	    + " where amco.status = '"+status2+"'"
+        	    + " and amco.type = 'non_biz'"
+        	    + " and amco.total_amount >= 0) A";
         
         String sqlTotal = "select count(1) total from ("+sql+") tab";
         Record rec = Db.findFirst(sqlTotal);

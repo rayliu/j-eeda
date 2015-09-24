@@ -63,7 +63,8 @@ $(document).ready(function() {
             {"mDataProp":"CNAME"},*/ 
             {"mDataProp":"TOTAL_AMOUNT","sWidth":"60px"},     
             {"mDataProp":null,"sWidth":"60px"},     
-            {"mDataProp":null,"sWidth":"60px"},    
+            {"mDataProp":null,"sWidth":"60px"},  
+            {"mDataProp":"PAYEE","sWidth":"60px"},
             {"mDataProp":"CUSTOMER","sWidth":"120px"},
             {"mDataProp":"CNAME"},     
             {"mDataProp":null},     
@@ -213,7 +214,8 @@ $(document).ready(function() {
             {"mDataProp":"OFFICE_NAME"},
             {"mDataProp":"CNAME"},*/            
             {"mDataProp":null,"sWidth":"60px"},     
-            {"mDataProp":null,"sWidth":"60px"},     
+            {"mDataProp":null,"sWidth":"60px"},
+            {"mDataProp":"PAYEE","sWidth":"60px"},
             {"mDataProp":"CUSTOMER","sWidth":"120px"},
             {"mDataProp":"CNAME"},
             {"mDataProp":null},     
