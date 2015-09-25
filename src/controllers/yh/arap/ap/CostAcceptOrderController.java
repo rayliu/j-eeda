@@ -140,7 +140,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " ro.amount as application ,"
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
-        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%'"
+        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%' and ro.amount != 0"
         		+ " UNION SELECT amco.id, amco.order_no, NULL AS payment_method, "
         		+ " NULL AS payee_name, "
         		+ " NULL AS account_id, amco. STATUS, "
@@ -162,7 +162,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " SELECT cso.id , cso.order_no,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,'行车单' as attribute,"
         		+ " null as invoice_no,cso.create_data create_time,'' as remark,cso.actual_payment_amount total_amount,'0' as application_amount,'' as cname"
         		+ " FROM car_summary_order cso"
-        		+ " WHERE cso. STATUS = '已审批' AND cso.reimbursement_order_id IS NULL"
+        		+ " WHERE cso. STATUS = '已审批' AND cso.reimbursement_order_id IS NULL and cso.actual_payment_amount != 0"
         		+ " ) A";
         
         String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
@@ -179,7 +179,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " ro.amount as application ,"
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
-        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%'"
+        		+ " where ro.status in ('audit', '新建') and ro.order_no not like 'XCBX%' and ro.amount != 0 "
         		+ " UNION SELECT amco.id, amco.order_no, NULL AS payment_method, "
         		+ " NULL AS payee_name, "
         		+ " NULL AS account_id, amco. STATUS, "
@@ -201,7 +201,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " SELECT cso.id , cso.order_no,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,'行车单' as attribute,"
         		+ " null as invoice_no,cso.create_data create_time,'' as remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
         		+ " FROM car_summary_order cso"
-        		+ " WHERE cso. STATUS = '已审批' AND cso.reimbursement_order_id IS NULL"
+        		+ " WHERE cso. STATUS = '已审批' AND cso.reimbursement_order_id IS NULL and cso.actual_payment_amount != 0 "
         		+ " ) A";
         		
         
