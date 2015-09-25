@@ -302,7 +302,6 @@ public class CostConfirmController extends Controller {
         			ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findFirst("select * from arap_misc_charge_order where order_no =?",order_no);
         			arapMiscChargeOrder.set("status", "已付款").update();
         		}
-				
 			}else{
 				arapCostPayConfirmOrder.set("status", "部分已付款").update();
 				arapMiscCostOrder.set("status", "部分已付款").update();
@@ -443,7 +442,7 @@ public class CostConfirmController extends Controller {
 			String[] idArray = ids.split(",");
 			logger.debug(String.valueOf(idArray.length));
 			if(order_type.equals("成本单")){
-				sql = " SELECT c.abbr FROM arap_misc_cost_order amco "
+				sql = " SELECT c.abbr,amco.others_name payee_name FROM arap_misc_cost_order amco "
 						+ " LEFT JOIN party p ON p.id = amco.sp_id "
 						+ " LEFT JOIN office o ON o.id = p.office_id "
 						+ " LEFT JOIN contact c ON c.id = p.contact_id "
