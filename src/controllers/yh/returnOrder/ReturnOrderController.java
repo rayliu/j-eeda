@@ -48,6 +48,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.LocationUtil;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.getCustomFile;
 
@@ -119,7 +120,7 @@ public class ReturnOrderController extends Controller {
 			sql = "select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
 					+ " ifnull(c4.contact_person, c3.contact_person) receipt_person, "
 					+ " ifnull(c4.phone, c3.phone) receipt_phone,"
-					+ " ifnull(tor2.receiving_unit, tor.receiving_unit) receiving_unit,"
+					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
 					+ " ifnull(c4.address, (select c.address from contact c LEFT JOIN party p on p.id = c.id  where p.id = tor.notify_party_id)) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " d_o.ref_no sign_no,"
@@ -168,7 +169,7 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor.address, tor2.address) address,"
 					+ " ifnull(c4.contact_person, c3.contact_person) receipt_person, "
 					+ " ifnull(c4.phone, c3.phone) receipt_phone,"
-					+ " ifnull(tor2.receiving_unit, tor.receiving_unit) receiving_unit,"
+					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
 					+ " ifnull(c4.address, (select c.address from contact c LEFT JOIN party p on p.id = c.id  where p.id = tor.notify_party_id)) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " d_o.ref_no sign_no,"
@@ -331,20 +332,7 @@ public class ReturnOrderController extends Controller {
 
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
-			List<Location> provinces = Location.dao
-					.find("select * from location where pcode ='1'");
-			Location l = Location.dao
-					.findFirst("select * from location where code = (select pcode from location where code = '"
-							+ routeTo + "')");
-			if (provinces.contains(l)) {
-				locationTo = Location.dao
-						.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
-								+ routeTo + "'");
-			} else {
-				locationTo = Location.dao
-						.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
-								+ routeTo + "'");
-			}
+			locationTo = LocationUtil.getLocation(routeTo);
 			setAttr("locationTo", locationTo);
 		}
 		
