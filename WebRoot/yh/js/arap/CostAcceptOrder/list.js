@@ -38,7 +38,7 @@ $(document).ready(function() {
             }, 
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-            		if(obj.aData.ATTRIBUTE == '对账单')
+            		if(obj.aData.ATTRIBUTE == '申请单')
             			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ATTRIBUTE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else if(obj.aData.ATTRIBUTE == '报销单')
             			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -172,11 +172,11 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_NO","sWidth":"80px",
             	"fnRender": function(obj) {
         			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		if(obj.aData.ATTRIBUTE == '对账单')
-            			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ATTRIBUTE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else if(obj.aData.ATTRIBUTE == '报销单')
+            		if(obj.aData.ORDER_TYPE == '申请单')
+            			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(obj.aData.ORDER_TYPE == '报销单')
             			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else if(obj.aData.ATTRIBUTE == '行车单')
+            		else if(obj.aData.ORDER_TYPE == '行车单')
             			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else
             			return obj.aData.ORDER_NO;

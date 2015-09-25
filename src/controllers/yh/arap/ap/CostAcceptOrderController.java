@@ -126,7 +126,7 @@ public class CostAcceptOrderController extends Controller {
 				    + " and ifnull(order_no,'') like '%" + orderNo + "%' "
 				    + " and ifnull(status,'') like '%" + status1 + "%' ";
         }
-        String sqlTotal = "select count(*) total from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+        String sqlTotal = "select count(*) total from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'申请单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
         		+ " aci.total_amount total_amount, "
         		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
         		+ " c.abbr cname "
@@ -165,7 +165,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " WHERE cso. STATUS = '已审批' AND cso.reimbursement_order_id IS NULL and cso.actual_payment_amount != 0"
         		+ " ) A";
         
-        String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'对账单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+        String sql = "select * from(select aci.id, aci.order_no, aci.payment_method, aci.payee_name, aci.account_id, aci.status,'申请单' attribute, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
         		+ " aci.total_amount total_amount, "
         		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
         		+ " c.abbr cname "
