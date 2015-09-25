@@ -91,13 +91,13 @@ $(document).ready(function() {
     
 	// 审核
 	$("#auditBtn").click(function(e){
+		$('#auditBtn').attr('disabled', true);
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
 		//异步向后台提交数据
 		$('#saveChargeCheckOrderBtn').attr('disabled', true);
 		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
 		$.post('/chargeCheckOrder/auditChargeCheckOrder', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
-			$('#auditBtn').attr('disabled', true);
 			$("#chargeCheckOrderStatus").html(data.STATUS);
 		},'json');
 	});
@@ -125,7 +125,8 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#saveChargeCheckOrderBtn").click(function(e){
- 		
+ 		//数据响应之前回调按钮
+        $('#saveChargeCheckOrderBtn').attr('disabled', true);
  		saveChargeCheckOrder(e);
 
  		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
