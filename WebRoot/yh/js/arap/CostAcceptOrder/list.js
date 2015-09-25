@@ -171,7 +171,15 @@ $(document).ready(function() {
 			},
             {"mDataProp":"ORDER_NO","sWidth":"80px",
             	"fnRender": function(obj) {
-        			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+        			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if(obj.aData.ATTRIBUTE == '对账单')
+            			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ATTRIBUTE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(obj.aData.ATTRIBUTE == '报销单')
+            			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(obj.aData.ATTRIBUTE == '行车单')
+            			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else
+            			return obj.aData.ORDER_NO;
         		}
             },
             {"mDataProp":"ORDER_TYPE", "sWidth":"80px"},
