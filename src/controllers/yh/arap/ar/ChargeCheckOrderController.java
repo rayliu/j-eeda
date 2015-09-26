@@ -385,13 +385,14 @@ public class ChargeCheckOrderController extends Controller {
 		String chargeCheckOrderId = (String)dto.get("chargeCheckOrderId");
 		Double total_amount = (Double)dto.get("total_amount");
 		Double change_amount = (Double)dto.get("change_amount");
+		String remark = (String)dto.get("remark");
 
 		
 		UserLogin user = LoginUserController.getLoginUser(this);
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapChargeOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			
-			arapChargeOrder.set("remark", getPara("remark"));
+			arapChargeOrder.set("remark", remark);
 			arapChargeOrder.set("last_modified_by", user.getLong("id"));
 			arapChargeOrder.set("last_modified_stamp", new Date());
 			
@@ -413,10 +414,10 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapChargeOrder.set("status", "新建");
-			arapChargeOrder.set("payee_id", getPara("customer_id"));
+			arapChargeOrder.set("payee_id", (String)dto.get("customer_id"));
 			arapChargeOrder.set("create_by", user.getLong("id"));
 			arapChargeOrder.set("create_stamp", new Date());
-			arapChargeOrder.set("remark", getPara("remark"));
+			arapChargeOrder.set("remark", remark);
 			arapChargeOrder.set("order_no",
 					OrderNoGenerator.getNextOrderNo("YSDZ"));
 
