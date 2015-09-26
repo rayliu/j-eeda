@@ -339,11 +339,11 @@ public class ChargeCheckOrderController extends Controller {
 		}
 		sqlTotal = "select count(1) total from (" + sql + condition + sql2
 				+ condition2 + sql3 + ") as A";
-		rec = Db.findFirst(sqlTotal + fieldsWhere);
+		rec = Db.findFirst(sqlTotal + fieldsWhere );
 		logger.debug("total records:" + rec.getLong("total"));
 
 		orders = Db.find(sql + condition + sql2 + condition2 + sql3
-				+ fieldsWhere);
+				+ fieldsWhere + sLimit);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
