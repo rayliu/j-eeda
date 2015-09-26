@@ -679,7 +679,16 @@ public class ChargeCheckOrderController extends Controller {
 		String tihuo = getPara("tihuo");
 		String office = getPara("office");
 		String sqlTotal = "";
-		String sql = "select distinct aao.*, "
+		String sql = "select distinct "//aao.*, 
+				+ " aao.id,"
+				+ " aao.order_no,"
+			    + " aao.order_type,"
+			    + " aao.payee_id,"
+			    + " aao.remark,"
+			    + " aao.create_stamp,"
+			    + " round(aao.total_amount,2) total_amount,"
+			    + " round(aao.debit_amount,2) debit_amount,"
+			    + " round(aao.charge_amount,2) charge_amount,"
 				+ " usl.user_name as creator_name,"
 				+ " c.abbr cname,usl.c_name,"
 				+ " (select case "
