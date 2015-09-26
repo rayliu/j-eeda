@@ -12,23 +12,32 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.DID);
+			$(nRow).attr('ids', aData.ID);
+			$(nRow).attr('order_ty', aData.BUSINESS_TYPE);
+			return nRow;
+		},
         "sAjaxSource": "/costCheckOrder/unSelectedList",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px", "bSortable": false,
                 "fnRender": function(obj) {
+                	//alert(obj.aData.CHANGE_AMOUNT.find("change_amount"));
                 	var amount = 0;
-	               	 if(obj.aData.PAY_AMOUNT!=null){
-	               		 amount = obj.aData.PAY_AMOUNT;
+	               	 if($(obj.aData.CHANGE_AMOUNT).val()!=null){
+	               		 amount = $(obj.aData.CHANGE_AMOUNT).val();
+	               	 }else{
+	               		amount = obj.aData.PAY_AMOUNT;
 	               	 }
-                	var strcheck='<input  type="checkbox" name="order_check_box" amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';;
+	               	 
+                	var strcheck='<input  type="checkbox" name="order_check_box" change_amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';;
                 	//判断obj.aData.ID 是否存在 list id 
                 	console.log(ids);
                 	 for(var i=0;i<ids.length;i++){
                 		 console.log(i + ":"+ids[i]);
                 		 console.log("obj.aData.ID="+obj.aData.ID);
                          if(ids[i]==obj.aData.ID){                        	 
-                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
+                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" chan_amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
                         	
                          }
                      }
@@ -43,6 +52,22 @@ $(document).ready(function() {
             {"mDataProp":"PLANNING_TIME", "sWidth":"180px"},
             {"mDataProp":"AMOUNT", "sWidth":"40px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
+            {"mDataProp":"CHANGE_AMOUNT","sWidth":"60px",
+            	"fnRender": function(obj) {
+                    if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+                        return "<input type='text' style='' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                        
+                    }
+                    else {
+                    	if(obj.aData.PAY_AMOUNT!=null){
+                        return "<input type='text' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+                    	}
+                    	else{
+                    		return "<input type='text' name='change_amount' value='0'/>";
+                    	}
+                    }
+                }
+            },
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
             {"mDataProp":"SPNAME", "sWidth":"200px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
@@ -127,7 +152,7 @@ $(document).ready(function() {
     
     var ids = [];
     var orderNos = [];
-    var amount = [];
+    var change_amount = [];
     //var j_amount = [];
     var sum = 0;
     var j_sum = 0;
@@ -137,9 +162,8 @@ $(document).ready(function() {
 			$(this).parent().parent().clone().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
 			orderNos.push($(this).attr('order_no'));
-			amount.push($(this).attr('amount'));
-			$("#checkedCostCheckList").children().length++;
-			sum =eval(amount.join("+"));//求和
+			change_amount.push($(this).attr('change_amount'));
+			sum =eval(change_amount.join("+"));//求和
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
 			$("#amount").html(sum);
@@ -149,7 +173,7 @@ $(document).ready(function() {
 		}
 		else{
 			ids.splice($.inArray($(this).attr('id'),ids),1);
-			amount.splice($.inArray($(this).attr('amount'),amount),1);
+			change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
 			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
 			//$("#checkedCostCheckList").remove("tbody",$(this).parent().parent());
 			//$("#checkedCostCheckList").$(this).parent().parent().remove();
@@ -162,7 +186,7 @@ $(document).ready(function() {
 					//$("#checkedCostCheckList").children().splice(i,1);
 				}
 			}
-			var sum_f = $(this).attr('amount');
+			var sum_f = $(this).attr('change_amount');
 			var x_sum=parseFloat(sum)-parseFloat(sum_f);
 			sum=parseFloat(sum)-parseFloat(sum_f);
 			$("#checkedOrderId").val(ids);
@@ -178,7 +202,7 @@ $(document).ready(function() {
         $(this).parent().parent().appendTo($("#uncheckedCostCheckList"));
 		if($(this).prop("checked") == false){
 			//j_amount.push($(this).attr('amount'));
-			j_sum =$(this).attr('amount');//eval(j_amount.join("+"));
+			j_sum =$(this).attr('change_amount');//eval(j_amount.join("+"));
 			var xj_sum=parseFloat(sum)-parseFloat(j_sum);
 			sum=parseFloat(sum)-parseFloat(j_sum);
 			//amount=parseFloat(a);
@@ -186,7 +210,7 @@ $(document).ready(function() {
 			//j_amount.splice($.inArray($(this).attr('id'),j_amount),1);
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
-				amount.splice($.inArray($(this).attr('amount'),amount),1);
+				change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
 				$("#checkedOrderId").val(ids);
 				if(ids.length<=0){
 					$("#saveBtn").attr("disabled",true);
@@ -203,15 +227,52 @@ $(document).ready(function() {
         e.preventDefault();
         $('#createForm').submit();
     });
-	
+	$("#uncheckedCostCheck-table").on('blur', 'input:text', function(e){
+		e.preventDefault();
+		var paymentId = $(this).parent().parent().attr("id");
+		var departId = $(this).parent().parent().attr("ids");
+		var ty = $(this).parent().parent().attr("order_ty");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		 if(isNaN(value)){      
+			 alert("调整金额为数字类型");
+		 }else{
+			 $.post('/costCheckOrder/updateDepartOrderFinItem', {ty:ty,departId:departId,paymentId:paymentId, name:name, value:value}, function(data){
+				 $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
+				 $("#debitAmount").html(data.changeAmount);
+				 $("#costAmount").html(data.actualAmount); 
+				 $("#total_amount").val(data.changeAmount);
+		    	},'json');
+			 uncheckedCostCheckTable.fnDraw();
+		 }
+	});
 	$("#checkedCostCheckOrder").click(function(){
 		$("#checked").show();
 	});
 	$("#uncheckedCostCheckOrder").click(function(){
-		uncheckedCostCheckTable.fnDraw();;
+		uncheckedCostCheckTable.fnDraw();
 	});
 	
-	
+	$("#uncheckedCostCheck-table_wrapper").on('blur', 'input', function(e){
+		e.preventDefault();
+		var orderNos = $("#orderNos").val();
+		var ids=$("#orderIds").val();
+		var paymentId = $(this).parent().parent().attr("id");
+		var departId = $(this).parent().parent().attr("ids");
+		var ty = $(this).parent().parent().attr("order_ty");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		 if(isNaN(value)){      
+			 alert("调整金额为数字类型");
+		 }else{
+			 /*$.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,ty:ty,departId:departId,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
+				 $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
+				 $("#debitAmount").html(data.changeAmount);
+				 $("# costAmount").html(data.actualAmount); 
+				 $("#total_amount").val(data.changeAmount);
+		    	},'json');*/
+		 }
+	}); 
 	//获取供应商的list，选中信息在下方展示其他信息
     $('#sp_filter2').on('input click', function(){
     		var me=this;

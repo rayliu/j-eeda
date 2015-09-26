@@ -770,9 +770,11 @@ public class CostCheckOrderController extends Controller {
     	String status = getPara("status");
     	
     	String sqlTotal = "";
-    	String sql = " select * from (select distinct dor.id, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,c.abbr spname,"
+    	String sql = " select * from (select distinct dor.id,dofi.id did, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,c.abbr spname,"
     						+ " (SELECT sum(doi1.amount) FROM delivery_order_item doi1 WHERE doi1.delivery_id = dor.id ) amount, "
     						+ " ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,'配送' business_type, (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount,"
+    						+ " (SELECT sum(change_amount) FROM delivery_order_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id"
+    						+ " WHERE dofi.order_id = dor.id AND fi.type = '应付') change_amount,"
     			            + " ((select sum(dofi.amount) from delivery_order_fin_item dofi where dofi.order_id = dor.id)-(select sum(tofi.amount) from	transfer_order tor"
         		            + " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
         		            + " left join fin_item fi on fi.id = tofi.fin_item_id"
@@ -781,6 +783,7 @@ public class CostCheckOrderController extends Controller {
     			            + " toid.serial_no,tor.customer_order_no customer_order_no, dor.ref_no"
 							+ " from delivery_order dor"
 							+ " left join party p on p.id = dor.sp_id "
+							+ " LEFT JOIN delivery_order_fin_item dofi ON dofi.order_id = dor.id"
 							+ " left join depart_order dpr on dpr.sp_id=p.id"
 							+ " left join contact c on c.id = p.contact_id "
 							+ " left join delivery_order_item doi on doi.delivery_id = dor.id "
@@ -794,13 +797,14 @@ public class CostCheckOrderController extends Controller {
 							+ " left join location lo2 on lo2.code = dpr.route_to "
 							+ " left join office oe on oe.id = w.office_id where dor.audit_status='已确认' group by dor.id "
 							+ " union"
-							+ " select distinct dpr.id, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,"
+							+ " select distinct dpr.id,dofi.id did, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,"
 							+ " ( SELECT CASE WHEN tor.cargo_nature = 'ATM' THEN ( SELECT count(toid.id) FROM transfer_order_item_detail toid  "
 							+ " WHERE toid.depart_id = dpr.id ) WHEN tor.cargo_nature = 'cargo' THEN ( SELECT sum(toi.amount) FROM "
 							+ " depart_order dpr2 LEFT JOIN depart_transfer dt ON dt.depart_id = dpr2.id "
 							+ " LEFT JOIN transfer_order_item toi ON toi.order_id = dt.order_id  "
 							+ " WHERE dpr2.id = dpr.id ) END ) amount, "
 							+ " ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'零担' business_type, (select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id and fi.type = '应付') pay_amount,"
+							+ " (SELECT sum(change_amount) FROM depart_order_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id WHERE dofi.depart_order_id = dpr.id AND fi.type = '应付') change_amount,"
 							+ " ((select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dpr.id  and fi.type = '应付')-(select sum(tofi.amount)"
 							+ " from transfer_order tor"
 							+ " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
@@ -810,6 +814,7 @@ public class CostCheckOrderController extends Controller {
 							+ " '' serial_no,tor.customer_order_no customer_order_no, '' ref_no"
 							+ " from depart_order dpr "
 							+ " left join depart_transfer dtr on dtr.depart_id = dpr.id"
+							+ " LEFT JOIN depart_order_fin_item dofi ON dofi.depart_order_id = dpr.id"
 							+ " left join transfer_order tor on tor.id = dtr.order_id "
 							+ " left join transfer_order_item toi on toi.order_id = tor.id "
 							+ " left join product prod on toi.product_id = prod.id "
@@ -818,7 +823,7 @@ public class CostCheckOrderController extends Controller {
 							+ " left join location lo2 on lo2.code = dpr.route_to "
 							+ " left join office oe on oe.id = tor.office_id where  (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'DEPART' group by dpr.id"
 							+ " union "
-							+ " select distinct dpr.id, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,"
+							+ " select distinct dpr.id,dofi.id did, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,"
 							+ " ( SELECT CASE WHEN tor.cargo_nature = 'ATM' THEN ( "
 							+ " SELECT count(toid.id) FROM transfer_order_item_detail toid "
 							+ " WHERE toid.pickup_id = dpr.id ) "
@@ -827,7 +832,8 @@ public class CostCheckOrderController extends Controller {
 							+ " LEFT JOIN depart_transfer dt ON dt.pickup_id = dpr2.id "
 							+ " LEFT JOIN transfer_order_item toi ON toi.order_id = dt.order_id "
 							+ " WHERE dpr2.id = dpr.id ) END ) amount,"
-							+ " ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount, "
+							+ " ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,'提货' business_type, (select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') pay_amount,"
+							+ " (select sum(change_amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付') change_amount,"
 							+ " ((select sum(pofi.amount) from pickup_order_fin_item pofi  where pofi.pickup_order_id = dpr.id )-(select sum(tofi.amount)"
 							+ " from transfer_order tor"
 							+ " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
@@ -837,6 +843,7 @@ public class CostCheckOrderController extends Controller {
 							+ " '' serial_no,tor.customer_order_no customer_order_no, '' ref_no"
 							+ " from depart_order dpr "
 							+ " left join depart_transfer dtr on dtr.pickup_id = dpr.id"
+							+ " LEFT JOIN pickup_order_fin_item dofi ON dofi.pickup_order_id = dpr.id"
 							+ " left join transfer_order tor on tor.id = dtr.order_id "
 							+ " left join transfer_order_item toi on toi.order_id = tor.id "
 							+ " left join transfer_order_item_detail toid on toid.order_id = tor.id and toid.item_id = toi.id "
@@ -846,7 +853,8 @@ public class CostCheckOrderController extends Controller {
 							+ " left join location lo2 on lo2.code = dpr.route_to "
 							+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' group by dpr.id"
 							+ " union "
-							+ " select distinct ior.id, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,ior.order_no order_no,ior.status,'保险公司' spname,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,'保险' business_type, round((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付'),2) pay_amount, "
+							+ " select distinct ior.id,ifi.id did, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,ior.order_no order_no,ior.status,'保险公司' spname,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,'保险' business_type, round((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付'),2) pay_amount, "
+							+ " round((SELECT sum(change_amount) FROM insurance_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id WHERE dofi.insurance_order_id = ior.id AND fi.type = '应付' ),2) change_amount,"
 							+ " ((select sum(ifi.insurance_amount) from insurance_fin_item ifi  where ifi.insurance_order_id = ior.id )-(select sum(tofi.amount)"
 							+ " from transfer_order tor"
 							+ " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
@@ -856,6 +864,7 @@ public class CostCheckOrderController extends Controller {
 							+ " '' serial_no, tor.customer_order_no customer_order_no,'' ref_no"
 							+ " from insurance_order ior "
 							+ " left join transfer_order tor on ior.id = tor.insurance_id "
+							+ " LEFT JOIN insurance_fin_item ifi ON ifi.insurance_order_id = ior.id"
 							+ " left join transfer_order_item toi on toi.order_id = tor.id "
 							+ " left join party p ON p.id=tor.sp_id"
                             + " left join depart_order dpr ON dpr.sp_id=p.id"
@@ -867,16 +876,19 @@ public class CostCheckOrderController extends Controller {
 							+ " left join location lo2 on lo2.code = dpr.route_to "
 							+ " where ior.audit_status='已确认' group by ior.id"
 							+ " union "
-							+ " SELECT DISTINCT amco.id,amco.route_from,l. NAME route_name,"
+							+ " SELECT DISTINCT amco.id,amcoi.id did,amco.route_from,l. NAME route_name,"
 							+ " amco.route_to,l1. NAME to_name,NULL AS planning_time,"
 							+ " amco.order_no,amco. STATUS,c.abbr spname,NULL AS amount,"
 							+ " NULL AS volume,NULL AS weight,amco.create_stamp,"
 							+ " ul.user_name creator,'成本单' business_type,"
-							+ " amco.total_amount pay_amount, null as alance,NULL AS transfer_order_no,"
+							+ " (SELECT sum(amount) FROM arap_misc_cost_order_item amcoi LEFT JOIN fin_item fi ON fi.id = amcoi.fin_item_id WHERE amcoi.misc_order_id = amco.id AND fi.type = '应付' ) pay_amount,"
+							+ " (SELECT sum(change_amount) FROM arap_misc_cost_order_item amcoi LEFT JOIN fin_item fi ON fi.id = amcoi.fin_item_id WHERE amcoi.misc_order_id = amco.id AND fi.type = '应付') change_amount,"
+							+ " null as alance,NULL AS transfer_order_no,"
 							+ " NULL AS return_order_collection,amco.remark remark,"
 							+ " NULL AS booking_note_number,NULL AS office_name,"
 							+ " '' serial_no,'' customer_order_no, '' ref_no "
 							+ " FROM arap_misc_cost_order amco"
+							+ " LEFT JOIN arap_misc_cost_order_item amcoi ON amcoi.misc_order_id = amco.id"
 							+ " LEFT JOIN user_login ul ON ul.id = amco.create_by"
 							+ " LEFT JOIN party p1 ON amco.customer_id = p1.id"
 							+ " LEFT JOIN contact c1 ON p1.contact_id = c1.id"
@@ -1114,11 +1126,7 @@ public class CostCheckOrderController extends Controller {
 		String tId = getPara("departId");
 		String name = getPara("name");
 		String value = getPara("value");
-		String orderNos = getPara("orderNos");
-		String orderIds= getPara("ids");
 		String type=getPara("ty");
-		String[] orderIdsArr = orderIds.split(",");
-    	String[] orderNoArr = orderNos.split(",");
     	Record rec = null;
     	Record rec1 = null;
     	Record rec2 = null;
@@ -1126,12 +1134,22 @@ public class CostCheckOrderController extends Controller {
     	double totalAmount = 0.0;
     	double changeAmount=0.0;
     	double changeAmount1=0.0;
- 		for(int i=0;i<orderIdsArr.length;i++){
-            if("提货".equals(orderNoArr[i])){
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+    	if("提货".equals(type)){
+    		rec3 = Db.findFirst("select * from pickup_order_fin_item  where pickup_order_id =?", tId);
+        	if(rec3==null){
+        		PickupOrderFinItem dofi = new PickupOrderFinItem();
+        		dofi.set("pickup_order_id", tId);
+        		dofi.set("fin_item_id", "1");
+        		dofi.set("amount", "0");
+        		dofi.set("change_amount", value);
+        		dofi.set("STATUS", "新建");
+        		dofi.set("create_date", new Date());
+        		dofi.set("remark", "对账确认金额为0增加明细");
+        		dofi.save();
+        	}
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", tId);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");	
             	List<Record> BillingOrders = Db.find("select id,amount from pickup_order_fin_item where fin_item_id!=7 and pickup_order_id=?",tId);
-            	if("提货".equals(type)){
             		rec2 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", tId);
                 	changeAmount1 = rec2.getDouble("sum_amount");
             		for(int j=0;j<BillingOrders.size();j++){
@@ -1143,22 +1161,28 @@ public class CostCheckOrderController extends Controller {
             		DecimalFormat df = new DecimalFormat("0.00");
             		String num = df.format(amount1);
             		PickupOrderFinItem pickuporderfinitem =PickupOrderFinItem.dao.findById(id);
-            		pickuporderfinitem.set("change_amount", num);
-            		pickuporderfinitem.update();
+            		if(changeAmount1==0.0){
+            			pickuporderfinitem.set("change_amount", value);
+                		pickuporderfinitem.update();
+            		}
+            		else{
+            			pickuporderfinitem.set("change_amount", num);
+                		pickuporderfinitem.update();
+            		}
+            		
             	}
-            	}
-            	rec = Db.findFirst("select sum(amount) amount,sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where fin_item_id!=7 and  dofi.pickup_order_id = ?", orderIdsArr[i]);
+            	rec = Db.findFirst("select sum(amount) amount,sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where fin_item_id!=7 and  dofi.pickup_order_id = ?", tId);
             	if(rec.getDouble("change_amount")!=null){
             		changeAmount = changeAmount + rec.getDouble("change_amount");
             	}
             	else{
             		changeAmount = changeAmount + rec.getDouble("amount");
             	}
-            }else if("零担".equals(orderNoArr[i])){
-            	rec3 = Db.findFirst("select * from depart_order_fin_item  where depart_order_id =?", orderIdsArr[i]);
+            }else if("零担".equals(type)){
+            	rec3 = Db.findFirst("select * from depart_order_fin_item  where depart_order_id =?", tId);
             	if(rec3==null){
             		DepartOrderFinItem dofi = new DepartOrderFinItem();
-            		dofi.set("depart_order_id", orderIdsArr[i]);
+            		dofi.set("depart_order_id", tId);
             		dofi.set("fin_item_id", "1");
             		dofi.set("amount", "0");
             		dofi.set("change_amount", value);
@@ -1168,10 +1192,9 @@ public class CostCheckOrderController extends Controller {
             		dofi.set("cost_source", "对账确认金额为0增加明细");
             		dofi.save();
             	}
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", tId);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
             	List<Record> BillingOrders = Db.find("select id,amount from depart_order_fin_item where depart_order_id=?",tId);
-            	if("零担".equals(type)){
             		rec2 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", tId);
                 	changeAmount1 = rec2.getDouble("sum_amount");
             		for(int j=0;j<BillingOrders.size();j++){
@@ -1192,9 +1215,8 @@ public class CostCheckOrderController extends Controller {
             		departorfinitem.update();
             		}
             	}
-            	}
             		
-                	rec = Db.findFirst("select sum(amount) amount, sum(change_amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ?", orderIdsArr[i]);
+                	rec = Db.findFirst("select sum(amount) amount, sum(change_amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ?", tId);
                 	if(rec.getDouble("change_amount")!=null){
                 		changeAmount = changeAmount + rec.getDouble("change_amount");
                 	}
@@ -1208,11 +1230,11 @@ public class CostCheckOrderController extends Controller {
             	//departorder.set("change_amount", value);
             	//departorder.update();
             	
-            }else if("配送".equals(orderNoArr[i])){
-            	rec3 = Db.findFirst("select * from delivery_order_fin_item  where order_id =?", orderIdsArr[i]);
+            }else if("配送".equals(type)){
+            	rec3 = Db.findFirst("select * from delivery_order_fin_item  where order_id =?", tId);
             	if(rec3==null){
             		DeliveryOrderFinItem dofi = new DeliveryOrderFinItem();
-            		dofi.set("order_id", orderIdsArr[i]);
+            		dofi.set("order_id", tId);
             		dofi.set("fin_item_id", "1");
             		dofi.set("amount", "0");
             		dofi.set("change_amount", value);
@@ -1221,10 +1243,10 @@ public class CostCheckOrderController extends Controller {
             		dofi.set("create_name", "user");
             		dofi.save();
             	}
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", tId);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
             	List<Record> BillingOrders = Db.find("select id,amount from delivery_order_fin_item where order_id=?",tId);
-            	if("配送".equals(type)){for(int j=0;j<BillingOrders.size();j++){
+            	for(int j=0;j<BillingOrders.size();j++){
             		rec2 = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", tId);
                 	changeAmount1 = rec2.getDouble("sum_amount");
             		Record b=BillingOrders.get(j);
@@ -1243,21 +1265,21 @@ public class CostCheckOrderController extends Controller {
             		deliveryfinitem.update();
             		}
             	}
-            	}
-            	rec = Db.findFirst("select sum(amount) amount, sum(change_amount) change_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ?", orderIdsArr[i]);
+            	rec = Db.findFirst("select sum(amount) amount, sum(change_amount) change_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ?", tId);
             	if(rec.getDouble("change_amount")!=null){
             		changeAmount = changeAmount + rec.getDouble("change_amount");
             	}
             	else{
             		changeAmount = changeAmount + rec.getDouble("amount");
             	}
-            }else if("成本单".equals(orderNoArr[i])){
-            	ArapMiscCostOrderItem misccostorderitem =ArapMiscCostOrderItem.dao.findById(paymentId);
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
+            }else if("成本单".equals(type)){
+            
+            	rec1 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",tId);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
             	List<Record> BillingOrders = Db.find("select id,amount from arap_misc_cost_order_item amcoi where misc_order_id=?",tId);
-            	if("成本单".equals(type)){for(int j=0;j<BillingOrders.size();j++){
-            		rec2 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'?", tId);
+            	
+            	for(int j=0;j<BillingOrders.size();j++){
+            		rec2 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'", tId);
                 	changeAmount1 = rec2.getDouble("sum_amount");
             		Record b=BillingOrders.get(j);
             		double amount = b.getDouble("AMOUNT");
@@ -1266,26 +1288,25 @@ public class CostCheckOrderController extends Controller {
             		double amount1= amount/changeAmount1*dd;
             		DecimalFormat df = new DecimalFormat("0.00");
             		String num = df.format(amount1);
-            		ArapMiscCostOrderItem ArapMiscOrderItem =ArapMiscCostOrderItem.dao.findById(id);
-            		ArapMiscOrderItem.set("change_amount", num);
-            		ArapMiscOrderItem.update();
-            	}
+            		ArapMiscCostOrderItem arapmiscorderitem =ArapMiscCostOrderItem.dao.findById(id);
+            		arapmiscorderitem.set("change_amount", num);
+            		arapmiscorderitem.update();
             	}
             	
-            	rec = Db.findFirst("select sum(change_amount) change_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ?",orderIdsArr[i]);
+            	rec = Db.findFirst("select sum(change_amount) change_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ?",tId);
             	if(rec.getDouble("change_amount")!=null){
             	changeAmount = changeAmount + rec.getDouble("change_amount");
             	}
-            }else if("保险".equals(orderNoArr[i])){
+            }else if("保险".equals(type)){
             	InsuranceFinItem insurancefinitem =InsuranceFinItem.dao.findById(paymentId);
             	if(value.equals("")){
             		value=null;
             	}
             	insurancefinitem.set(name, value);
             	insurancefinitem.update();
-            	rec1 = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
+            	rec1 = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",tId);
             	totalAmount = totalAmount + rec1.getDouble("sum_amount");
-            	rec = Db.findFirst("select sum(insurance_amount) amount,sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",orderIdsArr[i]);
+            	rec = Db.findFirst("select sum(insurance_amount) amount,sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",tId);
             	if(rec.getDouble("change_amount")!=null){
             		changeAmount = changeAmount + rec.getDouble("change_amount");
             	}
@@ -1293,7 +1314,6 @@ public class CostCheckOrderController extends Controller {
             		changeAmount = changeAmount + rec.getDouble("amount");
             	}
             }
-    	}
 		if ("change_amount".equals(name) && "".equals(value)) {
 			value = "0";
 		}
