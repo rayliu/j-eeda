@@ -462,5 +462,34 @@ $(document).ready(function() {
     	$('#addFee').hide();    	
     	$('#saveChargeMiscOrderBtn').attr('disabled', true);
     }
+    
+    
+    var display = function(charge_from){
+    	if(charge_from == 'sp'){
+        	$("#customer_div").hide();
+        	$("#sp_div").show();
+        }else if(charge_from == 'customer'){
+        	$("#sp_div").hide();
+        	$("#customer_div").show();
+        }else{
+        	$("#customer_div").hide();
+        	$("#sp_div").hide();
+        }
+    };
+    
+    
+    $("input:radio[name='charge_from_type']").on("click",function(){
+    	var charge_from = $("input:radio[name='charge_from_type']:checked").val();
+    	display(charge_from);
+    });
+    
+    
+    //动作回显
+    var charge_from = $("input:radio[name='charge_from_type']:checked").val();
+    display(charge_from);
+    
+    
+    
+    
 
 } );
