@@ -91,6 +91,7 @@ $(document).ready(function() {
 				for (var i = 0; i < data.itemList.length; i++) {
 					var item = data.itemList[i];
 					feeTable.fnAddData({
+						ID: item.ID,
 					 	CUSTOMER_ORDER_NO: item.CUSTOMER_ORDER_NO,
 					 	ITEM_DESC: item.ITEM_DESC,
 					 	NAME: item.NAME,
