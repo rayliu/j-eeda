@@ -578,10 +578,10 @@ public class CostConfirmController extends Controller {
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void list() {
     	String orderNo = getPara("orderNo")==null?null:getPara("orderNo").trim();
-    	String appOrderNo = getPara("applicationOrderNo")==null?null:getPara("applicationOrderNo").trim();
+    	String businessOrderNo = getPara("businessNo")==null?null:getPara("businessNo").trim();
 		String status = getPara("status")==null?null:getPara("status").trim();
-		String spName = getPara("sp_name")==null?null:getPara("sp_name").trim();
-		String receiverName = getPara("receiverName")==null?null:getPara("receiverName").trim();
+		String spName = getPara("sp")==null?null:getPara("sp").trim();
+		String receiverName = getPara("receiver")==null?null:getPara("receiver").trim();
 		String beginTime = getPara("beginTime")==null?null:getPara("beginTime").trim();
 		String endTime = getPara("endTime")==null?null:getPara("endTime").trim();
 		
@@ -645,12 +645,14 @@ public class CostConfirmController extends Controller {
         	conditions+=" and status = '"+status+"'";
         }
         if (StringUtils.isNotEmpty(spName)){
-        	conditions+=" and sp_name like '%"+spName+"%'";
+        	conditions+=" and ifnull(sp_name,'') like '%"+spName+"%'";
         }
         if (StringUtils.isNotEmpty(receiverName)){
         	conditions+=" and receive_person like '%"+receiverName+"%'";
         }
-        
+        if (StringUtils.isNotEmpty(businessOrderNo)){
+        	conditions+=" and ifnull(fksq_no,ifnull(misc_no,ifnull(reimbursement_no,car_no))) LIKE  '%"+businessOrderNo+"%'";
+        }
         if (StringUtils.isNotEmpty(beginTime)){
         	beginTime = " and create_date between'"+beginTime+"'";
         }else{
