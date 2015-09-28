@@ -115,6 +115,11 @@ public class PermissionConstant {
 	public static final String PERMSSION_PrePayOrder_CREATE = "PrePayOrder.create";
 	public static final String PERMSSION_PrePayOrder_UPDATE = "PrePayOrder.update";
 	public static final String PERMSSION_PrePayOrder_CANCEL = "PrePayOrder.cancel";
+	/*转账单 PrePayOrder*/
+	public static final String PERMSSION_TA_LIST = "TransferAccountsOrder.list";
+	public static final String PERMSSION_TA_CREATE = "TransferAccountsOrder.create";
+	public static final String PERMSSION_TA_UPDATE = "TransferAccountsOrder.update";
+	public static final String PERMSSION_TA_CANCEL = "TransferAccountsOrder.cancel";
 	
 	
 	/*出纳日记账权限*/

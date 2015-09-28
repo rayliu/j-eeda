@@ -374,7 +374,7 @@
                		var costConfirmPermission = map.costAcceptOrder_list;
                		var reimbureementPermission = map.costReimbureement_list;
                		var chunarijiPermission = map.PaymentCheckOrder_list;
-               		
+               		var TransferAccountPermission = map.TransferAccountsOrder_list;
                		if(payListPermission != '' || costListPermission != '' || chargePermission != '' || costConfirmPermission != ''
                			|| reimbureementPermission != '' || chunarijiPermission != '') {
                		
@@ -417,11 +417,12 @@
 	                            <li>
 	                                <a href="/costReimbursement">报销单</a>
 	                            </li>
+                            <%}%>
+                            <% if(TransferAccountPermission != ''){%>
 	                            <li>
 	                                <a href="/transferAccountsOrder">转账单</a>
 	                            </li>
                             <%}%>
-                            
                         </ul>
                      </li>
                         <!-- /.nav-second-level --> 

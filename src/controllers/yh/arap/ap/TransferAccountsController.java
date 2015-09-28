@@ -34,11 +34,11 @@ import controllers.yh.util.PermissionConstant;
 public class TransferAccountsController extends Controller {
 	private Logger logger = Logger.getLogger(CostCheckOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_LIST})
+	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_TA_LIST})
 	public void index() {
 		render("/yh/arap/TransferAccountsOrder/TransferAccountsOrderList.html");
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_TA_CREATE, PermissionConstant.PERMSSION_TA_UPDATE}, logical=Logical.OR)
 		public void create() {
 			List<Record> itemList  = Db.find("select * from fin_item where type='报销费用' and parent_id !=0 ");
 	        setAttr("itemList", itemList);
@@ -52,6 +52,7 @@ public class TransferAccountsController extends Controller {
 				.findFirst("select * from user_login where id='" + userId + "'");
 		renderJson(approval);
 	}
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_TA_LIST })
 	public void list(){
 		String orderNo =getPara("orderNo");
 		String transfer_method =getPara("transfer_method");
@@ -96,6 +97,7 @@ public class TransferAccountsController extends Controller {
         renderJson(BillingOrderListMap);
        
 	}
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_TA_UPDATE })
 	public void edit(){
 			String id = getPara("id");
 			TransferAccountsOrder transferaccounts = TransferAccountsOrder.dao.findById(id);
@@ -124,7 +126,7 @@ public class TransferAccountsController extends Controller {
 			List<Record> locationList= Db.find("SELECT * from fin_account");
 			renderJson(locationList);
 		}
-		@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
+		@RequiresPermissions(value = {PermissionConstant.PERMSSION_TA_CREATE, PermissionConstant.PERMSSION_TA_UPDATE}, logical=Logical.OR)
 		public void confirem() {
 			String transferOrderId =getPara("transferOrderId");
 			String in_filter =getPara("in_filter");
@@ -195,7 +197,7 @@ public class TransferAccountsController extends Controller {
 			}
 			renderJson(transferaccounts);
 		}
-		@RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
+		@RequiresPermissions(value = {PermissionConstant.PERMSSION_TA_CREATE, PermissionConstant.PERMSSION_TA_UPDATE}, logical=Logical.OR)
 		public void save() {
 			TransferAccountsOrder transferaccounts =null;
 			String method =getPara("transfer_filter");
