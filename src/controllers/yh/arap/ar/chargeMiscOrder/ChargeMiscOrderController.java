@@ -13,10 +13,12 @@ import java.util.Map;
 import models.Account;
 import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
-import models.ArapMiscChargeOrder;
-import models.ArapMiscChargeOrderItem;
 import models.Party;
 import models.UserLogin;
+import models.yh.arap.ArapMiscCostOrderItem;
+import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
+import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrderDTO;
+import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrderItem;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -322,7 +324,15 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrder.set("ref_order_no",
 					destOrder.getStr("order_no"));
 		}
-		renderJson(arapMiscChargeOrder);
+		
+		List<ArapMiscChargeOrderItem> itemList = 
+				ArapMiscChargeOrderItem.dao.find("select amcoi.*, fi.name from arap_misc_charge_order_item amcoi, fin_item fi"
+						+ " where amcoi.fin_item_id=fi.id and misc_order_id=?", chargeMiscOrderId);
+		
+		ArapMiscChargeOrderDTO orderDto = new ArapMiscChargeOrderDTO();
+		orderDto.setOrder(arapMiscChargeOrder);
+		orderDto.setItemList(itemList);
+		renderJson(orderDto);
 	}
 
 	private void deleteRefOrder(String originOrderId) throws Exception {

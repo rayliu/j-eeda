@@ -71,23 +71,40 @@ $(document).ready(function() {
         console.log(order);
 		//异步向后台提交数据
 		$.post('/chargeMiscOrder/save', {params:JSON.stringify(order)}, function(data){
-			if(data.ID>0){
-				$("#miscChargeOrderNo").html('<strong>'+data.ORDER_NO+'</strong>');
-				$("#create_stamp").html(data.CREATE_STAMP);
-				$("#chargeMiscOrderId").val(data.ID);
-				if(data.REF_ORDER_NO)
-					$("#refOrderNo").html('<strong>'+data.REF_ORDER_NO+'</strong>');
-				contactUrl("edit?id",data.ID);
+			var order = data.order;
+			if(order.ID>0){
+				$("#miscChargeOrderNo").html('<strong>'+order.ORDER_NO+'</strong>');
+				$("#create_stamp").html(order.CREATE_STAMP);
+				$("#chargeMiscOrderId").val(order.ID);
+				if(order.REF_ORDER_NO)
+					$("#refOrderNo").html('<strong>'+order.REF_ORDER_NO+'</strong>');
+				contactUrl("edit?id",order.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$('#saveChargeMiscOrderBtn').attr('disabled', false);
 				deletedIds=[];
 
-				window.location.reload();
+				feeTable.fnClearTable();
+
+				for (var i = 0; i < data.itemList.length; i++) {
+					var item = data.itemList[i];
+					feeTable.fnAddData({
+						ID: item.ID,
+					 	CUSTOMER_ORDER_NO: item.CUSTOMER_ORDER_NO,
+					 	ITEM_DESC: item.ITEM_DESC,
+					 	NAME: item.NAME,
+					 	AMOUNT: item.AMOUNT,
+					 	CHANGE_AMOUNT: item.CHANGE_AMOUNT,
+					 	STATUS: '新建'
+					 });
+				};
+				
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+				$('#saveChargeMiscOrderBtn').attr('disabled', false);
 			}
 		},'json').fail(function() {
 		    $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+		    $('#saveChargeMiscOrderBtn').attr('disabled', false);
 		  });
 	};
    
