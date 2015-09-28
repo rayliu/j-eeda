@@ -317,7 +317,7 @@ public class CostConfirmController extends Controller {
 			}
 		}else if(order_type.equals("行车单")){
 			CarSummaryOrder carsummaryorder = CarSummaryOrder.dao.findById(applicationId);
-			if(carsummaryorder.getDouble("actual_payment_amount") == Double.parseDouble(total_amount)){
+			if(re.getDouble("total") == Double.parseDouble(total_amount)){
 				arapCostPayConfirmOrder.set("status", "已付款").update();
 				carsummaryorder.set("status", "已付款").update();
 			}else{
