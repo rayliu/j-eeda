@@ -582,24 +582,19 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var value = $(this).val();
 
-		if(parseFloat(yufu_amount) < parseFloat(value)){
-			$.scojs_message('注意：此次付款金额已超过应付金额！！', $.scojs_message.FALSE);
-			return;
-		}else{
-			$.post('/costPreInvoiceOrder/updateArapCostOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId ,costOrderId:costOrderId, name:name, value:value}, function(data){
-				if(data.costApplicationOrderRel.ID > 0){
-					$("#tpayment").html(data.pay_amount_a);
-					$("#paidAmount").html(parseFloat($("#paidAmounts").val())+parseFloat(data.pay_amount_a));
-					costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
-					costPreInvoiceOrderTable.fnDraw();
-					
+		$.post('/costPreInvoiceOrder/updateArapCostOrder', {costPreInvoiceOrderId:costPreInvoiceOrderId ,costOrderId:costOrderId, name:name, value:value}, function(data){
+			if(data.costApplicationOrderRel.ID > 0){
+				$("#tpayment").html(data.pay_amount_a);
+				$("#paidAmount").html(parseFloat($("#paidAmounts").val())+parseFloat(data.pay_amount_a));
+				costPreInvoiceOrderTable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costCheckOrderListById?costPreInvoiceOrderId="+costPreInvoiceOrderId;   
+				costPreInvoiceOrderTable.fnDraw();
+
+				if(data.tips=='success')
 					$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
-				}else{
-					$.scojs_message('更新失败', $.scojs_message.TYPE_ERROR);
-				}
-	    	},'json');
-		}
-		//var costPreInvoiceOrderId = $("#costPreInvoiceOrderId").val();
+			}else{
+				$.scojs_message('更新失败', $.scojs_message.TYPE_ERROR);
+			}
+    	},'json');
 		
 	});	
 	

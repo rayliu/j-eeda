@@ -664,23 +664,24 @@ public class CostPreInvoiceOrderController extends Controller {
 	public void updateArapCostOrder() {
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
 		String costOrderId = getPara("costOrderId");
-		
-//		ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao
-//				.findById(costPreInvoiceOrderId);
-//		String name = getPara("name");
-//		String value = getPara("value");
-		
-//		CostApplicationOrderRel CostApplicationOrderRel = CostApplicationOrderRel.dao
-//				.findById(costOrderId);
+
 		String sql = "select * from cost_application_order_rel where application_order_id = '"+costPreInvoiceOrderId+"' and cost_order_id = '"+costOrderId+"'";
 		CostApplicationOrderRel costApplicationOrderRel = CostApplicationOrderRel.dao.findFirst(sql);
 		//SELECT sum(caor.pay_amount) FROM arap_cost_order acom 	LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id WHERE caor.application_order_id = aaia.id
 		String name = getPara("name");
 		String value = getPara("value");
-		
+		Double oldAmount = costApplicationOrderRel.getDouble("pay_amount");
+		String tips = "";
 		if ("pay_amount".equals(name) && "".equals(value)) {
 			value = "0";
 		}
+		if(!oldAmount.equals(Double.parseDouble(value))){
+			costApplicationOrderRel.set(name, value);
+			tips = "success";
+		}else{
+			tips = "noChange";
+		}
+		
 		costApplicationOrderRel.set(name, value);
 		costApplicationOrderRel.update();
 		CostApplicationOrderRel costApplicationOrderRel1 = CostApplicationOrderRel.dao.findFirst(
@@ -689,6 +690,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		Double  pay_amount_a = costApplicationOrderRel1.getDouble("pay_amount_a");
 		Map map = new HashMap();
 		map.put("pay_amount_a", pay_amount_a);
+		map.put("tips", tips);
 		map.put("costApplicationOrderRel", costApplicationOrderRel);
 		renderJson(map);
 	}
