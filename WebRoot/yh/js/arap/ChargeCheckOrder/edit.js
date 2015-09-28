@@ -165,7 +165,7 @@ $(document).ready(function() {
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, // 不要排序
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 10,
+        "iDisplayLength": 1000,
         //"bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
