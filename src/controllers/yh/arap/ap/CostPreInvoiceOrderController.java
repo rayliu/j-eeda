@@ -552,7 +552,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		setAttr("costCheckOrderIds", costCheckOrderIds);
 		
 		//已付总金额
-		Record re = Db.findFirst("select sum(aco.pay_amount) paid_amount from cost_application_order_rel aco where aco.cost_order_id in(?)",costCheckOrderIds);
+		Record re = Db.findFirst("select sum(aco.pay_amount) paid_amount from cost_application_order_rel aco where aco.cost_order_id in("+costCheckOrderIds+")");
 		Double paidAmount = re.getDouble("paid_amount");
 		setAttr("paidAmount", paidAmount);
 		
