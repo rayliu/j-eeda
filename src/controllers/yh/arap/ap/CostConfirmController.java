@@ -685,9 +685,11 @@ public class CostConfirmController extends Controller {
         Map orderListMap = new HashMap();
         orderListMap.put("sEcho", pageIndex);
         orderListMap.put("iTotalRecords", total);
-        orderListMap.put("iTotalDisplayRecords", costPayConfirmOrders.size());
+        orderListMap.put("iTotalDisplayRecords", total);
 
         orderListMap.put("aaData", costPayConfirmOrders);
+        
+
 
         renderJson(orderListMap);
     }
