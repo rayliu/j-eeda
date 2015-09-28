@@ -76,18 +76,32 @@ $(document).ready(function() {
         
 		//异步向后台提交数据
 		$.post('/costMiscOrder/save',{params:JSON.stringify(order)}, function(data){
-			if(data.ID>0){
-				$("#ref_order_no").text(data.REF_ORDER_NO);
-				$("#arapMiscCostOrderNo").html(data.ORDER_NO);
-				$("#create_time").html(data.CREATE_STAMP);
-				$("#costMiscOrderId").val(data.ID);
+			var order = data.order;
+			if(order.ID>0){
+				$("#ref_order_no").text(order.REF_ORDER_NO);
+				$("#arapMiscCostOrderNo").html(order.ORDER_NO);
+				$("#create_time").html(order.CREATE_STAMP);
+				$("#costMiscOrderId").val(order.ID);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$("#saveCostMiscOrderBtn").attr("disabled",false);
-				contactUrl("edit?id", data.ID);
-				window.location.reload();
-				//callback(data.ID);//回调函数，确保主表保存成功，有ID，再插入从表
+				contactUrl("edit?id", order.ID);
+
+				feeTable.fnClearTable();
+
+				for (var i = 0; i < data.itemList.length; i++) {
+					var item = data.itemList[i];
+					feeTable.fnAddData({
+					 	CUSTOMER_ORDER_NO: item.CUSTOMER_ORDER_NO,
+					 	ITEM_DESC: item.ITEM_DESC,
+					 	NAME: item.NAME,
+					 	AMOUNT: item.AMOUNT,
+					 	CHANGE_AMOUNT: item.CHANGE_AMOUNT,
+					 	STATUS: '新建'
+					 });
+				};
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+				$("#saveCostMiscOrderBtn").attr("disabled",false);
 			}
 		},'json');
 	};

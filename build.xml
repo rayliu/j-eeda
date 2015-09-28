@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Jfinal Project-1.9" basedir="." default="h2">
+<project name="Eeda TMS" basedir="." default="h2">
 	<property environment="env" />
 	
 	<!-- 定义一些变量，其值是基于其他的变量值 -->

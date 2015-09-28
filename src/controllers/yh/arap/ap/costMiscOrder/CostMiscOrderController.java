@@ -19,6 +19,7 @@ import models.ParentOfficeModel;
 import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapMiscCostOrder;
+import models.yh.arap.ArapMiscCostOrderDTO;
 import models.yh.arap.ArapMiscCostOrderItem;
 import models.yh.profile.Contact;
 
@@ -34,6 +35,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.LocationUtil;
@@ -305,6 +307,7 @@ public class CostMiscOrderController extends Controller {
     
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
+    @Before(Tx.class)
 	public void save() throws Exception {		
 		String jsonStr=getPara("params");
     	logger.debug(jsonStr);
@@ -440,9 +443,10 @@ public class CostMiscOrderController extends Controller {
 				destOrder = null;
 			}
 		} else {// new
-			if("non_biz".equals(biz_type))
+			if("non_biz".equals(biz_type)){
 				destOrder = buildNewCostMiscOrder(arapMiscCostOrder,destOrder, user);
 			    CostMiscOrderHelper.getInstance().buildNewChargeMiscOrder(destOrder, user);
+			}
 		}
 
 		if(destOrder!=null){
@@ -454,7 +458,15 @@ public class CostMiscOrderController extends Controller {
 			arapMiscCostOrder.set("ref_order_id", null);
 			arapMiscCostOrder.update();
 		}
-		renderJson(arapMiscCostOrder);
+		
+		List<ArapMiscCostOrderItem> itemList = 
+				ArapMiscCostOrderItem.dao.find("select amcoi.*, fi.name from arap_misc_cost_order_item amcoi, fin_item fi"
+						+ " where amcoi.fin_item_id=fi.id and misc_order_id=?", costMiscOrderId);
+		
+		ArapMiscCostOrderDTO returnDto = new ArapMiscCostOrderDTO();
+		returnDto.setOrder(arapMiscCostOrder);
+		returnDto.setItemList(itemList);
+		renderJson(returnDto);
 	}
     
     
@@ -485,7 +497,10 @@ public class CostMiscOrderController extends Controller {
 		setAttr("receivableItemList", receivableItemList);
 		
 		ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
-		Long spId = arapMiscCostOrder.get("sp_id");
+		Long spId = null;
+		if(arapMiscCostOrder!=null)	
+			spId = arapMiscCostOrder.get("sp_id");
+		
 		if (!"".equals(spId) && spId != null) {
 			Party party = Party.dao.findById(spId);
 			setAttr("spParty", party);
@@ -493,7 +508,10 @@ public class CostMiscOrderController extends Controller {
 			setAttr("spContact", contact); 
 		}
 		
-		Long customerId = arapMiscCostOrder.get("customer_id");
+		Long customerId = null;
+		if(arapMiscCostOrder!=null)	
+			customerId = arapMiscCostOrder.get("customer_id");
+		
 		if (!"".equals(customerId) && customerId != null) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("customerparty", party);
