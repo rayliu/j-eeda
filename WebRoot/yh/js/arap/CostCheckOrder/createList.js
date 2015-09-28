@@ -1,7 +1,52 @@
 
 $(document).ready(function() {
     $('#menu_cost').addClass('active').find('ul').addClass('in');
-    
+    $("input[name='allCheck']").click(function(){
+    	$("#uncheckedCostCheck-table input[name='order_check_box']").each(function () { 
+    		this.checked = !this.checked;
+    		if($(this).prop("checked") == true){
+    			$(this).parent().parent().clone().appendTo($("#checkedCostCheckList"));
+    			ids.push($(this).attr("id"));
+    			orderNos.push($(this).attr("order_no"));
+    			change_amount.push($(this).attr("change_amount"));
+    			$("#checkedCostCheckList").children().length++;
+    			sum =eval(change_amount.join("+"));//求和
+    			$("#checkedOrderId").val(ids);
+    			$("#checkedOrderNo").val(orderNos);
+    			$("#amount").html(sum);
+    			if(ids.length>0){
+    				$("#saveBtn").attr("disabled",false);
+    			}
+    		}
+    		else{
+    			ids.splice($.inArray($(this).attr('id'),ids),1);
+    			change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
+    			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+    			//$("#checkedCostCheckList").remove("tbody",$(this).parent().parent());
+    			//$("#checkedCostCheckList").$(this).parent().parent().remove();
+    			var id=$(this)[0].id;
+    			var rows = $("#checkedCostCheckList").children();
+    			for(var i=0; i<rows.length;i++){
+    				var row = rows[i];
+    				if(id==$(row).find("input").attr("id")){
+    					row.remove();
+    					//$("#checkedCostCheckList").children().splice(i,1);
+    				}
+    			}
+    			var sum_f = $(this).attr("change_amount");
+    			var x_sum=parseInt(sum)-parseInt(sum_f);
+    			sum=parseInt(sum)-parseInt(sum_f);
+    			$("#checkedOrderId").val(ids);
+    			$("#checkedOrderNo").val(orderNos);
+    			$("#amount").html(x_sum);
+    			if(ids.length<=0){
+    				$("#saveBtn").attr("disabled",true);
+    			}
+    		}    
+  
+         });
+
+    });
 	//datatable, 动态处理
     var uncheckedCostCheckTable = $('#uncheckedCostCheck-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -37,7 +82,7 @@ $(document).ready(function() {
                 		 console.log(i + ":"+ids[i]);
                 		 console.log("obj.aData.ID="+obj.aData.ID);
                          if(ids[i]==obj.aData.ID){                        	 
-                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" chan_amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
+                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" change_amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
                         	
                          }
                      }
