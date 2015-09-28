@@ -364,7 +364,7 @@ public class CostAcceptOrderController extends Controller {
         String[] orderArr=order.split(",");
         List<Record> recordList= new ArrayList<Record>();
         for(int i=0;i<orderArrId.length;i++){
-        	if(orderArr[i].equals("对账单")){
+        	if(orderArr[i].equals("申请单")){
 	            ArapCostInvoiceApplication arapcostinvoiceapplication= ArapCostInvoiceApplication.dao.findById(orderArrId[i]);
 	            arapcostinvoiceapplication.set("status","已复核");
 	            arapcostinvoiceapplication.update();
