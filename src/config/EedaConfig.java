@@ -127,6 +127,7 @@ import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.SqlReporter;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
+import com.jfinal.plugin.scheduler.SchedulerPlugin;
 import com.jfinal.weixin.demo.WeixinApiController;
 import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
@@ -330,11 +331,8 @@ public class EedaConfig extends JFinalConfig {
     	me.add(new ShiroPlugin(routes));
     	
     	//job启动
-//        QuartzPlugin quartzPlugin = new QuartzPlugin("job.properties");
-//    	me.add(quartzPlugin);
-    	
-    	//quartzPlugin.add("*/5 * * * * ?", new YourJob());//通过API增加任务
-    	//quartzPlugin.version(QuartzPlugin);//指定Quartz版本
+    	SchedulerPlugin sp = new SchedulerPlugin("job.properties");
+        me.add(sp);
     	
         mailUser = getProperty("mail_user_name");
         mailPwd = getProperty("mail_pwd");

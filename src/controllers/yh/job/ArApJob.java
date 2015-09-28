@@ -1,24 +1,32 @@
 package controllers.yh.job;
 
-import java.util.Date;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import java.util.Calendar;
 
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 
-import controllers.yh.returnOrder.ReturnOrderController;
-
-public class ArApJob implements Job {
+public class ArApJob implements Runnable {
 	private Logger logger = Logger.getLogger(ArApJob.class);
-	
+
 	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		Record rec = Db.findFirst("select * from user_login");
-		 logger.debug("你好, "+rec.getStr("user_name"));
+	public void run() {
+		Calendar cal = Calendar.getInstance();
+
+		Db.update(
+				"insert into arap_account_audit_summary"
+						+ "(account_id, year, month, total_charge, total_cost, init_amount, balance_amount)"
+						+ "select account_id, "
+						+ "case month+1"
+						+ "	when 13 then year+1"
+						+ "    else year"
+						+ "    end,  "
+						+ "  case month+1"
+						+ "	when 13 then 1"
+						+ "    else month+1"
+						+ "    end "
+						+ ", 0, 0, balance_amount, balance_amount "
+						+ "from arap_account_audit_summary where year=? and month=?",
+						cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1);
 	}
 
 }
