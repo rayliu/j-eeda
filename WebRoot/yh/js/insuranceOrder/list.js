@@ -133,4 +133,18 @@
 	        $(".bootstrap-datetimepicker-widget").hide();
 		    $('#endTime_filter').trigger('keyup');
 		});
+		$('#showBtn').on('keyup click', function(e){
+            var customer = $('#customer_filter').val();
+            var endTime = $('#endTime_filter').val();
+            var beginTime = $('#beginTime_filter').val();
+            if(customer==""){
+            	alert("请筛选客户");
+            	return;
+            }
+            $.post("/insuranceOrder/showCustomerAounmt", {customer:customer,endTime:endTime,beginTime:beginTime}, function(data){
+            $("#amount").html(data.orders[0].SUM_AMOUNT);
+            },'json');
+            
+        });
+		
     });

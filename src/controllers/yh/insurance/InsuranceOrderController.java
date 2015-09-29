@@ -528,6 +528,7 @@ public class InsuranceOrderController extends Controller {
 						+ " left join party p on p.id = tor.customer_id"
 						+ " left join contact c on c.id = p.contact_id"
 						+ " where tor.insurance_id = "+insuranceOrderId+" group by tor.id";
+		
 		List<Record> orders = Db.find(sql);
 		
 		orderMap.put("sEcho", pageIndex);
@@ -597,6 +598,36 @@ public class InsuranceOrderController extends Controller {
 			}
 		}
 		renderJson("{\"success\":true}");
+    }
+    public void showCustomerAounmt(){
+    	Map orderMap = new HashMap();
+    	String customer=getPara("customer");
+    	String beginTime = getPara("beginTime");
+    	String endTime = getPara("endTime");
+    	String sql = "SELECT sum(sum_amount) sum_amount from (SELECT DISTINCT ior.create_stamp,"
+    			+ " (SELECT c.abbr FROM party p LEFT JOIN contact c ON p.contact_id = c.id WHERE p.id = tor.customer_id) AS customer,"
+    			+ " (SELECT sum(ifi.insurance_amount) FROM insurance_fin_item ifi WHERE ifi.insurance_order_id = ior.id ) sum_amount FROM insurance_order ior"
+    			+ " LEFT JOIN transfer_order tor ON tor.insurance_id = ior.id"
+    			+ " LEFT JOIN office o ON o.id = tor.office_id"
+    			+ " LEFT JOIN party p ON p.id = ior.insurance_id"
+    			+ " LEFT JOIN contact con ON con.id = p.contact_id"
+    			+ " WHERE o.id IN (SELECT office_id FROM user_office WHERE user_name = 'admin@eeda123.com' )"
+    			+ " AND tor.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = 'admin@eeda123.com')) a";
+    		String condition="";
+        	if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "9999-12-31";
+			}
+			if(customer!=null&&!"".equals(customer)){
+				condition=" where customer like '%" +customer+ "%'"
+						+ " and create_stamp between '"+beginTime+"' and '"+endTime+"'";
+			}
+        	
+        List<Record> orders = Db.find(sql+condition);
+   		orderMap.put("orders", orders);
+       	renderJson(orderMap);
     }
     
 }
