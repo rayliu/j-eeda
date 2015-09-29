@@ -1,0 +1,263 @@
+<%layout("/yh/layout.html"){%>
+
+        <div id="page-wrapper">
+            <div class="row">
+            	<div class="col-lg-12">
+            	<div class="btn-header"></div>
+            	<div class="panel panel-default">
+                    <div class="panel-heading">
+                    	<div class="form-group">
+                    		<i class="fa fa-clock-o fa-fw"></i>
+                    		<big>单据状态时间线</big>
+	                    </div>
+                    </div>
+                    <div class="panel-body">
+                        <%
+			                var title = SYS_CONFIG.system_title!'易达物流';
+			                var show = 'none';
+			                if(title=='易达物流'){
+			                    show = 'block';
+			                }
+			            %>
+			           
+			            <div class="row">
+			                <div class="col-lg-4">
+					            <div class="input-group custom-search-form" style="margin-bottom: 15px;">
+		                            <input type="text" class="form-control" placeholder="请输入单号">
+		                            <span class="input-group-btn">
+		                                <button class="btn btn-default" type="button">
+		                                    <i class="fa fa-search"></i>
+		                                </button>
+		                            </span>
+		                        </div>
+		                    </div>
+		                </div>
+
+			            <div class="row">
+			                <div class="col-lg-12">
+			                    <div class="panel panel-default">
+			                        
+			                        <!-- /.panel-heading -->
+			                        <div class="panel-body">
+
+			                            <ul class="timeline">
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-comments"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">运输单:<a href="#">YS20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已入库</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge warning"><i class="fa fa-file-o"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">调车单:<a href="#">DC20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已入货场</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge danger"><i class="fa fa-shopping-cart"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">发车单:<a href="#">DC20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已发车</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge danger"><i class="fa fa-truck"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">配送单:<a href="#">DC20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已发车</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge info"><i class="fa fa-map-marker"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">回单:<a href="#">DC20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已签收</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge success"><i class="fa fa-home"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">应收对账单:<a href="#">YSDZ20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已审核</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">应收开票申请单:<a href="#">YSDZ20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已审核</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">应收开票记录单:<a href="#">YSDZ20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已审核</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li class="timeline-inverted">
+			                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">收款确认单:<a href="#">YSDZ20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已付款确认</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-home"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">应付对账单:<a href="#">YSDZ20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已审核</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">付款申请单:<a href="#">YSDZ20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已审核</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                                <li>
+			                                    <div class="timeline-badge success"><i class="fa fa-thumbs-up"></i>
+			                                    </div>
+			                                    <div class="timeline-panel">
+			                                        <div class="timeline-heading">
+			                                            <h4 class="timeline-title">付款确认单:<a href="#">YSDZ20150908700001</a></h4>
+			                                        </div>
+			                                        <div class="timeline-body">
+			                                            <p>
+			                                            	<span class="label label-info">已付款确认</span>
+			                                            	创建时间: 2015-08-09
+			                                            </p>
+			                                        </div>
+			                                    </div>
+			                                </li>
+			                            </ul>
+			                        </div>
+			                        <!-- /.panel-body -->
+			                    </div>
+			                </div>
+			               
+			                
+			                
+			            </div>
+			            <!-- /.row -->
+			                        
+			                        
+			                    </div>
+			                    <!-- /.panel-body -->
+			                </div>
+			            	</div>
+
+			                
+			            </div>
+
+            
+        </div>
+        <!-- /#page-wrapper -->
+  		      
+                        
+<%}%>
+	<!-- Page-Level Plugin Scripts - Tables -->
+	<script src="/yh/js/plugins/dataTables/jquery.dataTables.js" type="text/javascript"></script>
+	<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+	<script src="/yh/js/plugins/dataTables/jquery.dataTables.editable.js" type="text/javascript"></script>
+	<script src="/yh/js/plugins/dataTables/jquery.jeditable.js" type="text/javascript"></script>
+
+    <!-- Page-Level Plugin Scripts - Dashboard -->
+    <script src="/yh/js/plugins/morris/raphael-2.1.0.min.js"></script>
+    <script src="/yh/js/plugins/morris/morris.js"></script>
+	
+    <!-- Page-Level Demo Scripts - Dashboard - Use for reference -->
+    <!-- <script src="/yh/js/demo/dashboard-demo.js"></script> -->
+    <script src="/yh/js/index.js"></script>

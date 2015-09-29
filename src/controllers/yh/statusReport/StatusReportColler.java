@@ -37,6 +37,10 @@ public class StatusReportColler extends Controller{
 		render("/yh/statusReport/productStatusReport.html");
 	}
 	
+	public void orderFlow() {		
+		render("/yh/statusReport/orderFlow.html");
+	}
+	
 	public void productIndex() {		
 		render("/yh/statusReport/productStatusReport.html");
 	}
