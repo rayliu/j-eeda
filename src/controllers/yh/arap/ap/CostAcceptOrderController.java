@@ -272,7 +272,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in "+statusStr+" group by aci.id "
         		+ " UNION"
-        		+ " SELECT ro.id, ro.order_no,'报销单' as order_type,null as payment_method,null as payee_name,null as account_id,"
+        		+ " SELECT ro.id, ro.order_no,'报销单' as order_type,null as payment_method,ro.account_name as payee_name,null as account_id,"
         		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,ro.remark,"
         		+ " ro.amount actual_cost,"
         		+ " null as application ,"
