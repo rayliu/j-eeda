@@ -187,6 +187,7 @@ public class InsuranceOrderController extends Controller {
     	String departNo = getPara("departNo");
     	String beginTime = getPara("beginTime");
     	String endTime = getPara("endTime");
+    	String customer = getPara("customer");
     	
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -227,6 +228,8 @@ public class InsuranceOrderController extends Controller {
 		    				+departNo
 		    				+"%' and ifnull((select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id),'') like '%"
 		    				+orderNo
+		    				+"%' and (SELECT c.abbr FROM party p LEFT JOIN contact c ON p.contact_id = c.id WHERE p.id = tor.customer_id) like '%"
+		    				+customer
 		    				+"%' and ior.create_stamp between '"
 		    				+beginTime
 		    				+"' and '"+endTime+"'";

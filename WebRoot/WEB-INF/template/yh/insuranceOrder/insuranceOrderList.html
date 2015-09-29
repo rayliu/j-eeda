@@ -35,6 +35,13 @@
 	                                        <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter">
 	                                    </div>
 	                                </div>
+	                                 <div class="col-lg-4">
+	                                    <div class="form-group">
+	                                        <label class="search-label">客户名称</label>
+                                            <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择客户">
+                                        	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 22%; left: 33%;"></ul>
+	                                    </div>
+	                                </div>
 	                            </div><!-- end of row-->
 	                            <div class="row">
 	                                <div class="col-lg-4">
@@ -48,6 +55,7 @@
 	                                        </div>
 	                                    </div>    
 	                                </div>
+	                                
 	                                <!-- end of col-lg-6-->
 	                                <div class="col-lg-4">
 	                                    <div class="form-group">                                                    
@@ -61,7 +69,8 @@
 	                                    </div>
 	                                </div>
 	                                <!-- end of col-lg-6-->
-	                            </div><!-- end of row-->                            
+	                            </div><!-- end of row--> 
+	                            <span class="badge" style="margin-top:12px;"> 总额: <span id="amount">0</span></span>                           
 	                        </form>
                         </div>
                             
