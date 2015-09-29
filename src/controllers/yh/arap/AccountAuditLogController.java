@@ -72,8 +72,8 @@ public class AccountAuditLogController extends Controller {
 				    + "  from arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl"
 				    + "  where d.id = dl.detail_id and dl.order_id=aaal.car_summary_order_id )))) order_no from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
-        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id and aaal.source_order='应付开票申请单'"
-        			+ " left join transfer_accounts_order tao ON tao.id = aaal.invoice_order_id and aaal.source_order='转账单' "
+        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id"
+        			+ " left join transfer_accounts_order tao ON tao.id = aaal.transferOrder_id "
         			+ " left join fin_account fa on aaal.account_id = fa.id "
         			+ " where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;  
         }
