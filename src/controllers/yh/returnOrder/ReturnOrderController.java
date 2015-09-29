@@ -73,6 +73,7 @@ public class ReturnOrderController extends Controller {
 		String time_two = getPara("time_two");
 		String customer = getPara("customer");
 		String return_type = getPara("return_type");
+		String transfer_type = getPara("transfer_type");
 		String serial_no = getPara("serial_no");
 		String sign_no = getPara("sign_no");
 		String pageIndex = getPara("sEcho");
@@ -107,7 +108,7 @@ public class ReturnOrderController extends Controller {
                 + " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
                 + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
 		
-		if ((sign_no == null || sign_no == "") && (order_no == null || order_no == "") 
+		if ((sign_no == null || sign_no == "") && (order_no == null || order_no == "")&& (transfer_type == null || transfer_type == "") 
 				&& (tr_order_no == null || tr_order_no == "") && (de_order_no == null || de_order_no == "")
 				&& (return_type == null|| return_type == "")&& (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "") && (time_two == null || time_two == "") && (customer == null || customer == "")) {
 			// 获取总条数
@@ -145,7 +146,18 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
-					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' WHEN 'delivery' THEN '运输' ELSE '配送' end) return_type,"
+					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' "
+					+ "  WHEN 'delivery' THEN '运输' "
+					+ "  WHEN 'deliveryToFactory' THEN '退货直送'"
+					+ "  WHEN 'deliveryToWarehouse' or 'deliveryToFachtoryFromWarehouse' THEN '退货配送'"
+					+ "  ELSE '配送' end) return_type,"
+					+ " (CASE tor.order_type WHEN 'salesOrder' THEN '销售订单'"
+					+ " WHEN 'replenishmentOrder' THEN '补货订单'"
+					+ " WHEN 'arrangementOrder' THEN '调拨订单'"
+					+ " WHEN 'cargoReturnOrder'THEN '退货订单'"
+					+ " WHEN 'gateOutTransferOrder' THEN '出库运输单'"
+					+ " WHEN 'movesOrder' THEN '移机单'"
+					+ " ELSE '销售订单' END) transfer_type,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
@@ -199,6 +211,13 @@ public class ReturnOrderController extends Controller {
 					+ "  WHEN 'deliveryToFactory' THEN '退货直送'"
 					+ "  WHEN 'deliveryToWarehouse' or 'deliveryToFachtoryFromWarehouse' THEN '退货配送'"
 					+ "  ELSE '配送' end) return_type,"
+					+ " (CASE tor.order_type WHEN 'salesOrder' THEN '销售订单'"
+					+ " WHEN 'replenishmentOrder' THEN '补货订单'"
+					+ " WHEN 'arrangementOrder' THEN '调拨订单'"
+					+ " WHEN 'cargoReturnOrder'THEN '退货订单'"
+					+ " WHEN 'gateOutTransferOrder' THEN '出库运输单'"
+					+ " WHEN 'movesOrder' THEN '移机单'"
+					+ " ELSE '销售订单' END) transfer_type,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
 					+ fromSql
@@ -214,6 +233,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
 					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
+					+ " and ifnull(transfer_type,'') like '%" + transfer_type + "%'"
 					+ " and create_date between '" + time_one + "' and '" + time_two + " 23:59:59' ";
 					
 			

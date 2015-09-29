@@ -19,9 +19,22 @@
                                         <label class="search-label">回单号</label>
                                         <input type="text" class="form-control search-control orderNo_filter" id="order_no" value="">
                                     </div>
+                                    
                                     <div class="form-group">
                                         <label class="search-label">运输单号</label>
                                         <input type="text" class="form-control search-control address_filter" id="tr_order_no">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="search-label">回单类型</label>
+                                        <select id="transfer_type" class="form-control search-control status_filter">
+                                                <option value=""></option>
+                                                <option value="销售订单">销售订单</option>
+                                                <option value="补货订单">补货订单</option>
+                                                <option value="调拨订单">调拨订单</option>
+                                                <option value="退货订单">退货订单</option>
+                                                <option value="出库运输单">出库运输单</option>
+                                                <option value="移机单">移机单</option>                                           
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">序列号</label>
@@ -96,6 +109,7 @@
 					                                        <tr>
 					                                            <th>回单编号</th>
 					                                            <th>回单类型</th>
+					                                            <th>订单类型</th>
 					                                            <th>计划时间</th>
 					                                            <th>序列号</th>
 					                                            <th>货品型号</th>

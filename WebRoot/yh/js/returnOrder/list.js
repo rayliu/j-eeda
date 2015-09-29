@@ -4,7 +4,7 @@
 	var clickTabId = "createTab";
 	
 	//条件查询
-    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no,#return_type").on('keyup click', function () {    	 	
+    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no,#return_type,#transfer_type").on('keyup click', function () {    	 	
     	findData();
     });
     
@@ -55,6 +55,7 @@
         		}
    			},
    			{ "mDataProp": "RETURN_TYPE","sWidth":"65px" },
+   			{ "mDataProp": "TRANSFER_TYPE","sWidth":"65px" },
    			{ "mDataProp": "PLANNING_TIME","sWidth":"100px" },
    			{ "mDataProp": "SERIAL_NO","sWidth":"60px"},
    			{ "mDataProp": "ITEM_NO","sWidth":"80px"},
@@ -269,7 +270,8 @@
           customer : $("#customer_filter").val(),
           serial_no: $("#serial_no").val(),
           sign_no: $("#sign_no").val(),
-          return_type: $("#return_type").val()
+          return_type: $("#return_type").val(),
+          transfer_type: $("#transfer_type").val()
       }
       if(!!window.localStorage){//查询条件处理
           localStorage.setItem("query_return_order_list", JSON.stringify(conditions));
@@ -292,6 +294,7 @@
           $("#serial_no").val(conditions.serial_no);
           $("#sign_no").val(conditions.sign_no);
           $("#return_type").val(conditions.return_type);
+          $("#transfer_type").val(conditions.transfer_type);
       }
   };
 
@@ -305,14 +308,15 @@
       var time_one = $("#time_one").val();
       var time_two = $("#time_two").val();
       var inputStr =$("#customer_filter").val();
+      var transfer_type =$("#transfer_type").val();
       
       if(clickTabId == "createTab"){
         createDataTable.fnSettings().oFeatures.bServerSide = true;
-        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type;
         createDataTable.fnDraw();
       }else{
         finishDataTable.fnSettings().oFeatures.bServerSide = true;
-        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type;
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type;
         finishDataTable.fnDraw();
       }
       saveConditions();
