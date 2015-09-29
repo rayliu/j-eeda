@@ -3,6 +3,9 @@ $(document).ready(function() {
 	document.title = '出纳日记账查询 | '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
+    
+    $("#beginTime_filter").val(new Date().getFullYear()+'-'+ (new Date().getMonth()+1));
+    
 	//datatable, 动态处理
     var accountAuditLogTable = $('#accountAuditLog-table').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
@@ -14,7 +17,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/accountAuditLog/list",
+        "sAjaxSource": "/accountAuditLog/list?beginTime="+$("#beginTime_filter").val(),
         "aoColumns": [
             {"mDataProp":null, "sWidth":"20px",
                 "fnRender": function(obj) {
@@ -48,6 +51,7 @@ $(document).ready(function() {
     });
 
     //accountAuditLogTable.fnSetColumnVis(4, false );
+
     
     var accountTable = $('#account-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
@@ -63,7 +67,7 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-    	"sAjaxSource": "/accountAuditLog/accountList",
+    	"sAjaxSource": "/accountAuditLog/accountList?beginTime="+ $("#beginTime_filter").val(),
     	"aoColumns": [   
 	        { "mDataProp": null, "sWidth":"30px",
               "fnRender": function(obj) {
@@ -71,6 +75,7 @@ $(document).ready(function() {
               }
             },
 	        {"mDataProp":"BANK_NAME"},
+	        {"mDataProp":"MONTH"},
 	        {"mDataProp": "INIT_AMOUNT"}, //期初
             {"mDataProp": "TOTAL_CHARGE"}, //本期收入
 	        {"mDataProp":"TOTAL_COST"},  //本期支出
@@ -90,6 +95,38 @@ $(document).ready(function() {
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
         $('#beginTime_filter').trigger('keyup');
+        
+       	var idArr=[];
+   	    $("input[name='order_check_box']").each(function(){
+   	    	if($(this).prop('checked') == true){
+   	    		idArr.push($(this).val());
+   	    	}
+   	    });
+   	    var ids = idArr.toString();
+   		var beginTime = ev.date.getFullYear()+'-'+(ev.date.getMonth()+1);
+
+   		accountTable.fnSettings().sAjaxSource = "/accountAuditLog/accountList?beginTime="+beginTime;
+   		accountTable.fnDraw();
+   		
+   		accountAuditLogTable.fnSettings().sAjaxSource = "/accountAuditLog/list?ids="+ids+"&beginTime="+beginTime;
+   		accountAuditLogTable.fnDraw();
+    });
+    
+    $("#account-table").on('click', function(e){
+    	var idArr=[];
+   	    $("input[name='order_check_box']").each(function(){
+   	    	if($(this).prop('checked') == true){
+   	    		idArr.push($(this).val());
+   	    	}
+   	    });
+   	    var ids = idArr.toString();
+   		var beginTime =$("#beginTime_filter").val();
+
+   		//accountTable.fnSettings().sAjaxSource = "/accountAuditLog/accountList?beginTime="+beginTime;
+   		//accountTable.fnDraw();
+   		
+   		accountAuditLogTable.fnSettings().sAjaxSource = "/accountAuditLog/list?ids="+ids+"&beginTime="+beginTime;
+   		accountAuditLogTable.fnDraw();
     });
 
 
@@ -103,18 +140,6 @@ $(document).ready(function() {
     //     $('#endTime_filter').trigger('keyup');
     // });
     
-    $("#searchBtn").click(function(e){
-    	e.preventDefault();
-		var idArr=[];
-	    $("input[name='order_check_box']").each(function(){
-	    	if($(this).prop('checked') == true){
-	    		idArr.push($(this).val());
-	    	}
-	    });
-	    var ids = idArr.toString();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	accountAuditLogTable.fnSettings().sAjaxSource = "/accountAuditLog/list?ids="+ids+"&beginTime="+beginTime+"&endTime="+endTime;
-    	accountAuditLogTable.fnDraw();
-    });
+    
+
 } );

@@ -33,15 +33,19 @@ public class AccountAuditLogController extends Controller {
     public void list() {
     	String ids = getPara("ids");
     	String beginTime = getPara("beginTime");
-    	String endTime = getPara("endTime");
+    	String endTime = getPara("beginTime");
     	if(ids == null || "".equals(ids)){
     		ids = "-1";
     	}
     	if(beginTime == null || "".equals(beginTime)){
     		beginTime = "1970-01-01";
+    	}else{
+    		beginTime = getPara("beginTime")+"-01";
     	}
     	if(endTime == null || "".equals(endTime)){
     		endTime = "2037-12-31";
+    	}else{
+    		endTime = getPara("beginTime")+"-31";
     	}
         String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -53,11 +57,22 @@ public class AccountAuditLogController extends Controller {
         String sql = "";
         if(!"-1".equals(ids)){
         	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + "'";
-        	sql = "select aaal.*,aci.order_no invoice_order_no,ul.user_name user_name from arap_account_audit_log aaal"
+        	sql = "select aaal.*,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
+        			+ " if(aaal.payment_type='CHARGE', "
+        			+ "	   (select order_no from arap_charge_invoice where id = aaal.misc_order_id),"
+        			+ " ifnull((select group_concat( DISTINCT order_no SEPARATOR '<br/>' ) from arap_cost_invoice_application_order where id in("
+        			+ "  select d.application_order_id "
+				    + "  from arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl"
+				    + "  where d.id = dl.detail_id and dl.order_id=aaal.invoice_order_id )) "
+					+ " ,(select group_concat( DISTINCT order_no SEPARATOR '<br/>' ) from car_summary_order where id in("
+        			+ "  select d.car_summary_order_id "
+				    + "  from arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl"
+				    + "  where d.id = dl.detail_id and dl.order_id=aaal.car_summary_order_id )))) order_no from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id and aaal.source_order='应付开票申请单'"
         			+ " left join transfer_accounts_order tao ON tao.id = aaal.invoice_order_id and aaal.source_order='转账单' "
-        			+ " where aaal.account_id in("+ids+") and aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;        	
+        			+ " left join fin_account fa on aaal.account_id = fa.id "
+        			+ " where aaal.account_id in("+ids+") and aaal.create_date  between  '" + beginTime + "' and '" + endTime + "' order by aaal.create_date desc " + sLimit;        	
         }else{
         	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59'";
         	sql = "select aaal.*,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
@@ -75,7 +90,7 @@ public class AccountAuditLogController extends Controller {
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id"
         			+ " left join transfer_accounts_order tao ON tao.id = aaal.transferOrder_id "
         			+ " left join fin_account fa on aaal.account_id = fa.id "
-        			+ " where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;  
+        			+ " where aaal.create_date between  '" + beginTime + " ' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;  
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -94,6 +109,17 @@ public class AccountAuditLogController extends Controller {
     
     //出纳日记帐：所有账户的按月期初期末总计
     public void accountList() {
+    	String beginTime = getPara("beginTime");
+    	int year = 0;
+    	int month = 0;
+    	if(beginTime == null || "".equals(beginTime)){
+    		
+    	}else{
+    		year = Integer.parseInt(beginTime.substring(0, 4));
+    		month = Integer.parseInt(beginTime.substring(5));
+    	}
+    
+    	
     	String sLimit = "";
     	String pageIndex = getPara("sEcho");
     	if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -103,9 +129,11 @@ public class AccountAuditLogController extends Controller {
     	String sqlTotal = "select count(1) total from fin_account";
     	Record rec = Db.findFirst(sqlTotal);
     	logger.debug("total records:" + rec.getLong("total"));
+    	 
+    	
     	
     	String sql = "select fa.*, aas.* from fin_account fa "
-    			+ "left join arap_account_audit_summary aas on fa.id = aas.account_id order by fa.id desc " + sLimit;
+    			+ "left join arap_account_audit_summary aas on fa.id = aas.account_id where year ="+year+" and month ="+month+" order by fa.id desc " + sLimit;
     	
     	logger.debug("sql:" + sql);
     	List<Record> BillingOrders = Db.find(sql);
