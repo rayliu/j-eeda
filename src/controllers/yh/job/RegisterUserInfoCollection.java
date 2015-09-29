@@ -4,22 +4,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.MultiPartEmail;
-import org.apache.commons.mail.SimpleEmail;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -30,10 +24,10 @@ import config.EedaConfig;
 /**
  * @author Administrator 收集一个礼拜内新用户注册的信息,每周五下午5:30分发送邮件
  */
-public class RegisterUserInfoCollection implements Job {
+public class RegisterUserInfoCollection implements Runnable {
 	private Logger logger = Logger.getLogger(RegisterUserInfoCollection.class);
 	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException  {
+	public void run()  {
 
 		SimpleDateFormat simpleDate = new SimpleDateFormat(
 				"yyyy-MM-dd HH:mm:ss");
