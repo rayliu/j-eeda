@@ -675,11 +675,17 @@ public class CostPreInvoiceOrderController extends Controller {
 		if ("pay_amount".equals(name) && "".equals(value)) {
 			value = "0";
 		}
-		if(!oldAmount.equals(Double.parseDouble(value))){
+		
+		if(oldAmount!=null){
+			if(!oldAmount.equals(Double.parseDouble(value))){
+				costApplicationOrderRel.set(name, value);
+				tips = "success";
+			}else{
+				tips = "noChange";
+			}
+		}else{
 			costApplicationOrderRel.set(name, value);
 			tips = "success";
-		}else{
-			tips = "noChange";
 		}
 		
 		costApplicationOrderRel.set(name, value);

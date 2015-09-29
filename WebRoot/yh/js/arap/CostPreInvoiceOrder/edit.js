@@ -307,8 +307,9 @@ $(document).ready(function() {
  	$("#saveCostPreInvoiceOrderBtn").click(function(e){
  		$("#saveCostPreInvoiceOrderBtn").attr("disabled",true);
  		
+ 		var money = $("#money").val();
  		var pay_amount = $("#costPreInvoiceOrder-table").children().children().find('input[name="pay_amount"]').val();
- 		if(pay_amount == 0 || pay_amount == ''){
+ 		if(pay_amount == 0 || pay_amount == '' || money == null || money == ''){
  			$.scojs_message('申请金额不能为0', $.scojs_message.TYPE_FALSE);
  			$("#saveCostPreInvoiceOrderBtn").attr("disabled",false);
  			return;
@@ -548,6 +549,7 @@ $(document).ready(function() {
   	            	}else{
   	            		str = "<input type='text' name='pay_amount' style='width:100px' value='"+obj.aData.PAY_AMOUNT+"'>";
   	            	}
+  	            	$("#money").val(obj.aData.PAY_AMOUNT);
   	            	return str;
   	            }
             },
