@@ -798,7 +798,7 @@ public class InventoryController extends Controller {
                     tItem.set("height", product.get("height"));
                     tItem.set("volume", product.get("volume"));
                     tItem.set("weight", product.get("weight"));
-                    tItem.set("amount", warehouseItem.get(i).get("total_quantity"));
+                    tItem.set("amount", warehouseItem.get(0).get("total_quantity"));
                     tItem.set("unit", product.get("unit"));
                     tItem.set("product_id", inventory.get(i).get("product_id"));
                     tItem.set("order_id", transferOrder.get("id"));
