@@ -384,20 +384,20 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " left join contact c on c.id = p.contact_id"
 					+ " left join office o on o.id = p.office_id"
 					+ " left join user_login usl on usl.id=aao.create_by"
-					+ " where aao.status = '已确认' "
+					+ " where (aao.status = '已确认' "
 					+ " OR (( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
 					+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.charge_amount "
 					+ " AND ( SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor "
-					+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL )";
+					+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL ))";
 		String sqlTotal ="";
 		String condition = "";
 		//TODO 网点与对账单状态未做
 		
-		sqlTotal = "select count(1) total from arap_charge_order where status = '已确认'"
+		sqlTotal = "select count(1) total from arap_charge_order where (status = '已确认'"
 				+ " OR ( aao. STATUS = '收款申请中' AND ( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
 				+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.charge_amount "
 				+ " AND ( SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor "
-				+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL )";
+				+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL ))";
 		if(customer == null && beginTime == null && endTime == null 
 				&& office == null && status == null && orderNo == null ){
 			condition = " order by aao.create_stamp desc ";
