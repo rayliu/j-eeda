@@ -342,7 +342,7 @@ public class ChargeCheckOrderController extends Controller {
 					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from))  like '%"
 					+ address + "%' ";
 			condition2 = " and c.abbr like '%" + customer
-					+ "%' and amcoi.customer_order_no like '%" + customerNo
+					+ "%' and (SELECT GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '')FROM arap_misc_charge_order_item amcoi WHERE amcoi.misc_order_id = amco.id) like '%" + customerNo
 					+ "%'";
 		}
 		sqlTotal = "select count(1) total from (" + sql + condition + sql2
