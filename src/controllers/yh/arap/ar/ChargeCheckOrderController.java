@@ -163,8 +163,8 @@ public class ChargeCheckOrderController extends Controller {
 				+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount"
 				+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount"
 				+ " ,(select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
-				+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as charge_total_amount,"
-				+ " (select sum(rofi.change_amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as change_amount, "
+				+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and ifnull(rofi.remark,'') !='对账调整金额') as charge_total_amount,"
+				+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as change_amount, "
 				+ " null sp"
 				+ " from return_order ror"
 				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
@@ -469,7 +469,7 @@ public class ChargeCheckOrderController extends Controller {
 				}
 				
 				for(ReturnOrderFinItem orderItem : ordeItems){
-					Double newAmount = change_amount * (orderItem.getDouble("amount")/originTotal);
+					Double newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT")) * (orderItem.getDouble("amount")/originTotal);
 					orderItem.set("status", "对账中");
 					orderItem.set("change_amount", newAmount).update();
 				}
@@ -492,7 +492,19 @@ public class ChargeCheckOrderController extends Controller {
 					chargeItem.save();
 				}
 			}
+			//回单列表的列表添加新的明细（记录调整金额）
+			String returnOrderId = (String)item.get("ORDER_ID");
+			ReturnOrderFinItem orderItem = new ReturnOrderFinItem();
+			Double newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT"))-Double.parseDouble((String)item.get("AMOUNT"));
+			orderItem.set("return_order_id", returnOrderId);
+			orderItem.set("amount", newAmount);
+			orderItem.set("fin_item_id", 4);
+			orderItem.set("status", "对账中");
+			orderItem.set("remark", "对账调整金额");
+			orderItem.set("create_date", new Date());
+			orderItem.save();
 		}
+			
 	}
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE })
@@ -585,8 +597,8 @@ public class ChargeCheckOrderController extends Controller {
 									+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '台阶费') step_amount"
 									+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '仓租费') warehouse_amount"
 									+ " ,(select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
-									+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as charge_total_amount,"
-									+ " (select sum(rofi.change_amount) from return_order_fin_item rofi, fin_item fi where fi.id = rofi.fin_item_id and rofi.return_order_id = ror.id and fi.type = '应收') as change_amount, "
+									+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and ifnull(rofi.remark,'') !='对账调整金额') as charge_total_amount,"
+									+ " (select sum(rofi.amount) from return_order_fin_item rofi, fin_item fi where fi.id = rofi.fin_item_id and rofi.return_order_id = ror.id and fi.type = '应收') as change_amount, "
 									+ " null sp"
 									+ " from return_order ror"
 									+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
