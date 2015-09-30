@@ -222,6 +222,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CNAME", "sWidth":"200px"},
+            {"mDataProp":"SP", "sWidth":"200px"},
             {"mDataProp":null, "sWidth":"150px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
             {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},
