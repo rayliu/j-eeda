@@ -36,6 +36,7 @@ $(document).ready(function() {
             }},
             {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"}, 
             {"mDataProp":"CNAME", "sWidth":"200px"},
+            {"mDataProp":"SP", "sWidth":"200px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"130px"}, 
             {"mDataProp":"DEPART_TIME", "sWidth":"130px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},

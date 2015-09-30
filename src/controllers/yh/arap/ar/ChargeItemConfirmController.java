@@ -89,11 +89,12 @@ public class ChargeItemConfirmController extends Controller {
 					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount,"
 					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount,"
 					+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as charge_total_amount,"
-					+ " (select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount"
+					+ " (select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
 					/*
 					 * +
 					 * " ifnull((select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor.id order by dtr.turnout_time asc limit 0,1), (select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor2.id order by dtr.turnout_time asc limit 0,1)) departure_time"
 					 */
+					+ " null sp "
 					+ " from return_order ror"
 					+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
 					+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
@@ -102,7 +103,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已签收' group by ror.id,tor2.id"
 					+ " UNION"
-					+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,NULL receipt_date,amco. STATUS transaction_status,NULL order_type,"
+					+ " (SELECT amco.id id , amco.order_no order_no,NULL status_code,amco.create_stamp create_date,NULL receipt_date,amco. STATUS transaction_status,NULL order_type,"
 					+ " amco.create_by creator,amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,"
 					+ " NULL path,NULL creator_name,NULL transfer_order_no,'收入单' order_tp,NULL delivery_order_no,c.abbr cname,NULL planning_time,NULL address,"
 					+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
@@ -110,9 +111,12 @@ public class ChargeItemConfirmController extends Controller {
 					+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
 					+ " NULL route_from,NULL route_to,NULL contract_amount,"
 					+ " NULL depart_time,NULL pickup_amount,NULL step_amount,NULL wait_amount,NULL other_amount,NULL load_amount,NULL warehouse_amount,NULL transfer_amount,NULL send_amount,NULL installation_amount,"
-					+ " NULL super_mileage_amount,amco.total_amount charge_total_amount,NULL insurance_amount"
-					+ " FROM arap_misc_charge_order amco"
-					+ " LEFT JOIN contact c ON c.id=amco.customer_id"
+					+ " NULL super_mileage_amount,amco.total_amount charge_total_amount,NULL insurance_amount , c1.abbr sp "
+					+ " FROM arap_misc_charge_order amco "
+					+ " LEFT JOIN party p on p.id = amco.customer_id "
+					+ " LEFT JOIN contact c ON c.id = p.id"
+					+ " LEFT JOIN party p1 on p1.id = amco.sp_id "
+					+ " LEFT JOIN contact c1 ON c1.id = p1.id "
 					+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )"
 					+ " order by create_date desc " + sLimit;
 		} else {
