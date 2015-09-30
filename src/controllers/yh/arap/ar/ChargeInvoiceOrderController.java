@@ -12,12 +12,9 @@ import java.util.Map;
 import models.ArapChargeApplicationInvoiceNo;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
-import models.ArapChargeInvoiceApplicationItem;
 import models.ArapChargeInvoiceItemInvoiceNo;
-import models.ArapChargeOrder;
 import models.Party;
 import models.UserLogin;
-import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -34,7 +31,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.OrderNoUtil;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -70,6 +66,8 @@ public class ChargeInvoiceOrderController extends Controller {
 			
 	        ArapChargeInvoiceApplication arapChargeInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(idArray[0]);
 			Long customerId = arapChargeInvoiceApplication.get("payee_id");
+			Long spId = arapChargeInvoiceApplication.get("sp_id");
+			setAttr("spId", spId);
 	        if(!"".equals(customerId) && customerId != null){
 		        Party party = Party.dao.findById(customerId);
 		        setAttr("party", party);	        
@@ -115,10 +113,12 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
 				+ " where aaia.status = '已审批' ";
 		String sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by,"
-				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no"
+				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no,"
+				+ " c1.abbr sp"
         		+ " from arap_charge_invoice_application_order aaia "
         		+ " left join party p on p.id = aaia.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
+				+ " left join contact c1 on c1.id = aaia.sp_id"
         		+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
@@ -183,13 +183,14 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " left join party p on p.id = aci.payee_id "
 				+ " left join contact c on c.id = p.contact_id ";*/
         
-        String sql = "select aci.*,group_concat(distinct acai.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname from arap_charge_invoice aci"
+        String sql = "select aci.*,group_concat(distinct acai.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname,c1.abbr sp from arap_charge_invoice aci"
 				+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
 				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
 				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
 				+ " left join user_login ul on ul.id = aci.create_by "
 				+ " left join party p on p.id = aci.payee_id "
-				+ " left join contact c on c.id = p.contact_id ";
+				+ " left join contact c on c.id = p.contact_id "
+                + " left join contact c1 on c1.id = aci.sp_id ";
        String condition = "";
        if(companyName != null || beginTime != null || endTime != null || orderNo != null
     		  || status != null || office != null || sp != null || address != null ){
@@ -250,6 +251,10 @@ public class ChargeInvoiceOrderController extends Controller {
 	    	arapAuditInvoice.set("remark", getPara("remark"));
 	    	if(getPara("customer_id") != null && !"".equals(getPara("customer_id"))){
 	    		arapAuditInvoice.set("payee_id", getPara("customer_id"));
+	    	}
+	    	String spId = getPara("spId");
+	    	if(spId != null && !"".equals(spId)){
+	    		arapAuditInvoice.set("sp_id", spId);
 	    	}
 	    	arapAuditInvoice.save();
 	    	

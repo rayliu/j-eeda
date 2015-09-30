@@ -23,6 +23,7 @@ $(document).ready(function() {
         			
         	}},
             {"mDataProp":"CNAME"},
+            {"mDataProp":"SP"},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
