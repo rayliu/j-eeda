@@ -220,7 +220,7 @@ public class EedaConfig extends JFinalConfig {
 
 	private void setYhRoute(Routes me, String contentPath) {
 		// yh project controller
-        me.add("/", controllers.yh.AppController.class, contentPath);
+        me.add("/", controllers.yh.MainController.class, contentPath);
         me.add("/debug", controllers.yh.LogController.class, contentPath);
         
         me.add("/loginUser", controllers.yh.LoginUserController.class, contentPath);
@@ -323,6 +323,8 @@ public class EedaConfig extends JFinalConfig {
 		me.add("/returnTransfer",ReturnTransferController.class,contentPath);
 		
 		me.add("/scanOrder", ContentletController.class,contentPath);
+		//app 
+		me.add("/m", controllers.yh.app.AppController.class, contentPath);
 	}
 
     @Override
