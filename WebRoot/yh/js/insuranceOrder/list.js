@@ -28,6 +28,7 @@
 	            {"mDataProp":"COMPANY_NAME"},
 	            {"mDataProp":"CUSTOMER"},
 			    {"mDataProp":"STATUS"},    
+			    {"mDataProp":"PLANNING_TIME"},
 			    {"mDataProp":"CREATE_STAMP"},
 			    {"mDataProp":"DEPARTURE_TIME"},
 			    {"mDataProp":"TRANSFER_ORDER_NO"},
@@ -103,7 +104,7 @@
         $('#companyList').on('mousedown', function(){
             return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
         });
-        $('#endTime_filter, #beginTime_filter, #orderNo_filter ,#departNo_filter').on('keyup click', function () {
+        $('#endTime_filter, #beginTime_filter, #orderNo_filter ,#departNo_filter,#planning_end_filter,#planning_begin_filter').on('keyup click', function () {
         	refreshData();
         });
         var refreshData= function () {
@@ -112,7 +113,9 @@
 			var beginTime = $("#beginTime_filter").val();
 			var customer = $("#customer_filter").val();
 			var endTime = $("#endTime_filter").val();
-			insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime+"&customer="+customer;
+			var planningEndTime = $("#planning_end_filter").val();
+			var planningBeginTime = $("#planning_begin_filter").val();
+			insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime+"&customer="+customer+"&planningBeginTime="+planningBeginTime+"&planningEndTime="+planningEndTime;
 			insuranceOrder.fnDraw();
 		};
 		
@@ -122,7 +125,21 @@
 		}).on('changeDate', function(ev){
 	        $(".bootstrap-datetimepicker-widget").hide();
 		    $('#beginTime_filter').trigger('keyup');
-		});		
+		});	
+		$('#datetimepicker3').datetimepicker({  
+		    format: 'yyyy-MM-dd',  
+		    language: 'zh-CN'
+		}).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+		    $('#planning_end_filter').trigger('keyup');
+		});	
+		$('#datetimepicker4').datetimepicker({  
+		    format: 'yyyy-MM-dd',  
+		    language: 'zh-CN'
+		}).on('changeDate', function(ev){
+	        $(".bootstrap-datetimepicker-widget").hide();
+		    $('#planning_begin_filter').trigger('keyup');
+		});	
 		
 		$('#datetimepicker2').datetimepicker({  
 		    format: 'yyyy-MM-dd',  
@@ -135,13 +152,13 @@
 		});
 		$('#showBtn').on('keyup click', function(e){
             var customer = $('#customer_filter').val();
-            var endTime = $('#endTime_filter').val();
-            var beginTime = $('#beginTime_filter').val();
+            var planningEndTime = $("#planning_end_filter").val();
+			var planningBeginTime = $("#planning_begin_filter").val();
             if(customer==""){
             	alert("请筛选客户");
             	return;
             }
-            $.post("/insuranceOrder/showCustomerAounmt", {customer:customer,endTime:endTime,beginTime:beginTime}, function(data){
+            $.post("/insuranceOrder/showCustomerAounmt", {customer:customer,planningEndTime:planningEndTime,planningBeginTime:planningBeginTime}, function(data){
             $("#amount").html(data.orders[0].SUM_AMOUNT);
             },'json');
             

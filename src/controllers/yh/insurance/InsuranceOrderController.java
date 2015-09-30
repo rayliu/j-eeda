@@ -187,6 +187,8 @@ public class InsuranceOrderController extends Controller {
     	String departNo = getPara("departNo");
     	String beginTime = getPara("beginTime");
     	String endTime = getPara("endTime");
+    	String planningBeginTime = getPara("planningBeginTime");
+    	String planningEndTime = getPara("planningEndTime");
     	String customer = getPara("customer");
     	
         String sLimit = "";
@@ -202,7 +204,8 @@ public class InsuranceOrderController extends Controller {
         		+ " left join office o on o.id = tor .office_id where  o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
         		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
         sql = "select distinct ior.*, con.company_name, (select c.abbr from party p left join contact c on p.contact_id = c.id where p.id=tor.customer_id) as customer,(select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id) transfer_order_no,"
-        		+ " (select group_concat(cast(deo.departure_time as char) separator '<br>') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id left join depart_order deo on deo.id = dt.depart_id where	tor.insurance_id = ior.id ) departure_time "
+        		+ " (SELECT group_concat(cast(tor.planning_time AS CHAR) SEPARATOR '\r\n')  FROM transfer_order tor WHERE tor.insurance_id = ior.id) planning_time,"
+        		+ " (select group_concat(cast(deo.departure_time as char) separator '\r\n') from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id left join depart_order deo on deo.id = dt.depart_id where	tor.insurance_id = ior.id ) departure_time "
 //        		+ " (SELECT group_concat( insfi.insurance_no SEPARATOR '<br>' ) FROM insurance_order ior"
 //        		+ " left JOIN insurance_fin_item insfi on insfi.insurance_order_id=ior.id"
 //        		+ " WHERE tor.insurance_id = ior.id) insurance_no"
@@ -224,6 +227,12 @@ public class InsuranceOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
+			if (planningBeginTime == null || "".equals(planningBeginTime)) {
+        		planningBeginTime = "1-1-1";
+			}
+			if (planningEndTime == null || "".equals(planningEndTime)) {
+				planningEndTime = "9999-12-31";
+			}
         	String condition=" and ifnull(ior.order_no,'') like '%"
 		    				+departNo
 		    				+"%' and ifnull((select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id),'') like '%"
@@ -232,7 +241,10 @@ public class InsuranceOrderController extends Controller {
 		    				+customer
 		    				+"%' and ior.create_stamp between '"
 		    				+beginTime
-		    				+"' and '"+endTime+"'";
+		    				+"' and '"+endTime+"'"
+		    				+" and (SELECT group_concat(cast(tor.planning_time AS CHAR) SEPARATOR '\r\n')  FROM transfer_order tor WHERE tor.insurance_id = ior.id) between '"
+		    				+ planningBeginTime
+		    				+"' and '"+planningEndTime+"'";;
         	sqlTotal = sqlTotal + condition;
 	        sql = sql + condition + orderBysql;
         }
@@ -602,10 +614,11 @@ public class InsuranceOrderController extends Controller {
     public void showCustomerAounmt(){
     	Map orderMap = new HashMap();
     	String customer=getPara("customer");
-    	String beginTime = getPara("beginTime");
-    	String endTime = getPara("endTime");
-    	String sql = "SELECT sum(sum_amount) sum_amount from (SELECT DISTINCT ior.create_stamp,"
+    	String planningEndTime = getPara("planningEndTime");
+    	String planningBeginTime = getPara("planningBeginTime");
+    	String sql = "SELECT ROUND(sum(sum_amount),2) sum_amount from (SELECT DISTINCT ior.create_stamp,"
     			+ " (SELECT c.abbr FROM party p LEFT JOIN contact c ON p.contact_id = c.id WHERE p.id = tor.customer_id) AS customer,"
+    			+ " (SELECT group_concat(cast(tor.planning_time AS CHAR) SEPARATOR '\r\n')  FROM transfer_order tor WHERE tor.insurance_id = ior.id) planning_time,"
     			+ " (SELECT sum(ifi.insurance_amount) FROM insurance_fin_item ifi WHERE ifi.insurance_order_id = ior.id ) sum_amount FROM insurance_order ior"
     			+ " LEFT JOIN transfer_order tor ON tor.insurance_id = ior.id"
     			+ " LEFT JOIN office o ON o.id = tor.office_id"
@@ -614,15 +627,15 @@ public class InsuranceOrderController extends Controller {
     			+ " WHERE o.id IN (SELECT office_id FROM user_office WHERE user_name = 'admin@eeda123.com' )"
     			+ " AND tor.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = 'admin@eeda123.com')) a";
     		String condition="";
-        	if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
+        	if (planningBeginTime == null || "".equals(planningBeginTime)) {
+        		planningBeginTime = "1-1-1";
 			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
+			if (planningEndTime == null || "".equals(planningEndTime)) {
+				planningEndTime = "9999-12-31";
 			}
 			if(customer!=null&&!"".equals(customer)){
 				condition=" where customer like '%" +customer+ "%'"
-						+ " and create_stamp between '"+beginTime+"' and '"+endTime+"'";
+						+ " and planning_time between '"+planningBeginTime+"' and '"+planningEndTime+"'";
 			}
         	
         List<Record> orders = Db.find(sql+condition);
