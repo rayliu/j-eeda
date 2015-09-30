@@ -38,6 +38,7 @@ $(document).ready(function() {
 	          }},
 	          {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},
 	          {"mDataProp":"CNAME","sClass": "cname", "sWidth":"200px"},
+	          {"mDataProp":"SP","sClass": "sp", "sWidth":"200px"},
 	          {"mDataProp":null, "sWidth":"150px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
 	          {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
@@ -98,6 +99,7 @@ $(document).ready(function() {
 	          {"mDataProp":null, "bVisible": false},
 	          {"mDataProp":null},
 	          {"mDataProp":null, "sWidth":"120px"},
+	          {"mDataProp":null, "sWidth":"120px"},
 			  {"mDataProp":null, "sWidth":"200px"},
 			  {"mDataProp":null, "sWidth":"150px"},
 			  {"mDataProp":null, "sWidth":"200px"},
@@ -122,7 +124,7 @@ $(document).ready(function() {
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
 			  {"mDataProp":null, "sWidth":"150px"},                        
-			  {"mDataProp":null, "sWidth":"150px"},                       
+			  {"mDataProp":null, "sWidth":"150px"}, 
 			  {"mDataProp":null, "sWidth":"200px"}                      
 		]          
     });
