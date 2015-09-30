@@ -45,6 +45,7 @@ $(document).ready(function() {
             },
             {"mDataProp":null},
             {"mDataProp":"CNAME"},
+            {"mDataProp":"SP"},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},
