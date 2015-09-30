@@ -88,10 +88,12 @@ public class ChargePreInvoiceOrderController extends Controller {
 				+ "	end "
 				+ "	from arap_charge_invoice_application_order aciao"
 				+ "	left join arap_charge_invoice aci on aciao.invoice_order_id = aci.id"
-				+ "	where aciao.id = aaia.id) as order_status "
+				+ "	where aciao.id = aaia.id) as order_status,"
+				+ " c1.abbr sp "
         		+ " from arap_charge_invoice_application_order aaia "
 				+ " left join party p on p.id = aaia.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
+				+ " left join contact c1 on c1.id = aaia.sp_id"
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by ";
@@ -163,6 +165,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 			
 			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
 			Long customerId = arapChargeOrder.get("payee_id");
+			
+			Long spId = arapChargeOrder.get("sp_id");
+			setAttr("spId", spId);
 			if (!"".equals(customerId) && customerId != null) {
 				Party party = Party.dao.findById(customerId);
 				setAttr("party", party);
@@ -192,6 +197,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		ArapChargeInvoiceApplication arapAuditInvoiceApplication = null;
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		String paymentMethod = getPara("paymentMethod");
+		String spId = getPara("spId");
 		if (!"".equals(chargePreInvoiceOrderId) && chargePreInvoiceOrderId != null) {
 			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
             //arapAuditInvoiceApplication.set("status", "new");
@@ -215,6 +221,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("status", "新建");
 			if(!getPara("customer_id").equals("") && getPara("customer_id")!= null){
 				arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
+			}
+			if(!spId.equals("") && spId!= null){
+				arapAuditInvoiceApplication.set("sp_id", spId);
 			}
 			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
@@ -378,10 +387,12 @@ public class ChargePreInvoiceOrderController extends Controller {
 				    + " aao.charge_amount - ( SELECT ifnull(sum(caor.receive_amount), 0) total_receive"
 				    + " FROM charge_application_order_rel caor"
 				    + " WHERE caor.charge_order_id = aao.id ) total_noreceive,"
-				    + " ifnull(usl.c_name, usl.user_name) as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp"
+				    + " ifnull(usl.c_name, usl.user_name) as creator_name,o.office_name oname,c.abbr cname,MONTH(aao.create_stamp)as c_stamp,"
+				    + " c1.abbr sp "
 					+ " from arap_charge_order aao "
 					+ " left join party p on p.id = aao.payee_id "
 					+ " left join contact c on c.id = p.contact_id"
+					+ " left join contact c1 on c1.id = aao.sp_id"
 					+ " left join office o on o.id = p.office_id"
 					+ " left join user_login usl on usl.id=aao.create_by"
 					+ " where (aao.status = '已确认' "
