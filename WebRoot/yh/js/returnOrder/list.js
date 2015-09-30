@@ -4,10 +4,12 @@
 	var clickTabId = "createTab";
 	
 	//条件查询
-    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no,#return_type,#transfer_type").on('keyup click', function () {    	 	
+    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no").on('keyup click', function () {    	 	
     	findData();
     });
-    
+    $('#return_type,#transfer_type').on( 'change', function () {
+    	findData();
+    });
     
    
   //开始-时间按钮
