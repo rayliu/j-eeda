@@ -492,7 +492,7 @@ public class CostCheckOrderController extends Controller {
 	            	for(int j=0;j<BillingOrders.size();j++){
 	            		Record b=BillingOrders.get(j);
 	            	if(b.getDouble("CHANGE_AMOUNT")==null){
-            			if(b.getDouble("AMOUNT")==null){
+            			if(b.getDouble("INSURANCE_AMOUNT")==null){
             				amount=0.0;
             			}
             			else{
