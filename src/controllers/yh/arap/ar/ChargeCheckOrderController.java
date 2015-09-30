@@ -74,6 +74,7 @@ public class ChargeCheckOrderController extends Controller {
 		ArapMiscChargeOrder arapMiscChargeOrder = null;
 		ReturnOrder rOrder = null;
 		Long customerId =null;
+		Long spId = null;
 		String[] returnOrderIdArray = new String[]{};
 		if(!returnOrderIds.equals("")){
 			returnOrderIdArray = returnOrderIds.split(",");
@@ -113,6 +114,8 @@ public class ChargeCheckOrderController extends Controller {
 							arapMiscChargeOrder.get("id"));
 			totalAmount = totalAmount + record.getDouble("total_amount");
 			
+			spId = arapMiscChargeOrder.getLong("sp_id");
+			setAttr("spId", spId);
 			if(customerId ==null){
 				customerId = arapMiscChargeOrder.getLong("customer_id");
 				if (!"".equals(customerId) && customerId != null) {
@@ -122,7 +125,7 @@ public class ChargeCheckOrderController extends Controller {
 							"contact_id").toString());
 					setAttr("customer", contact);
 					setAttr("type", "CUSTOMER");
-					setAttr("classify", "");
+					setAttr("classify", "");			
 				}
 			}
 		}
@@ -391,7 +394,8 @@ public class ChargeCheckOrderController extends Controller {
 		Double total_amount = (Double)dto.get("total_amount");
 		Double change_amount = (Double)dto.get("change_amount");
 		String remark = (String)dto.get("remark");
-
+		String customerId = (String)dto.get("customer_id");
+		String spId = (String)dto.get("sp_id");
 		
 		UserLogin user = LoginUserController.getLoginUser(this);
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
@@ -419,14 +423,20 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapChargeOrder.set("status", "新建");
-			arapChargeOrder.set("payee_id", (String)dto.get("customer_id"));
+			
+			if(customerId != null && !customerId.equals("")){
+				arapChargeOrder.set("payee_id", customerId);
+			}
+			if(spId != null && !spId.equals("")){
+				arapChargeOrder.set("sp_id", spId);
+			}
 			arapChargeOrder.set("create_by", user.getLong("id"));
 			arapChargeOrder.set("create_stamp", new Date());
 			arapChargeOrder.set("remark", remark);
 			arapChargeOrder.set("order_no",
 					OrderNoGenerator.getNextOrderNo("YSDZ"));
 
-			if (getParaToDate("begin_time") != null) {
+			if (getParaToDate("begin_time") != null && !getParaToDate("begin_time").equals("")) {
 				arapChargeOrder.set("begin_time", getPara("begin_time"));
 			}
 			if (getParaToDate("end_time") != null) {
@@ -712,10 +722,12 @@ public class ChargeCheckOrderController extends Controller {
 				+ "	left join arap_charge_invoice_application_item aciai on aco.id = aciai.charge_order_id"
 				+ "	left join arap_charge_invoice_application_order aciao on aciai.invoice_application_id = aciao.id"
 				+ "	left join arap_charge_invoice aci on aciao.invoice_order_id = aci.id"
-				+ " where aco.id = aao.id) as order_status"
+				+ " where aco.id = aao.id) as order_status,"
+				+ " c1.abbr sp "
 				+ " from arap_charge_order aao "
 				+ " left join party p on p.id = aao.payee_id "
 				+ " left join contact c on c.id = p.contact_id"
+				+ " left join contact c1 on c1.id = aao.sp_id"
 				+ " left join user_login usl on usl.id=aao.create_by ";
 
 		String condition = "";

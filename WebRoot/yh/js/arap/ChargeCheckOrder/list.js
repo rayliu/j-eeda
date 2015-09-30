@@ -46,6 +46,7 @@ $(document).ready(function() {
             {"mDataProp":null},
             {"mDataProp":null},
             {"mDataProp":"CNAME"},
+            {"mDataProp":"SP"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":null},

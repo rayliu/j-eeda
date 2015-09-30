@@ -65,6 +65,7 @@ $(document).ready(function() {
             chargeCheckOrderId: $('#chargeCheckOrderId').val(),
             customer_id: $('#customer_id').val(),
             remark: $('#remark').val(),
+            sp_id: $('#spId').val(),
             total_amount: total_amount,
             change_amount: change_amount,
             items: itemsArray
