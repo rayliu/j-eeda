@@ -18,7 +18,7 @@ $(document).ready(function() {
             {"mDataProp":"COMPANY_NAME",
             	"fnRender":function(obj){
             		if(Provider.isUpdate){
-            			return "<a href='/serviceProvider/edit/"+obj.aData.PID+"' target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
+            			return "<a href='/serviceProvider/edit?id="+obj.aData.PID+"' target='_blank'>" + obj.aData.COMPANY_NAME + "</a>";
             		}else{
             			return obj.aData.COMPANY_NAME;
             		}

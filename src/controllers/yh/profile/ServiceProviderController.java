@@ -140,10 +140,9 @@ public class ServiceProviderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_UPDATE})
     public void edit() {
-        long id = getParaToLong();
-        
+        String id = getPara("id");
         Party party = Party.dao.findById(id);
-        Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
+        Contact locationCode = Contact.dao.findById(party.getLong("contact_id"));
         String code = locationCode.get("location");
 
         List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
