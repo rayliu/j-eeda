@@ -48,6 +48,7 @@ $(document).ready(function() {
 	        {"mDataProp":"C_STAMP","sWidth":"80px"},
 	        {"mDataProp":"ONAME","sWidth":"80px"},
 	        {"mDataProp":"CNAME","sWidth":"200px"},
+	        {"mDataProp":"SP","sWidth":"200px"},
 	        {"mDataProp":"CHARGE_AMOUNT","sWidth":"80px"},
 	        {"mDataProp":"TOTAL_RECEIVE","sWidth":"80px"},
 	        {"mDataProp":"TOTAL_NORECEIVE","sWidth":"80px" },
