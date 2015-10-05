@@ -3,6 +3,8 @@ package controllers.yh.app;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
 import models.TransferOrder;
 
 import com.jfinal.core.Controller;
@@ -11,6 +13,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+@RequiresAuthentication
 public class AppController extends Controller {
 	private Logger logger = Logger.getLogger(AppController.class);
 	private static int pageInterval = 20;//每页20行

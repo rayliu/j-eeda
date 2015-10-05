@@ -26,9 +26,9 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
 				ai.getController().setAttr("userId", currentUser.getPrincipal());
 			}
 			ai.getController().setAttr("user_login_id", currentUser.getPrincipal());
-			setSysTitle(ai.getController());
 			ai.getController().setAttr("permissionMap", ai.getController().getSessionAttr("permissionMap"));
 		}
+		setSysTitle(ai.getController());
 		ai.invoke();
 	}
 	
@@ -41,8 +41,8 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
         OfficeCofig of = OfficeCofig.dao.findFirst("select * from office_config where domain like '"+serverName +"%' or domain like '%"+serverName +"%'");
         if(of==null){//没有配置公司的信息会导致页面出错，显示空白页
         	of = new OfficeCofig();
-        	of.set("system_title", "");
-        	of.set("logo", "");
+        	of.set("system_title", "易达物流");
+        	of.set("logo", "/yh/img/eeda_logo.ico");
         }
         controller.setAttr("SYS_CONFIG", of);
 	}
