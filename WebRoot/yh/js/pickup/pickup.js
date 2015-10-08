@@ -52,7 +52,8 @@ $(document).ready(function() {
 				{"mDataProp":"PICKUP_MODE","sClass": "pickup_mode"},
 				{"mDataProp":"ARRIVAL_MODE","sClass": "arrival_mode"},
 				{"mDataProp": "STATUS","sWidth": "60px","sClass": "status"},
-				{"mDataProp": "OFFICE_NAME","sWidth": "120px","sClass": "office_name"},  
+				{"mDataProp": "CNAME","sWidth": "120px","sClass": "office_name"},  
+				{"mDataProp": "OFFICE_NAME","sWidth": "120px","sClass": "cname"},  
 				{"mDataProp": "CREATE_STAMP","sWidth": "150px","sClass": "create_stamp"},                                      
 				{ "mDataProp": "PICKUP_ASSIGN_STATUS","sClass": "assign_status"}                                                               
         ]      
