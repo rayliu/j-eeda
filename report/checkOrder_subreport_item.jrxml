@@ -183,33 +183,7 @@ SELECT
 	WHERE
 	aci.cost_order_id = $P{order_id}
             AND aci.ref_order_no = '成本单'
-   union
-    select
-        aci.ref_order_no,
-        aci.ref_order_id,
-        aci.cost_order_id,
-      io.order_no  as order_no,
-        tor.planning_time as create_date,
-        '' as sp_order_no,
-        c.abbr as customer_name,
-        r_f.`name` as route_from,
-        r_t.`name` as route_to,
-        '保险' as service_type,
-        (select sum(amount) from transfer_order_item where order_id in (select id from transfer_order where insurance_id = io.id)) as quantity,
-        '' as address,
-        round((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),2) as amount,
-        round(IFNULL((select sum(change_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付')),2) as confirm_amount,
-        '' as remark
-    from
-        arap_cost_item aci
-    left join  insurance_order io on io.id = aci.ref_order_id
-    left join transfer_order tor on tor.insurance_id = io.id
-    left join party p on tor.customer_id = p.id
-    left join contact c on p.contact_id = c.id
-    left join location r_f on r_f.`code` = tor.route_from
-    left join location r_t on r_t.`code` = tor.route_to
-    where
- aci.ref_order_no='保险'
+
 )as costCheckOrder left join arap_cost_order acor on acor.id = costCheckOrder.cost_order_id
 	left join user_login ul on  ul.id = acor.create_by left join  user_login u on  u.id = acor.confirm_by]]>
 	</queryString>
@@ -226,7 +200,7 @@ SELECT
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="create_date" class="java.sql.Date">
+	<field name="create_date" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="sp_order_no" class="java.lang.String"/>
