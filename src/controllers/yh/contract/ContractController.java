@@ -135,7 +135,7 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and o.id = p.office_id and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")"
+                    .find("select *,c.id as cid,c.is_stop as c_is_Stop from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='CUSTOMER' and o.id = p.office_id and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")"
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
@@ -439,9 +439,17 @@ public class ContractController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_DELETE})
     public void delete() {
         String id = getPara();
-        if (id != null) {
-            Db.deleteById("contract", id);
+        Contract contract=Contract.dao.findById(id);
+        Object obj = contract.get("is_stop");
+        if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+        	contract.set("is_stop", true);
+        }else{
+        	contract.set("is_stop", false);
         }
+        contract.update();
+        /*if (id != null) {
+            Db.deleteById("contract", id);
+        }*/
             redirect("/customerContract");
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_DELETE})
