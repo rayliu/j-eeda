@@ -63,26 +63,32 @@ public class ChargeConfirmController extends Controller {
    			if(a.getLong("invoice_order_id")!=null){
    				order_type = "开票记录单";
    				setAttr("order_type", "开票记录单");
-   			}else if(a.getLong("misc_cost_order_id")!=null){
-   				order_type = "成本单";
-   				setAttr("order_type", "成本单");
+   			}else if(a.getLong("misc_charge_order_id")!=null){
+   				order_type = "手工收入单";
+   				setAttr("order_type", "手工收入单");
    			}
    		}
    		//setAttr("order_type", order_type);
    		ArapChargeReceiveConfirmOrder arapChargeReceiveConfirmOrder = ArapChargeReceiveConfirmOrder.dao.findById(id);
    		setAttr("arapChargeReceiveConfirmOrder", arapChargeReceiveConfirmOrder);
    		
-   		if(arapChargeReceiveConfirmOrder.getLong("sp_id")!= null){
-	   		String sql1 = "select * from  party p LEFT JOIN office o ON o.id = p.office_id where p.id = '"+arapChargeReceiveConfirmOrder.getLong("sp_id")+"'";
-	   		Record re1 = Db.findFirst(sql1);
-	   		setAttr("abbr", re1.getStr("abbr"));
+   		Long customer_id = arapChargeReceiveConfirmOrder.getLong("customer_id");
+   		if(customer_id != null){
+	   		Contact contact = Contact.dao.findById(customer_id);
+	   		setAttr("customer_filter", contact.getStr("company_name"));
+   		}
+   		Long sp_id = arapChargeReceiveConfirmOrder.getLong("sp_id");
+   		if(sp_id != null){
+   			Contact contact = Contact.dao.findById(sp_id);
+	   		setAttr("sp_filter", contact.getStr("company_name"));
    		}
    		String sql = "";
-   		if(order_type.equals("成本单")){
+   		if(order_type.equals("手工收入单")){
    			sql = "SELECT "
-   	   				+ " (SELECT group_concat(cast(misc_cost_order_id as char) SEPARATOR ',' ) "
-   	   				+ "FROM arap_cost_pay_confirm_order_detail where order_id = acp.id ) ids "
-   	   				+ "FROM arap_cost_pay_confirm_order acp WHERE acp.id = '"+id+"'";
+   	   				+ " (SELECT group_concat(cast(misc_charge_order_id as char) SEPARATOR ',' ) "
+   	   				+ "FROM arap_charge_receive_confirm_order_detail where order_id = acp.id ) ids "
+   	   				+ "FROM arap_charge_receive_confirm_order acp WHERE acp.id = '"+id+"'";
+   			
    		}else if(order_type.equals("开票记录单")){
    			sql = "SELECT "
    	   				+ " (SELECT group_concat(cast(invoice_order_id as char) SEPARATOR ',' ) "
@@ -378,7 +384,7 @@ public class ChargeConfirmController extends Controller {
         	String[] one = alls[i].split(":");
 			String id = one[0];
 			if(order_type.equals("手工收入单")){
-				sql = "SELECT c.company_name cname ,c1.company_name customer,amco.others_name payee_name, "
+				sql = "SELECT c.company_name sp_filter ,c1.company_name customer,amco.others_name payee_name, "
 						+ " null,null,null,null,null,null"
 						+ " FROM arap_misc_charge_order amco "
 						+ " LEFT JOIN party p on p.id = amco.sp_id"
@@ -396,10 +402,11 @@ public class ChargeConfirmController extends Controller {
 						+ " where aci.id = '"+id+"'";
 			}else if(order_type.equals("开票记录单")){
 				sql = "SELECT c.company_name customer,"
-					+ " null,null,null,null,null,null,null"
+					+ " c1.company_name sp_filter,null,null,null,null,null"
 					+ " FROM arap_charge_invoice aci "
 					+ " LEFT JOIN party p on p.id = aci.payee_id"
 					+ " left join contact c on c.id = p.id "
+					+ " left join contact c1 on c1.id = aci.sp_id "
 					+ " where aci.id = '"+id+"'";
 			}
         }
