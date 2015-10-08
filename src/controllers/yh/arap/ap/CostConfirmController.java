@@ -598,6 +598,7 @@ public class CostConfirmController extends Controller {
 		String colName = getPara("mDataProp_"+sortColIndex);
 		
         String fromSql = " from arap_cost_pay_confirm_order cpco "
+        			+ " LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.order_id = cpco.id"
         			+ " left join party p1 on cpco.sp_id = p1.id "
 					+ " left join contact c1 on p1.contact_id = c1.id"
 					+ " left join user_login ul on ul.id=cpco.creator";
@@ -617,17 +618,49 @@ public class CostConfirmController extends Controller {
 				+ " (SELECT group_concat( DISTINCT ro.order_no SEPARATOR '<br/>' )"
 				+ " FROM arap_cost_pay_confirm_order_detail co, reimbursement_order ro"
 				+ " WHERE co.reimbursement_order_id = ro.id AND co.order_id = cpco.id ) reimbursement_no, "
-				+ " ifnull(( SELECT sum(caor.pay_amount) "
-				+ " FROM cost_application_order_rel caor where caor.application_order_id in "
-				+ " (select acpcod.application_order_id from arap_cost_pay_confirm_order cpco1  "
-				+ "  LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.order_id = cpco1.id   "
-				+ "  where cpco1.id = cpco.id) ),"
-				+ " ifnull((SELECT sum(cso.actual_payment_amount) FROM car_summary_order cso WHERE cso.id IN ("
-				+ " SELECT acpcod.car_summary_order_id FROM arap_cost_pay_confirm_order cpco1"
-				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id"
-				+ " WHERE cpco1.id = cpco.id)),(SELECT IFNULL(sum(ro.amount),0) FROM reimbursement_order ro WHERE"
-				+ " ro.id IN (SELECT acpcod.reimbursement_order_id FROM arap_cost_pay_confirm_order cpco1"
-				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id WHERE cpco1.id = cpco.id)))) pay_amount,"
+				
+//				+ " ifnull(( SELECT sum(caor.pay_amount) "
+//				+ " FROM cost_application_order_rel caor where caor.application_order_id in "
+//				+ " (select acpcod.application_order_id from arap_cost_pay_confirm_order cpco1  "
+//				+ "  LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.order_id = cpco1.id   "
+//				+ "  where cpco1.id = cpco.id) ),"
+//				+ " ifnull((SELECT sum(cso.actual_payment_amount) FROM car_summary_order cso WHERE cso.id IN ("
+//				+ " SELECT acpcod.car_summary_order_id FROM arap_cost_pay_confirm_order cpco1"
+//				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id"
+//				+ " WHERE cpco1.id = cpco.id)),(SELECT IFNULL(sum(ro.amount),0) FROM reimbursement_order ro WHERE"
+//				+ " ro.id IN (SELECT acpcod.reimbursement_order_id FROM arap_cost_pay_confirm_order cpco1"
+//				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id WHERE cpco1.id = cpco.id)))) pay_amount,
+
+                + " ( case when acp.application_order_id is not null "
+                + " then "
+                + " ( SELECT sum(caor.pay_amount) FROM cost_application_order_rel caor "
+                + " WHERE caor.application_order_id IN ( SELECT acpcod.application_order_id "
+                + " FROM arap_cost_pay_confirm_order cpco1 "
+                + " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id "
+                + " WHERE cpco1.id = cpco.id ) )"
+                + " when acp.car_summary_order_id is not null"
+                + " then "
+                + " ( SELECT sum(cso.actual_payment_amount) "
+                + " FROM car_summary_order cso"
+                + " WHERE cso.id IN ( SELECT acpcod.car_summary_order_id FROM arap_cost_pay_confirm_order cpco1"
+                + " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id"
+                + " WHERE cpco1.id = cpco.id ) )"
+                + " when acp.reimbursement_order_id is not null"
+                + " then "
+                + " (SELECT IFNULL(sum(ro.amount), 0) FROM reimbursement_order ro "
+                + " WHERE ro.id IN ( SELECT acpcod.reimbursement_order_id"
+                + " FROM arap_cost_pay_confirm_order cpco1"
+                + " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id"
+                + " WHERE cpco1.id = cpco.id ) )"
+                + " when acp.misc_cost_order_id is not null"
+                + " then"
+                + " ( SELECT IFNULL(sum(amco.total_amount), 0) FROM arap_misc_cost_order amco "
+                + "  WHERE amco.id IN ( SELECT acpcod.misc_cost_order_id FROM arap_cost_pay_confirm_order cpco1"
+                + " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id"
+                + " WHERE cpco1.id = cpco.id ) ) "
+                + " end "
+                + " ) pay_amount,"
+				
 				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_cost_pay_confirm_order_log log "
 				+ " where log.order_id = cpco.id) already_pay, "
         		+ " c1.abbr sp_name,"
@@ -670,9 +703,9 @@ public class CostConfirmController extends Controller {
         
         
         
-        String orderByStr= " order by id desc ";
+        String orderByStr= " group by id order by id desc ";
         if(colName.length()>0){
-        	orderByStr = " order by A."+colName+" "+sortBy;
+        	orderByStr = "group by id order by A."+colName+" "+sortBy;
         }
         columsSql+=conditions + orderByStr;
         
