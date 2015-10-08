@@ -538,7 +538,7 @@ public class ChargeConfirmController extends Controller {
         		+ " c1.abbr sp_name,"
         		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
         		+ fromSql;
-        String orderBy= " order by cpco.create_date desc ";
+        String orderBy= "group by cpco.id order by cpco.create_date desc ";
         
         String conditions=" where 1=1 ";
         if (StringUtils.isNotEmpty(orderNo)){
