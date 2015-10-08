@@ -114,7 +114,7 @@ $(document).ready(function() {
                    companyList.show();
                
            },'json');
-           
+           refreshCreateList();
        });
     
     var refreshCreateList = function(){
