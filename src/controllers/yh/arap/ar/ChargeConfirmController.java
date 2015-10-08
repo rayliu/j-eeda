@@ -509,6 +509,7 @@ public class ChargeConfirmController extends Controller {
 		}
                
         String fromSql = " from arap_charge_receive_confirm_order cpco "
+        			+ " LEFT JOIN arap_charge_receive_confirm_order_detail acrc on acrc.order_id = cpco.id "
         			+ " left join party p1 on cpco.sp_id = p1.id "
 					+ " left join contact c1 on p1.contact_id = c1.id"
 					+ " left join user_login ul on ul.id=cpco.creator";
@@ -520,11 +521,18 @@ public class ChargeConfirmController extends Controller {
         		+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.invoice_order_id = aci.id "
         		+ " WHERE acr.order_id = cpco.id ) sksq_no,"
 				+ " (SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' )"
-				+ " FROM arap_cost_pay_confirm_order_detail co, arap_misc_cost_order amco"
-				+ " WHERE co.misc_cost_order_id = amco.id AND co.order_id = cpco.id ) misc_no,"
-				+ " ( SELECT ifnull(sum(aci.total_amount), 0) FROM arap_charge_invoice aci "
-				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.invoice_order_id = aci.id "
-				+ " where acr.order_id = cpco.id ) pay_amount,"
+				+ " FROM arap_charge_receive_confirm_order_detail co, arap_misc_charge_order amco"
+				+ " WHERE co.misc_charge_order_id = amco.id AND co.order_id = cpco.id ) misc_no,"
+				+ " (case when acrc.invoice_order_id is not null "
+				+ " then (SELECT ifnull(sum(aci.total_amount), 0)"
+				+ " FROM arap_charge_invoice aci "
+				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr ON acr.invoice_order_id = aci.id"
+				+ " WHERE acr.order_id = cpco.id )  "
+				+ " when acrc.misc_charge_order_id is not null"
+				+ " then (SELECT ifnull(sum(amco.total_amount), 0) "
+				+ " FROM arap_misc_charge_order amco "
+				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr ON acr.misc_charge_order_id = amco.id "
+				+ " WHERE acr.order_id = cpco.id ) end ) pay_amount,"
 				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_charge_receive_confirm_order_log log "
 				+ " where log.order_id = cpco.id) already_pay, "
         		+ " c1.abbr sp_name,"
@@ -569,14 +577,14 @@ public class ChargeConfirmController extends Controller {
         logger.debug("total records:" + total);
         
         columsSql+=conditions + orderBy + sLimit;
-        List<Record> costPayConfirmOrders = Db.find(columsSql);
+        List<Record> chargeReceiveConfirmOrders = Db.find(columsSql);
 
         Map orderListMap = new HashMap();
         orderListMap.put("sEcho", pageIndex);
         orderListMap.put("iTotalRecords", total);
-        orderListMap.put("iTotalDisplayRecords", costPayConfirmOrders.size());
+        orderListMap.put("iTotalDisplayRecords", total);
 
-        orderListMap.put("aaData", costPayConfirmOrders);
+        orderListMap.put("aaData", chargeReceiveConfirmOrders);
 
         renderJson(orderListMap);
     }
