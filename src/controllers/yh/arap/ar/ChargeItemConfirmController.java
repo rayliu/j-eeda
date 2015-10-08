@@ -126,82 +126,54 @@ public class ChargeItemConfirmController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			sqlTotal = "select count(*) total from (select ror.id from return_order ror"
-					+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-					+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
-					+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
-					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-					+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator "
-					+ " where ror.transaction_status = '已签收' "
-					+ " and (ifnull(tor.customer_order_no,'') like '%"
-					+ customerNo
-					+ "%' or ifnull(tor2.customer_order_no,'') like '%"
-					+ customerNo
-					+ "%') "
-					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) like '%"
-					+ start
-					+ "%' and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) like '%"
-					+ orderNo
-					+ "%' and ifnull(c.abbr,c2.abbr) like '%"
-					+ customer
-					+ "%' and tor.planning_time between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime
-					+ "' "
-					+ " group by ror.id"
-					+ " order by ror.create_date desc ) ror";
-			/*sql = "select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
-					+ " tor.planning_time, c.address address,"
-					+ " DATE(dvr.appointment_stamp) AS depart_time,"
+			sqlTotal = "select count(*) total from (select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no,'回单' order_tp, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
+					+ " tor.planning_time, c.address address, "
 					+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
 					+ " ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) route_from,"
 					+ " ifnull((select name from location where code = tor.route_to),(select name from location where code = dvr.route_to)) route_to,"
-					+ " (select sum(rofi.amount) from return_order_fin_item rofi where rofi.return_order_id = ror.id and rofi.fin_type = 'charge' and rofi.contract_id !='') contract_amount"
-					+ " ,round(ifnull(dofi.amount,(select sum(dofi.amount) from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id left join depart_transfer dt on dt.order_id = tor.id left join depart_order dor on dor.id = dt.pickup_id and dor.combine_type = 'PICKUP' left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费' where dvr.id = ror.delivery_order_id)),2) pickup_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '台阶费') step_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '等待费') wait_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '其他费用') other_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '装卸费') load_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '仓租费') warehouse_amount"
-					+ " ,(select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '运输费') transfer_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '送货费') send_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount"
-					+ " ,(select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as charge_total_amount"
-					+ " ,(select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount"
-					
-					
-					 * +
-					 * " ifnull((select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor.id order by dtr.turnout_time asc limit 0,1), (select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor2.id order by dtr.turnout_time asc limit 0,1)) departure_time"
-					 
+					+ " (select sum(rofi.amount) from return_order_fin_item rofi where rofi.return_order_id = ror.id and rofi.fin_type = 'charge' and rofi.contract_id !='') contract_amount,"
+					+ " DATE(dvr.appointment_stamp) AS depart_time,"
+					+ " ifnull(dofi.amount,(select sum(dofi.amount) from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id left join depart_transfer dt on dt.order_id = tor.id left join depart_order dor on dor.id = dt.pickup_id and dor.combine_type = 'PICKUP' left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费' where dvr.id = ror.delivery_order_id)) pickup_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '台阶费') step_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '等待费') wait_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '其他费用') other_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '装卸费') load_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '仓租费') warehouse_amount,"
+					+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '运输费') transfer_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '送货费') send_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount,"
+					+ " (select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount,"
+					+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as charge_total_amount,"
+					+ " (select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
+					+ " null sp"
 					+ " from return_order ror"
 					+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
 					+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
 					+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
 					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
 					+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator "
-					+ " where ror.transaction_status = '已签收' "
-					+ " and (ifnull(tor.customer_order_no,'') like '%"
-					+ customerNo
-					+ "%' or ifnull(tor2.customer_order_no,'') like '%"
-					+ customerNo
-					+ "%') "
-					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) like '%"
-					+ start
-					+ "%' and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) like '%"
-					+ orderNo
-					+ "%' and ifnull(c.abbr,c2.abbr) like '%"
-					+ customer
-					 and tor.planning_time between '"
+					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已签收' group by ror.id,tor2.id"
+					+ " UNION"
+					+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,NULL receipt_date,amco. STATUS transaction_status,NULL order_type,"
+					+ " amco.create_by creator,amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,"
+					+ " NULL path,NULL creator_name,NULL transfer_order_no,'收入单' order_tp,NULL delivery_order_no,c.abbr cname,NULL planning_time,NULL address,"
+					+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
+							+ " 	from arap_misc_charge_order_item amcoi "
+							+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
+					+ "NULL route_from,NULL route_to,NULL contract_amount,"
+					+ " NULL depart_time,NULL pickup_amount,NULL step_amount,NULL wait_amount,NULL other_amount,NULL load_amount,NULL warehouse_amount,NULL transfer_amount,NULL send_amount,NULL installation_amount,"
+					+ " NULL super_mileage_amount,amco.total_amount charge_total_amount,NULL insurance_amount,c1.abbr sp"
+					+ " FROM arap_misc_charge_order amco"
+					+ " LEFT JOIN contact c ON c.id=amco.customer_id"
+					+ " LEFT JOIN contact c1 ON c1.id=amco.sp_id"
+					+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )) ror"
+					+ " where ifnull(cname,'')like '%"+customer+"%'"
+				    + " and ifnull(route_from,'') like '%"+start+"%'  and ifnull(customer_order_no,'')like '%"+customerNo+"%'"
+				    + " and IFNULL(transfer_order_no,'') like '%"+orderNo+"%' and IFNULL(planning_time,'1-1-1')  between '"
 					+ beginTime
 					+ "' and '"
 					+ endTime
-					+ "' "
-					+ " group by ror.id,tor2.id"
-					+ " order by ror.create_date desc " + sLimit;*/
+					+ "' ";
 			sql = "select * from (select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no,'回单' order_tp, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
 			+ " tor.planning_time, c.address address, "
 			+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
@@ -243,7 +215,7 @@ public class ChargeItemConfirmController extends Controller {
 			+ " LEFT JOIN contact c ON c.id=amco.customer_id"
 			+ " LEFT JOIN contact c1 ON c1.id=amco.sp_id"
 			+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )) a"
-			+ " where ifnull(order_no,'') like '%"+orderNo+"%' and ifnull(cname,'')like '%"+customer+"%'"
+			+ " where ifnull(cname,'')like '%"+customer+"%'"
 		    + " and ifnull(route_from,'') like '%"+start+"%'  and ifnull(customer_order_no,'')like '%"+customerNo+"%'"
 		    + " and IFNULL(transfer_order_no,'') like '%"+orderNo+"%' and IFNULL(planning_time,'1-1-1')  between '"
 			+ beginTime
