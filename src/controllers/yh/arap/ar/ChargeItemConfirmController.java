@@ -52,10 +52,10 @@ public class ChargeItemConfirmController extends Controller {
 		String customer = getPara("customer");//客户
 		String beginTime = getPara("beginTime");//开始时间
 		String endTime = getPara("endTime");//结束时间
-		String orderNo = getPara("orderNo");//运输单号
+		String transferOrderNo = getPara("transferOrderNo");//运输单号
 		String customerNo = getPara("customerNo");//客户订单号
 		String start = getPara("start");//始发地
-		String status = getPara("status");//收入状态
+		String orderNo= getPara("orderNo");//业务单号
 
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -69,7 +69,7 @@ public class ChargeItemConfirmController extends Controller {
 		// 收入状态条件没有过滤
 
 		if (customer == null && beginTime == null && endTime == null
-				&& orderNo == null && customerNo == null && start == null) {
+				&& transferOrderNo == null && customerNo == null && start == null && orderNo==null) {
 			sqlTotal = "select count(1) total from return_order ror where ror.transaction_status = '已签收' ";
 			sql = "select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no,'回单' order_tp, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
 					+ " tor.planning_time, c.address address, "
@@ -168,8 +168,8 @@ public class ChargeItemConfirmController extends Controller {
 					+ " LEFT JOIN contact c1 ON c1.id=amco.sp_id"
 					+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )) ror"
 					+ " where ifnull(cname,'')like '%"+customer+"%'"
-				    + " and ifnull(route_from,'') like '%"+start+"%'  and ifnull(customer_order_no,'')like '%"+customerNo+"%'"
-				    + " and IFNULL(transfer_order_no,'') like '%"+orderNo+"%' and IFNULL(planning_time,'1-1-1')  between '"
+				    + " and ifnull(route_from,'') like '%"+start+"%' and ifnull(order_no,'') like '%"+orderNo+"%'  and ifnull(customer_order_no,'')like '%"+customerNo+"%'"
+				    + " and IFNULL(transfer_order_no,'') like '%"+transferOrderNo+"%' and IFNULL(planning_time,'1-1-1')  between '"
 					+ beginTime
 					+ "' and '"
 					+ endTime
@@ -216,8 +216,8 @@ public class ChargeItemConfirmController extends Controller {
 			+ " LEFT JOIN contact c1 ON c1.id=amco.sp_id"
 			+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )) a"
 			+ " where ifnull(cname,'')like '%"+customer+"%'"
-		    + " and ifnull(route_from,'') like '%"+start+"%'  and ifnull(customer_order_no,'')like '%"+customerNo+"%'"
-		    + " and IFNULL(transfer_order_no,'') like '%"+orderNo+"%' and IFNULL(planning_time,'1-1-1')  between '"
+		    + " and ifnull(route_from,'') like '%"+start+"%' and ifnull(order_no,'') like '%"+orderNo+"%' and ifnull(customer_order_no,'')like '%"+customerNo+"%'"
+		    + " and IFNULL(transfer_order_no,'') like '%"+transferOrderNo+"%' and IFNULL(planning_time,'1-1-1')  between '"
 			+ beginTime
 			+ "' and '"
 			+ endTime

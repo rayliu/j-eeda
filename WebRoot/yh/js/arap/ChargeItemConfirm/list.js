@@ -122,15 +122,17 @@ $(document).ready(function() {
         var customer = $('#customer_filter').val();
 		var beginTime = $("#beginTime_filter").val();
 		var endTime = $("#endTime_filter").val();
-		var orderNo = $("#orderNo_filter").val();
+		var orderNofilter = $("#orderNo_filter").val();
+		var transferOrderNo = $("#transfer_Order_filter").val();
 		var customerNo = $("#customerNo_filter").val();
 		var start = $("#start_filter").val();
 		var status = $("#shouru_filter").val();
 	    chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
 	   												+"&beginTime="+beginTime
 	   												+"&endTime="+endTime
-	   												+"&orderNo="+orderNo
+	   												+"&transferOrderNo="+transferOrderNo
 	   												+"&customerNo="+customerNo
+	   												+"&orderNo="+orderNofilter
 	   												+"&start="+start
 	   												+"&status="+status;
 		   chargeConfiremTable.fnDraw(); 
@@ -160,7 +162,7 @@ $(document).ready(function() {
        });
        
        //过滤客户
-       $('#beginTime_filter,#endTime_filter,#orderNo_filter,#customerNo_filter,#start_filter').on( 'keyup ',function(){
+       $('#beginTime_filter,#endTime_filter,#orderNo_filter,#transfer_Order_filter,#customerNo_filter,#start_filter').on( 'keyup ',function(){
     	   refreshCreateList();  
        });
        $("#shouru_filter").on('change',function(){
