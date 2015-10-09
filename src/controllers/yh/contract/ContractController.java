@@ -232,7 +232,7 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentId + ")"
+                    .find("select *,c.id as cid,c.is_stop as c_is_stop from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentId + ")"
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", total);
@@ -313,7 +313,7 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentID + ")"
+                    .find("select *,c.id as cid,c.is_stop as c_is_stop from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentID + ")"
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -455,16 +455,29 @@ public class ContractController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_DELETE})
     public void delete2() {
         String id = getPara();
-        if (id != null) {
-            Db.deleteById("contract", id);
+        Contract contract=Contract.dao.findById(id);
+        Object obj = contract.get("is_stop");
+        if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+        	contract.set("is_stop", true);
+        }else{
+        	contract.set("is_stop", false);
         }
+        contract.update();
+       /* if (id != null) {
+            Db.deleteById("contract", id);
+        }*/
             redirect("/spContract/spIndex");
     }
     public void delete3() {
-        String id = getPara();
-        if (id != null) {
-            Db.deleteById("contract", id);
+    	String id = getPara();
+        Contract contract=Contract.dao.findById(id);
+        Object obj = contract.get("is_stop");
+        if(obj == null || "".equals(obj) || obj.equals(false) || obj.equals(0)){
+        	contract.set("is_stop", true);
+        }else{
+        	contract.set("is_stop", false);
         }
+        contract.update();
             redirect("/deliverySpContract/deliverySpIndex");
     }
 
