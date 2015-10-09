@@ -193,7 +193,12 @@ $(document).ready(function() {
                     return "未收款";
                 }
             },
-            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":null, "sWidth":"100px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CHARGE_TOTAL_AMOUNT == null)
+            			return 0;
+                }
+            },                        
             {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px",
                 "fnRender": function(obj) {
                     // return "<input style='width: 100%;' type='text' name='change_amount' value='0'/>";
