@@ -533,15 +533,28 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String[] idArray = chargeCheckOrderIds.split(",");
 		Double totalAmount = 0.0;
 		Double totalReceive = 0.0;
+		String tips = "";
 		String sql = "select * from charge_application_order_rel where application_order_id = '"+chargePreInvoiceOrderId+"' and charge_order_id = '"+chargeOrderId+"'";
 		ChargeApplicationOrderRel chargeApplicationOrderRel = ChargeApplicationOrderRel.dao.findFirst(sql);
 		String name = getPara("name");
 		String value = getPara("value");
+		Double oldAmount = chargeApplicationOrderRel.getDouble("receive_amount");
 		if ("receive_amount".equals(name) && "".equals(value)) {
 			value = "0";
 		}
-		chargeApplicationOrderRel.set(name, value);
-		chargeApplicationOrderRel.update();
+		
+		if(oldAmount!=null){
+			if(!oldAmount.equals(Double.parseDouble(value))){
+				chargeApplicationOrderRel.set(name, value).update();
+				tips = "success";
+			}else{
+				tips = "noChange";
+			}
+		}else{
+			chargeApplicationOrderRel.set(name, value).update();
+			tips = "success";
+		}
+
 		
 		
 		for(int i=0;i<idArray.length;i++){
@@ -567,6 +580,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		map.put("receive_amount", receive_amount);
 		map.put("total_noreceive", total_noreceive);
 		map.put("chargeApplicationOrderRel", chargeApplicationOrderRel);
+		map.put("tips", tips);
 		renderJson(map);
 	}
 	
