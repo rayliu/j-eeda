@@ -420,6 +420,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 			
 			condition = " and ifnull(c.abbr,'') like '%" + customer + "%' "
 					+ " and ifnull(aao.order_no,'') like '%" + orderNo + "%' "
+					+ " and ifnull(o.office_name,'') like '%" + office + "%' "
+					+ " and ifnull(aao.STATUS,'') like '%" + status + "%' "
 					+ " and aao.create_stamp between '" + beginTime + "' and '" + endTime +"' "
 					+ " order by aao.create_stamp desc ";
 			

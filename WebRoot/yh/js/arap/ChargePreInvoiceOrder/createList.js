@@ -103,7 +103,7 @@ $(document).ready(function() {
     	var customer = $('#customer_filter').val();
 		var beginTime = $("#beginTime_filter").val();
 		var endTime = $("#endTime_filter").val();
-		var office = $("#office_filter").val();
+		var office = $("#officeSelect").val();
 		var status = $("#status_filter").val();
 		var orderNo = $("#orderNo_filter").val();
 		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargePreInvoiceOrder/chargeCheckOrderList?customer="+customer
@@ -119,7 +119,7 @@ $(document).ready(function() {
     $('#beginTime_filter,#endTime_filter,#orderNo_filter').on( 'keyup', function () {
     	refreshCreate();
 	} );
-    $('#office_filter,#status_filter').on( 'change', function () {
+    $('#officeSelect,#status_filter').on( 'change', function () {
     	refreshCreate();
 	} );
     
@@ -148,6 +148,7 @@ $(document).ready(function() {
                 companyList.show();
             
         },'json');
+        refreshCreate();
     });    
     $('#companyList').on('click', '.fromLocationItem', function(e){        
         $('#customer_filter').val($(this).text());
