@@ -80,6 +80,9 @@ public class ReturnOrderController extends Controller {
 		String sLimit = "";
 		String sqlTotal = "";
 		String sql = "";
+		String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
 		Map orderMap = new HashMap();
 		
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -118,7 +121,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
 			// 获取当前页的数据
-			sql = "select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
+			sql = "select * from (select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
 					+ " ifnull(c4.contact_person, c3.contact_person) receipt_person, "
 					+ " ifnull(c4.phone, c3.phone) receipt_phone,"
 					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
@@ -164,7 +167,7 @@ public class ReturnOrderController extends Controller {
 					+ " where r_o.transaction_status in ("+status
 					+ ") and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
+					+ " or ifnull(r_o.import_ref_num,0) > 0 ) A ";
 		} else {
 			if (time_one == null || "".equals(time_one)) {
 				time_one = "1970-01-01";
@@ -239,8 +242,12 @@ public class ReturnOrderController extends Controller {
 			
 					// 获取总条数
 					sqlTotal = "select count(1) total "+conFromSql+"";
-					sql = "SELECT distinct * "+	conFromSql;
+					sql = "select * from (SELECT distinct * "+	conFromSql+") A";
 		}
+		String orderByStr = " order by A.planning_time asc ";
+	        if(colName.length()>0){
+	        	orderByStr = " order by A."+colName+" "+sortBy;
+	        }
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		Record rec = Db.findFirst(sqlTotal);
 		long endTime = Calendar.getInstance().getTimeInMillis();
@@ -248,7 +255,7 @@ public class ReturnOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 		
 		startTime = Calendar.getInstance().getTimeInMillis();
-		List<Record> orders = Db.find(sql+ sLimit);
+		List<Record> orders = Db.find(sql + orderByStr + sLimit);
 		endTime = Calendar.getInstance().getTimeInMillis();
 		logger.debug("ReturnOrder.list() sql time cost:" + (endTime - startTime));
 		
