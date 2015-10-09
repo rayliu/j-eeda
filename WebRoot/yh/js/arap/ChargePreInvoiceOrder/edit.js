@@ -123,13 +123,13 @@ $(document).ready(function() {
 	//点击保存的事件，保存运输单信息
 	//transferOrderForm 不需要提交	
  	$("#savechargePreInvoiceOrderBtn").click(function(e){
-
+ 		var money = $("#money").val();
  		var receive_amount = $("#chargeCheckList-table").children().children().find('input[name="receive_amount"]').val();
- 		if(receive_amount == 0 || receive_amount == ''){
+ 		if(receive_amount == 0 || receive_amount == '' || money == null || money == ''){
  			$.scojs_message('申请金额不能为0', $.scojs_message.TYPE_FALSE);
- 			$("#saveCostPreInvoiceOrderBtn").attr("disabled",false);
+ 			$("#savechargePreInvoiceOrderBtn").attr("disabled",false);
  			return;
- 		}			
+ 		}				
  		savechargePreInvoiceOrder(e);
 	});
 	
@@ -229,6 +229,7 @@ $(document).ready(function() {
   	            	}else{
   	            		str = "<input type='text' name='receive_amount' value='"+obj.aData.RECEIVE_AMOUNT+"'>";
   	            	}
+  	            	$("#money").val(obj.aData.RECEIVE_AMOUNT);
   	            	return str;
   	            }	
             },
