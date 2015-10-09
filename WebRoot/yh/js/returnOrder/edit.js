@@ -204,6 +204,7 @@ $(document).ready(function() {
     	$("#returnOrderAccomplish").attr("disabled", true);
     }else if(result=='已签收'){
 		$("#status span").append("已签收"); 
+		$("#saveReturnOrderBtn").attr("disabled", true);
 		$("#returnOrderAccomplish").attr("disabled", true);
 		/*$("#addrow2").attr("disabled",true);*/
 	}else{
@@ -216,8 +217,11 @@ $(document).ready(function() {
 	// 回单签收
 	$("#returnOrderAccomplish").on('click', function(e){
 		var receivableTotal = $("#receivableTotal").val();
- 		if(receivableTotal != null && receivableTotal != ""){
+ 		//if(receivableTotal != null && receivableTotal != ""){
 			e.preventDefault();
+			
+			$("#saveReturnOrderBtn").attr("disabled", true);
+     	    $("#returnOrderAccomplish").attr("disabled", true);
 	        //异步向后台提交数据
 			var id = $("#returnId").val();
 			$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
@@ -225,14 +229,13 @@ $(document).ready(function() {
 	           if(data.success){
 	        	   //alert('签收成功！');
 	        	   $("#status span").html("已签收");
-	        	   $("#returnOrderAccomplish").attr("disabled", true);
 	           }else{
 	               alert('签收失败！');
 	           }
 	        },'json');
- 		}else{
- 			alert("请收款(新增应收)后再签收！");
- 		}
+// 		}else{
+// 			alert("请收款(新增应收)后再签收！");
+// 		}
 	});
 	
 	//修改序列号
