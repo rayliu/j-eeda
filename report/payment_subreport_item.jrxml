@@ -43,6 +43,7 @@
 		WHERE
 			caor.cost_order_id = aco.id
 		AND caor.application_order_id = appl_order.id
+                       AND caor.order_type = '对账单'
 	),3)as cost_amount,
     round((
 		aco.cost_amount - (
@@ -52,6 +53,7 @@
 				cost_application_order_rel caor
 			WHERE
 				caor.cost_order_id = aco.id
+			AND caor.order_type = '对账单'
 		)
 	),3) as cost_balance
     from
@@ -74,6 +76,7 @@ SELECT
 			cost_application_order_rel caor
 		WHERE
 			caor.application_order_id = appl_order.id
+		AND caor.order_type = '预付单'
 	) cost_amount,
 (appo.total_amount-(
 					SELECT
@@ -98,7 +101,7 @@ and caor.order_type='预付单']]>
 	<field name="create_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="confirm_stamp" class="java.util.Date">
+	<field name="confirm_stamp" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="total_amount" class="java.lang.Double">
