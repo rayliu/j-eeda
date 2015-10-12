@@ -133,6 +133,7 @@ $(document).ready(function() {
                     return str;
                 }
             },
+            {"mDataProp":"RECEIVINGUNIT", "sWidth":"130px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"180px"}, 
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"90px"},  
 		    {"mDataProp":null, "sWidth":"90px",
