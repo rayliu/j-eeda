@@ -131,21 +131,8 @@
 	    });		
 	});	
     
-    
-    
-    //异步技术待付金额总额
-//    $("#InvorceApplication-table").on('input', 'input', function(e){
-//		e.preventDefault();
-//		var value = 0.00;
-//		$("span[name='nopay_amounts']").each(function(){
-//				value = value + parseFloat($(this).html());
-//				$("#nopay_total").html(value);
-//				$("#nopay_amount").val(value);
-//	    });	
-//	});	
-    
-  
-    
+
+   
   //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
     $('#pay_bank').on('input click', function(){
@@ -160,8 +147,6 @@
 				 var hideAccountId = $("#hideAccountId").val();
 				 accountTypeSelect.append("<option ></option>");
 				 for(var i=0; i<data.length; i++){
-					 //accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
-					 //bankList.append("<li><a id='"+data[i].ID+"' >"+data[i].BANK_PERSON+" "+data[i].BANK_NAME+" "+data[i].ACCOUNT_NO+"</a></li>");
 					bankList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' bank_name='"+data[i].BANK_NAME+"' bank_person='"+data[i].BANK_PERSON+"' account_no='"+data[i].ACCOUNT_NO+"', >"+data[i].BANK_PERSON+" "+data[i].BANK_NAME+" "+data[i].ACCOUNT_NO+"</a></li>");
 				 }
 			}
@@ -298,6 +283,17 @@
             {"mDataProp":"C_NAME"}
         ]      
 	});
+	
+	
+	$('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#pay_time').trigger('keyup');
+    });
 	
 	
 });

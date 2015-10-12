@@ -2,6 +2,7 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -234,11 +235,18 @@ public class CostConfirmController extends Controller {
    		String nopay_amount = getPara("nopay_amount");
    		String total_amount = getPara("total_amount");
    		String orderIds = getPara("orderIds");
+   		String pay_time= getPara("pay_time");
    		String order_type = getPara("order_type"); //单据类型
    		String detailJson = getPara("detailJson");
    		String applicationId = "";
    		String value = "";
    		String sql = "";
+   		
+   		
+   		if( pay_time==null||pay_time.equals("")){
+   			pay_time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+   		}
+   		
    		Gson gson = new Gson();
 		List<LinkedTreeMap> list = gson.fromJson(detailJson, new TypeToken<List<LinkedTreeMap>>(){}.getType());
 		for (Map obj: list) {
@@ -275,7 +283,7 @@ public class CostConfirmController extends Controller {
 		arapCostPayConfirmOrderLog.set("pay_out_bank_name", pay_bank);
 		arapCostPayConfirmOrderLog.set("pay_out_account_no", pay_account_no);
 		arapCostPayConfirmOrderLog.set("amount", pay_amount);
-		arapCostPayConfirmOrderLog.set("create_date", new Date());
+		arapCostPayConfirmOrderLog.set("create_date", pay_time);
 		arapCostPayConfirmOrderLog.set("creator",LoginUserController.getLoginUserId(this));
 		arapCostPayConfirmOrderLog.set("order_id",confirmId);
 		arapCostPayConfirmOrderLog.save();
@@ -351,7 +359,7 @@ public class CostConfirmController extends Controller {
 	        auditLog.set("payment_type", ArapAccountAuditLog.TYPE_COST);
 	        auditLog.set("amount", pay_amount);
 	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
-	        auditLog.set("create_date", new Date());
+	        auditLog.set("create_date", pay_time);
 	        if(account!=null)
 	        	auditLog.set("account_id", account.get("id"));
 	        else
@@ -375,12 +383,12 @@ public class CostConfirmController extends Controller {
 	        	Account cashAccount = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
 	        	cashAccount.set("amount", (cashAccount.getDouble("amount")==null?0.0:cashAccount.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
 	        	
-	        	updateAccountSummary(pay_amount, cashAccount.getLong("id"));
+	        	updateAccountSummary(pay_amount, cashAccount.getLong("id"),pay_time);
 	        	
 	        }else{
 	        	account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
 	        	
-	        	updateAccountSummary(pay_amount, account.getLong("id"));
+	        	updateAccountSummary(pay_amount, account.getLong("id"),pay_time);
 	        }
 		
 		Map BillingOrderListMap = new HashMap();
@@ -391,22 +399,52 @@ public class CostConfirmController extends Controller {
 
 	//更新日记账的账户期初结余
 	//本期结余 = 期初结余 + 本期总收入 - 本期总支出
-	private void updateAccountSummary(String pay_amount, Long acountId) {
+	private void updateAccountSummary(String pay_amount, Long acountId, String pay_time) {
 		Calendar cal = Calendar.getInstance();  
-		int year = cal.get(Calendar.YEAR);  
-		int month = cal.get(Calendar.MONTH)+1;  
-		ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
-				"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-				, acountId, year, month);
-		if(aaas!=null){
-			aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
-			aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
-			aaas.update();
-		}else{//add a new
-			//1.该账户没有记录
-			//2.该月份没有，从上月拷贝一条，考虑：上月也没有（跨1-N月）， 跨年
-			ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
+		int this_year = cal.get(Calendar.YEAR);  
+		int this_month = cal.get(Calendar.MONTH)+1;  
+		String year = pay_time.substring(0, 4);
+		String month = pay_time.substring(5, 7);
+		
+		if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
+			ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+					"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+					, acountId, year, month);
+			if(aaas!=null){
+				aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
+				aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+				aaas.update();
+			}else{//add a new
+				//1.该账户没有记录
+				//2.该月份没有，从上月拷贝一条，考虑：上月也没有（跨1-N月）， 跨年
+				ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
+			}
+		}else{
+			ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+					"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+					, acountId, year, month);
+			ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
+					"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+					, acountId, this_year, this_month);
+			
+			
+			if(aaas!=null){
+				aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
+				aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+				aaas.update();
+				
+				this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") - Double.parseDouble(pay_amount)));
+				this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount)));
+				this_aaas.update();
+			}
+//			else{//add a new
+//				//1.该账户没有记录
+//				//2.该月份没有，从上月拷贝一条，考虑：上月也没有（跨1-N月）， 跨年
+//				ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
+//			}
 		}
+		
+	
 	}
 	
    	
