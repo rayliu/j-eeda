@@ -43,10 +43,9 @@ $(document).ready(function() {
         rules: {
         	payment_type:{required:true},
         	account_name: {required:true},
-        	account_no: {required:true,number: true}
         },
         messages : {	             
-        	customerMessage : {number:"请输入数字",required:"必填项"}
+        	customerMessage : {required:"必填项"}
         }
     });
 	
