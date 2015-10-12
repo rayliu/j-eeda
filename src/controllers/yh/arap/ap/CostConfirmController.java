@@ -183,7 +183,7 @@ public class CostConfirmController extends Controller {
 				arapCostPayConfirmOrderDtail.set("order_id", arapCostPayConfirmOrder.getLong("id"));
 				if(order_type.equals("成本单")){
 					arapCostPayConfirmOrderDtail.set("misc_cost_order_id", idArray[i]);
-				}else if(order_type.equals("报销单")){
+				}else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 					arapCostPayConfirmOrderDtail.set("reimbursement_order_id", idArray[i]);
 				}else if(order_type.equals("行车单")){
 					arapCostPayConfirmOrderDtail.set("car_summary_order_id", idArray[i]);
@@ -205,7 +205,7 @@ public class CostConfirmController extends Controller {
 	        			arapMiscChargeOrder.set("status", "付款确认中").update();
 	        		}
 					
-				}else if(order_type.equals("报销单")){
+				}else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(idArray[i]);
 					reimbursementOrder.set("status", "付款确认中").update();
 				}else if(order_type.equals("行车单")){
@@ -248,7 +248,7 @@ public class CostConfirmController extends Controller {
 			value = obj.get("value").toString();
 			if(order_type.equals("成本单")){
 				sql = "select * from arap_cost_pay_confirm_order_detail where misc_cost_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
-			}else if(order_type.equals("报销单")){
+			}else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 				sql = "select * from arap_cost_pay_confirm_order_detail where reimbursement_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}else if(order_type.equals("行车单")){
 				sql = "select * from arap_cost_pay_confirm_order_detail where car_summary_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
@@ -306,7 +306,7 @@ public class CostConfirmController extends Controller {
 				arapCostPayConfirmOrder.set("status", "部分已付款").update();
 				arapMiscCostOrder.set("status", "部分已付款").update();
 			}
-		}else if(order_type.equals("报销单")){
+		}else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 			ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(applicationId);
 			if(re.getDouble("total") == Double.parseDouble(total_amount)){
 				arapCostPayConfirmOrder.set("status", "已付款").update();
@@ -362,9 +362,9 @@ public class CostConfirmController extends Controller {
 	        }else if(order_type.equals("行车单")){
 	        	auditLog.set("car_summary_order_id", confirmId);
 	        	auditLog.set("source_order", "行车单");
-	        }else if(order_type.equals("报销单")){
+	        }else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 	        	auditLog.set("reimbursement_order_id", confirmId);
-	        	auditLog.set("source_order", "报销单");
+	        	auditLog.set("source_order", "行车报销单");
 	        }else{
 	        	auditLog.set("invoice_order_id", confirmId);
 	        	auditLog.set("source_order", "应付开票申请单");
@@ -447,7 +447,7 @@ public class CostConfirmController extends Controller {
 						+ " LEFT JOIN office o ON o.id = p.office_id "
 						+ " LEFT JOIN contact c ON c.id = p.contact_id "
 						+ " WHERE amco.id = '"+idArray[0]+"'";
-			}else if(order_type.equals("报销单")){
+			}else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 				sql = " SELECT  ro.account_name payee_unit, ro.account_no bank_no, ro.account_bank bank_name"
 					+ " FROM reimbursement_order ro WHERE ro.id = '"+idArray[0]+"'";
 			}else if(order_type.equals("行车单")){
@@ -490,7 +490,7 @@ public class CostConfirmController extends Controller {
 						+ " FROM arap_misc_cost_order amco "
 						+ " WHERE amco.id in(" + orderIds + ")";
 				
-			}else if(order_type.equals("报销单")){
+			}else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 				sql = "SELECT ro.id, ro.order_no, ro.create_stamp cost_stamp, ro.amount pay_amount, "
 						+ "ifnull( ro.amount - ( SELECT sum(acpcodl.pay_amount)"
 						+ "FROM arap_cost_pay_confirm_order_detail_log acpcodl"

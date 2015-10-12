@@ -38,17 +38,34 @@ $(document).ready(function() {
             }, 
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
+            		var A=obj.aData.ORDER_NO.substring(0, 4);
             		if(obj.aData.ATTRIBUTE == '申请单')
             			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ATTRIBUTE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else if(obj.aData.ATTRIBUTE == '报销单')
-            			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(obj.aData.ATTRIBUTE == '报销单'){
+            			if(A=='YFBX'){
+            				return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			}
+            			else if(A=='XCBX'){
+            				return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			}
+            		}
             		else if(obj.aData.ATTRIBUTE == '行车单')
             			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else
             			return obj.aData.ORDER_NO;
         		} 
             },
-            {"mDataProp":"ATTRIBUTE", "sWidth":"80px"},   
+            {"mDataProp":"ATTRIBUTE", "sWidth":"80px",
+            "fnRender": function(obj) {
+            	var A=$(obj.aData.ORDER_NO).text().substring(0, 4);
+            	if(A=='YFBX')
+    				return "报销单";
+            	else if(A=='XCBX')
+            		return "行车报销单";
+            	else
+        			return obj.aData.ATTRIBUTE;
+            	}
+            },   
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px",
             	"sClass": "pay_amount",
             	 "fnRender": function(obj) {
@@ -171,18 +188,35 @@ $(document).ready(function() {
 			},
             {"mDataProp":"ORDER_NO","sWidth":"80px",
             	"fnRender": function(obj) {
+            		var A=obj.aData.ORDER_NO.substring(0, 4);
         			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		if(obj.aData.ORDER_TYPE == '申请单')
             			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else if(obj.aData.ORDER_TYPE == '报销单')
-            			return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(obj.aData.ORDER_TYPE == '报销单'){
+            			if(A=='YFBX'){
+            				return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			}
+            			else if(A=='XCBX'){
+            				return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			}
+            		}
             		else if(obj.aData.ORDER_TYPE == '行车单')
             			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else
             			return obj.aData.ORDER_NO;
         		}
             },
-            {"mDataProp":"ORDER_TYPE", "sWidth":"80px"},
+            {"mDataProp":"ORDER_TYPE", "sWidth":"80px",
+                "fnRender": function(obj) {
+                	var A=$(obj.aData.ORDER_NO).text().substring(0, 4);
+                	if(A=='YFBX')
+        				return "报销单";
+                	else if(A=='XCBX')
+                		return "行车报销单";
+                	else
+            			return obj.aData.ORDER_TYPE;
+                	}
+                },   
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px",
             	"sClass":"pay_amount",
            	 	"fnRender": function(obj) {
