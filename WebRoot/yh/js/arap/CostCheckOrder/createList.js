@@ -101,15 +101,15 @@ $(document).ready(function() {
             {"mDataProp":"CHANGE_AMOUNT","sWidth":"60px",
             	"fnRender": function(obj) {
                     if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
-                        return "<input type='text' style='' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                        return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                         
                     }
                     else {
                     	if(obj.aData.PAY_AMOUNT!=null){
-                        return "<input type='text' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+                        return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
                     	}
                     	else{
-                    		return "<input type='text' name='change_amount' value='0'/>";
+                    		return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
                     	}
                     }
                 }
