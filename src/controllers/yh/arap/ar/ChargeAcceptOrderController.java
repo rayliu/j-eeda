@@ -15,6 +15,7 @@ import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -48,6 +49,10 @@ public class ChargeAcceptOrderController extends Controller {
     public void list() {
         String sLimit = "";
         String status = getPara("status");
+        String orderNo_filter = getPara("orderNo_filter");
+        String customer_filter = getPara("customer_filter");
+        String beginTime = getPara("beginTime_filter");
+        String endTime = getPara("endTime_filter");
         String status2 = "";
         if(status.equals("unCheck")){
         	status = "'已审批'";
@@ -84,12 +89,41 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " and amco.type = 'non_biz'"
         	    + " and amco.total_amount >= 0) A";
         
-        String sqlTotal = "select count(1) total from ("+sql+") tab";
-        Record rec = Db.findFirst(sqlTotal);
+        
+        String conditions=" where 1=1 ";
+        if (StringUtils.isNotEmpty(orderNo_filter)){
+        	conditions+=" and UPPER(order_no) like '%"+orderNo_filter.toUpperCase()+"%'";
+        }
+        if (StringUtils.isNotEmpty(customer_filter)){
+        	conditions+=" and UPPER(customer) like '%"+customer_filter+"%'";
+        }
+//        if (StringUtils.isNotEmpty(spName)){
+//        	conditions+=" and c1.abbr like '%"+spName+"%'";
+//        }
+//        if (StringUtils.isNotEmpty(receiverName)){
+//        	conditions+=" and cpco.receive_person like '%"+receiverName+"%'";
+//        }
+//        
+        if (StringUtils.isNotEmpty(beginTime)){
+        	beginTime = " and create_time between'"+beginTime+"'";
+        }else{
+        	beginTime =" and create_time between '1970-1-1'";
+        }
+        if (StringUtils.isNotEmpty(endTime)){
+        	endTime =" and '"+endTime+"'";
+        }else{
+        	endTime =" and '3000-1-1'";
+        }
+        conditions+=beginTime+endTime;
+
+        
+        
+        String sqlTotal = "select count(1) total from ("+sql+") tab " ;
+        Record rec = Db.findFirst(sqlTotal+ conditions);
         logger.debug("total records:" + rec.getLong("total"));
         
        
-        List<Record> BillingOrders = Db.find(sql + " order by create_time desc " + sLimit);
+        List<Record> BillingOrders = Db.find(sql + conditions + " order by create_time desc " + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

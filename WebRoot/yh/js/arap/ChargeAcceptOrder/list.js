@@ -82,6 +82,8 @@ $(document).ready(function() {
         ]      
     });
     
+    
+    
     $.post('/chargeMiscOrder/searchAllAccount',function(data){
 		 if(data.length > 0){
 			 var accountTypeSelect = $("#accountTypeSelect");
@@ -269,6 +271,73 @@ $(document).ready(function() {
         e.preventDefault();
         $('#confirmForm').submit();
         ids = [];
+    });
+	
+	
+	
+	var refreshData=function(){
+		var orderNo_filter =  $("#orderNo_filter").val();
+		var customer_filter =  $("#customer_filter").val();
+		var beginTime_filter =  $("#beginTime_filter").val();
+		var endTime_filter =  $("#endTime_filter").val();
+		
+//        var plantime=$("#plantime").val();
+//        var arrivarltime=$("#arrivaltime").val();
+//        var customer_order_no=$("#order_no_filter").val();
+
+        chargeNoAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?status=unCheck&orderNo_filter="+orderNo_filter
+        		                                       +"&customer_filter="+customer_filter
+        		                                       +"&beginTime_filter="+beginTime_filter
+        		                                       +"&endTime_filter="+endTime_filter;
+       
+		chargeNoAcceptOrderTab.fnDraw();
+    };
+    
+    
+    $("#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter").on('keyup',function(){
+    	refreshData();
+    });
+    
+	
+	
+	
+	//获取客户列表，自动填充
+    $('#customer_filter').on('keyup click', function(event){
+        var me = this;
+        var inputStr = $('#customer_filter').val();
+        var companyList =$("#companyList");
+        $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
+            companyList.empty();
+            for(var i = 0; i < data.length; i++)
+                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+                
+            companyList.css({ 
+		    	left:$(me).position().left+"px", 
+		    	top:$(me).position().top+32+"px" 
+		    });
+	        companyList.show();    
+        },'json');  
+    });
+    
+    $('#companyList').on('click', '.fromLocationItem', function(e){        
+        $('#customer_filter').val($(this).text());
+        $("#companyList").hide();
+//        var companyId = $(this).attr('partyId');
+//        $('#customerId').val(companyId);
+    	refreshData();
+    });
+    // 没选中客户，焦点离开，隐藏列表
+    $('#customer_filter').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+    $('#customer_filter').on('blur', function(){
+        $('#companyList').hide();
+    });
+
+    $('#companyList').on('mousedown', function(){
+        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
 	
 } );

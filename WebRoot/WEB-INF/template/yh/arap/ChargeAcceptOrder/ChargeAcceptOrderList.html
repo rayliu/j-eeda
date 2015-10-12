@@ -41,20 +41,7 @@
                                                 <div class="form-group">
                                                     <label class="search-label">客户</label>
                                                     <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户"/>
-                                                    <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 28%; left: 32%;"></ul>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="search-label">开票记录单号</label>
-                                                    <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"/>
-                                                </div>
-                                                <div class="form-group">
-                                                    <button type="button" id="checkBtn" disabled="disabled" class="btn  btn-primary" >复核</button>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group">
-                                                    <label class="search-label">收款申请单号</label>
-                                                    <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value=""/>
+                                                    <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 28%; left: 32%;"></ul>
                                                 </div>
                                                 <div class="form-group">
                                                     <div id="datetimepicker" class="input-append date ">
@@ -64,15 +51,14 @@
                                                         </span>
                                                     </div>
                                                 </div>
+                                                <div class="form-group">
+                                                    <button type="button" id="checkBtn" disabled="disabled" class="btn  btn-primary" >复核</button>
+                                                </div>
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label class="search-label">状态</label>
-                                                    <select id="status_filter" class="form-control search-control status_filter">
-                                                        <option value=""></option>
-                                                        <option value="已审批">已审批</option>
-                                                        <option value="已收款确认">已收款确认</option>
-                                                    </select>
+                                                    <label class="search-label">业务单号</label>
+                                                    <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value=""/>
                                                 </div>
                                                 <div class="form-group">
                                                     <span id="datetimepicker2" class="input-append date search-control ">
@@ -82,6 +68,21 @@
                                                         </span>
                                                     </span>
                                                 </div>
+                                                <!-- <div class="form-group">
+                                                    <label class="search-label">开票记录单号</label>
+                                                    <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"/>
+                                                </div> -->
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <!-- <div class="form-group">
+                                                    <label class="search-label">状态</label>
+                                                    <select id="status_filter" class="form-control search-control status_filter">
+                                                        <option value=""></option>
+                                                        <option value="已审批">已审批</option>
+                                                        <option value="已收款确认">已收款确认</option>
+                                                    </select>
+                                                </div> -->
+                                                
                                             </div>
 
                                         </div>
