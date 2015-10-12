@@ -437,14 +437,7 @@ public class CostConfirmController extends Controller {
 				this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount)));
 				this_aaas.update();
 			}
-//			else{//add a new
-//				//1.该账户没有记录
-//				//2.该月份没有，从上月拷贝一条，考虑：上月也没有（跨1-N月）， 跨年
-//				ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
-//			}
 		}
-		
-	
 	}
 	
    	

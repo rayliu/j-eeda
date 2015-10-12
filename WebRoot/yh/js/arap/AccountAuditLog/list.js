@@ -79,10 +79,10 @@ $(document).ready(function() {
 	        {"mDataProp": "INIT_AMOUNT"}, //期初
             {"mDataProp": "TOTAL_CHARGE"}, //本期收入
 	        {"mDataProp":"TOTAL_COST"},  //本期支出
-            {"mDataProp":null, //本期结余
-                 "fnRender": function(obj) {
-                return obj.aData.INIT_AMOUNT+obj.aData.TOTAL_CHARGE-obj.aData.TOTAL_COST;
-              }
+            {"mDataProp":"BALANCE_AMOUNT" //本期结余
+//                 "fnRender": function(obj) {
+//                return obj.aData.INIT_AMOUNT+obj.aData.TOTAL_CHARGE-obj.aData.TOTAL_COST;
+//              }
             }, //期末结余
 	        {"mDataProp":"REMARK", "bVisible": false}           
 	     ]      
