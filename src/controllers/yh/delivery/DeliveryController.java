@@ -117,7 +117,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,w.warehouse_name, "
+			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -146,7 +146,7 @@ public class DeliveryController extends Controller {
 					+ " FROM delivery_order d"
 					+ " LEFT JOIN party p ON d.customer_id = p.id"
 					+ " LEFT JOIN contact c ON p.contact_id = c.id"
-					+ " LEFT JOIN party p2 ON d.sp_id = p2.id"
+					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"
 					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
@@ -226,7 +226,7 @@ public class DeliveryController extends Controller {
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
-			String sql = "select * from (SELECT toi.item_no item_no,trid.id tid,c2.contact_person driver,c2.phone,pickup_mode,IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) company,o.office_name,tor.customer_order_no,tor.status statu,w.warehouse_name, "
+			String sql = "select * from (SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.status statu,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -254,7 +254,7 @@ public class DeliveryController extends Controller {
 					+ " WHERE doi.delivery_id = d.id ) AS serial_no FROM delivery_order d"
 					+ " LEFT JOIN party p ON d.customer_id = p.id"
 					+ " LEFT JOIN contact c ON p.contact_id = c.id"
-					+ " LEFT JOIN party p2 ON d.sp_id = p2.id"
+					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"
 					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
