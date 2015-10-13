@@ -16,10 +16,10 @@ import config.EedaConfig;
 public class ResetPassWordController extends Controller{
 	
 	public void index(){
-		render("/yh/profile/resetPassWord/resetPass.html");
+		render("/yh/profile/resetPassword/resetPass.html");
 	}
 	public void input(){
-		render("/yh/profile/resetPassWord/inputPass.html");
+		render("/yh/profile/resetPassword/inputPass.html");
 	}
 	  // 使用common-email, javamail
     public void sendMail() throws Exception {
@@ -61,10 +61,10 @@ public class ResetPassWordController extends Controller{
       
         try{
         	email.send();
-        	render("/yh/profile/resetPassWord/sendSuccess.html");
+        	render("/yh/profile/resetPassword/sendSuccess.html");
         }catch(Exception e){
         	e.printStackTrace();
-        	render("/yh/profile/resetPassWord/sendError.html");
+        	render("/yh/profile/resetPassword/sendError.html");
         }
         
        
@@ -87,7 +87,7 @@ public class ResetPassWordController extends Controller{
 		user.set("password", getPara("pass"));
     	user.set("token", null);
     	user.update();
-    	render("/yh/profile/resetPassWord/resetSuccess.html");
+    	render("/yh/profile/resetPassword/resetSuccess.html");
     	
     }
 }
