@@ -41,7 +41,6 @@ $(document).ready(function() {
 	//from表单验证
 	var validate = $('#expenseAccountForm').validate({
         rules: {
-        	payment_type:{required:true},
         	account_name: {required:true},
         },
         messages : {	             
