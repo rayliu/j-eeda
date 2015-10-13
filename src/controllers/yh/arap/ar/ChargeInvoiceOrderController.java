@@ -183,10 +183,10 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " left join party p on p.id = aci.payee_id "
 				+ " left join contact c on c.id = p.contact_id ";*/
         
-        String sql = "select aci.*,group_concat(distinct acai.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname,c1.abbr sp from arap_charge_invoice aci"
+        String sql = "select aci.*,group_concat(distinct acio.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname,c1.abbr sp from arap_charge_invoice aci"
 				+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
-				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
-				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
+//				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
+//				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
 				+ " left join user_login ul on ul.id = aci.create_by "
 				+ " left join party p on p.id = aci.payee_id "
 				+ " left join contact c on c.id = p.contact_id "
