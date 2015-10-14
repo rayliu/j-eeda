@@ -65,6 +65,7 @@ $(document).ready(function() {
     	},
     	"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.ID);
+			$(nRow).attr('account_id', aData.ACCOUNT_ID);
 			return nRow;
 		},
     	"sAjaxSource": "/accountAuditLog/accountList?beginTime="+ $("#beginTime_filter").val(),
@@ -99,7 +100,7 @@ $(document).ready(function() {
        	var idArr=[];
    	    $("input[name='order_check_box']").each(function(){
    	    	if($(this).prop('checked') == true){
-   	    		idArr.push($(this).val());
+   	    		idArr.push($(this).parent().parent().attr("account_id"));
    	    	}
    	    });
    	    var ids = idArr.toString();
@@ -116,7 +117,7 @@ $(document).ready(function() {
     	var idArr=[];
    	    $("input[name='order_check_box']").each(function(){
    	    	if($(this).prop('checked') == true){
-   	    		idArr.push($(this).val());
+   	    		idArr.push($(this).parent().parent().attr("account_id"));
    	    	}
    	    });
    	    var ids = idArr.toString();
