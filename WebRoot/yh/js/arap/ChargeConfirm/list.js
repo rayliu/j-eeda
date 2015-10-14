@@ -7,6 +7,7 @@ $(document).ready(function() {
     var invoiceApplicationOrderIds = $("#invoiceApplicationOrderIds").val();
     var total = 0.00;
     var datatable=$('#chargeConfirm_table').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
@@ -152,6 +153,24 @@ $(document).ready(function() {
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
+    });
+    
+    $('#datetimepicker3').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();   
+        $('#beginTime_filter2').trigger('keyup');
+    });
+
+    $('#datetimepicker4').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter2').trigger('keyup');
     });
 
     $('#query_btn').click(function(){

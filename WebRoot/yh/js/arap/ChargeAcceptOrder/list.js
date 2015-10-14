@@ -10,6 +10,7 @@ $(document).ready(function() {
    
 	//datatable, 动态处理
     var chargeNoAcceptOrderTab = $('#chargeNoAccept-table').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -162,6 +163,7 @@ $(document).ready(function() {
 	
 	//datatable, 动态处理
     var chargeAcceptOrderTab = $('#chargeAccept-table').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
         "bFilter": false, //不需要默认的搜索框
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -274,28 +276,46 @@ $(document).ready(function() {
     });
 	
 	
-	
+	//未复核数据条件查询
 	var refreshData=function(){
 		var orderNo_filter =  $("#orderNo_filter").val();
 		var customer_filter =  $("#customer_filter").val();
 		var beginTime_filter =  $("#beginTime_filter").val();
 		var endTime_filter =  $("#endTime_filter").val();
-		
-//        var plantime=$("#plantime").val();
-//        var arrivarltime=$("#arrivaltime").val();
-//        var customer_order_no=$("#order_no_filter").val();
 
         chargeNoAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?status=unCheck&orderNo_filter="+orderNo_filter
         		                                       +"&customer_filter="+customer_filter
         		                                       +"&beginTime_filter="+beginTime_filter
         		                                       +"&endTime_filter="+endTime_filter;
-       
 		chargeNoAcceptOrderTab.fnDraw();
     };
     
     
     $("#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter").on('keyup',function(){
     	refreshData();
+    });
+    
+    
+    
+    
+  //已复核数据条件查询
+	var refreshData2=function(){
+		var orderNo_filter =  $("#orderNo_filter2").val();
+		var customer_filter =  $("#customer_filter2").val();
+		var beginTime_filter =  $("#beginTime_filter2").val();
+		var endTime_filter =  $("#endTime_filter2").val();
+
+		chargeAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?status=check&orderNo_filter="+orderNo_filter
+        		                                       +"&customer_filter="+customer_filter
+        		                                       +"&beginTime_filter="+beginTime_filter
+        		                                       +"&endTime_filter="+endTime_filter;
+       
+		chargeAcceptOrderTab.fnDraw();
+    };
+    
+    
+    $("#orderNo_filter2,#customer_filter2,#beginTime_filter2,#endTime_filter2").on('keyup blur',function(){
+    	refreshData2();
     });
     
 	
@@ -339,5 +359,45 @@ $(document).ready(function() {
     $('#companyList').on('mousedown', function(){
         return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
+    
+    
+    //已复核界面的客户
+  //获取客户列表，自动填充
+    $('#customer_filter2').on('keyup click', function(event){
+        var me = this;
+        var inputStr = $('#customer_filter2').val();
+        var companyList2 =$("#companyList2");
+        $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
+            companyList2.empty();
+            for(var i = 0; i < data.length; i++)
+                companyList2.append("<li><a tabindex='-1' class='fromLocationItem2' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+                
+            companyList2.css({ 
+		    	left:$(me).position().left+"px", 
+		    	top:$(me).position().top+32+"px" 
+		    });
+	        companyList2.show();    
+        },'json');  
+    });
+    
+    $('#companyList2').on('click', '.fromLocationItem2', function(e){        
+        $('#customer_filter2').val($(this).text());
+        $("#companyList2").hide();
+    	refreshData2();
+    });
+    // 没选中客户，焦点离开，隐藏列表
+    $('#customer_filter2').on('blur', function(){
+        $('#companyList2').hide();
+    });
+
+    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+    $('#customer_filter2').on('blur', function(){
+        $('#companyList2').hide();
+    });
+
+    $('#companyList2').on('mousedown', function(){
+        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+    });
+    
 	
 } );
