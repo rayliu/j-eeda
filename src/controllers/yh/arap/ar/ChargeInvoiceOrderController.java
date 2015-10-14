@@ -111,7 +111,7 @@ public class ChargeInvoiceOrderController extends Controller {
         		+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
-				+ " where aaia.status = '已审批' ";
+				+ " where aaia.status = '已审批' and aaia.have_invoice = 'Y'";
 		String sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by,"
 				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no,"
 				+ " c1.abbr sp"
@@ -122,7 +122,7 @@ public class ChargeInvoiceOrderController extends Controller {
         		+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
-				+ " where aaia.status = '已审批' ";
+				+ " where aaia.status = '已审批' and aaia.have_invoice = 'Y'";
 		String condition = "";
 		if(companyName != null || beginTime != null || endTime != null
 				|| orderNo != null  || status != null || office != null ){

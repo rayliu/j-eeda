@@ -10,6 +10,7 @@ import java.util.Map;
 import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
+import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
@@ -55,10 +56,10 @@ public class ChargeAcceptOrderController extends Controller {
         String endTime = getPara("endTime_filter");
         String status2 = "";
         if(status.equals("unCheck")){
-        	status = "'已审批'";
+        	status = "已审批";
         	status2 = "新建";
         }else{
-        	status = "'已复核'";
+        	status = "已复核";
         	status2 = "已复核";
         }
         String pageIndex = getPara("sEcho");
@@ -76,7 +77,7 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " left join party p on p.id = aci.payee_id "
         		+ " left join contact c on c.id = p.contact_id"
         		+ " left join contact c1 on c1.id = aci.sp_id"
-        		+ " where aci.status in(" + status + ") "
+        		+ " where aci.status in('" + status + "') "
         	    + " UNION "
         	    + " select amco.id,'手工收入单' order_type, amco.order_no,amco.status, amco.others_name payee ,"
         	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr customer,c1.company_name cname "
@@ -87,7 +88,17 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
         	    + " where amco.status = '"+status2+"'"
         	    + " and amco.type = 'non_biz'"
-        	    + " and amco.total_amount >= 0) A";
+        	    + " and amco.total_amount >= 0"
+        	    + " UNION "
+        	    + " select amco.id,'申请单' order_type, amco.order_no,amco.status, null payee ,"
+        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr customer,c1.company_name cname "
+        	    + " from arap_charge_invoice_application_order amco "
+        	    + " LEFT JOIN party p ON p.id = amco.payee_id "
+        	    + " LEFT JOIN contact c ON c.id = p.contact_id "
+        	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
+        	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
+        	    + " where amco.status = '"+status+"' and amco.have_invoice = 'N'"
+        	    + " ) A";
         
         
         String conditions=" where 1=1 ";
@@ -271,6 +282,10 @@ public class ChargeAcceptOrderController extends Controller {
 	            ArapChargeInvoice arapChargeInvoice= ArapChargeInvoice.dao.findById(id);
 	            arapChargeInvoice.set("status","已复核");
 	            arapChargeInvoice.update();
+	        }else if(order_type.equals("申请单")){
+        		ArapChargeInvoiceApplication arapChargeInvoiceApplication =ArapChargeInvoiceApplication.dao.findById(id);
+        		arapChargeInvoiceApplication.set("status", "已复核");
+        		arapChargeInvoiceApplication.update();
 	        }else if(order_type.equals("报销单")){
         		ReimbursementOrder reimbursementorder =ReimbursementOrder.dao.findById(id);
         		reimbursementorder.set("status", "已复核");
