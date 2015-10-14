@@ -321,10 +321,10 @@ public class EedaConfig extends JFinalConfig {
 		me.add("/driverAssistant", DriverAssistantController.class, contentPath);
 		//退货单
 		me.add("/returnTransfer",ReturnTransferController.class,contentPath);
-		
-		me.add("/scanOrder", ContentletController.class,contentPath);
 		//app 
 		me.add("/m", controllers.yh.app.AppController.class, contentPath);
+		
+		me.add("/gateOutOrder", ContentletController.class, "bz");
 	}
 
     @Override

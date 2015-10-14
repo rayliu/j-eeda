@@ -33,13 +33,28 @@ public class ContentletController extends Controller {
 //    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     public void index() {
-        render("/yh/scanorder/OrderList.html");
+        render("/bz/gateOutOrder/OrderList.html");
     }
     
     public void list() {
     	String pageIndex = getPara("sEcho");
     	
-    	String sqlField = "select field_name, field_type, field_contentlet from field where structure_id=1";
+    	List<Record> results = searchGateOutOrder("");
+    	
+    	Map orderListMap = new HashMap();
+    	orderListMap.put("sEcho", pageIndex);
+    	orderListMap.put("iTotalRecords", 10);
+    	orderListMap.put("iTotalDisplayRecords", 10);
+
+    	orderListMap.put("aaData", results);
+		
+		renderJson(orderListMap);
+    }
+
+	private List<Record> searchGateOutOrder(String condition) {
+		String structureId ="1";
+    	
+    	String sqlField = "select field_name, field_type, field_contentlet from field where structure_id="+structureId;
     	List<Record> fields = Db.find(sqlField);
     	
     	String contentletFields = "";
@@ -54,37 +69,24 @@ public class ContentletController extends Controller {
     		}
 		} 
     	
-    	String sql = "select 'aa' as seq"+contentletFields+" from contentlet cl where structure_id = 1";
+    	String sql = "select id"+contentletFields+" from contentlet cl where structure_id = "+structureId + condition;
     	
     	List<Record> results = Db.find(sql);
-
-    	
-    	Map orderListMap = new HashMap();
-    	orderListMap.put("sEcho", pageIndex);
-    	orderListMap.put("iTotalRecords", 10);
-    	orderListMap.put("iTotalDisplayRecords", 10);
-
-    	orderListMap.put("aaData", results);
-		
-		renderJson(orderListMap);
-    }
+		return results;
+	}
+	
+	private Record getGateOutOrderById(String orderId) {
+    	List<Record> results = searchGateOutOrder(" and id="+orderId);
+    	if(!results.isEmpty() && results.size() == 1)
+    		return results.get(0);
+		return null;
+	}
     
-    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_CREATE})
-    // 链接到添加金融账户页面
-    public void editAccount() {
-        render("/yh/scanorder/updateOrder.html");
-    }
-
-    // 编辑金融账户信息
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_A_UPDATE})
     public void edit() {
-        String id = getPara();
-        if (id != null) {
-            Account l = Account.dao.findById(id);
-            setAttr("ul", l);
-        }
-        render("/yh/scanorder/updateOrder.html");
-
+        String orderId = getPara();
+        setAttr("order", getGateOutOrderById(orderId));
+        render("/bz/gateOutOrder/updateOrder.html");
     }
 
 }
