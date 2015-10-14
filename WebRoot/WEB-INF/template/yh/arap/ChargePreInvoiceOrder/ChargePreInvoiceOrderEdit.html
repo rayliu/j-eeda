@@ -97,6 +97,17 @@
                                         	<label>此次收款金额:</label>
                                         	<label class="radio-inline"><span id="receive_amount">${receive_amount!''}</span></label>
                                         </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="label-margin">是否开票</label>
+                                           	<input id="invoiceRadio" type="hidden" value="${transferOrder.order_type!''}"/>
+                                           	<label class="radio-inline">
+                                                <input type="radio" name="invoiceType" id="salesOrder" value="Y" checked="checked">是
+                                            </label>
+                                           	<label class="radio-inline">
+                                                <input type="radio" name="invoiceType" id="replenishmentOrder" value="N">否
+                                            </label>
+                                        </div>
                                         <!-- <div class="form-group" id="paymentMethods">
                                             <label class="label-margin">收款方式</label>
                                             	<input id="paymentMethodRadio" type="hidden" value="${arapAuditInvoiceApplication.payment_method!''}"/>
