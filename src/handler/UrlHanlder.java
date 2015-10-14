@@ -1,5 +1,7 @@
 package handler;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,9 +19,20 @@ public class UrlHanlder extends Handler {
 		String host = request.getRemoteHost();// 返回发出请求的客户机的主机名
 		int port = request.getRemotePort();// 返回发出请求的客户机的端口号。
 
+		String queryString = "";  //获取Post参数
+		Map<String, String[]> postParams = request.getParameterMap(); 
+        for (String key : postParams.keySet()) {  
+            String[] values = postParams.get(key);  
+            for (int i = 0; i < values.length; i++) {  
+                String value = values[i];  
+                queryString += key + "=" + value + "&";  
+            }  
+        }  
+		
 		logger.debug("handle url: " + target);
 		logger.debug("IP: " + ip);
-		logger.debug("params: " + params);
+		logger.debug("GET params: " + params);
+		logger.debug("POST params: " + queryString);
 		logger.debug("host: " + host + ":" + port);
 		logger.debug("----------------------------------------------------------");
 		// login page handle
