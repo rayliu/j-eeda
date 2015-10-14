@@ -33,6 +33,7 @@ $(document).ready(function() {
             	}
             }, 
             {"mDataProp":"STATUS", "sWidth": "60px"},//状态
+            {"mDataProp":"CUSTOMER_NAME", "sWidth": "100px"},//客户
             {"mDataProp":"SP_NAME", "sWidth": "100px"},//供应商
             {"mDataProp":"RECEIVE_PERSON","sWidth": "80px"},//收款人
             {"mDataProp":"PAY_AMOUNT","sWidth": "60px"},//付款金额  
@@ -172,23 +173,88 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter2').trigger('keyup');
     });
+    
+    $('#datetimepicker5').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();   
+        $('#beginTime_filter3').trigger('keyup');
+    });
 
-    $('#query_btn').click(function(){
-        var order_no = $('#order_no_filter').val();
+    $('#datetimepicker6').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter3').trigger('keyup');
+    });
+
+    
+    var refreshData = function(){
+    	var receiveConfirnNo = $('#receiveConfirnNo_filter').val();
+        var order_no = $('#orderNo').val();
         var status = $('#status_filter').val();
         var sp_name = $('#sp_filter').val();
+        var customer_name = $('#customer_filter3').val();
         var receiverName = $('#receiver_filter').val();
-        var beginTime = $('#beginTime_filter').val();
-        var endTime = $('#endTime_filter').val();
+        var beginTime = $('#beginTime_filter3').val();
+        var endTime = $('#endTime_filter3').val();
         datatable.fnSettings().sAjaxSource = "/chargeConfirm/list?orderNo="+order_no
             +"&status="+status
+            +"&receiveConfirnNo="+receiveConfirnNo
             +"&sp_name="+sp_name
             +"&receiverName="+receiverName
+            +"&customer_name="+customer_name
             +"&beginTime="+beginTime
             +"&endTime="+endTime;
             
         datatable.fnDraw(); 
+    };
+    
+    
+    $('#query_btn').click(function(){
+    	refreshData();
     });
+    
+    
+    $('#receiveConfirnNo_filter,#orderNo,#sp_filter,#customer_filter3,#receiver_filter,#beginTime_filter3,#endTime_filter3').on('keyup',function(){
+    	refreshData();
+    });
+    
+    
+    
+    
+    //已收款界面的客户
+    //获取客户列表，自动填充
+      $('#customer_filter3').on('keyup click', function(event){
+          var me = this;
+          var inputStr = $('#customer_filter3').val();
+          var companyList3 =$("#companyList3");
+          $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
+              companyList3.empty();
+              for(var i = 0; i < data.length; i++)
+                  companyList3.append("<li><a tabindex='-1' class='fromLocationItem3' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+                  
+              companyList3.css({ 
+  		    	left:$(me).position().left+"px", 
+  		    	top:$(me).position().top+32+"px" 
+  		    });
+  	        companyList3.show();    
+          },'json');  
+      });
+      
+      $('#companyList3').on('click', '.fromLocationItem3', function(e){        
+          $('#customer_filter3').val($(this).text());
+          $("#companyList3").hide();
+      	refreshData();
+      });
+      // 没选中客户，焦点离开，隐藏列表
+      $('#customer_filter3').on('blur', function(){
+          $('#companyList3').hide();
+      });
 
 
 } );

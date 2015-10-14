@@ -318,8 +318,7 @@ $(document).ready(function() {
     	refreshData2();
     });
     
-	
-	
+
 	
 	//获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(event){
@@ -398,6 +397,18 @@ $(document).ready(function() {
     $('#companyList2').on('mousedown', function(){
         return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
+    
+    
+
+
+      //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+      $('#customer_filter3').on('blur', function(){
+          $('#companyList3').hide();
+      });
+
+      $('#companyList3').on('mousedown', function(){
+          return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+      });
     
 	
 } );

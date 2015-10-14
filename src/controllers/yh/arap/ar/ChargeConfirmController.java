@@ -544,9 +544,10 @@ public class ChargeConfirmController extends Controller {
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void list() {
     	String orderNo = getPara("orderNo")==null?null:getPara("orderNo").trim();
-    	String appOrderNo = getPara("applicationOrderNo")==null?null:getPara("applicationOrderNo").trim();
+    	String receiveConfirnNo = getPara("receiveConfirnNo")==null?null:getPara("receiveConfirnNo").trim();
 		String status = getPara("status")==null?null:getPara("status").trim();
 		String spName = getPara("sp_name")==null?null:getPara("sp_name").trim();
+		String customerName = getPara("customer_name")==null?null:getPara("customer_name").trim();
 		String receiverName = getPara("receiverName")==null?null:getPara("receiverName").trim();
 		String beginTime = getPara("beginTime")==null?null:getPara("beginTime").trim();
 		String endTime = getPara("endTime")==null?null:getPara("endTime").trim();
@@ -558,14 +559,20 @@ public class ChargeConfirmController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
+		
+		String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
                
         String fromSql = " from arap_charge_receive_confirm_order cpco "
         			+ " LEFT JOIN arap_charge_receive_confirm_order_detail acrc on acrc.order_id = cpco.id "
-        			+ " left join party p1 on cpco.sp_id = p1.id "
-					+ " left join contact c1 on p1.contact_id = c1.id"
+        			+ " LEFT JOIN party p ON cpco.sp_id = p.id "
+        			+ " LEFT JOIN contact c ON p.contact_id = c.id "
+        			+ " LEFT JOIN contact c2 ON c2.id = cpco.customer_id"
 					+ " left join user_login ul on ul.id=cpco.creator";
         
-        String totalSql = "select count(1) total" + fromSql;
+        //String totalSql = "select count(1) total" + fromSql;
         
         String columsSql = "select cpco.*, "
         		+ " ( SELECT group_concat( DISTINCT aci .order_no SEPARATOR '<br/>' ) FROM arap_charge_invoice aci  "
@@ -586,32 +593,35 @@ public class ChargeConfirmController extends Controller {
 				+ " WHERE acr.order_id = cpco.id ) end ) pay_amount,"
 				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_charge_receive_confirm_order_log log "
 				+ " where log.order_id = cpco.id) already_pay, "
-        		+ " c1.abbr sp_name,"
+        		+ " c.abbr sp_name,"
+        		+ " c2.abbr customer_name,"
         		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
         		+ fromSql;
-        String orderBy= "group by cpco.id order by cpco.create_date desc ";
+        //String orderBy= "group by cpco.id order by cpco.create_date desc ";
         
         String conditions=" where 1=1 ";
+        if (StringUtils.isNotEmpty(receiveConfirnNo)){
+        	conditions+=" and UPPER(order_no) like '%"+receiveConfirnNo.toUpperCase()+"%'";
+        }
+        
         if (StringUtils.isNotEmpty(orderNo)){
-        	conditions+=" and UPPER(cpco.order_no) like '%"+orderNo.toUpperCase()+"%'";
+        	conditions+=" and (UPPER(sksq_no) like '%"+orderNo.toUpperCase()+"%' or UPPER(misc_no) like '%"+orderNo.toUpperCase()+"%')" ;
         }
-//        if (appOrderNo != null){
-//        	conditions+=" fksq_no like'%"+appOrderNo+"%'";
-//        }
-        if (StringUtils.isNotEmpty(status)){
-        	conditions+=" and cpco.status = '"+status+"'";
-        }
+
         if (StringUtils.isNotEmpty(spName)){
-        	conditions+=" and c1.abbr like '%"+spName+"%'";
+        	conditions+=" and sp_name like '%"+spName+"%'";
+        }
+        if (StringUtils.isNotEmpty(customerName)){
+        	conditions+=" and customer_name like '%"+customerName+"%'";
         }
         if (StringUtils.isNotEmpty(receiverName)){
-        	conditions+=" and cpco.receive_person like '%"+receiverName+"%'";
+        	conditions+=" and receive_person like '%"+receiverName+"%'";
         }
         
         if (StringUtils.isNotEmpty(beginTime)){
-        	beginTime = " and cpco.create_date between'"+beginTime+"'";
+        	beginTime = " and create_date between'"+beginTime+"'";
         }else{
-        	beginTime =" and cpco.create_date between '1970-1-1'";
+        	beginTime =" and create_date between '1970-1-1'";
         }
         
         if (StringUtils.isNotEmpty(endTime)){
@@ -622,13 +632,20 @@ public class ChargeConfirmController extends Controller {
         conditions+=beginTime+endTime;
         
         
-        totalSql+=conditions;
-        Record recTotal = Db.findFirst(totalSql);
+        //排序
+        String orderByStr= " group by id order by create_date desc ";
+        if(colName.length()>0){
+        	orderByStr = "group by id order by A."+colName+" "+sortBy;
+        }
+        
+        conditions += orderByStr + sLimit;
+        
+        Record recTotal = Db.findFirst("select count(*) total from (select * from ("+columsSql+") A " + conditions + ") B");
         Long total = recTotal.getLong("total");
         logger.debug("total records:" + total);
         
-        columsSql+=conditions + orderBy + sLimit;
-        List<Record> chargeReceiveConfirmOrders = Db.find(columsSql);
+        //columsSql+=conditions + orderBy + sLimit;
+        List<Record> chargeReceiveConfirmOrders = Db.find("select * from ("+columsSql+") A " + conditions);
 
         Map orderListMap = new HashMap();
         orderListMap.put("sEcho", pageIndex);
