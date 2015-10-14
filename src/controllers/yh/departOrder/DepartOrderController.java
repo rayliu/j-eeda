@@ -630,6 +630,7 @@ public class DepartOrderController extends Controller {
 		String fromSql=" from v_create_depart vcd where "
 					+ " vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()	+ "') "
 					+ " and vcd.status not in('手动删除', '已入库') "
+					+ " and vcd.is_direct_deliver != 1 "
 					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='"	+ currentUser.getPrincipal() + "')"
 					+ " and (pickup_id is not null or operation_type='out_source')";
 		
@@ -654,6 +655,7 @@ public class DepartOrderController extends Controller {
 					+ " and vcd.route_to like '%"+ routeTo+ "%' "
 					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
 					+ " and vcd.status!='手动删除' "
+					+ " and vcd.is_direct_deliver != 1"
 					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
 					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
 
@@ -666,6 +668,7 @@ public class DepartOrderController extends Controller {
 					+ " and vcd.route_to like '%"+ routeTo+ "%' "
 					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
 					+ " and vcd.status!='手动删除' "
+					+ " and vcd.is_direct_deliver != 1"
 					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
 					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')"
 					+ " order by planning_time desc, order_no"
