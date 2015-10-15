@@ -18,7 +18,17 @@ $(document).ready(function() {
 			$('#auditBtn').attr('disabled', false);
 		}
 	}
-	 
+	$("#printBtn").on('click',function(){
+    	var order_no = $("#arap_order_no").text();
+    	if(order_no != null && order_no != ""){
+    		$.post('/report/printCustomerOrder', {order_no:order_no}, function(data){
+        		window.open(data);
+        	});
+    	}else{
+    		$.scojs_message('当前单号为空', $.scojs_message.TYPE_ERROR);
+    	}
+    	
+    });
 	var saveChargeCheckOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();

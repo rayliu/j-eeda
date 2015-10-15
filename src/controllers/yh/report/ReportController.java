@@ -45,6 +45,15 @@ public class ReportController extends Controller {
     	String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
     	renderText(file.substring(7));
     }
+    public void printCustomerOrder(){
+    	String order_no = getPara("order_no").trim();
+    	String fileName ="report/customer_checkOrder.jasper";
+    	String outFileName = "WebRoot/download/客户对账单";
+    	HashMap<String, Object> hm = new HashMap<String, Object>();
+    	hm.put("order_no", order_no);
+    	String file = PrintPatterns.getInstance().print(fileName,outFileName,hm);
+    	renderText(file.substring(7));
+    }
     public String pritCheckOrderByPay(String order_no){
     	String fileName ="report/checkOrder.jasper";
     	String outFileName = "WebRoot/download/供应商对账单";
