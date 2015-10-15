@@ -762,6 +762,7 @@ public class CostCheckOrderController extends Controller {
         
         String booking_id= getPara("booking_id");;
         String orderNo = getPara("orderNo");
+        String serial_no = getPara("serial_no");
     	String sp = getPara("sp");
     	String no = getPara("no");
     	String beginTime = getPara("beginTime");
@@ -911,7 +912,7 @@ public class CostCheckOrderController extends Controller {
     	String condition = "";
     	
     	
-    	if(orderNo != null || sp != null || no != null || beginTime != null
+    	if(orderNo != null || sp != null || serial_no != null || no != null || beginTime != null
     			|| endTime != null || type != null || status != null){
     		String time ="";
 			if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
@@ -929,6 +930,7 @@ public class CostCheckOrderController extends Controller {
     					+ " and business_type like '%" + type + "%' "
     					+ " and status like '%" + status + "%' "
     					+ " and spname like '%" + sp + "%' "
+    					+ " and ifnull(serial_no,'') like '%" + serial_no + "%' "
     					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
     					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
     		

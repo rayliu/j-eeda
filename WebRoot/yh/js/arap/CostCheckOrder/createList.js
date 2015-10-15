@@ -475,7 +475,7 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var type = $("#order_type_filter").val();
     	var status = $("#order_status_filter").val();
-    	
+    	var serial_no = $("#serial_no").val();
     	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/unSelectedList?sp="+sp
 														+"&beginTime="+beginTime
 														+"&endTime="+endTime
@@ -483,12 +483,13 @@ $(document).ready(function() {
 														+"&no="+no
 														+"&type="+type
 														+"&status="+status
-    	                                                +"&booking_id="+booking_id;
+    	                                                +"&booking_id="+booking_id
+    													+"&serial_no="+serial_no;
     	uncheckedCostCheckTable.fnDraw();
     	
     	
     };
-    $("#orderNo_filter,#booking_id,#no,#beginTime_filter,#endTime_filter").on('keyup',function(){
+    $("#orderNo_filter,#booking_id,#no,#beginTime_filter,#endTime_filter,#serial_no").on('keyup',function(){
     	refreshCreateList();
     });
     $("#order_type_filter,#order_status_filter").on('change',function(){
