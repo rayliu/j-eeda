@@ -368,7 +368,7 @@ public class CostAcceptOrderController extends Controller {
 	            ArapCostInvoiceApplication arapcostinvoiceapplication= ArapCostInvoiceApplication.dao.findById(orderArrId[i]);
 	            arapcostinvoiceapplication.set("status","已复核");
 	            arapcostinvoiceapplication.update();
-        	}else if(orderArr[i].equals("报销单")){
+        	}else if(orderArr[i].equals("报销单")||orderArr[i].equals("行车报销单")){
         		ReimbursementOrder reimbursementorder =ReimbursementOrder.dao.findById(orderArrId[i]);
         		reimbursementorder.set("status", "已复核");
         		reimbursementorder.update();
