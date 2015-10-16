@@ -564,7 +564,14 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		        		TransferOrder order = TransferOrder.dao.findFirst(sql);
 		    			if(order != null){
 		    				TransferOrderItem tansferOrderItem = null;
-		    				if(product != null){
+		    				if(content.get(j).get("货品属性")=="ATM"){
+		    					product = Product.dao.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '" + customer.get("pid") + "' and item_no =  '"+content.get(j).get("货品型号")+"';");
+		    				}
+		    				if(product==null){
+		    					importResult.put("cause", "第"+causeRow+"行，货品属性信息有误");
+		    					return importResult;
+		    				}
+		    				else{
 		    					tansferOrderItem = TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
 		    				}
 		    				if(tansferOrderItem != null){
