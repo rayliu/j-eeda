@@ -244,10 +244,11 @@ public class ReturnOrderController extends Controller {
 					sqlTotal = "select count(1) total "+conFromSql+"";
 					sql = "select * from (SELECT distinct * "+	conFromSql+") A";
 		}
+		
 		String orderByStr = " order by A.planning_time asc ";
-	        if(colName.length()>0){
-	        	orderByStr = " order by A."+colName+" "+sortBy;
-	        }
+        if(colName!=null && colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		Record rec = Db.findFirst(sqlTotal);
 		long endTime = Calendar.getInstance().getTimeInMillis();
