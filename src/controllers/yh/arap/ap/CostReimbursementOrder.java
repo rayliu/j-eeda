@@ -135,11 +135,13 @@ public class CostReimbursementOrder extends Controller {
         if(orderNo == null && status == null && auditName == null){
 	        sqlTotal = "select count(1) total from reimbursement_order ro where ro.order_no like 'YFBX%'";
 	    	 
-	        sql = "select ro.*,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
+	        sql = "select ro.*,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
-	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
+	        		+ " from reimbursement_order ro "
+	        		+ " left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
+	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
 	        		+ " where ro.order_no like 'YFBX%'  group by ro.id order by ro.create_stamp desc " + sLimit;
         }else{
         	sqlTotal = "select count(1) total from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
@@ -148,12 +150,13 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'";
 	    	 
-	        sql = "select ro.*,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
+	        sql = "select ro.*,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " left join user_login u on u.id  = ro.audit_id "
+	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'"
