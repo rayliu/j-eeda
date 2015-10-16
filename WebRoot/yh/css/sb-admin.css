@@ -251,7 +251,7 @@ table.dataTable thead .sorting_asc_disabled,
 table.dataTable thead .sorting_desc_disabled {
     background: transparent;
 }
-
+/*1.9*/
 table.dataTable thead .sorting_asc:after {
     content: "\f0de";
     float: right;
@@ -269,6 +269,25 @@ table.dataTable thead .sorting:after {
     float: right;
     font-family: fontawesome;
     color: rgba(50,50,50,.5);
+}
+
+/*1.10*/
+table.dataTable thead.eeda .sorting_asc:after {
+    content: "";
+}
+
+table.dataTable thead.eeda .sorting_desc:after {
+    content: "";
+}
+table.dataTable thead.eeda .sorting:after {
+    content: "";
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    display: inline !important;
+    padding: 0 0 !important; 
+    margin-left: 0 !important;
+    /* color: #333 !important; */
 }
 
 /* Circle Buttons */
