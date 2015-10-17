@@ -41,6 +41,7 @@ $(document).ready(function() {
                 }
             },*/
         	{"mDataProp":"ORDER_STATUS"},
+        	{"mDataProp":"DZD_ORDER_NO"},
             {"mDataProp":null},
             {"mDataProp":"CNAME"},
             {"mDataProp":"SP"},
