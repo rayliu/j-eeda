@@ -13,12 +13,12 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/chargeInvoiceOrder/createList",
         "aoColumns": [    
-            { "mDataProp": null,
+            { "mDataProp": null,"sWidth":"20px",
   	            "fnRender": function(obj) {
   	              return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
   	            }
   	        },    
-            {"mDataProp":"ORDER_NO",
+            {"mDataProp":"ORDER_NO","sWidth":"80px",
             	"fnRender": function(obj) {
             		if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
             			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -27,7 +27,8 @@ $(document).ready(function() {
             		}
         			
         		}},
-            {"mDataProp":"STATUS",
+        	{"mDataProp":"ORDER_TYPE","sWidth":"80px","sClass":"order_type"},
+            {"mDataProp":"STATUS","sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -43,17 +44,12 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":null},
-            {"mDataProp":"CNAME"},
-            {"mDataProp":"SP"},
-            {"mDataProp":"TOTAL_AMOUNT"},
-            {"mDataProp":"REMARK"},
-            {"mDataProp":"CREATE_BY"},
-            {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"AUDIT_BY"},
-            {"mDataProp":"AUDIT_STAMP"},
-            {"mDataProp":"APPROVAL_BY"},
-            {"mDataProp":"APPROVAL_STAMP"}                        
+            {"mDataProp":"CNAME","sWidth":"180px"},
+            {"mDataProp":"SP","sWidth":"200px"},
+            {"mDataProp":"TOTAL_AMOUNT","sWidth":"60px"},
+            {"mDataProp":"REMARK","sWidth":"180px"},
+            {"mDataProp":"CREATE_BY","sWidth":"100px"},
+            {"mDataProp":"CREATE_STAMP"}                     
         ]      
     });	
 	
@@ -64,6 +60,7 @@ $(document).ready(function() {
 			$(this).parent().parent().appendTo($("#checkedChargePreInvoiceOrderList"));
 			ids.push($(this).val());
 			$("#checkedPreInvoiceOrder").val(ids);
+			$("#order_type").val($(this).parent().parent().find(".order_type").text());
 			$('#saveBtn').attr('disabled', false);
 		}			
 	});

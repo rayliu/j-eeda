@@ -40,7 +40,7 @@
                                                                     <div class="form-group">
                                                                         <label class="search-label">客户</label>
                                                                         <input type="text" class="form-control search-control customer_filter" id="customer_filter"  placeholder="请输入或者选择客户">
-                                                                        <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 45%; left: 32%;"></ul>
+                                                                        <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 45%; left: 32%;"></ul>
                                                                         
                                                                     </div>
                                                                     <div class="form-group">                                        
@@ -55,9 +55,13 @@
                                                                 </div>
                                                                 <!-- end of col-lg-6-->
                                                                 <div class="col-lg-4">
-                                                                     <div class="form-group">
+                                                                     <!-- <div class="form-group">
                                                                         <label class="search-label">网点</label>
                                                                         <select id="office_filter" class="form-control search-control officeName_filter" name="office_filter"></select>
+                                                                    </div> -->
+                                                                    <div class="form-group">
+                                                                        <label class="search-label">业务单号</label>
+                                                                        <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
                                                                     </div>
                                                                     <div class="form-group">                                                    
                                                                         <span id="datetimepicker2" class="input-append date search-control "> 
@@ -71,18 +75,15 @@
                                                                     
                                                                 </div>
                                                                 <div class="col-lg-4">
-                                                                	<div class="form-group">
-                                                                        <label class="search-label">对账单号</label>
-                                                                        <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter" value="">
-                                                                    </div>
-                                                                    <div class="form-group">
+                                                                	
+                                                                    <!-- <div class="form-group">
                                                                         <label class="search-label">对账状态</label>
                                                                         <select id="status_filter" class="form-control search-control" name="status_filter">
                                                                         	<option></option>
                                                                         	<option value="已审批">已审批</option>
                                                                         	
                                                                         </select>
-                                                                    </div>
+                                                                    </div> -->
                                                                 </div>
                                                                 <!-- end of col-lg-6-->
                                                             </div><!-- end of row-->
@@ -93,6 +94,7 @@
 													<br/>
 								                        <form id="createForm" action="/chargeInvoiceOrder/create" method="post">
 								                            <input id='checkedPreInvoiceOrder' name='ids' type="hidden">
+								                            <input id='order_type' name='order_type' type="hidden">
 								                            <div class="col-lg-6">
 								                                <div class="form-group">
 								                                    <div class="controls">
@@ -116,19 +118,15 @@
                                                             <thead>
                                                                 <tr>
                                                                 	<th></th>
-                                                                    <th>申请单号</th>
+                                                                    <th>业务单号</th>
+                                                                    <th>单据类型</th>
 						                                            <th>状态</th>
-						                                            <th>网点</th>
 						                                            <th>客户名称</th>
 						                                            <th>供应商名称</th>
-						                                            <th>申请金额</th>                                            
+						                                            <th>金额</th>                                            
 						                                            <th>备注</th>
 						                                            <th>创建人</th>
 						                                            <th>创建时间</th>
-						                                            <th>审核人</th>
-						                                            <th>审核时间</th>
-						                                            <th>审批人</th>
-						                                            <th>审批时间</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody id="uncheckedChargePreInvoiceOrderList">
@@ -139,24 +137,19 @@
                                                     </div>
                                                     <div class="tab-pane fade active in" id="checked" style="display: none">
 	                                                 	<div class="table-responsive">
-	                                                        <table class="table table-striped table-bordered table-hover" id="checkedChargePreInvoiceOrder-table"  style="width: 1800px">
+	                                                        <table class="table table-striped table-bordered table-hover" id="checkedChargePreInvoiceOrder-table" >
 	                                                            <thead>
 	                                                                <tr>
-                                                                		<th></th>
-							                                            <th>申请单号</th>
-							                                            <th>状态</th>
-							                                            <th>网点</th>
-							                                            <th>客户名称</th>
-							                                            <th>供应商名称</th>
-							                                            <th>申请金额</th>                                            
-							                                            <th>备注</th>
-							                                            <th>创建人</th>
-							                                            <th>创建时间</th>
-							                                            <th>审核人</th>
-							                                            <th>审核时间</th>
-							                                            <th>审批人</th>
-							                                            <th>审批时间</th>
-							                                        </tr>
+                                                                	<th></th>
+                                                                    <th>业务单号</th>
+						                                            <th>状态</th>
+						                                            <th>客户名称</th>
+						                                            <th>供应商名称</th>
+						                                            <th>金额</th>                                            
+						                                            <th>备注</th>
+						                                            <th>创建人</th>
+						                                            <th>创建时间</th>
+                                                                </tr>
 	                                                            </thead>
 	                                                            <tbody id="checkedChargePreInvoiceOrderList">
 	                                                                
