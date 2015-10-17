@@ -87,7 +87,12 @@ public class ChargePreInvoiceOrderController extends Controller {
 				+ "	from arap_charge_invoice_application_order aciao"
 				+ "	left join arap_charge_invoice aci on aciao.invoice_order_id = aci.id"
 				+ "	where aciao.id = aaia.id) as order_status,"
-				+ " c1.abbr sp "
+				+ " c1.abbr sp ,"
+				+ " (select GROUP_CONCAT(aco.order_no SEPARATOR '<br/>')"
+				+ " from arap_charge_order aco "
+				+ " LEFT JOIN charge_application_order_rel cao on cao.charge_order_id = aco.id "
+				+ " where cao.application_order_id = aaia.id"
+				+ " ) dzd_order_no"
         		+ " from arap_charge_invoice_application_order aaia "
 				+ " left join party p on p.id = aaia.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
@@ -206,7 +211,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("last_modified_by", getPara("create_by"));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
-			arapAuditInvoiceApplication.set("have_invoice", haveInvoice);
+			//arapAuditInvoiceApplication.set("have_invoice", haveInvoice);
 			if("transfers".equals(paymentMethod)){
 				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
 					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
@@ -219,7 +224,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
 			arapAuditInvoiceApplication.set("order_no", OrderNoGenerator.getNextOrderNo("YSSQ"));
 			arapAuditInvoiceApplication.set("status", "新建");
-			arapAuditInvoiceApplication.set("have_invoice", haveInvoice);
+			//arapAuditInvoiceApplication.set("have_invoice", haveInvoice);
 			if(!getPara("customer_id").equals("") && getPara("customer_id")!= null){
 				arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
 			}
@@ -400,7 +405,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " OR (( SELECT ifnull(sum(caor.receive_amount), '') total_receive "
 					+ " FROM charge_application_order_rel caor WHERE caor.charge_order_id = aao.id ) < aao.charge_amount "
 					+ " AND ( SELECT sum(caor.receive_amount) total_receive FROM charge_application_order_rel caor "
-					+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL ))";
+					+ " WHERE caor.charge_order_id = aao.id ) IS NOT NULL ))  and aao.have_invoice is null";
 		String sqlTotal ="";
 		String condition = "";
 		//TODO 网点与对账单状态未做
