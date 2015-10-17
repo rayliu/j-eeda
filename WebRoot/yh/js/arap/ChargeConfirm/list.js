@@ -27,6 +27,8 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.SKSQ_NO != null){
             			return obj.aData.SKSQ_NO;
+            		}else if(obj.aData.SKDZ_NO != null){
+            			return obj.aData.SKDZ_NO;
             		}else{
             			return obj.aData.MISC_NO;
             		}

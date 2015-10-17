@@ -12,6 +12,7 @@ import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
+import models.ArapChargeOrder;
 import models.ArapChargeReceiveConfirmOrder;
 import models.ArapChargeReceiveConfirmOrderDtail;
 import models.ArapChargeReceiveConfirmOrderDtailLog;
@@ -19,6 +20,7 @@ import models.ArapChargeReceiveConfirmOrderLog;
 import models.CostApplicationOrderRel;
 import models.DepartOrder;
 import models.InsuranceOrder;
+import models.ReturnOrder;
 import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
@@ -68,6 +70,9 @@ public class ChargeConfirmController extends Controller {
    			}else if(a.getLong("misc_charge_order_id")!=null){
    				order_type = "手工收入单";
    				setAttr("order_type", "手工收入单");
+   			}else if(a.getLong("dz_order_id")!=null){
+   				order_type = "对账单";
+   				setAttr("order_type", "对账单");
    			}
    		}
    		//setAttr("order_type", order_type);
@@ -94,6 +99,11 @@ public class ChargeConfirmController extends Controller {
    		}else if(order_type.equals("开票记录单")){
    			sql = "SELECT "
    	   				+ " (SELECT group_concat(cast(invoice_order_id as char) SEPARATOR ',' ) "
+   	   				+ "FROM arap_charge_receive_confirm_order_detail where order_id = acp.id ) ids "
+   	   				+ "FROM arap_charge_receive_confirm_order acp WHERE acp.id = '"+id+"'";
+   		}else if(order_type.equals("对账单")){
+   			sql = "SELECT "
+   	   				+ " (SELECT group_concat(cast(dz_order_id as char) SEPARATOR ',' ) "
    	   				+ "FROM arap_charge_receive_confirm_order_detail where order_id = acp.id ) ids "
    	   				+ "FROM arap_charge_receive_confirm_order acp WHERE acp.id = '"+id+"'";
    		}
@@ -177,6 +187,8 @@ public class ChargeConfirmController extends Controller {
 					arapChargeReceiveConfirmOrderDtail.set("misc_charge_order_id", idArray[i]);
 				}else if(order_type.equals("开票记录单")){
 					arapChargeReceiveConfirmOrderDtail.set("invoice_order_id", idArray[i]);
+				}else if(order_type.equals("对账单")){
+					arapChargeReceiveConfirmOrderDtail.set("dz_order_id", idArray[i]);
 				}
 				arapChargeReceiveConfirmOrderDtail.save();
 				
@@ -199,6 +211,20 @@ public class ChargeConfirmController extends Controller {
 					for(ArapChargeInvoiceApplication arapChargeInvoiceApplication : chargeOrderList){
 						arapChargeInvoiceApplication.set("status", "收款确认中").update();
 			    	}
+				}else if(order_type.equals("对账单")){
+					ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[i]);
+					arapChargeOrder.set("status", "收款确认中").update();
+					List<ReturnOrder> returnOrderList = ReturnOrder.dao.find("select * from return_order ror left join arap_charge_item  aci on aci.ref_order_id = ror.id where aci.charge_order_id =? and aci.ref_order_type = '回单'",idArray[i]);
+					for(ReturnOrder returnOrder : returnOrderList){
+						returnOrder.set("transaction_status", "收款确认中").update();
+				    }
+					
+					
+					List<ArapMiscChargeOrder> miscOrderList = ArapMiscChargeOrder.dao.find("select * from arap_misc_charge_order amc left join arap_charge_item aci on aci.ref_order_id = amc.id where aci.charge_order_id =? and aci.ref_order_type = '收入单'",idArray[i]);
+					for(ArapMiscChargeOrder arapMiscChargeOrder : miscOrderList){
+						arapMiscChargeOrder.set("status", "收款确认中").update();
+				    }
+					
 				}
 			}
 		}
@@ -231,6 +257,8 @@ public class ChargeConfirmController extends Controller {
 				sql = "select * from arap_charge_receive_confirm_order_detail where misc_charge_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}else if(order_type.equals("开票记录单")){
 				sql = "select * from arap_charge_receive_confirm_order_detail where invoice_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
+			}else if(order_type.equals("对账单")){
+				sql = "select * from arap_charge_receive_confirm_order_detail where dz_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}
 			
 			ArapChargeReceiveConfirmOrderDtail detail = ArapChargeReceiveConfirmOrderDtail.dao.findFirst(sql);
@@ -301,6 +329,28 @@ public class ChargeConfirmController extends Controller {
 			}else{
 				arapChargeReceiveConfirmOrder.set("status", "部分已收款").update();
 			}
+		}else if(order_type.equals("对账单")){
+			if(re.getDouble("total") == Double.parseDouble(total_amount)){
+				//更新确认表状态
+				arapChargeReceiveConfirmOrder.set("status", "已收款").update();
+				
+				//更新申请单状态
+				for (int i = 0; i < idArray.length; i++) {
+					ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[i]);
+					arapChargeOrder.set("status", "已收款确认").update();
+					//List<Record> list= Db.find("SELECT STATUS from arap_cost_order where application_order_id =?",idArray[i]);
+					List<ReturnOrder> returnOrderList = ReturnOrder.dao.find("select * from return_order ror left join arap_charge_item  aci on aci.ref_order_id = ror.id where aci.charge_order_id =? and aci.ref_order_type = '回单'",idArray[i]);
+					for(ReturnOrder returnOrder : returnOrderList){
+						returnOrder.set("transaction_status", "收款确认中").update();
+				    }
+					List<ArapMiscChargeOrder> miscOrderList = ArapMiscChargeOrder.dao.find("select * from arap_misc_charge_order amc left join arap_charge_item aci on aci.ref_order_id = amc.id where aci.charge_order_id =? and aci.ref_order_type = '收入单'",idArray[i]);
+					for(ArapMiscChargeOrder arapMiscChargeOrder : miscOrderList){
+						arapMiscChargeOrder.set("status", "收款确认中").update();
+				    }
+				}
+			}else{
+				arapChargeReceiveConfirmOrder.set("status", "部分已收款").update();
+			}
 		}
 		
 		
@@ -318,10 +368,12 @@ public class ChargeConfirmController extends Controller {
 	        if(order_type.equals("手工收入单")){
 	        	auditLog.set("misc_order_id", confirmId);
 	        	auditLog.set("source_order", "手工收入单");
-	        }
-	        else if(order_type.equals("开票记录单")){
+	        }else if(order_type.equals("开票记录单")){
 	        	auditLog.set("invoice_order_id", confirmId);
-	        	auditLog.set("source_order", "应付开票记录单");
+	        	auditLog.set("source_order", "应收开票记录单");
+	        }else if(order_type.equals("对账单")){
+	        	auditLog.set("dz_order_id", confirmId);
+	        	auditLog.set("source_order", "应收对账单");
 	        }
 	        auditLog.save();
 	        
@@ -459,7 +511,15 @@ public class ChargeConfirmController extends Controller {
 					+ " left join contact c on c.id = p.id "
 					+ " left join contact c1 on c1.id = aci.sp_id "
 					+ " where aci.id = '"+id+"'";
-			}
+			}else if(order_type.equals("对账单")){
+				sql = "SELECT c.company_name customer,"
+						+ " c1.company_name sp_filter,null,null,null,null,null"
+						+ " FROM arap_charge_order aci "
+						+ " LEFT JOIN party p on p.id = aci.payee_id"
+						+ " left join contact c on c.id = p.id "
+						+ " left join contact c1 on c1.id = aci.sp_id "
+						+ " where aci.id = '"+id+"'";
+				}
         }
 		Record record = Db.findFirst(sql);
 		setAttr("re", record);
@@ -490,12 +550,18 @@ public class ChargeConfirmController extends Controller {
 						+ " WHERE amco.id in(" + orderIds + ")";
 			}else if(order_type.equals("报销单")){
 				sql = "";
+			}else if(order_type.equals("对账单")){
+				sql = " SELECT aci.charge_amount total_amount,aci.id,aci.order_no,aci.create_stamp ,  "
+						+ " IFNULL( aci.charge_amount - ( SELECT sum(acrcodl.receive_amount) FROM arap_charge_receive_confirm_order_detail_log acrcodl "
+						+ " LEFT JOIN arap_charge_receive_confirm_order_detail acrcod on acrcod.id = acrcodl.detail_id "
+						+ " WHERE  acrcod.dz_order_id = aci.id ), "
+						+ " aci.charge_amount ) noreceive_amount FROM arap_charge_order aci WHERE aci.id IN("+orderIds+")";
 			}else{
 				sql = "SELECT aci.*,  "
-						+ "IFNULL( aci.total_amount - ( SELECT sum(acrcodl.receive_amount) FROM arap_charge_receive_confirm_order_detail_log acrcodl "
-						+ "LEFT JOIN arap_charge_receive_confirm_order_detail acrcod on acrcod.id = acrcodl.detail_id "
-						+ "WHERE  acrcod.invoice_order_id = aci.id ), "
-						+ "aci.total_amount ) noreceive_amount FROM arap_charge_invoice aci WHERE aci.id IN("+orderIds+")";
+						+ " IFNULL( aci.total_amount - ( SELECT sum(acrcodl.receive_amount) FROM arap_charge_receive_confirm_order_detail_log acrcodl "
+						+ " LEFT JOIN arap_charge_receive_confirm_order_detail acrcod on acrcod.id = acrcodl.detail_id "
+						+ " WHERE  acrcod.invoice_order_id = aci.id ), "
+						+ " aci.total_amount ) noreceive_amount FROM arap_charge_invoice aci WHERE aci.id IN("+orderIds+")";
 			}
 			record = Db.find(sql);			
 		}
@@ -578,6 +644,9 @@ public class ChargeConfirmController extends Controller {
         		+ " ( SELECT group_concat( DISTINCT aci .order_no SEPARATOR '<br/>' ) FROM arap_charge_invoice aci  "
         		+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.invoice_order_id = aci.id "
         		+ " WHERE acr.order_id = cpco.id ) sksq_no,"
+        		+ " ( SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>' ) FROM arap_charge_order aci  "
+        		+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.dz_order_id = aci.id "
+        		+ " WHERE acr.order_id = cpco.id ) skdz_no,"
 				+ " (SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' )"
 				+ " FROM arap_charge_receive_confirm_order_detail co, arap_misc_charge_order amco"
 				+ " WHERE co.misc_charge_order_id = amco.id AND co.order_id = cpco.id ) misc_no,"
@@ -585,6 +654,11 @@ public class ChargeConfirmController extends Controller {
 				+ " then (SELECT ifnull(sum(aci.total_amount), 0)"
 				+ " FROM arap_charge_invoice aci "
 				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr ON acr.invoice_order_id = aci.id"
+				+ " WHERE acr.order_id = cpco.id )  "
+				+ " when acrc.dz_order_id is not null "
+				+ " then (SELECT ifnull(sum(aci.charge_amount), 0)"
+				+ " FROM arap_charge_order aci "
+				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr ON acr.dz_order_id = aci.id"
 				+ " WHERE acr.order_id = cpco.id )  "
 				+ " when acrc.misc_charge_order_id is not null"
 				+ " then (SELECT ifnull(sum(amco.total_amount), 0) "
