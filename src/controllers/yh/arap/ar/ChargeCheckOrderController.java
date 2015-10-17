@@ -396,6 +396,7 @@ public class ChargeCheckOrderController extends Controller {
 		String remark = (String)dto.get("remark");
 		String customerId = (String)dto.get("customer_id");
 		String spId = (String)dto.get("sp_id");
+		String haveInvoice = (String)dto.get("have_invoice");
 		
 		UserLogin user = LoginUserController.getLoginUser(this);
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
@@ -413,6 +414,7 @@ public class ChargeCheckOrderController extends Controller {
 			}
 			arapChargeOrder.set("total_amount", total_amount);
 			arapChargeOrder.set("charge_amount", change_amount);
+			arapChargeOrder.set("have_invoice", haveInvoice);
 			
 			arapChargeOrder.update();
 
@@ -444,6 +446,7 @@ public class ChargeCheckOrderController extends Controller {
 			}
 			arapChargeOrder.set("total_amount", total_amount);
 			arapChargeOrder.set("charge_amount", change_amount);
+			arapChargeOrder.set("have_invoice", haveInvoice);
 			arapChargeOrder.save();
 
 			boolean isCreate = true;
@@ -479,7 +482,43 @@ public class ChargeCheckOrderController extends Controller {
 					chargeItem.set("ref_order_type", "回单");
 					chargeItem.set("ref_order_id", ref_order_id);
 					chargeItem.save();
-				}
+					
+					
+					//回单列表的列表添加新的明细（记录调整金额）
+					String returnOrderId = (String)item.get("ORDER_ID");
+					Double newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT"))-Double.parseDouble((String)item.get("AMOUNT"));
+					if(newAmount != 0){
+						ReturnOrderFinItem orderItem = new ReturnOrderFinItem();
+						orderItem.set("return_order_id", returnOrderId);
+						orderItem.set("amount", newAmount);
+						orderItem.set("fin_item_id", 4);
+						orderItem.set("status", "对账中");
+						orderItem.set("remark", "对账调整金额");
+						orderItem.set("create_date", new Date());
+						orderItem.save();
+					}
+				}else{
+					//回单列表的列表添加新的明细（记录调整金额）
+					String returnOrderId = (String)item.get("ORDER_ID");
+					Double newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT"))-Double.parseDouble((String)item.get("AMOUNT"));
+					ReturnOrderFinItem orderItem = ReturnOrderFinItem.dao.findFirst("select * from return_order_fin_item where return_order_id = ? and remark = '对账调整金额'",returnOrderId);
+					if(orderItem == null){
+						if(newAmount != 0 ){
+							ReturnOrderFinItem orderItem1 = new ReturnOrderFinItem();
+							orderItem1.set("return_order_id", returnOrderId);
+							orderItem1.set("amount", newAmount);
+							orderItem1.set("fin_item_id", 4);
+							orderItem1.set("status", "对账中");
+							orderItem1.set("remark", "对账调整金额");
+							orderItem1.set("create_date", new Date());
+							orderItem1.save();
+						}
+					}else{
+						orderItem.set("amount", newAmount);
+						orderItem.set("create_date", new Date());
+						orderItem.update();
+					}
+				}	
 			}else{
 				//手工单就不允许改确认金额了
 				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(item.get("ORDER_ID"));
@@ -492,17 +531,7 @@ public class ChargeCheckOrderController extends Controller {
 					chargeItem.save();
 				}
 			}
-			//回单列表的列表添加新的明细（记录调整金额）
-			String returnOrderId = (String)item.get("ORDER_ID");
-			ReturnOrderFinItem orderItem = new ReturnOrderFinItem();
-			Double newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT"))-Double.parseDouble((String)item.get("AMOUNT"));
-			orderItem.set("return_order_id", returnOrderId);
-			orderItem.set("amount", newAmount);
-			orderItem.set("fin_item_id", 4);
-			orderItem.set("status", "对账中");
-			orderItem.set("remark", "对账调整金额");
-			orderItem.set("create_date", new Date());
-			orderItem.save();
+			
 		}
 			
 	}

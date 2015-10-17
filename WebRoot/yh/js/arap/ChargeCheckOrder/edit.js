@@ -78,6 +78,7 @@ $(document).ready(function() {
             sp_id: $('#spId').val(),
             total_amount: total_amount,
             change_amount: change_amount,
+            have_invoice: $('input:radio:checked').val(),
             items: itemsArray
         };
 
