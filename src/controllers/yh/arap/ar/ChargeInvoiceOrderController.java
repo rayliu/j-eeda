@@ -13,6 +13,7 @@ import models.ArapChargeApplicationInvoiceNo;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
 import models.ArapChargeInvoiceItemInvoiceNo;
+import models.ArapChargeOrder;
 import models.Party;
 import models.UserLogin;
 import models.yh.profile.Contact;
@@ -51,32 +52,63 @@ public class ChargeInvoiceOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_CREATE})
     public void create() {
         String ids = getPara("ids");
+        String order_type = getPara("order_type");
+        setAttr("order_type", order_type);
 
-        setAttr("chargePreInvoiceOrderIds", ids);	
-        if(ids != null && !"".equals(ids)){
-			String[] idArray = ids.split(",");
-			logger.debug(String.valueOf(idArray.length));
-			Double totalAmount = 0.0;
-			for(int i=0;i<idArray.length;i++){
-				ArapChargeInvoiceApplication rOrder = ArapChargeInvoiceApplication.dao.findById(idArray[i]);
-				Double amount = rOrder.getDouble("total_amount")==null?0.0:rOrder.getDouble("total_amount");
-				totalAmount = totalAmount + amount;
-			}
-			setAttr("totalAmount", totalAmount);
-			
-	        ArapChargeInvoiceApplication arapChargeInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(idArray[0]);
-			Long customerId = arapChargeInvoiceApplication.get("payee_id");
-			Long spId = arapChargeInvoiceApplication.get("sp_id");
-			setAttr("spId", spId);
-	        if(!"".equals(customerId) && customerId != null){
-		        Party party = Party.dao.findById(customerId);
-		        setAttr("party", party);	        
-		        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-		        setAttr("customer", contact);
-		        setAttr("type", "CUSTOMER");
-		    	setAttr("classify", "");
-	        }
+        if(order_type.equals("对账单")){
+        	setAttr("chargePreInvoiceOrderIds", ids);	
+            if(ids != null && !"".equals(ids)){
+    			String[] idArray = ids.split(",");
+    			logger.debug(String.valueOf(idArray.length));
+    			Double totalAmount = 0.0;
+    			for(int i=0;i<idArray.length;i++){
+    				ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
+    				Double amount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
+    				totalAmount = totalAmount + amount;
+    			}
+    			setAttr("totalAmount", totalAmount);
+    			
+    			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
+    			Long customerId = arapChargeOrder.get("payee_id");
+    			Long spId = arapChargeOrder.get("sp_id");
+    			setAttr("spId", spId);
+    	        if(!"".equals(customerId) && customerId != null){
+    		        Party party = Party.dao.findById(customerId);
+    		        setAttr("party", party);	        
+    		        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+    		        setAttr("customer", contact);
+    		        setAttr("type", "CUSTOMER");
+    		    	setAttr("classify", "");
+    	        }
+            }
+        }else if(order_type.equals("申请单")){
+        	setAttr("chargePreInvoiceOrderIds", ids);	
+            if(ids != null && !"".equals(ids)){
+    			String[] idArray = ids.split(",");
+    			logger.debug(String.valueOf(idArray.length));
+    			Double totalAmount = 0.0;
+    			for(int i=0;i<idArray.length;i++){
+    				ArapChargeInvoiceApplication rOrder = ArapChargeInvoiceApplication.dao.findById(idArray[i]);
+    				Double amount = rOrder.getDouble("total_amount")==null?0.0:rOrder.getDouble("total_amount");
+    				totalAmount = totalAmount + amount;
+    			}
+    			setAttr("totalAmount", totalAmount);
+    			
+    	        ArapChargeInvoiceApplication arapChargeInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(idArray[0]);
+    			Long customerId = arapChargeInvoiceApplication.get("payee_id");
+    			Long spId = arapChargeInvoiceApplication.get("sp_id");
+    			setAttr("spId", spId);
+    	        if(!"".equals(customerId) && customerId != null){
+    		        Party party = Party.dao.findById(customerId);
+    		        setAttr("party", party);	        
+    		        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+    		        setAttr("customer", contact);
+    		        setAttr("type", "CUSTOMER");
+    		    	setAttr("classify", "");
+    	        }
+            }
         }
+        
         
         setAttr("saveOK", false);
         String name = (String) currentUser.getPrincipal();
@@ -103,8 +135,10 @@ public class ChargeInvoiceOrderController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String orderNo = getPara("orderNo");
-		String status = getPara("status");
+		//String status = getPara("status");
 		String office = getPara("office");
+		
+		
 		String sqlTotal = "select count(1) total from arap_charge_invoice_application_order aaia "
         		+ " left join party p on p.id = aaia.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
@@ -112,20 +146,30 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
 				+ " where aaia.status = '已审批' and aaia.have_invoice = 'Y'";
-		String sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by,"
-				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no,"
-				+ " c1.abbr sp"
-        		+ " from arap_charge_invoice_application_order aaia "
-        		+ " left join party p on p.id = aaia.payee_id"
-				+ " left join contact c on c.id = p.contact_id"
-				+ " left join contact c1 on c1.id = aaia.sp_id"
-        		+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
-				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
-				+ " where aaia.status = '已审批' and aaia.have_invoice = 'Y'";
+		String sql = "SELECT '申请单' order_type, aaia.id,aaia.order_no,aaia.STATUS ,aaia.total_amount,aaia.remark,aaia.create_stamp,"
+				+ "  c.abbr cname, ul.c_name create_by, c1.abbr sp "
+				+ " FROM arap_charge_invoice_application_order aaia "
+				+ " LEFT JOIN party p ON p.id = aaia.payee_id"
+				+ " LEFT JOIN contact c ON c.id = p.contact_id"
+				+ " LEFT JOIN contact c1 ON c1.id = aaia.sp_id"
+				+ " LEFT JOIN user_login ul ON ul.id = aaia.create_by"
+				+ " LEFT JOIN user_login ul2 ON ul2.id = aaia.audit_by"
+				+ " LEFT JOIN user_login ul3 ON ul3.id = aaia.approver_by"
+				+ " WHERE"
+				+ " aaia. STATUS = '已审批'"
+				+ " union"
+				+ " select '对账单' order_type,aco.id,aco.order_no,aco.`STATUS`,aco.charge_amount total_amount,aco.remark,aco.create_stamp,c.abbr cname,"
+				+ " ul.c_name create_by,c1.abbr sp"
+				+ " from arap_charge_order aco"
+				+ " LEFT JOIN party p ON p.id = aco.payee_id"
+				+ " LEFT JOIN contact c ON c.id = p.contact_id"
+				+ " LEFT JOIN contact c1 ON c1.id = aco.sp_id"
+				+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
+				+ " where aco.STATUS ='已确认'";
+		
 		String condition = "";
 		if(companyName != null || beginTime != null || endTime != null
-				|| orderNo != null  || status != null || office != null ){
+				|| orderNo != null || office != null ){
 			
 			if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -134,19 +178,19 @@ public class ChargeInvoiceOrderController extends Controller {
 				endTime = "9999-12-31";
 			}
 			
-			condition = " and ifnull(c.abbr,'') like '%" + companyName + "%' "
-					  + " and ifnull(aaia.order_no,'') like '%" + orderNo + "%' "
-					  + " and aaia.create_stamp between '" + beginTime + "' and '" + endTime + "' ";
-			if(status != null && !"".equals(status)){
-				condition = condition + " and aaia.status = '" + status + "' ";
-			}
+			condition = " where ifnull(cname,'') like '%" + companyName + "%' "
+					  + " and ifnull(order_no,'') like '%" + orderNo + "%' "
+					  + " and create_stamp between '" + beginTime + "' and '" + endTime + "' ";
+//			if(status != null && !"".equals(status)){
+//				condition = condition + " and status = '" + status + "' ";
+//			}
 		}
         
-        Record rec = Db.findFirst(sqlTotal + condition);
+        Record rec = Db.findFirst("select count(*) total from(select *  from ("+sql+") A "+condition+") B");
         logger.debug("total records:" + rec.getLong("total"));
 
         
-        List<Record> BillingOrders = Db.find(sql + condition + " order by aaia.create_stamp desc " + sLimit);
+        List<Record> BillingOrders = Db.find("select *  from ("+sql+") A "+condition + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
@@ -230,46 +274,90 @@ public class ChargeInvoiceOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_CREATE, PermissionConstant.PERMSSION_CIO_UPDATE}, logical=Logical.OR)
     public void save(){
     	ArapChargeInvoice arapAuditInvoice = null;
+    	String order_type = getPara("order_type");
     	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
-    	if(!"".equals(chargeInvoiceOrderId) && chargeInvoiceOrderId != null){
-    		arapAuditInvoice = ArapChargeInvoice.dao.findById(chargeInvoiceOrderId);
-	    	arapAuditInvoice.set("create_stamp", new Date());
-	    	arapAuditInvoice.set("remark", getPara("remark"));
-	    	arapAuditInvoice.set("last_modified_by", getPara("create_by"));
-	    	arapAuditInvoice.set("last_modified_stamp", new Date());
-	    	arapAuditInvoice.update();
-    	}else{
-    		arapAuditInvoice = new ArapChargeInvoice();
-            String sql = "select * from arap_charge_invoice order by id desc limit 0,1";
-            arapAuditInvoice.set("order_no", OrderNoGenerator.getNextOrderNo("YSFP") );
-    		arapAuditInvoice.set("create_by", getPara("create_by"));
-    		arapAuditInvoice.set("status", getPara("status"));
-	    	arapAuditInvoice.set("create_stamp", new Date());
-	    	if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
-	    		arapAuditInvoice.set("total_amount", getPara("total_amount"));
-	    	}
-	    	arapAuditInvoice.set("remark", getPara("remark"));
-	    	if(getPara("customer_id") != null && !"".equals(getPara("customer_id"))){
-	    		arapAuditInvoice.set("payee_id", getPara("customer_id"));
-	    	}
-	    	String spId = getPara("spId");
-	    	if(spId != null && !"".equals(spId)){
-	    		arapAuditInvoice.set("sp_id", spId);
-	    	}
-	    	arapAuditInvoice.save();
-	    	
-	    	String ids = getPara("chargePreInvoiceOrderIds");
-	    	String[] idArr = null;
-	    	if(ids != null && !"".equals(ids)){
-	    		idArr = ids.split(",");
-	    		for(int i=0;i<idArr.length;i++){
-	    			ArapChargeInvoiceApplication application = ArapChargeInvoiceApplication.dao.findById(idArr[i]);
-	    			application.set("status", "已开票");
-	    			application.set("invoice_order_id", arapAuditInvoice.get("id"));
-	    			application.update();
-	    		}
-	    	}
+    	if(order_type.equals("申请单")){
+    		if(!"".equals(chargeInvoiceOrderId) && chargeInvoiceOrderId != null){
+        		arapAuditInvoice = ArapChargeInvoice.dao.findById(chargeInvoiceOrderId);
+    	    	arapAuditInvoice.set("create_stamp", new Date());
+    	    	arapAuditInvoice.set("remark", getPara("remark"));
+    	    	arapAuditInvoice.set("last_modified_by", getPara("create_by"));
+    	    	arapAuditInvoice.set("last_modified_stamp", new Date());
+    	    	arapAuditInvoice.update();
+        	}else{
+        		arapAuditInvoice = new ArapChargeInvoice();
+                String sql = "select * from arap_charge_invoice order by id desc limit 0,1";
+                arapAuditInvoice.set("order_no", OrderNoGenerator.getNextOrderNo("YSFP") );
+        		arapAuditInvoice.set("create_by", getPara("create_by"));
+        		arapAuditInvoice.set("status", getPara("status"));
+    	    	arapAuditInvoice.set("create_stamp", new Date());
+    	    	if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
+    	    		arapAuditInvoice.set("total_amount", getPara("total_amount"));
+    	    	}
+    	    	arapAuditInvoice.set("remark", getPara("remark"));
+    	    	if(getPara("customer_id") != null && !"".equals(getPara("customer_id"))){
+    	    		arapAuditInvoice.set("payee_id", getPara("customer_id"));
+    	    	}
+    	    	String spId = getPara("spId");
+    	    	if(spId != null && !"".equals(spId)){
+    	    		arapAuditInvoice.set("sp_id", spId);
+    	    	}
+    	    	arapAuditInvoice.save();
+    	    	
+    	    	String ids = getPara("chargePreInvoiceOrderIds");
+    	    	String[] idArr = null;
+    	    	if(ids != null && !"".equals(ids)){
+    	    		idArr = ids.split(",");
+    	    		for(int i=0;i<idArr.length;i++){
+    	    			ArapChargeInvoiceApplication application = ArapChargeInvoiceApplication.dao.findById(idArr[i]);
+    	    			application.set("status", "已开票");
+    	    			application.set("invoice_order_id", arapAuditInvoice.get("id"));
+    	    			application.update();
+    	    		}
+    	    	}
+        	}
+    	}else if(order_type.equals("对账单")){
+    		if(!"".equals(chargeInvoiceOrderId) && chargeInvoiceOrderId != null){
+        		arapAuditInvoice = ArapChargeInvoice.dao.findById(chargeInvoiceOrderId);
+    	    	arapAuditInvoice.set("create_stamp", new Date());
+    	    	arapAuditInvoice.set("remark", getPara("remark"));
+    	    	arapAuditInvoice.set("last_modified_by", getPara("create_by"));
+    	    	arapAuditInvoice.set("last_modified_stamp", new Date());
+    	    	arapAuditInvoice.update();
+        	}else{
+        		arapAuditInvoice = new ArapChargeInvoice();
+                String sql = "select * from arap_charge_invoice order by id desc limit 0,1";
+                arapAuditInvoice.set("order_no", OrderNoGenerator.getNextOrderNo("YSFP") );
+        		arapAuditInvoice.set("create_by", getPara("create_by"));
+        		arapAuditInvoice.set("status", getPara("status"));
+    	    	arapAuditInvoice.set("create_stamp", new Date());
+    	    	if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
+    	    		arapAuditInvoice.set("total_amount", getPara("total_amount"));
+    	    	}
+    	    	arapAuditInvoice.set("remark", getPara("remark"));
+    	    	if(getPara("customer_id") != null && !"".equals(getPara("customer_id"))){
+    	    		arapAuditInvoice.set("payee_id", getPara("customer_id"));
+    	    	}
+    	    	String spId = getPara("spId");
+    	    	if(spId != null && !"".equals(spId)){
+    	    		arapAuditInvoice.set("sp_id", spId);
+    	    	}
+    	    	arapAuditInvoice.save();
+    	    	
+    	    	String ids = getPara("chargePreInvoiceOrderIds");
+    	    	String[] idArr = null;
+    	    	if(ids != null && !"".equals(ids)){
+    	    		idArr = ids.split(",");
+    	    		for(int i=0;i<idArr.length;i++){
+    	    			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArr[i]);
+    	    			arapChargeOrder.set("status", "已开票");
+    	    			arapChargeOrder.set("invoice_order_id", arapAuditInvoice.get("id"));
+    	    			arapChargeOrder.update();
+    	    		}
+    	    	}
+        	}
     	}
+    	
         renderJson(arapAuditInvoice);
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_UPDATE})
@@ -290,10 +378,21 @@ public class ChargeInvoiceOrderController extends Controller {
     	}
     	String chargePreInvoiceOrderIds = "";
     	List<ArapChargeInvoiceApplication> arapChargeInvoiceApplications = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?", getPara("id"));
-    	for(ArapChargeInvoiceApplication arapChargeInvoiceApplication : arapChargeInvoiceApplications){
-    		chargePreInvoiceOrderIds += arapChargeInvoiceApplication.get("id") + ",";
+    	if(arapChargeInvoiceApplications.size()>0){
+    		for(ArapChargeInvoiceApplication arapChargeInvoiceApplication : arapChargeInvoiceApplications){
+        		chargePreInvoiceOrderIds += arapChargeInvoiceApplication.get("id") + ",";
+        	}
+        	chargePreInvoiceOrderIds = chargePreInvoiceOrderIds.substring(0, chargePreInvoiceOrderIds.length() - 1);
+        	setAttr("order_type", "申请单");
+    	}else{
+    		List<ArapChargeOrder> arapChargeOrderLsst = ArapChargeOrder.dao.find("select * from arap_charge_order where invoice_order_id = ?", getPara("id"));
+    		for(ArapChargeOrder arapChargeOrder : arapChargeOrderLsst){
+        		chargePreInvoiceOrderIds += arapChargeOrder.get("id") + ",";
+        	}
+        	chargePreInvoiceOrderIds = chargePreInvoiceOrderIds.substring(0, chargePreInvoiceOrderIds.length() - 1);
+        	setAttr("order_type", "对账单");
     	}
-    	chargePreInvoiceOrderIds = chargePreInvoiceOrderIds.substring(0, chargePreInvoiceOrderIds.length() - 1);
+    	
 		setAttr("chargePreInvoiceOrderIds", chargePreInvoiceOrderIds);
     	render("/yh/arap/ChargeInvoiceOrder/ChargeInvoiceOrderEdit.html");
     }
@@ -446,6 +545,7 @@ public class ChargeInvoiceOrderController extends Controller {
     public void chargePreInvoiceOrderList(){
     	String sLimit = "";
         String chargePreInvoiceOrderIds = getPara("chargePreInvoiceOrderIds");
+        String order_type = getPara("order_type");
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
@@ -454,20 +554,41 @@ public class ChargeInvoiceOrderController extends Controller {
         if(chargePreInvoiceOrderIds == null || "".equals(chargePreInvoiceOrderIds)){
         	chargePreInvoiceOrderIds = "-1";
         }
-        String sqlTotal = "select count(1) total from arap_charge_invoice_application_order where id in("+chargePreInvoiceOrderIds+")";
+        String sqlTotal = "select count(1) total from arap_charge_order where id in("+chargePreInvoiceOrderIds+")";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by,"
-				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no"
-        		+ " from arap_charge_invoice_application_order aaia "
-        		+ " left join party p on p.id = aaia.payee_id"
-				+ " left join contact c on c.id = p.contact_id"
-        		+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
-				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
-				+ " where aaia.id in("+chargePreInvoiceOrderIds+") order by aaia.create_stamp desc " + sLimit;
-
+        String sql  = "";
+        if(order_type!=null){
+        	if(order_type.equals("申请单")){
+            	sql = "select aaia.*,c.abbr cname,ul.user_name create_by,ul2.user_name audit_by,ul3.user_name approval_by,"
+        				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no"
+                		+ " from arap_charge_invoice_application_order aaia "
+                		+ " left join party p on p.id = aaia.payee_id"
+        				+ " left join contact c on c.id = p.contact_id"
+                		+ " left join user_login ul on ul.id = aaia.create_by"
+        				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
+        				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
+        				+ " where aaia.id in("+chargePreInvoiceOrderIds+") order by aaia.create_stamp desc " + sLimit;
+            }else if(order_type.equals("对账单")){
+            	sql = "select aaia.*,c.abbr cname,ul.user_name create_by,"
+        				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no"
+                		+ " from arap_charge_order aaia "
+                		+ " left join party p on p.id = aaia.payee_id"
+        				+ " left join contact c on c.id = p.contact_id"
+                		+ " left join user_login ul on ul.id = aaia.create_by"
+        				+ " where aaia.id in("+chargePreInvoiceOrderIds+") order by aaia.create_stamp desc " + sLimit;
+            }
+        }else{
+        	sql = "select aaia.*,c.abbr cname,ul.user_name create_by,"
+    				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no"
+            		+ " from arap_charge_order aaia "
+            		+ " left join party p on p.id = aaia.payee_id"
+    				+ " left join contact c on c.id = p.contact_id"
+            		+ " left join user_login ul on ul.id = aaia.create_by"
+    				+ " where aaia.id in("+chargePreInvoiceOrderIds+") order by aaia.create_stamp desc " + sLimit;
+        }
+        
+        
         logger.debug("sql:" + sql);
         List<Record> BillingOrders = Db.find(sql);
 

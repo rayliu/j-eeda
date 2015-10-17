@@ -38,6 +38,7 @@
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditInvoice.endTime!''}"/>
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}"/>
                                         	<input type="hidden" name="spId" value="${spId!''}"/>
+                                        	<input type="hidden" id="order_type" name="order_type" value="${order_type!''}"/>
                                             <h2>客户信息</h2>
                                             <div class="form-group">
                                                 <label>公司名称</label>
@@ -118,10 +119,10 @@
 					                                    <th>备注</th>
 					                                    <th>创建人</th>
 					                                    <th>创建时间</th>
-					                                    <th>审核人</th>
+					                               <!--      <th>审核人</th>
 					                                    <th>审核时间</th>
 					                                    <th>审批人</th>
-					                                    <th>审批时间</th>
+					                                    <th>审批时间</th> -->
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -159,6 +160,7 @@
 <%}%>
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/eeda-common.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
 <script src="/yh/css/ui/jquery-ui.js"></script>
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>

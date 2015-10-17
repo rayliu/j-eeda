@@ -25,6 +25,7 @@ $(document).ready(function() {
 		//异步向后台提交数据
 		$.post('/chargeInvoiceOrder/save', $("#chargeInvoiceOrderForm").serialize(), function(data){
 			if(data.ID>0){
+				contactUrl("edit?id", data.ID);
 				$("#chargeInvoiceOrderId").val(data.ID);
 				$("#arapAuditInvoice_order_no").text(data.ORDER_NO);
 			  	$("#departureConfirmationBtn").attr("disabled", false);
@@ -120,7 +121,7 @@ $(document).ready(function() {
 				}
 				itemInvoiceNoList.append(option);	
 			    //var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-			    chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val();   
+			    chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val()+"&order_type="+$("#order_type").val();   
 				chargePreInvoiceOrderTable.fnDraw();
 			}
     	},'json');
@@ -189,10 +190,10 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},
             {"mDataProp":"CREATE_STAMP"},
-            {"mDataProp":"AUDIT_BY"},
-            {"mDataProp":"AUDIT_STAMP"},
-            {"mDataProp":"APPROVAL_BY"},
-            {"mDataProp":"APPROVAL_STAMP"}                        
+//            {"mDataProp":"AUDIT_BY"},
+//            {"mDataProp":"AUDIT_STAMP"},
+//            {"mDataProp":"APPROVAL_BY"},
+//            {"mDataProp":"APPROVAL_STAMP"}                        
         ]      
     });	
 	
@@ -228,7 +229,7 @@ $(document).ready(function() {
 	    invoiceItemTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
 	    invoiceItemTable.fnDraw();		    
 	    
-		chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val();   
+		chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val()+"&order_type="+$("#order_type").val();  
 		chargePreInvoiceOrderTable.fnDraw();
 
  		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
