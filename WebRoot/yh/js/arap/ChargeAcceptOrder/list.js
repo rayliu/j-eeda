@@ -34,8 +34,8 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == '手工收入单'){
 	            		return obj.aData.ORDER_NO;
-	            	}else if(obj.aData.ORDER_TYPE == '申请单'){
-	            		return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+	            	}else if(obj.aData.ORDER_TYPE == '对账单'){
+	            		return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 	            	}else{
 	            		return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 	            	}
@@ -243,7 +243,7 @@ $(document).ready(function() {
     });
 	
 	
-    var ids = [];
+    var ids2 = [];
     // 未选中列表
 	$("#chargeAccept-table").on('click', '.checkedOrUnchecked', function(e){
 		$("#confirmBtn").attr('disabled',false);
@@ -251,18 +251,18 @@ $(document).ready(function() {
             var orderNo = $(this).parent().parent().find('.order_type').text();
             var orderObj=$(this).val()+":"+orderNo;
             //var order = ids.pop();
-			ids.push(orderObj);
+			ids2.push(orderObj);
 		}else{
 			var array = [];
-			for(id in ids){
-				if($(this).val()+":"+$(this).parent().parent().find('.order_type').text()!= ids[id]){
-					array.push(ids[id]);
+			for(id in ids2){
+				if($(this).val()+":"+$(this).parent().parent().find('.order_type').text()!= ids2[id]){
+					array.push(ids2[id]);
 				}
 			}
-			ids = array;
+			ids2 = array;
 		}	
-		$("#chargeIds2").val(ids);
-		if(ids.length != 0 ){
+		$("#chargeIds2").val(ids2);
+		if(ids2.length != 0 ){
 			$("#confirmBtn").attr('disabled',false);
 		}else{
 			$("#confirmBtn").attr('disabled',true);

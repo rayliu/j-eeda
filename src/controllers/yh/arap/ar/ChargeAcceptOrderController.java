@@ -10,7 +10,6 @@ import java.util.Map;
 import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
-import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
@@ -55,12 +54,15 @@ public class ChargeAcceptOrderController extends Controller {
         String beginTime = getPara("beginTime_filter");
         String endTime = getPara("endTime_filter");
         String status2 = "";
+        String status3 = "";
         if(status.equals("unCheck")){
         	status = "已审批";
         	status2 = "新建";
+        	status3 = "已确认";
         }else{
         	status = "已复核";
         	status2 = "已复核";
+        	status3 = "已复核";
         }
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -90,14 +92,14 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " and amco.type = 'non_biz'"
         	    + " and amco.total_amount >= 0"
         	    + " UNION "
-        	    + " select amco.id,'申请单' order_type, amco.order_no,amco.status, null payee ,"
-        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr customer,c1.company_name cname "
-        	    + " from arap_charge_invoice_application_order amco "
+        	    + " select amco.id,'对账单' order_type, amco.order_no,amco.status, null payee ,"
+        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.charge_amount,c.abbr customer,c1.company_name cname "
+        	    + " from arap_charge_order amco "
         	    + " LEFT JOIN party p ON p.id = amco.payee_id "
         	    + " LEFT JOIN contact c ON c.id = p.contact_id "
         	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
-        	    + " where amco.status = '"+status+"' and amco.have_invoice = 'N'"
+        	    + " where amco.status = '"+status3+"' and amco.have_invoice = 'N'"
         	    + " ) A";
         
         
@@ -282,10 +284,10 @@ public class ChargeAcceptOrderController extends Controller {
 	            ArapChargeInvoice arapChargeInvoice= ArapChargeInvoice.dao.findById(id);
 	            arapChargeInvoice.set("status","已复核");
 	            arapChargeInvoice.update();
-	        }else if(order_type.equals("申请单")){
-        		ArapChargeInvoiceApplication arapChargeInvoiceApplication =ArapChargeInvoiceApplication.dao.findById(id);
-        		arapChargeInvoiceApplication.set("status", "已复核");
-        		arapChargeInvoiceApplication.update();
+	        }else if(order_type.equals("对账单")){
+        		ArapChargeOrder arapChargeOrder =ArapChargeOrder.dao.findById(id);
+        		arapChargeOrder.set("status", "已复核");
+        		arapChargeOrder.update();
 	        }else if(order_type.equals("报销单")){
         		ReimbursementOrder reimbursementorder =ReimbursementOrder.dao.findById(id);
         		reimbursementorder.set("status", "已复核");
