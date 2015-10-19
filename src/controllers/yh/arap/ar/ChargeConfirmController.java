@@ -366,15 +366,16 @@ public class ChargeConfirmController extends Controller {
 	        else
 	        	auditLog.set("account_id", 4);
 	        if(order_type.equals("手工收入单")){
-	        	auditLog.set("misc_order_id", confirmId);
+	        	//auditLog.set("misc_order_id", confirmId);
 	        	auditLog.set("source_order", "手工收入单");
 	        }else if(order_type.equals("开票记录单")){
-	        	auditLog.set("invoice_order_id", confirmId);
+	        	//auditLog.set("invoice_order_id", confirmId);
 	        	auditLog.set("source_order", "应收开票记录单");
 	        }else if(order_type.equals("对账单")){
-	        	auditLog.set("dz_order_id", confirmId);
+	        	//auditLog.set("dz_order_id", confirmId);
 	        	auditLog.set("source_order", "应收对账单");
 	        }
+	        auditLog.set("invoice_order_id", confirmId);
 	        auditLog.save();
 	        
 	        if("cash".equals(receive_type)){
