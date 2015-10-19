@@ -56,6 +56,16 @@ public class DamageOrderController extends Controller {
 		setAttr("userOffices", offices);
     	render("/yh/DamageOrder/orderList.html");
     }
+	
+	public void create() {
+		List<Record> paymentItemList = Collections.EMPTY_LIST;
+		paymentItemList = Db.find("select * from fin_item where type='应付'");
+		setAttr("paymentItemList", paymentItemList);
+		List<Record> receivableItemList = Collections.EMPTY_LIST;
+		receivableItemList = Db.find("select * from fin_item where type='应收'");
+		setAttr("receivableItemList", receivableItemList);
+    	render("/yh/DamageOrder/DamageOrderEdit.html");
+    }
 
     public void list() {
     	String sp = getPara("sp");

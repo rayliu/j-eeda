@@ -7,7 +7,7 @@ $(document).ready(function() {
     $("#beginTime_filter").val(new Date().getFullYear()+'-'+ (new Date().getMonth()+1));
     
 	  //datatable, 动态处理
-    var dataTable = $('#eeda-table').dataTable({
+    var dataTable = $('#eeda-table').DataTable({
         "processing": true,
         "searching": false,
         //"serverSide": true,
