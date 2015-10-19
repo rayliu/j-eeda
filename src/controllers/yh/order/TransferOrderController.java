@@ -302,12 +302,12 @@ public class TransferOrderController extends Controller {
 					.get("contact_id"));
 			setAttr("driverContact", driverContact);
 		}
-		Long notify_party_id = transferOrder.get("notify_party_id");
+		/*Long notify_party_id = transferOrder.get("notify_party_id");
 		if (notify_party_id != null) {
 			Party notify = Party.dao.findById(notify_party_id);
 			Contact contact = Contact.dao.findById(notify.get("contact_id"));
 			setAttr("contact", contact);
-		}
+		}*/
 
 		String routeFrom = transferOrder.get("route_from");
 		Location locationFrom = null;
@@ -517,6 +517,9 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo")); 
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
+			transferOrder.set("receiving_name", getPara("notify_contact_person")); 
+			transferOrder.set("receiving_address", getPara("notify_address")); 
+			transferOrder.set("receiving_phone", getPara("notify_phone")); 
 			transferOrder.set("no_contract_revenue", revenueCheckBox); 
 			transferOrder.set("no_contract_cost", costCheckBox); 
 			
@@ -526,15 +529,8 @@ public class TransferOrderController extends Controller {
 			if(getParaToDate("arrival_time") != null){
 				transferOrder.set("arrival_time", getPara("arrival_time")); 
 			}
-			Party party = null;
-			String notifyPartyId = getPara("notify_party_id");
 			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery") || getPara("arrivalMode").equals("deliveryToFactory")) {
-				if (notifyPartyId == null || "".equals(notifyPartyId)) {
-					party = saveContact();
-				} else {
-					party = updateContact(notifyPartyId);
-				}
-				transferOrder.set("notify_party_id", party.get("id"));
+				
 			} else {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
@@ -579,6 +575,9 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
 			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
+			transferOrder.set("receiving_name", getPara("notify_contact_person")); 
+			transferOrder.set("receiving_address", getPara("notify_address")); 
+			transferOrder.set("receiving_phone", getPara("notify_phone")); 
 			transferOrder.set("no_contract_revenue", revenueCheckBox); 
 			transferOrder.set("no_contract_cost", costCheckBox); 			
 			
@@ -588,15 +587,9 @@ public class TransferOrderController extends Controller {
 			if(getParaToDate("arrival_time") != null){
 				transferOrder.set("arrival_time", getPara("arrival_time")); 
 			}
-			Party party = null;
-			String notifyPartyId = getPara("notify_party_id");
+			
 			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery") || getPara("arrivalMode").equals("deliveryToFactory")) {
-				if (notifyPartyId == null || "".equals(notifyPartyId)) {
-					party = saveContact();
-				} else {
-					party = updateContact(notifyPartyId);
-				}
-				transferOrder.set("notify_party_id", party.get("id"));
+				
 				transferOrder.set("warehouse_id", null);
 			} else {
 				if (warehouseId != null && !"".equals(warehouseId)) {
@@ -647,7 +640,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存收货人
-	public Party saveContact() {
+	/*public Party saveContact() {
 		Party party = new Party();
 		Contact contact = setContact();
 		party.set("contact_id", contact.getLong("id"));
@@ -656,10 +649,10 @@ public class TransferOrderController extends Controller {
 		party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
 		party.save();
 		return party;
-	}
+	}*/
 
 	// 更新收货人party
-	public Party updateContact(String notifyPartyId) {
+	/*public Party updateContact(String notifyPartyId) {
 		Party party = Party.dao.findById(notifyPartyId);
 		Contact contact = editContact(party);
 		party.set("create_date", new Date());
@@ -667,7 +660,7 @@ public class TransferOrderController extends Controller {
 		party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
 		party.update();
 		return party;
-	}
+	}*/
 
 	// 保存联系人
 	public Contact setContact() {

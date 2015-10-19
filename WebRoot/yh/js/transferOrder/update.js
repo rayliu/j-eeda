@@ -1112,13 +1112,9 @@ $(document).ready(function() {
     	console.log(this);
     	var inputId  = $(this).attr('id');
     	if(inputId=='arrivalMode1'){
-    		$("#contactInformation").show();
-    		$("#warehousingConfirmBtn").attr("disabled", true);
     		//$("#gateInSelect").hide();
     		$("#gateInDiv").hide();
-    		$("#warehousingConfirmBtn").attr("disabled", true);
     	}else{
-    		$("#contactInformation").hide();
     		//$("#gateInSelect").show();
     		$("#gateInDiv").show();
     	} 
@@ -1144,7 +1140,7 @@ $(document).ready(function() {
 		},'json');
 	});*/
 	
-	$("input[name='arrivalMode']").each(
+/*	$("input[name='arrivalMode']").each(
 		function(){
 			if($(this).attr('checked') == 'checked'){
 				 $("#contactInformation").show();
@@ -1153,7 +1149,7 @@ $(document).ready(function() {
 				 $("#contactInformation").hide();
 			}
 		}			
-	);
+	);*/
 	
 	// 保存单品信息
 	$("#transferOrderItemDetailFormBtn").click(function(){
@@ -1339,7 +1335,6 @@ $(document).ready(function() {
 			if($(this).val() == 'gateIn'){
 				//$("#gateInSelect").show();
 				$("#gateInDiv").show();
-				$("#contactInformation").hide();
 			}
 		}
 	});
@@ -2240,7 +2235,6 @@ $(document).ready(function() {
     	$("#cancelBtn").attr('disabled', true);
     }
     if($("#arrivalMode2").prop('checked') == true){
-    	$("#contactInformation").hide();
     	//$("#gateInSelect").show();    	
     	$("#gateInDiv").show();    	
     }
