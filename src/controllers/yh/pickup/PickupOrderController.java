@@ -102,9 +102,7 @@ public class PickupOrderController extends Controller {
             transferOrder.set("pickup_seq", i + 1);
             transferOrder.update();
         }
-        String sql = "SELECT *,con.address con_address FROM transfer_order tra "
-                + " LEFT JOIN party de on de.id = tra.notify_party_id"
-                + " LEFT JOIN contact con on con.id = de.contact_id"
+        String sql = "SELECT tra.receiving_address FROM transfer_order tra "
                 + " where tra.id in("+list+")";
         Record tro = Db.findFirst(sql);
         setAttr("transferOrder",tro);
@@ -703,14 +701,16 @@ public class PickupOrderController extends Controller {
                         }
                         if ("receiverCheckbox".equals(values[i])) {
                         	pickupOrder.set("is_direct_deliver", true);
-                        	String sql = "SELECT *,con.id con_id FROM transfer_order tra "
+                        	/*String sql = "SELECT *,con.id con_id FROM transfer_order tra "
                                     + " LEFT JOIN party de on de.id = tra.notify_party_id"
                                     + " LEFT JOIN contact con on con.id = de.contact_id"
                                     + " where tra.id in("+orderids[0]+")";
                         	Record record =Db.findFirst(sql);
                         	record.get("con_id");
                         	Contact contact = Contact.dao.findById(record.get("con_id"));
-                        	contact.set("address", con_address).update();
+                        	contact.set("address", con_address).update();*/
+                        	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
+                        	transferOrder.set("receiving_address", con_address).update();
                         }else{
                         	pickupOrder.set("is_direct_deliver", false);
                         }
@@ -1074,9 +1074,7 @@ public class PickupOrderController extends Controller {
         TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
         setAttr("transferOrderAttr", transferOrderAttr);
         
-        String sq = "SELECT *,con.address con_address FROM transfer_order tra "
-                + " LEFT JOIN party de on de.id = tra.notify_party_id"
-                + " LEFT JOIN contact con on con.id = de.contact_id"
+        String sq = "SELECT tra.receiving_address FROM transfer_order tra "
                 + " where tra.id in("+transferOrderIds[0]+")";
         Record tro = Db.findFirst(sq);
         setAttr("transferOrder",tro);
