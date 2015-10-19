@@ -365,18 +365,19 @@ public class CostConfirmController extends Controller {
 	        else
 	        	auditLog.set("account_id", 4);
 	        if(order_type.equals("成本单")){
-	        	auditLog.set("misc_order_id", confirmId);
+	        	//auditLog.set("misc_order_id", confirmId);
 	        	auditLog.set("source_order", "成本单");
 	        }else if(order_type.equals("行车单")){
-	        	auditLog.set("car_summary_order_id", confirmId);
+	        	//auditLog.set("car_summary_order_id", confirmId);
 	        	auditLog.set("source_order", "行车单");
 	        }else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
-	        	auditLog.set("reimbursement_order_id", confirmId);
+	        	//auditLog.set("reimbursement_order_id", confirmId);
 	        	auditLog.set("source_order", "行车报销单");
 	        }else{
-	        	auditLog.set("invoice_order_id", confirmId);
+	        	//auditLog.set("invoice_order_id", confirmId);
 	        	auditLog.set("source_order", "应付开票申请单");
 	        }
+	        auditLog.set("invoice_order_id", confirmId);
 	        auditLog.save();
 	        
 	        if("cash".equals(pay_type)){
