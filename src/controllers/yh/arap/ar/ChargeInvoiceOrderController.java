@@ -227,7 +227,7 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " left join party p on p.id = aci.payee_id "
 				+ " left join contact c on c.id = p.contact_id ";*/
         
-        String sql = "select aci.*,group_concat(distinct acio.invoice_no separator '\r\n') invoice_item_no,ul.user_name creator_name,c.abbr cname,c1.abbr sp from arap_charge_invoice aci"
+        String sql = "select aci.*,group_concat(distinct acio.invoice_no separator '\r\n') invoice_item_no,ul.c_name creator_name,c.abbr cname,c1.abbr sp from arap_charge_invoice aci"
 				+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
 //				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
 //				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
@@ -570,7 +570,7 @@ public class ChargeInvoiceOrderController extends Controller {
         				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
         				+ " where aaia.id in("+chargePreInvoiceOrderIds+") order by aaia.create_stamp desc " + sLimit;
             }else if(order_type.equals("对账单")){
-            	sql = "select aaia.*,c.abbr cname,ul.user_name create_by,"
+            	sql = "select aaia.*,c.abbr cname,ul.c_name create_by,"
         				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no"
                 		+ " from arap_charge_order aaia "
                 		+ " left join party p on p.id = aaia.payee_id"

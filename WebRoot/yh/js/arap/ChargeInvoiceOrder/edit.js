@@ -166,7 +166,14 @@ $(document).ready(function() {
   	        },    
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
-        			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if($("#order_type").val()=='申请单'){
+            			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		}else if($("#order_type").val()=='对账单'){
+            			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		}else{
+            			return obj.aData.ORDER_NO;
+            		}
+        			
         		}},
             {"mDataProp":"STATUS",
                 "fnRender": function(obj) {
@@ -184,9 +191,9 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":null},
-            {"mDataProp":null},
-            {"mDataProp":null},
+            /*{"mDataProp":null},*/
+            {"mDataProp":"CNAME"},
+            {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},
             {"mDataProp":"CREATE_STAMP"},
