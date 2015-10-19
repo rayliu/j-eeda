@@ -297,9 +297,12 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		}else{
 			transferOrder.set("operation_type", "own");
 		}
-		//取货地址、收货单位
+		//取货地址、收货信息
 		transferOrder.set("address", content.get("始发城市"))
-		.set("receiving_unit", content.get("收货单位"));
+		.set("receiving_unit", content.get("收货单位"))
+		.set("receiving_name", content.get("单品收货人"))
+		.set("receiving_address", content.get("单品收货地址"))
+		.set("receiving_phone", content.get("单品收货人联系电话"));
 		
 		//到达方式
 		if("入中转仓".equals(content.get("到达方式"))){
@@ -310,7 +313,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 			//货品直送
 			transferOrder.set("arrival_mode", "delivery");
 			// 保存联系人
-			Contact contact = new Contact();
+			/*Contact contact = new Contact();
 			contact.set("address", content.get("单品收货地址"));//收货地址
 			contact.set("contact_person", content.get("单品收货人"));//收货人
 			contact.set("phone", content.get("单品收货人联系电话"));//收货人电话
@@ -323,7 +326,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 			party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
 			party.save();
 			//收货人
-			transferOrder.set("notify_party_id", party.get("id"));
+			transferOrder.set("notify_party_id", party.get("id"));*/
 		}
 		//始发城市
 		transferOrder.set("route_from",location1.get("code"));
