@@ -26,6 +26,7 @@ import models.yh.profile.Contact;
 
 import com.jfinal.aop.Before;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.DbKit;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
@@ -499,28 +500,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		transferOrderMilestone.save();
     }
 	
-	/**
-     * 回滚数据（报错回滚）
-     * @param content
-     * @return 
-     */
-	private long rollbackInvocation(List<TransferOrder> orderList) throws Exception{
-		System.out.println("已生成运输单数量："+orderList.size()+",开始回滚数据......");
-		long delNumber = 0;
-		List<String> sqlList = new ArrayList<String>();
-		for (TransferOrder transferOrder : orderList) {
-			delNumber+=1;
-			long orderId = transferOrder.getLong("id");
-			sqlList.add("delete from transfer_order_milestone where order_id = '"+orderId+"'");
-			sqlList.add("delete from transfer_order_item_detail where order_id = '"+orderId+"'");
-			sqlList.add("delete from transfer_order_item where order_id = '"+orderId+"'");
-			sqlList.add("delete from transfer_order where id = '"+orderId+"'");
-		}
-		Db.batch(sqlList, sqlList.size());
-		System.out.println("共删除运输单数量："+delNumber+",结束回滚数据......");
-		return delNumber;
-    }
-	
     /**
      * 导入数据
      * @param content
@@ -570,10 +549,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				if(content.get(j).get("货品属性")=="ATM"){
 		    					product = Product.dao.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '" + customer.get("pid") + "' and item_no =  '"+content.get(j).get("货品型号")+"';");
 		    				}
-		    				if(product==null){
+		    				/*if(product==null){
 		    					importResult.put("cause", "第"+causeRow+"行，货品属性信息有误");
 		    					return importResult;
-		    				}
+		    				}*/
 		    				else{
 		    					tansferOrderItem = TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
 		    				}
@@ -608,20 +587,18 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 						}
 					}
 				} catch (Exception e) {
-					long rollbackNumber = 0;
+					
 					System.out.println("导入操作异常！");
 					e.printStackTrace();
 					try {
-						rollbackNumber = rollbackInvocation(orderList);
+						DbKit.getConfig().getConnection().rollback();
 					} catch (Exception e1) {
 						System.out.println("回滚操作异常！");
-						e1.printStackTrace();
+						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>回滚已导入数据出现异常，请联系管理员手动删除！");
 					}
 					importResult.put("result","false");
-					if(rollbackNumber == orderList.size())
-						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>导入数据已取消！");
-					else
-						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>回滚已导入数据出现异常，请联系管理员手动删除！");
+					importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>导入数据已取消！");
+											
 					return importResult;
 				}
 				importResult.put("result","true");
