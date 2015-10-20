@@ -13,7 +13,7 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/chargeInvoiceOrder/list",
         "aoColumns": [   
-            {"mDataProp":"ORDER_NO",
+            {"mDataProp":"ORDER_NO","sWidth":"130px",
             	"fnRender": function(obj) {
             		if(ChargeInvoice.isUpdate || ChargeInvoice.isApproval){
             			return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -22,11 +22,11 @@ $(document).ready(function() {
             		}
         			
         	}},
-        	{"mDataProp":"CHARGE_ORDER_NO"},
-            {"mDataProp":"CNAME"},
-            {"mDataProp":"SP"},
-            {"mDataProp":"TOTAL_AMOUNT"},
-            {"mDataProp":"STATUS",
+        	{"mDataProp":"CHARGE_ORDER_NO","sWidth":"130px"},
+            {"mDataProp":"CNAME","sWidth":"180px"},
+            {"mDataProp":"SP","sWidth":"180px"},
+            {"mDataProp":"TOTAL_AMOUNT","sWidth":"80px"},
+            {"mDataProp":"STATUS","sWidth":"120px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -42,9 +42,9 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"INVOICE_ITEM_NO"},           
-            {"mDataProp":"CREATOR_NAME"},        	
-            {"mDataProp":"CREATE_STAMP"},
+            {"mDataProp":"INVOICE_ITEM_NO","sWidth":"120px"},          
+            {"mDataProp":"CREATOR_NAME","sWidth":"80px"},       	
+            {"mDataProp":"CREATE_STAMP","sWidth":"120px"},
             {"mDataProp":"REMARK"}                        
         ]      
     });	
