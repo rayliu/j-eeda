@@ -105,8 +105,6 @@ public class ReturnOrderController extends Controller {
                 + " tor2.route_from"
                 + " ) = lo. CODE"
                 + " LEFT JOIN location lo2 ON ifnull(tor.route_to, tor2.route_to) = lo2. CODE"
-                + " LEFT JOIN party p3 ON p3.id = tor.notify_party_id"
-                + " LEFT JOIN contact c3 ON c3.id = p3.contact_id"
                 + " LEFT JOIN transfer_order_item_detail toid2 ON toid2.id = doi.transfer_item_detail_id"
                 + " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
                 + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
@@ -122,10 +120,10 @@ public class ReturnOrderController extends Controller {
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
 			// 获取当前页的数据
 			sql = "select * from (select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
-					+ " ifnull(c4.contact_person, c3.contact_person) receipt_person, "
-					+ " ifnull(c4.phone, c3.phone) receipt_phone,"
+					+ " ifnull(c4.contact_person, tor.receiving_name) receipt_person, "
+					+ " ifnull(c4.phone, tor.receiving_phone) receipt_phone,"
 					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
-					+ " ifnull(c4.address, (select c.address from contact c LEFT JOIN party p on p.id = c.id  where p.id = tor.notify_party_id)) receipt_address,"
+					+ " ifnull(c4.address,receiving_address) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " d_o.ref_no sign_no,"
 					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
@@ -182,10 +180,10 @@ public class ReturnOrderController extends Controller {
 			String conFromSql = " from(select ifnull(tor.route_from,tor2.route_from) route_from ,"
 					+ " lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, "
 					+ " ifnull(tor.address, tor2.address) address,"
-					+ " ifnull(c4.contact_person, c3.contact_person) receipt_person, "
-					+ " ifnull(c4.phone, c3.phone) receipt_phone,"
+					+ " ifnull(c4.contact_person, tor.receiving_name) receipt_person, "
+					+ " ifnull(c4.phone, tor.receiving_phone) receipt_phone,"
 					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
-					+ " ifnull(c4.address, (select c.address from contact c LEFT JOIN party p on p.id = c.id  where p.id = tor.notify_party_id)) receipt_address,"
+					+ " ifnull(c4.address, tor.receiving_address) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " d_o.ref_no sign_no,"
 					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
@@ -281,7 +279,7 @@ public class ReturnOrderController extends Controller {
 		if (deliveryId == null) {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
 			if(transferOrder != null){
-				notify_party_id = transferOrder.get("notify_party_id");
+				//notify_party_id = transferOrder.get("notify_party_id");
 				routeTo = transferOrder.get("route_to");
 			}
 		} else {
@@ -399,11 +397,15 @@ public class ReturnOrderController extends Controller {
 			if (!"".equals(routeTo) && routeTo != null) {
 				transferOrder.set("route_to", routeTo);
 			}
+            transferOrder.set("receiving_unit", getPara("company_name")); 
+            transferOrder.set("receiving_name", getPara("contact_person")); 
+            transferOrder.set("receiving_address", getPara("address")); 
+            transferOrder.set("receiving_phone", getPara("phone")); 
 			transferOrder.update();
-			notifyPartyId = transferOrder.get("notify_party_id");
+			/*notifyPartyId = transferOrder.get("notify_party_id");
 			if (notifyPartyId != null) {
 				updateContact(notifyPartyId);
-			}
+			}*/
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
 				deleteContractFinItemByTransfer(transferOrder, returnOrder.getLong("id"));
@@ -426,10 +428,10 @@ public class ReturnOrderController extends Controller {
 					deliveryOrder.set("ref_no", getPara("sign_document_no"));
 			}
 			deliveryOrder.update();
-			notifyPartyId = deliveryOrder.get("notify_party_id");
+			/*notifyPartyId = deliveryOrder.get("notify_party_id");
 			if (notifyPartyId != null) {
 				updateContact(notifyPartyId);
-			}
+			}*/
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
 				deleteContractFinItem(deliveryOrder, returnOrder.getLong("id"));
@@ -472,7 +474,7 @@ public class ReturnOrderController extends Controller {
 	}
 
 	// 更新收货人信息
-	private void updateContact(Long notifyPartyId) {
+	/*private void updateContact(Long notifyPartyId) {
 		Party party = Party.dao.findById(notifyPartyId);
 		Contact contact = Contact.dao.findById(party.get("contact_id"));
 		contact.set("company_name", getPara("company_name"));
@@ -480,7 +482,7 @@ public class ReturnOrderController extends Controller {
 		contact.set("contact_person", getPara("contact_person"));
 		contact.set("phone", getPara("phone"));
 		contact.update();
-	}
+	}*/
 
 	// 回单签收
 	public void returnOrderReceipt() {
@@ -1321,7 +1323,7 @@ public class ReturnOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         String sql = "select ro.id,ro.order_no,ro.transaction_status,ro.create_date,"
-        		+ " (select company_name from contact where id= tor.notify_party_id) notify_party_name,"
+        		+ " ifnull(tor.receiving_unit,'') notify_party_name,"
         		+ " ifnull((select name from location where code = dor.route_from ), '') route_from,"
         		+ " ifnull((select name from location where code = dor.route_to ), '') route_to,"
         		+ " (select sum(amount) from return_order_fin_item where return_order_id = ro.id ) amount"

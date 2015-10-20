@@ -4,10 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 import models.DepartTransferOrder;
+import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.UserLogin;
 import models.yh.delivery.DeliveryOrder;
+import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -34,8 +36,24 @@ public class CreatReturnOrder{
 	    if(ReturnOrder.Depart_Order.equals(type)){
 	    	DepartTransferOrder det=DepartTransferOrder.dao.findFirst("select * from depart_transfer where depart_id="+id+"");
 			TransferOrder trf=TransferOrder.dao.findFirst("select * from transfer_order where id="+Integer.parseInt(det.get("order_id").toString())+"");
+	        if(trf.get("notify_party_id")==null){	
+	        Party party = new Party();
+	        Contact contact = new Contact();
+	        party.set("contact_id", contact.getLong("id"));
+	        party.set("create_date", new Date());
+	        party.set("creator", currentUser.getPrincipal());
+	        party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
+	        party.save();
+	        contact.set("contact_person", trf.get("receiving_name"));
+	        contact.set("phone", trf.get("receiving_phone"));
+	        contact.set("address", trf.get("receiving_address"));
+	        contact.save();
+	        re.set("notity_party_id",party.get("id"));
+	        }
+	        else{
+	        	re.set("notity_party_id",Integer.parseInt(trf.get("notify_party_id").toString()));
+	        }
 	    	re.set("depart_order_id", id);
-			re.set("notity_party_id",Integer.parseInt(trf.get("notify_party_id").toString()));
 			re.set("customer_id",Integer.parseInt(trf.get("customer_id").toString()));
 		}else if(ReturnOrder.Delivery_Order.equals(type)){
 			DeliveryOrder de=DeliveryOrder.dao.findById(id);
