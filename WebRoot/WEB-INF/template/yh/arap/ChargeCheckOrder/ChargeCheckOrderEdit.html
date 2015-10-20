@@ -86,7 +86,7 @@
                                         <div class="form-group">                                        
                                             <div id="datetimepicker" class="input-append date "> 
                                                 <label class="search-label">对账开始时间</label> 
-                                                <input id="planning_time" class="form-control search-control  beginTime_filter" type="text" name="begin_time" value="${arapAuditOrder.begin_time!''}">
+                                                <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text" name="beginTime_filter" value="${arapAuditOrder.begin_time!''}">
                                                 <span class="add-on">  
                                                     <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
                                                 </span>  
@@ -94,7 +94,7 @@
 	                                        <div class="form-group">                                                    
 	                                            <span id="datetimepicker2" class="input-append date search-control "> 
 	                                                <label class="search-label">对账结束时间</label> 
-	                                                <input id="arrival_time" class="form-control search-control endTime_filter" type="text" name="end_time" value="${arapAuditOrder.end_time!''}">
+	                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text" name="endTime_filter" value="${arapAuditOrder.end_time!''}">
 	                                                <span class="add-on">  
 	                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
 	                                                </span>  
@@ -110,7 +110,20 @@
                                            	<label class="radio-inline">
                                                 <input type="radio" name="invoiceType" id="replenishmentOrder" value="N">否
                                             </label>
-                                        </div><!-- end of row-->                                        
+                                        </div>
+                                        <div id ="isInvoice">
+	                                        <div class="form-group">
+	                                            <label>开票单位</label>
+	                                            <input  class="form-control search-control" id="billing_unit" name="billing_unit"  type="text" placeholder="请选择开票单位" value="${arapAuditOrder.billing_unit!''}">
+												<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+												</ul>
+	                                        </div>
+	                                        <div class="form-group">
+	                                            <label>收&nbsp;&nbsp;款&nbsp;&nbsp;人</label>
+	                                            <input  class="form-control search-control" id="payee" name="payee" type="text" value="${arapAuditOrder.payee!''}">
+	                                        </div>
+                                        </div>
+                                        <!-- end of row-->                                        
                                     </form>    
                                     
                                    <!--  <h2>时间段</h2>

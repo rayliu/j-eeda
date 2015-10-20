@@ -396,6 +396,10 @@ public class ChargeCheckOrderController extends Controller {
 		String remark = (String)dto.get("remark");
 		String customerId = (String)dto.get("customer_id");
 		String spId = (String)dto.get("sp_id");
+		String billing_unit = (String)dto.get("billing_unit");
+		String beginTime_filter = (String)dto.get("beginTime_filter");
+		String endTime_filter = (String)dto.get("endTime_filter");
+		String payee = (String)dto.get("payee");
 		String haveInvoice = (String)dto.get("have_invoice");
 		
 		UserLogin user = LoginUserController.getLoginUser(this);
@@ -406,15 +410,17 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.set("last_modified_by", user.getLong("id"));
 			arapChargeOrder.set("last_modified_stamp", new Date());
 			
-			if (getParaToDate("begin_time") != null) {
-				arapChargeOrder.set("begin_time", getPara("begin_time"));
+			if (beginTime_filter != null) {
+				arapChargeOrder.set("begin_time", beginTime_filter);
 			}
-			if (getParaToDate("end_time") != null) {
-				arapChargeOrder.set("end_time", getPara("end_time"));
+			if (endTime_filter != null) {
+				arapChargeOrder.set("end_time", endTime_filter);
 			}
 			arapChargeOrder.set("total_amount", total_amount);
 			arapChargeOrder.set("charge_amount", change_amount);
 			arapChargeOrder.set("have_invoice", haveInvoice);
+			arapChargeOrder.set("billing_unit", billing_unit);
+			arapChargeOrder.set("payee", payee);
 			
 			arapChargeOrder.update();
 
@@ -438,15 +444,17 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.set("order_no",
 					OrderNoGenerator.getNextOrderNo("YSDZ"));
 
-			if (getParaToDate("begin_time") != null && !getParaToDate("begin_time").equals("")) {
-				arapChargeOrder.set("begin_time", getPara("begin_time"));
+			if (beginTime_filter != null) {
+				arapChargeOrder.set("begin_time", beginTime_filter);
 			}
-			if (getParaToDate("end_time") != null) {
-				arapChargeOrder.set("end_time", getPara("end_time"));
+			if (endTime_filter != null) {
+				arapChargeOrder.set("end_time", endTime_filter);
 			}
 			arapChargeOrder.set("total_amount", total_amount);
 			arapChargeOrder.set("charge_amount", change_amount);
 			arapChargeOrder.set("have_invoice", haveInvoice);
+			arapChargeOrder.set("billing_unit", billing_unit);
+			arapChargeOrder.set("payee", payee);
 			arapChargeOrder.save();
 
 			boolean isCreate = true;

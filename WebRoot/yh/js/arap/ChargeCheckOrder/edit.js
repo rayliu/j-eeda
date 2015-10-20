@@ -4,6 +4,15 @@ $(document).ready(function() {
 	}
 	$('#menu_charge').addClass('active').find('ul').addClass('in');
 	
+	$("input[type='radio']").on('click',function(){
+		if($(this).val()=='Y'){
+			$("#isInvoice").show();
+		}else{
+			$("#payee").val('');
+			$("#billing_unit").val('');
+			$("#isInvoice").hide();
+		}
+	});
 	
 	if($("#chargeCheckOrderId").val() == ""){
 		$('#auditBtn').attr('disabled', true);
@@ -37,8 +46,16 @@ $(document).ready(function() {
 	       	return;
         }
         //数据响应之前回调按钮
+        
+        if($('#beginTime_filter').val()==""){
+        	$.scojs_message('对账开始日期不能为空', $.scojs_message.TYPE_ERROR);
+        	return;
+        }
+        if($('#endTime_filter').val()==""){
+        	$.scojs_message('对账结束日期不能为空', $.scojs_message.TYPE_ERROR);
+        	return;
+        }
         $('#saveChargeCheckOrderBtn').attr('disabled', true);
-
         var tableRows = $("#chargeConfirem-table tr");
         var itemsArray=[];
         for(var index=0; index<tableRows.length; index++){
@@ -76,6 +93,10 @@ $(document).ready(function() {
             customer_id: $('#customer_id').val(),
             remark: $('#remark').val(),
             sp_id: $('#spId').val(),
+            billing_unit: $('#billing_unit').val(),
+            payee: $('#payee').val(),
+            beginTime_filter:$('#beginTime_filter').val(),
+            endTime_filter:$('#endTime_filter').val(),
             total_amount: total_amount,
             change_amount: change_amount,
             have_invoice: $('input:radio:checked').val(),
@@ -138,7 +159,6 @@ $(document).ready(function() {
 	//transferOrderForm 不需要提交	
  	$("#saveChargeCheckOrderBtn").click(function(e){
  		//数据响应之前回调按钮
-        $('#saveChargeCheckOrderBtn').attr('disabled', true);
  		saveChargeCheckOrder(e);
 
  		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -315,7 +335,7 @@ $(document).ready(function() {
         pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
         $(".bootstrap-datetimepicker-widget").hide();
-        $('#departure_time').trigger('keyup');
+        $('#beginTime_filter').trigger('keyup');
     });	 
     
     $('#datetimepicker2').datetimepicker({  
@@ -325,7 +345,7 @@ $(document).ready(function() {
     	pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
     	$(".bootstrap-datetimepicker-widget").hide();
-    	$('#arrival_time').trigger('keyup');
+    	$('#endTime_filter').trigger('keyup');
     });	
     
     var externalTab = $('#external-table').dataTable({
@@ -420,7 +440,141 @@ $(document).ready(function() {
 		},'json');
 	});
 	
+	/*//开票单位
+	$('#billing_unit').on('keyup click', function(){
+
+		var inputStr = $('#billing_unit').val();
+		var billingList =$("#billingList");
+		$.get('/costPreInvoiceOrder/sp_filter_list', {input:inputStr}, function(data){
+			billingList.empty();
+			for(var i = 0; i < data.length; i++){
+				var company_name = data[i].COMPANY_NAME;
+				if(company_name == null){
+					company_name='';
+				}
+				billingList.append("<li><a tabindex='-1' class='fromLo'>"+company_name+" </a></li>");
+			}
+		},'json');
+		
+		billingList.css({ 
+        	left:$(this).position().left+"px", 
+        	top:$(this).position().top+32+"px" 
+        });		 
+		billingList.show();	 
+    });
+	$('#billing_unit').on('blur', function(){
+ 		$('#billingList').hide();
+ 	});
+	$('#billingList').on('blur', function(){
+ 		$('#billingList').hide();
+ 	});
+
+	$('#billingList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
 	
+	$('#billingList').on('mousedown', '.fromLo', function(e){
+		var message = $(this).text();
+		$('#billing_unit').val(message.substring(0, message.indexOf(" ")));
+        $('#billingList').hide();
+        //payment();
+    });*/
+	
+	
+	
+	 //获取供应商的list，选中信息在下方展示其他信息
+    $('#billing_unit').on('input click', function(){
+    		var me= this;
+    		var inputStr = $('#billing_unit').val();
+    		if(inputStr == ""){
+    			var pageSpName = $("#pageSpName");
+    			pageSpName.empty();
+    			var pageSpAddress = $("#pageSpAddress");
+    			pageSpAddress.empty();
+    			$('#sp_id').val($(this).attr(''));
+    		}
+    		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
+    			if(inputStr!=$('#billing_unit').val()){//查询条件与当前输入值不相等，返回
+					return;
+				}
+    			var spList =$("#spList");
+    			spList.empty();
+    			for(var i = 0; i < data.length; i++)
+    			{
+    				var abbr = data[i].ABBR;
+ 				if(abbr == null){
+ 					abbr = '';
+ 				}
+ 				var company_name = data[i].COMPANY_NAME;
+ 				if(company_name == null){
+ 					company_name = '';
+ 				}
+ 				var contact_person = data[i].CONTACT_PERSON;
+ 				if(contact_person == null){
+ 					contact_person = '';
+ 				}
+ 				var phone = data[i].PHONE;
+ 				if(phone == null){
+ 					phone = '';
+ 				}
+ 				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+company_name+"</a></li>");
+ 			}
+ 			$("#spList").css({ 
+        	left:$(me).position().left+"px", 
+        	top:$(me).position().top+28+"px" 
+       }); 
+       $('#spList').show();
+
+    		},'json');
+
+    		
+    	});
+
+    	// 没选中供应商，焦点离开，隐藏列表
+    	$('#billing_unit').on('blur', function(){
+     		$('#spList').hide();
+     	});
+
+    	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+    	$('#spList').on('blur', function(){
+     		$('#spList').hide();
+     	});
+
+    	$('#spList').on('mousedown', function(){
+    		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+    	});
+
+    	// 选中供应商
+    	$('#spList').on('mousedown', '.fromLocationItem', function(e){
+    		//console.log($('#spList').is(":focus"))
+    		var message = $(this).text();
+    		$('#billing_unit').val(message);
+    		var pageSpName = $("#pageSpName");
+    		pageSpName.empty();
+    		var pageSpAddress = $("#pageSpAddress");
+    		pageSpAddress.empty();
+    		pageSpAddress.append($(this).attr('address'));
+    		var contact_person = $(this).attr('contact_person');
+    		if(contact_person == 'null'){
+    			contact_person = '';
+    		}
+    		pageSpName.append(contact_person+'&nbsp;');
+    		var phone = $(this).attr('phone');
+    		if(phone == 'null'){
+    			phone = '';
+    		}
+    		pageSpName.append(phone); 
+    		pageSpAddress.empty();
+    		var address = $(this).attr('address');
+    		if(address == 'null'){
+    			address = '';
+    		}
+    		pageSpAddress.append(address);
+            $('#spList').hide();
+            //refreshList();
+        });
+    	
+    	
 	
 	
 } );
