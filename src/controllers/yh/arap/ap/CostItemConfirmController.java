@@ -262,7 +262,7 @@ public class CostItemConfirmController extends Controller {
         		+ " (SELECT NAME FROM location WHERE CODE = tor.route_from )) route_from,"
         		+ " ifnull((SELECT NAME FROM location WHERE CODE = tor.route_to),"
         		+ " (SELECT NAME FROM location WHERE CODE = tor.route_to)) route_to,"
-				+ " '保险公司' spname,"
+				+ " c.abbr spname,"
 //				+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id in(select tro.id from transfer_order tro where tro.insurance_id  = ior.id )) amount,"
 //				+ " (select round(sum(ifnull(prod.volume,toi.volume)*amount),2) from transfer_order_item toi left join product prod on toi.product_id = prod.id  where toi.order_id in(select tro.id from transfer_order tro where tro.insurance_id  = ior.id )) volume,"
 //				+ " (select round(sum(ifnull(prod.weight,toi.weight)*amount),2) from transfer_order_item toi left join product prod on toi.product_id = prod.id  where toi.order_id in(select tro.id from transfer_order tro where tro.insurance_id  = ior.id )) weight,"
