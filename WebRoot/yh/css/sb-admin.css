@@ -271,7 +271,7 @@ table.dataTable thead .sorting:after {
     color: rgba(50,50,50,.5);
 }
 
-/*1.10*/
+/*1.10   Ray    start*/
 table.dataTable thead.eeda .sorting_asc:after {
     content: "";
 }
@@ -290,6 +290,7 @@ table.dataTable thead.eeda .sorting:after {
     /* color: #333 !important; */
 }
 
+/*1.10   Ray   end*/
 /* Circle Buttons */
 
  .btn-circle {
@@ -491,4 +492,7 @@ label.error {
     margin-top: 10px;
 }
 
+table .form-control{
+	width: 100% !important;
+}
 /* ray added */

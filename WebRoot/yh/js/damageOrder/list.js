@@ -16,7 +16,7 @@ $(document).ready(function() {
         "scrollCollapse": true,
         "autoWidth": false,
         "language": {
-            "url": "/eeda/dataTables.ch.txt"
+            "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         }
         //"ajax": "/gateOutOrder/list"
     });
