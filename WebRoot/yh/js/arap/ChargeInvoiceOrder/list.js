@@ -22,6 +22,7 @@ $(document).ready(function() {
             		}
         			
         	}},
+        	{"mDataProp":"CHARGE_ORDER_NO"},
             {"mDataProp":"CNAME"},
             {"mDataProp":"SP"},
             {"mDataProp":"TOTAL_AMOUNT"},
