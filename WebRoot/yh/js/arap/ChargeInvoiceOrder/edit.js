@@ -3,18 +3,7 @@ $(document).ready(function() {
 		document.title = order_no+' | '+document.title;
 	}
 	$('#menu_charge').addClass('active').find('ul').addClass('in');
-	
-	if($("#chargeInvoiceOrderId").val() == ""){
-		$('#departureConfirmationBtn').attr('disabled', true);
-	}else{
-		if($("#chargeInvoiceOrderStatus").text() == "新建"){
-			$('#departureConfirmationBtn').attr('disabled', false);
-		}else if($("#chargeInvoiceOrderStatus").text() == "已审批"){
-			$('#departureConfirmationBtn').attr('disabled', true);
-			$('#saveChargeInvoiceOrderBtn').attr('disabled', true);
-		}
-	}
-	
+		
 	var saveChargeCheckOrder = function(e){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -44,12 +33,15 @@ $(document).ready(function() {
 	$("#departureConfirmationBtn").click(function(){
 		$(this).attr("disabled", true);
 		var id = $("#chargeInvoiceOrderId").val();
+		var order_type = $("#order_type").val();
+		var chargePreInvoiceOrderIds = $("#chargePreInvoiceOrderIds").val();
 		if(id != null && id != ""){
-			$.post('/chargeInvoiceOrder/confirm', {chargeInvoiceOrderId:id}, function(data){
+			$.post('/chargeInvoiceOrder/confirm', {chargeInvoiceOrderId:id,chargePreInvoiceOrderIds:chargePreInvoiceOrderIds,order_type:order_type}, function(data){
 				if(data.ID>0){
 					$("#chargeInvoiceOrderId").val(data.ID);
 					$("#saveChargeInvoiceOrderBtn").attr("disabled", true);
 					$("#chargeInvoiceOrderStatus").html(data.STATUS);
+					chargePreInvoiceOrderTable.fnDraw();
 				}else{
 					$("#departureConfirmationBtn").attr("disabled", false);
 					alert('数据保存失败。');
@@ -63,70 +55,7 @@ $(document).ready(function() {
 	if($("#chargeCheckOrderStatus").text() == 'new'){
     	$("#chargeCheckOrderStatus").text('新建');
 	}
-
-	var invoiceItemTable =$('#invoiceItem-table').dataTable( {
-	    "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 10,
-        "bServerSide": true,
-    	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
-			return nRow;
-		},
-        "sAjaxSource": "/chargeInvoiceOrder/chargeInvoiceItemList",
-   			"aoColumns": [
-            { "mDataProp": null,
-  	            "fnRender": function(obj) {
-  	            	var str;
-  	            	if(obj.aData.INVOICE_NO == null){
-  	            		str = "<input type='text' name='invoice_no'>";
-  	            	}else{
-  	            		str = "<input type='text' name='invoice_no' value='"+obj.aData.INVOICE_NO+"'>";
-  	            	}
-  	            	return str;
-  	            }
-  	        },
-            {"mDataProp":"CNAME"},
-            { "mDataProp": null,
-  	            "fnRender": function(obj) {
-  	            	var str;
-  	            	if(obj.aData.AMOUNT == null){
-  	            		str = "<input type='text' name='amount'>";
-  	            	}else{
-  	            		str = "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-  	            	}
-  	            	return str;
-  	            }
-  	        },
-            {"mDataProp":"PRE_ORDER_NO"},            
-            {"mDataProp":null}
-         ]
-	});	
-
-	$("#invoiceItem-table").on('blur', 'input', function(e){
-		e.preventDefault();
-		var invoiceItemId = $(this).parent().parent().attr("id");
-		var name = $(this).attr("name");
-		var value = $(this).val();
-		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
-		$.post('/chargeInvoiceOrder/updateInvoiceItem', {chargeInvoiceOrderId:chargeInvoiceOrderId, invoiceItemId:invoiceItemId, name:name, value:value}, function(data){
-			if(data.length > 0){
-				var itemInvoiceNoList = $("#itemInvoiceNoList");
-				itemInvoiceNoList.empty();
-				var option = "<option></option>";
-				for(var i=0;i<data.length;i++){
-					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
-				}
-				itemInvoiceNoList.append(option);	
-			    //var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-			    chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val()+"&order_type="+$("#order_type").val();   
-				chargePreInvoiceOrderTable.fnDraw();
-			}
-    	},'json');
-	});	
-	
+		
 	var chargePreInvoiceOrderTable=$('#chargePreInvoiceOrder-table').dataTable({
 		"bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -141,28 +70,18 @@ $(document).ready(function() {
 		},
         "sAjaxSource": "/chargeInvoiceOrder/chargePreInvoiceOrderList",
         "aoColumns": [    
-            { "mDataProp": "INVOICE_NO",
+            { "mDataProp": null,
             	"fnRender": function(obj) {
-                    var str="";
-                    if(obj.aData.INVOICE_NO!='' && obj.aData.INVOICE_NO != null){
-                    	$("#itemInvoiceNoList").children().each(function(){
-                    		if(obj.aData.INVOICE_NO.indexOf($(this).text()) > -1 && $(this).text() != ''){
-                    			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
-                    		}else{
-                    			if($(this).text != null){
-                    				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-                    			}
-                    		}
-                    	});
-                    }else{
-                    	$("#itemInvoiceNoList").children().each(function(){
-                    		if($(this).text != null){
-                				str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-                			}
-                    	});
-                    }
-                    return "<select name='invoice_no' multiple=''>"+str+"</select>";
-            	}
+  	            	if(obj.aData.INVOICE_NO == null){
+  	            		str = "<input type='text' name='invoice_no'>";
+  	            	}else{
+  	            		if($("#chargeInvoiceOrderStatus").text()=='新建')
+  	            			str = "<input type='text' name='invoice_no' value='"+obj.aData.INVOICE_NO+"'>";
+  	            		else
+  	            			str = obj.aData.INVOICE_NO;
+  	            	}
+  	            	return str;
+  	            }
   	        },    
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
@@ -174,87 +93,66 @@ $(document).ready(function() {
             			return obj.aData.ORDER_NO;
             		}
         			
-        		}},
-            {"mDataProp":"STATUS",
-                "fnRender": function(obj) {
-                    if(obj.aData.STATUS=='new'){
-                        return '新建';
-                    }else if(obj.aData.STATUS=='checking'){
-                        return '已发送对帐';
-                    }else if(obj.aData.STATUS=='confirmed'){
-                        return '已审核';
-                    }else if(obj.aData.STATUS=='completed'){
-                        return '已结算';
-                    }else if(obj.aData.STATUS=='cancel'){
-                        return '取消';
-                    }
-                    return obj.aData.STATUS;
-                }
-            },
-            /*{"mDataProp":null},*/
+            	}
+  	        },
+            {"mDataProp":"STATUS" },
             {"mDataProp":"CNAME"},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":"REMARK"},
             {"mDataProp":"CREATE_BY"},
-            {"mDataProp":"CREATE_STAMP"},
-//            {"mDataProp":"AUDIT_BY"},
-//            {"mDataProp":"AUDIT_STAMP"},
-//            {"mDataProp":"APPROVAL_BY"},
-//            {"mDataProp":"APPROVAL_STAMP"}                        
+            {"mDataProp":"CREATE_STAMP"},                       
         ]      
     });	
 	
-	$("#addInvoiceItemBtn").click(function(){		
-		$.post('/chargeInvoiceOrder/addInvoiceItem', {chargeInvoiceOrderId:$("#chargeInvoiceOrderId").val()}, function(data){
-			if(data.success){
-			    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-				invoiceItemTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
-			    invoiceItemTable.fnDraw();
+	
+	$("#chargePreInvoiceOrder-table").on('blur', 'input', function(e){
+		e.preventDefault();
+		var chargeId = $(this).parent().parent().attr("id");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		$.post('/chargeInvoiceOrder/updateInvoiceItem', {chargeId:chargeId, name:name, value:value}, function(data){
+			if(data.ID> 0){
+				$.scojs_message('添加成功', $.scojs_message.TYPE_OK);
 			}
-		},'json');
+    	},'json');
 	});
+	
 	
 	$("#invoiceItemNo").click(function(e){	
 		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
-		$.post('/chargeInvoiceOrder/findAllInvoiceItemNo', {chargeInvoiceOrderId:chargeInvoiceOrderId}, function(data){
-			if(data.length > 0){
-				var itemInvoiceNoList = $("#itemInvoiceNoList");
-				itemInvoiceNoList.empty();
-				var option = "<option></option>";
-				for(var i=0;i<data.length;i++){
-					option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
+		var status  = $("#chargeInvoiceOrderStatus").text();
+		if(status == '新建'){
+			$.post('/chargeInvoiceOrder/findAllInvoiceItemNo', {chargeInvoiceOrderId:chargeInvoiceOrderId}, function(data){
+				if(data.length > 0){
+					var itemInvoiceNoList = $("#itemInvoiceNoList");
+					itemInvoiceNoList.empty();
+					var option = "<option></option>";
+					for(var i=0;i<data.length;i++){
+						option += "<option value='"+data[i].INVOICE_NO+"'>"+data[i].INVOICE_NO+"</option>";
+					}
+					itemInvoiceNoList.append(option);	
 				}
-				itemInvoiceNoList.append(option);	
-			    //chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-				//chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList";   
-				//chargePreInvoiceOrderTable.fnDraw();
-			}
-    	},'json');
+	    	},'json');	
+			saveChargeCheckOrder(e);
+			chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val()+"&order_type="+$("#order_type").val();  
+			chargePreInvoiceOrderTable.fnDraw();
+		}else{
+			chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val()+"&order_type="+$("#order_type").val();  
+			chargePreInvoiceOrderTable.fnDraw();
+		}
 		
-		saveChargeCheckOrder(e);
-			
-	    invoiceItemTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
-	    invoiceItemTable.fnDraw();		    
-	    
-		chargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargePreInvoiceOrderList?chargePreInvoiceOrderIds="+$("#chargePreInvoiceOrderIds").val()+"&order_type="+$("#order_type").val();  
-		chargePreInvoiceOrderTable.fnDraw();
-
- 		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	});	
-
-	$("#chargePreInvoiceOrder-table").on('blur', 'select', function(e){
-		e.preventDefault();
-		var preInvoiceId = $(this).parent().parent().attr("id");
-		var name = $(this).attr("name");
-		var value = $(this).val();
-		var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();
-		$.post('/chargeInvoiceOrder/updatePreInvoice', {chargeInvoiceOrderId:chargeInvoiceOrderId, preInvoiceId:preInvoiceId, name:name, value:value}, function(data){
-			if(data.success){
-			    var chargeInvoiceOrderId = $("#chargeInvoiceOrderId").val();	
-				invoiceItemTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/chargeInvoiceItemList?chargeInvoiceOrderId="+chargeInvoiceOrderId;   
-			    invoiceItemTable.fnDraw();
-			}
-    	},'json');
-	});
 	
+	
+	
+	if($("#chargeInvoiceOrderId").val() == ""){
+		$('#departureConfirmationBtn').attr('disabled', true);
+	}else{
+		if($("#chargeInvoiceOrderStatus").text() == "新建"){
+			$('#departureConfirmationBtn').attr('disabled', false);
+		}else if($("#chargeInvoiceOrderStatus").text() == "已审批"){
+			$('#departureConfirmationBtn').attr('disabled', true);
+			$('#saveChargeInvoiceOrderBtn').attr('disabled', true);
+		}
+	}
 } );

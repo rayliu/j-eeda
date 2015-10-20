@@ -20,12 +20,19 @@ $(document).ready(function() {
   	        },    
             {"mDataProp":"ORDER_NO","sWidth":"80px",
             	"fnRender": function(obj) {
-            		if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
-            			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if(obj.aData.ORDER_TYPE =='对账单'){
+            			if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
+                			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                		}else{
+                			return obj.aData.ORDER_NO;
+                		}
             		}else{
-            			return obj.aData.ORDER_NO;
+            			if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
+                			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                		}else{
+                			return obj.aData.ORDER_NO;
+                		}
             		}
-        			
         		}},
         	{"mDataProp":"ORDER_TYPE","sWidth":"80px","sClass":"order_type"},
             {"mDataProp":"STATUS","sWidth":"80px",
