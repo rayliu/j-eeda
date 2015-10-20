@@ -2,7 +2,7 @@ $(document).ready(function() {
 	if(user_name){
 		document.title = user_name+' | '+document.title;
 	}
-	$('#menu_profile').addClass('active').find('ul').addClass('in');	
+	$('#menu_sys_profile').addClass('active').find('ul').addClass('in');	
 	
 	//datatable, 动态处理
 	var name = $("#user_name").val();

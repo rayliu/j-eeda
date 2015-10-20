@@ -1,9 +1,9 @@
 var queryRole = function(){
-	document.title = '角色权限查询 | '+document.title;
+	document.title = '岗位权限查询 | '+document.title;
 	$.get('/privilege/roleList', function(data){
 		var roleList =$("#role_filter");
 		roleList.empty();
-		roleList.append("<option value='' checked>请选择角色</option>");
+		roleList.append("<option value='' checked>请选择岗位</option>");
 		for(var i = 0; i < data.length; i++)
 		{
 			var name = data[i].NAME;
@@ -18,7 +18,7 @@ var queryRole = function(){
 
 
 $(document).ready(function() {
-  $('#menu_profile').addClass('active').find('ul').addClass('in');
+  $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
   queryRole();
 	var privilege_table = $('#eeda-table').dataTable({
     	"bFilter" : false,
@@ -73,7 +73,7 @@ $(document).ready(function() {
        	 },  	
 		 messages:{
 			 rolename:{
-				 required:"角色不能为空"
+				 required:"岗位不能为空"
 			 }
        },
        highlight: function(element) {

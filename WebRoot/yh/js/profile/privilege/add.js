@@ -2,7 +2,7 @@ var queryRole = function(){
 	$.post('/privilege/seachNewRole', function(data){
 		var roleList =$("#role_filter");
 		roleList.empty();
-		roleList.append("<option value='' checked>请选择角色</option>");
+		roleList.append("<option value='' checked>请选择岗位</option>");
 		for(var i = 0; i < data.length; i++)
 		{
 			var name = data[i].NAME;
@@ -16,7 +16,7 @@ var queryRole = function(){
 };
 
 $(document).ready(function() {
-  $('#menu_profile').addClass('active').find('ul').addClass('in');
+  $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
   queryRole();
 
 	var numberName="";
@@ -96,7 +96,7 @@ $(document).ready(function() {
         		permission.splice(0,permission.length);
     		},'json');
         }else{
-        	$.scojs_message('保存失败,当前没有选择角色或者权限', $.scojs_message.TYPE_ERROR);
+        	$.scojs_message('保存失败,当前没有选择岗位或者权限', $.scojs_message.TYPE_ERROR);
         }
        
     });

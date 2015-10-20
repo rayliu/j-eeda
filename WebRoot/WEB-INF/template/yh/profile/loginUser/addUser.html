@@ -106,7 +106,7 @@
 		                    <div class="col-lg-12">
 		                    	<hr/>
 		                    	<button id="saveBtn" type="button" class="btn  btn-primary">保存</button>
-		                    	<a id="assigning_role" type="button" style = "display:none" href="/userRole/addOrUpdate?id=${lu.id!''}" class="btn  btn-primary">分配角色</a>
+		                    	<a id="assigning_role" type="button" style = "display:none" href="/userRole/addOrUpdate?id=${lu.id!''}" class="btn  btn-primary">分配岗位</a>
 			                    <a class="btn  btn-primary" href="/loginUser">返回</a>
 		                    </div>
 	           			</div>
@@ -136,7 +136,7 @@
 			return this.optional(element) || ( /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/).test(value);
 			}, "登陆名格式不正确(邮箱格式)");
 
-    $('#menu_profile').addClass('active').find('ul').addClass('in');
+    $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
         $('#leadsForm').validate({
             rules: {
             	username: {

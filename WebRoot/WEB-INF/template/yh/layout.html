@@ -505,10 +505,6 @@
                     </li>
                     <%}%>
                     <%
-                    	var userLoginListPermission = map.User_list;
-                    	var roleListPermission = map.Role_list;
-                    	var userRoleListPermission = map.UserRole_list;
-                    	var rolePrivilegeListPermission = map.RolePermission_list;
                     	var customerPermission = map.Customer_list;
                     	var spListPermission = map.Provider_list;
                     	var spCarListPermission = map.ProviderCar_list;
@@ -520,8 +516,7 @@
                     	var tollcostListPermission = map.Pay_list;
                     	var accountListPermission = map.Account_list;
                     	
-                    	if(userLoginListPermission != '' || roleListPermission != '' || userRoleListPermission != ''
-                    		|| rolePrivilegeListPermission != '' || customerPermission != '' || spListPermission != '' || spCarListPermission != ''
+                    	if(customerPermission != '' || spListPermission != '' || spCarListPermission != ''
                     		|| spDriverListPermission != '' || officeListPermission != '' || productListPermission != '' || warehouseListPermission != ''
                     		|| tollpayListPermission != '' || tollcostListPermission != '' || accountListPermission != ''){
                     %>
@@ -529,28 +524,6 @@
 	                    <li id="menu_profile">
 	                        <a href="#"><i class="fa fa-cog fa-fw"></i> 基础数据设置<span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level">
-	                            <% if(roleListPermission != ''){%>
-		                            <li>
-		                                <a href="/role">角色</a>
-		                            </li>
-		                        <%}%>
-	                            <% if(rolePrivilegeListPermission != ''){%>
-		                            <li>
-		                                <a href="/privilege">角色权限</a>
-		                            </li>
-	                             <%}%>
-	                            <% if(userLoginListPermission != ''){%>
-		                            <li>
-		                                <a href="/loginUser">登录用户</a>
-		                            </li>
-		                         <%}%>
-		                         
-		                         <% if(userRoleListPermission != ''){%>
-		                            <li>
-		                                <a href="/userRole">用户角色</a>
-		                            </li>
-	                             <%}%>
-		                         
 		                         <% if(customerPermission != ''){%>
 		                            <li>
 		                                <a href="/customer">客户</a>
@@ -627,6 +600,45 @@
 	                        </ul>
 	                        <!-- /.nav-second-level -->
 	                    </li>
+                    <%}%>
+                    <%
+                        var userLoginListPermission = map.User_list;
+                        var roleListPermission = map.Role_list;
+                        var userRoleListPermission = map.UserRole_list;
+                        var rolePrivilegeListPermission = map.RolePermission_list;
+                       
+                        if(userLoginListPermission != '' 
+                            || roleListPermission != '' 
+                            || userRoleListPermission != ''
+                            || rolePrivilegeListPermission != '' ){
+                    %>
+                        <li id="menu_sys_profile">
+                            <a href="#"><i class="fa fa-cog fa-fw"></i> 系统配置<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <% if(roleListPermission != ''){%>
+                                    <li>
+                                        <a href="/role">岗位</a>
+                                    </li>
+                                <%}%>
+                                <% if(rolePrivilegeListPermission != ''){%>
+                                    <li>
+                                        <a href="/privilege">岗位权限</a>
+                                    </li>
+                                 <%}%>
+                                <% if(userLoginListPermission != ''){%>
+                                    <li>
+                                        <a href="/loginUser">登录用户</a>
+                                    </li>
+                                 <%}%>
+                                 
+                                 <% if(userRoleListPermission != ''){%>
+                                    <li>
+                                        <a href="/userRole">用户岗位</a>
+                                    </li>
+                                 <%}%>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
                     <%}%>
                     <%if(!shiro.hasRole("outuser")){%>
                     <li>

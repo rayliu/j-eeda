@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $('#menu_profile').addClass('active').find('ul').addClass('in');
+  $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
   	var rolename =$("#role_filter").val();
   	if(rolename.indexOf("管理员")>=0){
   		$("#allCheck").prop('disabled',true);

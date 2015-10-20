@@ -16,7 +16,7 @@ var queryUser = function(){
 };
 $(document).ready(function() {
 	
-	$('#menu_profile').addClass('active').find('ul').addClass('in');
+	$('#menu_sys_profile').addClass('active').find('ul').addClass('in');
 	
 	//datatable, 动态处理
 	
@@ -72,7 +72,7 @@ $(document).ready(function() {
         		role.splice(0,role.length);	
     		},'json');
         }else{
-        	$.scojs_message('保存失败，当前没有选择用户或者角色', $.scojs_message.TYPE_ERROR);
+        	$.scojs_message('保存失败，当前没有选择用户或者岗位', $.scojs_message.TYPE_ERROR);
         }
        
     });

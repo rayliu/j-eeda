@@ -17,14 +17,14 @@
 	                         <div class="col-lg-6">
 	                             <div class="form-group">
 	                                 <nobr>
-	                                 <label >角色(必选)</label>
+	                                 <label >岗位(必选)</label>
 	                                 <select id="role_filter" name="rolename" class="form-control search-control role_filter " name="role_filter"></select>
 	                            	 
 	                             	 <% if(shiro.hasPermission("RolePermission.update")){%>
 							            <button type="submit" class="btn  btn-primary">编辑权限</button> 
 			                         <%}%>
 									 <% if(shiro.hasPermission("RolePermission.create")){%>
-									 	<a id="fenBtn" class="btn  btn-primary" href="/privilege/add">分配新角色权限</a>
+									 	<a id="fenBtn" class="btn  btn-primary" href="/privilege/add">分配新岗位权限</a>
 									 <%}%>
 									 </nobr>
 	                              </div>                                    
@@ -34,7 +34,7 @@
                     </div>
                     <div class="panel panel-default">                              
                         <div class="panel-heading">
-                               <i class="fa fa-list fa-fw"></i>角色权限
+                               <i class="fa fa-list fa-fw"></i>岗位权限
                         </div>
 						 
                         <div class="panel-body">

@@ -1,6 +1,6 @@
 $(document).ready(function() {
-	document.title = '角色查询 | '+document.title;
-	$('#menu_profile').addClass('active').find('ul').addClass('in');
+	document.title = '岗位查询 | '+document.title;
+	$('#menu_sys_profile').addClass('active').find('ul').addClass('in');
 	$('#example').dataTable({
 			"bFilter" : false,
 			"sDom" : "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -103,10 +103,10 @@ $(document).ready(function() {
 				},
 				 messages:{
 	            	 rolename:{
-	            		 remote:"角色已存在"
+	            		 remote:"岗位已存在"
 	            	 },
 	            	 rolecode:{
-	            		 remote:"角色编码已存在" 
+	            		 remote:"岗位编码已存在" 
 	            	 }
 	             },
 				highlight : function(element) {

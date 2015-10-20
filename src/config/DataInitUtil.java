@@ -418,7 +418,7 @@ public class DataInitUtil {
             stmt.executeUpdate("insert into transfer_order_fin_item(order_id,fin_item_id,fin_item_code,amount,status) values('2','2','20132015','3200','未完成');");
             */
             
-            // 角色定义
+            // 岗位定义
             stmt.executeUpdate("insert into role(code, name) values('admin', '系统管理员');");
             stmt.executeUpdate("insert into role(code, name) values('clerk', '文员');");
             stmt.executeUpdate("insert into role(code, name) values('manager', '经理');");
@@ -889,20 +889,20 @@ public class DataInitUtil {
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户','User.update', '登录用户更新权限');");
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户','User.delete', '登录用户删除权限');");
 		
-		/*角色权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.list', '角色查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.create', '角色创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.update', '角色更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色','Role.delete', '角色删除权限');");
-		/*用户角色权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.list', '用户角色查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.create', '用户角色创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.update', '用户角色更新权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户角色','UserRole.permission_list', '用户角色权限查询权限');");
-		/*角色权限*/
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.list', '角色操作查询权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.create', '角色操作创建权限');");
-		stmt.executeUpdate("insert into permission(module_name,code, name) values('角色操作','RolePermission.update', '角色操作更新权限');");
+		/*岗位权限*/
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('岗位','Role.list', '岗位查询权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('岗位','Role.create', '岗位创建权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('岗位','Role.update', '岗位更新权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('岗位','Role.delete', '岗位删除权限');");
+		/*用户岗位权限*/
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户岗位','UserRole.list', '用户岗位查询权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户岗位','UserRole.create', '用户岗位创建权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户岗位','UserRole.update', '用户岗位更新权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('用户岗位','UserRole.permission_list', '用户岗位权限查询权限');");
+		/*岗位权限*/
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('岗位操作','RolePermission.list', '岗位操作查询权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('岗位操作','RolePermission.create', '岗位操作创建权限');");
+		stmt.executeUpdate("insert into permission(module_name,code, name) values('岗位操作','RolePermission.update', '岗位操作更新权限');");
 
 		/*客户权限*/
 		stmt.executeUpdate("insert into permission(module_name,code, name) values('客户','Customer.list', '客户查询权限');");
@@ -1198,7 +1198,7 @@ public class DataInitUtil {
         		.set("creator", "demo").save();
     }
     public static void initBaseData(Record office,Record user) {
-    	//角色
+    	//岗位
        Role r = new Role();
        Role r1 = new Role();
        Role r2 = new Role();
