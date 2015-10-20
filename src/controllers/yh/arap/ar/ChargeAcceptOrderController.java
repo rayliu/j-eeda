@@ -70,10 +70,10 @@ public class ChargeAcceptOrderController extends Controller {
         }
 
 
-        String sql = "select * from( select aci.id, '开票记录单' order_type,aci.order_no, aci.status, null payee, "
-        		+ " ( select group_concat( invoice_item.invoice_no SEPARATOR '<br/>' )  "
-        		+ " from arap_charge_invoice_item_invoice_no invoice_item "
-        		+ " where invoice_item.invoice_id = aci.id GROUP BY aci.id ) invoice_no,"
+        String sql = "select * from( select aci.id, '开票记录单' order_type,aci.order_no, aci.status, "
+        		+ " (select  group_concat( aco.payee SEPARATOR '<br/>' ) from arap_charge_order aco where aco.invoice_order_id = aci.id ) payee, "
+        		+ " (select group_concat( aco.invoice_no SEPARATOR '<br/>' ) "
+        		+ " from arap_charge_order aco where aco.invoice_order_id = aci.id ) invoice_no,"
         		+ " aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr customer,c1.abbr cname "
         		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id "
@@ -92,8 +92,8 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " and amco.type = 'non_biz'"
         	    + " and amco.total_amount >= 0"
         	    + " UNION "
-        	    + " select amco.id,'对账单' order_type, amco.order_no,amco.status, null payee ,"
-        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.charge_amount,c.abbr customer,c1.company_name cname "
+        	    + " select amco.id,'对账单' order_type, amco.order_no,amco.status, amco.payee payee ,"
+        	    + " amco.invoice_no invoice_no,amco.create_stamp create_time,amco.remark,amco.charge_amount,c.abbr customer,c1.company_name cname "
         	    + " from arap_charge_order amco "
         	    + " LEFT JOIN party p ON p.id = amco.payee_id "
         	    + " LEFT JOIN contact c ON c.id = p.contact_id "
