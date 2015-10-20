@@ -5,6 +5,7 @@ import java.util.List;
 
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
+import models.CostApplicationOrderRel;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
@@ -74,7 +75,8 @@ public class ReportController extends Controller {
    public void printPayMent(){
 	   String order_no = getPara("order_no");
 	   ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findFirst("select * from arap_cost_invoice_application_order where order_no = ?",order_no);
-	   List<ArapCostOrder> list = ArapCostOrder.dao.find("select * FROM arap_cost_order where application_order_id = ?",arapAuditInvoiceApplication.get("id"));
+	   CostApplicationOrderRel costapplicationorderrel=CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where application_order_id = ?",arapAuditInvoiceApplication.get("id"));
+	   List<ArapCostOrder> list = ArapCostOrder.dao.find("select * FROM arap_cost_order where id = ?",costapplicationorderrel.get("cost_order_id"));
 	   String checkOrderFile ="";
 	   StringBuffer buffer = new StringBuffer();
 	   for (ArapCostOrder arapCostOrder : list) {
