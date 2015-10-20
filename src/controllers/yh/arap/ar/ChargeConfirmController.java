@@ -168,8 +168,8 @@ public class ChargeConfirmController extends Controller {
 			}
 			arapChargeReceiveConfirmOrder.set("status", "新建");
 //			arapChargeReceiveConfirmOrder.set("invoice_type",invoice_type);
-//			arapChargeReceiveConfirmOrder.set("invoice_company", billing_unit);
-//			arapChargeReceiveConfirmOrder.set("receive_company", payee_unit);
+			arapChargeReceiveConfirmOrder.set("invoice_company", billing_unit);
+			arapChargeReceiveConfirmOrder.set("receive_company", payee_unit);
 			arapChargeReceiveConfirmOrder.set("receive_person", payee_name); //收款人
 //			arapChargeReceiveConfirmOrder.set("receive_bank", deposit_bank);
 //			arapChargeReceiveConfirmOrder.set("receive_bank_person_name", account_name);//账户人名
@@ -506,7 +506,12 @@ public class ChargeConfirmController extends Controller {
 						+ " where aci.id = '"+id+"'";
 			}else if(order_type.equals("开票记录单")){
 				sql = "SELECT c.company_name customer,"
-					+ " c1.company_name sp_filter,null,null,null,null,null"
+					+ " c1.company_name sp_filter,"
+					+ " (select group_concat(distinct aco.payee SEPARATOR '<br/>' )"
+					+ "  from arap_charge_order aco where aco.invoice_order_id = aci.id) payee_name,"
+					+ " (select group_concat(distinct aco.billing_unit SEPARATOR '<br/>' )"
+					+ "  from arap_charge_order aco where aco.invoice_order_id = aci.id)  billing_unit,"
+					+ " null,null,null"
 					+ " FROM arap_charge_invoice aci "
 					+ " LEFT JOIN party p on p.id = aci.payee_id"
 					+ " left join contact c on c.id = p.id "
@@ -514,7 +519,7 @@ public class ChargeConfirmController extends Controller {
 					+ " where aci.id = '"+id+"'";
 			}else if(order_type.equals("对账单")){
 				sql = "SELECT c.company_name customer,"
-						+ " c1.company_name sp_filter,null,null,null,null,null"
+						+ " c1.company_name sp_filter,aci.payee payee_name,aci.billing_unit,null,null,null"
 						+ " FROM arap_charge_order aci "
 						+ " LEFT JOIN party p on p.id = aci.payee_id"
 						+ " left join contact c on c.id = p.id "
