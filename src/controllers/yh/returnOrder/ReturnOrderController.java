@@ -279,7 +279,7 @@ public class ReturnOrderController extends Controller {
 		if (deliveryId == null) {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
 			if(transferOrder != null){
-				//notify_party_id = transferOrder.get("notify_party_id");
+				setAttr("transferOrder", transferOrder);
 				routeTo = transferOrder.get("route_to");
 			}
 		} else {
