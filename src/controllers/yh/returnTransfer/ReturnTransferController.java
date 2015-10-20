@@ -237,12 +237,6 @@ public class ReturnTransferController extends Controller{
 					.get("contact_id"));
 			setAttr("driverContact", driverContact);
 		}
-		Long notify_party_id = transferOrder.get("notify_party_id");
-		if (notify_party_id != null) {
-			Party notify = Party.dao.findById(notify_party_id);
-			Contact contact = Contact.dao.findById(notify.get("contact_id"));
-			setAttr("contact", contact);
-		}
 
 		String routeFrom = transferOrder.get("route_from");
 		Location locationFrom = null;
