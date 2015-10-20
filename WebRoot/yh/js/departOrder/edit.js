@@ -948,22 +948,7 @@
     				$('#spMessage').val(data.COMPANY_NAME);
     			},'json');
     		}
-    		//会显收货人
-    		/*$.get('/departOrder/ginNotifyPerson', {order_id:message}, function(data){
-				//console.log(data);
-				if(data.ADDRESS==null){
-					data.ADDRESS='';
-				}
-				if(data.CONTACT_PERSON==null){
-					data.CONTACT_PERSON='';				
-								}
-				if(data.PHONE==null){
-					data.PHONE='';
-				}
-				$('#notify_address').text(data.ADDRESS);
-				$('#notify_contact_person').text(data.CONTACT_PERSON);
-				$('#notify_phone').text(data.PHONE);
-			},'json');*/
+    		
     		//是直送显示“确认收货”
     		var check_sh=$("#check_sh").val();
     		if(check_sh==false){
