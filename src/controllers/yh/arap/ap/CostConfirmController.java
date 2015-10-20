@@ -696,7 +696,9 @@ public class CostConfirmController extends Controller {
 				+ " (SELECT	ifnull(sum(log.amount), 0) FROM arap_cost_pay_confirm_order_log log "
 				+ " where log.order_id = cpco.id) already_pay, "
         		+ " c1.abbr sp_name,"
-        		+ "ifnull(nullif(ul.c_name,''), ul.user_name) user_name "
+        		+ " ifnull(nullif(ul.c_name,''), ul.user_name) user_name,"
+        		+ " (select group_concat(cast(acr.create_date as char) separator '</br>') "
+        		+ " from arap_cost_pay_confirm_order_log acr where acr.order_id = cpco.id) confirm_time "
         		+ fromSql;
         
         

@@ -48,7 +48,7 @@ $(document).ready(function() {
                     return obj.aData.PAY_AMOUNT - obj.aData.ALREADY_PAY;
                 }    
             },
-            {"mDataProp":"REMARKS","sWidth": "100px"},//备注
+            {"mDataProp":"CONFIRM_TIME","sWidth": "100px"},//备注
             {"mDataProp":"USER_NAME","sWidth": "60px"},//创建人
             {"mDataProp":"CREATE_DATE","sWidth": "80px",
                 "fnRender":function(obj){
