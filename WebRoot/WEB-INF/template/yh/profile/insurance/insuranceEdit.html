@@ -28,7 +28,19 @@
                                          <div class="form-group">
                                              <label class="control-label">电话</label>
                                              <input id="phone" name="phone" type="text" class="form-control" value="${contact.phone!''}">
-                                         </div>                                  
+                                         </div>
+                                         <div class="form-group">
+                                                <label>付款方式</label>
+	                                           	<select class="form-control valid" id="payment" name="payment">
+	                                           		<option value="monthlyStatement">月结</option>
+	                                           		<option value="freightCollect">到付</option>
+	                                           		<option value="cashPayment" selected="selected">现付</option>
+	                                           	</select>
+                                         </div>
+                                         <div class="form-group">
+                                                <label>付款单位</label>
+                                                <input class="form-control valid" id="receipt" type="text" name="receipt" value="${party.receipt!''}">
+                                         </div>                               
                                     </div>
                                     <div class="col-lg-6">
                                          <div class="form-group">
@@ -46,7 +58,19 @@
                                          <div class="form-group">
                                              <label class="control-label">备注</label>
                                              <input id="remark" name="remark" type="text" class="form-control" value="${party.remark!''}">
-                                         </div>                                 
+                                         </div>    
+                                         <div class="form-group">
+                                                <label>收款人</label>
+                                                <input class="form-control" id="receiver" type="text" name="receiver" value="${contact.receiver!''}">
+                                         </div>    
+                                         <div class="form-group">
+                                                <label>银行账号</label>
+                                                <input class="form-control valid" id="bank_no" type="text" name="bank_no" value="${contact.bank_no!''}">
+                                            </div>
+                                         <div class="form-group">
+                                                <label>开户行</label>
+                                                <input class="form-control" id="bank_name" type="text" name="bank_name" value="${contact.bank_name!''}">
+                                         </div>                         
                                     </div>
                                 </form>
                             </div>

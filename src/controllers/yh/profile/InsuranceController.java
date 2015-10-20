@@ -102,6 +102,12 @@ public class InsuranceController extends Controller{
     	String address = getPara("address");
     	String post = getPara("post");
     	String remark = getPara("remark");
+    	String payment = getPara("payment");//付款方式
+    	String receipt = getPara("receipt");//付款单位
+    	String receiver = getPara("receiver");//收款人
+    	String bank_no = getPara("bank_no");//银行账户
+    	String bank_name = getPara("bank_name");//开户行
+    	
         Party party = null;
         if (insuranceId == null || "".equals(insuranceId)) {
         	String name = (String) currentUser.getPrincipal();
@@ -116,10 +122,15 @@ public class InsuranceController extends Controller{
 			.set("phone", phone)
 			.set("mobile", mobilePhone)
 			.set("introduction", post)
+			.set("receiver", receiver)
+			.set("bank_name", bank_name)
+			.set("bank_no", bank_no)
         	.set("abbr", abbr).save();
 			party = new Party();
 			party.set("contact_id", contact.get("id"))
 			.set("party_type", "INSURANCE_PARTY")
+			.set("payment",payment)
+			.set("receipt", receipt)
 			.set("create_date", new Date())
 			.set("creator", users.get(0).get("id"))
 			.set("office_id", currentoffice.get("office_id"))
@@ -133,8 +144,12 @@ public class InsuranceController extends Controller{
 			.set("phone", phone)
 			.set("mobile", mobilePhone)
 			.set("introduction", post)
+			.set("bank_name", bank_name)
+			.set("bank_no", bank_no)
+        	.set("receiver", receiver)
         	.set("abbr", abbr).update();
-        	party.set("remark", remark).update();
+        	party.set("remark", remark).set("payment",payment)
+			.set("receipt", receipt).update();
         }
         renderJson(party); 
     }
