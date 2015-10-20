@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	document.title = '系统监控 | '+document.title;
+	document.title = '管理看板 | '+document.title;
     
 	console.log("当前选择："+$("input[name='optionsRadiosInline'][checked]").val());
 	
