@@ -20,10 +20,11 @@ $(document).ready(function() {
             },
             {"mDataProp":null,
             	"fnRender":function(obj){
-            		if(obj.aData.ORDER_TYPE="预付单"){
+                    console.log(obj.aData);
+            		if(obj.aData.ORDER_TYPE=="预付单"){
             			return "<a href='/costPrePayOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
                 	}
-            		if(obj.aData.ORDER_TYPE="对账单"){
+            		if(obj.aData.ORDER_TYPE=="对账单"){
             			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
                 	}
             	}
