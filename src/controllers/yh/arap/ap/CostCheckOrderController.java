@@ -158,7 +158,7 @@ public class CostCheckOrderController extends Controller {
                 		}
             	}
             	InsuranceOrder insuraceOrder = InsuranceOrder.dao.findById(orderIdsArr[i]);
-            	spId = insuraceOrder.get("sp_id");
+            	spId = insuraceOrder.get("insurance_id");
             }
     	}
     	if(!"".equals(spId) && spId != null){
