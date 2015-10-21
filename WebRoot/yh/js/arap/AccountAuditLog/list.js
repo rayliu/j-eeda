@@ -24,11 +24,11 @@ $(document).ready(function() {
                     return '<input type="checkbox"/>' ;
                 }
             },
-            {"mDataProp":"CREATE_DATE", "sWidth":"80px"},
-            {"mDataProp":"SOURCE_ORDER"},
-            {"mDataProp":"ORDER_NO"},
-            {"mDataProp":"BANK_NAME"},
-            {"mDataProp":null, "sWidth":"80px",
+            {"mDataProp":"CREATE_DATE", "sWidth":"180px"},
+            {"mDataProp":"SOURCE_ORDER", "sWidth":"150px"},
+            {"mDataProp":"ORDER_NO", "sWidth":"150px"},
+            {"mDataProp":"BANK_NAME", "sWidth":"150px"},
+            {"mDataProp":null, "sWidth":"150px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_TYPE == "CHARGE"){
                          return (Number(obj.aData.AMOUNT));
@@ -37,7 +37,7 @@ $(document).ready(function() {
                 }
                  
             },
-            {"mDataProp":null, "sWidth":"80px",
+            {"mDataProp":null, "sWidth":"150px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_TYPE == "COST"){
                         return (Number(obj.aData.AMOUNT));
@@ -72,7 +72,7 @@ $(document).ready(function() {
     	"aoColumns": [   
 	        { "mDataProp": null, "sWidth":"30px",
               "fnRender": function(obj) {
-                return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'" checked="">';
+                return '<input type="checkbox" name="order_check_box" value="'+obj.aData.ID+'">';
               }
             },
 	        {"mDataProp":"BANK_NAME"},
@@ -131,16 +131,44 @@ $(document).ready(function() {
     });
 
 
-    // $('#datetimepicker2').datetimepicker({  
-    //     format: 'yyyy-MM-dd',  
-    //     language: 'zh-CN', 
-    //     autoclose: true,
-    //     pickerPosition: "bottom-left"
-    // }).on('changeDate', function(ev){
-    //     $(".bootstrap-datetimepicker-widget").hide();
-    //     $('#endTime_filter').trigger('keyup');
-    // });
-    
-    
+    $('#datetimepicker3').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#beginTime').trigger('keyup');
+    });
 
+    $('#datetimepicker2').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime').trigger('keyup');
+    });
+    
+    
+    var find = function(){
+    	var source_order = $('#source_order').val();
+    	var orderNo = $('#orderNo').val();
+    	var beginTime = $('#beginTime').val();
+    	var endTime = $('#endTime').val();
+    	var bankName = $('#bankName').val();
+    	var money = $('#money').val();
+    	accountAuditLogTable.fnSettings().sAjaxSource = "/accountAuditLog/list?source_order="+source_order
+            +"&orderNo="+orderNo
+            +"&bankName="+bankName
+            +"&money="+money
+            +"&begin="+beginTime
+            +"&end="+endTime;
+       		accountAuditLogTable.fnDraw();
+    };
+    
+    $('#source_order,#orderNo,#beginTime,#endTime,#bankName,#money').on('blur',function(){
+    	find();
+    });
 } );
