@@ -30,11 +30,11 @@ $(document).ready(function() {
 	              return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.BUSINESS_TYPE+'">';	
                 }
             },
-            {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px", "bSortable": false},            	
-            {"mDataProp":"SPNAME", "sWidth":"160px", "bSortable": false},
+            {"mDataProp":"BUSINESS_TYPE", "sWidth":"100px"},            	
+            {"mDataProp":"SPNAME", "sWidth":"160px"},
            
             	
-            {"mDataProp":null, "sWidth":"110px", "bSortable": false,//托运单号
+            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"110px",//托运单号
             	"fnRender":function(obj){
             		var number = obj.aData.BOOKING_NOTE_NUMBER;
             		if(number == ""){
@@ -43,12 +43,12 @@ $(document).ready(function() {
             			return number;
             	}		
             }}, 
-            {"mDataProp":"REF_NO", "sWidth":"80px", "bSortable": false},
+            {"mDataProp":"REF_NO", "sWidth":"80px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px", "bSortable": false},
-            {"mDataProp":"AMOUNT", "sWidth":"55px", "bSortable": false},
-            {"mDataProp":"CNAME", "sWidth":"100px", "bSortable": false},
-            {"mDataProp":null, "sWidth":"130px", 
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
+            {"mDataProp":"AMOUNT", "sWidth":"55px"},
+            {"mDataProp":"CNAME", "sWidth":"100px"},
+            {"mDataProp":"DEPART_TIME", "sWidth":"130px", 
             	"fnRender":function(obj){
             		var timeStamp = obj.aData.DEPART_TIME;
             		if(timeStamp==null){
@@ -61,7 +61,7 @@ $(document).ready(function() {
             			return subtimeStamp;
             		}
             	}},
-            	{"mDataProp":null, "sWidth":"130px", "bSortable": false,
+            	{"mDataProp":"PLANNING_TIME1", "sWidth":"130px",
                 	"fnRender":function(obj){
                 		var timeStamp = obj.aData.PLANNING_TIME1;
                 		if(timeStamp==null || typeof(timeStamp) =="object"){
@@ -76,12 +76,12 @@ $(document).ready(function() {
                 	}},
                 {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
                 {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
-            	{"mDataProp":"ORDER_NO", "sWidth":"140px", "bSortable": false, 
+            	{"mDataProp":"ORDER_NO", "sWidth":"140px", 
                     "fnRender": function(obj) {
                     	return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
                     }
                 },
-            {"mDataProp":null, "sWidth": "100px", "bSortable": false, 
+            {"mDataProp":"STATUS", "sWidth": "100px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -97,16 +97,16 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },   
-            {"mDataProp":"ROUTE_FROM", "sWidth":"75px", "bSortable": false},
-            {"mDataProp":"ROUTE_TO", "sWidth":"75px", "bSortable": false},                      
-            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"75px", "bSortable": false},  
-		    {"mDataProp":null, "sWidth":"75px", "bSortable": false,
+            {"mDataProp":"ROUTE_FROM", "sWidth":"75px"},
+            {"mDataProp":"ROUTE_TO", "sWidth":"75px"},                      
+            {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"75px"},  
+		    {"mDataProp":null, "sWidth":"75px",
                 "fnRender": function(obj) {
                     return "未确认";
             }},
-            {"mDataProp":"VOLUME", "sWidth":"35px", "bSortable": false},
-            {"mDataProp":"WEIGHT", "sWidth":"40px", "bSortable": false}, 
-            {"mDataProp":null, "sWidth":"50px", "bSortable": false,
+            {"mDataProp":"VOLUME", "sWidth":"35px"},
+            {"mDataProp":"WEIGHT", "sWidth":"40px"}, 
+            {"mDataProp":"TRANSPORT_COST", "sWidth":"50px",
             	"fnRender":function(obj){
             		if(obj.aData.TRANSPORT_COST == null){
             			return "";
@@ -114,15 +114,15 @@ $(document).ready(function() {
             			return obj.aData.TRANSPORT_COST;
             		}
             	}}, 
-            {"mDataProp":"CARRY_COST", "sWidth":"50px", "bSortable": false},
-            {"mDataProp":"CLIMB_COST", "sWidth":"50px", "bSortable": false}, 
-            {"mDataProp":"INSURANCE_COST", "sWidth":"50px", "bSortable": false}, 
-            {"mDataProp":"TAKE_COST", "sWidth":"50px", "bSortable": false},
-            {"mDataProp":"ANZHUANG_COST", "sWidth":"50px", "bSortable": false},
-            {"mDataProp":"CANGCHU_COST", "sWidth":"50px", "bSortable": false}, 
-            {"mDataProp":"OTHER_COST", "sWidth":"80px", "bSortable": false}, 
+            {"mDataProp":"CARRY_COST", "sWidth":"50px"},
+            {"mDataProp":"CLIMB_COST", "sWidth":"50px"}, 
+            {"mDataProp":"INSURANCE_COST", "sWidth":"50px"}, 
+            {"mDataProp":"TAKE_COST", "sWidth":"50px"},
+            {"mDataProp":"ANZHUANG_COST", "sWidth":"50px"},
+            {"mDataProp":"CANGCHU_COST", "sWidth":"50px"}, 
+            {"mDataProp":"OTHER_COST", "sWidth":"80px"}, 
             
-            {"mDataProp":null, "sWidth":"100px", "bSortable": false,
+            {"mDataProp":"CREATE_STAMP", "sWidth":"100px",
             	"fnRender":function(obj){
             		var timeStamp = obj.aData.CREATE_STAMP;
             		if(timeStamp==null || typeof(timeStamp) =="object"){
@@ -136,8 +136,8 @@ $(document).ready(function() {
             		}
             	}
             }, 
-            {"mDataProp":"OFFICE_NAME", "sWidth":"80px", "bSortable": false},
-            {"mDataProp":"REMARK", "sWidth":"150px", "bSortable": false}                         
+            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},
+            {"mDataProp":"REMARK", "sWidth":"150px"}                         
         ]      
     });	
      
