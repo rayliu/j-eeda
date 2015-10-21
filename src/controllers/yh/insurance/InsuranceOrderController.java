@@ -330,7 +330,7 @@ public class InsuranceOrderController extends Controller {
         String sql = "select ifi.id ,tor.order_no,c.abbr customer,toi.amount,tor.remark,ifi.amount fin_amount,ifi.rate,ifi.insurance_no,"
         		+ " round(ifi.amount * toi.amount,2) total_amount,ifi.insurance_amount,ifnull(toi.item_no, pd.item_no) item_no,"
         		+ " ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.volume, pd.volume) * toi.amount volume,"
-        		+ " (select tom.create_stamp  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
+        		+ " (select group_concat(cast(tom.create_stamp AS CHAR) SEPARATOR '\r\n')  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
         		+ " ifnull((select name from location l where l.code = tor.route_from),'') route_from,ifnull((select name from location l where l.code = tor.route_to),'') route_to "
         		+ " from insurance_fin_item  ifi "
         		+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
