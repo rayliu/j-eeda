@@ -115,7 +115,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
-            {"mDataProp":"SPNAME", "sWidth":"200px"},
+            {"mDataProp":"SPNAME","sClass":"spname", "sWidth":"200px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"ORDER_NO", "sWidth":"200px", 
@@ -203,9 +203,20 @@ $(document).ready(function() {
     //var j_amount = [];
     var sum = 0;
     var j_sum = 0;
+    var spType =[];
     // 未选中列表
 	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){	
+		
 		if($(this).prop("checked") == true){
+			if(spType.length!=0){
+			if(spType[0] != $(this).parent().siblings('.spname')[0].innerHTML){
+				alert("请选择相同的供应商!");
+				return false;
+			}
+			}
+			if($(this).parent().siblings('.spname')[0].innerHTML != ''){
+				spType.push($(this).parent().siblings('.spname')[0].innerHTML);
+			}
 			$(this).parent().parent().clone().appendTo($("#checkedCostCheckList"));
 			ids.push($(this).attr('id'));
 			orderNos.push($(this).attr('order_no'));
@@ -222,6 +233,9 @@ $(document).ready(function() {
 			ids.splice($.inArray($(this).attr('id'),ids),1);
 			change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
 			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+			if(spType.length != 0){
+				spType.splice($(this).parent().siblings('.spname')[0].innerHTML, 1);
+			}
 			//$("#checkedCostCheckList").remove("tbody",$(this).parent().parent());
 			//$("#checkedCostCheckList").$(this).parent().parent().remove();
 			var id=$(this)[0].id;
