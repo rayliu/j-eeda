@@ -2,6 +2,7 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -549,51 +550,56 @@ public class CostCheckOrderController extends Controller {
     	String[] orderNoArr = orderNos.split(",");
     	Record rec1 = null;
     	Record rec = null;
-    	Double totalAmount = 0.00;
-    	Double changeAmount = 0.00;
+    	Double totalamount = 0.00;
+    	Double changeamount = 0.00;
     	for(int i=0;i<orderIdsArr.length;i++){
             if("提货".equals(orderNoArr[i])){
             	rec1 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
             	if(rec1.getDouble("sum_amount")!=null){
-            		totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            		totalamount = totalamount + rec1.getDouble("sum_amount");
             	}
             	rec = Db.findFirst("select sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?", orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
-            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }else if("零担".equals(orderNoArr[i])){
             	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
-            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ?", orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
-            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }else if("配送".equals(orderNoArr[i])){
             	rec1 = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", orderIdsArr[i]);
-            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ?", orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
-            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }else if("成本单".equals(orderNoArr[i])){
             	rec1 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
-            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ?",orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
-            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }else{
-            	rec1 = Db.findFirst("select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
-            	totalAmount = totalAmount + rec1.getDouble("sum_amount");
+            	rec1 = Db.findFirst("select ifnull(sum(insurance_amount),0) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",orderIdsArr[i]);
             	if(rec.getDouble("change_amount")!=null){
-            		changeAmount = changeAmount + rec.getDouble("change_amount");
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }
-            Double actualAmount=totalAmount-changeAmount;
-            setAttr("totalAmount", totalAmount);
-            setAttr("changeAmount", changeAmount);
-            setAttr("actualAmount", actualAmount);
+            
+           
+            
+            Double actualamount=totalamount-changeamount;
+            
+            
+            setAttr("totalAmount", Double.valueOf(String.format("%.2f",totalamount)));
+            setAttr("changeAmount", Double.valueOf(String.format("%.2f",changeamount)));
+            setAttr("actualAmount", actualamount);
     	}
     	
     	
