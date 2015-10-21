@@ -94,8 +94,8 @@ $(document).ready(function() {
             {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
             {"mDataProp":"SERIAL_NO", "sWidth":"200px"},
             {"mDataProp":"REF_NO", "sWidth":"200px"},
-            {"mDataProp":"TO_NAME", "sWidth":"150px"},
-            {"mDataProp":"PLANNING_TIME", "sWidth":"180px"},
+            {"mDataProp":"TO_NAME", "sWidth":"130px"},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"140px"},
             {"mDataProp":"AMOUNT", "sWidth":"40px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
             {"mDataProp":"CHANGE_AMOUNT","sWidth":"60px",
@@ -116,7 +116,7 @@ $(document).ready(function() {
             },
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
             {"mDataProp":"SPNAME","sClass":"spname", "sWidth":"200px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
+            {"mDataProp":"CUSTOMER_NAME", "sWidth":"120px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"ORDER_NO", "sWidth":"200px", 
                 "fnRender": function(obj) {
@@ -134,6 +134,7 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"RECEIVINGUNIT", "sWidth":"130px"},
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"180px"}, 
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"90px"},  
 		    {"mDataProp":null, "sWidth":"90px",
