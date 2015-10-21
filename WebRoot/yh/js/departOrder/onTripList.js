@@ -134,9 +134,8 @@ $(document).ready(function() {
     //入库的确认
     $("#eeda-table").on('click', '.confirmInWarehouse', function(e){
     	var departOrderId =$(this).attr("code");
-    	
+    	$(this).attr("disabled",true);
     	if(confirm("确定入库吗？")){
-    		$(this).attr("disabled",true);
     		$.post('/transferOrderMilestone/warehousingConfirm',{departOrderId:departOrderId},function(data){
     			if(data.success){
     				detailTable.fnDraw(); 
@@ -148,22 +147,23 @@ $(document).ready(function() {
                 }
     		},'json');
         } else {
+        	$(this).attr("disabled",false);
             return;
         }
     });
 
     // 收货确认
     $("#eeda-table").on('click', '.confirmReceipt', function(e){
+    	$(this).attr("disabled",true);
     	var orderId =$(this).attr("code");
     	var departOrderId =$(this).attr("departOrderId");
-    	if(confirm("确定收货吗？")){
-    		$(this).attr("disabled",true);
+    	if(confirm("确定收货吗？")){	
     		$.post('/transferOrderMilestone/receipt', {orderId:orderId, departOrderId:departOrderId}, function(data){    
     			if(data.success){
     				detailTable.fnDraw();
     				$.scojs_message('已收货', $.scojs_message.TYPE_OK);	
                 }else{
-                	detailTable.fnDraw();
+                	$(this).attr("disabled",false);
                     alert('收货出错');
                 }
         	});
