@@ -49,7 +49,6 @@ public class AccountAuditLogController extends Controller {
     	String bankName = getPara("bankName");
     	String money = getPara("money");
     	String condiction = "";
-    	String month = "";
     	
     	if(ids != null && !"".equals(ids)){
     		condiction += " and account_id in("+ids+") ";
@@ -66,37 +65,28 @@ public class AccountAuditLogController extends Controller {
     	}else{
     		endTime = getPara("beginTime")+"-31";
     	}
-    	month = " and A.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59' ";
     	
     	
     	if(sourceOrder != null && !sourceOrder.equals("")){
-    		month = "";
     		condiction +=" and A.source_order ='" + sourceOrder + "' ";
     	}
     	if(orderNo != null && !orderNo.equals("")){
-    		month = "";
     		condiction +=" and A.order_no like '%" + orderNo + "%' ";
     	}
     	if(bankName != null && !bankName.equals("")){
-    		month = "";
     		condiction +=" and A.bank_name = '" + bankName + "' ";
     	}
     	if(money != null && !money.equals("")){
-    		month = "";
     		condiction +=" and A.amount like '%" + money + "%' ";
     	}
     	if(begin == null || "".equals(begin)){
-    		
-    		condiction += " and A.create_date between '1970-01-01' ";
+    		condiction += " and A.create_date between '" + beginTime + "' ";
     	}else{
-    		month = "";
     		condiction += " and A.create_date between '" + begin + "' ";
     	}
     	if(end == null || "".equals(end)){
-    		
-    		condiction += " and '2037-12-31' ";
+    		condiction += " and '" + endTime + "' ";
     	}else{
-    		month = "";
     		condiction += " and '" + end + "' ";
     	}
     	
@@ -107,47 +97,38 @@ public class AccountAuditLogController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-        String sqlTotal = "";
         String sql = "";
         if(true){
-        	sqlTotal = "select count(1) total from arap_account_audit_log aaal where 1 = 1 " ;
         	sql = " select * from (select aaal.*,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
-        			+ " (CASE WHEN aaal.source_order = '手工收入单' THEN (SELECT order_no FROM arap_misc_charge_order WHERE id IN (SELECT d.misc_charge_order_id FROM arap_charge_receive_confirm_order_detail d,arap_charge_receive_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-        			+ " WHEN aaal.source_order = '报销单' THEN(SELECT group_concat(DISTINCT order_no SEPARATOR '<br/>')FROM reimbursement_order WHERE id IN ( SELECT d.reimbursement_order_id FROM arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-        			+ " WHEN aaal.source_order = '行车报销单' THEN(SELECT group_concat(DISTINCT order_no SEPARATOR '<br/>')FROM reimbursement_order WHERE id IN ( SELECT d.reimbursement_order_id FROM arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-        			+ " WHEN aaal.source_order = '应付开票申请单' THEN(SELECT group_concat( DISTINCT order_no SEPARATOR '<br/>') FROM arap_cost_invoice_application_order WHERE id IN (SELECT d.application_order_id FROM arap_cost_pay_confirm_order_detail d,arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-        			+ " WHEN aaal.source_order = '应收对账单' THEN(SELECT group_concat( DISTINCT order_no SEPARATOR '<br/>') FROM arap_charge_order WHERE id IN (SELECT d.dz_order_id FROM arap_charge_receive_confirm_order_detail d,arap_charge_receive_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-        			+ " WHEN aaal.source_order = '应收开票记录单' THEN(SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>') FROM arap_charge_invoice aci WHERE aci.id IN (SELECT d.invoice_order_id FROM arap_charge_receive_confirm_order_detail d,arap_charge_receive_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-        			+ " WHEN aaal.source_order = '手工成本单' THEN(SELECT group_concat( DISTINCT order_no SEPARATOR '<br/>') FROM arap_misc_cost_order WHERE id IN (SELECT d.misc_cost_order_id FROM arap_cost_pay_confirm_order_detail d,arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-        			+ " WHEN aaal.source_order = '行车单' THEN(SELECT group_concat(DISTINCT order_no SEPARATOR '<br/>') FROM car_summary_order WHERE id IN ( SELECT d.car_summary_order_id FROM arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))END) order_no"
-        			+ " from arap_account_audit_log aaal"
+        			+ " (CASE "
+        			+ " WHEN aaal.source_order = '手工收入单' "
+        			+ " THEN ( SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' ) FROM arap_misc_charge_order amco LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.misc_charge_order_id = amco.id where acr.order_id = aaal.invoice_order_id)"
+				    + " WHEN aaal.source_order = '报销单' "
+				    + " THEN ( SELECT group_concat( DISTINCT rei.order_no SEPARATOR '<br/>' ) FROM reimbursement_order rei LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.reimbursement_order_id = rei.id where acp.order_id = aaal.invoice_order_id )"
+				    + " WHEN aaal.source_order = '行车报销单' "
+				    + " THEN ( SELECT group_concat( DISTINCT rei.order_no SEPARATOR '<br/>' ) FROM reimbursement_order rei LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.reimbursement_order_id = rei.id where acp.order_id = aaal.invoice_order_id )"
+				    + " WHEN aaal.source_order = '应付开票申请单' "
+				    + " THEN ( SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>' ) FROM arap_cost_invoice_application_order aci LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.application_order_id = aci.id where acp.order_id = aaal.invoice_order_id )"
+				    + " WHEN aaal.source_order = '应收对账单' "
+				    + " THEN ( SELECT group_concat( DISTINCT aco.order_no SEPARATOR '<br/>' ) FROM arap_charge_order aco LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.dz_order_id = aco.id where acr.order_id = aaal.invoice_order_id )"
+				    + " WHEN aaal.source_order = '应收开票记录单' "
+				    + " THEN ( SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>' ) FROM arap_charge_invoice aci LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.invoice_order_id = aci.id where acr.order_id = aaal.invoice_order_id )"
+				    + " WHEN aaal.source_order = '手工成本单' "
+				    + " THEN ( SELECT group_concat( DISTINCT amc.order_no SEPARATOR '<br/>' ) FROM arap_misc_cost_order amc LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.misc_cost_order_id = amc.id where acp.order_id = aaal.invoice_order_id )"
+				    + " WHEN aaal.source_order = '行车单' "
+				    + " THEN ( SELECT group_concat( DISTINCT cso.order_no SEPARATOR '<br/>' ) FROM car_summary_order cso LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.car_summary_order_id = cso.id where acp.order_id = aaal.invoice_order_id ) "
+				    + " end ) order_no"
+				    + " from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id and aaal.source_order='应付开票申请单'"
         			+ " left join transfer_accounts_order tao ON tao.id = aaal.invoice_order_id and aaal.source_order='转账单' "
         			+ " left join fin_account fa on aaal.account_id = fa.id "
         			+ " ) A where 1 = 1 ";        	
         }
-//      else{
-//        	sqlTotal = "select count(1) total from arap_account_audit_log aaal where aaal.create_date between  '" + beginTime + "' and '" + endTime + " 23:59:59'";
-//        	sql = "select aaal.*,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
-//        			+ " (CASE WHEN aaal.source_order = '手工收入单' THEN (SELECT order_no FROM arap_misc_charge_order WHERE id IN (SELECT d.misc_charge_order_id FROM arap_charge_receive_confirm_order_detail d,arap_charge_receive_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-//        			+ " WHEN aaal.source_order = '报销单' THEN(SELECT group_concat(DISTINCT order_no SEPARATOR '<br/>')FROM reimbursement_order WHERE id IN ( SELECT d.reimbursement_order_id FROM arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-//        			+ " WHEN aaal.source_order = '行车报销单' THEN(SELECT group_concat(DISTINCT order_no SEPARATOR '<br/>')FROM reimbursement_order WHERE id IN ( SELECT d.reimbursement_order_id FROM arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-//        			+ " WHEN aaal.source_order = '应付开票申请单' THEN(SELECT group_concat( DISTINCT order_no SEPARATOR '<br/>') FROM arap_cost_invoice_application_order WHERE id IN (SELECT d.application_order_id FROM arap_cost_pay_confirm_order_detail d,arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-//        			+ " WHEN aaal.source_order = '应收对账单' THEN(SELECT group_concat( DISTINCT order_no SEPARATOR '<br/>') FROM arap_charge_order WHERE id IN (SELECT d.dz_order_id FROM arap_charge_receive_confirm_order_detail d,arap_charge_receive_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-//        			+ " WHEN aaal.source_order = '应收开票记录单' THEN(SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>') FROM arap_charge_invoice aci WHERE aci.id IN (SELECT d.invoice_order_id FROM arap_charge_receive_confirm_order_detail d,arap_charge_receive_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-//        			+ " WHEN aaal.source_order = '手工成本单' THEN(SELECT group_concat( DISTINCT order_no SEPARATOR '<br/>') FROM arap_misc_cost_order WHERE id IN (SELECT d.misc_cost_order_id FROM arap_cost_pay_confirm_order_detail d,arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))"
-//        			+ " WHEN aaal.source_order = '行车单' THEN(SELECT group_concat(DISTINCT order_no SEPARATOR '<br/>') FROM car_summary_order WHERE id IN ( SELECT d.car_summary_order_id FROM arap_cost_pay_confirm_order_detail d, arap_cost_pay_confirm_order_detail_log dl WHERE d.id = dl.detail_id AND dl.order_id = aaal.invoice_order_id))END) order_no"
-//        			+ " from arap_account_audit_log aaal"
-//        			+ " left join user_login ul on ul.id = aaal.creator"
-//        			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id"
-//        			+ " left join transfer_accounts_order tao ON tao.id = aaal.transferOrder_id "
-//        			+ " left join fin_account fa on aaal.account_id = fa.id "
-//        			+ " where aaal.create_date between  '" + beginTime + " ' and '" + endTime + " 23:59:59' order by aaal.create_date desc " + sLimit;  
-//        }
-        Record rec = Db.findFirst("select count(*) total from ("+sql + month + condiction + ") B ");
+
+        Record rec = Db.findFirst("select count(*) total from ("+sql + condiction + ") B ");
         logger.debug("total records:" + rec.getLong("total"));
-        List<Record> BillingOrders = Db.find(sql + month + condiction + "order by A.create_date desc " + sLimit);
+        List<Record> BillingOrders = Db.find(sql + condiction + "order by A.create_date desc " + sLimit);
 
         
         
