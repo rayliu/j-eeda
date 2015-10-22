@@ -575,6 +575,12 @@ $(document).ready(function() {
         });
     	
     	
-	
+    	// 回显订单类型
+   	 $("input[name='invoiceType']").each(function(){
+   		if($("#invoiceRadio").val() == $(this).val()){
+   			$(this).attr('checked', true);
+   		}
+   		
+   	 });
 	
 } );

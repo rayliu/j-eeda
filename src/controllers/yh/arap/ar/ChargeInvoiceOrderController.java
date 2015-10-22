@@ -164,7 +164,7 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " LEFT JOIN contact c ON c.id = p.contact_id"
 				+ " LEFT JOIN contact c1 ON c1.id = aco.sp_id"
 				+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
-				+ " where aco.STATUS ='已确认'";
+				+ " where aco.STATUS ='已确认' and aco.have_invoice = 'Y'";
 		
 		String condition = "";
 		if(companyName != null || beginTime != null || endTime != null
