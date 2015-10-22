@@ -243,5 +243,15 @@
         ]      
 	});
 	
+	$('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#receive_time').trigger('keyup');
+    });
+	
 	
 });
