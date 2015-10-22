@@ -101,6 +101,7 @@ ifnull(
 ifnull(ul.c_name,ul.user_name) as create_name
 FROM
 	arap_charge_item aci
+LEFT JOIN arap_charge_order aco on aco.id =aci.charge_order_id
 LEFT JOIN return_order r_o ON r_o.id = aci.ref_order_id
 LEFT JOIN delivery_order d_o ON d_o.id = r_o.delivery_order_id
 LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id
@@ -109,7 +110,7 @@ LEFT JOIN transfer_order tor ON tor.id = r_o.transfer_order_id
 LEFT JOIN location lo2 ON ifnull(tor.route_to, tor2.route_to) = lo2. CODE
 LEFT JOIN party p4 ON p4.id = d_o.notify_party_id
 LEFT JOIN contact c4 ON c4.id = p4.contact_id
-left join user_login ul on ul.id = aci.create_by
+left join user_login ul on ul.id = aco.create_by
 where aci.charge_order_id=$P{order_id}]]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
@@ -463,7 +464,7 @@ where aci.charge_order_id=$P{order_id}]]>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="35" y="41" width="186" height="25" uuid="de3f04a1-30da-44a4-9a4b-9c4e54411735"/>
+				<reportElement x="36" y="41" width="186" height="25" uuid="de3f04a1-30da-44a4-9a4b-9c4e54411735"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>

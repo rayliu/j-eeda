@@ -32,7 +32,7 @@
 	aao.id,
 	ifnull(aao.order_no,'') order_no,
 	ifnull(aao.begin_time,'') begin_time,
-            ifnull(MONTH (aao.begin_time),'') c_stamp,
+            MONTH (aao.begin_time) c_stamp,
 	ifnull(c.abbr,'') cname,
             ifnull(o.office_name,'') office_name
 FROM
@@ -53,7 +53,7 @@ where aao.order_no=$P{order_no}]]>
 	<field name="begin_time" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="c_stamp" class="java.lang.Long"/>
+	<field name="c_stamp" class="java.lang.Integer"/>
 	<field name="cname" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -169,17 +169,17 @@ where aao.order_no=$P{order_no}]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cname}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true" pattern="yyyy-MM-dd" isBlankWhenNull="true">
 				<reportElement x="506" y="96" width="125" height="26" uuid="da1f32ce-1cdb-4f63-ba03-93c9e76b42aa"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{begin_time}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="698" y="96" width="104" height="26" uuid="92bbc116-181e-477e-b859-a7f64711f998"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{c_stamp}]]></textFieldExpression>
 			</textField>
