@@ -4,6 +4,7 @@ $(document).ready(function() {
 
     $('#menu_cost').addClass('active').find('ul').addClass('in');
     var datatable=$('#costCheckList-table').dataTable({
+        "bProcessing": true, 
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,

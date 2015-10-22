@@ -49,6 +49,7 @@ $(document).ready(function() {
     });
 	//datatable, 动态处理
     var uncheckedCostCheckTable = $('#uncheckedCostCheck-table').dataTable({
+        "bProcessing": true, 
         "bFilter": false, //不需要默认的搜索框
         "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -165,6 +166,7 @@ $(document).ready(function() {
     });		
 
     var checkedCostCheckTable = $('#checkedCostCheck-table').dataTable({
+        "bProcessing": true, 
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
