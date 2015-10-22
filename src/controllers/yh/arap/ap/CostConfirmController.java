@@ -424,19 +424,24 @@ public class CostConfirmController extends Controller {
 			ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
 					"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
 					, acountId, year, month);
-			ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
-					"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-					, acountId, this_year, this_month);
-			
 			
 			if(aaas!=null){
 				aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
 				aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
 				aaas.update();
 				
-				this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") - Double.parseDouble(pay_amount)));
-				this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount)));
-				this_aaas.update();
+				
+				for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
+					ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
+							"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+							, acountId, this_year, Integer.parseInt(month)+i);
+					
+					this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") - Double.parseDouble(pay_amount)));
+					this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount)));
+					this_aaas.update();
+				}
+				
+				
 			}
 		}
 	}
@@ -650,19 +655,6 @@ public class CostConfirmController extends Controller {
 				+ " (SELECT group_concat( DISTINCT ro.order_no SEPARATOR '<br/>' )"
 				+ " FROM arap_cost_pay_confirm_order_detail co, reimbursement_order ro"
 				+ " WHERE co.reimbursement_order_id = ro.id AND co.order_id = cpco.id ) reimbursement_no, "
-				
-//				+ " ifnull(( SELECT sum(caor.pay_amount) "
-//				+ " FROM cost_application_order_rel caor where caor.application_order_id in "
-//				+ " (select acpcod.application_order_id from arap_cost_pay_confirm_order cpco1  "
-//				+ "  LEFT JOIN arap_cost_pay_confirm_order_detail acpcod on acpcod.order_id = cpco1.id   "
-//				+ "  where cpco1.id = cpco.id) ),"
-//				+ " ifnull((SELECT sum(cso.actual_payment_amount) FROM car_summary_order cso WHERE cso.id IN ("
-//				+ " SELECT acpcod.car_summary_order_id FROM arap_cost_pay_confirm_order cpco1"
-//				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id"
-//				+ " WHERE cpco1.id = cpco.id)),(SELECT IFNULL(sum(ro.amount),0) FROM reimbursement_order ro WHERE"
-//				+ " ro.id IN (SELECT acpcod.reimbursement_order_id FROM arap_cost_pay_confirm_order cpco1"
-//				+ " LEFT JOIN arap_cost_pay_confirm_order_detail acpcod ON acpcod.order_id = cpco1.id WHERE cpco1.id = cpco.id)))) pay_amount,
-
                 + " ( case when acp.application_order_id is not null "
                 + " then "
                 + " ( SELECT sum(caor.pay_amount) FROM cost_application_order_rel caor "
@@ -707,9 +699,7 @@ public class CostConfirmController extends Controller {
         if (StringUtils.isNotEmpty(orderNo)){
         	conditions+=" and UPPER(order_no) like '%"+orderNo.toUpperCase()+"%'";
         }
-//        if (appOrderNo != null){
-//        	conditions+=" fksq_no like'%"+appOrderNo+"%'";
-//        }
+
         if (StringUtils.isNotEmpty(status)){
         	conditions+=" and status = '"+status+"'";
         }
