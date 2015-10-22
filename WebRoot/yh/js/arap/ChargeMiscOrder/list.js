@@ -2,7 +2,7 @@
 $(document).ready(function() {
 	document.title = '手工收入单查询 | '+document.title;
 
-    $('#menu_finance').addClass('active').find('ul').addClass('in');
+    $('#menu_charge').addClass('active').find('ul').addClass('in');
 
 	//datatable, 动态处理
     var datatable=$('#chargeMiscOrderList-table').dataTable({

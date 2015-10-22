@@ -2,7 +2,7 @@ $(document).ready(function() {
 	if(order_no){
 		document.title = order_no+' | '+document.title;
 	}
-	$('#menu_finance').addClass('active').find('ul').addClass('in');
+	$('#menu_charge').addClass('active').find('ul').addClass('in');
 	
 	var saveChargeMiscOrder = function(e){
 		$('#saveChargeMiscOrderBtn').attr('disabled', true);

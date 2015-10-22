@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-    $('#menu_finance').addClass('active').find('ul').addClass('in');
+    $('#menu_charge').addClass('active').find('ul').addClass('in');
     
 	//datatable, 动态处理
 	var uncheckedChargeCheckTable=$('#uncheckedChargeMisc-table').dataTable({
