@@ -10,7 +10,7 @@ $(document).ready(function() {
     var accountAuditLogTable = $('#accountAuditLog-table').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
+        "bSort": true, 
         "iDisplayLength": 100,
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
@@ -28,24 +28,8 @@ $(document).ready(function() {
             {"mDataProp":"SOURCE_ORDER", "sWidth":"150px"},
             {"mDataProp":"ORDER_NO", "sWidth":"150px"},
             {"mDataProp":"BANK_NAME", "sWidth":"150px"},
-            {"mDataProp":null, "sWidth":"150px",
-                "fnRender": function(obj) {
-                    if(obj.aData.PAYMENT_TYPE == "CHARGE"){
-                         return (Number(obj.aData.AMOUNT));
-                    }
-                    return '' ;
-                }
-                 
-            },
-            {"mDataProp":null, "sWidth":"150px",
-                "fnRender": function(obj) {
-                    if(obj.aData.PAYMENT_TYPE == "COST"){
-                        return (Number(obj.aData.AMOUNT));
-                    }
-                    return '' ;
-                }
-                 
-            },         
+            {"mDataProp":"CHARGE_AMOUNT", "sWidth":"150px"},
+            {"mDataProp":"COST_AMOUNT", "sWidth":"150px" },         
             {"mDataProp":"USER_NAME"}
         ]      
     });

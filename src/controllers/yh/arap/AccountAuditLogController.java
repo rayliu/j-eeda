@@ -50,6 +50,17 @@ public class AccountAuditLogController extends Controller {
     	String money = getPara("money");
     	String condiction = "";
     	
+    	//升降序
+    	String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
+		String orderByStr = " order by A.create_date desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+    	
+    	
     	if(ids != null && !"".equals(ids)){
     		condiction += " and account_id in("+ids+") ";
     	}
@@ -117,7 +128,9 @@ public class AccountAuditLogController extends Controller {
 				    + " THEN ( SELECT group_concat( DISTINCT amc.order_no SEPARATOR '<br/>' ) FROM arap_misc_cost_order amc LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.misc_cost_order_id = amc.id where acp.order_id = aaal.invoice_order_id )"
 				    + " WHEN aaal.source_order = '行车单' "
 				    + " THEN ( SELECT group_concat( DISTINCT cso.order_no SEPARATOR '<br/>' ) FROM car_summary_order cso LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.car_summary_order_id = cso.id where acp.order_id = aaal.invoice_order_id ) "
-				    + " end ) order_no"
+				    + " end ) order_no,"
+				    + " (select amount from arap_account_audit_log where id=aaal.id and payment_type='cost') cost_amount,"
+				    + " (select amount from arap_account_audit_log where id=aaal.id and payment_type='charge') charge_amount"
 				    + " from arap_account_audit_log aaal"
         			+ " left join user_login ul on ul.id = aaal.creator"
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id and aaal.source_order='应付开票申请单'"
@@ -128,7 +141,7 @@ public class AccountAuditLogController extends Controller {
 
         Record rec = Db.findFirst("select count(*) total from ("+sql + condiction + ") B ");
         logger.debug("total records:" + rec.getLong("total"));
-        List<Record> BillingOrders = Db.find(sql + condiction + "order by A.create_date desc " + sLimit);
+        List<Record> BillingOrders = Db.find(sql + condiction + orderByStr + sLimit);
 
         
         
