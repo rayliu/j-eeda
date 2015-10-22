@@ -211,8 +211,8 @@ public class CarSummaryController extends Controller {
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
-					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
-					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
+					+ "	round((cso.next_start_car_amount + cso.month_refuel_amount),2) AS total_cost,"
+					+ " round((cso.finish_car_mileage - cso.start_car_mileage),2) AS carsummarymileage,"
 					+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
 					+ " (select GROUP_CONCAT(DISTINCT dt.transfer_order_no SEPARATOR '<br>') from  car_summary_detail csd"
 					+ " left join depart_transfer dt on dt.pickup_id=csd.pickup_order_id"
@@ -266,8 +266,8 @@ public class CarSummaryController extends Controller {
 			
 			sql = "select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 					+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
-					+ "	(cso.next_start_car_amount + cso.month_refuel_amount) as total_cost ,"
-					+ " (cso.finish_car_mileage - cso.start_car_mileage ) as carsummarymileage,"
+					+ "	round((cso.next_start_car_amount + cso.month_refuel_amount),2) AS total_cost,"
+					+ " round((cso.finish_car_mileage - cso.start_car_mileage),2) AS carsummarymileage,"
 					+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
 					+ " (select group_concat(distinct dt.transfer_order_no separator '<br>' ) from depart_transfer dt"
 					+ " where dt.pickup_id in(select pickup_order_id from car_summary_detail where car_summary_id = cso.id )) as transfer_order_no,"
