@@ -216,15 +216,11 @@ public class ChargeInvoiceOrderController extends Controller {
     	String status = getPara("status");
     	String office = getPara("office");
     	String sp = getPara("sp");
+    	String dzOrderNo = getPara("dzOrderNo");
     	String address = getPara("address");
     	//TODO 网点，提货地点，供应商没有做条件过滤
         String sqlTotal = "select count(1) total from arap_charge_invoice aci";
-				/*+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
-				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
-				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
-				+ " left join user_login ul on ul.id = aci.create_by "
-				+ " left join party p on p.id = aci.payee_id "
-				+ " left join contact c on c.id = p.contact_id ";*/
+
         
         String sql = "select aci.*,"
         		+ " (select group_concat(distinct aco.invoice_no separator '</br>') "
@@ -234,15 +230,13 @@ public class ChargeInvoiceOrderController extends Controller {
         		+ " ul.c_name creator_name,c.abbr cname,c1.abbr sp "
         		+ " from arap_charge_invoice aci"
 				+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
-//				+ " left join arap_charge_application_invoice_no acai on acai.invoice_no = acio.invoice_no"
-//				+ " left join arap_charge_invoice_application_order acao on acao.id = acai.application_order_id"
 				+ " left join user_login ul on ul.id = aci.create_by "
 				+ " left join party p on p.id = aci.payee_id "
 				+ " left join contact c on c.id = p.contact_id "
                 + " left join contact c1 on c1.id = aci.sp_id ";
        String condition = "";
        if(companyName != null || beginTime != null || endTime != null || orderNo != null
-    		  || status != null || office != null || sp != null || address != null ){
+    		  || status != null || office != null || sp != null || address != null || dzOrderNo != null){
     	    if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
 			}
@@ -251,6 +245,8 @@ public class ChargeInvoiceOrderController extends Controller {
 			}
 			condition = " where ifnull(c.abbr,'') like '%" + companyName + "%' "
 					+ " and ifnull(aci.order_no,'') like '%" + orderNo + "%' "
+					+ " and (select group_concat(distinct aco.order_no separator '</br>') "
+					+ " from arap_charge_order aco where aco.invoice_order_id = aci.id) like '%" + dzOrderNo + "%' "
 					+ " and aci.create_stamp between '" + beginTime + "' "
 							+ " and '" + endTime + "' ";
 			if(!"".equals(status) && status != null){

@@ -56,6 +56,7 @@ $(document).ready(function() {
 		var orderNo = $("#select_orderNo_filter").val();
 		var status = $("#select_status_filter").val();
 		var office = $("#select_office_filter").val();
+		var dzOrderNo = $("#dzOrderNo_filter").val();
 		var sp = $("#sp_filter").val();
 		var address = $("#address_filter").val();
 		chargeInvoiceOrderListTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/list?companyName="+companyName
@@ -65,10 +66,11 @@ $(document).ready(function() {
 																		+"&status="+status
 																		+"&office="+office
 																		+"&sp="+sp
+																		+"&dzOrderNo="+dzOrderNo
 																		+"&address="+address;
 		chargeInvoiceOrderListTable.fnDraw();
     };
-    $('#select_orderNo_filter,#select_customer_filter,#sp_filter,#address_filter,#kaishi_filter,#jieshu_filter').on( 'keyup', function () {    	
+    $('#select_orderNo_filter,#select_customer_filter,#sp_filter,#address_filter,#kaishi_filter,#jieshu_filter,#dzOrderNo_filter').on( 'keyup', function () {    	
     	refreshList();
 	} );
     $("#select_status_filter,#select_office_filter").on('change',function(){    	
