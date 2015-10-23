@@ -1,6 +1,8 @@
 package controllers.yh.order;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -507,6 +509,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
      */
 	@Before(Tx.class)
     public Map<String,String> importTransferOrder(List<Map<String,String>> content){
+		Connection conn=null;
+		
     	Map<String, String> importResult = new HashMap<String, String>();
     	importResult = validatingOrderNo(content);
     	if("true".equals(importResult.get("result"))){
@@ -517,6 +521,11 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    	//回滚运输单信息
 		    	List<TransferOrder> orderList = new ArrayList<TransferOrder>();
 				try {
+					//手动控制提交
+					conn=DbKit.getConfig().getDataSource().getConnection();
+		            DbKit.getConfig().setThreadLocalConnection(conn);
+		            conn.setAutoCommit(false);//自动提交变成false
+					
 					for (int j = 0; j < content.size(); j++) {
 						causeRow = j+2;
 						System.out.println("导入至第【"+causeRow+"】行");
@@ -586,21 +595,35 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 							}
 						}
 					}
+					conn.commit();
 				} catch (Exception e) {
 					
 					System.out.println("导入操作异常！");
 					e.printStackTrace();
 					try {
-						DbKit.getConfig().getConnection().rollback();
-					} catch (Exception e1) {
-						System.out.println("回滚操作异常！");
-						importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>回滚已导入数据出现异常，请联系管理员手动删除！");
+						if(null!=conn) conn.rollback();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
 					}
+					
 					importResult.put("result","false");
 					importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>导入数据已取消！");
 											
 					return importResult;
-				}
+				}finally{
+		            try
+		            {
+		                if(null!=conn){
+		                    conn.close();
+		                }
+		            }
+		            catch (Exception e2)
+		            {
+		                e2.printStackTrace();
+		            }finally{
+		                DbKit.getConfig().removeThreadLocalConnection();
+		            }
+		        }
 				importResult.put("result","true");
 	        	importResult.put("cause", "成功导入" + resultNum + "张运输单");
 			}
