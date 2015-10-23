@@ -558,10 +558,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    				if(content.get(j).get("货品属性")=="ATM"){
 		    					product = Product.dao.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '" + customer.get("pid") + "' and item_no =  '"+content.get(j).get("货品型号")+"';");
 		    				}
-		    				/*if(product==null){
-		    					importResult.put("cause", "第"+causeRow+"行，货品属性信息有误");
-		    					return importResult;
-		    				}*/
+		    				if(product==null){
+		    					//importResult.put("cause", "第"+causeRow+"行，货品属性信息有误");
+		    					throw new Exception("货品属性信息有误");
+		    				}
 		    				else{
 		    					tansferOrderItem = TransferOrderItem.dao.findFirst("select * from transfer_order_item where order_id = '" + order.get("id") +"' and item_no = '" + product.get("item_no") + "';");
 		    				}
@@ -607,7 +607,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 					}
 					
 					importResult.put("result","false");
-					importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常，<br/>导入数据已取消！");
+					importResult.put("cause", "导入失败，数据导入至第" + (causeRow) + "行时出现异常:"+e.getMessage()+"，<br/>导入数据已取消！");
 											
 					return importResult;
 				}finally{
