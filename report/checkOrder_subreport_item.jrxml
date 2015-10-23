@@ -72,7 +72,7 @@ union
 		r_f.`name` as route_from,
 		r_t.`name` as route_to,
 		'零担' as service_type,
-		(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id = dto.id )) as quantity,
+		(SELECT COUNT(0) FROM transfer_order_item_detail WHERE depart_id = dto.id ) as quantity,
 		(
 SELECT group_concat(DISTINCT c.address SEPARATOR '\r\n')
 from contact c
@@ -133,11 +133,14 @@ union
 		aci.ref_order_id,
 		aci.cost_order_id,
 	  io.order_no  as order_no,
-		tor.planning_time as create_date,
+		io.create_stamp as create_date,
 		'' as sp_order_no,
-		c.abbr as customer_name,
-		r_f.`name` as route_from,
-		r_t.`name` as route_to,
+		( SELECT   group_concat(DISTINCT c.abbr SEPARATOR '\r\n') from contact c
+left join party p on p.contact_id = c.id
+left join transfer_order tor on tor.customer_id = p.id
+where tor.insurance_id=io.id)  customer_name,
+		'' as route_from,
+		'' as route_to,
 		'保险' as service_type,
 		(select sum(amount) from transfer_order_item where order_id in (select id from transfer_order where insurance_id = io.id)) as quantity,
 		'' as address,
@@ -147,11 +150,6 @@ union
 	from
 		arap_cost_item aci
 	left join  insurance_order io on io.id = aci.ref_order_id
-	left join transfer_order tor on tor.insurance_id = io.id
-	left join party p on tor.customer_id = p.id
-	left join contact c on p.contact_id = c.id
-	left join location r_f on r_f.`code` = tor.route_from
-	left join location r_t on r_t.`code` = tor.route_to
 	where
 		aci.cost_order_id = $P{order_id}
 		and aci.ref_order_no='保险'

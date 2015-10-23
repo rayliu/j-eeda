@@ -141,7 +141,7 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no}]]>
 				<textFieldExpression><![CDATA[$F{begin_time}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="360" y="87" width="231" height="26" uuid="9966966f-9aba-4b68-88f9-667c46ba32d5"/>
+				<reportElement x="360" y="88" width="231" height="26" uuid="9966966f-9aba-4b68-88f9-667c46ba32d5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
