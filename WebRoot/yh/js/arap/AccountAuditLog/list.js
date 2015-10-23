@@ -7,6 +7,7 @@ $(document).ready(function() {
     $("#beginTime_filter").val(new Date().getFullYear()+'-'+ (new Date().getMonth()+1));
     
 	//datatable, 动态处理
+    var checkedIds = [];
     var accountAuditLogTable = $('#accountAuditLog-table').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
@@ -21,7 +22,19 @@ $(document).ready(function() {
         "aoColumns": [
             {"mDataProp":null, "sWidth":"20px",
                 "fnRender": function(obj) {
-                    return '<input type="checkbox"/>' ;
+                	var str = "";
+                	if(checkedIds.length>0){
+                		for(id in checkedIds){
+                    		if(checkedIds[id] == obj.aData.ID){
+                    			return str =  '<input type="checkbox" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'" checked = "checked">';
+                           }else{
+                        	    str =  '<input type="checkbox" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
+                            }
+                    	}
+                	}else{
+                 	   str = '<input type="checkbox" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
+                    }
+                	return str;
                 }
             },
             {"mDataProp":"CREATE_DATE", "sWidth":"180px"},
@@ -144,15 +157,36 @@ $(document).ready(function() {
     	var bankName = $('#bankName').val();
     	var money = $('#money').val();
     	accountAuditLogTable.fnSettings().sAjaxSource = "/accountAuditLog/list?source_order="+source_order
-            +"&orderNo="+orderNo
-            +"&bankName="+bankName
-            +"&money="+money
-            +"&begin="+beginTime
-            +"&end="+endTime;
-       		accountAuditLogTable.fnDraw();
+										            +"&orderNo="+orderNo
+										            +"&bankName="+bankName
+										            +"&money="+money
+										            +"&begin="+beginTime
+										            +"&end="+endTime;
+       	accountAuditLogTable.fnDraw();
     };
     
     $('#source_order,#orderNo,#beginTime,#endTime,#bankName,#money').on('blur',function(){
     	find();
     });
+    
+    
+    
+    // 未选中列表
+	$("#accountAuditLog-table").on('click', '.invoice', function(e){	
+		if($(this).prop("checked") == true){
+			checkedIds.push($(this).attr('id'));
+		}else{		
+			var tmpArr1 = [];
+			for(id in checkedIds){
+				if(checkedIds[id] != $(this).attr('id')){
+					tmpArr1.push(checkedIds[id]);
+				}
+			}
+			checkedIds = tmpArr1;
+		}
+		$("#checkedId").val(checkedIds);
+	});
+
+    
+    
 } );
