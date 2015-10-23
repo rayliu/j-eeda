@@ -72,7 +72,9 @@ union
 		r_f.`name` as route_from,
 		r_t.`name` as route_to,
 		'零担' as service_type,
-		(SELECT COUNT(0) FROM transfer_order_item_detail WHERE depart_id = dto.id ) as quantity,
+		(SELECT CASE WHEN t.cargo_nature = 'ATM' THEN (SELECT count(toid.id) FROM transfer_order_item_detail toid WHERE toid.depart_id = dto.id )
+		WHEN t.cargo_nature = 'cargo' THEN ( SELECT sum(toi.amount) FROM depart_order dpr2 LEFT JOIN depart_transfer dt ON dt.depart_id = dpr2.id LEFT JOIN transfer_order_item toi ON toi.order_id = dt.order_id
+		WHERE dpr2.id = dto.id )END) as quantity,
 		(
 SELECT group_concat(DISTINCT c.address SEPARATOR '\r\n')
 from contact c
