@@ -632,7 +632,8 @@ public class DepartOrderController extends Controller {
 					+ " and vcd.status not in('手动删除', '已入库') "
 					+ " and vcd.is_direct_deliver != 1 "
 					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='"	+ currentUser.getPrincipal() + "')"
-					+ " and (pickup_id is not null or operation_type='out_source')";
+					+ " and (pickup_id is not null or operation_type='out_source')"
+					+ " and (cargo_nature='cargo' or total_amount !=0)";
 		
 		if (orderNo == null && status == null && address == null
 				&& customer == null && routeFrom == null && routeTo == null
