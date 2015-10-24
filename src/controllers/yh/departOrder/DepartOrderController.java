@@ -969,7 +969,6 @@ public class DepartOrderController extends Controller {
 
 	// 保存发车单
 	public void saveDepartOrder() {
-
 		String depart_id = getPara("depart_id");// 发车单id
 		String charge_type = getPara("chargeType");// 供应商计费类型
 		String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
@@ -990,6 +989,7 @@ public class DepartOrderController extends Controller {
 		String transfer_type = getPara("transfer_type");// 运输方式
 		String[] orderids = getPara("orderid").split(",");
 		String[] pickupIds = getPara("pickupIds").split("&");// 调车单id
+		String partySpId = getPara("partySpId");
 
 		DepartOrder dp = null;
 		if ("".equals(depart_id)) {
@@ -1020,7 +1020,7 @@ public class DepartOrderController extends Controller {
 			if (!"".equals(carinfoId) && carinfoId != null) {
 				dp.set("carinfo_id", carinfoId);
 			}
-			String partySpId = getPara("partySpId");
+			
 			if ("".equals(sp_id)) {
 				if (!"".equals(partySpId)) {
 					dp.set("sp_id", partySpId);
@@ -1148,7 +1148,6 @@ public class DepartOrderController extends Controller {
 			 * departPickup.set("depart_id", dp.get("id")) .set("pickup_id",
 			 * pickupId[j]) .set("order_id", orderids[i]) .save(); } } }
 			 */
-
 		} else {// TODO update不需要更改create_by, create_date
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
 			dp.set("charge_type", charge_type)
@@ -1197,6 +1196,20 @@ public class DepartOrderController extends Controller {
 				updateTransferOrderSp(dp);
 			}
 		}
+		
+		//更新运输单供应商（同步发车单）
+		for (int i = 0; i < orderids.length; i++) {
+			TransferOrder transferOrder = TransferOrder.dao.findById(orderids[i]);
+			if ("".equals(sp_id)) {
+				if (!"".equals(partySpId)) {
+					transferOrder.set("sp_id", partySpId).update();
+				}
+			} else {
+				transferOrder.set("sp_id", sp_id).update();
+			}
+			
+		}
+		
 		renderJson(dp);
 	}
 
