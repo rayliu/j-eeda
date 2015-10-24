@@ -1905,10 +1905,54 @@ public class DeliveryController extends Controller {
   		
  		renderJson(resultMap);
  	}
+ // 更新配送单
+  	public void reviseDeliveryOrder() {
+  		UploadFile uploadFile = getFile();
+  		File file = uploadFile.getFile();
+  		String fileName = file.getName();
+  		logger.debug("文件名:" + file.getName() +",路径："+file.getPath());
+  		Map<String,String> resultMap = new HashMap<String,String>();
+   		try {
+   			String[] title = null;
+   			List<Map<String,String>> content = new ArrayList<Map<String,String>>();
+   			if(fileName.endsWith(".xls")){
+   				title = ReaderXLS.getXlsTitle(file);
+   				content = ReaderXLS.getXlsContent(file);
+   			}else if(fileName.endsWith(".xlsx")){
+   				title = ReaderXlSX.getXlsTitle(file);
+   				content = ReaderXlSX.getXlsContent(file);
+   			}else{
+   				resultMap.put("result", "false");
+  				resultMap.put("cause", "导入失败，请选择正确的execl文件");
+   			}
+   			if(title != null && content.size() > 0){
+  				DeliveryOrderExeclHandeln handeln = new DeliveryOrderExeclHandeln();
+  				if(handeln.reviseExeclTitle(title,"reviseDeliveryOrder")){
+  					resultMap = handeln.reviseDeliveryOrder(content);
+  				}else{
+  					resultMap.put("result", "false");
+  					resultMap.put("cause", "导入失败，execl标题列与系统默认execl标题列不一致");
+  				}
+   			}
+  		} catch (Exception e) {
+  			e.printStackTrace();
+  			resultMap.put("result", "false");
+  			resultMap.put("cause", "导入失败，请选择正确的execl文件<br/>（建议使用Microsoft Office Execl软件操作数据）");
+  			renderJson(resultMap);
+  		}
+   		logger.debug("result:" + resultMap.get("result") +",cause:"+resultMap.get("cause"));
+   		
+  		renderJson(resultMap);
+  	}
  	
     //下载配送单导入模板
 	public void downloadDeliveryOrderTemplate(){
 		File file = new File(PathKit.getWebRootPath()+"/download/配送单导入模板.xlsx");
+		renderFile(file);
+	}
+	//下载配送单更新模板
+	public void reviseDownloadDeliveryOrderTemplate(){
+		File file = new File(PathKit.getWebRootPath()+"/download/配送单更新模板.xlsx");
 		renderFile(file);
 	}
 	

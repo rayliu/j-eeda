@@ -85,6 +85,11 @@ $(document).ready(function() {
     		window.location.href="/delivery/downloadDeliveryOrderTemplate";
     	}
     });
+	$("#revisedowmload").on('click', function(e){
+    	if(confirm("确认下载吗？")){
+    		window.location.href="/delivery/reviseDownloadDeliveryOrderTemplate";
+    	}
+    });
 	
 	    
 	$("#eeda-table3").on('click', '.cancelbutton', function(e){
@@ -319,8 +324,25 @@ $(document).ready(function() {
     $("#fileUploadBtn").click(function(){
     	$("#toFileUpload").click();
     });
+   // 更新配送单
+    $("#revisefileUploadBtn").click(function(){
+    	$("#reviseFileUpload").click();
+    });
     
 	$('#toFileUpload').fileupload({
+        dataType: 'json',
+        done: function (e, data) {
+        	$("#footer").show();
+        	$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+        	dataTable.fnDraw();
+        },  
+        progressall: function (e, data) {//设置上传进度事件的回调函数  
+        	$('#centerBody').empty().append('<img src="/yh/image/loading5.gif" width="20%"><h4>导入过程可能需要一点时间，请勿退出页面！</h4>');
+        	$('#myModal').modal('show');
+        	$("#footer").hide();
+        } 
+    });
+	$('#reviseFileUpload').fileupload({
         dataType: 'json',
         done: function (e, data) {
         	$("#footer").show();
