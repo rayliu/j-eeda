@@ -123,7 +123,7 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(c4.contact_person, tor.receiving_name) receipt_person, "
 					+ " ifnull(c4.phone, tor.receiving_phone) receipt_phone,"
 					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
-					+ " ifnull(c4.address,receiving_address) receipt_address,"
+					+ " ifnull(c4.address,tor.receiving_address) receipt_address,"
 					+ " ifnull(w.warehouse_name, '') warehouse_name,"
 					+ " d_o.ref_no sign_no,"
 					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
