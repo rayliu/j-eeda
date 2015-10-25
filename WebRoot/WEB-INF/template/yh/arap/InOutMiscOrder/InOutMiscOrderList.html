@@ -25,23 +25,23 @@
                         <form role="form" style="margin: 0 15px;">
                             <div class="row search_panel">
                                 <div class="col-lg-4">
-                                    <%include("/yh/component/inputField.html",{id:'charge_unit_filter', label:'收款单位'}){} %>
-                                    <%include("/yh/component/inputField.html",{id:'pay_unit_filter', label:'付款单位'}){} %>
+                                    <%include("/yh/component/search/inputField.html",{id:'charge_unit_filter', label:'收款单位'}){} %>
+                                    <%include("/yh/component/search/inputField.html",{id:'pay_unit_filter', label:'付款单位'}){} %>
                                 </div>
                                 <!-- end of col-lg-6-->
                                 <div class="col-lg-4">
-                                    <%include("/yh/component/inputField.html",{id:'order_no_filter', label:'单号'}){} %>
-                                    <%include("/yh/component/dateInputField.html",{div_id:'datetimepicker', input_id:'beginTime_filter', label:'开票开始时间'}){} %>
+                                    <%include("/yh/component/search/inputField.html",{id:'order_no_filter', label:'单号'}){} %>
+                                    <%include("/yh/component/search/dateInputField.html",{div_id:'datetimepicker', input_id:'beginTime_filter', label:'开票开始时间'}){} %>
                                 </div><!-- end of col-lg-4-->
                                 <div class="col-lg-4">
-                                    <%include("/yh/component/selectField.html", 
+                                    <%include("/yh/component/search/selectField.html", 
                                                 {   id:'biz_type_filter', 
                                                     label:'业务类型', 
                                                     value_list:[{code:'', value:''}, {code:'personal', value:'借支'}, {code:'company', value:'公司'}]
                                                 }
                                              ){} %>
                                     
-                                    <%include("/yh/component/dateInputField.html",{div_id:'datetimepicker2', input_id:'endTime_filter', label:'结束时间'}){} %>
+                                    <%include("/yh/component/search/dateInputField.html",{div_id:'datetimepicker2', input_id:'endTime_filter', label:'结束时间'}){} %>
                                 </div><!-- end of col-lg-4--> 
                                 
                             </div><!-- end of row--> 
@@ -68,7 +68,7 @@
                                 '备注'
                             ];
 
-                           include("/yh/component/searchResultTable.html",{id:'result_table', list:col_list}){} %>
+                           include("/yh/component/search/searchResultTable.html",{id:'result_table', list:col_list}){} %>
                         <!--  --------------------查询结果------------                 -->        
 
                  </div>
