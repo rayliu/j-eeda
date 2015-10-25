@@ -5,7 +5,7 @@ $(document).ready(function() {
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 
 	//datatable, 动态处理
-    var datatable=$('#chargeMiscOrderList-table').DataTable({
+    var datatable=$('#result_table').DataTable({
         "processing": true,
         "searching": false,
         //"serverSide": true,
@@ -74,26 +74,6 @@ $(document).ready(function() {
         ]      
     });	 
 
-    
-
-    //时间控件
-    $('#datetimepicker').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN'
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();   
-        $('#beginTime_filter').trigger('keyup');
-    });
-
-    $('#datetimepicker2').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN', 
-        autoclose: true,
-        pickerPosition: "bottom-left"
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
-        $('#endTime_filter').trigger('keyup');
-    });
     
     $("#charge_unit_filter,  #pay_unit_filter, #order_no_filter, #beginTime_filter, #endTime_filter").on( 'keyup click', function () {
         refreshData();
