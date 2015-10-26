@@ -1,5 +1,7 @@
 package controllers.yh.delivery;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -521,10 +523,16 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 	public Map<String, String> reviseDeliveryOrder(
 			List<Map<String, String>> content) {
 		Map<String, String> importResult = new HashMap<String, String>();
+		SimpleDateFormat dbDataFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Connection conn=null;
 		int resultNum = 1;
 		int causeRow = 0;
 		// 回滚运输单信息
 		try {
+			//手动控制提交
+			conn=DbKit.getConfig().getDataSource().getConnection();
+            DbKit.getConfig().setThreadLocalConnection(conn);
+            conn.setAutoCommit(false);//自动提交变成false
 			for (int j = 0; j < content.size(); j++) {
 				causeRow = j + 2;
 				System.out.println("更新至第【" + causeRow + "】行");
@@ -532,11 +540,18 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 				TransferOrderItemDetail transferorderitemdetail = TransferOrderItemDetail.dao
 						.findFirst("SELECT delivery_id from transfer_order_item_detail where serial_no ='"
 								+ content.get(j).get("序列号") + "'");
+				if(transferorderitemdetail==null){
+					throw new Exception("序列号信息有误");
+				}
 				if (transferorderitemdetail != null) {
 					DeliveryOrder deliveryorder = DeliveryOrder.dao
 							.findById(transferorderitemdetail
 									.get("delivery_id"));
+					if(deliveryorder==null){
+						throw new Exception("序列号信息有误");
+					}
 					if (content.get(j).get("预约送货时间") != null) {
+					dbDataFormat.parse(content.get(j).get("预约送货时间"));
 					deliveryorder.set("order_delivery_stamp", content.get(j).get("预约送货时间"));
 					}
 					if (content.get(j).get("城市") != null) {
@@ -545,6 +560,9 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 										+ content.get(j).get("城市") + "'");
 						if (location != null) {
 							deliveryorder.set("route_to", location.get("code"));
+						}
+						else {
+							throw new Exception("城市信息有误");
 						}
 					}
 					String name = (String) currentUser.getPrincipal();
@@ -596,22 +614,35 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 						}
 				}
 			}
+			conn.commit();
 		} catch (Exception e) {
-			System.out.println("导入操作异常！");
+			
+			System.out.println("更新操作异常！");
 			e.printStackTrace();
 			try {
-				DbKit.getConfig().getConnection().rollback();
-			} catch (Exception e1) {
-				System.out.println("回滚操作异常！");
-				importResult.put("cause", "更新失败，数据更新至第" + (causeRow)
-						+ "行时出现异常，<br/>回滚已导入数据出现异常，请联系管理员手动删除！");
+				if(null!=conn) conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
 			}
-			importResult.put("result", "false");
-			importResult.put("cause", "更新失败，数据更新至第" + (causeRow)
-					+ "行时出现异常，<br/>导入数据已取消！");
-
+			
+			importResult.put("result","false");
+			importResult.put("cause", "更新失败，数据导入至第" + (causeRow) + "行时出现异常:"+e.getMessage()+"，<br/>导入数据已取消！");
+									
 			return importResult;
-		}
+		}finally{
+            try
+            {
+                if(null!=conn){
+                    conn.close();
+                }
+            }
+            catch (Exception e2)
+            {
+                e2.printStackTrace();
+            }finally{
+                DbKit.getConfig().removeThreadLocalConnection();
+            }
+        }
 		importResult.put("result", "true");
 		importResult.put("cause", "成功更新" + resultNum + "张配送单");
 		return importResult;
