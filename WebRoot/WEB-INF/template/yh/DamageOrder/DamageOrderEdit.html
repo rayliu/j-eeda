@@ -13,49 +13,105 @@
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        <label  class="label-margin">运输单号</label> <strong id="showOrderNo"></strong>
-                    </div>
-                    <div class="form-group">
-                        <label class="label-margin">单据状态</label>
-                    </div>
+            <div class="row"><!--  三列排版  -->
+                <div class="col-lg-4">
+                    <%include("/yh/component/form/inputField.html", 
+                                        {   id:'order_no', 
+                                            label:'货损单号', 
+                                            value:order.ORDER_NO!'', 
+                                            disabled: 'disabled'
+                                        }){}%>
+                                        
+                    <%include("/yh/component/form/selectField.html", 
+                                                {   id:'order_type', 
+                                                    label:'单据类型', 
+                                                    value_list:[
+                                                        {code:'运输单', value:'运输单'}, 
+                                                        {code:'提货单', value:'提货单'}, 
+                                                        {code:'发车单', value:'发车单'},
+                                                        {code:'配送单', value:'配送单'}, 
+                                                        {code:'退货单', value:'退货单'}
+                                                    ]
+                                                }
+                                             ){} %>
+                    <%include("/yh/component/form/selectField.html", 
+                                                {   id:'accident_type', 
+                                                    label:'事故类型', 
+                                                    value_list:[
+                                                        {code:'包装破损', value:'包装破损'}, 
+                                                        {code:'摔机货损', value:'摔机货损'}, 
+                                                        {code:'货品丢失', value:'货品丢失'},
+                                                        {code:'交通事故', value:'交通事故'}, 
+                                                        {code:'设施损坏', value:'设施损坏'},
+                                                        {code:'其它', value:'其它'}
+                                                    ]
+                                                }
+                                             ){} %>
+                                             
+                    
                     <div class="form-group">
                         <label class="label-margin">创建人</label>          
                     </div>
+                </div><!-- /.col-lg-4 -->
+                <div class="col-lg-4">
+                    <%include("/yh/component/form/inputCustomerField.html", 
+                        {
+                            id:'customer_id', 
+                            label:'客户名称', 
+                            value:order.CUSTOMER_ID!''
+                        }){} %>
+
+                    <%include("/yh/component/form/inputField.html", 
+                                        {   id:'biz_order_no', 
+                                            label:'业务单号', 
+                                            value:order.biz_order_no!''
+                                            }){} %>
+                    <%include("/yh/component/form/inputField.html", 
+                                        {  id:'accident_desc', 
+                                            label:'事故描述', 
+                                            value:order.accident_desc!''
+                                        }){} %>
                     <div class="form-group">
-                        <label class="label-margin">业务类型 </label>
-                        <select id="deliveryOfficeSelect" name="deliveryOfficeSelect">
-                            <option>运输单</option>
-                            <option>提货单</option>
-                            <option>发车单</option>
-                            <option>配送单</option>
-                            <option>退货单</option>
-                        </select>  
+                        <label class="label-margin">创建时间</label>          
                     </div>
-                    <div class="form-group">
-                        <label>业务单号</label>
-                        <input name="biz_order_no" value="${contact.address!''}" class="form-control" placeholder="请输入业务单号">
-                    </div>
-                    <div class="form-group">
+
+                </div><!-- /.col-lg-4 -->
+                <div class="col-lg-4">
+                    <%include("/yh/component/form/inputSpField.html", 
+                        {
+                            id:'sp_id', 
+                            label:'供应商', 
+                            value:order.sp_id!''
+                        }){} %>
+                        
+                    <%include("/yh/component/form/selectField.html", 
+                                {   id:'process_status', 
+                                    label:'处理进度', 
+                                    value_list:[
+                                        {code:'已报保险', value:'已报保险'}, 
+                                        {code:'退回中转仓', value:'退回中转仓'}, 
+                                        {code:'退回客户仓', value:'退回客户仓'},
+                                        {code:'检测定损', value:'检测定损'}, 
+                                        {code:'保险定案', value:'保险定案'},
+                                        {code:'已收理赔款', value:'已收理赔款'},
+                                        {code:'已支付赔款', value:'已支付赔款'},
+                                        {code:'更换包装', value:'更换包装'},
+                                        {code:'重新发货', value:'重新发货'}
+                                    ]
+                                }
+                             ){} %>
+                    <%include("/yh/component/form/dateInputField.html",{div_id:'datetimepicker', input_id:'accident_date', label:'事故时间'}){} %>
+                </div><!-- /.col-lg-4 -->
+            </div><!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                   <div class="form-group">
                         <label>备注</label>
                         <textarea class="form-control" rows="3" name="remark"></textarea>
                     </div>
-                </div><!-- /.col-lg-6 -->
-                <div class="col-lg-6">
-                    <div class="form-group has-feedback">
-                        <label>客户</label>
-                        <input name="biz_order_no" value="${contact.address!''}" class="form-control" placeholder="请选择客户">
-                        <span class="glyphicon glyphicon-search form-control-feedback" style="top: 18px;" aria-hidden="true"></span>
-                    </div>
-                    <div class="form-group has-feedback">
-                        <label>供应商</label>
-                        <input name="biz_order_no" value="${contact.address!''}" class="form-control" placeholder="请选择供应商">
-                        <span class="glyphicon glyphicon-search form-control-feedback" style="top: 18px;" aria-hidden="true"></span>
-                    </div>
-                </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
              <br>
             <div class="row">
                 <div class="col-lg-12">
