@@ -14,6 +14,7 @@ import models.ArapChargeOrder;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
+import models.yh.arap.inoutorder.ArapInOutMiscOrder;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -55,14 +56,17 @@ public class ChargeAcceptOrderController extends Controller {
         String endTime = getPara("endTime_filter");
         String status2 = "";
         String status3 = "";
+        String status4 = "";       
         if(status.equals("unCheck")){
-        	status = "已审批";
-        	status2 = "新建";
-        	status3 = "已确认";
+        	status = "已审批";    //开票记录单
+        	status2 = "新建";     //手工单
+        	status3 = "已确认";    //对账单
+        	status4 = "未收";     //往来票据单
         }else{
         	status = "已复核";
         	status2 = "已复核";
         	status3 = "已复核";
+        	status4 = "已复核";
         }
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -100,6 +104,11 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
         	    + " where amco.status = '"+status3+"' and amco.have_invoice = 'N'"
+        	    + " UNION"
+        		+ " SELECT aio.id, '往来票据单' order_type, aio.order_no, aio.charge_status status , aio.charge_person AS payee,"
+        		+ " NULL AS invoice_no, aio.create_date create_stamp,"
+        		+ " aio.remark, aio.charge_amount charge_amount,null customer, null AS cname"
+        		+ " FROM arap_in_out_misc_order aio WHERE aio.charge_status IN ('" + status4 + "')"
         	    + " ) A";
         
         
@@ -271,7 +280,7 @@ public class ChargeAcceptOrderController extends Controller {
     }
     
     
-    
+    @Before(Tx.class)
     public void checkOrder(){
         String all=getPara("ids");
         String[] alls=all.split(",");
@@ -304,6 +313,10 @@ public class ChargeAcceptOrderController extends Controller {
         			ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findFirst("select * from arap_misc_cost_order where order_no =?",order_no);
         			arapMiscCostOrder.set("status", "已复核").update();
         		}
+	        }else if(order_type.equals("往来票据单")){
+        		ArapInOutMiscOrder arapInOutMiscOrder =ArapInOutMiscOrder.dao.findById(id);
+        		arapInOutMiscOrder.set("charge_status", "已复核");
+        		arapInOutMiscOrder.update();
 	        }
 	        renderJson("{\"success\":true}");	 	 
         }
