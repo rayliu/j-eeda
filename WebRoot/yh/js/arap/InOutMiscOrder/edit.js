@@ -3,6 +3,8 @@ $(document).ready(function() {
 		document.title = order_no+' | '+document.title;
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
+
+	
 	
 	$('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
