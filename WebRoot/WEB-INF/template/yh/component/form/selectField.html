@@ -1,0 +1,8 @@
+<div class="form-group">
+    <label class="search-label">${label}</label>
+    <select id="${id}" class="form-control search-control">
+    	<%for(item in value_list){%>
+        	<option value="${item.code}">${item.value}</option>
+        <%}%>
+    </select>
+</div>
