@@ -536,8 +536,8 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					DeliveryOrder deliveryorder = DeliveryOrder.dao
 							.findById(transferorderitemdetail
 									.get("delivery_id"));
-					if (content.get(j).get("城市") != null) {
-					deliveryorder.set("client_order_stamp", content.get(j).get("预约送货时间"));
+					if (content.get(j).get("预约送货时间") != null) {
+					deliveryorder.set("order_delivery_stamp", content.get(j).get("预约送货时间"));
 					}
 					if (content.get(j).get("城市") != null) {
 						Location location = Location.dao
@@ -603,11 +603,11 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 				DbKit.getConfig().getConnection().rollback();
 			} catch (Exception e1) {
 				System.out.println("回滚操作异常！");
-				importResult.put("cause", "导入失败，数据导入至第" + (causeRow)
+				importResult.put("cause", "更新失败，数据更新至第" + (causeRow)
 						+ "行时出现异常，<br/>回滚已导入数据出现异常，请联系管理员手动删除！");
 			}
 			importResult.put("result", "false");
-			importResult.put("cause", "导入失败，数据导入至第" + (causeRow)
+			importResult.put("cause", "更新失败，数据更新至第" + (causeRow)
 					+ "行时出现异常，<br/>导入数据已取消！");
 
 			return importResult;
