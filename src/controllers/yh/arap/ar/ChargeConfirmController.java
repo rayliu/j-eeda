@@ -25,6 +25,7 @@ import models.ReturnOrder;
 import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
+import models.yh.arap.inoutorder.ArapInOutMiscOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
@@ -74,6 +75,9 @@ public class ChargeConfirmController extends Controller {
    			}else if(a.getLong("dz_order_id")!=null){
    				order_type = "对账单";
    				setAttr("order_type", "对账单");
+   			}else if(a.getLong("wlpj_order_id")!=null){
+   				order_type = "往来票据单";
+   				setAttr("order_type", "往来票据单");
    			}
    		}
    		//setAttr("order_type", order_type);
@@ -105,6 +109,11 @@ public class ChargeConfirmController extends Controller {
    		}else if(order_type.equals("对账单")){
    			sql = "SELECT "
    	   				+ " (SELECT group_concat(cast(dz_order_id as char) SEPARATOR ',' ) "
+   	   				+ "FROM arap_charge_receive_confirm_order_detail where order_id = acp.id ) ids "
+   	   				+ "FROM arap_charge_receive_confirm_order acp WHERE acp.id = '"+id+"'";
+   		}else if(order_type.equals("往来票据单")){
+   			sql = "SELECT "
+   	   				+ " (SELECT group_concat(cast(wlpj_order_id as char) SEPARATOR ',' ) "
    	   				+ "FROM arap_charge_receive_confirm_order_detail where order_id = acp.id ) ids "
    	   				+ "FROM arap_charge_receive_confirm_order acp WHERE acp.id = '"+id+"'";
    		}
@@ -190,6 +199,8 @@ public class ChargeConfirmController extends Controller {
 					arapChargeReceiveConfirmOrderDtail.set("invoice_order_id", idArray[i]);
 				}else if(order_type.equals("对账单")){
 					arapChargeReceiveConfirmOrderDtail.set("dz_order_id", idArray[i]);
+				}else if(order_type.equals("往来票据单")){
+					arapChargeReceiveConfirmOrderDtail.set("wlpj_order_id", idArray[i]);
 				}
 				arapChargeReceiveConfirmOrderDtail.save();
 				
@@ -225,7 +236,9 @@ public class ChargeConfirmController extends Controller {
 					for(ArapMiscChargeOrder arapMiscChargeOrder : miscOrderList){
 						arapMiscChargeOrder.set("status", "收款确认中").update();
 				    }
-					
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(idArray[i]);
+					arapInOutMiscOrder.set("charge_status", "收款确认中").update();
 				}
 			}
 		}
@@ -249,7 +262,7 @@ public class ChargeConfirmController extends Controller {
    		String sql = "";
    		
    		if( receive_time==null||receive_time.equals("")){
-   			receive_time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+   			receive_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
    		}
    		
    		
@@ -266,6 +279,8 @@ public class ChargeConfirmController extends Controller {
 				sql = "select * from arap_charge_receive_confirm_order_detail where invoice_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}else if(order_type.equals("对账单")){
 				sql = "select * from arap_charge_receive_confirm_order_detail where dz_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
+			}else if(order_type.equals("往来票据单")){
+				sql = "select * from arap_charge_receive_confirm_order_detail where wlpj_order_id = '"+applicationId+"' and order_id = '"+confirmId+"'";
 			}
 			
 			ArapChargeReceiveConfirmOrderDtail detail = ArapChargeReceiveConfirmOrderDtail.dao.findFirst(sql);
@@ -355,9 +370,18 @@ public class ChargeConfirmController extends Controller {
 						arapMiscChargeOrder.set("status", "收款确认中").update();
 				    }
 				}
+			}
+		}else if(order_type.equals("往来票据单")){
+			ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(applicationId);
+			if(re.getDouble("total") == Double.parseDouble(total_amount)){
+				arapChargeReceiveConfirmOrder.set("status", "已收款").update();
+				arapInOutMiscOrder.set("charge_status", "已收款").update();
 			}else{
 				arapChargeReceiveConfirmOrder.set("status", "部分已收款").update();
+				arapInOutMiscOrder.set("charge_status", "部分已收款").update();
 			}
+		}else{
+			arapChargeReceiveConfirmOrder.set("status", "部分已收款").update();
 		}
 		
 		
@@ -373,14 +397,13 @@ public class ChargeConfirmController extends Controller {
 	        else
 	        	auditLog.set("account_id", 4);
 	        if(order_type.equals("手工收入单")){
-	        	//auditLog.set("misc_order_id", confirmId);
 	        	auditLog.set("source_order", "手工收入单");
 	        }else if(order_type.equals("开票记录单")){
-	        	//auditLog.set("invoice_order_id", confirmId);
 	        	auditLog.set("source_order", "应收开票记录单");
 	        }else if(order_type.equals("对账单")){
-	        	//auditLog.set("dz_order_id", confirmId);
 	        	auditLog.set("source_order", "应收对账单");
+	        }else if(order_type.equals("往来票据单")){
+	        	auditLog.set("source_order", "往来票据单");
 	        }
 	        auditLog.set("invoice_order_id", confirmId);
 	        auditLog.save();
@@ -512,7 +535,8 @@ public class ChargeConfirmController extends Controller {
 						+ " left join contact c1 on c1.id = p1.id  "
 						+ " where amco.id ='"+id+"'";
 			}else if(order_type.equals("报销单")){
-				sql = "SELECT c.company_name,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name FROM `arap_cost_invoice_application_order` aci"
+				sql = "SELECT c.company_name,aci.bill_type,aci.billing_unit,aci.payee_unit,aci.payee_name,aci.bank_no,aci.bank_name"
+						+ " FROM `arap_cost_invoice_application_order` aci"
 						+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
 						+ " LEFT JOIN arap_cost_order aco on aco.id = cao.cost_order_id "
 						+ " LEFT JOIN party p ON p.id = aci.payee_id "
@@ -534,13 +558,17 @@ public class ChargeConfirmController extends Controller {
 					+ " where aci.id = '"+id+"'";
 			}else if(order_type.equals("对账单")){
 				sql = "SELECT c.company_name customer,"
-						+ " c1.company_name sp_filter,aci.payee payee_name,aci.billing_unit,null,null,null"
+						+ " c1.company_name sp_filter,aci.payee payee_name,aci.billing_unit"
 						+ " FROM arap_charge_order aci "
 						+ " LEFT JOIN party p on p.id = aci.payee_id"
 						+ " left join contact c on c.id = p.id "
 						+ " left join contact c1 on c1.id = aci.sp_id "
 						+ " where aci.id = '"+id+"'";
-				}
+			}else if(order_type.equals("往来票据单")){
+				sql = "SELECT aio.charge_unit payee_unit,aio.charge_person payee_name "
+						+ " FROM `arap_in_out_misc_order` aio"
+						+ " where aio.id = '"+id+"'";
+        	}
         }
 		Record record = Db.findFirst(sql);
 		setAttr("re", record);
@@ -577,6 +605,14 @@ public class ChargeConfirmController extends Controller {
 						+ " LEFT JOIN arap_charge_receive_confirm_order_detail acrcod on acrcod.id = acrcodl.detail_id "
 						+ " WHERE  acrcod.dz_order_id = aci.id ), "
 						+ " aci.charge_amount ) noreceive_amount FROM arap_charge_order aci WHERE aci.id IN("+orderIds+")";
+			}else if(order_type.equals("往来票据单")){
+				sql = " SELECT aio.id,aio.order_no,aio.create_date create_stamp,aio.charge_amount total_amount,"
+						+ " ifnull(aio.charge_amount-( select sum(acrl.receive_amount) "
+						+ " from arap_charge_receive_confirm_order_detail_log acrl  "
+						+ " LEFT JOIN arap_charge_receive_confirm_order_detail acrd on acrd.id = acrl.detail_id "
+						+ " where acrd.wlpj_order_id = aio.id ),aio.charge_amount) noreceive_amount "
+						+ " FROM arap_in_out_misc_order aio "
+						+ " WHERE aio.id in(" + orderIds + ")";
 			}else{
 				sql = "SELECT aci.*,  "
 						+ " IFNULL( aci.total_amount - ( SELECT sum(acrcodl.receive_amount) FROM arap_charge_receive_confirm_order_detail_log acrcodl "
@@ -671,6 +707,9 @@ public class ChargeConfirmController extends Controller {
 				+ " (SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' )"
 				+ " FROM arap_charge_receive_confirm_order_detail co, arap_misc_charge_order amco"
 				+ " WHERE co.misc_charge_order_id = amco.id AND co.order_id = cpco.id ) misc_no,"
+				+ " (SELECT group_concat( DISTINCT aio.order_no SEPARATOR '<br/>' )"
+				+ " FROM arap_charge_receive_confirm_order_detail co, arap_in_out_misc_order aio"
+				+ " WHERE co.wlpj_order_id = aio.id AND co.order_id = cpco.id ) wlpj_no,"
 				+ " (case when acrc.invoice_order_id is not null "
 				+ " then (SELECT ifnull(sum(aci.total_amount), 0)"
 				+ " FROM arap_charge_invoice aci "
@@ -680,6 +719,11 @@ public class ChargeConfirmController extends Controller {
 				+ " then (SELECT ifnull(sum(aci.charge_amount), 0)"
 				+ " FROM arap_charge_order aci "
 				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr ON acr.dz_order_id = aci.id"
+				+ " WHERE acr.order_id = cpco.id )  "
+				+ " when acrc.wlpj_order_id is not null "
+				+ " then (SELECT ifnull(sum(aio.charge_amount), 0)"
+				+ " FROM arap_in_out_misc_order aio "
+				+ " LEFT JOIN arap_charge_receive_confirm_order_detail acr ON acr.wlpj_order_id = aio.id"
 				+ " WHERE acr.order_id = cpco.id )  "
 				+ " when acrc.misc_charge_order_id is not null"
 				+ " then (SELECT ifnull(sum(amco.total_amount), 0) "

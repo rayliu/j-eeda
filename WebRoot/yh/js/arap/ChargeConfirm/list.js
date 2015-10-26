@@ -29,6 +29,8 @@ $(document).ready(function() {
             			return obj.aData.SKSQ_NO;
             		}else if(obj.aData.SKDZ_NO != null){
             			return obj.aData.SKDZ_NO;
+            		}else if(obj.aData.WLPJ_NO != null){
+            			return obj.aData.WLPJ_NO;
             		}else{
             			return obj.aData.MISC_NO;
             		}
