@@ -101,7 +101,7 @@ and caor.order_type='预付单']]>
 	<field name="create_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="confirm_stamp" class="java.lang.Object">
+	<field name="confirm_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="total_amount" class="java.lang.Double">

@@ -59,7 +59,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="create_stamp" class="java.lang.Object">
+	<field name="create_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="office_name" class="java.lang.String">
