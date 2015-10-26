@@ -33,6 +33,8 @@ $(document).ready(function() {
             			return obj.aData.REIMBURSEMENT_NO;
             		}else if(obj.aData.CAR_NO != null){
             			return obj.aData.CAR_NO;
+            		}else if(obj.aData.WLPJ_NO != null){
+            			return obj.aData.WLPJ_NO;
             		}else{
             			return obj.aData.MISC_NO;
             		}
