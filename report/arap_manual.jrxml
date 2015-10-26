@@ -33,15 +33,15 @@
 		<![CDATA[SELECT
 amco.id order_id,
 amco.order_no oder_no,
-amco.remark remark,
+ifnull(amco.remark,'') remark,
 ul.c_name creator_name,
 	IFNULL(
 		(
 			CASE amco.charge_from_type
 			WHEN 'customer' THEN
-				p1.receipt
+				c1.company_name
 			WHEN 'sp' THEN
-				p.receipt
+				c.company_name
 			ELSE
 				amco.others_name
 			END
@@ -53,7 +53,9 @@ ul.c_name creator_name,
 FROM
 	arap_misc_charge_order amco
 LEFT JOIN party p ON p.id = amco.sp_id and p.party_type='SERVICE_PROVIDER'
+LEFT JOIN contact c on c.id =p.contact_id
 LEFT JOIN party p1 ON p1.id = amco.customer_id and p1.party_type='CUSTOMER'
+LEFT JOIN contact c1 on c1.id =p1.contact_id
 LEFT JOIN office o ON o.id = amco.office_id
 LEFT JOIN user_login ul ON ul.id = amco.create_by
 where amco.order_no =$P{order_no}]]>
@@ -68,7 +70,7 @@ where amco.order_no =$P{order_no}]]>
 	<field name="office_name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="create_stamp" class="java.lang.String">
+	<field name="create_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -83,42 +85,42 @@ where amco.order_no =$P{order_no}]]>
 				<reportElement x="0" y="76" width="802" height="1" uuid="460e6c5a-c6d2-45e0-a90b-dc719c90f34a"/>
 			</line>
 			<staticText>
-				<reportElement x="14" y="87" width="100" height="25" uuid="a5440221-8a38-4e30-b80b-17cca17d5851"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="11" y="87" width="68" height="25" uuid="a5440221-8a38-4e30-b80b-17cca17d5851"/>
+				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[制单网点]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="299" y="87" width="100" height="25" uuid="64921e8e-7f68-4b83-bed2-542e195dd55f"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="315" y="87" width="57" height="25" uuid="64921e8e-7f68-4b83-bed2-542e195dd55f"/>
+				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[收款名称]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="558" y="87" width="100" height="25" uuid="59992d98-91ea-4791-a857-8433669a8203"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<reportElement x="583" y="87" width="58" height="25" uuid="59992d98-91ea-4791-a857-8433669a8203"/>
+				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[制单时间]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="399" y="87" width="159" height="25" uuid="2fba3209-9313-430e-8779-476d8d85afdd"/>
+				<reportElement x="372" y="87" width="211" height="25" uuid="2fba3209-9313-430e-8779-476d8d85afdd"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{chargr_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="114" y="87" width="185" height="25" uuid="84de16a9-51ef-419e-9851-534e4170e525"/>
+				<reportElement x="79" y="87" width="236" height="25" uuid="84de16a9-51ef-419e-9851-534e4170e525"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{office_name}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="658" y="87" width="144" height="25" uuid="86a379ad-28b4-4571-b3de-943b29f67359"/>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement x="641" y="87" width="161" height="25" uuid="86a379ad-28b4-4571-b3de-943b29f67359"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -139,7 +141,7 @@ where amco.order_no =$P{order_no}]]>
 				<textFieldExpression><![CDATA[java.util.Calendar.getInstance().getTime()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="253" y="4" width="221" height="71" uuid="20771280-47fc-4369-b153-09750e158ed1"/>
+				<reportElement x="259" y="4" width="221" height="71" uuid="20771280-47fc-4369-b153-09750e158ed1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="黑体" size="24" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -205,7 +207,7 @@ where amco.order_no =$P{order_no}]]>
 	<summary>
 		<band height="70" splitType="Stretch">
 			<textField>
-				<reportElement style="table_TD" x="114" y="-1" width="645" height="40" uuid="bd6adf09-3efa-4081-9d7b-6a15ab5cb86d"/>
+				<reportElement style="table_TD" x="114" y="-1" width="686" height="40" uuid="bd6adf09-3efa-4081-9d7b-6a15ab5cb86d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
