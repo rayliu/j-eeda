@@ -112,7 +112,7 @@
                                             </label>
                                         </div>
                                         <div id ="isInvoice">
-                                            <%include("/yh/component/form/inputField.html",{id:'billing_unit', label:'开票单位' ,value:arapAuditOrder.billing_unit!customer.company_name }){} %>
+                                            <%include("/yh/component/form/inputField.html",{id:'billing_unit', label:'开票单位' ,value:arapAuditOrder.billing_unit!customer.company_name!'' }){} %>
 	                                        <%include("/yh/component/form/inputField.html",{id:'payee', label:'收&nbsp;&nbsp;款&nbsp;&nbsp;人' ,value:arapAuditOrder.payee!'' }){} %>
                                         </div>
                                         <!-- end of row-->                                        
