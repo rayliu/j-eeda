@@ -24,6 +24,12 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/costConfirmList/list",
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+          $(nRow).attr('id', aData.DID);
+          $(nRow).attr('ids', aData.ID);
+          $(nRow).attr('order_ty', aData.BUSINESS_TYPE);
+          return nRow;
+        },
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"10px", "bSortable": false,
                 "fnRender": function(obj) {
@@ -45,6 +51,22 @@ $(document).ready(function() {
             }}, 
             {"mDataProp":"REF_NO", "sWidth":"80px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},
+            {"mDataProp":"CHANGE_AMOUNT","sWidth":"100px",
+              "fnRender": function(obj) {
+                    if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+                        return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                        
+                    }
+                    else {
+                      if(obj.aData.PAY_AMOUNT!=null){
+                        return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+                      }
+                      else{
+                        return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
+                      }
+                    }
+                }
+            },
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
             {"mDataProp":"AMOUNT", "sWidth":"55px"},
             {"mDataProp":"CNAME", "sWidth":"100px"},
@@ -141,6 +163,24 @@ $(document).ready(function() {
         ]      
     });	
      
+    $('#costConfirem-table').on('blur', 'input:text', function(e){
+      e.preventDefault();
+      var paymentId = $(this).parent().parent().attr("id");
+      var departId = $(this).parent().parent().attr("ids");
+      var ty = $(this).parent().parent().attr("order_ty");
+      var name = $(this).attr("name");
+      var value = $(this).val();
+       if(isNaN(value)){      
+         alert("调整金额为数字类型");
+       }else{
+         $.post('/costCheckOrder/updateDepartOrderFinItem', 
+            {ty:ty,departId:departId,paymentId:paymentId, name:name, value:value}, 
+            function(data){
+              $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
+            },'json');
+         
+       }
+    }); 
     
     $('#plandatetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
