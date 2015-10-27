@@ -64,18 +64,19 @@ $(document).ready(function() {
     // 未选中列表
 	$("#uncheckedChargePreInvoiceOrder-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			$(this).parent().parent().appendTo($("#checkedChargePreInvoiceOrderList"));
+			$(this).parent().parent().clone().appendTo($("#checkedChargePreInvoiceOrderList"));
 			ids.push($(this).val());
 			$("#checkedPreInvoiceOrder").val(ids);
 			$("#order_type").val($(this).parent().parent().find(".order_type").text());
 			$('#saveBtn').attr('disabled', false);
-		}			
+		}
+        console.log(ids);			
 	});
 	
 	// 已选中列表
 	$("#checkedChargePreInvoiceOrder-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == false){
-			$(this).parent().parent().appendTo($("#uncheckedChargePreInvoiceOrderList"));
+			$(this).parent().parent().remove();
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).val(),ids),1);
 				$("#checkedPreInvoiceOrder").val(ids);

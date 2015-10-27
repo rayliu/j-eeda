@@ -70,7 +70,7 @@ $(document).ready(function() {
 		},
         "sAjaxSource": "/chargeInvoiceOrder/chargePreInvoiceOrderList",
         "aoColumns": [    
-            { "mDataProp": null,
+            { "mDataProp": null, "sWidth":"100px",
             	"fnRender": function(obj) {
   	            	if(obj.aData.INVOICE_NO == null){
   	            		str = "<input type='text' name='invoice_no'>";
@@ -83,7 +83,7 @@ $(document).ready(function() {
   	            	return str;
   	            }
   	        },    
-            {"mDataProp":"ORDER_NO",
+            {"mDataProp":"ORDER_NO", "sWidth":"120px",
             	"fnRender": function(obj) {
             		if($("#order_type").val()=='申请单'){
             			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -95,12 +95,12 @@ $(document).ready(function() {
         			
             	}
   	        },
-            {"mDataProp":"STATUS" },
-            {"mDataProp":"CNAME"},
-            {"mDataProp":"TOTAL_AMOUNT"},
-            {"mDataProp":"REMARK"},
-            {"mDataProp":"CREATE_BY"},
-            {"mDataProp":"CREATE_STAMP"},                       
+            {"mDataProp":"STATUS", "sWidth":"60px"},
+            {"mDataProp":"CNAME", "sWidth":"80px"},
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},
+            {"mDataProp":"REMARK", "sWidth":"80px"},
+            {"mDataProp":"CREATE_BY", "sWidth":"80px"},
+            {"mDataProp":"CREATE_STAMP", "sWidth":"80px"},                       
         ]      
     });	
 	
