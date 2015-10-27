@@ -1422,4 +1422,34 @@ public class CostCheckOrderController extends Controller {
 		}
         renderJson(arapCostOrder);
 	}
+	
+	
+	
+	public void delete(){
+		String id = getPara("id");
+    	String order_type = getPara("order_type");
+		if("提货".equals(order_type)){
+			DepartOrder pickupOrder = DepartOrder.dao.findById(id);
+			pickupOrder.set("audit_status", "新建");
+			pickupOrder.update();
+		}else if("零担".equals(order_type) || "整车".equals(order_type)){
+			DepartOrder departOrder = DepartOrder.dao.findById(id);
+			departOrder.set("audit_status", "新建");
+			departOrder.update();
+		}else if("配送".equals(order_type)){
+			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(id);
+			deliveryOrder.set("audit_status", "新建");
+			deliveryOrder.update();
+		}else if("成本单".equals(order_type)){
+			ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao.findById(id);
+			arapmisccostOrder.set("audit_status", "新建");
+			arapmisccostOrder.update();
+		}else{
+			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
+			insuranceOrder.set("audit_status", "新建");
+			insuranceOrder.update();
+		}
+
+        renderJson("{\"success\":true}");
+	}
 }

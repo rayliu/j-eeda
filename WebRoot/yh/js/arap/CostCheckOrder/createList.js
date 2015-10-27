@@ -161,9 +161,33 @@ $(document).ready(function() {
             {"mDataProp":"FROM_NAME", "sWidth":"150px"},   
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                                           
-            {"mDataProp":"REMARK", "sWidth":"150px"}                         
+            {"mDataProp":"REMARK", "sWidth":"150px"},
+            {"mDataProp": null, 
+                "sWidth": "20px",                
+                "fnRender": function(obj) {
+                	return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' order_type='"+obj.aData.BUSINESS_TYPE+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+                }
+            }            
         ]     
     });		
+    
+    
+    $("#uncheckedCostCheck-table").on('click', '.finItemdel', function(e){
+		e.preventDefault();
+		var id = $(this).attr('code');
+		var order_type = $(this).attr('order_type');
+		$.get('/costCheckOrder/delete',{id:id,order_type:order_type},function(data){
+			if(data.success){
+				$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+				uncheckedCostCheckTable.fnDraw();
+			}else{
+				$.scojs_message('撤销成功', $.scojs_message.TYPE_ERROR);
+			}
+			
+		});
+	});
+    
+    
 
     var checkedCostCheckTable = $('#checkedCostCheck-table').dataTable({
         "bProcessing": true, 
