@@ -146,36 +146,7 @@ $(document).ready(function() {
 			$("#status").val(data.STATUS);
 			$("#audit_stamp").val(data.AUDIT_STAMP);
 			$("#approval_stamp").val(data.APPROVAL_STAMP);			
-			/*if(data.AUDIT_ID != "" && data.AUDIT_ID != null){
-				$.post('/costReimbursement/findUser', {"userId":data.CREATE_ID}, function(data){
-					$("#audit_name").val(data.USER_NAME);
-				});
-			}else{
-				$("#audit_name").val("");
-			}
 			
-			if(data.APPROVAL_ID != "" && data.APPROVAL_ID != null){
-				$.post('/costReimbursement/findUser', {"userId":data.CREATE_ID}, function(data){
-					$("#approval_name").val(data.USER_NAME);
-				});
-			}else{
-				$("#approval_name").val("");
-			}
-			if("审核" == btntTxt){
-				//$("#cancelAuditBtn").show();
-				$("#approvalBtn").show();
-			}else if("审批" == btntTxt){
-				$("#cancelAuditBtn").hide();
-				//$("#cancelApprovalBtn").show();
-			}else if("取消审核" == btntTxt){
-				$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",false);
-				$("#auditBtn").show();
-				$("#approvalBtn").hide();
-			}else if("取消审批" == btntTxt){
-				$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
-				$("#approvalBtn").show();
-				$("#cancelAuditBtn").show();
-			}*/
 			num = 1;
 			reimbursementOrderFinItemTbody.fnSettings().oFeatures.bServerSide = true;
 			reimbursementOrderFinItemTbody.fnSettings().sAjaxSource = "/costReimbursement/accountPayable/"+reimbursementId;   
@@ -268,23 +239,7 @@ $(document).ready(function() {
 			        		return "<select name='fin_item_id'>"+str+"</select>";
 			        }
 			 }},
-			 {"mDataProp":"INVOICE_AMOUNT",
-			     "fnRender": function(obj) {
-			    	 
-			    	 if($("#saveExpenseAccount").prop("disabled")){
-			    		 if(obj.aData.INVOICE_AMOUNT!='' && obj.aData.INVOICE_AMOUNT != null){
-				             return obj.aData.INVOICE_AMOUNT;
-				         }else{
-				         	 return "";
-				         }
-			    	 }else{
-			    		 if(obj.aData.INVOICE_AMOUNT!='' && obj.aData.INVOICE_AMOUNT != null){
-				             return "<input type='text' name='invoice_amount' value='"+obj.aData.INVOICE_AMOUNT+"'>";
-				         }else{
-				         	 return "<input type='text' name='invoice_amount'>";
-				         }
-			    	 }
-			}},
+			
 			{"mDataProp":"REVOCATION_AMOUNT",
 			     "fnRender": function(obj) {
 			    	 if($("#saveExpenseAccount").prop("disabled")){
