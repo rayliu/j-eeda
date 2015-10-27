@@ -72,7 +72,7 @@
                                             </div>                               
                                     </div>
                                     <!-- /.col-lg-6 (nested) -->
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                     <h3>对账单信息</h3>
                                     <div class="form-group">
                                         <label>对账单号</label> <strong id = "arap_order_no">${order_no!''}${arapAuditOrder.order_no!''}</strong>
@@ -112,16 +112,8 @@
                                             </label>
                                         </div>
                                         <div id ="isInvoice">
-	                                        <div class="form-group">
-	                                            <label>开票单位</label>
-	                                            <input  class="form-control search-control" id="billing_unit" name="billing_unit"  type="text" placeholder="请选择开票单位" value="${arapAuditOrder.billing_unit!''}">
-												<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
-												</ul>
-	                                        </div>
-	                                        <div class="form-group">
-	                                            <label>收&nbsp;&nbsp;款&nbsp;&nbsp;人</label>
-	                                            <input  class="form-control search-control" id="payee" name="payee" type="text" value="${arapAuditOrder.payee!''}">
-	                                        </div>
+                                            <%include("/yh/component/form/inputField.html",{id:'billing_unit', label:'开票单位' ,value:arapAuditOrder.billing_unit!customer.company_name }){} %>
+	                                        <%include("/yh/component/form/inputField.html",{id:'payee', label:'收&nbsp;&nbsp;款&nbsp;&nbsp;人' ,value:arapAuditOrder.payee!'' }){} %>
                                         </div>
                                         <!-- end of row-->                                        
                                     </form>    
@@ -195,7 +187,6 @@
 			                                            <th>仓租费</th>
 			                                            <th>等待费</th>
 			                                            <th>其他费用</th>
-			                                            
 			                                            <th>收货地址</th>
 			                                            <th>备注</th>
 			                                        </tr>
