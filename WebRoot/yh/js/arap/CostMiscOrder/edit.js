@@ -85,7 +85,6 @@ $(document).ready(function() {
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$("#saveCostMiscOrderBtn").attr("disabled",false);
 				contactUrl("edit?id", order.ID);
-
 				feeTable.fnClearTable();
 
 				for (var i = 0; i < data.itemList.length; i++) {
@@ -100,6 +99,7 @@ $(document).ready(function() {
 					 	STATUS: '新建'
 					 });
 				};
+				window.location.reload();
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 				$("#saveCostMiscOrderBtn").attr("disabled",false);
@@ -479,33 +479,6 @@ $(document).ready(function() {
     });
    
     
-
-	//不知道为什么，直接定义dataTable里定义sAjaxSource不起作用，需要在这里重新load
-	/*var costMiscOrderId =$("#costMiscOrderId").val();
-    if(costMiscOrderId!=""){
-		feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
-		feeTable.fnDraw(); 
-	} */
-    	
-//	//应收
-//	$("#addFee").click(function(){	
-//		 var insertNewFee = function(costMiscOrderId){
-//		 	$.post('/costMiscOrder/addNewFee?costMiscOrderId='+costMiscOrderId,function(data){
-//				console.log(data);
-//				if(data.ID > 0){
-//					feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
-//					feeTable.fnDraw();  
-//				}
-//			});
-//		 };
-//		 var costMiscOrderId =$("#costMiscOrderId").val();
-//		 if(costMiscOrderId=="" || costMiscOrderId==null){
-//		 	saveCostMiscOrder(event, insertNewFee); //save 主表
-//		 }else{
-//		 	insertNewFee(costMiscOrderId);
-//		 }
-//
-//	});	
     
   //删除一行
     var deletedIds=[];
@@ -531,72 +504,7 @@ $(document).ready(function() {
 		 feeTable.fnDraw(); 
 	});	
 	
-	
-	//保存修改费用明细的方法
-	/*var savaUpdataMethod = function(evt){
-		var inputThis = $(evt);
-		var costMiscOrderId = $("#costMiscOrderId").val();
-		var paymentId = inputThis.parent().parent().attr("id");
-		if(paymentId == "" || paymentId == null)
-			paymentId = inputThis.parent().parent().parent().attr("id");
-		var name = inputThis.attr("name");
-		var value = inputThis.val();
-		var costCheckOrderIds = $("#costCheckOrderIds").val();
-		if(paymentId != "" && value != "" && costMiscOrderId != "")
-		$.post('/costMiscOrder/updateCostMiscOrderItem', {paymentId:paymentId, name:name, value:value, costMiscOrderId: costMiscOrderId, costCheckOrderIds: costCheckOrderIds}, function(data){
-			if(data.ID > 0){
-				//$("#totalAmountSpan")[0].innerHTML = data.TOTAL_AMOUNT;
-			}else{
-				alert("修改失败!");
-			}
-    	},'json');
-	};*/
-	
-	//费用明细列表修改（成本单据类型），当单据改变值时，单据号值为空
-	/*$("#feeItemList-table").on('change', 'select[name="order_type"]', function(e){
-		savaUpdataMethod(this);
-		$(this).parent().parent().find("td").find("input[name='order_no']").val("");
-	});*/
-	
-	//费用明细列表修改(单据号，费用类型，金额，备注，日期)
-	/*$("#feeItemList-table").on('blur', 'input, select', function(e){
-		savaUpdataMethod(this);
-	});*/
-	
-		
-	/*$("#costMiscOrderItem").click(function(e){
-		//阻止a 的默认响应行为，不需要跳转
-		e.preventDefault();
-		//提交前，校验数据
-        if(!$("#costMiscOrderForm").valid()){
-	       	return;
-        }
-        if(parentId == "costMiscOrderbasic"){
-        	saveCostMiscOrder(e);
-        }
-		
-		var costMiscOrderId =$("#costMiscOrderId").val();
-		if(costMiscOrderId != "" && costMiscOrderId != null){
-			feeTable.fnSettings().oFeatures.bServerSide = true;
-			feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+costMiscOrderId;
-			feeTable.fnDraw();
-		}
-		
-		parentId = e.target.getAttribute("id");
-	});*/
-	
-	//异步删除应付
-	/*$("#feeItemList-table").on('click', '.finItemdel', function(e){
-		var id = $(this).attr('code');
-		e.preventDefault();
-		$.post('/costMiscOrder/finItemdel/'+id,function(data){
-             //保存成功后，刷新列表
-             console.log(data);
-             feeTable.fnSettings().sAjaxSource = "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val();
-     		 feeTable.fnDraw();  
-        },'text');
-	});	*/
-	    
+    
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){
         var inputStr = $('#customer_filter').val();
@@ -698,12 +606,11 @@ function datetimepicker(data){
 
 //按钮控制
 var status = $("#status").val();
-if(status != '新建' && status != 'new'){
+if(status == '新建' || status == 'new'){
+	$('#addFee').show();  
+	$("#saveCostMiscOrderBtn").attr("disabled",false);	
+}else{
 	$('#addFee').hide();  
 	$("#saveCostMiscOrderBtn").attr("disabled",true);
 }
 
-if(type == 'non_biz' && !is_origin){
-	$('#addFee').hide();    	
-	$('#saveCostMiscOrderBtn').attr('disabled', true);
-}
