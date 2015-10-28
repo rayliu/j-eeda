@@ -556,6 +556,10 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					if(deliveryorder==null){
 						throw new Exception("序列号信息有误");
 					}
+					ReturnOrder returnorder =ReturnOrder.dao.findFirst("SELECT * from return_order where delivery_order_id='"+deliveryorder.get("id")+"'");
+					if(returnorder!=null){
+						throw new Exception("序列号信息有误");
+					}
 					deliveryorder.set("status", "已送达");
 					//配送里程碑
 					DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
@@ -864,7 +868,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					return importResult;
 				}
 				importResult.put("result", "true");
-				importResult.put("cause", "成功导入" + resultNum + "张配送单");
+				importResult.put("cause", "成功导入" + causeRow + "张配送单");
 			}
 		}
 		return importResult;
