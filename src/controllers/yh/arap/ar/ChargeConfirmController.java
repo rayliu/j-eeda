@@ -297,7 +297,7 @@ public class ChargeConfirmController extends Controller {
 		//创建付款LOG记录表
    		arapChargeReceiveConfirmOrderLog = new ArapChargeReceiveConfirmOrderLog();
 		if(account!=null)
-			arapChargeReceiveConfirmOrderLog.set("pay_in_bank_id", account.getLong("id"));
+			arapChargeReceiveConfirmOrderLog.set("receive_in_bank_id", account.getLong("id"));
 		arapChargeReceiveConfirmOrderLog.set("receive_type", receive_type);
 		arapChargeReceiveConfirmOrderLog.set("receive_in_bank_name", receive_bank);
 		arapChargeReceiveConfirmOrderLog.set("receive_in_account_no", receive_account_no);
