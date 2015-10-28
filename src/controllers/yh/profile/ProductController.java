@@ -15,6 +15,7 @@ import models.Party;
 import models.Product;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -45,6 +46,7 @@ public class ProductController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void list() {
+    	String searchStr = getPara("sSearch");//查询文本框
         String sLimit = "";
         Map productListMap = null;
         String categoryId = getPara("categoryId");
@@ -55,12 +57,22 @@ public class ProductController extends Controller {
         String category = getPara("category");
         String sql = "";
         String sqlTotal = "";
+        String searchConditions = "";
+        if(StringUtils.isNotEmpty(searchStr)){
+        	searchConditions=" and (item_name like '%"+searchStr+"%'" 
+        			+ " or item_no like '%"+searchStr+"%'" 
+        			+ " or serial_no like '%"+searchStr+"%'"
+        			+ " or item_desc like '%"+searchStr+"%')";
+        } 
         if (categoryId == null || "".equals(categoryId)) {
             sqlTotal = "select count(1) total from product";
             sql = "select *,(select name from category  where id = "+categoryId+") category_name from product order by id desc"+sLimit;
         } else {
             sqlTotal = "select count(1) total from product where category_id = " + categoryId;
-            sql = "select *,(select name from category where id = "+categoryId+") category_name from product where category_id = " + categoryId + " order by id desc "+sLimit;
+            sql = "select *,(select name from category where id = "+categoryId+") category_name from product "
+            		+ "where category_id = " + categoryId 
+            		+ searchConditions
+            		+ " order by id desc "+sLimit;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));

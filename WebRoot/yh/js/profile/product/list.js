@@ -48,7 +48,7 @@ $(document).ready(function() {
 	//datatable, 动态处理
     productDataTable = $('#eeda-table').dataTable({
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "bFilter": false, //不需要默认的搜索框
+        "bFilter": true, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "bServerSide": true,
