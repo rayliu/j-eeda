@@ -284,46 +284,46 @@ public class ChargeMiscOrderController extends Controller {
 
 		}
 
-		ArapMiscChargeOrder destOrder = null;
-		if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {// update
-			// 1. 是从biz->non_biz, 新生成对应往来单
-			if ("biz".equals(old_biz_type) && "non_biz".equals(biz_type)) {
-				destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
-				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
-			} else if ("non_biz".equals(old_biz_type)
-					&& "non_biz".equals(biz_type)) {
-				// non_biz 不变，update 对应的信息，判断对应往来单状态是否是“新建”，
-				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
-				ArapMiscChargeOrder refOrder = ArapMiscChargeOrder.dao
-						.findFirst(
-								"select * from arap_misc_charge_order where ref_order_id=?",
-								arapMiscChargeOrder.getLong("id"));
-				if (refOrder == null)
-					throw new Exception("对应的手工收入单找不到对应的单据，不能修改本张单据。");
-				if (!"新建".equals(refOrder.getStr("status"))) {
-					throw new Exception("对应的手工收入单已不是“新建”，不能修改本张单据。");
-				}
-				destOrder = updateRefChargeMiscOrder(arapMiscChargeOrder, user,
-						refOrder);
-				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
-			} else if ("non_biz".equals(old_biz_type) && "biz".equals(biz_type)) {
-				// 1. non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
-				// 2. 是就删除整张单，不是则提示应为往来单已复核，不能改变
-				// 3. 并在手工成本单创建对应的单
-				deleteRefOrder(chargeMiscOrderId);
-			}
-		} else {// new
-			if ("non_biz".equals(biz_type)){
-				destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
-				//在手工成本单创建对应的单
-				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
-			}
-		}
-
-		if (destOrder != null) {
-			arapMiscChargeOrder.set("ref_order_no",
-					destOrder.getStr("order_no"));
-		}
+//		ArapMiscChargeOrder destOrder = null;
+//		if (!"".equals(chargeMiscOrderId) && chargeMiscOrderId != null) {// update
+//			// 1. 是从biz->non_biz, 新生成对应往来单
+//			if ("biz".equals(old_biz_type) && "non_biz".equals(biz_type)) {
+//				destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
+//				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
+//			} else if ("non_biz".equals(old_biz_type)
+//					&& "non_biz".equals(biz_type)) {
+//				// non_biz 不变，update 对应的信息，判断对应往来单状态是否是“新建”，
+//				// 是就删除整张单，不是则提示应为往来单已复核，不能改变
+//				ArapMiscChargeOrder refOrder = ArapMiscChargeOrder.dao
+//						.findFirst(
+//								"select * from arap_misc_charge_order where ref_order_id=?",
+//								arapMiscChargeOrder.getLong("id"));
+//				if (refOrder == null)
+//					throw new Exception("对应的手工收入单找不到对应的单据，不能修改本张单据。");
+//				if (!"新建".equals(refOrder.getStr("status"))) {
+//					throw new Exception("对应的手工收入单已不是“新建”，不能修改本张单据。");
+//				}
+//				destOrder = updateRefChargeMiscOrder(arapMiscChargeOrder, user,
+//						refOrder);
+//				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
+//			} else if ("non_biz".equals(old_biz_type) && "biz".equals(biz_type)) {
+//				// 1. non_biz -> biz 删除整张对应的单，判断对应往来单状态是否是“新建”，
+//				// 2. 是就删除整张单，不是则提示应为往来单已复核，不能改变
+//				// 3. 并在手工成本单创建对应的单
+//				deleteRefOrder(chargeMiscOrderId);
+//			}
+//		} else {// new
+//			if ("non_biz".equals(biz_type)){
+//				destOrder = buildNewChargeMiscOrder(arapMiscChargeOrder, user);
+//				//在手工成本单创建对应的单
+//				ChargeMiscOrderHelper.getInstance().buildNewCostMiscOrder(destOrder, user);
+//			}
+//		}
+//
+//		if (destOrder != null) {
+//			arapMiscChargeOrder.set("ref_order_no",
+//					destOrder.getStr("order_no"));
+//		}
 		
 		List<ArapMiscChargeOrderItem> itemList = 
 				ArapMiscChargeOrderItem.dao.find("select amcoi.*, fi.name from arap_misc_charge_order_item amcoi, fin_item fi"
@@ -335,117 +335,117 @@ public class ChargeMiscOrderController extends Controller {
 		renderJson(orderDto);
 	}
 
-	private void deleteRefOrder(String originOrderId) throws Exception {
-		ArapMiscChargeOrder refOrder = ArapMiscChargeOrder.dao.findFirst(
-				"select * from arap_misc_charge_order where ref_order_id=?",
-				originOrderId);
-		if (refOrder == null)
-			return;
-		if (!"新建".equals(refOrder.getStr("status"))) {
-			throw new Exception("对应的手工收入单已不是“新建”，不能修改本张单据。");
-		}
-		long refOrderId = refOrder.getLong("id");
-		ChargeMiscOrderHelper.getInstance().deleteCostMiscOrder(refOrder);
-		Db.update(
-				"delete from arap_misc_charge_order_item where misc_order_id = ?",
-				refOrderId);
-		refOrder.delete();
-	}
+//	private void deleteRefOrder(String originOrderId) throws Exception {
+//		ArapMiscChargeOrder refOrder = ArapMiscChargeOrder.dao.findFirst(
+//				"select * from arap_misc_charge_order where ref_order_id=?",
+//				originOrderId);
+//		if (refOrder == null)
+//			return;
+//		if (!"新建".equals(refOrder.getStr("status"))) {
+//			throw new Exception("对应的手工收入单已不是“新建”，不能修改本张单据。");
+//		}
+//		long refOrderId = refOrder.getLong("id");
+//		ChargeMiscOrderHelper.getInstance().deleteCostMiscOrder(refOrder);
+//		Db.update(
+//				"delete from arap_misc_charge_order_item where misc_order_id = ?",
+//				refOrderId);
+//		refOrder.delete();
+//	}
 
-	private ArapMiscChargeOrder buildNewChargeMiscOrder(
-			ArapMiscChargeOrder originOrder, UserLogin user)
-			throws IllegalAccessException, InvocationTargetException {
-		long originId = originOrder.getLong("id");
+//	private ArapMiscChargeOrder buildNewChargeMiscOrder(
+//			ArapMiscChargeOrder originOrder, UserLogin user)
+//			throws IllegalAccessException, InvocationTargetException {
+//		long originId = originOrder.getLong("id");
+//
+//		ArapMiscChargeOrder orderDest = new ArapMiscChargeOrder();
+//		orderDest.set("type", originOrder.getStr("type"));
+//		orderDest.set("charge_from_type",
+//				originOrder.getStr("charge_from_type"));
+//		orderDest.set("sp_id", originOrder.getStr("sp_id"));
+//		orderDest.set("customer_id", originOrder.getStr("customer_id"));
+//		orderDest
+//				.set("total_amount", 0 - originOrder.getDouble("total_amount"));
+//		orderDest.set("others_name", originOrder.getStr("others_name"));
+//		orderDest.set("ref_no", originOrder.getStr("ref_no"));
+//		orderDest.set("create_by", user.getLong("id"));
+//		orderDest.set("office_id", user.getLong("office_id"));
+//		orderDest.set("status", "新建");
+//
+//		orderDest.set("order_no", OrderNoGenerator.getNextOrderNo("SGSK"));
+//		orderDest.set("ref_order_id", originId);
+//		orderDest.set("ref_order_no", originOrder.get("order_no"));
+//		orderDest.set("create_by", user.getLong("id"));
+//		orderDest.set("create_stamp", new Date());
+//		orderDest.set("office_id", user.getLong("office_id"));
+//		orderDest.save();
+//		
+//		originOrder.set("ref_order_id", orderDest.getLong("id"));
+//		originOrder.set("ref_order_no", orderDest.get("order_no"));
+//		originOrder.update();
+//
+//		List<ArapMiscChargeOrderItem> originItems = ArapMiscChargeOrderItem.dao
+//				.find("select * from arap_misc_charge_order_item where misc_order_id = ?",
+//						originId);
+//
+//		for (ArapMiscChargeOrderItem originItem : originItems) {
+//			ArapMiscChargeOrderItem newItem = new ArapMiscChargeOrderItem();
+//			newItem.set("status", "新建");
+//			newItem.set("creator", user.getLong("id"));
+//			newItem.set("create_date", new Date());
+//			newItem.set("customer_order_no",
+//					originItem.get("customer_order_no"));
+//			newItem.set("item_desc", originItem.get("item_desc"));
+//			newItem.set("fin_item_id", originItem.get("fin_item_id"));
+//
+//			newItem.set("misc_order_id", orderDest.get("id"));
+//			newItem.set("amount", 0 - originItem.getDouble("amount"));
+//			newItem.save();
+//		}
+//		return orderDest;
+//	}
 
-		ArapMiscChargeOrder orderDest = new ArapMiscChargeOrder();
-		orderDest.set("type", originOrder.getStr("type"));
-		orderDest.set("charge_from_type",
-				originOrder.getStr("charge_from_type"));
-		orderDest.set("sp_id", originOrder.getStr("sp_id"));
-		orderDest.set("customer_id", originOrder.getStr("customer_id"));
-		orderDest
-				.set("total_amount", 0 - originOrder.getDouble("total_amount"));
-		orderDest.set("others_name", originOrder.getStr("others_name"));
-		orderDest.set("ref_no", originOrder.getStr("ref_no"));
-		orderDest.set("create_by", user.getLong("id"));
-		orderDest.set("office_id", user.getLong("office_id"));
-		orderDest.set("status", "新建");
-
-		orderDest.set("order_no", OrderNoGenerator.getNextOrderNo("SGSK"));
-		orderDest.set("ref_order_id", originId);
-		orderDest.set("ref_order_no", originOrder.get("order_no"));
-		orderDest.set("create_by", user.getLong("id"));
-		orderDest.set("create_stamp", new Date());
-		orderDest.set("office_id", user.getLong("office_id"));
-		orderDest.save();
-		
-		originOrder.set("ref_order_id", orderDest.getLong("id"));
-		originOrder.set("ref_order_no", orderDest.get("order_no"));
-		originOrder.update();
-
-		List<ArapMiscChargeOrderItem> originItems = ArapMiscChargeOrderItem.dao
-				.find("select * from arap_misc_charge_order_item where misc_order_id = ?",
-						originId);
-
-		for (ArapMiscChargeOrderItem originItem : originItems) {
-			ArapMiscChargeOrderItem newItem = new ArapMiscChargeOrderItem();
-			newItem.set("status", "新建");
-			newItem.set("creator", user.getLong("id"));
-			newItem.set("create_date", new Date());
-			newItem.set("customer_order_no",
-					originItem.get("customer_order_no"));
-			newItem.set("item_desc", originItem.get("item_desc"));
-			newItem.set("fin_item_id", originItem.get("fin_item_id"));
-
-			newItem.set("misc_order_id", orderDest.get("id"));
-			newItem.set("amount", 0 - originItem.getDouble("amount"));
-			newItem.save();
-		}
-		return orderDest;
-	}
-
-	private ArapMiscChargeOrder updateRefChargeMiscOrder(
-			ArapMiscChargeOrder originOrder, UserLogin user,
-			ArapMiscChargeOrder orderDest) throws IllegalAccessException,
-			InvocationTargetException {
-		long originId = originOrder.getLong("id");
-
-		orderDest.set("type", originOrder.getStr("type"));
-		orderDest.set("charge_from_type",
-				originOrder.getStr("charge_from_type"));
-		orderDest.set("sp_id", originOrder.getStr("sp_id"));
-		orderDest.set("customer_id", originOrder.getStr("customer_id"));
-		orderDest
-				.set("total_amount", 0 - originOrder.getDouble("total_amount"));
-		orderDest.set("others_name", originOrder.getStr("others_name"));
-		orderDest.set("ref_no", originOrder.getStr("ref_no"));
-		orderDest.set("remark", originOrder.getStr("remark"));
-		orderDest.update();
-
-		Db.update(
-				"delete from arap_misc_charge_order_item where misc_order_id = ?",
-				orderDest.getLong("id"));
-
-		List<ArapMiscChargeOrderItem> originItems = ArapMiscChargeOrderItem.dao
-				.find("select * from arap_misc_charge_order_item where misc_order_id = ?",
-						originId);
-
-		for (ArapMiscChargeOrderItem originItem : originItems) {
-			ArapMiscChargeOrderItem newItem = new ArapMiscChargeOrderItem();
-			newItem.set("status", "新建");
-			newItem.set("creator", user.getLong("id"));
-			newItem.set("create_date", new Date());
-			newItem.set("customer_order_no",
-					originItem.get("customer_order_no"));
-			newItem.set("item_desc", originItem.get("item_desc"));
-			newItem.set("fin_item_id", originItem.get("fin_item_id"));
-
-			newItem.set("misc_order_id", orderDest.get("id"));
-			newItem.set("amount", 0 - originItem.getDouble("amount"));
-			newItem.save();
-		}
-		return orderDest;
-	}
+//	private ArapMiscChargeOrder updateRefChargeMiscOrder(
+//			ArapMiscChargeOrder originOrder, UserLogin user,
+//			ArapMiscChargeOrder orderDest) throws IllegalAccessException,
+//			InvocationTargetException {
+//		long originId = originOrder.getLong("id");
+//
+//		orderDest.set("type", originOrder.getStr("type"));
+//		orderDest.set("charge_from_type",
+//				originOrder.getStr("charge_from_type"));
+//		orderDest.set("sp_id", originOrder.getStr("sp_id"));
+//		orderDest.set("customer_id", originOrder.getStr("customer_id"));
+//		orderDest
+//				.set("total_amount", 0 - originOrder.getDouble("total_amount"));
+//		orderDest.set("others_name", originOrder.getStr("others_name"));
+//		orderDest.set("ref_no", originOrder.getStr("ref_no"));
+//		orderDest.set("remark", originOrder.getStr("remark"));
+//		orderDest.update();
+//
+//		Db.update(
+//				"delete from arap_misc_charge_order_item where misc_order_id = ?",
+//				orderDest.getLong("id"));
+//
+//		List<ArapMiscChargeOrderItem> originItems = ArapMiscChargeOrderItem.dao
+//				.find("select * from arap_misc_charge_order_item where misc_order_id = ?",
+//						originId);
+//
+//		for (ArapMiscChargeOrderItem originItem : originItems) {
+//			ArapMiscChargeOrderItem newItem = new ArapMiscChargeOrderItem();
+//			newItem.set("status", "新建");
+//			newItem.set("creator", user.getLong("id"));
+//			newItem.set("create_date", new Date());
+//			newItem.set("customer_order_no",
+//					originItem.get("customer_order_no"));
+//			newItem.set("item_desc", originItem.get("item_desc"));
+//			newItem.set("fin_item_id", originItem.get("fin_item_id"));
+//
+//			newItem.set("misc_order_id", orderDest.get("id"));
+//			newItem.set("amount", 0 - originItem.getDouble("amount"));
+//			newItem.save();
+//		}
+//		return orderDest;
+//	}
 
 	// 审核
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_APPROVAL })

@@ -97,7 +97,7 @@ $(document).ready(function() {
 					 	STATUS: '新建'
 					 });
 				};
-				
+				window.location.reload();
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 				$('#saveChargeMiscOrderBtn').attr('disabled', false);
@@ -281,7 +281,7 @@ $(document).ready(function() {
 			{"mDataProp":"STATUS","sClass": "status"},
             {"mDataProp": null,"sWidth": "80px",
                 "fnRender": function(obj) {
-                	if($("#chargeMiscOrderStatus").text()!='新建' || (type == 'non_biz' &&!is_origin)){
+                	if($("#chargeMiscOrderStatus").text()!='新建'){
                 		return "";
                 	}
 
@@ -377,22 +377,7 @@ $(document).ready(function() {
 		 feeTable.fnDraw(); 
 	});	
 	
-	//应收修改
-	// $("#feeItemList-table").on('blur', 'input,select', function(e){
-	// 	e.preventDefault();
-	// 	var chargeMiscOrderId = $("#chargeMiscOrderId").val();
-	// 	var paymentId = $(this).parent().parent().attr("id");
-	// 	var name = $(this).attr("name");
-	// 	var value = $(this).val();
-	// 	var chargeCheckOrderIds = $("#chargeCheckOrderIds").val();
-		// $.post('/chargeMiscOrder/updateChargeMiscOrderItem', {paymentId:paymentId, name:name, value:value, chargeMiscOrderId: chargeMiscOrderId, chargeCheckOrderIds: chargeCheckOrderIds}, function(data){
-		// 	if(data.ID > 0){
-		// 		$("#totalAmountSpan").html(data.TOTAL_AMOUNT);
-		// 	}else{
-		// 		alert("修改失败!");
-		// 	}
-  //   	},'json');
-	// });
+
 	
 	$("#chargeMiscOrderItem").click(function(){
 		feeTable.fnSettings().sAjaxSource = "/chargeMiscOrder/chargeMiscOrderItemList?chargeMiscOrderId="+$("#chargeMiscOrderId").val();
@@ -473,12 +458,11 @@ $(document).ready(function() {
     if($("#chargeMiscOrderStatus").text()!='新建'){
     	$('#addFee').hide();    	
     	$('#saveChargeMiscOrderBtn').attr('disabled', true);
+    }else{
+    	$('#addFee').show();    	
+    	$('#saveChargeMiscOrderBtn').attr('disabled', false);
     }
 
-    if(type == 'non_biz' && !is_origin){
-    	$('#addFee').hide();    	
-    	$('#saveChargeMiscOrderBtn').attr('disabled', true);
-    }
     
     
     var display = function(charge_from){
