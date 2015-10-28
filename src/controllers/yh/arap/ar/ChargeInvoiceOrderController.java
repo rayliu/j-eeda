@@ -566,7 +566,7 @@ public class ChargeInvoiceOrderController extends Controller {
         				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
         				+ " where aaia.id in("+chargePreInvoiceOrderIds+") order by aaia.create_stamp desc " + sLimit;
             }else if(order_type.equals("对账单")){
-            	sql = "select aaia.*,c.abbr cname,ul.c_name create_by,"
+            	sql = "select aaia.id ,aaia.order_no,aaia.remark,aaia.create_stamp,aaia.status,aaia.charge_amount total_amount,c.abbr cname,ul.c_name create_by,"
         				+ " aaia.invoice_no"
                 		+ " from arap_charge_order aaia "
                 		+ " left join party p on p.id = aaia.payee_id"
