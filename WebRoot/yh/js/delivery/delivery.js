@@ -199,13 +199,15 @@ $(document).ready(function() {
 	});
 			
 	var saveDelivery = function(){
-		var spMessage = $("#spMessage").val();
+		
 		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
 		var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
-		if(spMessage == ""){
-			alert("请输入供应商名称");
+		
+		var sp_id = $("#sp_id").val();
+		if(sp_id == ""){
+			alert("请选择有效的供应商");
 			return false;
 		}
 		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
