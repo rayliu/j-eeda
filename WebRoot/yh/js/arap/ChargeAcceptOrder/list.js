@@ -36,7 +36,9 @@ $(document).ready(function() {
 	            		return obj.aData.ORDER_NO;
 	            	}else if(obj.aData.ORDER_TYPE == '对账单'){
 	            		return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-	            	}else{
+	            	}else if(obj.aData.ORDER_TYPE == '往来票据单'){
+                        return "<a href='/inOutMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }else{
 	            		return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 	            	}
         		}},
@@ -194,7 +196,9 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == '手工收入单'){
 	            		return obj.aData.ORDER_NO;
-	            	}else{
+	            	}else if(obj.aData.ORDER_TYPE == '往来票据单'){
+                        return "<a href='/inOutMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }else{
 	            		return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 	            	}
         		}},
