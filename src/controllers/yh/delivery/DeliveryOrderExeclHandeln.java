@@ -20,6 +20,7 @@ import models.Location;
 import models.Office;
 import models.Party;
 import models.Product;
+import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
@@ -33,6 +34,10 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.DbKit;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
+
+import controllers.yh.LoginUserController;
+import controllers.yh.returnOrder.ReturnOrderController;
+import controllers.yh.util.OrderNoGenerator;
 @Before(Tx.class)
 public class DeliveryOrderExeclHandeln extends DeliveryController {
 
@@ -547,13 +552,112 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					DeliveryOrder deliveryorder = DeliveryOrder.dao
 							.findById(transferorderitemdetail
 									.get("delivery_id"));
+					
 					if(deliveryorder==null){
 						throw new Exception("序列号信息有误");
+					}
+					deliveryorder.set("status", "已送达");
+					//配送里程碑
+					DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
+					transferOrderMilestone.set("status", "已送达");
+			        Long userId = LoginUserController.getLoginUserId(this);
+			        transferOrderMilestone.set("create_by", userId);
+			        transferOrderMilestone.set("location", "");
+			        java.util.Date utilDate = new java.util.Date();
+			        java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
+			        transferOrderMilestone.set("create_stamp", sqlDate);
+			        transferOrderMilestone.set("delivery_id", deliveryorder.get("id"));
+			        transferOrderMilestone.save();
+			        //回单
+			        Date createDate = Calendar.getInstance().getTime();
+			        String orderNo = OrderNoGenerator.getNextOrderNo("HD");
+			        ReturnOrder returnOrder = new ReturnOrder();
+			        //查询配送单中的运输单,如果是普货配送就验证是否以配送完成
+			        if(!"ATM".equals(deliveryorder.get("cargo_nature"))){
+			        	Record deliveryTotal = Db.findFirst("SELECT * FROM delivery_order_item doi LEFT JOIN delivery_order dor on dor.id = doi.delivery_id LEFT JOIN transfer_order_item toi on toi.id = doi.transfer_item_id where dor.id = '" + deliveryorder.get("id") + "';");
+			    		double SumDelivery = deliveryTotal.getDouble("complete_amount");//已配送的数量
+			    		double totalamount = deliveryTotal.getDouble("amount"); //货品总数
+			        	
+			        	
+			        	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
+			        	DeliveryOrderItem item = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where delivery_id = '" + deliveryorder.get("id") + "';");
+			        	long transferOrderId = item.getLong("transfer_order_id");
+			        	//运输单货品总数
+						//Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + transferOrderId + "';");
+						//double SumTranferItem = tranferTotal.getDouble("amount");
+						//已配送总数
+						//Record deliveryTotal = Db.findFirst("select sum(ifnull(doi.product_number,0)) product_number from delivery_order_item doi where doi.transfer_order_id = '" + transferOrderId + "';");
+						
+						if(totalamount == SumDelivery){
+							//Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + transferOrderId + "';");
+							//double deliveryNumber = rec.getLong("total");
+							//已送达的货品数量
+							Record finishTotal = Db.findFirst("SELECT sum(doi.amount) total FROM `delivery_order_item` doi where doi.transfer_order_id = '" + transferOrderId + "';");
+							if(finishTotal.getDouble("total") == totalamount){
+								//当运输单配送完成时生成回单
+								returnOrder.set("order_no", orderNo);
+					            returnOrder.set("delivery_order_id", deliveryorder.get("id"));
+					            returnOrder.set("customer_id", deliveryorder.get("customer_id"));
+					            returnOrder.set("notity_party_id", deliveryorder.get("notity_party_id"));
+					            returnOrder.set("transfer_order_id", transferOrderId);
+					            returnOrder.set("order_type", "应收");
+					            returnOrder.set("transaction_status", "新建");
+					            returnOrder.set("creator", LoginUserController.getLoginUserId(this));
+					            returnOrder.set("create_date", createDate);
+					            returnOrder.set("customer_id", deliveryorder.get("customer_id"));
+					            returnOrder.save();
+					            
+					            ReturnOrderController roController = new ReturnOrderController(); 
+					            //把运输单的应收带到回单中
+					            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, deliveryorder.getLong("id"), transferOrderId);
+					            //计算普货合同应收，算没单品的，有单品暂时没做
+					            TransferOrder order = TransferOrder.dao.findById(transferOrderId);
+					            if(!order.getBoolean("no_contract_revenue")){
+					            	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", deliveryorder.get("id"));
+					            	roController.calculateChargeGeneral(userId, deliveryorder, returnOrder.getLong("id"), transferOrderItemList);
+					            }
+							}
+						}
+			        }else{
+			        	//如果是配送单生成回单：一张配送单只生成一张回单
+			            returnOrder.set("order_no", orderNo);
+			            returnOrder.set("delivery_order_id", deliveryorder.get("id"));
+			            returnOrder.set("customer_id", deliveryorder.get("customer_id"));
+			            returnOrder.set("notity_party_id", deliveryorder.get("notity_party_id"));
+			            returnOrder.set("order_type", "应收");
+			            returnOrder.set("transaction_status", "新建");
+			            returnOrder.set("creator", userId);
+			            returnOrder.set("create_date", createDate);
+			            returnOrder.set("customer_id", deliveryorder.get("customer_id"));
+			            returnOrder.save();
+			            
+			            // 生成应收
+			            //ATM
+			            //if("ATM".equals(deliveryOrder.get("cargo_nature"))){
+			    	        ReturnOrderController roController= new ReturnOrderController();
+			    	        List<Record> transferOrderItemDetailList = Db.find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryorder.get("id"));
+			    	        roController.calculateCharge(userId, deliveryorder, returnOrder.getLong("id"), transferOrderItemDetailList);
+			    	        
+			            //}
+			        }
+					//供应商简称
+					if (content.get(j).get("供应商名称(简称)") != null) {
+					Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
+					if(provider==null){
+						throw new Exception("供应商名称信息有误");
+					}
+					else{
+						deliveryorder.set("sp_id", provider.get("pid"));
+					}
 					}
 					if (content.get(j).get("预约送货时间") != null) {
 					dbDataFormat.parse(content.get(j).get("预约送货时间"));
 					deliveryorder.set("order_delivery_stamp", content.get(j).get("预约送货时间"));
 					}
+					if (content.get(j).get("配送发车时间") != null) {
+						dbDataFormat.parse(content.get(j).get("配送发车时间"));
+						deliveryorder.set("depart_stamp", content.get(j).get("配送发车时间"));
+						}
 					if (content.get(j).get("城市") != null) {
 						Location location = Location.dao
 								.findFirst("SELECT code from location where `name`='"
@@ -569,7 +673,6 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					List<UserLogin> users = UserLogin.dao
 							.find("select * from user_login where user_name='"
 									+ name + "'");
-					Date createDate = Calendar.getInstance().getTime();
 					if(deliveryorder.get("notify_party_id")==null){
 						Party party = new Party();
 						Contact contact = new Contact();
@@ -612,6 +715,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 						contact.update();
 						deliveryorder.update();
 						}
+				      
 				}
 			}
 			conn.commit();
