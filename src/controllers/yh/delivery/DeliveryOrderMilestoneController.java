@@ -91,7 +91,6 @@ public class DeliveryOrderMilestoneController extends Controller {
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         
-        logger.debug("test.....");
         if("ATM".equals(cargoNature)){
         	//有可能勾选多个运输单做配送单
         	String sql ="select toi.amount, ifnull(toi.complete_amount,0) complete_amount, toid.* "
