@@ -32,6 +32,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
@@ -363,7 +364,9 @@ public class InsuranceOrderController extends Controller {
     	}
     	renderJson("{\"success\":true}");
     }
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_CREATE, PermissionConstant.PERMSSION_IO_UPDATE}, logical=Logical.OR)
+    @Before(Tx.class)
     public void save(){
     	InsuranceOrder insuranceOrder = null;
     	String insuranceOrderId = getPara("insuranceId");
@@ -408,7 +411,6 @@ public class InsuranceOrderController extends Controller {
     		for(int i = 0; i < orderIds.length; i++){
     			TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
     			transferOrder.set("insurance_id", insuranceOrder.get("id"));
-    			transferOrder.set("status", "已投保");
     			transferOrder.update();
     			
     			//保险公司费率
