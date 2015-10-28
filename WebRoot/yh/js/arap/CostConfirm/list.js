@@ -11,8 +11,8 @@ $(document).ready(function() {
     	"bSort": true, // 不要排序
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 10,
-        "aLengthMenu": [ [10 ,50 ,100 ,200 ,9999999], [10, 50, 100, 200, "All"] ],
+        "iDisplayLength": 100,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"

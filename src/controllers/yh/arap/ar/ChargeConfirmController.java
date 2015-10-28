@@ -779,7 +779,7 @@ public class ChargeConfirmController extends Controller {
         
         conditions += orderByStr + sLimit;
         
-        Record recTotal = Db.findFirst("select count(*) total from (select * from ("+columsSql+") A " + conditions + ") B");
+        Record recTotal = Db.findFirst("select count(*) total from (select * from ("+columsSql+") A ) B");
         Long total = recTotal.getLong("total");
         logger.debug("total records:" + total);
         
