@@ -4,12 +4,18 @@
 	var clickTabId = "createTab";
 	
 	//条件查询
-    $("#order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no").on('keyup click', function () {    	 	
-    	findData();
-    });
-    $('#return_type,#transfer_type').on( 'change', function () {
-    	findData();
-    });
+  $("#return_type, #transfer_type, #order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no").on('keyup', function (e) {    	 	
+  	
+    var code = e.which; // recommended to use e.which, it's normalized across browsers
+    if(code==13)e.preventDefault();
+    if(code==32||code==13||code==188||code==186){
+        findData();
+    }
+  });
+
+  // $('#return_type, #transfer_type').on('change', function () {
+  // 	findData();
+  // });
     
    
   //开始-时间按钮
@@ -217,7 +223,6 @@
        $("#companyList").hide();
        var companyId = $(this).attr('partyId');
        $('#customerId').val(companyId);
-       findData();
 	});
 	// 没选中客户，焦点离开，隐藏列表
 	$('#customer_filter').on('blur', function(){
@@ -254,11 +259,17 @@
 		$(".bootstrap-datetimepicker-widget").hide();
 	    $('#time_two').trigger('keyup');
 	});
-    $("#resetBtn").click(function(){
-        $('#searchForm')[0].reset();
-        saveConditions();
-        findData();
-    });
+
+  $("#searchBtn").click(function(){
+      saveConditions();
+      findData();
+  });
+
+  $("#resetBtn").click(function(){
+      $('#searchForm')[0].reset();
+      saveConditions();
+      findData();
+  });
 
   //var conditions_name="query_return_order_list";
   var saveConditions=function(){
