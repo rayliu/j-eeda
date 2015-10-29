@@ -176,15 +176,14 @@ public class CostCheckOrderController extends Controller {
     	Double actualAmount=totalAmount-changeAmount;
     	setAttr("orderIds", orderIds);	 
     	setAttr("orderNos", orderNos);	 
-    	setAttr("changeAmount", changeAmount);
-        setAttr("saveOK", false);
+    	setAttr("changeAmount",changeAmount);
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
         setAttr("create_by", users.get(0).get("id"));
         UserLogin ul = UserLogin.dao.findById(users.get(0).get("id"));
         setAttr("create_name", ul.get("c_name"));
         setAttr("status", "new");
-    		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
+    	render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
     }
 
     // 创建应收对帐单时，先选取合适的回单，条件：客户，时间段
@@ -340,6 +339,152 @@ public class CostCheckOrderController extends Controller {
             	arapAuditOrder.set("cost_amount", Double.parseDouble(total_amount) - Double.parseDouble(debit_amount));
             }
 	    	arapAuditOrder.update();
+	    	for(int i=0;i<orderIdsArr.length;i++){
+		    	ArapCostItem arapAuditItem = ArapCostItem.dao.findFirst("SELECT * from arap_cost_item  where ref_order_id=? and ref_order_no=?",orderIdsArr[i],orderNoArr[i]);
+		    	if(arapAuditItem==null){
+		    		ArapCostItem addArapAuditItem = new ArapCostItem();
+		    		addArapAuditItem.set("ref_order_id", orderIdsArr[i]);
+		    		addArapAuditItem.set("ref_order_no", orderNoArr[i]);
+		    		addArapAuditItem.set("cost_order_id", arapAuditOrder.get("id"));
+			    	//arapAuditItem.set("item_status", "");
+		    		addArapAuditItem.set("create_by", getPara("create_by"));
+		    		addArapAuditItem.set("create_stamp", new Date());
+		    		addArapAuditItem.save();
+		    	if("提货".equals(orderNoArr[i])){
+	            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
+	            	departOrder.set("audit_status", "对账中");
+	            	departOrder.update();
+	            	double amount=0.0;
+	            	List<Record> BillingOrders = Db.find("select id,amount,change_amount from pickup_order_fin_item where fin_item_id!=7 and pickup_order_id= ?",orderIdsArr[i]);
+	            	for(int j=0;j<BillingOrders.size();j++){
+	            		Record b=BillingOrders.get(j);
+	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
+	            		 amount = b.getDouble("AMOUNT");
+	            			}
+	            		}
+	            		else{
+	            			amount=b.getDouble("CHANGE_AMOUNT");
+	            		}
+	            		Long id= b.getLong("ID");
+	            		DecimalFormat df = new DecimalFormat("0.00");
+	            		String num = df.format(amount);
+	            		PickupOrderFinItem pickuporderfinitem =PickupOrderFinItem.dao.findById(id);
+	            		pickuporderfinitem.set("change_amount", num);
+	            		pickuporderfinitem.update();
+	            	}
+	            }else if("零担".equals(orderNoArr[i])){
+	            	DepartOrder departOrder = DepartOrder.dao.findById(orderIdsArr[i]);
+	            	departOrder.set("audit_status", "对账中");
+	            	departOrder.update();
+	            	double amount=0.0;
+	            	List<Record> BillingOrders = Db.find("select id,amount,change_amount from depart_order_fin_item where depart_order_id=?",orderIdsArr[i]);
+	            	for(int j=0;j<BillingOrders.size();j++){
+	            		Record b=BillingOrders.get(j);
+	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
+	            		 amount = b.getDouble("AMOUNT");
+	            			}
+	            		}
+	            		else{
+	            			amount=b.getDouble("CHANGE_AMOUNT");
+	            		}
+	            		Long id= b.getLong("ID");
+	            		DecimalFormat df = new DecimalFormat("0.00");
+	            		String num = df.format(amount);
+	            		DepartOrderFinItem departorfinitem =DepartOrderFinItem.dao.findById(id);
+	            		departorfinitem.set("change_amount", num);
+	            		departorfinitem.update();
+	            	}
+	            }else if("配送".equals(orderNoArr[i])){
+	            	DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(orderIdsArr[i]);
+	            	deliveryOrder.set("audit_status", "对账中");
+	            	deliveryOrder.update();
+	            	double amount=0.0;
+	            	List<Record> BillingOrders = Db.find("select id,amount,change_amount from delivery_order_fin_item where order_id=?",orderIdsArr[i]);
+	            	for(int j=0;j<BillingOrders.size();j++){
+	            		Record b=BillingOrders.get(j);
+	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
+	            		 amount = b.getDouble("AMOUNT");
+	            			}
+	            		}
+	            		else{
+	            			amount=b.getDouble("CHANGE_AMOUNT");
+	            		}
+	            		Long id= b.getLong("ID");
+	            		DecimalFormat df = new DecimalFormat("0.00");
+	            		String num = df.format(amount);
+	            		DeliveryOrderFinItem deliveryfinitem =DeliveryOrderFinItem.dao.findById(id);
+	            		deliveryfinitem.set("change_amount", num);
+	            		deliveryfinitem.update();
+	            	}
+	            }else if("成本单".equals(orderNoArr[i])){
+	            	ArapMiscCostOrder arapmisc = ArapMiscCostOrder.dao.findById(orderIdsArr[i]);
+	            	arapmisc.set("audit_status", "对账中");
+	            	arapmisc.update();
+	            	double amount=0.0;
+	            	List<Record> BillingOrders = Db.find("select id,amount,change_amount from arap_misc_cost_order_item amcoi where misc_order_id=?",orderIdsArr[i]);
+	            	for(int j=0;j<BillingOrders.size();j++){
+	            		Record b=BillingOrders.get(j);
+	            		if(b.getDouble("CHANGE_AMOUNT")==null){
+	            			if(b.getDouble("AMOUNT")==null){
+	            				amount=0.0;
+	            			}
+	            			else{
+	            		 amount = b.getDouble("AMOUNT");
+	            			}
+	            		}
+	            		else{
+	            			amount=b.getDouble("CHANGE_AMOUNT");
+	            		}
+	            		Long id= b.getLong("ID");
+	            		DecimalFormat df = new DecimalFormat("0.00");
+	            		String num = df.format(amount);
+	            		ArapMiscCostOrderItem arapmiscorderitem =ArapMiscCostOrderItem.dao.findById(id);
+	            		arapmiscorderitem.set("change_amount", num);
+	            		arapmiscorderitem.update();
+	            	}
+	            	
+	            }else{
+	            	InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(orderIdsArr[i]);
+	            	insuranceOrder.set("audit_status", "对账中");
+	            	insuranceOrder.update();
+	            	double amount=0.0;
+	            	List<Record> BillingOrders = Db.find("select id,insurance_amount,change_amount from insurance_fin_item ifi where ifi.insurance_order_id=?",orderIdsArr[i]);
+	            	for(int j=0;j<BillingOrders.size();j++){
+	            		Record b=BillingOrders.get(j);
+	            	if(b.getDouble("CHANGE_AMOUNT")==null){
+            			if(b.getDouble("INSURANCE_AMOUNT")==null){
+            				amount=0.0;
+            			}
+            			else{
+            		 amount = b.getDouble("INSURANCE_AMOUNT");
+            			}
+            		}
+	            		else{
+	            			amount=b.getDouble("CHANGE_AMOUNT");
+	            		}
+	            		Long id= b.getLong("ID");
+	            		DecimalFormat df = new DecimalFormat("0.00");
+	            		String num = df.format(amount);
+	            		InsuranceFinItem insurancefinitem =InsuranceFinItem.dao.findById(id);
+	            		insurancefinitem.set("change_amount", num);
+	            		insurancefinitem.update();
+	            	}
+	            	
+	            }
+	    	}
+	    	}
     	}else{
 	    	arapAuditOrder = new ArapCostOrder();
 	    	arapAuditOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YFDZ"));
@@ -364,19 +509,18 @@ public class CostCheckOrderController extends Controller {
             	arapAuditOrder.set("cost_amount", Double.parseDouble(total_amount) - Double.parseDouble(debit_amount));
             }
 	    	arapAuditOrder.save();
+            for(int i=0;i<orderIdsArr.length;i++){
+                ArapCostItem arapAuditItem = new ArapCostItem();
+                //arapAuditItem.set("ref_order_type", );
+                arapAuditItem.set("ref_order_id", orderIdsArr[i]);
+                arapAuditItem.set("ref_order_no", orderNoArr[i]);
+                arapAuditItem.set("cost_order_id", arapAuditOrder.get("id"));
+                //arapAuditItem.set("item_status", "");
+                arapAuditItem.set("create_by", getPara("create_by"));
+                arapAuditItem.set("create_stamp", new Date());
+                arapAuditItem.save();
+            }
 	    	
-	    	
-	    	for(int i=0;i<orderIdsArr.length;i++){
-		    	ArapCostItem arapAuditItem = new ArapCostItem();
-		    	//arapAuditItem.set("ref_order_type", );
-		    	arapAuditItem.set("ref_order_id", orderIdsArr[i]);
-		    	arapAuditItem.set("ref_order_no", orderNoArr[i]);
-		    	arapAuditItem.set("cost_order_id", arapAuditOrder.get("id"));
-		    	//arapAuditItem.set("item_status", "");
-		    	arapAuditItem.set("create_by", getPara("create_by"));
-		    	arapAuditItem.set("create_stamp", new Date());
-		    	arapAuditItem.save();
-	    	}
     	}
 	    	for(int i=0;i<orderIdsArr.length;i++){
 	            if("提货".equals(orderNoArr[i])){
@@ -513,6 +657,7 @@ public class CostCheckOrderController extends Controller {
 	            	
 	            }
 	    	}
+	    	
         renderJson(arapAuditOrder);
     }
 
@@ -554,69 +699,41 @@ public class CostCheckOrderController extends Controller {
     	Double changeamount = 0.00;
     	for(int i=0;i<orderIdsArr.length;i++){
             if("提货".equals(orderNoArr[i])){
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
-            	if(rec1!=null){
-            		if(rec1.getDouble("sum_amount")!=null){
-                		totalamount = totalamount + rec1.getDouble("sum_amount");
-                	}
+            	rec1 = Db.findFirst("select ifnull(sum(amount),0) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	if(rec1.getDouble("sum_amount")!=null){
+            		totalamount = totalamount + rec1.getDouble("sum_amount");
             	}
             	rec = Db.findFirst("select sum(change_amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?", orderIdsArr[i]);
-            	if(rec!=null){
-            		if(rec.getDouble("change_amount")!=null){
-                		changeamount = changeamount + rec.getDouble("change_amount");
-                	}
+            	if(rec.getDouble("change_amount")!=null){
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
-            }else if("零担".equals(orderNoArr[i])){ System.out.println(orderIdsArr[i]);
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
-            	if(rec1!=null){
-            		if(rec1.getDouble("sum_amount")!=null){
-            			totalamount = totalamount + rec1.getDouble("sum_amount");
-                	}
-            	}
+            }else if("零担".equals(orderNoArr[i])){
+            	rec1 = Db.findFirst("select ifnull(sum(amount),0) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ?", orderIdsArr[i]);
-            	if(rec!=null){
-            		if(rec.getDouble("change_amount")!=null){
-            			changeamount = changeamount + rec.getDouble("change_amount");
-                	}
+            	if(rec.getDouble("change_amount")!=null){
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }else if("配送".equals(orderNoArr[i])){
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", orderIdsArr[i]);
-            	if(rec1!=null){
-            		if(rec1.getDouble("sum_amount")!=null){
-            			totalamount = totalamount + rec1.getDouble("sum_amount");
-                	}
-            	}
+            	rec1 = Db.findFirst("select ifnull(sum(amount),0) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付'", orderIdsArr[i]);
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ?", orderIdsArr[i]);
-            	if(rec!=null){
-            		if(rec.getDouble("change_amount")!=null){
-            			changeamount = changeamount + rec.getDouble("change_amount");
-                	}
+            	if(rec.getDouble("change_amount")!=null){
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }else if("成本单".equals(orderNoArr[i])){
-            	rec1 = Db.findFirst("select sum(amount) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
-            	if(rec1!=null){
-            		if(rec1.getDouble("sum_amount")!=null){
-            			totalamount = totalamount + rec1.getDouble("sum_amount");
-                	}
-            	}
+            	rec1 = Db.findFirst("select ifnull(sum(amount),0) sum_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id  where amcoi.misc_order_id = ?",orderIdsArr[i]);
-            	if(rec!=null){
-            		if(rec.getDouble("change_amount")!=null){
-                		changeamount = changeamount + rec.getDouble("change_amount");
-                	}
+            	if(rec.getDouble("change_amount")!=null){
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }else{
             	rec1 = Db.findFirst("select ifnull(sum(insurance_amount),0) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付'",orderIdsArr[i]);
-            	if(rec1!=null){
-            		if(rec1.getDouble("sum_amount")!=null){
-            			totalamount = totalamount + rec1.getDouble("sum_amount");
-                	}
-            	}
+            	totalamount = totalamount + rec1.getDouble("sum_amount");
             	rec = Db.findFirst("select sum(change_amount) change_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ?",orderIdsArr[i]);
-            	if(rec!=null){
-            		if(rec.getDouble("change_amount")!=null){
-                		changeamount = changeamount + rec.getDouble("change_amount");
-                	}
+            	if(rec.getDouble("change_amount")!=null){
+            		changeamount = changeamount + rec.getDouble("change_amount");
             	}
             }
             
@@ -803,7 +920,7 @@ public class CostCheckOrderController extends Controller {
     	String endTime = getPara("endTime");
     	String type = getPara("type");
     	String status = getPara("status");
-    	
+    	String ispage = getPara("ispage");
     	String sqlTotal = "";
     	String sql = " select * from (select distinct dor.id,dofi.id did,IFNULL(c2.address,IFNULL(toid.notify_party_company,'')) receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,c.abbr spname,c1.abbr customer_name,"
     						+ " (SELECT sum(doi1.amount) FROM delivery_order_item doi1 WHERE doi1.delivery_id = dor.id ) amount, "
@@ -965,8 +1082,6 @@ public class CostCheckOrderController extends Controller {
 							+ " WHERE	amco.audit_status = '已确认'"
 							+ " GROUP BY amco.id) as A " ;
     	String condition = "";
-    	
-    	
     	if(orderNo != null || sp != null || serial_no != null || no != null || beginTime != null
     			|| endTime != null || type != null || status != null){
     		String time ="";
@@ -980,6 +1095,11 @@ public class CostCheckOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
+			if(ispage.equals("costCheckOrder")&&ispage!=null){
+	    		condition = " where ifnull(serial_no,'') like '%" + serial_no + "%' "
+						+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'";
+						
+	    	}else{
     		condition = " where ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
     					+ " and order_no like '%" + no + "%' "
     					+ " and business_type like '%" + type + "%' "
@@ -988,9 +1108,8 @@ public class CostCheckOrderController extends Controller {
     					+ " and ifnull(serial_no,'') like '%" + serial_no + "%' "
     					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
     					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
-    		
+	    	}
     	}
-    	
         sqlTotal = "select count(1) total from (" + sql + condition + ") as B";  
         
         Record rec = Db.findFirst(sqlTotal);
