@@ -747,6 +747,17 @@ public class ChargeCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
+		
+		 //升降序
+    	String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
+		String orderByStr = " order by A.create_stamp desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
 
 		String orderNo = getPara("orderNo");
 		String beginTime = getPara("beginTime");
@@ -817,7 +828,7 @@ public class ChargeCheckOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// logger.debug("sql:" + sql);
-		List<Record> BillingOrders = Db.find(sql + condition + sLimit);
+		List<Record> BillingOrders = Db.find("select * from (" + sql + condition + sLimit+") A" + orderByStr);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
