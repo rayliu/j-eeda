@@ -752,7 +752,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
             }
         }
 		importResult.put("result", "true");
-		importResult.put("cause", "成功更新" + resultNum + "张配送单");
+		importResult.put("cause", "成功更新" + causeRow + "张配送单");
 		return importResult;
 
 	}
