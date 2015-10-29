@@ -129,7 +129,7 @@ public class ChargeItemConfirmController extends Controller {
 					+ " LEFT JOIN party p1 on p1.id = amco.sp_id "
 					+ " LEFT JOIN contact c1 ON c1.id = p1.id "
 					+ " where amco. STATUS='新建' and amco.type = 'biz' and amco.total_amount!=0 )"
-					+ " order by create_date desc " + sLimit;
+					+ " order by create_date desc ";
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -233,12 +233,12 @@ public class ChargeItemConfirmController extends Controller {
 			+ "' and '"
 			+ endTime
 			+ "' "
-			+ " order by create_date desc " + sLimit;
+			+ " order by create_date desc ";
 		}
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		List<Record> BillingOrders = Db.find("select * from (" + sql + ") A" + orderByStr);
+		List<Record> BillingOrders = Db.find("select * from (" + sql + ") A" + orderByStr  + sLimit);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
