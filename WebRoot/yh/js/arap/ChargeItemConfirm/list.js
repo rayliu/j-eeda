@@ -6,7 +6,7 @@ $(document).ready(function() {
     var chargeConfiremTable = $('#chargeConfirem-table').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
         "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
+        "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -21,7 +21,7 @@ $(document).ready(function() {
               }
             },  
             {"mDataProp":"ID", "bVisible": false},
-            {"mDataProp":"ORDER_NO",
+            {"mDataProp":"ORDER_NO", "sWidth":"120px",
             	"fnRender": function(obj) {
             		return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
         		}},
@@ -29,14 +29,14 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未收款";
             }},
-            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"}, 
+            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"120px"}, 
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"SP", "sWidth":"200px"},
-            {"mDataProp":"PLANNING_TIME", "sWidth":"130px"}, 
+            {"mDataProp":"PLANNING_TIME", "sWidth":"150px"}, 
             {"mDataProp":"DEPART_TIME", "sWidth":"130px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},        	
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
+            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"},        	
             {"mDataProp":null, "sWidth": "120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new'){
@@ -58,20 +58,20 @@ $(document).ready(function() {
             {"mDataProp":"ROUTE_TO", "sWidth":"100px"},                        
             /*{"mDataProp":null, "sWidth":"150px"},                         
             {"mDataProp":null, "sWidth":"100px"},*/                        
-            {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"150px"},
+            {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"80px"},
             {"mDataProp":"TRANSFER_AMOUNT", "sWidth":"150px"},
             //{"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"PICKUP_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"SEND_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"INSURANCE_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"SUPER_MILEAGE_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"STEP_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"INSTALLATION_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":"PICKUP_AMOUNT", "sWidth":"80px"},                        
+            {"mDataProp":"SEND_AMOUNT", "sWidth":"80px"},                        
+            {"mDataProp":"INSURANCE_AMOUNT", "sWidth":"80px"},                        
+            {"mDataProp":"SUPER_MILEAGE_AMOUNT", "sWidth":"80px"},                        
+            {"mDataProp":"STEP_AMOUNT", "sWidth":"80px"},                        
+            {"mDataProp":"INSTALLATION_AMOUNT", "sWidth":"80px"},                        
             {"mDataProp":"LOAD_AMOUNT", "sWidth":"150px"},                        
-            {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"WAIT_AMOUNT", "sWidth":"100px"},                        
-            {"mDataProp":"OTHER_AMOUNT", "sWidth":"100px"},  
-            {"mDataProp":null, "sWidth":"150px"},                        
+            {"mDataProp":"WAREHOUSE_AMOUNT", "sWidth":"80px"},                        
+            {"mDataProp":"WAIT_AMOUNT", "sWidth":"80px"},                        
+            {"mDataProp":"OTHER_AMOUNT", "sWidth":"80px"},  
+            {"mDataProp":null, "sWidth":"80px"},                        
             {"mDataProp":"ADDRESS", "sWidth":"150px"},                        
             {"mDataProp":"REMARK", "sWidth":"200px"}                       
         ]      

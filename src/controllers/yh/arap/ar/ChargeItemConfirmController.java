@@ -64,6 +64,17 @@ public class ChargeItemConfirmController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
+		//升降序
+    	String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
+		String orderByStr = " order by A.create_date desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+		
 		String sqlTotal = "";
 		String sql = "";
 		// 收入状态条件没有过滤
@@ -227,7 +238,7 @@ public class ChargeItemConfirmController extends Controller {
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		List<Record> BillingOrders = Db.find(sql);
+		List<Record> BillingOrders = Db.find("select * from (" + sql + ") A" + orderByStr);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
