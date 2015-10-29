@@ -72,6 +72,16 @@ public class ChargeAcceptOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        
+        //升降序
+    	String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
+		String orderByStr = " order by A.create_time desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
 
 
         String sql = "select * from( select aci.id, '开票记录单' order_type,aci.order_no, aci.status, "
@@ -145,7 +155,7 @@ public class ChargeAcceptOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         
        
-        List<Record> BillingOrders = Db.find(sql + conditions + " order by create_time desc " + sLimit);
+        List<Record> BillingOrders = Db.find("select * from (" + sql + conditions + " order by create_time desc " + sLimit+") A "+orderByStr);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
