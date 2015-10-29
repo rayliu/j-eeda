@@ -1361,7 +1361,7 @@ public class ReturnOrderController extends Controller {
 		List<Record> detailList = Db.find("select count(0) delivery_number,item_id from transfer_order_item_detail where delivery_id = ? group by item_id;",deliveryOrder.get("id"));
 		for (int i = 0; i < detailList.size(); i++) {
 			Record insuranceItem = Db.findFirst("select amount * income_rate detail_insurance from insurance_fin_item where transfer_order_item_id = ?",detailList.get(i).get("item_id"));
-			if(insuranceItem != null){
+			if(insuranceItem != null && insuranceItem.getDouble("detail_insurance") !=null ){				
 				sum_insurance += detailList.get(i).getLong("delivery_number") * insuranceItem.getDouble("detail_insurance");
 			}
 		}

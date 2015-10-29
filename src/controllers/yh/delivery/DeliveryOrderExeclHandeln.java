@@ -546,7 +546,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 						.findFirst("SELECT delivery_id from transfer_order_item_detail where serial_no ='"
 								+ content.get(j).get("序列号") + "'");
 				if(transferorderitemdetail==null){
-					throw new Exception("序列号信息有误");
+					throw new Exception("在配送单中找不到此序列号 "+content.get(j).get("序列号"));
 				}
 				if (transferorderitemdetail != null) {
 					DeliveryOrder deliveryorder = DeliveryOrder.dao
@@ -554,11 +554,11 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 									.get("delivery_id"));
 					
 					if(deliveryorder==null){
-						throw new Exception("序列号信息有误");
+						throw new Exception("序列号 "+content.get(j).get("序列号")+"找不到对应的配送单");
 					}
 					ReturnOrder returnorder =ReturnOrder.dao.findFirst("SELECT * from return_order where delivery_order_id='"+deliveryorder.get("id")+"'");
 					if(returnorder!=null){
-						throw new Exception("序列号信息有误");
+						throw new Exception("序列号 "+content.get(j).get("序列号")+"找不到对应的配送单");
 					}
 					deliveryorder.set("status", "已送达");
 					//配送里程碑
