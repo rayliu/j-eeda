@@ -45,8 +45,8 @@
 			''
 		)
 	) as address,
-		(select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') as amount,
-		IFNULL((select sum(change_amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付'),(select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付')) as confirm_amount,
+		ifnull((select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付'),0) as amount,
+		ifnull(IFNULL((select sum(change_amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付'),(select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付')),0) as confirm_amount,
 		'' as remark
 	from
 		arap_cost_item aci
@@ -83,8 +83,8 @@ LEFT JOIN depart_transfer dt on t.id = dt.order_id
 left join depart_order dto on dto.id =dt.depart_id
 where dto.id = aci.ref_order_id
  ) as address,
-		(select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付') as amount,
-		ifnull((select sum(change_amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付'),(select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付')) as confirm_amount,
+		ifnull((select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付'),0) as amount,
+		ifnull(ifnull((select sum(change_amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付'),(select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付')),0) as confirm_amount,
 		'' as remark
 	from
 		arap_cost_item aci
@@ -114,8 +114,8 @@ union
 		'提货' as service_type,
 		(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id = doer.id )) as quantity,
 		doer.address as address,
-		(select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付') as amount,
-		IFNULL((select sum(change_amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),(select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付')) as confirm_amount,
+		ifnull((select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),0) as amount,
+		ifnull(IFNULL((select sum(change_amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),(select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付')),0) as confirm_amount,
 		'' as remark
 	from
 		arap_cost_item aci
@@ -146,8 +146,8 @@ where tor.insurance_id=io.id)  customer_name,
 		'保险' as service_type,
 		(select sum(amount) from transfer_order_item where order_id in (select id from transfer_order where insurance_id = io.id)) as quantity,
 		'' as address,
-		(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付') as amount,
-		IFNULL((select sum(change_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付')) as confirm_amount,
+		ifnull((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),0) as amount,
+		ifnull(IFNULL((select sum(change_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付')),0) as confirm_amount,
 		'' as remark
 	from
 		arap_cost_item aci
@@ -169,8 +169,8 @@ SELECT
 	'成本单' AS service_type,
 	0 AS quantity,
 	'' AS address,
-	(SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付') AS amount,
-	IFNULL((SELECT sum(change_amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付'),(SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付')) AS confirm_amount,
+	ifnull((SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付'),0) AS amount,
+	ifnull(IFNULL((SELECT sum(change_amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付'),(SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付')),0) AS confirm_amount,
 	'' AS remark
        FROM
 	arap_cost_item aci
