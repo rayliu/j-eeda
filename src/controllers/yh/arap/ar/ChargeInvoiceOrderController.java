@@ -285,7 +285,7 @@ public class ChargeInvoiceOrderController extends Controller {
         
         Record rec = Db.findFirst(sqlTotal + condition );
         logger.debug("total records:" + rec.getLong("total"));
-        List<Record> BillingOrders = Db.find("select * from (" + sql + condition +  " group by aci.id order by aci.create_stamp desc " + sLimit +") A"+ orderByStr);
+        List<Record> BillingOrders = Db.find("select * from (" + sql + condition +  " group by aci.id order by aci.create_stamp desc " +") A"+ orderByStr + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

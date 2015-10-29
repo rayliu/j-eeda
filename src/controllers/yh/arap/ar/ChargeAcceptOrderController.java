@@ -155,7 +155,7 @@ public class ChargeAcceptOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
         
        
-        List<Record> BillingOrders = Db.find("select * from (" + sql + conditions + " order by create_time desc " + sLimit+") A "+orderByStr);
+        List<Record> BillingOrders = Db.find("select * from (" + sql + conditions + " order by create_time desc) A "+orderByStr + sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

@@ -361,7 +361,7 @@ public class ChargeCheckOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 
 		orders = Db.find("select * from ("+sql + condition + sql2 + condition2 + sql3
-				+ fieldsWhere + sLimit+") A "+orderByStr) ;
+				+ fieldsWhere + ") A "+ orderByStr + sLimit) ;
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -828,7 +828,7 @@ public class ChargeCheckOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// logger.debug("sql:" + sql);
-		List<Record> BillingOrders = Db.find("select * from (" + sql + condition + sLimit+") A" + orderByStr);
+		List<Record> BillingOrders = Db.find("select * from (" + sql + condition+") A" + orderByStr + sLimit);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
