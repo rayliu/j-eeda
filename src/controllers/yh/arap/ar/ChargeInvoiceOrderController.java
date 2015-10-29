@@ -221,6 +221,18 @@ public class ChargeInvoiceOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        
+      //升降序
+    	String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
+		String orderByStr = " order by A.create_stamp desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+        
+        
     	String companyName = getPara("companyName");
     	String beginTime = getPara("beginTime");
     	String endTime = getPara("endTime");
@@ -273,7 +285,7 @@ public class ChargeInvoiceOrderController extends Controller {
         
         Record rec = Db.findFirst(sqlTotal + condition );
         logger.debug("total records:" + rec.getLong("total"));
-        List<Record> BillingOrders = Db.find(sql + condition +  " group by aci.id order by aci.create_stamp desc " + sLimit);
+        List<Record> BillingOrders = Db.find("select * from (" + sql + condition +  " group by aci.id order by aci.create_stamp desc " + sLimit +") A"+ orderByStr);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
