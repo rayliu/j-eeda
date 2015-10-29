@@ -217,6 +217,16 @@ public class ChargeCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
+		//升降序
+    	String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
+		String orderByStr = " order by A.create_date desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
 
 		// 获取数据
 		String customer = getPara("customer");
@@ -350,8 +360,8 @@ public class ChargeCheckOrderController extends Controller {
 		rec = Db.findFirst(sqlTotal + fieldsWhere );
 		logger.debug("total records:" + rec.getLong("total"));
 
-		orders = Db.find(sql + condition + sql2 + condition2 + sql3
-				+ fieldsWhere + sLimit);
+		orders = Db.find("select * from ("+sql + condition + sql2 + condition2 + sql3
+				+ fieldsWhere + sLimit+") A "+orderByStr) ;
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
