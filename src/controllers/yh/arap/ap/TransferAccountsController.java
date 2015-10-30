@@ -1,17 +1,18 @@
 package controllers.yh.arap.ap;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import interceptor.SetAttrLoginUserInterceptor;
 import models.Account;
 import models.ArapAccountAuditLog;
-import models.ArapCostInvoiceApplication;
 import models.UserLogin;
-import models.yh.arap.ReimbursementOrder;
+import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.TransferAccountsOrder;
 
 import org.apache.shiro.SecurityUtils;
@@ -25,6 +26,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
@@ -126,13 +128,24 @@ public class TransferAccountsController extends Controller {
 			List<Record> locationList= Db.find("SELECT * from fin_account");
 			renderJson(locationList);
 		}
+		
+		
+		
 		@RequiresPermissions(value = {PermissionConstant.PERMSSION_TA_CREATE, PermissionConstant.PERMSSION_TA_UPDATE}, logical=Logical.OR)
+		@Before(Tx.class)
 		public void confirem() {
 			String transferOrderId =getPara("transferOrderId");
 			String in_filter =getPara("in_filter");
 			String out_filter =getPara("out_filter");
 			String amount =getPara("amount");
 			String remark =getPara("remark");
+			String transfer_time =getPara("transfer_time");
+			
+			if( transfer_time==null||transfer_time.equals("")){
+				transfer_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+	   		}
+			
+			
 			String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name + "'");
@@ -164,7 +177,7 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("payment_type", "CHARGE");
 				arapaccountauditlog.set("amount", amount);
 				arapaccountauditlog.set("creator",users.get(0).get("id"));
-				arapaccountauditlog.set("create_date",new Date());
+				arapaccountauditlog.set("create_date",transfer_time);
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", in_filter);
@@ -188,15 +201,108 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("payment_type", "COST");
 				arapaccountauditlog.set("amount", amount);
 				arapaccountauditlog.set("creator",users.get(0).get("id"));
-				arapaccountauditlog.set("create_date",new Date());
+				arapaccountauditlog.set("create_date",transfer_time);
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", out_filter);
 				arapaccountauditlog.set("transferOrder_id", transferOrderId);
 				arapaccountauditlog.save();
 			}
+			
+			//日记账金额更新
+			updateAccountSummary(amount, Long.parseLong(out_filter),Long.parseLong(in_filter) ,transfer_time);
+			
 			renderJson(transferaccounts);
 		}
+		
+		
+		//更新日记账的账户期初结余
+		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
+		@Before(Tx.class)
+		private void updateAccountSummary(String amount, Long out_filter, Long in_filter,  String pay_time) {
+			Calendar cal = Calendar.getInstance();  
+			int this_year = cal.get(Calendar.YEAR);  
+			int this_month = cal.get(Calendar.MONTH)+1;  
+			String year = pay_time.substring(0, 4);
+			String month = pay_time.substring(5, 7);
+			
+			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
+				
+				//支出
+				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, out_filter, year, month);
+				if(aaas!=null){
+					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(amount));
+					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					aaas.update();
+				}else{
+					ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
+				}
+				
+				//收入
+				ArapAccountAuditSummary aaas2 = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, in_filter, year, month);
+				if(aaas2!=null){
+					aaas2.set("total_charge", (aaas2.getDouble("total_charge")==null?0.0:aaas2.getDouble("total_charge")) + Double.parseDouble(amount));
+					aaas2.set("balance_amount", (aaas2.getDouble("init_amount")-aaas2.getDouble("total_cost")+ aaas2.getDouble("total_charge")));
+					aaas2.update();
+				}else{
+					ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
+				}
+			}else{
+				
+				//支出
+				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, out_filter, year, month);
+				
+				if(aaas!=null){
+					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(amount));
+					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					aaas.update();
+					
+					
+					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
+						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
+								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+								, out_filter, this_year, Integer.parseInt(month)+i);
+						
+						this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") - Double.parseDouble(amount)));
+						this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(amount)));
+						this_aaas.update();
+					}
+				}
+				
+				//收入
+				ArapAccountAuditSummary aaas1 = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, in_filter, year, month);
+				
+				if(aaas1!=null){
+					aaas1.set("total_charge", (aaas1.getDouble("total_charge")==null?0.0:aaas1.getDouble("total_charge")) + Double.parseDouble(amount));
+					aaas1.set("balance_amount", (aaas1.getDouble("init_amount")+aaas1.getDouble("total_charge")- aaas1.getDouble("total_cost")));
+					aaas1.update();
+				
+					
+					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
+						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
+								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+								, in_filter, this_year, Integer.parseInt(month)+i);
+						
+						this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") + Double.parseDouble(amount)));
+						this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") + Double.parseDouble(amount)));
+						this_aaas.update();	
+					}
+					
+				}
+				
+				
+			}
+		}
+
+		
 		@RequiresPermissions(value = {PermissionConstant.PERMSSION_TA_CREATE, PermissionConstant.PERMSSION_TA_UPDATE}, logical=Logical.OR)
 		public void save() {
 			TransferAccountsOrder transferaccounts =null;
