@@ -281,7 +281,10 @@
           serial_no: $("#serial_no").val(),
           sign_no: $("#sign_no").val(),
           return_type: $("#return_type").val(),
-          transfer_type: $("#transfer_type").val()
+          transfer_type: $("#transfer_type").val(),
+          warehouse: $("#warehouse").val(),
+          to_name: $("#to_name").val(),
+          province: $("#province").val()
       }
       if(!!window.localStorage){//查询条件处理
           localStorage.setItem("query_return_order_list", JSON.stringify(conditions));
@@ -305,12 +308,16 @@
           $("#sign_no").val(conditions.sign_no);
           $("#return_type").val(conditions.return_type);
           $("#transfer_type").val(conditions.transfer_type);
+          $("#warehouse").val(conditions.warehouse);
+          $("#to_name").val(conditions.to_name);
+          $("#province").val(conditions.province);
       }
   };
 
   var findData = function(){
       var order_no = $("#order_no").val();
       var serial_no = $("#serial_no").val();
+      var warehouse = $("#warehouse").val();
       var return_type = $("#return_type").val();
       var tr_order_no = $("#tr_order_no").val();
       var de_order_no = $("#de_order_no").val();
@@ -319,14 +326,16 @@
       var time_two = $("#time_two").val();
       var inputStr =$("#customer_filter").val();
       var transfer_type =$("#transfer_type").val();
+      var to_name =$("#to_name").val();
+      var province =$("#province").val();
       
       if(clickTabId == "createTab"){
         createDataTable.fnSettings().oFeatures.bServerSide = true;
-        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type;
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province;
         createDataTable.fnDraw();
       }else{
         finishDataTable.fnSettings().oFeatures.bServerSide = true;
-        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type;
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province;;
         finishDataTable.fnDraw();
       }
       saveConditions();

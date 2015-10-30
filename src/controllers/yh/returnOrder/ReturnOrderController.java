@@ -74,7 +74,10 @@ public class ReturnOrderController extends Controller {
 		String customer = getPara("customer");
 		String return_type = getPara("return_type");
 		String transfer_type = getPara("transfer_type");
+		String warehouse = getPara("warehouse");
 		String serial_no = getPara("serial_no");
+		String to_name = getPara("to_name");
+		String province = getPara("province");
 		String sign_no = getPara("sign_no");
 		String pageIndex = getPara("sEcho");
 		String sLimit = "";
@@ -105,13 +108,14 @@ public class ReturnOrderController extends Controller {
                 + " tor2.route_from"
                 + " ) = lo. CODE"
                 + " LEFT JOIN location lo2 ON ifnull(tor.route_to, tor2.route_to) = lo2. CODE"
+                + " LEFT JOIN location lo3 on lo3.`code` = lo2.pcode"
                 + " LEFT JOIN transfer_order_item_detail toid2 ON toid2.id = doi.transfer_item_detail_id"
                 + " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
                 + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
 		
 		if ((sign_no == null || sign_no == "") && (order_no == null || order_no == "")&& (transfer_type == null || transfer_type == "") 
 				&& (tr_order_no == null || tr_order_no == "") && (de_order_no == null || de_order_no == "")
-				&& (return_type == null|| return_type == "")&& (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "") && (time_two == null || time_two == "") && (customer == null || customer == "")) {
+				&& (return_type == null|| return_type == "")&& (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "")&& (warehouse == null|| warehouse == "") && (time_two == null || time_two == "") && (customer == null || customer == "")&& (to_name == null || to_name == "")) {
 			// 获取总条数
 			sqlTotal = "select count(DISTINCT r_o.id) total "+fromSql
 					+ " where r_o.transaction_status in ("+status
@@ -119,7 +123,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
 			// 获取当前页的数据
-			sql = "select * from (select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
+			sql = "select * from (select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to,lo3.name province, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
 					+ " ifnull(c4.contact_person, tor.receiving_name) receipt_person, "
 					+ " ifnull(c4.phone, tor.receiving_phone) receipt_phone,"
 					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
@@ -178,7 +182,7 @@ public class ReturnOrderController extends Controller {
 
 			// 获取当前页的数据
 			String conFromSql = " from(select ifnull(tor.route_from,tor2.route_from) route_from ,"
-					+ " lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to, lo2.name to_name, "
+					+ " lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to,lo3.name province, lo2.name to_name, "
 					+ " ifnull(tor.address, tor2.address) address,"
 					+ " ifnull(c4.contact_person, tor.receiving_name) receipt_person, "
 					+ " ifnull(c4.phone, tor.receiving_phone) receipt_phone,"
@@ -234,6 +238,9 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
 					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
+					+ " and ifnull(warehouse_name,'') like '%" + warehouse + "%'"
+					+ " and ifnull(to_name,'') like '%" + to_name + "%'"
+					+ " and ifnull(province,'') like '%" + province + "%'"
 					+ " and ifnull(transfer_type,'') like '%" + transfer_type + "%'"
 					+ " and create_date between '" + time_one + "' and '" + time_two + " 23:59:59' ";
 					
