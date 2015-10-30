@@ -48,7 +48,6 @@ import controllers.yh.util.PermissionConstant;
 public class CostMiscOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostMiscOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
     public void index() {
     	   render("/yh/arap/CostMiscOrder/CostMiscOrderList.html");
     }
@@ -69,7 +68,6 @@ public class CostMiscOrderController extends Controller {
         render("/yh/arap/CostAcceptOrder/CostCheckOrderEdit.html");
     }
 
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
     public void list() {
     	String sp = getPara("sp");
         String customer = getPara("companyName");
@@ -136,7 +134,6 @@ public class CostMiscOrderController extends Controller {
         renderJson(BillingOrderListMap);
     }
     
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void create() {
 		String ids = getPara("ids");
 		if(ids != null && !"".equals(ids)){
@@ -189,7 +186,7 @@ public class CostMiscOrderController extends Controller {
 
      
     
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
+    
     @Before(Tx.class)
 	public void save() throws Exception {		
 		String jsonStr=getPara("params");
@@ -316,7 +313,6 @@ public class CostMiscOrderController extends Controller {
     
 	
 	// 审核
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_APPROVAL})
 	public void auditCostPreInvoiceOrder(){
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
 		if(costPreInvoiceOrderId != null && !"".equals(costPreInvoiceOrderId)){
@@ -331,7 +327,6 @@ public class CostMiscOrderController extends Controller {
         renderJson("{\"success\":true}");
 	}
     
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
 	public void edit() {
 		String id = getPara("id");
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
