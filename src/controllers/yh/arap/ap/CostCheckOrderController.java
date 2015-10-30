@@ -1095,7 +1095,7 @@ public class CostCheckOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
-			if(ispage.equals("costCheckOrder")&&ispage!=null){
+			if(ispage!=null){
 	    		condition = " where ifnull(serial_no,'') like '%" + serial_no + "%' "
 						+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'";
 						
