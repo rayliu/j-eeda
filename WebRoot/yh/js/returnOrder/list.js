@@ -196,8 +196,6 @@
     //点击tab选项卡查询
     $("#createTab ,#finishTab").on('click', function (e) { 
     	clickTabId = e.target.getAttribute("id");
-    	console.log("当前选项卡："+clickTabId);
-    	findData();
     });
 
     $('#customer_filter').on('keyup click', function(){
@@ -335,5 +333,5 @@
     };
 
   loadConditions(); 
-  findData();
+ 
 });
