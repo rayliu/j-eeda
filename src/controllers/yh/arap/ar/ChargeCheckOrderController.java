@@ -232,6 +232,8 @@ public class ChargeCheckOrderController extends Controller {
 		String customer = getPara("customer");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String planningBeginTime = getPara("planningBeginTime");
+		String planningEndTime = getPara("planningEndTime");
 		String orderNo = getPara("orderNo");
 		String customerNo = getPara("customerNo");
 		String address = getPara("address");
@@ -280,7 +282,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " dvr.order_no as delivery_order_no, '回单' as tporder,"
 				+ " ifnull(c.abbr,c2.abbr) cname,"
 				+ " ifnull(c3.address,tor.receiving_address) address,"
-				+ " tor.planning_time planning_time,"
+				+ " ifnull(tor2.planning_time,tor.planning_time) planning_time,"
 				+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
 				+ " ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) route_from,"
 				+ " ifnull((select name from location where code = tor.route_to),(select name from location where code = dvr.route_to)) route_to,"
@@ -328,7 +330,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " WHERE amco. STATUS = '已确认' ";
 		sql3 = " ) order by create_date desc ";
 		if (customer == null && beginTime == null && endTime == null
-				&& orderNo == null && customerNo == null && address == null) {
+				&& orderNo == null && customerNo == null && address == null && planningBeginTime == null && planningEndTime == null) {
 			condition = " ";
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
@@ -336,6 +338,12 @@ public class ChargeCheckOrderController extends Controller {
 			}
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
+			}
+			if (planningBeginTime == null || "".equals(planningBeginTime)) {
+				planningBeginTime = "1-1-1";
+			}
+			if (planningEndTime == null || "".equals(planningEndTime)) {
+				planningEndTime = "9999-12-31";
 			}
 			condition = " and (ifnull(c.abbr,'') like '%"
 					+ customer
@@ -346,6 +354,11 @@ public class ChargeCheckOrderController extends Controller {
 					+ beginTime
 					+ "' and '"
 					+ endTime
+					+ "') "
+					+ " and (ifnull(tor2.planning_time,tor.planning_time) between'"
+					+ planningBeginTime
+					+ "' and '"
+					+ planningEndTime
 					+ "') "
 					+ " and (ifnull(tor.customer_order_no,'')  like '%"
 					+ customerNo

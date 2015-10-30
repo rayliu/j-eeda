@@ -197,6 +197,8 @@ $(document).ready(function() {
     	var customer = $('#customer_filter').val();
 		var beginTime = $("#beginTime_filter").val();
 		var endTime = $("#endTime_filter").val();
+		var planningBeginTime = $("#beginTime_filter1").val();
+		var planningEndTime = $("#endTime_filter1").val();
 		var orderNo = $("#orderNo_filter").val();
 		var customerNo = $("#customerNo_filter").val();
 		var address = $("#address_filter").val();
@@ -207,12 +209,14 @@ $(document).ready(function() {
 															+"&orderNo="+orderNo
 															+"&customerNo="+customerNo
 															+"&address="+address
+															+"&planningBeginTime="+planningBeginTime
+															+"&planningEndTime="+planningEndTime
 															+"&status="+status;
 		uncheckedChargeCheckTable.fnDraw();
     };
    
     
-    $('#customer_filter,#beginTime_filter,#endTime_filter,#orderNo_filter,#customerNo_filter,#address_filter').on( 'keyup', function () {
+    $('#customer_filter,#beginTime_filter,#endTime_filter,#beginTime_filter1,#endTime_filter1,#orderNo_filter,#customerNo_filter,#address_filter').on( 'keyup', function () {
     	refreshCreate();
 	} );
     $('#shouru_filter').on( 'change', function () {
@@ -298,8 +302,6 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#beginTime_filter').trigger('keyup');
     });
-
-
     $('#datetimepicker2').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN', 
@@ -309,6 +311,19 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
-    
+    $('#datetimepicker3').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#beginTime_filter1').trigger('keyup');
+    });
+    $('#datetimepicker4').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN'
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#endTime_filter1').trigger('keyup');
+    });
    
 } );
