@@ -534,6 +534,9 @@ public class CostPreInvoiceOrderController extends Controller {
 				+ " WHERE caor.application_order_id=?",id);
 		
 		setAttr("tpayment", rec1.getDouble("total_pay"));//本次支付金额
+		
+		
+		//处理子表的ids：对账单, 预付单
 		String costCheckOrderIds = "";
 		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
 				"SELECT aco.* FROM `arap_cost_order` aco "
@@ -547,8 +550,12 @@ public class CostPreInvoiceOrderController extends Controller {
 		for (ArapCostOrder arapCostOrder : arapCostOrders) {
 			costCheckOrderIds += arapCostOrder.get("id") + ",";
 		}
-		costCheckOrderIds = costCheckOrderIds.substring(0,
+		if(costCheckOrderIds.length()>0){
+			costCheckOrderIds = costCheckOrderIds.substring(0,
 				costCheckOrderIds.length() - 1);
+		}else{
+			costCheckOrderIds="-1";
+		}
 		setAttr("costCheckOrderIds", costCheckOrderIds);
 		
 		//已付总金额
