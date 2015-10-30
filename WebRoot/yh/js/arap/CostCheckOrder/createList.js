@@ -241,6 +241,10 @@ $(document).ready(function() {
 				return false;
 			}
 			}
+			if($(this).attr('change_amount')==0){
+				$.scojs_message('金额不能为0', $.scojs_message.TYPE_ERROR);
+				return false;
+			}
 			if($(this).parent().siblings('.spname')[0].innerHTML != ''){
 				spType.push($(this).parent().siblings('.spname')[0].innerHTML);
 			}
@@ -322,9 +326,15 @@ $(document).ready(function() {
 		var ty = $(this).parent().parent().attr("order_ty");
 		var name = $(this).attr("name");
 		var value = $(this).val();
+		if(value==0){      
+			$.scojs_message('调整金额失败,金额不能为0', $.scojs_message.TYPE_ERROR);
+			uncheckedCostCheckTable.fnDraw();
+			 return false; 
+		 }
 		 if(isNaN(value)){      
 			 alert("调整金额为数字类型");
-		 }else{
+		 }
+		 else{
 			 $.post('/costCheckOrder/updateDepartOrderFinItem', {ty:ty,departId:departId,paymentId:paymentId, name:name, value:value}, function(data){
 				 $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
 				 $("#debitAmount").html(data.changeAmount);
