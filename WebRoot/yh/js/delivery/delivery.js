@@ -403,9 +403,6 @@ $(document).ready(function() {
 		}
 	}) ;*/
 	$(function(){
-		if($("#deliverystatus").val()=='新建'){
-			$("#ConfirmationBtn").attr("disabled", false);
-		}
 		if($("#deliverystatus").val()=='已发车'){
 			$("#ConfirmationBtn").attr("disabled", true);
 			$("#receiptBtn").attr("disabled", false);
