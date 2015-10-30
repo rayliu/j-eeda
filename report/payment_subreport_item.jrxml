@@ -64,7 +64,7 @@ where  appl_order.id = $P{order_id}
 and caor.order_type='对账单'
 union
 SELECT
-    '' as service_type,
+    '预付单' as service_type,
     appo.order_no as order_no,
     appo.create_date as create_stamp,
     '' as confirm_stamp,
@@ -101,7 +101,7 @@ and caor.order_type='预付单']]>
 	<field name="create_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="confirm_stamp" class="java.sql.Timestamp">
+	<field name="confirm_stamp" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="total_amount" class="java.lang.Double">
