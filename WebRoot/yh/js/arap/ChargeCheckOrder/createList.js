@@ -39,6 +39,8 @@ $(document).ready(function() {
 	          {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},
 	          {"mDataProp":"CNAME","sClass": "cname", "sWidth":"200px"},
 	          {"mDataProp":"SP","sClass": "sp", "sWidth":"200px"},
+	          {"mDataProp":"PLANNING_TIME", "sWidth":"150px"},
+	          {"mDataProp":"ADDRESS", "sWidth":"200px"},
 	          {"mDataProp":null, "sWidth":"150px"},
 	          {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
 	          {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"200px"},
