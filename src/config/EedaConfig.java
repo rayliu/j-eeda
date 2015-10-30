@@ -496,6 +496,7 @@ public class EedaConfig extends JFinalConfig {
         if (H2.equals(dbType)) {
             connectH2();
         } else {
+        	logger.info("DB url: " + url);
             cp = new C3p0Plugin(url, username, pwd);
             //DataInitUtil.initH2Tables(cp);
 
