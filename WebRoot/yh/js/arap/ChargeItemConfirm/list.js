@@ -30,8 +30,10 @@ $(document).ready(function() {
                     return "未收款";
             }},
             {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"120px"}, 
-            {"mDataProp":"CNAME", "sWidth":"200px"},
-            {"mDataProp":"SP", "sWidth":"200px"},
+            {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px"}, 
+            {"mDataProp":"ADDRESS", "sWidth":"150px"}, 
+            {"mDataProp":"CNAME", "sWidth":"100px"},
+            {"mDataProp":"SP", "sWidth":"150px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"150px"}, 
             {"mDataProp":"DEPART_TIME", "sWidth":"130px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
@@ -72,7 +74,7 @@ $(document).ready(function() {
             {"mDataProp":"WAIT_AMOUNT", "sWidth":"80px"},                        
             {"mDataProp":"OTHER_AMOUNT", "sWidth":"80px"},  
             {"mDataProp":null, "sWidth":"80px"},                        
-            {"mDataProp":"ADDRESS", "sWidth":"150px"},                        
+                                   
             {"mDataProp":"REMARK", "sWidth":"200px"}                       
         ]      
     });	
