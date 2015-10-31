@@ -744,10 +744,8 @@ public class CostCheckOrderController extends Controller {
             
             setAttr("totalAmount", Double.valueOf(String.format("%.2f",totalamount)));
             setAttr("changeAmount", Double.valueOf(String.format("%.2f",changeamount)));
-            setAttr("actualAmount", actualamount);
+            setAttr("actualAmount", actualamount);  
     	}
-    	
-    	
     		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
     }
 
@@ -1594,6 +1592,38 @@ public class CostCheckOrderController extends Controller {
 		}else{
 			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
 			insuranceOrder.set("audit_status", "新建");
+			insuranceOrder.update();
+		}
+
+        renderJson("{\"success\":true}");
+	}
+	public void deleteItem(){
+		String id = getPara("id");
+    	String order_type = getPara("order_type");
+    	String costCheckOrderId = getPara("costCheckOrderId");
+    	ArapCostItem item =ArapCostItem.dao.findFirst("select *  from arap_cost_item where ref_order_no=? and ref_order_id=? and cost_order_id=?",order_type,id,costCheckOrderId);
+    	if(item!=null){
+    		item.delete();
+    	}
+		if("提货".equals(order_type)){
+			DepartOrder pickupOrder = DepartOrder.dao.findById(id);
+			pickupOrder.set("audit_status", "已确认");
+			pickupOrder.update();
+		}else if("零担".equals(order_type) || "整车".equals(order_type)){
+			DepartOrder departOrder = DepartOrder.dao.findById(id);
+			departOrder.set("audit_status", "已确认");
+			departOrder.update();
+		}else if("配送".equals(order_type)){
+			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(id);
+			deliveryOrder.set("audit_status", "已确认");
+			deliveryOrder.update();
+		}else if("成本单".equals(order_type)){
+			ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao.findById(id);
+			arapmisccostOrder.set("audit_status", "已确认");
+			arapmisccostOrder.update();
+		}else{
+			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
+			insuranceOrder.set("audit_status", "已确认");
 			insuranceOrder.update();
 		}
 

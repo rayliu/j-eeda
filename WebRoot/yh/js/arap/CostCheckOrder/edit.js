@@ -35,6 +35,7 @@ $(document).ready(function() {
 			  	contactUrl("edit?id",data.ID);
 			  	//if("costCheckOrderbasic" == parentId){
 			  	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			  	addcheckedCostCheck.fnDraw();
 			  	$("#saveCostCheckOrderBtn").attr("disabled",false);
 			  	$("#auditBtn").attr("disabled",false);
 			  	//}
@@ -166,10 +167,46 @@ $(document).ready(function() {
             {"mDataProp":"PAY_AMOUNT"},
             {"mDataProp":"CHANGE_AMOUNT"},
             {"mDataProp":"OFFICE_NAME"},                       
-            {"mDataProp":"REMARK"}                         
+            {"mDataProp":"REMARK"},
+            {"mDataProp": null, 
+                "sWidth": "20px",                
+                "fnRender": function(obj) {
+                	return "<a class='btn btn-danger finItemdel' did='"+obj.aData.DID+"' code='"+obj.aData.ID+"' change_amount='"+obj.aData.CHANGE_AMOUNT+"' order_type='"+obj.aData.BUSINESS_TYPE+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+                }
+            } 
         ]      
     });	
-    
+    $("#costConfirem-table").on('click', '.finItemdel', function(e){
+    	var changeamount=$("#debitAmount").html();
+    	var totalamount=$("#total_amount").val();
+    	var delIds = [$("#orderIds").val().split(",")];
+        var delorderNos = [$("#orderNos").val().split(",")];
+        var value2 = $(this).attr('change_amount');
+		e.preventDefault();
+		var id = $(this).attr('code');
+		var costCheckOrderId = $("#costCheckOrderId").val();
+		var order_type = $(this).attr('order_type');
+		$.post('/costCheckOrder/deleteItem',{id:id,costCheckOrderId:costCheckOrderId,order_type:order_type},function(data){
+			if(data.success){
+				$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+				delIds[0].splice($.inArray(id,delIds[0]),1);
+				isID[0].splice($.inArray(id,isID[0]),1);
+				delorderNos[0].splice($.inArray(order_type,delorderNos[0]),1);
+				$("#orderIds").val(delIds);
+				$("#orderNos").val(delorderNos);
+				var orderNos=$("#orderNos").val();
+				var orderIds=$("#orderIds").val();
+	    		$("#debitAmount").html(parseInt(changeamount )-parseInt(value2));
+	    		$("#total_amount").val(parseInt(totalamount )-parseInt(value2));
+				costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
+		    	costConfiremTable.fnDraw(); 
+		    	addcheckedCostCheck.fnDraw();
+			}else{
+				$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
+			}
+			
+		});
+	});
     $("#arapAuditList").click(function(){
     	var costCheckOrderId = $("#costCheckOrderId").val();
     	var orderNos = $("#orderNos").val();
@@ -188,27 +225,7 @@ $(document).ready(function() {
     		$.scojs_message('当前单号为空', $.scojs_message.TYPE_ERROR);
     	}
     	
-    });
-    $("#costConfirem-table").on('blur', 'input', function(e){
-		e.preventDefault();
-		var orderNos = $("#orderNos").val();
-		var ids=$("#orderIds").val();
-		var paymentId = $(this).parent().parent().attr("id");
-		var departId = $(this).parent().parent().attr("ids");
-		var ty = $(this).parent().parent().attr("order_ty");
-		var name = $(this).attr("name");
-		var value = $(this).val();
-		 if(isNaN(value)){      
-			 alert("调整金额为数字类型");
-		 }else{
-			 $.post('/costCheckOrder/updateDepartOrderFinItem', {orderNos:orderNos,ty:ty,departId:departId,paymentId:paymentId,ids:ids, name:name, value:value}, function(data){
-				 $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
-				 $("#debitAmount").html(data.changeAmount);
-				 $("#costAmount").html(data.actualAmount); 
-				 $("#total_amount").val(data.changeAmount);
-		    	},'json');
-		 }
-	}); 
+    }); 
     var costMiscListTable = $('#costMiscList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -328,14 +345,13 @@ $(document).ready(function() {
             { "mDataProp": null, "sWidth":"20px", "bSortable": false,
                 "fnRender": function(obj) {
 	               	 
-                	var strcheck='<input  type="checkbox" name="order_check_box" spname="'+obj.aData.SPNAME+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';;
+                	var strcheck='<input  type="checkbox" name="order_check_box" spname="'+obj.aData.SPNAME+'" changeamount="'+obj.aData.CHANGE_AMOUNT+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';;
                 	//判断obj.aData.ID 是否存在 list id 
-                	console.log(ids);
-                	 for(var i=0;i<ids.length;i++){
-                		 console.log(i + ":"+ids[i]);
+                	 for(var i=0;i<isID[0].length;i++){
+                		 console.log(i + ":"+isID[0][i]);
                 		 console.log("obj.aData.ID="+obj.aData.ID);
-                         if(ids[i]==obj.aData.ID){                        	 
-                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" spname="'+obj.aData.SPNAME+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
+                         if(isID[0][i]==obj.aData.ID){                        	 
+                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" spname="'+obj.aData.SPNAME+'" changeamount="'+obj.aData.CHANGE_AMOUNT+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
                         	
                          }
                      }
@@ -353,15 +369,15 @@ $(document).ready(function() {
             {"mDataProp":"CHANGE_AMOUNT","sWidth":"60px",
             	"fnRender": function(obj) {
                     if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
-                        return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                        return obj.aData.CHANGE_AMOUNT;
                         
                     }
                     else {
                     	if(obj.aData.PAY_AMOUNT!=null){
-                        return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+                        return obj.aData.PAY_AMOUNT;
                     	}
                     	else{
-                    		return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
+                    		return 0;
                     	}
                     }
                 }
@@ -420,13 +436,6 @@ $(document).ready(function() {
     	externalTab.fnDraw();  
     }); 
     $("#addOrderFormBtn").click(function(){
-    	var ids = $("#orderIds").val();
-    	var OrderNos = $("#orderNos").val();
-    	$.post('/costCheckOrder/create', {ids: ids, orderNos: OrderNos},
-    			
-		'json');
-    });
-    $("#addOrderFormBtn").click(function(){
     	var costCheckOrderId = $("#costCheckOrderId").val();
     	var orderNos = $("#orderNos").val();
     	var orderIds = $("#orderIds").val();
@@ -435,10 +444,13 @@ $(document).ready(function() {
     	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
     	costConfiremTable.fnDraw(); 
     });
+    
+    var isID = [$("#orderIds").val().split(",")];
     var addIds = [$("#orderIds").val()];
     var orderNos = [$("#orderNos").val()];
-    var isID = [$("#orderIds").val().split(",")];
     $("#addcheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
+    	var changeamount=$("#debitAmount").html();
+    	var totalamount=$("#total_amount").val();
     	var a =$("#company").html();
     	var b =$(this).attr('spname');
     	if($(this).prop("checked") == true){
@@ -451,16 +463,27 @@ $(document).ready(function() {
         		alert("单号已经存在明细");
         		return false;
         	}
+    		isID[0].push($(this).attr('id'));
     		addIds.push($(this).attr('id'));
     		orderNos.push($(this).attr('order_no'));
     		$("#orderIds").val(addIds);
     		$("#orderNos").val(orderNos);
+    		var value2 = $(this).attr('changeamount');
+    		$("#debitAmount").html(parseInt(changeamount )+parseInt(value2));
+    		$("#total_amount").val(parseInt(totalamount )+parseInt(value2));
     	}
     	else{
-    		addIds.splice($.inArray($(this).attr('id'),addIds),1);
-    		orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
-    		$("#orderIds").val(addIds);
-    		$("#orderNos").val(orderNos);
+    			addIds.splice($.inArray($(this).attr('id'),addIds),1);
+    			$("#orderIds").val(addIds);
+    			isID[0].splice($.inArray($(this).attr('id'),isID[0]),1);
+    			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+    			$("#orderNos").val(orderNos);
+
+
+    		
+    		var value2 = $(this).attr('changeamount');
+    		$("#debitAmount").html(parseInt(changeamount )-parseInt(value2));
+    		$("#total_amount").val(parseInt(totalamount )-parseInt(value2));
     	}
     });
     // 未选中列表
