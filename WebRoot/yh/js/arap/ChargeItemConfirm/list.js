@@ -29,7 +29,7 @@ $(document).ready(function() {
                 "fnRender": function(obj) {
                     return "未收款";
             }},
-            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"120px"}, 
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"120px"}, 
             {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px"}, 
             {"mDataProp":"ADDRESS", "sWidth":"150px"}, 
             {"mDataProp":"CNAME", "sWidth":"100px"},
