@@ -1,0 +1,1 @@
+package controllers.bz.gateOutOrder.models;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class BzGateOutOrder extends Model<BzGateOutOrder> {	public static final BzGateOutOrder dao = new BzGateOutOrder();}
