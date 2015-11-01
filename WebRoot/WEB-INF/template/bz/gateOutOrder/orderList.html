@@ -1,0 +1,128 @@
+
+<%layout("/yh/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
+<link href="/yh/js/plugins/datatables-1.10.9/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-list fa-fw"></i>出货单列表                            
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            
+                            <div class="">  <!--  form row  -->
+                                <form id="orderForm">
+                                    <div class="row"><!--  第1行  -->
+                                        <div class="col-lg-4"><!--  三列排版  -->
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'order_no', 
+                                                                    label: '出货单号', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>                        
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'customer_name', 
+                                                                    label: '客户名称', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'product_no', 
+                                                                    label: '型号', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>
+                                    </div>
+
+                                    <div class="row"><!--  第2行  -->
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'serial_no', 
+                                                                    label: '条码', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>                        
+                                        <div class="col-lg-4">        
+                                            <%include("/yh/component/form/dateInputField.html", {id:'start_date', label:'创建时间', value:''}){} %>
+                                        </div><!-- /.col-lg-4 -->
+                                        <div class="col-lg-4">${order.accident_date!''}
+                                            <%include("/yh/component/form/dateInputField.html", {id:'end_date', label:'~', value:''}){} %>
+                                        </div><!-- /.col-lg-4 -->
+                                    </div><!-- /.row-->
+
+                                    
+                                </form>
+                            </div><!-- /.row -->
+
+                            <div class="form-group button-bar" >
+                                <button id="searchBtn" class="btn btn-primary btn-sm" type="button">查询</button>
+                                <button id="resetBtn" class="btn btn-default btn-sm" type="button">清空条件</button>
+                               
+                                <a class="btn btn-success btn-sm" href="/gateOutOrder/create">新增</a>
+
+                            </div> 
+                            <div class="table-responsive">
+                                <br/>
+                                <table class="display" id="eeda-table" cellspacing="0">
+                                    <thead class="eeda">
+                                        <tr>
+                                            <th>出货单号</th>
+                                            <th>客户</th>
+                                            <th>型号</th>
+                                            <th>条码</th>
+                                            <th>创建时间</th>
+                                            <th>备注</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        
+                                    </tfoot>
+                                    <tbody>
+                                         
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="panel-heading">
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body" align="center">
+                                        	<center id="centerBody"></center>
+                                        </div>
+                                        <div class="modal-footer" id="footer" aria-hidden="true">
+								        	<button type="button" class="btn  btn-primary" data-dismiss="modal" id="cancel">关闭</button>
+								      	</div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+          
+
+<%}%>
+
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/datatables-1.10.9/js/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/datatables-1.10.9/js/dataTables.bootstrap.js"></script>
+
+
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+
+<script src="/js/bz/gateOutOrder/list.js"></script>
+
