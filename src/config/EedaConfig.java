@@ -91,6 +91,7 @@ import models.yh.carmanage.CarSummaryDetailSalary;
 import models.yh.carmanage.CarSummaryOrder;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
+import models.yh.damageOrder.DamageOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.delivery.DeliveryPlanOrder;
 import models.yh.delivery.DeliveryPlanOrderCarinfo;
@@ -133,6 +134,9 @@ import com.jfinal.weixin.demo.WeixinApiController;
 import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
+import controllers.bz.gateOutOrder.BzGateOutOrderController;
+import controllers.bz.gateOutOrder.models.BzGateOutOrder;
+import controllers.bz.gateOutOrder.models.BzGateOutOrderItem;
 import controllers.yh.profile.DriverAssistantController;
 import controllers.yh.returnTransfer.ReturnTransferController;
 import controllers.yh.scanorder.ContentletController;
@@ -328,7 +332,7 @@ public class EedaConfig extends JFinalConfig {
 		//app 
 		me.add("/m", controllers.yh.app.AppController.class, contentPath);
 		
-		me.add("/gateOutOrder", ContentletController.class, "bz");
+		me.add("/gateOutOrder", BzGateOutOrderController.class, "bz");
 	}
 
     @Override
@@ -464,6 +468,9 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("car_summary_detail_oil_fee", CarSummaryDetailOilFee.class);
         arp.addMapping("car_summary_detail_salary", CarSummaryDetailSalary.class);
         arp.addMapping("car_summary_detail_other_fee", CarSummaryDetailOtherFee.class);
+        
+        arp.addMapping("damage_order", DamageOrder.class);
+        
         //基本数据用户网点
         arp.addMapping("user_office", UserOffice.class);
         arp.addMapping("user_customer", UserCustomer.class);
@@ -485,6 +492,10 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("structure", Structure.class);
         arp.addMapping("field", Field.class);
         arp.addMapping("contentlet", Contentlet.class);
+        
+        //bz
+        arp.addMapping("bz_gate_out_order", BzGateOutOrder.class);
+        arp.addMapping("bz_gate_out_order_item", BzGateOutOrderItem.class);
     }
 
     private void initDBconnector() {

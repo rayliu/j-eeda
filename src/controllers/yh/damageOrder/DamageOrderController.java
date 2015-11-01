@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import models.Account;
 import models.ArapCostInvoiceApplication;
@@ -21,8 +23,11 @@ import models.UserLogin;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ArapMiscCostOrderDTO;
 import models.yh.arap.ArapMiscCostOrderItem;
+import models.yh.carmanage.CarSummaryDetailOtherFee;
+import models.yh.damageOrder.DamageOrder;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -38,6 +43,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.DbUtils;
 import controllers.yh.util.LocationUtil;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
@@ -64,64 +70,33 @@ public class DamageOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
+		
     	render("/yh/DamageOrder/DamageOrderEdit.html");
     }
 
     public void list() {
-    	String sp = getPara("sp");
-        String customer = getPara("companyName");
-        String spName = getPara("spName");
-        String beginTime = getPara("beginTime");
-        String endTime = getPara("endTime");
-        String orderNo = getPara("orderNo");
-        String status = getPara("status");
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        
-        String sql = "select amco.*, c1.abbr customer_name, c2.abbr sp_name from arap_misc_cost_order amco"
-					+ " left join party p1 on amco.customer_id = p1.id"
-					+ " left join party p2 on amco.sp_id = p2.id"
-					+ " left join contact c1 on p1.contact_id = c1.id"
-					+ " left join contact c2 on p2.contact_id = c2.id"
-					+ " where amco.order_no not like 'SGSK%'";
+        String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name, "
+    			+ " ifnull(u.c_name, u.user_name) creator_name from damage_order dao"
+    			+"	left join party p1 on dao.customer_id = p1.id "
+    			+"		left join contact c1 on p1.contact_id = c1.id"
+    			+"	    left join party p2 on dao.sp_id = p2.id "
+    			+"		left join contact c2 on p2.contact_id = c2.id "
+    			+"      left join user_login u on u.id = dao.creator where 1 =1 ";
         logger.debug("sql:" + sql);
-        String condition = "";
-        //TODO 始发地和目的地 客户没有做
-        if(sp != null || customer != null || spName != null
-        		|| status != null || beginTime != null || endTime != null|| orderNo != null){
-        	if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1970-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "2037-12-31";
-			}
-			if (status!=null && "业务收款".equals(status)) {
-				status = "biz";
-			}
-			if (status!=null && "非业务收款".equals(status)) {
-				status = "non_biz";
-			}
-			condition = " and "
-					+ " ifnull(c2.abbr,'') like '%" + spName + "%' "
-					+ " and ifnull(c1.abbr,'') like '%" + customer + "%' "
-					+ " and amco.order_no like '%" + orderNo + "%' "
-					+ " and amco.create_stamp between '" + beginTime + "' and '" + endTime+ " 23:59:59' ";
-			if(status!=null && status.length()>0){
-				condition  += " and amco.type = '" + status + "' ";
-			}
-			
-        }
         
+        String condition = DbUtils.buildConditions(getParaMap());
 
         String sqlTotal = "select count(1) total from ("+sql+ condition+") B";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
-        List<Record> BillingOrders = Db.find(sql+ condition + " order by amco.create_stamp desc " +sLimit);
+        List<Record> BillingOrders = Db.find(sql+ condition + " order by create_date desc " +sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
@@ -173,57 +148,86 @@ public class DamageOrderController extends Controller {
     @Before(Tx.class)
 	public void save() throws Exception {		
 		String jsonStr=getPara("params");
-    	logger.debug(jsonStr);
+    	
     	 Gson gson = new Gson();  
          Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
          
         ArapMiscCostOrder arapMiscCostOrder = new ArapMiscCostOrder();
-		String costMiscOrderId = (String) dto.get("costMiscOrderId");
-		String biz_type = (String) dto.get("biz_type");
-		String customerId = (String) dto.get("customer_id");
-		String spId = (String) dto.get("sp_id");
-		String routeFrom = (String) dto.get("route_from");
-		String routeTo = (String) dto.get("route_to");
-		String others_name = (String) dto.get("others_name");
-		String ref_no = (String) dto.get("ref_no");
+		String id = (String) dto.get("id");
+		String customer_id = (String) dto.get("customer_id");
+		String sp_id = (String) dto.get("sp_id");
+		String order_type = (String) dto.get("order_type");
+		String biz_order_no = (String) dto.get("biz_order_no");
+		String process_status = (String) dto.get("process_status");
+		String accident_type = (String) dto.get("accident_type");
+		String accident_desc = (String) dto.get("accident_desc");
+		String accident_date = (String) dto.get("accident_date");
 		String remark = (String) dto.get("remark");
-		Double amount = (Double) dto.get("amount");
-		String cost_to_type = (String) dto.get("cost_to_type");
+		
 		UserLogin user = LoginUserController.getLoginUser(this);
 		
-		String old_biz_type = "";
-		if (!"".equals(costMiscOrderId) && costMiscOrderId != null) {
+		if (StringUtils.isNotEmpty(id)) {
 			//update
+			DamageOrder order = DamageOrder.dao.findById(id);
+			order.set("customer_id", customer_id);
+			order.set("sp_id", sp_id);
+			order.set("order_type", order_type);
+			order.set("biz_order_no", biz_order_no);
+			order.set("process_status", process_status);
+			order.set("accident_type", accident_type);
+			order.set("accident_desc", accident_desc);
+			order.set("accident_date", accident_date);
+			order.set("remark", remark);
+			order.update();
 		} else {
 			//create
+			DamageOrder order = new DamageOrder();
+			order.set("order_no", OrderNoGenerator.getNextOrderNo("HSD"));
+			order.set("customer_id", customer_id);
+			order.set("sp_id", sp_id);
+			order.set("order_type", order_type);
+			order.set("biz_order_no", biz_order_no);
+			order.set("process_status", process_status);
+			order.set("accident_type", accident_type);
+			order.set("accident_desc", accident_desc);
+			order.set("accident_date", accident_date);
+			order.set("remark", remark);
+			
+			order.set("creator", user.get("id"));
+			order.set("office_id", user.get("office_id"));
+			order.set("create_date", new Date());
+			order.set("status", "新建");
+			order.save();
+			id = order.getInt("id").toString();
 		}
 		
 		//return dto
-		ArapMiscCostOrderDTO returnDto = getOrderDto(arapMiscCostOrder,
-				costMiscOrderId);
+		Record returnDto = getOrderDto(id);
 		renderJson(returnDto);
 	}
 
-	private ArapMiscCostOrderDTO getOrderDto(
-			ArapMiscCostOrder arapMiscCostOrder, String costMiscOrderId) {
-		List<ArapMiscCostOrderItem> itemList = 
-				ArapMiscCostOrderItem.dao.find("select amcoi.*, fi.name from arap_misc_cost_order_item amcoi, fin_item fi"
-						+ " where amcoi.fin_item_id=fi.id and misc_order_id=?", costMiscOrderId);
+	private Record getOrderDto(String orderId) {
+		Map order = new HashMap();
+		String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name, "
+			+ " ifnull(u.c_name, u.user_name) creator_name from damage_order dao"
+			+"	left join party p1 on dao.customer_id = p1.id "
+			+"		left join contact c1 on p1.contact_id = c1.id"
+			+"	    left join party p2 on dao.sp_id = p2.id "
+			+"		left join contact c2 on p2.contact_id = c2.id "
+			+"      left join user_login u on u.id = dao.creator"
+			+ " where dao.id=?";
+		Record orderRec = Db.findFirst(sql, orderId);
 		
-		ArapMiscCostOrderDTO returnDto = new ArapMiscCostOrderDTO();
-		returnDto.setOrder(arapMiscCostOrder);
-		returnDto.setItemList(itemList);
-		return returnDto;
+		order.put("itemList", orderRec);
+		
+		return orderRec;
 	}
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
 	public void edit() {
 		String id = getPara("id");
 		
-//		ArapMiscCostOrderDTO orderDto = getOrderDto(arapMiscCostOrder,
-//				costMiscOrderId);
-//		
-//		setAttr("orderDto", orderDto);
+		setAttr("order", getOrderDto(id));
 		render("/yh/DamageOrder/DamageOrderEdit.html");
 	}
 	

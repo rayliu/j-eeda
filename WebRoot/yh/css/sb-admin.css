@@ -500,4 +500,8 @@ label.error {
 table .form-control{
 	width: 100% !important;
 }
+
+.button-bar{
+	margin-top: 10px;
+}
 /* ray added */

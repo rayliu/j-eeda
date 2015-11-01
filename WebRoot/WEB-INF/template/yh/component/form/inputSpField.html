@@ -2,11 +2,11 @@
 	<label class="search-label">${label!''}</label>
 	<input type="text" class="form-control search-control" 
 	id="${id}_input" 
-	placeholder="${placeholder!'请选择供应商'}">
+	placeholder="${placeholder!'请选择供应商'}"  value="${display_value!''}">
 	<ul id='${id}_list' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 </ul>
 </div>
-<input id="${id}" type="hidden" name="${id}" value="${value!''}"/>
+<input id="${id}" style="display: none;" name="${id}" value="${value!''}"/>
 <script>
 
 $(document).ready(function() {
@@ -55,6 +55,9 @@ $(document).ready(function() {
     
     // 没选中供应商，焦点离开，隐藏列表
 	inputField.on('blur', function(){
+		if (inputField.val().trim().length ==0) {
+			hiddenField.val('');
+		};
 		spList.hide();
  	});
 

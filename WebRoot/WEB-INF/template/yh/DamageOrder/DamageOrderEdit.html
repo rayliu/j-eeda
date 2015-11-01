@@ -6,571 +6,206 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="btn-header" style="font-size:32px">货损记录单
-                        <a class="btn  btn-primary" href="/damageOrder">返回</a>
-                    </div>
+                    <div class="btn-header" style="font-size:32px">货损记录单</div>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
-            <div class="row"><!--  三列排版  -->
-                <div class="col-lg-4">
-                    <%include("/yh/component/form/inputField.html", 
-                                        {   id:'order_no', 
-                                            label:'货损单号', 
-                                            value:order.ORDER_NO!'', 
-                                            disabled: 'disabled'
-                                        }){}%>
-                                        
-                    <%include("/yh/component/form/selectField.html", 
-                                                {   id:'order_type', 
-                                                    label:'单据类型', 
-                                                    value_list:[
-                                                        {code:'运输单', value:'运输单'}, 
-                                                        {code:'提货单', value:'提货单'}, 
-                                                        {code:'发车单', value:'发车单'},
-                                                        {code:'配送单', value:'配送单'}, 
-                                                        {code:'退货单', value:'退货单'}
-                                                    ]
-                                                }
-                                             ){} %>
-                    <%include("/yh/component/form/selectField.html", 
-                                                {   id:'accident_type', 
-                                                    label:'事故类型', 
-                                                    value_list:[
-                                                        {code:'包装破损', value:'包装破损'}, 
-                                                        {code:'摔机货损', value:'摔机货损'}, 
-                                                        {code:'货品丢失', value:'货品丢失'},
-                                                        {code:'交通事故', value:'交通事故'}, 
-                                                        {code:'设施损坏', value:'设施损坏'},
-                                                        {code:'其它', value:'其它'}
-                                                    ]
-                                                }
-                                             ){} %>
-                                             
-                    
-                    <div class="form-group">
-                        <label class="label-margin">创建人</label>          
-                    </div>
-                </div><!-- /.col-lg-4 -->
-                <div class="col-lg-4">
-                    <%include("/yh/component/form/inputCustomerField.html", 
-                        {
-                            id:'customer_id', 
-                            label:'客户名称', 
-                            value:order.CUSTOMER_ID!''
-                        }){} %>
 
-                    <%include("/yh/component/form/inputField.html", 
-                                        {   id:'biz_order_no', 
-                                            label:'业务单号', 
-                                            value:order.biz_order_no!''
-                                            }){} %>
-                    <%include("/yh/component/form/inputField.html", 
-                                        {  id:'accident_desc', 
-                                            label:'事故描述', 
-                                            value:order.accident_desc!''
-                                        }){} %>
-                    <div class="form-group">
-                        <label class="label-margin">创建时间</label>          
+            <input id="order_id" type="hidden" name="order_id" value="${order.id!''}"/>
+
+
+            <div class="row">  <!--  form row  -->
+                <form id="orderForm">
+                    <div class="row"><!--  第1行  -->
+                        <div class="col-lg-4"><!--  三列排版  -->
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'order_no', 
+                                                    label:'货损单号', 
+                                                    value:order.ORDER_NO!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                        </div>                        
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputCustomerField.html", 
+                                {
+                                    id:'customer_id', 
+                                    label:'客户名称', 
+                                    value:order.CUSTOMER_ID!'',
+                                    display_value: order.customer_name!''
+                                }){} %>
+                        </div>
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputSpField.html", 
+                                {
+                                    id:'sp_id', 
+                                    label:'供应商', 
+                                    value:order.sp_id!'',
+                                    display_value: order.sp_name!''
+                                }){} %>
+                        </div>
                     </div>
 
-                </div><!-- /.col-lg-4 -->
-                <div class="col-lg-4">
-                    <%include("/yh/component/form/inputSpField.html", 
-                        {
-                            id:'sp_id', 
-                            label:'供应商', 
-                            value:order.sp_id!''
-                        }){} %>
+                    <div class="row"><!--  第2行  -->
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/selectField.html", 
+                                                    {   id:'order_type', 
+                                                        label:'单据类型', 
+                                                        value: order.order_type!'',
+                                                        value_list:[
+                                                            {code:'运输单', value:'运输单'}, 
+                                                            {code:'提货单', value:'提货单'}, 
+                                                            {code:'发车单', value:'发车单'},
+                                                            {code:'配送单', value:'配送单'}, 
+                                                            {code:'退货单', value:'退货单'}
+                                                        ]
+                                                    }
+                                                 ){} %>
+                        </div>                        
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                            {   id:'biz_order_no', 
+                                                label:'业务单号', 
+                                                value:order.biz_order_no!''
+                                                }){} %>
                         
-                    <%include("/yh/component/form/selectField.html", 
-                                {   id:'process_status', 
-                                    label:'处理进度', 
-                                    value_list:[
-                                        {code:'已报保险', value:'已报保险'}, 
-                                        {code:'退回中转仓', value:'退回中转仓'}, 
-                                        {code:'退回客户仓', value:'退回客户仓'},
-                                        {code:'检测定损', value:'检测定损'}, 
-                                        {code:'保险定案', value:'保险定案'},
-                                        {code:'已收理赔款', value:'已收理赔款'},
-                                        {code:'已支付赔款', value:'已支付赔款'},
-                                        {code:'更换包装', value:'更换包装'},
-                                        {code:'重新发货', value:'重新发货'}
-                                    ]
-                                }
-                             ){} %>
-                    <%include("/yh/component/form/dateInputField.html",{div_id:'datetimepicker', input_id:'accident_date', label:'事故时间'}){} %>
-                </div><!-- /.col-lg-4 -->
+                        </div>                        
+                        <div class="col-lg-4"> 
+                            <%include("/yh/component/form/selectField.html", 
+                                    {   id:'process_status', 
+                                        label:'处理进度', 
+                                        value: order.process_status!'',
+                                        value_list:[
+                                            {code:'已报保险', value:'已报保险'}, 
+                                            {code:'退回中转仓', value:'退回中转仓'}, 
+                                            {code:'退回客户仓', value:'退回客户仓'},
+                                            {code:'检测定损', value:'检测定损'}, 
+                                            {code:'保险定案', value:'保险定案'},
+                                            {code:'已收理赔款', value:'已收理赔款'},
+                                            {code:'已支付赔款', value:'已支付赔款'},
+                                            {code:'更换包装', value:'更换包装'},
+                                            {code:'重新发货', value:'重新发货'}
+                                        ]
+                                    }
+                                 ){} %>
+                        </div><!-- /.col-lg-4 -->
+                    </div><!-- /.row-->
+
+                    <div class="row"><!--  第3行  -->
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/selectField.html", 
+                                                    {   id:'accident_type', 
+                                                        label:'事故类型', 
+                                                        value: order.accident_type!'',
+                                                        value_list:[
+                                                            {code:'包装破损', value:'包装破损'}, 
+                                                            {code:'摔机货损', value:'摔机货损'}, 
+                                                            {code:'货品丢失', value:'货品丢失'},
+                                                            {code:'交通事故', value:'交通事故'}, 
+                                                            {code:'设施损坏', value:'设施损坏'},
+                                                            {code:'其它', value:'其它'}
+                                                        ]
+                                                    }
+                                                 ){} %>
+                        </div><!-- /.col-lg-4 -->
+                        <div class="col-lg-4">        
+                            <%include("/yh/component/form/inputField.html", 
+                                            {  id:'accident_desc', 
+                                                label:'事故描述', 
+                                                value:order.accident_desc!''
+                                            }){} %>
+                        </div><!-- /.col-lg-4 -->
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/dateInputField.html",{id:'accident_date', label:'事故时间', value: order.accident_date!''}){} %>
+                        </div><!-- /.col-lg-4 -->
+                    </div>    
+
+                    <div class="row"><!--  第4行  -->
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'creator_name', 
+                                                    label:'创建人', 
+                                                    value:order.creator_name!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                        </div>
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'create_date', 
+                                                    label:'创建时间', 
+                                                    value:order.create_date!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                        </div>    
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'status', 
+                                                    label:'状态', 
+                                                    value:order.status!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                        </div><!-- /.col-lg-4 -->
+                    </div> 
+                </form>
             </div><!-- /.row -->
             <div class="row">
                 <div class="col-lg-12">
                    <div class="form-group">
                         <label>备注</label>
-                        <textarea class="form-control" rows="3" name="remark"></textarea>
+                        <textarea id='remark' class="form-control" rows="3" name="remark">${order.remark!''}</textarea>
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
+
+
              <br>
             <div class="row">
                 <div class="col-lg-12">
-                   
-                    <div class ="form-group">
-                        <button class="btn  btn-primary btn-sm" id="add_cargo">添加货品</button>
-                    </div>
-                    <div class="table-responsive">
-                                <br/>
-                                <table class="display" id="cargo-table" cellspacing="0"  width="100%">
-                                    <thead class="eeda">
-                                        <tr>
-                                            <th></th>
-                                            <th>产品型号</th>
-                                            <th>产品序列号</th>
-                                            <th>货损数量</th>
-                                            <th>备注说明</th>
-                                        </tr>
-                                    </thead>                                   
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
+                    <button class="btn btn-success btn-xs" id="add_cargo">添加货品</button>
+                    <%include("/yh/component/form/detailTable.html", 
+                        {
+                            id:'cargo_table', 
+                            list:['', '产品型号', '产品序列号', '货损数量', '备注']
+                        }){} %>
                 </div>
             </div>
-            <hr/>
+            <hr>
             <div class="row">
                 <div class="col-lg-12">
-                    <br>
-                    <div class ="form-group">
-                        <button class="btn  btn-primary btn-sm" id="addFee">添加应收费用</button>
-                    </div>
-                    <div class="table-responsive">
-                                <br/>
-                                <table class="display" id="charge-table" cellspacing="0" width="100%">
-                                    <thead class="eeda">
-                                        <tr>
-                                            <th>条目  </th>
-                                            <th>赔偿金额  </th>  
-                                            <th>付给  </th>
-                                            <th>名称  </th>
-                                            <th>备注</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
+                    <button class="btn btn-success btn-xs" id="add_charge">添加应收</button>
+                    <%include("/yh/component/form/detailTable.html", 
+                        {
+                            id:'charge_table', 
+                            list:['', '应收条目', '金额', '收取', '名称', '备注']
+                        }){} %>
+                    
                 </div>
             </div>
+            <hr>
             <div class="row">
                 <div class="col-lg-12">
-                    <br>
-                    <div class ="form-group">
-                        <button class="btn  btn-primary btn-sm" id="addFee">添加应付费用</button>
-                    </div>
-                    <div class="table-responsive">
-                                <br/>
-                                <table class="display" id="cost-table" cellspacing="0" style="width: 2200px;">
-                                    <thead class="eeda">
-                                        <tr>
-                                            <th>货损单号</th>
-                                            <th>单据类型</th>
-                                            <th>业务单号</th>
-                                            <th>客户</th>
-                                            <th>供应商</th>
-                                            <th>事故类型</th>
-                                            <th>事故描述</th>
-                                            <th>产品型号（多种如何处理？）</th>
-                                            <th>货损数量</th>
-                                            <th>产品编码（序列号？）</th>
-                                            <th>处理进度</th>  
-                                            <th>赔付情况（几种？人手写？）</th>
-                                            <th>事故时间</th>
-                                            <th>运输计划时间</th>
-                                            <th>赔偿方案</th>
-                                            <th>节点（和进度的区别？）</th>
-                                            <th>时间??</th>
-                                            <th>备注说明</th>
-                                        </tr>
-                                    </thead>
-                             
-                                    <tbody>
-                                         <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr><tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                        <tr>
-                                            <td>HS2015101100001</td>
-                                            <td>运输单</td>
-                                            <td>YS2015101100001</td>
-                                            <td>广电运通</td>
-                                            <td>顺丰</td>
-                                            <td>包装破损</td>
-                                            <td>人为包装破损</td>
-                                            <td>H23L</td>
-                                            <td>20</td>
-                                            <td>??</td>
-                                            <td>已报保险</td>
-                                            <td>赔付情况（几种？人手写？）</td>
-                                            <td>2015-10-11</td>
-                                            <td>2015-10-11</td>
-                                            <td>直接赔偿</td>
-                                            <td>已报保险</td>
-                                            <td>2015-10-11</td>
-                                            <td>示例说明</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <button class="btn btn-success btn-xs" id="add_cost">添加应付</button>
+                    <%include("/yh/component/form/detailTable.html", 
+                        {
+                            id:'cost_table', 
+                            list:['', '应付条目', '金额', '付给', '名称', '备注']
+                        }){} %>
+                    
                 </div>
-            </div><!-- end of row-->
+            </div>
             <br>
             <div class="row">
                 <div class="col-lg-12">
-                    <a class="btn  btn-primary" href="#">保存</a>
-                    <a class="btn  btn-primary" href="#">已完成</a>
+                    <a id='saveBtn' class="btn  btn-primary" href="#">保存</a>
+                    <a id='completeBtn' class="btn  btn-primary" href="#">已完成</a>
+                    <a class="btn  btn-default" href="/damageOrder">返回</a>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-        </div>
+
+
+        </div><!--  form row  -->
         <!-- /#page-wrapper -->
 <%}%>
 
@@ -587,4 +222,7 @@
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 
 <script src="/yh/js/eeda-common.js"></script>
+<script>
+    var order_no = '${data.order.order_no!'新建货损单'}'; 
+</script>
 <script src="/yh/js/damageOrder/edit.js"></script>
