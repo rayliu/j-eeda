@@ -242,7 +242,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(to_name,'') like '%" + to_name + "%'"
 					+ " and ifnull(province,'') like '%" + province + "%'"
 					+ " and ifnull(transfer_type,'') like '%" + transfer_type + "%'"
-					+ " and create_date between '" + time_one + "' and '" + time_two + " 23:59:59' ";
+					+ " and planning_time between '" + time_one + "' and '" + time_two + " 23:59:59' ";
 					
 			
 					// 获取总条数
