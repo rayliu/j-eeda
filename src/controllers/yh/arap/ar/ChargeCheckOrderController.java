@@ -130,7 +130,7 @@ public class ChargeCheckOrderController extends Controller {
 			}
 		}
 
-		setAttr("totalAmount", totalAmount);
+		setAttr("totalAmount", Double.valueOf(String.format("%.2f",totalAmount)));
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
