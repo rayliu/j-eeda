@@ -293,7 +293,7 @@ public class ChargeConfirmController extends Controller {
 		}
 		
 		ArapChargeReceiveConfirmOrderLog arapChargeReceiveConfirmOrderLog = null;
-   		Account account = Account.dao.findFirst("select * from fin_account where account_no = '"+receive_account_no+"'");
+   		Account account = Account.dao.findFirst("select * from fin_account where bank_name = '"+receive_bank+"'");
 		//创建付款LOG记录表
    		arapChargeReceiveConfirmOrderLog = new ArapChargeReceiveConfirmOrderLog();
 		if(account!=null)
