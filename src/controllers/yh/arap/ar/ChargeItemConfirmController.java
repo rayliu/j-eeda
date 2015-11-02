@@ -89,7 +89,7 @@ public class ChargeItemConfirmController extends Controller {
 				+"        ror.transfer_order_id,"
 				+"        ror.notity_party_id,"
 				+"        ror.customer_id,"
-				+"		  ror.total_amount,"
+				+"		  (select sum(amount) from return_order_fin_item rofi where rofi.return_order_id= ror.id) total_amount,"
 				+"        ror.path,"
 				+"        ror.create_date,"
 				+"        null change_amount,"
