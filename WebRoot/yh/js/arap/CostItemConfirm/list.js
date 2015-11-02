@@ -19,11 +19,11 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 9999999], [10, 25, 50, "All"] ],
-        "bServerSide": true,
+        //"bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costConfirmList/list",
+        //"sAjaxSource": "/costConfirmList/list",
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
           $(nRow).attr('id', aData.DID);
           $(nRow).attr('ids', aData.ID);
@@ -191,6 +191,7 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#plantime').trigger('keyup');
     });
+
     $('#arrivaldatetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
@@ -198,6 +199,7 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#arrivaltime').trigger('keyup');
     });
+
     $("#costConfiremBtn").click(function(e){
         e.preventDefault();
     	var idArr=[];
@@ -264,7 +266,7 @@ $(document).ready(function() {
            $("#companyList").hide();
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
-           refreshData();
+          
        });
     // 没选中客户，焦点离开，隐藏列表
        $('#customer_name').on('blur', function(){
@@ -326,12 +328,6 @@ $(document).ready(function() {
 
        		
        	});
-       	
-    	// 没选中供应商，焦点离开，隐藏列表
-       	$('#sp_filter').on('blur', function(){
-        		refreshData();
-        	});
-
 
        	// 没选中供应商，焦点离开，隐藏列表
        	$('#sp_filter').on('blur', function(){
@@ -374,7 +370,6 @@ $(document).ready(function() {
        		}
        		pageSpAddress.append(address);
                $('#spList').hide();
-               refreshData();
            });
        
        	$('#datetimepicker').datetimepicker({  
@@ -410,28 +405,35 @@ $(document).ready(function() {
     		var customer_name = $("#customer_name").val();
     		var plantime = $("#plantime").val();
     		var arrivaltime = $("#arrivaltime").val();
+
+        costConfiremTable.fnSettings().oFeatures.bServerSide = true;
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
-											    		+"&sp="+sp
+                              +"&sp="+sp
 											    		+"&no="+no
 											    		+"&beginTime="+beginTime
 											    		+"&endTime="+endTime
 											    		+"&status="+status
 											    		+"&type="+type
 											    		+"&booking_note_number="+booking_note_number
-    		                                            +"&route_from="+route_from
-    		                                            +"&route_to="+route_to
-    		                                            +"&customer_name="+customer_name
+                              +"&route_from="+route_from
+                              +"&route_to="+route_to
+                              +"&customer_name="+customer_name
     													+"&plantime="+plantime
     													+"&arrivaltime="+arrivaltime;
     	
-    		costConfiremTable.fnDraw();
+    		  costConfiremTable.fnDraw();
        };
+       
        /*=====================条件过滤=======================*/
-        //过滤客户
-        $('#plantime,#arrivaltime,#route_to,#operation_number,#route_from,#customer_name,#orderNo_filter,#operation number,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
-        	refreshData();
-     	} );
-        $('#order_type_filter,#arrivaltime,#order_status_filter').on( 'change', function () {
-        	refreshData();
-     	} );
+      $('#searchButton').click(function(){
+          refreshData();
+      });
+      //过滤客户
+      // $('#plantime,#arrivaltime,#route_to,#operation_number,#route_from,#customer_name,#orderNo_filter,#operation number,#beginTime_filter,#endTime_filter,#booking_note_number').on('keyup', function () {
+      //   	refreshData();
+     	// });
+
+      // $('#order_type_filter,#arrivaltime,#order_status_filter').on( 'change', function () {
+      //   	refreshData();
+     	// } );
 } );
