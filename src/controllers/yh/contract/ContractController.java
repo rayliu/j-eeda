@@ -483,19 +483,20 @@ public class ContractController extends Controller {
 
     // 列出客户公司名称
     public void search() {
-        String locationName = getPara("locationName");
+        String customerName = getPara("locationName");
         
         List<Record> locationList = Collections.EMPTY_LIST;
-        if (locationName.trim().length() > 0) {
-            locationList = Db
-                    .find("select c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.abbr like '%"+locationName+"%' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
-
-        } else {
-            locationList = Db.find("select c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'  and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
-
+        String sql = "select c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' "
+        		+ " and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
+        			
+        if (customerName.trim().length() > 0) {
+        	sql +=" and (c.abbr like '%" + customerName + "%' or c.quick_search_code like '%" + customerName.toUpperCase() + "%') ";
         }
+        locationList = Db.find(sql);
+
         renderJson(locationList);
     }
+    
     public void searcCustomer() {
     	
         String locationName = getPara("locationName");
