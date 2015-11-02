@@ -195,6 +195,8 @@ public class CostConfirmController extends Controller {
 					arapCostPayConfirmOrderDtail.set("misc_cost_order_id", idArray[i]);
 				}else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
 					arapCostPayConfirmOrderDtail.set("reimbursement_order_id", idArray[i]);
+				}else if(order_type.equals("行车单")||order_type.equals("行车报销单")){
+					arapCostPayConfirmOrderDtail.set("car_summary_order_id", idArray[i]);
 				}else if(order_type.equals("往来票据单")){
 					arapCostPayConfirmOrderDtail.set("wlpj_order_id", idArray[i]);
 				}else{
@@ -246,6 +248,7 @@ public class CostConfirmController extends Controller {
    		String total_amount = getPara("total_amount");
    		String orderIds = getPara("orderIds");
    		String pay_time= getPara("pay_time");
+   		String account_id= getPara("account_id");
    		String order_type = getPara("order_type"); //单据类型
    		String detailJson = getPara("detailJson");
    		String applicationId = "";
@@ -286,11 +289,11 @@ public class CostConfirmController extends Controller {
 		}
 		
 		ArapCostPayConfirmOrderLog arapCostPayConfirmOrderLog = null;
-   		Account account = Account.dao.findFirst("select * from fin_account where account_no = '"+pay_account_no+"'");
+   		//Account account = Account.dao.findFirst("select * from fin_account where account_no = '"+pay_account_no+"'");
 		//创建付款LOG记录表
 		arapCostPayConfirmOrderLog = new ArapCostPayConfirmOrderLog();
-		if(account!=null)
-		arapCostPayConfirmOrderLog.set("pay_out_bank_id", account.getLong("id"));
+		if(!account_id.equals("") && account_id!=null)
+			arapCostPayConfirmOrderLog.set("pay_out_bank_id", account_id);
 		arapCostPayConfirmOrderLog.set("pay_type", pay_type);
 		arapCostPayConfirmOrderLog.set("pay_out_bank_name", pay_bank);
 		arapCostPayConfirmOrderLog.set("pay_out_account_no", pay_account_no);
@@ -381,8 +384,8 @@ public class CostConfirmController extends Controller {
 	        auditLog.set("amount", pay_amount);
 	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
 	        auditLog.set("create_date", pay_time);
-	        if(account!=null)
-	        	auditLog.set("account_id", account.get("id"));
+	        if(!account_id.equals("") && account_id!=null)
+	        	auditLog.set("account_id", account_id);
 	        else
 	        	auditLog.set("account_id", 4);
 	        if(order_type.equals("成本单")){
@@ -401,14 +404,15 @@ public class CostConfirmController extends Controller {
 	        
 	        if("cash".equals(pay_type)){
 	        	Account cashAccount = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
-	        	cashAccount.set("amount", (cashAccount.getDouble("amount")==null?0.0:cashAccount.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
+	        	//cashAccount.set("amount", (cashAccount.getDouble("amount")==null?0.0:cashAccount.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
 	        	
-	        	updateAccountSummary(pay_amount, cashAccount.getLong("id"),pay_time);
+	        	updateAccountSummary(pay_amount,cashAccount.getLong("id"),pay_time);
 	        	
 	        }else{
-	        	account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
+	        	//Account account = Account.dao.findFirst("select * from fin_account where account_id = ");
+	        	//account.set("amount", (account.getDouble("amount")==null?0.0:account.getDouble("amount")) - Double.parseDouble(pay_amount)).update();
 	        	
-	        	updateAccountSummary(pay_amount, account.getLong("id"),pay_time);
+	        	updateAccountSummary(pay_amount, Long.parseLong(account_id) ,pay_time);
 	        }
 		
 		Map BillingOrderListMap = new HashMap();

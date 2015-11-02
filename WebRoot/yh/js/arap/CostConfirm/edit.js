@@ -133,8 +133,7 @@
     
 
    
-  //供应商查询
-    //获取供应商的list，选中信息在下方展示其他信息
+  //银行
     $('#pay_bank').on('input click', function(){
     	var me = this;
 		var inputStr = $('#pay_bank').val();
@@ -180,6 +179,7 @@
 		var message = $(this).text();
 		$('#pay_bank').val(message.substring(0, message.indexOf(" ")));
 	    $('#pay_bank').val($(this).attr('bank_name'));
+	    $('#account_id').val($(this).attr('id'));
 	    $('#pay_account_no').val($(this).attr('account_no'));
         $('#bankList').hide();
         refreshData();
@@ -187,10 +187,14 @@
     
 	$("#pay_type").on('mouseup click',function(){
 		if($("#pay_type").val() == 'cash'){
-			//$("#pay_bank").attr("readonly",true);
-//			$("#pay_bank").hide();
-//			 $('#payee_no').hide();
+			$("#pay_bank").val('');
+			$("#pay_account_no").val('');
+			$("#pay_bank").attr("disabled",true);
+			$('#pay_account_no').attr("disabled",true);
 			
+		}else if($("#pay_type").val() == 'transfers'){
+			$("#pay_bank").attr("disabled",false);
+			$("#pay_account_no").attr("disabled",false);	
 		};
 	});
 	
@@ -231,6 +235,13 @@
 			$("#savePayConfirmBtn").attr("disabled", true);
 		}else{
 			$("#savePayConfirmBtn").attr("disabled", false);
+		}
+		
+		if($("#pay_type").val()=='transfers'){
+			if($("#pay_bank").val()==''){
+				$.scojs_message('转账的账户不能为空', $.scojs_message.TYPE_FALSE);
+				return false;
+			}
 		}
 
 		$.get('/costConfirm/saveConfirmLog',$("#confirmForm").serialize(), function(data){

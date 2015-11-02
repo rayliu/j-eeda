@@ -16,6 +16,7 @@
             			<input id='total_pay' name='total_pay' type="hidden" value="${total_pay!'0'}" >
             			<input id='total_amount' name='total_amount' type="hidden" >
             			<input id='total_nopay' name='total_amount' type="hidden" >
+            			<input id='account_id' name='account_id' type="hidden" >
             			<input id='detailJson' name='detailJson' type="hidden" >
             			<input id='order_type' name='order_type' type="hidden" value="${order_type!''}" >
             			<!-- <input id='nopay_one' name='nopay_one' type="hidden" > -->
@@ -117,13 +118,13 @@
                             <div class="col-lg-4">
                                 <div class="form-group">
                                         <label class="search-label">支付银行</label>
-                                        <input type="text" class="form-control search-control pay_bank" id="pay_bank" placeholder="请选择支付银行" name="pay_bank"> 
+                                        <input type="text" class="form-control search-control pay_bank" id="pay_bank" disabled="disabled" placeholder="请选择支付银行" name="pay_bank"> 
                                     	<ul id='bankList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 							</ul>
                                 </div>
                                 <div class="form-group">
                                     <label class="search-label">支付账号</label>
-                                    <input type="text" class="form-control search-control pay_account_no" id="pay_account_no" name="pay_account_no">
+                                    <input type="text" class="form-control search-control pay_account_no" disabled="disabled" id="pay_account_no" name="pay_account_no">
                                 </div>
                             </div>
                             <div class="col-lg-4">
