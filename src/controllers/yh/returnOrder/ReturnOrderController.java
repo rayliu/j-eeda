@@ -525,7 +525,8 @@ public class ReturnOrderController extends Controller {
 					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.id = "+id;
 		ReturnOrder returnOrder = ReturnOrder.dao.findFirst(sql);		
 		
-		returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).set("total_amount", returnOrder.get("total_amount")).update();
+		returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).update();
+		
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		if (deliveryId != null && !"".equals(deliveryId)) {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(returnOrder.get("delivery_order_id"));
