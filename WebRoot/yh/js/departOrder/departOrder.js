@@ -263,7 +263,7 @@ $(document).ready(function() {
     			transferOrderIds.push($(this).val());
     			ckeckedTransferOrderList.empty();
     		}else{
-    			if(spName != spname && spname != ''){
+    			if(spName != spname && spname != ''&&spName!=''){
     				alert("请选择同一供应商!");
     				return false;
     			}else if(chargeType2 != charge_type){
