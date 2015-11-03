@@ -167,7 +167,7 @@ $(document).ready(function() {
         var me = this;
         var inputStr = $('#customer_filter').val();
         var companyList =$("#companyList");
-        $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
+        $.get("/customerContract/search", {customerName:inputStr}, function(data){
             companyList.empty();
             for(var i = 0; i < data.length; i++)
                 companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
@@ -182,6 +182,7 @@ $(document).ready(function() {
         	transferOrder.fnFilter('', 2);*/
         
     });
+
     $('#companyList').on('click', '.fromLocationItem', function(e){        
         $('#customer_filter').val($(this).text());
         $("#companyList").hide();
@@ -209,7 +210,8 @@ $(document).ready(function() {
     	var me = this;
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
-		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
+
+		$.get('/customerContract/searchSp', {spName:inputStr}, function(data){
 			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
 				return;
 			}
@@ -246,11 +248,13 @@ $(document).ready(function() {
     // 没选中供应商，焦点离开，隐藏列表
 	$('#sp_filter').on('blur', function(){
  		$('#spList').hide();
+        refreshData();
  	});
 
 	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
 	$('#spList').on('blur', function(){
  		$('#spList').hide();
+        refreshData();
  	});
 
 	$('#spList').on('mousedown', function(){
