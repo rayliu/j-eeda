@@ -1,0 +1,1 @@
+package models.yh.damageOrder;import com.jfinal.plugin.activerecord.Model;public class DamageOrderItem extends Model<DamageOrderItem> {    public static final DamageOrderItem dao = new DamageOrderItem();}

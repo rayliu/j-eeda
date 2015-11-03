@@ -1,10 +1,22 @@
 <table id="${id}" cellspacing="0" style="width: 100%;">
     <thead class="eeda">
         <tr>
-        	<%for(name in list){%>
+        	<%for(name in headers){%>
         		<th>${name}</th>
         	<%}%>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+    	<%for(record in value_list![]){
+    		 var map = @record.getColumns();
+    		%>
+    		<tr id='${map["id"]}'>
+    			<% 
+    				for(col_name in field_list![]){
+    					print('<td>'+map[col_name]+'</td>');
+    				}
+    			%>
+    		</tr>
+    	<%}%>
+    </tbody>
 </table>

@@ -494,7 +494,7 @@ public class ContractController extends Controller {
         }
         
         List<Record> locationList = Collections.EMPTY_LIST;
-        String sql = "select c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' "
+        String sql = "select c.id, c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' "
         		+ " and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
         			
         if (customerName.trim().length() > 0) {
@@ -530,7 +530,7 @@ public class ContractController extends Controller {
         
         List<Record> spList = Collections.EMPTY_LIST;
         
-        String sql="select c.abbr, p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' ";
+        String sql="select c.id, c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' ";
         		
         if (spName.trim().length() > 0) {
         	sql +=" and (c.abbr like '%" + spName + "%' or c.quick_search_code like '%" + spName.toUpperCase() + "%') ";

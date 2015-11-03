@@ -25,6 +25,8 @@ import models.yh.arap.ArapMiscCostOrderDTO;
 import models.yh.arap.ArapMiscCostOrderItem;
 import models.yh.carmanage.CarSummaryDetailOtherFee;
 import models.yh.damageOrder.DamageOrder;
+import models.yh.damageOrder.DamageOrderFinItem;
+import models.yh.damageOrder.DamageOrderItem;
 import models.yh.profile.Contact;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,10 +37,12 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Model;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
@@ -56,7 +60,7 @@ public class DamageOrderController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 	
 	
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
+	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_LIST})
     public void index() {
 		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
 		setAttr("userOffices", offices);
@@ -108,97 +112,45 @@ public class DamageOrderController extends Controller {
         renderJson(BillingOrderListMap);
     }
     
-	public void getListForCreate() {
-		String ids = getPara("ids");
-		if(ids != null && !"".equals(ids)){
-			String[] idArray = ids.split(",");
-			logger.debug(String.valueOf(idArray.length));
-	
-			setAttr("costCheckOrderIds", ids); 
-			ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(idArray[0]);
-			Long spId = arapCostOrder.get("payee_id");
-			if (!"".equals(spId) && spId != null) {
-				Party party = Party.dao.findById(spId);
-				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get("contact_id").toString());
-				setAttr("sp", contact); 
-			}
-		}
-
-		setAttr("saveOK", false);
-		String name = (String) currentUser.getPrincipal();
-		List<UserLogin> users = UserLogin.dao
-				.find("select * from user_login where user_name='" + name + "'");
-		setAttr("create_by", users.get(0).get("id"));
-		
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
-		setAttr("userLogin", userLogin);
-
-		List<Record> receivableItemList = Collections.EMPTY_LIST;
-		receivableItemList = Db.find("select * from fin_item where type='应付'");
-		setAttr("receivableItemList", receivableItemList);
-		setAttr("status", "new");
-		
-		List<Record> itemList = Collections.emptyList();
-		setAttr("itemList", itemList);
-		
-			render("/yh/arap/CostMiscOrder/CostMiscOrderEdit.html");
-	}
-    
     @Before(Tx.class)
 	public void save() throws Exception {		
 		String jsonStr=getPara("params");
     	
-    	 Gson gson = new Gson();  
-         Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
+    	Gson gson = new Gson();  
+        Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
          
         ArapMiscCostOrder arapMiscCostOrder = new ArapMiscCostOrder();
 		String id = (String) dto.get("id");
-		String customer_id = (String) dto.get("customer_id");
-		String sp_id = (String) dto.get("sp_id");
-		String order_type = (String) dto.get("order_type");
-		String biz_order_no = (String) dto.get("biz_order_no");
-		String process_status = (String) dto.get("process_status");
-		String accident_type = (String) dto.get("accident_type");
-		String accident_desc = (String) dto.get("accident_desc");
-		String accident_date = (String) dto.get("accident_date");
-		String remark = (String) dto.get("remark");
 		
 		UserLogin user = LoginUserController.getLoginUser(this);
 		
 		if (StringUtils.isNotEmpty(id)) {
 			//update
 			DamageOrder order = DamageOrder.dao.findById(id);
-			order.set("customer_id", customer_id);
-			order.set("sp_id", sp_id);
-			order.set("order_type", order_type);
-			order.set("biz_order_no", biz_order_no);
-			order.set("process_status", process_status);
-			order.set("accident_type", accident_type);
-			order.set("accident_desc", accident_desc);
-			order.set("accident_date", accident_date);
-			order.set("remark", remark);
+			setModelValues(dto, order);
 			order.update();
+			//处理从表
+			handleCargoDetail(dto, id);
+			handleChargeDetail(dto, id);
+			handleCostDetail(dto, id);
 		} else {
-			//create
+			//create 
 			DamageOrder order = new DamageOrder();
-			order.set("order_no", OrderNoGenerator.getNextOrderNo("HSD"));
-			order.set("customer_id", customer_id);
-			order.set("sp_id", sp_id);
-			order.set("order_type", order_type);
-			order.set("biz_order_no", biz_order_no);
-			order.set("process_status", process_status);
-			order.set("accident_type", accident_type);
-			order.set("accident_desc", accident_desc);
-			order.set("accident_date", accident_date);
-			order.set("remark", remark);
+			setModelValues(dto, order);
 			
+			//需后台处理的字段
+			order.set("order_no", OrderNoGenerator.getNextOrderNo("HSD"));
 			order.set("creator", user.get("id"));
 			order.set("office_id", user.get("office_id"));
 			order.set("create_date", new Date());
 			order.set("status", "新建");
 			order.save();
-			id = order.getInt("id").toString();
+			id = order.getLong("id").toString();
+
+			//处理从表
+			handleCargoDetail(dto, id);
+			handleChargeDetail(dto, id);
+			handleCostDetail(dto, id);
 		}
 		
 		//return dto
@@ -206,8 +158,74 @@ public class DamageOrderController extends Controller {
 		renderJson(returnDto);
 	}
 
+	private void handleCargoDetail(Map<String, ?> dto, String id) {
+		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("cargo_list");
+    	for (Map<String, String> rowMap : itemList) {//获取每一行
+    		String rowId = rowMap.get("id");
+    		String action = rowMap.get("action");
+    		if(StringUtils.isEmpty(rowId)){//创建
+    			DamageOrderItem item = new DamageOrderItem();
+    			setModelValues(rowMap, item);
+    			item.set("order_id", id);
+    			item.save();
+    		}else if("DELETE".equals(action)){//delete
+    			DamageOrderItem item = DamageOrderItem.dao.findById(rowId);
+    			item.delete();
+    		}else{//UPDATE
+    			DamageOrderItem item = DamageOrderItem.dao.findById(rowId);
+    			setModelValues(rowMap, item);
+    			item.update();
+    		}
+		}
+	}
+	
+	private void handleChargeDetail(Map<String, ?> dto, String id) {
+		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("charge_list");
+    	handleFinItem(id, itemList);
+	}
+	
+	private void handleCostDetail(Map<String, ?> dto, String id) {
+		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("cost_list");
+    	handleFinItem(id, itemList);
+	}
+
+	private void handleFinItem(String id, List<Map<String, String>> itemList) {
+		for (Map<String, String> rowMap : itemList) {//获取每一行
+    		String rowId = rowMap.get("id");
+    		String action = rowMap.get("action");
+    		if(StringUtils.isEmpty(rowId)){//创建
+    			DamageOrderFinItem item = new DamageOrderFinItem();
+    			setModelValues(rowMap, item);
+    			item.set("order_id", id);
+    			item.save();
+    		}else if("DELETE".equals(action)){//delete
+    			DamageOrderFinItem item = DamageOrderFinItem.dao.findById(rowId);
+    			item.delete();
+    		}else{//UPDATE
+    			DamageOrderFinItem item = DamageOrderFinItem.dao.findById(rowId);
+    			setModelValues(rowMap, item);
+    			item.update();
+    		}
+		}
+	}
+
+    //遇到 _list 是从表Map, 不处理
+	private void setModelValues(Map<String, ?> dto, Model<?> model) {
+		logger.debug("----Model:"+model.getClass().toString());
+		for (Entry<String, ?> entry : dto.entrySet()) { 
+			String key = entry.getKey();
+			if(!key.endsWith("_list")){
+            	String value = (String) entry.getValue();
+            	logger.debug(key+":"+value);
+            	//忽略  action 字段
+            	if(StringUtils.isNotEmpty(value) && !"action".equals(key)){
+            		model.set(key, value);
+            	}
+            }
+		}
+	}
+
 	private Record getOrderDto(String orderId) {
-		Map order = new HashMap();
 		String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name, "
 			+ " ifnull(u.c_name, u.user_name) creator_name from damage_order dao"
 			+"	left join party p1 on dao.customer_id = p1.id "
@@ -218,16 +236,28 @@ public class DamageOrderController extends Controller {
 			+ " where dao.id=?";
 		Record orderRec = Db.findFirst(sql, orderId);
 		
-		order.put("itemList", orderRec);
 		
+		String itemSql = "select * from damage_order_item where order_id=?";
+		List<Record> itemList = Db.find(itemSql, orderId);
+		orderRec.set("item_list", itemList);
+		
+		String chargeItemSql = "select * from damage_order_fin_item where type='charge' and order_id=?";
+		List<Record> chargeItemList = Db.find(chargeItemSql, orderId);
+		orderRec.set("charge_list", chargeItemList);
+		
+		String costItemSql = "select * from damage_order_fin_item where type='cost' and order_id=?";
+		List<Record> costItemList = Db.find(costItemSql, orderId);
+		orderRec.set("cost_list", costItemList);
 		return orderRec;
 	}
     
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
+
 	public void edit() {
 		String id = getPara("id");
+		Record m = getOrderDto(id);
 		
-		setAttr("order", getOrderDto(id));
+		setAttr("order", m);
+		
 		render("/yh/DamageOrder/DamageOrderEdit.html");
 	}
 	

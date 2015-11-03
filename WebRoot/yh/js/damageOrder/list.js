@@ -34,7 +34,9 @@ $(document).ready(function() {
             { "data": "ACCIDENT_DESC"}, 
             { "data": "ACCIDENT_DATE",
                 "render": function ( data, type, full, meta ) {
-                    return data.substr(0,10);
+                    if(data)
+                        return data.substr(0,10);
+                    return '';
                 }
             }, 
             { "data": "REMARK"}

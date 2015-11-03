@@ -27,7 +27,7 @@ $(document).ready(function() {
 			}
 	        companyList.empty();
 	        for(var i = 0; i < data.length; i++)
-	            companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
+	            companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
 	            
 	        companyList.css({ 
 		    	left:$(me).position().left+"px", 
@@ -37,7 +37,7 @@ $(document).ready(function() {
 	    },'json');
 	});
 	
-	companyList.on('click', '.fromLocationItem', function(e){        
+	companyList.on('click', '.fromLocationItem', function(e){
 		inputField.val($(this).text());
 	    companyList.hide();
 	    var companyId = $(this).attr('partyId');

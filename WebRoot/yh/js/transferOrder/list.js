@@ -174,7 +174,7 @@ $(document).ready(function() {
                 
             companyList.css({ 
 		    	left:$(me).position().left+"px", 
-		    	top:$(me).position().top+32+"px" 
+		    	top:$(me).position().top+28+"px" 
 		    });
 	        companyList.show();    
         },'json');
@@ -235,7 +235,7 @@ $(document).ready(function() {
 			}
 			spList.css({ 
 	        	left:$(me).position().left+"px", 
-	        	top:$(me).position().top+32+"px" 
+	        	top:$(me).position().top+28+"px" 
 	        }); 
 			
 			spList.show();

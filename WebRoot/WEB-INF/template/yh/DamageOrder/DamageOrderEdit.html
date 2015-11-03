@@ -166,7 +166,9 @@
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'cargo_table', 
-                            list:['', '产品型号', '产品序列号', '货损数量', '备注']
+                            headers:['', '产品型号', '产品序列号', '货损数量', '备注'],
+                            field_list:['', 'product_no', 'serial_no', 'amount', 'remark'],
+                            value_list: order.item_list![]
                         }){} %>
                 </div>
             </div>
@@ -177,7 +179,9 @@
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'charge_table', 
-                            list:['', '应收条目', '金额', '收取', '名称', '备注']
+                            headers:['', '状态', '应收条目', '金额', '收取', '名称', '备注'],
+                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'name', 'remark'],
+                            value_list: order.charge_list![]
                         }){} %>
                     
                 </div>
@@ -189,9 +193,10 @@
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'cost_table', 
-                            list:['', '应付条目', '金额', '付给', '名称', '备注']
+                            headers:['', '状态', '应付条目', '金额', '付给', '名称', '备注'],
+                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'name', 'remark'],
+                            value_list: order.cost_list![]
                         }){} %>
-                    
                 </div>
             </div>
             <br>
@@ -223,6 +228,10 @@
 
 <script src="/yh/js/eeda-common.js"></script>
 <script>
-    var order_no = '${data.order.order_no!'新建货损单'}'; 
+    var order_no = '${order.order_no!'新建货损单'}'; 
+    var damageOrder = {};
 </script>
+<script src="/yh/js/damageOrder/edit_item_table.js"></script>
+<script src="/yh/js/damageOrder/edit_charge_table.js"></script>
+<script src="/yh/js/damageOrder/edit_cost_table.js"></script>
 <script src="/yh/js/damageOrder/edit.js"></script>

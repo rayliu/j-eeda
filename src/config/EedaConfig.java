@@ -92,6 +92,8 @@ import models.yh.carmanage.CarSummaryOrder;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.damageOrder.DamageOrder;
+import models.yh.damageOrder.DamageOrderFinItem;
+import models.yh.damageOrder.DamageOrderItem;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.delivery.DeliveryPlanOrder;
 import models.yh.delivery.DeliveryPlanOrderCarinfo;
@@ -470,6 +472,8 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("car_summary_detail_other_fee", CarSummaryDetailOtherFee.class);
         
         arp.addMapping("damage_order", DamageOrder.class);
+        arp.addMapping("damage_order_item", DamageOrderItem.class);
+        arp.addMapping("damage_order_fin_item", DamageOrderFinItem.class);
         
         //基本数据用户网点
         arp.addMapping("user_office", UserOffice.class);
