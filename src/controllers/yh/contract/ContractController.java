@@ -18,6 +18,7 @@ import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -484,6 +485,13 @@ public class ContractController extends Controller {
     // 列出客户公司名称
     public void search() {
         String customerName = getPara("locationName");
+        if(StringUtils.isEmpty(customerName)){
+        	customerName = getPara("customerName");
+        }
+        
+        if(StringUtils.isEmpty(customerName)){
+        	customerName = "";
+        }
         
         List<Record> locationList = Collections.EMPTY_LIST;
         String sql = "select c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' "
