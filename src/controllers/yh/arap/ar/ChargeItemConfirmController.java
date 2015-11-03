@@ -56,7 +56,8 @@ public class ChargeItemConfirmController extends Controller {
 		String customerNo = getPara("customerNo");//客户订单号
 		String start = getPara("start");//始发地
 		String orderNo= getPara("orderNo");//业务单号
-
+		String serial_no = getPara("serial_no");//始发地
+		String ref_no= getPara("ref_no");//业务单号
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -80,33 +81,39 @@ public class ChargeItemConfirmController extends Controller {
 		// 收入状态条件没有过滤
 
 		sql = "SELECT "
-				+"		ror.id,"
-				+"        ror.order_no,"
-				+"        ror.transaction_status,"
-				+"        ror.remark,"
-				+"        ror.receipt_date,"
-				+"        ror.delivery_order_id,"
-				+"        ror.transfer_order_id,"
-				+"        ror.notity_party_id,"
-				+"        ror.customer_id,"
-				+"		  (select sum(amount) from return_order_fin_item rofi where rofi.return_order_id= ror.id) total_amount,"
-				+"        ror.path,"
-				+"        ror.create_date,"
-				+"        null change_amount,"
-				+"            IFNULL(tor.order_no, (SELECT "
-				+"                    GROUP_CONCAT(DISTINCT tor.order_no"
-				+"                            SEPARATOR '<br/>')"
-				+"                FROM"
-				+"                    delivery_order dvr"
-				+"                LEFT JOIN delivery_order_item doi ON doi.delivery_id = dvr.id"
-				+"                LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
-				+"                WHERE"
-				+"                    dvr.id = ror.delivery_order_id)) transfer_order_no,"
-				+"            '回单' order_tp,"
-				+"            dvr.order_no AS delivery_order_no,"
-				+"            IFNULL(c.abbr, c2.abbr) cname,"
-				+"            IFNULL(tor.planning_time, (SELECT "
-				+"                    GROUP_CONCAT(tor.planning_time SEPARATOR '<br/>')"
+				+ "		ror.id,"
+				+ " ror.order_no,"
+				+ " ror.transaction_status,"
+				+ " ror.remark,"
+				+ " ror.receipt_date,"
+				+ " ror.delivery_order_id,"
+				+ " ror.transfer_order_id,"
+				+ " ror.notity_party_id,"
+				+ " ror.customer_id,"
+				+ " (SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '<br/>')"
+				+ " FROM transfer_order_item_detail toid"
+				+ " LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id"
+				+ " LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id"
+				+ " WHERE d_o.id = ror.delivery_order_id) serial_no,"
+				+ " dvr.ref_no ref_no,"
+				+ "		  (select sum(amount) from return_order_fin_item rofi where rofi.return_order_id= ror.id) total_amount,"
+				+ "        ror.path,"
+				+ "        ror.create_date,"
+				+ "        null change_amount,"
+				+ "            IFNULL(tor.order_no, (SELECT "
+				+ "                    GROUP_CONCAT(DISTINCT tor.order_no"
+				+ "                            SEPARATOR '<br/>')"
+				+ "                FROM"
+				+ "                    delivery_order dvr"
+				+ "                LEFT JOIN delivery_order_item doi ON doi.delivery_id = dvr.id"
+				+ "                LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+				+ "                WHERE"
+				+ "                    dvr.id = ror.delivery_order_id)) transfer_order_no,"
+				+ "            '回单' order_tp,"
+				+ "            dvr.order_no AS delivery_order_no,"
+				+ "            IFNULL(c.abbr, c2.abbr) cname,"
+				+ "            IFNULL(tor.planning_time, (SELECT "
+				+ "                    GROUP_CONCAT(tor.planning_time SEPARATOR '<br/>')"
 				+"                FROM"
 				+"                    delivery_order dvr"
 				+"                LEFT JOIN delivery_order_item doi ON doi.delivery_id = dvr.id"
@@ -202,6 +209,8 @@ public class ChargeItemConfirmController extends Controller {
 				+"            NULL transfer_order_id,"
 				+"            NULL notity_party_id,"
 				+"            amco.customer_id customer_id,"
+				+" 		      null serial_no,"
+				+" 		      null ref_no,"
 				+"            amco.total_amount total_amount,"
 				+"            NULL path,"
 				+"            amco.create_stamp create_date,"
@@ -247,7 +256,7 @@ public class ChargeItemConfirmController extends Controller {
 				+"            AND amco.type = 'biz'"
 				+"            AND amco.total_amount != 0)";
 		if (customer == null && beginTime == null && endTime == null
-				&& transferOrderNo == null && customerNo == null && start == null && orderNo==null) {
+				&& transferOrderNo == null && customerNo == null && start == null && orderNo==null&& serial_no==null&& ref_no==null) {
 			sqlTotal = " select count(1) total from ("+ sql +") A";
 			sql = "select * from ("+ sql +") A ";
 		} else {
@@ -261,8 +270,10 @@ public class ChargeItemConfirmController extends Controller {
 			 String conditions = " where ifnull(A.cname,'')like '%"+customer+"%'"
 				    + " and ifnull(A.route_from,'') like '%"+start
 				    +"%' and ifnull(A.order_no,'') like '%"+orderNo
-				    +"%'  and ifnull(A.customer_order_no,'')like '%"+customerNo+"%'"
-				    + " and IFNULL(A.transfer_order_no,'') like '%"+transferOrderNo
+				    +"%' and ifnull(A.customer_order_no,'')like '%"+customerNo+"%'"
+				    +"	 and ifnull(A.serial_no,'')like '%"+serial_no+"%'"
+				    +"   and ifnull(A.ref_no,'')like '%"+ref_no+"%'"
+				    +"   and IFNULL(A.transfer_order_no,'') like '%"+transferOrderNo
 				    +"%' and IFNULL(A.planning_time,'1970-01-01')  between '"
 					+ beginTime
 					+ "' and '"

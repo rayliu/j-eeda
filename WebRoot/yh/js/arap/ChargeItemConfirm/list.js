@@ -25,16 +25,18 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
         		}},
-		        {"mDataProp":null, "sWidth":"120px",
-                "fnRender": function(obj) {
-                    return "未收款";
-            }},
+            {"mDataProp":"SERIAL_NO", "sWidth":"120px"}, 
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"120px"}, 
             {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px"}, 
-            {"mDataProp":"ADDRESS", "sWidth":"150px"}, 
+            {"mDataProp":"ADDRESS", "sWidth":"150px"},
+            {"mDataProp":"REF_NO", "sWidth":"150px"},
             {"mDataProp":"CNAME", "sWidth":"100px"},
             {"mDataProp":"SP", "sWidth":"150px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"150px"}, 
+            {"mDataProp":null, "sWidth":"120px",
+                "fnRender": function(obj) {
+                    return "未收款";
+            }},
             {"mDataProp":"DEPART_TIME", "sWidth":"130px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
             {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},
@@ -126,6 +128,8 @@ $(document).ready(function() {
 		var endTime = $("#endTime_filter").val();
 		var orderNofilter = $("#orderNo_filter").val();
 		var transferOrderNo = $("#transfer_Order_filter").val();
+		var serial_no = $("#serial_no").val();
+		var ref_no = $("#ref_no").val();
 		var customerNo = $("#customerNo_filter").val();
 		var start = $("#start_filter").val();
 		var status = $("#shouru_filter").val();
@@ -136,6 +140,8 @@ $(document).ready(function() {
 	   												+"&customerNo="+customerNo
 	   												+"&orderNo="+orderNofilter
 	   												+"&start="+start
+	   												+"&serial_no="+serial_no
+	   												+"&ref_no="+ref_no
 	   												+"&status="+status;
 		   chargeConfiremTable.fnDraw(); 
     };
@@ -164,7 +170,7 @@ $(document).ready(function() {
        });
        
        //过滤客户
-       $('#beginTime_filter,#endTime_filter,#orderNo_filter,#transfer_Order_filter,#customerNo_filter,#start_filter').on( 'keyup ',function(){
+       $('#beginTime_filter,#endTime_filter,#orderNo_filter,#transfer_Order_filter,#customerNo_filter,#serial_no,#ref_no,#start_filter').on( 'keyup ',function(){
     	   refreshCreateList();  
        });
        $("#shouru_filter").on('change',function(){
