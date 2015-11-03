@@ -509,7 +509,13 @@ public class ChargeCheckOrderController extends Controller {
 				}
 				
 				for(ReturnOrderFinItem orderItem : ordeItems){
-					Double newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT")) * (orderItem.getDouble("amount")/originTotal);
+					Double newAmount=0.0;
+					if(originTotal>0){
+					 newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT")) * (orderItem.getDouble("amount")/originTotal);
+					}
+					else{
+						newAmount=Double.parseDouble((String)item.get("CHANGE_AMOUNT"));
+					}
 					orderItem.set("status", "对账中");
 					orderItem.set("change_amount", newAmount).update();
 				}
