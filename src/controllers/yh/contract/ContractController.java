@@ -515,21 +515,23 @@ public class ContractController extends Controller {
     }
 
 
-    // 列出供应商公司名称
-    public void search2() {
-        String locationName = getPara("locationName");
-        // 不能查所有
-        if (locationName.trim().length() > 0) {
-            List<Record> locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' and c.company_name like ?",
-                            "%" + locationName + "%");
-            renderJson(locationList);
-        } else {
-            List<Record> locationList = Db
-                    .find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER'");
-            renderJson(locationList);
-        }
+    // 列出供应商公司名称, 包括：干线，配送
+    public void searchSp() {
+        String spName = getPara("spName");
+        String spType = getPara("spType");//TODO: 未实现
+        
+        List<Record> spList = Collections.EMPTY_LIST;
+        
+        String sql="select c.abbr, p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' ";
+        		
+        if (spName.trim().length() > 0) {
+        	sql +=" and (c.abbr like '%" + spName + "%' or c.quick_search_code like '%" + spName.toUpperCase() + "%') ";
+        } 
+        
+        spList = Db.find(sql);  
+        renderJson(spList);
     }
+    
     public void searchPart() {
         String locationName = getPara("locationName");
         
