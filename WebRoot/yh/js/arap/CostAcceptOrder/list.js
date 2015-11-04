@@ -161,14 +161,6 @@ $(document).ready(function() {
 		},
         "sAjaxSource": "/costAcceptOrder/applicationList",
         "aoColumns": [
-			{ "mDataProp": null, "sWidth":"20px", "bSortable": false,
-			    "fnRender": function(obj) {
-                    if(obj.aData.STATUS=='付款确认中' || obj.aData.STATUS=='已付款确认'){
-                        return '';
-                    }
-			        return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
-			    }
-			},
             {"mDataProp":"ORDER_NO","sWidth":"90px",
             	"fnRender": function(obj) {
             		var A=obj.aData.ORDER_NO.substring(0, 4);
@@ -189,7 +181,7 @@ $(document).ready(function() {
             			return obj.aData.ORDER_NO;
         		}
             },
-            {"mDataProp":"ORDER_TYPE", "sWidth":"90px","sClass":'order_type',
+            {"mDataProp":"ORDER_TYPE", "sWidth":"80px","sClass":'order_type',
                 "fnRender": function(obj) {
                 	var A=$(obj.aData.ORDER_NO).text().substring(0, 4);
                 	if(A=='YFBX')
@@ -199,7 +191,8 @@ $(document).ready(function() {
                 	else
             			return obj.aData.ORDER_TYPE;
                 	}
-                },   
+            },
+            {"mDataProp":"STATUS", "sWidth":"50px"},    
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"90px",
             	"sClass":"pay_amount",
            	 	"fnRender": function(obj) {
