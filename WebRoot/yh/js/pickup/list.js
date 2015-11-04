@@ -22,6 +22,13 @@
             			return obj.aData.DEPART_NO;
             	}
 		    },
+		    {"mDataProp":"TURNOUT_TIME", "sWidth":"80px",
+		    	"fnRender":function(obj){
+    				var create_stamp=obj.aData.TURNOUT_TIME;
+    				var str=create_stamp.substr(0,10);
+    				return str;
+    			}
+		    }, 
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"80px"},
             {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
 		    {"mDataProp":"STATUS", "sWidth":"80px"},
@@ -41,13 +48,7 @@
 		    {"mDataProp":"SP_NAME", "sWidth":"60px"},
 		    {"mDataProp":"PHONE", "sWidth":"80px"},
 		    {"mDataProp":"CARTYPE", "sWidth":"80px"},     
-		    {"mDataProp":"TURNOUT_TIME", "sWidth":"80px",
-		    	"fnRender":function(obj){
-    				var create_stamp=obj.aData.TURNOUT_TIME;
-    				var str=create_stamp.substr(0,10);
-    				return str;
-    			}
-		    }, 
+		    
 		    {"mDataProp":null, "sWidth":"50px",
 				"fnRender":function(obj){
     				return obj.aData.ATMVOLUME + obj.aData.CARGOVOLUME;
