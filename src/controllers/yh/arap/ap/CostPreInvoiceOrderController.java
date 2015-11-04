@@ -3,7 +3,9 @@ package controllers.yh.arap.ap;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,8 +21,10 @@ import models.ArapCostOrderInvoiceNo;
 import models.CostApplicationOrderRel;
 import models.Party;
 import models.UserLogin;
+import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.prePayOrder.ArapPrePayOrder;
+import models.yh.carmanage.CarSummaryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.commons.lang.StringUtils;
@@ -193,40 +197,43 @@ public class CostPreInvoiceOrderController extends Controller {
 		renderJson(BillingOrderListMap);
 	}
 	
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
-	public void create() {
-		String strJson = getPara("ids");
-		setAttr("costCheckOrderIds", strJson.replace("\"", "'"));
-		Double totalAmount = 0.0;
-		
-		Gson gson = new Gson();
-		
-		List<Map> idList = new Gson().fromJson(strJson, 
-				new TypeToken<List<Map>>(){}.getType());
-		for (Map map : idList) {
-			String orderType = (String)map.get("order_type");
-			List<Integer> ids = (List<Integer>)map.get("ids");
-			if("对账单".equals(orderType)){
-				totalAmount += getDzTotal(ids);
-			}else{
-				totalAmount += getYfTotal(ids);
-			}
-		}
-		
-		setAttr("saveOK", false);
-		setAttr("totalAmount", totalAmount);
-		
-		String name = (String) currentUser.getPrincipal();
-		List<UserLogin> users = UserLogin.dao
-				.find("select * from user_login where user_name='" + name + "'");
-		setAttr("create_by", users.get(0).get("id"));
-
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
-		setAttr("userLogin", userLogin);
-
-		setAttr("status", "新建");
-		render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
-	}
+//	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
+//	public void create() {
+//		String strJson = getPara("ids");
+//		setAttr("costCheckOrderIds", strJson.replace("\"", "'"));
+//		Double totalAmount = 0.0;
+//		
+//		Gson gson = new Gson();
+//		
+//		List<Map> idList = new Gson().fromJson(strJson, 
+//				new TypeToken<List<Map>>(){}.getType());
+//		for (Map map : idList) {
+//			String orderType = (String)map.get("order_type");
+//			List<Integer> ids = (List<Integer>)map.get("ids");
+//			if("对账单".equals(orderType)){
+//				totalAmount += getDzTotal(ids);
+//			}else{
+//				totalAmount += getYfTotal(ids);
+//			}
+//		}
+//		
+//		setAttr("saveOK", false);
+//		setAttr("totalAmount", totalAmount);
+//		
+//		String name = (String) currentUser.getPrincipal();
+//		List<UserLogin> users = UserLogin.dao
+//				.find("select * from user_login where user_name='" + name + "'");
+//		setAttr("create_by", users.get(0).get("id"));
+//
+//		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+//		setAttr("userLogin", userLogin);
+//
+//		setAttr("status", "新建");
+//		render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
+//	}
+	
+	
+	
 
 	private Double getYfTotal(List<Integer> idList) {
 		Double totalAmount = 0.0;
@@ -297,114 +304,104 @@ public class CostPreInvoiceOrderController extends Controller {
 	@Before(Tx.class)
 	public void save() {
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = null;
-		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
-		String paymentMethod = getPara("paymentMethod");
-		String account_id = getPara("account");
-		String bank_no = getPara("bank_no");
-		String bank_name = getPara("bank_name");
-		String payee_unit = getPara("payee_unit");
-		String sp_Id = getPara("sp_id");
-		String billing = getPara("billing");
-		String billtype = getPara("billtype");
-		String numname = getPara("num_name");
-		if (!"".equals(costPreInvoiceOrderId) && costPreInvoiceOrderId != null) {
-			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
-					.findById(costPreInvoiceOrderId);
-			
-			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
+		String application_id = getPara("application_id");
+		String paymentMethod = getPara("payment_method");//付款方式
+		String bank_no = getPara("bank_no");          //收款账号
+		String payee_name = getPara("payee_name");    //收款人
+		String bank_name = getPara("account_name");   //账户名
+		String payee_unit = getPara("payee_unit");      //收款单位
+		String payee_id = getPara("payee_id")==""?null:getPara("payee_id");         //付款给
+		String billing_unit = getPara("billing_unit"); //收款单位
+		String billtype = getPara("invoice_type");   //开票类型
+		String numname = getPara("deposit_bank");   //开户行
+		String total_amount = getPara("total_amount")==""?"0.00":getPara("total_amount");   //申请总金额
+
+		
+		if (!"".equals(application_id) && application_id != null) {
+			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
+			//arapAuditInvoiceApplication.set("create_by", LoginUserController.getLoginUserId(this));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
-			arapAuditInvoiceApplication.set("remark", getPara("remark"));
-			arapAuditInvoiceApplication.set("last_modified_by",
-					getPara("create_by"));
+			//arapAuditInvoiceApplication.set("remark", getPara("remark"));
+			arapAuditInvoiceApplication.set("last_modified_by",LoginUserController.getLoginUserId(this));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
-			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
+			arapAuditInvoiceApplication.set("payee_name", payee_name);
 			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
 			arapAuditInvoiceApplication.set("payee_unit", payee_unit);
-			arapAuditInvoiceApplication.set("billing_unit", billing);
+			arapAuditInvoiceApplication.set("billing_unit", billing_unit);
 			arapAuditInvoiceApplication.set("bill_type", billtype);
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
 			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			arapAuditInvoiceApplication.set("num_name", numname);
-			String noInvoice = getPara("noInvoice");
-			if ("on".equals(noInvoice)) {
-				noInvoice = "true";
-			} else {
-				noInvoice = "false";
-			}
-			arapAuditInvoiceApplication.set("noInvoice", noInvoice);
-			if ("transfers".equals(paymentMethod)) {
-				arapAuditInvoiceApplication.set("account_id", account_id);
-			} else {
-				arapAuditInvoiceApplication.set("account_id", null);
-			}
-			arapAuditInvoiceApplication.update();
-		} else {
-			String payee_id = getPara("customer_id");
-			if (sp_Id != null && !"".equals(sp_Id)) {
-				payee_id = sp_Id;
-			}
-			else{}
-			arapAuditInvoiceApplication = new ArapCostInvoiceApplication();
-
-			String sql = "select * from arap_cost_invoice_application_order order by id desc limit 0,1";
-			if ("transfers".equals(paymentMethod)) {
-
-				arapAuditInvoiceApplication.set("account_id", account_id);
-			} else {
-				arapAuditInvoiceApplication.set("account_id", null);
-			}
-			arapAuditInvoiceApplication.set("order_no",
-					OrderNoGenerator.getNextOrderNo("YFSQ"));
-			arapAuditInvoiceApplication.set("status", "新建");
 			arapAuditInvoiceApplication.set("payee_id", payee_id);
-			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
-			arapAuditInvoiceApplication.set("create_stamp", new Date());
-			arapAuditInvoiceApplication.set("remark", getPara("remark"));
-			arapAuditInvoiceApplication.set("payee_name", getPara("payeename"));
-			arapAuditInvoiceApplication.set("payee_unit", payee_unit);
-			arapAuditInvoiceApplication.set("billing_unit", billing);
-			arapAuditInvoiceApplication.set("bill_type", billtype);
-			arapAuditInvoiceApplication.set("payment_method",
-					getPara("paymentMethod"));
-			arapAuditInvoiceApplication.set("bank_no", bank_no);
-			arapAuditInvoiceApplication.set("bank_name", bank_name);
-			if(numname != null){
-				arapAuditInvoiceApplication.set("num_name", numname);
-			}
-			if (getPara("total_amount") != null
-					&& !"".equals(getPara("total_amount"))) {
-				arapAuditInvoiceApplication.set("total_amount",
-						getPara("total_amount"));
-			}
-			arapAuditInvoiceApplication.save();
+			arapAuditInvoiceApplication.update();
 			
-			
-			
-			String strJson = getPara("costCheckOrderIds");
+			String strJson = getPara("detailJson");
 			Gson gson = new Gson();
-			
 			List<Map> idList = new Gson().fromJson(strJson, 
 					new TypeToken<List<Map>>(){}.getType());
 			for (Map map : idList) {
-				String orderType = (String)map.get("order_type");
-				List<String> ids = (List<String>)map.get("ids");
+				String id = (String)map.get("id");
+				String order_type = (String)map.get("order_type");
+				String value = (String)map.get("value");
+
+				CostApplicationOrderRel costApplicationOrderRel = CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where cost_order_id =?",id);
+				costApplicationOrderRel.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
+				costApplicationOrderRel.set("cost_order_id", id);
+				costApplicationOrderRel.set("order_type", order_type);
+				costApplicationOrderRel.set("pay_amount", value);
+				costApplicationOrderRel.update();
+			}
+		} else {
+			arapAuditInvoiceApplication = new ArapCostInvoiceApplication();
+			arapAuditInvoiceApplication.set("order_no",
+					OrderNoGenerator.getNextOrderNo("YFSQ"));
+			arapAuditInvoiceApplication.set("status", "新建");
+			arapAuditInvoiceApplication.set("create_by", LoginUserController.getLoginUserId(this));
+			arapAuditInvoiceApplication.set("create_stamp", new Date());
+			arapAuditInvoiceApplication.set("payee_name", payee_name);
+			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
+			arapAuditInvoiceApplication.set("payee_unit", payee_unit);
+			arapAuditInvoiceApplication.set("billing_unit", billing_unit);
+			arapAuditInvoiceApplication.set("bill_type", billtype);
+			arapAuditInvoiceApplication.set("bank_no", bank_no);
+			arapAuditInvoiceApplication.set("bank_name", bank_name);
+			arapAuditInvoiceApplication.set("num_name", numname);
+			arapAuditInvoiceApplication.set("payee_id", payee_id);
+			
+			if (total_amount != null && !"".equals(total_amount)) {
+				arapAuditInvoiceApplication.set("total_amount",total_amount);
+			}
+			arapAuditInvoiceApplication.save();
+			
+			String strJson = getPara("detailJson");
+			Gson gson = new Gson();
+			List<Map> idList = new Gson().fromJson(strJson, 
+					new TypeToken<List<Map>>(){}.getType());
+			for (Map map : idList) {
+				String id = (String)map.get("id");
+				String order_type = (String)map.get("order_type");
+				String value = (String)map.get("value");
+
+				CostApplicationOrderRel costApplicationOrderRel = new CostApplicationOrderRel();
+				costApplicationOrderRel.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
+				costApplicationOrderRel.set("cost_order_id", id);
+				costApplicationOrderRel.set("order_type", order_type);
+				costApplicationOrderRel.set("pay_amount", value);
+				costApplicationOrderRel.save();
 				
-				for (String id : ids) {
-					//更新中间表
-					CostApplicationOrderRel costApplicationOrderRel = new CostApplicationOrderRel();
-					costApplicationOrderRel.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
-					costApplicationOrderRel.set("cost_order_id", id);
-					costApplicationOrderRel.set("order_type", orderType);
-					costApplicationOrderRel.save();
-					if("对账单".equals(orderType)){
-						//更新对账单表
-						updateDzOrder(arapAuditInvoiceApplication, id);
-					}else{
-						//更新预付单表
-						updateYfOrder(arapAuditInvoiceApplication, id);
-					}
+                if(order_type.equals("对账单")){
+					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
+					arapCostOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("成本单")){
+					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+					arapMiscCostOrder.set("audit_status", "付款申请中").update();
+				}else if(order_type.equals("行车单")){
+					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
+					carSummaryOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("预付单")){
+					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+					arapPrePayOrder.set("status", "付款申请中").update();
 				}
-				
 			}
 
 		}
@@ -491,90 +488,85 @@ public class CostPreInvoiceOrderController extends Controller {
 		BillingOrderListMap.put("ul", ul);
 		renderJson(BillingOrderListMap);
 	}
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_UPDATE})
-	public void edit() throws ParseException {
-		String id = getPara("id");
-		ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
-				.findById(id);
-		Contact con = Contact.dao.findById(arapAuditInvoiceApplication.get("payee_id")
-				.toString());
-		
-		//已付总金额
-//		String sql = "select sum(pay_amount) totalPay from arap_cost_order aco where aco.application_order_id = '" + id +"'";
-//		Record totalPay = Db.findFirst(sql);
-//		setAttr("totalPay", totalPay.get("totalPay"));
-		
-		String company_name =con.get("company_name");
-		Long customerId = arapAuditInvoiceApplication.get("payee_id");
-		setAttr("payee_unit",arapAuditInvoiceApplication.get("payee_unit"));
-		setAttr("billing_unit",arapAuditInvoiceApplication.get("billing_unit"));
-		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
-		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
-		setAttr("bill_type",arapAuditInvoiceApplication.get("bill_type"));
-		setAttr("approval_stamp",
-				arapAuditInvoiceApplication.get("approval_stamp"));
-		setAttr("noInvoice", arapAuditInvoiceApplication.get("noInvoice"));
-		setAttr("company_name",company_name);
-		setAttr("payee_name",arapAuditInvoiceApplication.get("payee_name"));
-		setAttr("bank_name",arapAuditInvoiceApplication.get("bank_name"));
-		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
-		setAttr("num_name",arapAuditInvoiceApplication.get("num_name"));
-		UserLogin userLogin = UserLogin.dao
-				.findById(arapAuditInvoiceApplication.get("create_by"));
-		setAttr("userLogin", userLogin);
-		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
-		
-		//需付款金额
-		Record rec = Db.findFirst("SELECT sum(caor.pay_amount) pay_amount_a FROM arap_cost_order aco LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id WHERE caor.application_order_id=?",id);
-		
-		setAttr("paidAmount", 0);
-		
-		//已付总金额
-		Record rec1 = Db.findFirst("SELECT sum(ifnull(caor.pay_amount,0)) total_pay FROM cost_application_order_rel caor"
-				+ " WHERE caor.application_order_id=?",id);
-		
-		setAttr("tpayment", rec1.getDouble("total_pay"));//本次支付金额
-		
-		
-		//处理子表的ids：对账单, 预付单
-		String costCheckOrderIds = "";
-		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
-				"SELECT aco.* FROM `arap_cost_order` aco "
-				+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id "
-				+ " where caor.application_order_id = '"+id+"'"
-				);
-		if(arapCostOrders.size()== 0){
-			arapCostOrders = ArapCostOrder.dao.find(
-	                "select * from arap_cost_order where application_order_id = '"+ id+"'");
-		}
-		for (ArapCostOrder arapCostOrder : arapCostOrders) {
-			costCheckOrderIds += arapCostOrder.get("id") + ",";
-		}
-		if(costCheckOrderIds.length()>0){
-			costCheckOrderIds = costCheckOrderIds.substring(0,
-				costCheckOrderIds.length() - 1);
-		}else{
-			costCheckOrderIds="-1";
-		}
-		setAttr("costCheckOrderIds", costCheckOrderIds);
-		
-		//已付总金额
-		Record re = Db.findFirst("select sum(aco.pay_amount) paid_amount from cost_application_order_rel aco where aco.cost_order_id in("+costCheckOrderIds+")");
-		Double paidAmount = re.getDouble("paid_amount");
-		setAttr("paidAmount", paidAmount);
-		
-		
-		userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication
-				.get("approver_by"));
-		if(userLogin!=null){
-			setAttr("approver_name", userLogin.get("c_name"));
-			
-			userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication
-					.get("audit_by"));
-			setAttr("audit_name", userLogin.get("c_name"));
-		}
-		render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
-	}
+//	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_UPDATE})
+//	public void edit() throws ParseException {
+//		String id = getPara("id");
+//		ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
+//				.findById(id);
+//		Contact con = Contact.dao.findById(arapAuditInvoiceApplication.get("payee_id")
+//				.toString());
+//
+//		String company_name =con.get("company_name");
+//		Long customerId = arapAuditInvoiceApplication.get("payee_id");
+//		setAttr("payee_unit",arapAuditInvoiceApplication.get("payee_unit"));
+//		setAttr("billing_unit",arapAuditInvoiceApplication.get("billing_unit"));
+//		setAttr("create_stamp", arapAuditInvoiceApplication.get("create_stamp"));
+//		setAttr("audit_stamp", arapAuditInvoiceApplication.get("audit_stamp"));
+//		setAttr("bill_type",arapAuditInvoiceApplication.get("bill_type"));
+//		setAttr("approval_stamp",
+//				arapAuditInvoiceApplication.get("approval_stamp"));
+//		setAttr("noInvoice", arapAuditInvoiceApplication.get("noInvoice"));
+//		setAttr("company_name",company_name);
+//		setAttr("payee_name",arapAuditInvoiceApplication.get("payee_name"));
+//		setAttr("bank_name",arapAuditInvoiceApplication.get("bank_name"));
+//		setAttr("bank_no",arapAuditInvoiceApplication.get("bank_no"));
+//		setAttr("num_name",arapAuditInvoiceApplication.get("num_name"));
+//		UserLogin userLogin = UserLogin.dao
+//				.findById(arapAuditInvoiceApplication.get("create_by"));
+//		setAttr("userLogin", userLogin);
+//		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
+//		
+//		//需付款金额
+//		Record rec = Db.findFirst("SELECT sum(caor.pay_amount) pay_amount_a FROM arap_cost_order aco LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = aco.id WHERE caor.application_order_id=?",id);
+//		
+//		setAttr("paidAmount", 0);
+//		
+//		//已付总金额
+//		Record rec1 = Db.findFirst("SELECT sum(ifnull(caor.pay_amount,0)) total_pay FROM cost_application_order_rel caor"
+//				+ " WHERE caor.application_order_id=?",id);
+//		
+//		setAttr("tpayment", rec1.getDouble("total_pay"));//本次支付金额
+//		
+//		
+//		//处理子表的ids：对账单, 预付单
+//		String costCheckOrderIds = "";
+//		List<ArapCostOrder> arapCostOrders = ArapCostOrder.dao.find(
+//				"SELECT aco.* FROM `arap_cost_order` aco "
+//				+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id "
+//				+ " where caor.application_order_id = '"+id+"'"
+//				);
+//		if(arapCostOrders.size()== 0){
+//			arapCostOrders = ArapCostOrder.dao.find(
+//	                "select * from arap_cost_order where application_order_id = '"+ id+"'");
+//		}
+//		for (ArapCostOrder arapCostOrder : arapCostOrders) {
+//			costCheckOrderIds += arapCostOrder.get("id") + ",";
+//		}
+//		if(costCheckOrderIds.length()>0){
+//			costCheckOrderIds = costCheckOrderIds.substring(0,
+//				costCheckOrderIds.length() - 1);
+//		}else{
+//			costCheckOrderIds="-1";
+//		}
+//		setAttr("costCheckOrderIds", costCheckOrderIds);
+//		
+//		//已付总金额
+//		Record re = Db.findFirst("select sum(aco.pay_amount) paid_amount from cost_application_order_rel aco where aco.cost_order_id in("+costCheckOrderIds+")");
+//		Double paidAmount = re.getDouble("paid_amount");
+//		setAttr("paidAmount", paidAmount);
+//		
+//		
+//		userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication
+//				.get("approver_by"));
+//		if(userLogin!=null){
+//			setAttr("approver_name", userLogin.get("c_name"));
+//			
+//			userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication
+//					.get("audit_by"));
+//			setAttr("audit_name", userLogin.get("c_name"));
+//		}
+//		render("/yh/arap/CostPreInvoiceOrder/CostPreInvoiceOrderEdit.html");
+//	}
 
 	// 添加发票
 	public void addInvoiceItem() {
@@ -1101,6 +1093,414 @@ public class CostPreInvoiceOrderController extends Controller {
 	        auditLog.set("source_order", sourceOrder);
 	        auditLog.save();
 	    }	
-	
-	
+		
+		
+		
+		
+		@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_CREATE})
+		public void create() {
+			String ids = getPara("sids");
+			setAttr("ids", ids);
+
+			List<Record> Account = null;
+			Account = Db.find("select * from fin_account where bank_name != '现金'");
+			setAttr("accountList", Account);
+			
+			setAttr("submit_name", LoginUserController.getLoginUserName(this));
+			setAttr("saveOK", false);
+			setAttr("status", "new");
+			render("/yh/arap/CostAcceptOrder/payEdit.html");
+		}
+		
+		
+		//新模块
+		//性逻辑
+		public void costOrderList() {
+	        String ids = getPara("ids");
+	        String application_id = getPara("application_id");
+	        String dz_id ="" ;//对账单
+	        String yf_id = "";//预付单
+	        String cb_id = "";//预付单
+	        String xc_id = "";//预付单
+	        String sql = "";
+	        
+	        
+	        if(application_id.equals("")){
+	        	if(!application_id.equals(ids)){
+	        		String[] orderArrId=ids.split(",");
+	 				for (int i=0;i<orderArrId.length;i++) {
+	 					String[] one=orderArrId[i].split(":");
+	 					String id = one[0];
+	 					String orderType = one[1];
+	 					if("应付对账单".equals(orderType)){
+	 						dz_id += id+",";
+	 					}else if("预付单".equals(orderType)){
+	 						yf_id += id+",";
+	 					}else if("成本单".equals(orderType)){
+	 						cb_id += id+",";
+	 					}else if("行车单".equals(orderType)){
+	 						xc_id += id+",";
+	 					}
+	 				}
+	 				if(!dz_id.equals(""))
+	 					dz_id = dz_id.substring(0, dz_id.length()-1);
+	 				else
+	 					dz_id = "''";
+	 				if(!yf_id.equals(""))
+	 					yf_id = yf_id.substring(0, yf_id.length()-1);
+	 				else
+	 					yf_id = "''";
+	 				if(!cb_id.equals(""))
+	 					cb_id = cb_id.substring(0, cb_id.length()-1);
+	 				else
+	 					cb_id = "''";
+	 				if(!xc_id.equals(""))
+	 					xc_id = xc_id.substring(0, xc_id.length()-1);
+	 				else
+	 					xc_id = "''";
+	        	}
+		       
+				
+			
+				sql = " SELECT aco.id,aco.payee_id,aco.order_no, '对账单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
+						+ " c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '对账单' "
+						+ " ) pay_amount,"
+						+ " (aco.cost_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '对账单'"
+						+ " )) yufu_amount"
+						+ " FROM arap_cost_order aco "
+						+ " LEFT JOIN party p ON p.id = aco.payee_id"
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
+						+ " WHERE "
+						+ " aco.id in(" + dz_id +")"
+						+ " union "
+						+ " SELECT ppo.id,ppo.sp_id payee_id, ppo.order_no, '预付单' order_type, ppo. STATUS, ppo.remark, "
+						+ " ppo.create_date create_stamp, c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, "
+						+ " ppo.total_amount cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0 ) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = ppo.id"
+						+ " AND caor.order_type = '预付单'"
+						+ " ) pay_amount,"
+						+ " ( ppo.total_amount - ( SELECT ifnull(sum(caor.pay_amount), 0) total_pay"
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = ppo.id "
+						+ " AND caor.order_type = '预付单' ) ) yufu_amount"
+						+ " FROM arap_pre_pay_order ppo"
+						+ " LEFT OUTER JOIN party p ON ppo.sp_id = p.id"
+						+ " LEFT OUTER JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT OUTER JOIN user_login ul ON ppo.creator = ul.id"
+						+ " LEFT OUTER JOIN office o ON ppo.office_id = o.id"
+						+ " WHERE "
+						+ " ppo.id in(" + yf_id +")"
+					    + " union"
+					    + " SELECT aco.id,"
+					    + " (case when aco.cost_to_type = 'sp' then aco.sp_id"
+						+ " when aco.cost_to_type = 'customer' then aco.customer_id end) payee_id,"
+					    + " aco.order_no, '成本单' order_type, aco.audit_STATUS, aco.remark, aco.create_stamp,"
+						+ " (case when aco.cost_to_type = 'sp' then (select c.abbr from contact c where c.id = aco.sp_id)"
+						+ " when aco.cost_to_type = 'customer' then (select c.abbr from contact c where c.id = aco.customer_id) end) cname,"
+						+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '成本单' "
+						+ " ) pay_amount,"
+						+ " (aco.total_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '成本单'"
+						+ " )) yufu_amount"
+						+ " FROM arap_misc_cost_order aco "
+						+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
+						+ " WHERE "
+						+ " aco.id in(" + cb_id +")"
+						 + " union"
+					    + " SELECT aco.id,null payee_id, aco.order_no, '行车单' order_type, aco.STATUS, '' remark, aco.create_data create_stamp,"
+						+ " '' cname,"
+						+ " '' creator_name, aco.actual_payment_amount cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '行车单' "
+						+ " ) pay_amount,"
+						+ " (aco.actual_payment_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '行车单'"
+						+ " )) yufu_amount"
+						+ " FROM car_summary_order aco "
+						+ " WHERE "
+						+ " aco.id in(" + xc_id +")";
+			}else{
+				sql = "select * from( SELECT aco.id,aco.payee_id,aco.order_no, '对账单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
+						+ " c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
+						+ " WHERE "
+						+ " caor.cost_order_id = aco.id and caor.application_order_id = aciao.id "
+						+ " AND caor.order_type = '对账单' "
+						+ " ) pay_amount,"
+						+ " (aco.cost_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id"
+						+ " AND caor.order_type = '对账单'"
+						+ " )) yufu_amount, aciao.id app_id "
+						+ " FROM arap_cost_order aco "
+						+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id"
+						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
+						+ " LEFT JOIN party p ON p.id = aco.payee_id"
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
+						+ " where caor.order_type = '对账单'"
+						
+						+ " union "
+						+ " SELECT ppo.id,ppo.sp_id payee_id, ppo.order_no, '预付单' order_type, ppo. STATUS, ppo.remark, "
+						+ " ppo.create_date create_stamp, c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, "
+						+ " ppo.total_amount cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0 ) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE "
+						+ " caor.application_order_id = aciao.id"
+						+ " and caor.cost_order_id = ppo.id"
+						+ " AND caor.order_type = '预付单'"
+						+ " ) pay_amount,"
+						+ " ( ppo.total_amount - ( SELECT ifnull(sum(caor.pay_amount), 0) total_pay"
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = ppo.id "
+						+ " AND caor.order_type = '预付单' ) ) yufu_amount, aciao.id app_id "
+						+ " FROM arap_pre_pay_order ppo"
+						+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = ppo.id"
+						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
+						+ " LEFT OUTER JOIN party p ON ppo.sp_id = p.id"
+						+ " LEFT OUTER JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT OUTER JOIN user_login ul ON ppo.creator = ul.id"
+						+ " LEFT OUTER JOIN office o ON ppo.office_id = o.id"
+						+ " where caor.order_type = '预付单'"
+					    + " union"
+					    + " SELECT aco.id,"
+					    + " (case when aco.cost_to_type = 'sp' then aco.sp_id"
+						+ " when aco.cost_to_type = 'customer' then aco.customer_id end) payee_id,"
+					    + " aco.order_no, '成本单' order_type, aco.audit_STATUS, aco.remark, aco.create_stamp,"
+						+ " (case when aco.cost_to_type = 'sp' then (select c.abbr from contact c where c.id = aco.sp_id)"
+						+ " when aco.cost_to_type = 'customer' then (select c.abbr from contact c where c.id = aco.customer_id) end) cname,"
+						+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
+						+ " WHERE "
+						+ " caor.application_order_id = aciao.id"
+						+ " and caor.cost_order_id = aco.id AND caor.order_type = '成本单' "
+						+ " ) pay_amount,"
+						+ " (aco.total_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '成本单'"
+						+ " )) yufu_amount, aciao.id app_id "
+						+ " FROM arap_misc_cost_order aco "
+						+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id"
+						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
+						+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
+						+ " where caor.order_type = '成本单'"
+						 + " union"
+					    + " SELECT aco.id,null payee_id, aco.order_no, '行车单' order_type, aco.STATUS, '' remark, aco.create_data create_stamp,"
+						+ " '' cname,"
+						+ " '' creator_name, aco.actual_payment_amount cost_amount,"
+						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
+						+ " WHERE  "
+						+ " caor.application_order_id = aciao.id "
+						+ " and caor.cost_order_id = aco.id AND caor.order_type = '行车单' "
+						+ " ) pay_amount,"
+						+ " (aco.actual_payment_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+						+ " FROM cost_application_order_rel caor "
+						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '行车单'"
+						+ " )) yufu_amount, aciao.id app_id "
+						+ " FROM car_summary_order aco"
+						+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id"
+						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
+						+ " where caor.order_type = '行车单'"
+						+ " ) A where app_id ="+application_id;
+						
+			}
+			
+			Map BillingOrderListMap = new HashMap();
+			List<Record> recordList= Db.find(sql);
+	        BillingOrderListMap.put("iTotalRecords", recordList.size());
+	        BillingOrderListMap.put("iTotalDisplayRecords", recordList.size());
+	        BillingOrderListMap.put("aaData", recordList);
+
+	        renderJson(BillingOrderListMap);
+		}
+		
+		
+		
+		@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPO_UPDATE})
+		public void edit() throws ParseException {
+			String id = getPara("id");
+			setAttr("application_id", id);
+			
+			ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(id);
+			setAttr("invoiceApplication", arapAuditInvoiceApplication);
+			
+			Contact con  = Contact.dao.findById(arapAuditInvoiceApplication.get("payee_id"));
+			if(con != null){
+				String payee_filter = con.get("company_name");
+				setAttr("payee_filter", payee_filter);
+			}
+			UserLogin userLogin = null;
+			userLogin = UserLogin.dao .findById(arapAuditInvoiceApplication.get("create_by"));
+			String submit_name = userLogin.get("c_name");
+			setAttr("submit_name", submit_name);
+			
+			Long check_by = arapAuditInvoiceApplication.getLong("check_by");
+			if( check_by != null){
+				userLogin = UserLogin.dao .findById(check_by);
+				String check_name = userLogin.get("c_name");
+				setAttr("check_name", check_name);
+			}
+			
+			List<Record> Account = Db.find("select * from fin_account where bank_name != '现金'");
+			setAttr("accountList", Account);
+			
+			render("/yh/arap/CostAcceptOrder/payEdit.html");
+		}
+		
+		
+		//复核
+		@Before(Tx.class)
+	    public void checkStatus(){
+	        String application_id=getPara("application_id");
+	        
+	        ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
+	        arapCostInvoiceApplication.set("status", "已复核");
+	        arapCostInvoiceApplication.set("check_by", LoginUserController.getLoginUserId(this));
+	        arapCostInvoiceApplication.set("check_stamp", new Date()).update();
+	        renderJson(arapCostInvoiceApplication);
+	        
+	    }
+		
+		//退回
+		@Before(Tx.class)
+	    public void returnOrder(){
+	        String application_id=getPara("application_id");
+	        
+	        ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
+	        arapCostInvoiceApplication.set("status", "新建");
+	        arapCostInvoiceApplication.set("return_by", LoginUserController.getLoginUserId(this));
+	        arapCostInvoiceApplication.set("return_stamp", new Date()).update();
+	        renderJson("{\"success\":true}");
+	        
+	    }
+	    
+	    
+		//付款确认
+		@Before(Tx.class)
+	    public void confirmOrder(){
+	        String application_id=getPara("application_id");
+	        String pay_type = getPara("pay_type");
+	        String pay_bank_id = getPara("pay_bank");
+	        String pay_time = getPara("pay_time");
+	        
+	        if( pay_time==null||pay_time.equals("")){
+	   			pay_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+	   		}
+	        
+	        ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
+	        String pay_amount = arapCostInvoiceApplication.getDouble("total_amount").toString();
+	        arapCostInvoiceApplication.set("status", "已付款");
+	        arapCostInvoiceApplication.set("pay_type", pay_type);
+	        if(pay_bank_id != null && !pay_bank_id.equals(""))
+	        	arapCostInvoiceApplication.set("confirm_bank_id", pay_bank_id);
+	        if(pay_time==null || pay_time.equals(""))
+	        	arapCostInvoiceApplication.set("pay_time", new Date());
+	        else
+	        	arapCostInvoiceApplication.set("pay_time", pay_time);
+	        arapCostInvoiceApplication.set("confirm_by", LoginUserController.getLoginUserId(this));
+	        arapCostInvoiceApplication.set("confirm_stamp", new Date());
+	        arapCostInvoiceApplication.set("confirm_by", LoginUserController.getLoginUserId(this));
+	        arapCostInvoiceApplication.set("confirm_stamp", new Date());
+	        arapCostInvoiceApplication.update();
+	        
+	        
+	        
+	        
+	      //新建日记账表数据
+			 ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
+	        auditLog.set("payment_method", pay_type);
+	        auditLog.set("payment_type", ArapAccountAuditLog.TYPE_COST);
+	        auditLog.set("amount", pay_amount);
+	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
+	        auditLog.set("create_date", pay_time);
+	        if(!pay_bank_id.equals("") && pay_bank_id!=null)
+	        	auditLog.set("account_id", pay_bank_id);
+	        else
+	        	auditLog.set("account_id", 4);
+	        
+//	        if(order_type.equals("成本单")){
+//	        	auditLog.set("source_order", "成本单");
+//	        }else if(order_type.equals("行车单")){
+//	        	auditLog.set("source_order", "行车单");
+//	        }else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
+//	        	auditLog.set("source_order", "行车报销单");
+//	        }else if(order_type.equals("往来票据单")){
+//	        	auditLog.set("source_order", "往来票据单");
+//	        }else{
+	        	auditLog.set("source_order", "应付开票申请单");
+//	        }
+	        auditLog.set("invoice_order_id", application_id);
+	        auditLog.save();
+	        
+	        if("transfers".equals(pay_type)){
+	        	updateAccountSummary(pay_amount, Long.parseLong(pay_bank_id) ,pay_time);
+	        }else{
+	        	Account cashAccount = Account.dao.findFirst("select * from fin_account where bank_name ='现金'");
+	        	updateAccountSummary(pay_amount,cashAccount.getLong("id"),pay_time);
+	        }	        
+	        renderJson("{\"success\":true}");  
+	    }
+		
+		
+		
+		//更新日记账的账户期初结余
+		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
+		private void updateAccountSummary(String pay_amount, Long acountId, String pay_time) {
+			Calendar cal = Calendar.getInstance();  
+			int this_year = cal.get(Calendar.YEAR);  
+			int this_month = cal.get(Calendar.MONTH)+1;  
+			String year = pay_time.substring(0, 4);
+			String month = pay_time.substring(5, 7);
+			
+			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
+				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, acountId, year, month);
+				if(aaas!=null){
+					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
+					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					aaas.update();
+				}else{//add a new
+					//1.该账户没有记录
+					//2.该月份没有，从上月拷贝一条，考虑：上月也没有（跨1-N月）， 跨年
+					ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
+				}
+			}else{
+				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, acountId, year, month);
+				
+				if(aaas!=null){
+					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
+					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					aaas.update();
+					
+					
+					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
+						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
+								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+								, acountId, this_year, Integer.parseInt(month)+i);
+						
+						this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") - Double.parseDouble(pay_amount)));
+						this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount)));
+						this_aaas.update();
+					}
+					
+					
+				}
+			}
+		}
+	    
 }
