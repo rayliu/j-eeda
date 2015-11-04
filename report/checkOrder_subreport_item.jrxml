@@ -47,7 +47,7 @@
 	) as address,
 		ifnull((select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付'),0) as amount,
 		ifnull(IFNULL((select sum(change_amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付'),(select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付')),0) as confirm_amount,
-		'' as remark
+		dor.remark as remark
 	from
 		arap_cost_item aci
 	left join delivery_order dor on dor.id = aci.ref_order_id
@@ -85,7 +85,7 @@ where dto.id = aci.ref_order_id
  ) as address,
 		ifnull((select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付'),0) as amount,
 		ifnull(ifnull((select sum(change_amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付'),(select sum(amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = dto.id and fi.type = '应付')),0) as confirm_amount,
-		'' as remark
+		dto.remark as remark
 	from
 		arap_cost_item aci
 	left join depart_order dto on dto.id = aci.ref_order_id
@@ -116,7 +116,7 @@ union
 		doer.address as address,
 		ifnull((select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),0) as amount,
 		ifnull(IFNULL((select sum(change_amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),(select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付')),0) as confirm_amount,
-		'' as remark
+		doer.remark as remark
 	from
 		arap_cost_item aci
 	left join depart_order doer on doer.id = aci.ref_order_id
@@ -148,7 +148,7 @@ where tor.insurance_id=io.id)  customer_name,
 		'' as address,
 		ifnull((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),0) as amount,
 		ifnull(IFNULL((select sum(change_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付'),(select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = io.id and fi.type = '应付')),0) as confirm_amount,
-		'' as remark
+		io.remark as remark
 	from
 		arap_cost_item aci
 	left join  insurance_order io on io.id = aci.ref_order_id
@@ -171,7 +171,7 @@ SELECT
 	'' AS address,
 	ifnull((SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付'),0) AS amount,
 	ifnull(IFNULL((SELECT sum(change_amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付'),(SELECT sum(amount) FROM arap_misc_cost_order_item amcoi left join fin_item fi on fi.id = amcoi.fin_item_id where amcoi.misc_order_id = amco.id and fi.type = '应付')),0) AS confirm_amount,
-	'' AS remark
+	amco.remark AS remark
        FROM
 	arap_cost_item aci
 	LEFT JOIN arap_misc_cost_order amco ON amco.id = aci.ref_order_id
@@ -204,7 +204,9 @@ SELECT
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="sp_order_no" class="java.lang.String"/>
-	<field name="customer_name" class="java.lang.String"/>
+	<field name="customer_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="route_from" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
