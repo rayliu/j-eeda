@@ -111,7 +111,7 @@
                         <div class="col-lg-4">        
                             <%include("/yh/component/form/inputField.html", 
                                             {  id:'accident_desc', 
-                                                label:'事故描述', 
+                                                label:'事故描述-D', 
                                                 value:order.accident_desc!''
                                             }){} %>
                         </div><!-- /.col-lg-4 -->
@@ -119,7 +119,15 @@
                             <%include("/yh/component/form/dateInputField.html",{id:'accident_date', label:'事故时间', value: order.accident_date!''}){} %>
                         </div><!-- /.col-lg-4 -->
                     </div>    
-
+                    <div class="row"><!--  第4行  -->
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'insurance_amount', 
+                                                    label:'货损金额', 
+                                                    value:order.insurance_amount!''
+                                                }){}%>
+                        </div>
+                    </div>
                     <div class="row"><!--  第4行  -->
                         <div class="col-lg-4">
                             <%include("/yh/component/form/inputField.html", 
@@ -151,7 +159,7 @@
             <div class="row">
                 <div class="col-lg-12">
                    <div class="form-group">
-                        <label>备注</label>
+                        <label>事故描述</label>
                         <textarea id='remark' class="form-control" rows="3" name="remark">${order.remark!''}</textarea>
                     </div>
                 </div>
@@ -162,7 +170,8 @@
              <br>
             <div class="row">
                 <div class="col-lg-12">
-                    <button class="btn btn-success btn-xs" id="add_cargo">添加货品</button>
+                    货损明细
+                    <button class="btn btn-success btn-xs" id="add_cargo">添加</button>
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'cargo_table', 
@@ -175,12 +184,13 @@
             <hr>
             <div class="row">
                 <div class="col-lg-12">
-                    <button class="btn btn-success btn-xs" id="add_charge">添加应收</button>
+                    保险公司或责任方赔偿
+                    <button class="btn btn-success btn-xs" id="add_charge">添加</button>
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'charge_table', 
-                            headers:['', '状态', '应收条目', '金额', '收取', '名称', '备注'],
-                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'name', 'remark'],
+                            headers:['', '状态', '应收描述', '金额', '收取', '收款方式', '名称', '备注'],
+                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'charge_type', 'name', 'remark'],
                             value_list: order.charge_list![]
                         }){} %>
                     
@@ -189,21 +199,42 @@
             <hr>
             <div class="row">
                 <div class="col-lg-12">
-                    <button class="btn btn-success btn-xs" id="add_cost">添加应付</button>
+                    向客户或收货人赔款
+                    <button class="btn btn-success btn-xs" id="add_cost">添加</button>
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'cost_table', 
-                            headers:['', '状态', '应付条目', '金额', '付给', '名称', '备注'],
-                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'name', 'remark'],
+                            headers:['', '状态', '应付描述', '金额', '付给', '付款方式', '名称', '备注'],
+                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'cost_type', 'name', 'remark'],
                             value_list: order.cost_list![]
                         }){} %>
                 </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                   <div class="form-group">
+                        <h3>
+                            <label>总金额： 10000</label>
+                            <label>责任方赔付金额：8000</label>
+                            <label>向客户赔付金额：10000</label>
+                            <label>差异金额：-2000</label>
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                   <div class="form-group">
+                        <label>差异说明</label>
+                        <textarea id='remark' class="form-control" rows="3" name="remark">${order.remark!''}
+                        点“已结案” 如果应收应付没确认完，出提示</textarea>
+                    </div>
+                </div>
+                <!-- /.col-lg-12 -->
             </div>
             <br>
             <div class="row">
                 <div class="col-lg-12">
                     <a id='saveBtn' class="btn  btn-primary" href="#">保存</a>
-                    <a id='completeBtn' class="btn  btn-primary" href="#">已完成</a>
+                    <a id='completeBtn' class="btn  btn-primary" href="#">已结案</a>
                     <a class="btn  btn-default" href="/damageOrder">返回</a>
                 </div>
                 <!-- /.col-lg-12 -->

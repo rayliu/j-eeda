@@ -119,10 +119,22 @@ $(document).ready(function() {
                     if(!data)
                         data='';
                     return '<select class="form-control search-control">'
-                        +'<option >供应商</option>'
+                        
                         +'<option >客户</option>'
-                        +'<option >保险公司</option>'
+                        +'<option >收货人</option>'
                         +'<option >其他</option>'
+                    +'</select>';
+                }
+            },
+            { "data": "COST_TYPE",
+                "render": function ( data, type, full, meta ) {
+                    if(!data)
+                        data='';
+                    
+                    return '<select class="form-control search-control">'
+                        +'<option >正常付款</option>'
+                        +'<option >抵扣运费</option>'
+                        +'<option >责任方已付款</option>'
                     +'</select>';
                 }
             },

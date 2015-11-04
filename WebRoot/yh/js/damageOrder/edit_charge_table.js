@@ -127,6 +127,17 @@ $(document).ready(function() {
                     +'</select>';
                 }
             },
+            { "data": "CHARGE_TYPE",
+                "render": function ( data, type, full, meta ) {
+                    if(!data)
+                        data='';
+                    
+                    return '<select class="form-control search-control">'
+                        +'<option >正常收款</option>'
+                        +'<option >抵扣运费</option>'
+                    +'</select>';
+                }
+            },
             { "data": "NAME",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
