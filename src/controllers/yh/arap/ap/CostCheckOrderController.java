@@ -912,7 +912,7 @@ public class CostCheckOrderController extends Controller {
         String booking_id= getPara("booking_id");;
         String orderNo = getPara("orderNo");
         String serial_no = getPara("serial_no");
-    	String sp = getPara("sp");
+    	String sp_id2 = getPara("sp_id2");
     	String no = getPara("no");
     	String beginTime = getPara("beginTime");
     	String endTime = getPara("endTime");
@@ -920,7 +920,8 @@ public class CostCheckOrderController extends Controller {
     	String status = getPara("status");
     	String ispage = getPara("ispage");
     	String sqlTotal = "";
-    	String sql = " select * from (select distinct dor.id,dofi.id did,IFNULL(c2.address,IFNULL(toid.notify_party_company,'')) receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,c.abbr spname,c1.abbr customer_name,"
+    	String sql = " select * from (select distinct dor.id,dofi.id did,IFNULL(c2.address,IFNULL(toid.notify_party_company,'')) receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,"
+    			+ " c.id sp_id, c.abbr spname,c1.abbr customer_name,"
     						+ " (SELECT sum(doi1.amount) FROM delivery_order_item doi1 WHERE doi1.delivery_id = dor.id ) amount, "
     						+ " ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,"
     						+ " '配送' business_type, (select sum(amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.type = '应付') pay_amount,"
@@ -959,7 +960,8 @@ public class CostCheckOrderController extends Controller {
 							+ " left join office oe on oe.id = w.office_id where dor.audit_status='已确认' group by dor.id "
 							+ " union"
 							+ " select distinct dpr.id,dofi.id did,(CASE tor.arrival_mode WHEN 'gateIn' THEN w.warehouse_name WHEN 'delivery' THEN tor.receiving_address WHEN 'deliveryToFactory' THEN tor.receiving_address "
-							+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END)  receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,c1.abbr customer_name,"
+							+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END)  receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,"
+							+ "c.id sp_id, c.abbr spname,c1.abbr customer_name,"
 							+ " ( SELECT CASE WHEN tor.cargo_nature = 'ATM' THEN ( SELECT count(toid.id) FROM transfer_order_item_detail toid  "
 							+ " WHERE toid.depart_id = dpr.id ) WHEN tor.cargo_nature = 'cargo' THEN ( SELECT sum(toi.amount) FROM "
 							+ " depart_order dpr2 LEFT JOIN depart_transfer dt ON dt.depart_id = dpr2.id "
@@ -991,7 +993,8 @@ public class CostCheckOrderController extends Controller {
 							+ " left join office oe on oe.id = tor.office_id where  (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'DEPART' group by dpr.id"
 							+ " union "
 							+ " select distinct dpr.id,dofi.id did,(CASE tor.arrival_mode WHEN 'gateIn' THEN w.warehouse_name WHEN 'delivery' THEN tor.receiving_address WHEN 'deliveryToFactory' THEN tor.receiving_address "
-							+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END)  receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,c.abbr spname,c1.abbr customer_name,"
+							+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END)  receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,"
+							+ " c.id sp_id, c.abbr spname,c1.abbr customer_name,"
 							+ " ( SELECT CASE WHEN tor.cargo_nature = 'ATM' THEN ( "
 							+ " SELECT count(toid.id) FROM transfer_order_item_detail toid "
 							+ " WHERE toid.pickup_id = dpr.id ) "
@@ -1027,7 +1030,7 @@ public class CostCheckOrderController extends Controller {
 							+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' group by dpr.id"
 							+ " union "
 							+ " select distinct ior.id,ifi.id did,NULL as receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,ior.order_no order_no,ior.status,"
-							+ " con.abbr spname,c_c.abbr customer_name,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,"
+							+ " con.id sp_id, con.abbr spname,c_c.abbr customer_name,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,"
 							+ " '保险' business_type, "
 							+ " round((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付'),2) pay_amount, "
 							+ " round((SELECT sum(change_amount) FROM insurance_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id WHERE dofi.insurance_order_id = ior.id AND fi.type = '应付' ),2) change_amount,"
@@ -1058,7 +1061,8 @@ public class CostCheckOrderController extends Controller {
 							+ " union "
 							+ " SELECT DISTINCT amco.id,amcoi.id did,NULL as receivingunit,amco.route_from,l. NAME route_name,"
 							+ " amco.route_to,l1. NAME to_name,NULL AS planning_time,"
-							+ " amco.order_no,amco. STATUS,c.abbr spname, c1.abbr customer_name, NULL AS amount,"
+							+ " amco.order_no,amco. STATUS,"
+							+ " c.id sp_id, c.abbr spname, c1.abbr customer_name, NULL AS amount,"
 							+ " NULL AS volume,NULL AS weight,amco.create_stamp,"
 							+ " ul.user_name creator,"
 							+ " '成本单' business_type,"
@@ -1080,7 +1084,7 @@ public class CostCheckOrderController extends Controller {
 							+ " WHERE	amco.audit_status = '已确认'"
 							+ " GROUP BY amco.id) as A " ;
     	String condition = "";
-    	if(orderNo != null || sp != null || serial_no != null || no != null || beginTime != null
+    	if(orderNo != null || sp_id2 != null || serial_no != null || no != null || beginTime != null
     			|| endTime != null || type != null || status != null){
     		String time ="";
 			if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
@@ -1102,7 +1106,7 @@ public class CostCheckOrderController extends Controller {
     					+ " and order_no like '%" + no + "%' "
     					+ " and business_type like '%" + type + "%' "
     					+ " and status like '%" + status + "%' "
-    					+ " and spname like '%" + sp + "%' "
+    					+ " and sp_id = '" + sp_id2 + "' "
     					+ " and ifnull(serial_no,'') like '%" + serial_no + "%' "
     					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
     					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";

@@ -382,7 +382,7 @@ $(document).ready(function() {
     			pageSpAddress.empty();
     			$('#sp_id2').val($(this).attr(''));
     		}
-    		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
+    		$.get('/customerContract/searchSp', {spName:inputStr}, function(data){
     			if(inputStr!=$('#sp_filter2').val()){//查询条件与当前输入值不相等，返回
 					return;
 				}
@@ -420,7 +420,10 @@ $(document).ready(function() {
 
     	// 没选中供应商，焦点离开，隐藏列表
     	$('#sp_filter2').on('blur', function(){
+            if($(this).val().trim().length == 0)
+                $('#sp_id2').val('');
      		$('#spList2').hide();
+            refreshCreateList();
      	});
 
     	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
@@ -437,28 +440,8 @@ $(document).ready(function() {
     		console.log($('#spList').is(":focus"))
     		var message = $(this).text();
     		$('#sp_filter2').val(message.substring(0, message.indexOf(" ")));
-    		$('#sp_id').val($(this).attr('partyId'));
-    		var pageSpName = $("#pageSpName");
-    		pageSpName.empty();
-    		var pageSpAddress = $("#pageSpAddress");
-    		pageSpAddress.empty();
-    		pageSpAddress.append($(this).attr('address'));
-    		var contact_person = $(this).attr('contact_person');
-    		if(contact_person == 'null'){
-    			contact_person = '';
-    		}
-    		pageSpName.append(contact_person+'&nbsp;');
-    		var phone = $(this).attr('phone');
-    		if(phone == 'null'){
-    			phone = '';
-    		}
-    		pageSpName.append(phone); 
-    		pageSpAddress.empty();
-    		var address = $(this).attr('address');
-    		if(address == 'null'){
-    			address = '';
-    		}
-    		pageSpAddress.append(address);
+    		$('#sp_id2').val($(this).attr('spid'));
+    		
             $('#spList2').hide();
             
             refreshCreateList();
@@ -521,13 +504,14 @@ $(document).ready(function() {
     	var booking_id = $("#booking_id").val();
     	var orderNo = $("#orderNo_filter").val();
     	var sp = $("#sp_filter2").val();
+        var sp_id2 = $("#sp_id2").val();
     	var no = $("#no").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var type = $("#order_type_filter").val();
     	var status = $("#order_status_filter").val();
     	var serial_no = $("#serial_no").val();
-    	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/unSelectedList?sp="+sp
+    	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/unSelectedList?sp_id2="+sp_id2
 														+"&beginTime="+beginTime
 														+"&endTime="+endTime
 														+"&orderNo="+orderNo
