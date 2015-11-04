@@ -36,7 +36,7 @@ $(document).ready(function() {
             		var A=obj.aData.ORDER_NO.substring(0, 4);
         			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		if(obj.aData.ORDER_TYPE == '申请单')
-            			return "<a href='/costAcceptOrder/edit2?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		else if(obj.aData.ORDER_TYPE == '报销单'){
             			if(A=='YFBX'){
             				return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -82,6 +82,8 @@ $(document).ready(function() {
             		 }
             	 }
             },  
+            {"mDataProp":"PAID_AMOUNT", "sWidth":"80px" },
+            {"mDataProp":"NOPAID_AMOUNT", "sWidth":"80px" },
             {"mDataProp":"CNAME",  "sWidth":"200px",
             	"sClass": "cname"
             },  
@@ -138,126 +140,216 @@ $(document).ready(function() {
     
     
     
-    //待付款列表
-    var ids = [];
-    var ids2 = [];
-	var cnames = [];
-	var cnames2 = [];
-	var payee_names = [];
-	var payee_names2 = [];
-
-    // 未选中列表
-	$("#costAccept-table").on('click', '.invoice', function(e){
+    
+    var applicationTab = $('#application-table').dataTable({
+        "bFilter": false, //不需要默认的搜索框
+        "bSort": true, 
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "bServerSide": false,
+        "iDisplayLength": 100,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "order": [
+            [1, 'desc']
+        ],
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+			$(nRow).attr({order_type: aData.ORDER_TYPE}); 
+			return nRow;
+		},
+        "sAjaxSource": "/costAcceptOrder/applicationList",
+        "aoColumns": [
+			{ "mDataProp": null, "sWidth":"20px", "bSortable": false,
+			    "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='付款确认中' || obj.aData.STATUS=='已付款确认'){
+                        return '';
+                    }
+			        return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
+			    }
+			},
+            {"mDataProp":"ORDER_NO","sWidth":"90px",
+            	"fnRender": function(obj) {
+            		var A=obj.aData.ORDER_NO.substring(0, 4);
+        			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		if(obj.aData.ORDER_TYPE == '申请单')
+            			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else if(obj.aData.ORDER_TYPE == '报销单'){
+            			if(A=='YFBX'){
+            				return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			}
+            			else if(A=='XCBX'){
+            				return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			}
+            		}
+            		else if(obj.aData.ORDER_TYPE == '行车单')
+            			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            		else
+            			return obj.aData.ORDER_NO;
+        		}
+            },
+            {"mDataProp":"ORDER_TYPE", "sWidth":"90px","sClass":'order_type',
+                "fnRender": function(obj) {
+                	var A=$(obj.aData.ORDER_NO).text().substring(0, 4);
+                	if(A=='YFBX')
+        				return "报销单";
+                	else if(A=='XCBX')
+                		return "行车报销单";
+                	else
+            			return obj.aData.ORDER_TYPE;
+                	}
+                },   
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"90px",
+            	"sClass":"pay_amount",
+           	 	"fnRender": function(obj) {
+        		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
+        			 return '<p style="color:red">0<p>';
+        		 }else{
+        			 return obj.aData.TOTAL_AMOUNT;
+        		 }
+        	 }
+            } ,
+            {"mDataProp":"CNAME",  "sWidth":"200px",
+            	"sClass": "cname"
+            },  
+            {"mDataProp":"PAYEE_NAME", "sWidth":"150px",
+            	"sClass": "payee_name"},
+            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
+                "fnRender": function(obj) {
+                    if(obj.aData.PAYMENT_METHOD == 'cash')
+                        return '现金';
+                    else if(obj.aData.PAYMENT_METHOD == 'transfers')
+                        return '转账';
+                    else
+                    	return obj.aData.PAYMENT_METHOD;
+                }
+            },
+            {"mDataProp":"STATUS", "sWidth":"80px",
+            	"sClass": "status",
+                "fnRender": function(obj) {
+                    if(obj.aData.STATUS=='new'){
+                        return '新建';
+                    }else if(obj.aData.STATUS=='checking'){
+                        return '已发送对帐';
+                    }else if(obj.aData.STATUS=='confirmed'){
+                        return '已审核';
+                    }else if(obj.aData.STATUS=='completed'){
+                        return '已结算';
+                    }else if(obj.aData.STATUS=='cancel'){
+                        return '取消';
+                    }
+                    return obj.aData.STATUS;
+                }
+            },             
+            {"mDataProp":"REMARK", "sWidth":"200px"},
+                       
+        ]      
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    var clean = function(){
+    	ids = [];
+    	ids2 = [];
+    	sids = [];
+    	
+    	payee_names = [];
+        payee_names2 = [];
+        payee_names3 = [];
+        
+        cnames = [];
+        cnames2 = [];
+        cnames3 = [];
+    };
+    
+    
+    //待申请列表
+    var sids = [];
+    var cnames3 = [];
+	var payee_names3 = [];
+    $("#costAccept-table").on('click', '.invoice', function(e){
+    	var this_id = $(this).attr('id');
+		var this_order_type = $(this).parent().parent().attr('order_type');
 		if($(this).prop("checked") == true){
 			if($(this).parent().siblings('.pay_amount')[0].textContent == 0){
 				$.scojs_message('申请金额不能为0!', $.scojs_message.TYPE_FALSE);
 				return false;
 			}
-
-			var status = $(this).parent().siblings('.status')[0].textContent;
-			if(status == '已复核'){
-				if(ids2.length>0){
-					$.scojs_message('只能选择未复核单据!', $.scojs_message.TYPE_FALSE);
-					return false;
-				}
-				ids.push($(this).attr('id'));
-				if(ids.length>0){
-					$("#confirmBtn").attr("disabled",false);
-					if(ids.length > 1){
-						if(cnames[0] != $(this).parent().siblings('.cname')[0].textContent){
-							$.scojs_message('请选择相同的供应商!', $.scojs_message.TYPE_FALSE);
-							var tmpArr1 = [];
-							for(id in ids){
-								if(ids[id] != $(this).attr('id')){
-									tmpArr1.push(ids[id]);
-								}
+			sids.push(this_id+':'+this_order_type);
+			if(sids.length>0){
+				$("#createBtn").attr("disabled",false);
+				if(sids.length > 1){
+					if(cnames3[0] != $(this).parent().siblings('.cname')[0].textContent){
+						$.scojs_message('请选择相同的供应商!', $.scojs_message.TYPE_FALSE);
+						var tmpArr1 = [];
+						for(id in sids){
+							if(sids[id] != this_id+':'+this_order_type){
+								tmpArr1.push(sids[id]);
 							}
-							ids = tmpArr1;
-							return false;
-						}else if(payee_names[0] != $(this).parent().siblings('.payee_name')[0].textContent){
-							$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
-							var tmpArr2 = [];
-							for(id in ids){
-								if(ids[id] != $(this).attr('id')){
-									tmpArr2.push(ids[id]);
-								}
-							}
-							ids = tmpArr2;
-							return false;
 						}
-					}
-					cnames.push($(this).parent().siblings('.cname')[0].textContent);
-					payee_names.push($(this).parent().siblings('.payee_name')[0].textContent);
-					$("#order_type").val($(this).parent().parent().attr('order_type'));
-				}
-			}else{
-				if(ids.length>0){
-					$.scojs_message('只能选择已付复核单据!', $.scojs_message.TYPE_FALSE);
-					return false;
-				}
-				ids2.push($(this).attr('id'));
-				if(ids2.length>0){
-					$("#checkBtn").attr("disabled",false);
-					if(ids2.length > 1){
-						if(cnames2[0] != $(this).parent().siblings('.cname')[0].textContent){
-							$.scojs_message('请选择相同的供应商!', $.scojs_message.TYPE_FALSE);
-							var tmpArr1 = [];
-							for(id in ids2){
-								if(ids2[id] != $(this).attr('id')){
-									tmpArr1.push(ids2[id]);
-								}
+						sids = tmpArr1;
+						return false;
+					}else if(payee_names3[0] != $(this).parent().siblings('.payee_name')[0].textContent){
+						$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
+						var tmpArr2 = [];
+						for(id in sids){
+							if(sids[id] != this_id+':'+this_order_type){
+								tmpArr2.push(sids[id]);
 							}
-							ids2 = tmpArr1;
-							return false;
-						}else if(payee_names2[0] != $(this).parent().siblings('.payee_name')[0].textContent){
-							$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
-							var tmpArr2 = [];
-							for(id in ids2){
-								if(ids2[id] != $(this).attr('id')){
-									tmpArr2.push(ids2[id]);
-								}
-							}
-							ids2 = tmpArr2;
-							return false;
 						}
+						sids = tmpArr2;
+						return false;
 					}
-					cnames2.push($(this).parent().siblings('.cname')[0].textContent);
-					payee_names2.push($(this).parent().siblings('.payee_name')[0].textContent);
-					$("#order_type").val($(this).parent().parent().attr('order_type'));
 				}
+				cnames3.push($(this).parent().siblings('.cname')[0].textContent);
+				payee_names3.push($(this).parent().siblings('.payee_name')[0].textContent);
+				//$("#order_type").val();
 			}
+			$('#sids').val(sids);
 		}else if($(this).prop("checked") == false){
 			var tmpArr = [];
-			for(id in ids){
-				if(ids[id] != $(this).attr('id')){
-					tmpArr.push(ids[id]);
+			for(id in sids){
+				if(sids[id] != this_id+':'+this_order_type){
+					tmpArr.push(sids[id]);
 				}
 			}
-			ids = tmpArr;
-			
-			
-			var tmpArr2 = [];
-			for(id in ids2){
-				if(ids2[id] != $(this).attr('id')){
-					tmpArr.push(ids2[id]);
-				}
-			}
-			ids2 = tmpArr2;
+			sids = tmpArr;
 		}
 		
-		$("#invoiceApplicationOrderIds").val(ids);
-		if(ids.length == 0){
-			$("#confirmBtn").attr("disabled",true);
-			 cnames = [];
-			 payee_names = [];
-		}
-		if(ids2.length == 0){
-			$("#checkBtn").attr("disabled",true);
-			 cnames2 = [];
-			 payee_names2 = [];
+		$("#sids").val(sids);
+		if(sids.length == 0){
+			$("#createBtn").attr("disabled",true);
+			 cnames3 = [];
+			 payee_names3 = [];
 		}
 	});
-	
+    
+    
+    $("#createBtn").on('click', function(){
+    	clean();
+		$("#createBtn").attr("disabled",true);
+//		var idArr=[];  	
+//		var orderArr=[];
+//        $("input[name='order_check_box']").each(function(){
+//        	if($(this).prop('checked') == true){
+//        		idArr.push($(this).attr('id'));
+//        		orderArr.push($(this).parent().parent().find('.order_type').text());
+//        	}
+//        });     
+//        console.log(idArr);
+//        var ids = idArr.join(",");
+//        var order= orderArr.join(",");
+		$('#confirmForm').submit();
+	});
+    
 	
 	$('#datetimepicker3').datetimepicker({  
         format: 'yyyy-MM-dd',  
@@ -320,34 +412,7 @@ $(document).ready(function() {
 		}
 	},'json');
     
-   
-//    var ids = [];
-//    // 未选中列表
-//	$("#costAccept-table").on('click', '.checkedOrUnchecked', function(e){
-//		if($(this).prop("checked") == true){
-//            var orderNo = $(this).parent().parent().find('a').text();
-//            var orderObj=$(this).val()+":"+orderNo;
-//            //var order = ids.pop();
-//			ids.push(orderObj);
-//
-//			$("#costIds").val(ids);
-//		}else{
-//			if(ids.length != 0){
-//				ids.splice($.inArray($(this).val(),ids),1);
-//				$("#costIds").val(ids);
-//			}
-//			if(ids.length <= 0){
-//			}
-//		}			
-//	});	
-    var clean = function(){
-    	ids = [];
-    	ids2 = [];
-    	payee_names = [];
-        payee_names2 = [];
-    };
-
-		
+	
 	$("#checkBtn").on('click', function(){
 		clean();
 		$("#checkBtn").attr("disabled",true);
@@ -608,11 +673,21 @@ $(document).ready(function() {
     $('#customer_filter1').on('blur', function(){
         $('#companyList1').hide();
     });
+    
     $("#status_filter1").on('change', function () {
     	refreshData();
     });
+    
     $('#beginTime_filter2,#endTime_filter2,#orderNo_filter1').on('keyup', function () {
     	refreshData();
+    } );
+    
+    $("#status_filter8").on('change', function () {
+    	refreshData2();
+    });
+    
+    $('#beginTime_filter8,#endTime_filter8,#orderNo_filter8').on('keyup', function () {
+    	refreshData2();
     } );
 
 
@@ -629,7 +704,7 @@ $(document).ready(function() {
         }
     };
 
-    //已复核页面
+    //待申请页面
     var refreshData=function(){
         var orderNo = $("#orderNo_filter1").val();//单号
         var status = $("#status_filter1").val();
@@ -643,6 +718,25 @@ $(document).ready(function() {
             +"&beginTime="+beginTime+"&endTime="+endTime+"&orderNo="+orderNo+"&sp="+sp;
 
         costAcceptOrderTab.fnDraw(); 
+
+        saveConditions();
+    };
+    
+    
+    
+  //待付款页面
+    var refreshData2=function(){
+        var orderNo = $("#orderNo_filter8").val();//单号
+        var status = $("#status_filter8").val();
+        var sp = $("#sp_filter8").val();
+        var beginTime = $("#beginTime_filter8").val();
+        var endTime = $("#endTime_filter8").val();
+
+        applicationTab.fnSettings().oFeatures.bServerSide = true;
+        applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status
+            +"&beginTime="+beginTime+"&endTime="+endTime+"&orderNo="+orderNo+"&sp="+sp;
+
+        applicationTab.fnDraw(); 
 
         saveConditions();
     };
@@ -663,9 +757,9 @@ $(document).ready(function() {
             $("#endTime_filter2").val(conditions.endTime);
         }
     };
-
     loadConditions();
     refreshData();
+    refreshData2();
 
 
 

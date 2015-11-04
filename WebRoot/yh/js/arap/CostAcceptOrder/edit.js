@@ -22,13 +22,10 @@
 		},
         "aoColumns": [   
              {"mDataProp":"TYPE","sWidth": "150px"},
-             {"mDataProp":"ORDER_NO",
+             {"mDataProp":"ORDER_NO","sWidth": "150px",
             	"fnRender": function(obj) {
         			return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
         		}},
-    		{"mDataProp":null,"sWidth": "150px"},
-    		{"mDataProp":null,"sWidth": "150px"},
-    		{"mDataProp":"CREATE_STAMP","sWidth": "150px"},
     		{"mDataProp":"COST_AMOUNT","sWidth": "150px",
     			"fnRender": function(obj) {
 					total = total + parseFloat(obj.aData.COST_AMOUNT) ;
@@ -47,7 +44,7 @@
     			"fnRender": function(obj) {
 					pay = pay + parseFloat(obj.aData.PAY_AMOUNT) ;
 					$("#pay").html(pay);
-					return obj.aData.PAY_AMOUNT;
+					return "<input type ='text' id = 'pay_amount' value='"+obj.aData.PAY_AMOUNT+"'>";
     			}
     		},    
         ]      

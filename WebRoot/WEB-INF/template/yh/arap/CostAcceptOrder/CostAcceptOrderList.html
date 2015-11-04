@@ -16,11 +16,11 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<ul id="orderTabs" class="nav nav-tabs">
-				<!-- <li class="active">
-					<a href="#unaudit" data-toggle="tab" data-src="create" id="costCheckOrderbasic">未复核单据</a>
-				</li> -->
 				<li class="active">
-					<a href="#audit" data-toggle="tab" id="costCheckOrderItem">待付款单据</a>
+					<a href="#audit" data-toggle="tab" id="costCheckOrderItem">待申请单据</a>
+				</li>
+				<li >
+					<a href="#unpay" data-toggle="tab" data-src="create" id="costCheckOrderbasic">待付款单据</a>
 				</li>
 				<li class="">
 					<a href="#payed" data-toggle="tab" id="costPayedOrder">已付款单据</a>
@@ -38,11 +38,6 @@
                                         	<ul id='spList1' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 											</ul>
                                         </div>
-									<!-- <div class="form-group">
-										<label class="search-label">客户</label>
-										<input type="text" class="form-control search-control customer_filter" id="customer_filter1"  placeholder="请输入或者选择客户">
-										<ul id='companyList1' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 28%; left: 32%;"></ul>
-									</div> -->
 								</div>
 								<!-- end of col-lg-6-->
 								<div class="col-lg-4">
@@ -82,18 +77,17 @@
 							</div>
 							<!-- end of row-->
 					</form>
-
 					<!--   ------------------------------------------------ -->
 					<div class="row">
-						<form id="confirmForm" action="/costConfirm/create" method="post">
-							<input id='invoiceApplicationOrderIds' name='ids' type="hidden">
-							<input type="hidden" id="order_type" name="order_type">
+						<form id="confirmForm" action="/costPreInvoiceOrder/create" method="post">
+							<input id='sids' name='sids' type="hidden"> 
 							<div class="col-lg-6">
 								<div class="form-group">
 									<div class="controls">
-										<button id="checkBtn" disabled="true" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">复核</button>
-										<button id="confirmBtn" disabled="true" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建付款确认单</button>
-									</div>
+										<button id="createBtn" disabled type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建申请单</button>
+										<!-- <button id="checkBtn" disabled type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">复核</button>
+										<button id="confirmBtn" disabled type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建付款确认单</button>
+									 --></div>
 								</div>
 							</div>
 						</form>
@@ -111,6 +105,8 @@
 									<th>单据类型</th>
 									<th>应付总金额</th>
 									<th>申请金额</th>
+									<th>已付金额</th>
+									<th>待付金额</th>
 									<th>付款给</th>
 									<th>收款人</th>
 									<th>发票号</th>
@@ -134,13 +130,85 @@
 							</thead>
 							<tbody></tbody>
 						</table>
-
 					</div>
-			
-		</div>
+				</div>
+		
+		
+		
+		
+					<div class="tab-pane fade " id="unpay">
+						<form role="form" style="margin: 15px 15px;">
+							<div class="row search_panel">
+								<div class="col-lg-4">
+									<div class="form-group">
+                                            <label class="search-label">供应商</label>
+                                            <input type="text" class="form-control search-control sp_filter8" id="sp_filter8" placeholder="请选择供应商">
+                                        	<ul id='spList8' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
+											</ul>
+                                        </div>
+								</div>
+								<!-- end of col-lg-6-->
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="search-label">业务单号</label>
+										<input type="text" class="form-control search-control orderNo_filter8" id="orderNo_filter8" value=""></div>
+									<div class="form-group">
+										<div id="datetimepicker3" class="input-append date ">
+											<label class="search-label">开始时间</label>
+											<input id="beginTime_filter8" class="form-control search-control  beginTime_filter8" type="text">
+											<span class="add-on">
+												<i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="search-label">状态</label>
+										<select id="status_filter8" class="form-control search-control status_filter8">
+											<option value=""></option>
+											<option value="未复核">未复核</option>
+											<option value="已复核">已复核</option>
+											<option value="已付款">已付款</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<span id="datetimepicker4" class="input-append date search-control ">
+											<label class="search-label">结束时间</label>
+											<input id="endTime_filter8" class="form-control search-control endTime_filter8" type="text">
+											<span class="add-on">
+												<i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+											</span>
+										</span>
+									</div>
+								</div>
+								<!-- end of col-lg-6-->
+							</div>
+							<!-- end of row-->
+					</form>
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-hover" id="application-table" style="width: 1400px;">
+							<thead>
+								<tr>
+									<th></th>
+									<th>业务单号</th>
+									<th>单据类型</th>
+									<th>付款总金额</th>
+									<th>付款给</th>
+									<th>收款人</th>
+									<th>付款方式</th>
+									<th>状态</th>
+									<th>备注</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>	
+		
+
 
 		<div class="tab-pane fade" id="payed">
-			
 					<form role="form" style="margin: 15px 15px;">
 						<div class="row search_panel">
 							<div class="col-lg-4">

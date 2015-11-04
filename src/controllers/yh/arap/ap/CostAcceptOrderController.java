@@ -100,6 +100,7 @@ public class CostAcceptOrderController extends Controller {
         String status2 = "";
         String status3 = "";
         String status4 = "";
+        String status5 = "";
         
 		
 		String sortColIndex = getPara("iSortCol_0");
@@ -112,20 +113,23 @@ public class CostAcceptOrderController extends Controller {
       
         //String statusStr = " ('已复核')";
         if(status == null || status.equals("")){
-        	status  = "'已审批','已复核'";        //申请单
-        	status2 = "'新建','已复核'";         //手工单
-        	status3 = "'新建','audit','已复核'"; //报销单/行车报销单
-        	status4 = "'未付','已复核'";         //往来票据单
+        	status  = "'新建','已复核','付款申请中'";        //申请单
+        	status2 = "'新建','已复核','付款申请中'";         //手工单
+        	status3 = "'已审核','已复核','付款申请中'"; //报销单/行车报销单
+        	status4 = "'未付','已复核','付款申请中'";         //往来票据单
+        	status5 = "'已确认','已复核','付款申请中'";         //应付对账单
         }else if(status.equals("未复核")){
-        	status  = "'已审批'"; 
-        	status2 = "'新建'";
-        	status3 = "'新建','audit'";
-        	status4 = "'未付'";
+        	status  = "'已审批','付款申请中'"; 
+        	status2 = "'新建','付款申请中'";
+        	status3 = "'已审核','付款申请中'";
+        	status4 = "'未付','付款申请中'";
+        	status5 = "'已确认','付款申请中'";
         }else if(status.equals("已复核")){
         	status  = "'已复核'";
         	status2 = "'已复核'";
         	status3 = "'已复核'";
         	status4 = "'已复核'";
+        	status5 = "'已复核'";
         }
         
         String condition = "";
@@ -137,32 +141,41 @@ public class CostAcceptOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
-		condition = " where "
+		condition = " where nopaid_amount>0 and "
 					+ " ifnull(cname,'') like '%" + spName + "%' "
 					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
 				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
         }
         
-        String sql = "select * from(select aci.id, aci.order_no,'申请单' as order_type, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
-        		+ " aci.total_amount total_amount, "
-        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
-        		+ " c.abbr cname "
-        		+ " from arap_cost_invoice_application_order aci "
-        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
-        		+ " UNION"
-        		+ " SELECT ro.id, ro.order_no,'报销单' as order_type,ro.payment_type as payment_method,null as payee_name,null as account_id,"
+//        String sql = "select * from(select aci.id, aci.order_no,'申请单' as order_type, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+//        		+ " aci.total_amount total_amount, "
+//        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
+//        		+ " null paid_amount,null nopaid_amount,"//已付未付
+//        		+ " c.abbr cname "
+//        		+ " from arap_cost_invoice_application_order aci "
+//        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
+//        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
+//        		+ " UNION"
+        String sql = "select * from( SELECT ro.id, ro.order_no,'报销单' as order_type,ro.payment_type as payment_method,null as payee_name,null as account_id,"
         		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,ro.remark,"
-        		+ " ro.amount actual_cost,"
-        		+ " ro.amount as application ,"
+        		+ " ro.amount total_amount,"
+        		+ " ro.amount as application_amount ,"
+        		+ " null paid_amount,null nopaid_amount,"//已付未付
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
-        		+ " where ro.STATUS in ("+status3+")"
+        		+ " where ro.STATUS in ('待定')"
         		+ " UNION "
         		+ " SELECT amco.id, amco.order_no,'成本单' as order_type, NULL AS payment_method, amco.others_name AS payee_name, NULL AS account_id, amco. STATUS, "
         		+ "  NULL AS invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount total_amount, "
         		+ " NULL AS application_amount, "
+        		+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "  //已付未付
+				+ " WHERE caor.cost_order_id = amco.id AND caor.order_type = '成本单' "
+				+ " ) pay_amount,"
+				+ " (amco.total_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+				+ " FROM cost_application_order_rel caor "
+				+ " WHERE caor.cost_order_id = amco.id AND caor.order_type = '成本单'"
+				+ " )) yufu_amount ," //-----------------
         		+ " (case amco.cost_to_type"
         		+ " when 'sp' then "
 				+ " 	(select c.abbr from party p  "
@@ -177,16 +190,56 @@ public class CostAcceptOrderController extends Controller {
                 + " and amco.type = 'non_biz'  and amco.total_amount>=0 "
                 + " UNION"
                 + " SELECT cso.id,cso.order_no,'行车单' AS order_type,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,"
-        		+ "  NULL AS invoice_no,cso.create_data create_time,'' AS remark,cso.actual_payment_amount total_amount,0 application_amount,'' cname"
+        		+ "  NULL AS invoice_no,cso.create_data create_time,'' AS remark,cso.actual_payment_amount total_amount,0 application_amount,"
+        		+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "   //-------------
+				+ " WHERE caor.cost_order_id = cso.id AND caor.order_type = '行车单' "
+				+ " ) pay_amount,"
+				+ " (cso.actual_payment_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+				+ " FROM cost_application_order_rel caor "
+				+ " WHERE caor.cost_order_id = cso.id AND caor.order_type = '行车单'"
+				+ " )) yufu_amount ,"  //-----------------
+        		+ " '' cname"
         		+ " FROM car_summary_order cso"
         		+ " WHERE cso. STATUS in ("+status+")"
         		+ " AND cso.reimbursement_order_id IS NULL"
         		+ " UNION"
         		+ " SELECT aio.id, aio.order_no, '往来票据单' AS order_type, NULL AS payment_method, aio.charge_person AS payee_name,"
         		+ " NULL AS account_id, aio.pay_status status, NULL AS invoice_no, aio.create_date create_time,"
-        		+ " aio.remark, aio.pay_amount total_amount, NULL AS application_amount, null AS cname"
+        		+ " aio.remark, aio.pay_amount total_amount, NULL AS application_amount,"
+        		+ " null paid_amount,null nopaid_amount,"//已付未付
+        		+ " null AS cname"
         		+ " FROM arap_in_out_misc_order aio WHERE aio.pay_status IN (" + status4 + ")"
-        		+ ") A";
+        		+ " UNION"
+        		+ " SELECT aco.id, aco.order_no, '应付对账单' AS order_type, null AS payment_method,"
+        		+ " null AS payee_name, NULL AS account_id, null STATUS, NULL AS invoice_no, aco.create_stamp create_time,"
+        		+ " aco.remark, aco.cost_amount total_amount, NULL AS application_amount,"
+        		+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "  //-----------------------
+				+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '对账单' "
+				+ " ) pay_amount,"
+				+ " (aco.cost_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+				+ " FROM cost_application_order_rel caor "
+				+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '对账单'"
+				+ " )) yufu_amount ,"//*-----------------------
+        		+ " c.abbr cname FROM arap_cost_order aco"
+        		+ " LEFT JOIN party p ON p.id = aco.payee_id"
+        		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE aco.status IN ("+ status5 +")"
+        		+ " UNION "
+        		+ " SELECT app.id, app.order_no, '预付单' AS order_type, null AS payment_method, "
+        		+ " null AS payee_name, NULL AS account_id, null STATUS, NULL AS invoice_no, app.create_date create_time,"
+        		+ " app.remark, app.total_amount total_amount, 0 AS application_amount,"
+        		+ " ( SELECT ifnull(sum(caor.pay_amount),0 ) "
+				+ " FROM cost_application_order_rel caor "   //------------------
+				+ " WHERE caor.cost_order_id = app.id"
+				+ " AND caor.order_type = '预付单'"
+				+ " ) pay_amount,"
+				+ " ( app.total_amount - ( SELECT ifnull(sum(caor.pay_amount), 0) total_pay"
+				+ " FROM cost_application_order_rel caor "
+				+ " WHERE caor.cost_order_id = app.id "
+				+ " AND caor.order_type = '预付单' ) ) yufu_amount ,"//-------------------
+        		+ " c.abbr cname FROM arap_pre_pay_order app"
+        		+ " LEFT JOIN party p ON p.id = app.sp_id"
+        		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE app.status IN ("+ status2 +")"
+        		+ ") A ";
         
         
         Record rec = Db.findFirst("select count(*) total from (" + sql + condition + " ) B");
@@ -207,6 +260,86 @@ public class CostAcceptOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
+    
+    
+    public void applicationList() {
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        String spName = getPara("sp")!=null?getPara("sp"):"";
+        String beginTime = getPara("beginTime")!=null?getPara("beginTime"):"";
+        String endTime = getPara("endTime")!=null?getPara("endTime"):"";
+        String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
+        String status = getPara("status")!=null?getPara("status"):"";
+		
+//		String sortColIndex = getPara("iSortCol_0");
+//		String sortBy = getPara("sSortDir_0");
+//		String colName = getPara("mDataProp_"+sortColIndex);
+        
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+      
+        //String statusStr = " ('已复核')";
+        if(status == null || status.equals("")){
+        	status  = "'新建','已复核','已付款'";        //申请单
+        }else if(status.equals("未复核")){
+        	status = "'新建'";
+        }else if(status.equals("已复核")){
+        	status  = "'已复核'";
+        }else if(status.equals("已付款")){
+        	status  = "'已付款'";
+        }
+        
+        String condition = "";
+        if(spName != null || status != null || beginTime != null || endTime != null|| orderNo != null)
+        {
+        	if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1970-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "2037-12-31";
+			}
+		condition = " where "
+					+ " ifnull(cname,'') like '%" + spName + "%' "
+					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
+				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
+        }
+        
+        String sql = "select * from(select aci.id, aci.order_no,'申请单' as order_type, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+        		+ " aci.total_amount total_amount, "
+        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
+        		+ " null paid_amount,null nopaid_amount,"//已付未付
+        		+ " c.abbr cname "
+        		+ " from arap_cost_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
+        		+ ") A";
+        
+        
+        Record rec = Db.findFirst("select count(*) total from (" + sql + condition + " ) B");
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String orderByStr = " order by A.create_time desc ";
+//        if(colName.length()>0){
+//        	orderByStr = " order by A."+colName+" "+sortBy;
+//        }
+        List<Record> BillingOrders = Db.find(sql+ condition + orderByStr +sLimit);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
+    }
+    
+    
+    
+    
+    
+    
     
     @Before(Tx.class)
     public void checkStatus(){
