@@ -115,7 +115,7 @@ public class CostAcceptOrderController extends Controller {
         if(status == null || status.equals("")){
         	status  = "'已审批','付款申请中','部分已复核','部分已付款'";        //申请单
         	status2 = "'新建','付款申请中','部分已复核','部分已付款'";         //手工单
-        	status3 = "'已审核','付款申请中','部分已复核','部分已付款'"; //报销单/行车报销单
+        	status3 = "'已审核','付款申请中','部分已复核','部分已付款'";       //报销单/行车报销单
         	status4 = "'未付','付款申请中','部分已复核','部分已付款'";         //往来票据单
         	status5 = "'已确认','付款申请中','部分已复核','部分已付款'";         //应付对账单
         }else if(status.equals("部分申请中")){
@@ -146,11 +146,17 @@ public class CostAcceptOrderController extends Controller {
         		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,ro.remark,"
         		+ " ro.amount total_amount,"
         		+ " ro.amount as application_amount ,"
-        		+ " null paid_amount,null nopaid_amount,"//已付未付
+        		+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "  //已付未付
+				+ " WHERE caor.cost_order_id = ro.id AND caor.order_type = '成本单' "
+				+ " ) paid_amount,"
+				+ " (ro.amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
+				+ " FROM cost_application_order_rel caor "
+				+ " WHERE caor.cost_order_id = ro.id AND caor.order_type = '成本单'"
+				+ " )) nopaid_amount ," //-----------------
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
-        		+ " where ro.STATUS in ('待定')"
+        		+ " where ro.STATUS in ("+status2+")"
         		+ " UNION "
         		+ " SELECT amco.id, amco.order_no,'成本单' as order_type, NULL AS payment_method, amco.others_name AS payee_name, NULL AS account_id, amco. STATUS, "
         		+ "  NULL AS invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount total_amount, "

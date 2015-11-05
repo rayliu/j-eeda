@@ -23,6 +23,8 @@ import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.ArapMiscCostOrder;
+import models.yh.arap.ReimbursementOrder;
+import models.yh.arap.inoutorder.ArapInOutMiscOrder;
 import models.yh.arap.prePayOrder.ArapPrePayOrder;
 import models.yh.carmanage.CarSummaryOrder;
 import models.yh.profile.Contact;
@@ -364,6 +366,12 @@ public class CostPreInvoiceOrderController extends Controller {
 				}else if(order_type.equals("预付单")){
 					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
 					arapPrePayOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("报销单")){
+					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+					reimbursementOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+					arapInOutMiscOrder.set("pay_status", "付款申请中").update();
 				}
 			}
 		} else {
@@ -416,6 +424,12 @@ public class CostPreInvoiceOrderController extends Controller {
 				}else if(order_type.equals("预付单")){
 					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
 					arapPrePayOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("报销单")){
+					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+					reimbursementOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+					arapInOutMiscOrder.set("pay_status", "付款申请中").update();
 				}
 			}
 
@@ -1135,8 +1149,10 @@ public class CostPreInvoiceOrderController extends Controller {
 	        String application_id = getPara("application_id");
 	        String dz_id ="" ;//对账单
 	        String yf_id = "";//预付单
-	        String cb_id = "";//预付单
-	        String xc_id = "";//预付单
+	        String cb_id = "";//成本单
+	        String xc_id = "";//行车单
+	        String bx_id = "";//报销单
+	        String wl_id = "";//往来票据单
 	        String sql = "";
 	        
 	        
@@ -1155,6 +1171,10 @@ public class CostPreInvoiceOrderController extends Controller {
 	 						cb_id += id+",";
 	 					}else if("行车单".equals(orderType)){
 	 						xc_id += id+",";
+	 					}else if("报销单".equals(orderType)){
+	 						bx_id += id+",";
+	 					} else if("往来票据单".equals(orderType)){
+	 						wl_id += id+",";
 	 					}
 	 				}
 	 				if(!dz_id.equals(""))
@@ -1173,6 +1193,14 @@ public class CostPreInvoiceOrderController extends Controller {
 	 					xc_id = xc_id.substring(0, xc_id.length()-1);
 	 				else
 	 					xc_id = "''";
+	 				if(!bx_id.equals(""))
+	 					bx_id = bx_id.substring(0, bx_id.length()-1);
+	 				else
+	 					bx_id = "''";
+	 				if(!wl_id.equals(""))
+	 					wl_id = wl_id.substring(0, wl_id.length()-1);
+	 				else
+	 					wl_id = "''";
 	        	}
 		       
 				
@@ -1244,7 +1272,41 @@ public class CostPreInvoiceOrderController extends Controller {
 						+ " )) yufu_amount"
 						+ " FROM car_summary_order aco "
 						+ " WHERE "
-						+ " aco.id in(" + xc_id +")";
+						+ " aco.id in(" + xc_id +")"
+					    + " union "
+					    + " SELECT ror.id, null payee_id, ror.order_no, '报销单' order_type,"
+					    + " ror. STATUS, ror.remark, ror.create_stamp, null cname,"
+					    + " ifnull(ul.c_name, ul.user_name) creator_name,"
+					    + " ror.amount cost_amount,"
+					    + " ( SELECT ifnull(sum(caor.pay_amount), 0)"
+					    + " FROM cost_application_order_rel caor"
+					    + " WHERE caor.cost_order_id = ror.id"
+					    + " AND caor.order_type = '报销单'"
+					    + " ) pay_amount,"
+					    + " ( ror.amount - ( SELECT ifnull(sum(caor.pay_amount), 0) "
+					    + " FROM cost_application_order_rel caor"
+					    + " WHERE caor.cost_order_id = ror.id"
+					    + " AND caor.order_type = '报销单' ) ) yufu_amount"
+					    + " FROM reimbursement_order ror"
+					    + " LEFT JOIN user_login ul ON ul.id = ror.create_id"
+					    + " WHERE ror.id in(" + bx_id +")"
+					    + " union"
+					    + " SELECT aio.id, null payee_id, aio.order_no, '往来票据单' order_type,"
+					    + " aio.pay_status STATUS, aio.remark, aio.create_date create_stamp, aio.charge_unit cname,"
+					    + " ifnull(ul.c_name, ul.user_name) creator_name,"
+					    + " aio.pay_amount cost_amount,"
+					    + " ( SELECT ifnull(sum(caor.pay_amount), 0)"
+					    + " FROM cost_application_order_rel caor"
+					    + " WHERE caor.cost_order_id = aio.id"
+					    + " AND caor.order_type = '往来票据单'"
+					    + " ) pay_amount,"
+					    + " ( aio.pay_amount - ( SELECT ifnull(sum(caor.pay_amount), 0) "
+					    + " FROM cost_application_order_rel caor"
+					    + " WHERE caor.cost_order_id = aio.id"
+					    + " AND caor.order_type = '往来票据单' ) ) yufu_amount"
+					    + " FROM arap_in_out_misc_order aio"
+					    + " LEFT JOIN user_login ul ON ul.id = aio.creator_id"
+					    + " WHERE aio.id in(" + wl_id +")";
 			}else{
 				sql = "select * from( SELECT aco.id,aco.payee_id,aco.order_no, '对账单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
 						+ " c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.cost_amount,"
@@ -1328,6 +1390,44 @@ public class CostPreInvoiceOrderController extends Controller {
 						+ " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id"
 						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
 						+ " where caor.order_type = '行车单'"
+						+ " union "
+					    + " SELECT ror.id, null payee_id, ror.order_no, '报销单' order_type,"
+					    + " ror. STATUS, ror.remark, ror.create_stamp, null cname,"
+					    + " ifnull(ul.c_name, ul.user_name) creator_name,"
+					    + " ror.amount cost_amount,"
+					    + " ( SELECT ifnull(sum(caor.pay_amount), 0)  FROM cost_application_order_rel caor"
+					    + " WHERE caor.cost_order_id = ror.id and "
+					    + " caor.application_order_id = aciao.id  AND caor.order_type = '报销单'"
+					    + " ) pay_amount,"
+					    + " ( ror.amount - ( SELECT ifnull(sum(caor.pay_amount), 0) "
+					    + " FROM cost_application_order_rel caor"
+					    + " WHERE caor.cost_order_id = ror.id"
+					    + " AND caor.order_type = '报销单' ) ) yufu_amount, aciao.id app_id"
+					    + " FROM reimbursement_order ror"
+					    + " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = ror.id"
+						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
+					    + " LEFT JOIN user_login ul ON ul.id = ror.create_id"
+					    + " where caor.order_type = '报销单'"
+					    + " union"
+					    + " SELECT aio.id, null payee_id, aio.order_no, '往来票据单' order_type,"
+					    + " aio.pay_status STATUS, aio.remark, aio.create_date create_stamp, aio.charge_unit cname,"
+					    + " ifnull(ul.c_name, ul.user_name) creator_name,"
+					    + " aio.pay_amount cost_amount,"
+					    + " ( SELECT ifnull(sum(caor.pay_amount), 0)"
+					    + " FROM cost_application_order_rel caor"
+					    + " WHERE "
+					    + " caor.cost_order_id = aio.id and caor.application_order_id = aciao.id"
+					    + " AND caor.order_type = '往来票据单'"
+					    + " ) pay_amount,"
+					    + " ( aio.pay_amount - ( SELECT ifnull(sum(caor.pay_amount), 0) "
+					    + " FROM cost_application_order_rel caor"
+					    + " WHERE caor.cost_order_id = aio.id"
+					    + " AND caor.order_type = '往来票据单' ) ) yufu_amount, aciao.id app_id"
+					    + " FROM arap_in_out_misc_order aio"
+					    + " LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aio.id"
+						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
+					    + " LEFT JOIN user_login ul ON ul.id = aio.creator_id"
+					    + " where caor.order_type = '报销单'"
 						+ " ) A where app_id ="+application_id;
 						
 			}
@@ -1437,6 +1537,27 @@ public class CostPreInvoiceOrderController extends Controller {
 						arapPrePayOrder.set("status", "部分已复核").update();
 					}else
 						arapPrePayOrder.set("status", "已复核").update();
+					
+				}else if(order_type.equals("报销单")){
+					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+					Double total_amount = reimbursementOrder.getDouble("total_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(total_amount != paid_amount){
+						reimbursementOrder.set("status", "部分已复核").update();
+					}else
+						reimbursementOrder.set("status", "已复核").update();
+					
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+					
+					Double total_amount = arapInOutMiscOrder.getDouble("total_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(total_amount != paid_amount){
+						arapInOutMiscOrder.set("pay_status", "部分已复核").update();
+					}else
+						arapInOutMiscOrder.set("pay_status", "已复核").update();
 					
 				}
 			}
@@ -1561,6 +1682,27 @@ public class CostPreInvoiceOrderController extends Controller {
 						arapPrePayOrder.set("status", "部分已付款").update();
 					}else
 						arapPrePayOrder.set("status", "已付款").update();
+					
+				}else if(order_type.equals("报销单")){
+					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+					Double total_amount = reimbursementOrder.getDouble("total_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(total_amount != paid_amount){
+						reimbursementOrder.set("status", "部分已付款").update();
+					}else
+						reimbursementOrder.set("status", "已付款").update();
+					
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+					
+					Double total_amount = arapInOutMiscOrder.getDouble("total_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(total_amount != paid_amount){
+						arapInOutMiscOrder.set("pay_status", "部分已付款").update();
+					}else
+						arapInOutMiscOrder.set("pay_status", "已付款").update();
 					
 				}
 			}
