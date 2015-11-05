@@ -92,7 +92,72 @@ SELECT
 LEFT JOIN cost_application_order_rel caor ON appo.id = caor.cost_order_id
 LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
 where  appl_order.id = $P{order_id}
-and caor.order_type='预付单']]>
+and caor.order_type='预付单'
+union
+SELECT
+		'行车单' AS service_type,
+		cso.order_no AS order_no,
+		cso.create_data AS create_stamp,
+		'' AS confirm_stamp,
+		cso.actual_payment_amount AS total_amount,
+		(
+			SELECT
+				sum(caor.pay_amount)
+			FROM
+				cost_application_order_rel caor
+			WHERE
+				caor.application_order_id = appl_order.id
+			AND caor.order_type = '行车单'
+		) cost_amount,
+		(
+							cso.actual_payment_amount - (
+								SELECT
+									ifnull(sum(caor.pay_amount), 0)
+								FROM
+									cost_application_order_rel caor
+								WHERE
+									caor.cost_order_id = cso.id
+								AND caor.order_type = '行车单'
+							)
+			) cost_balance
+	FROM
+		car_summary_order cso
+	LEFT JOIN cost_application_order_rel caor ON cso.id = caor.cost_order_id
+	LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
+	WHERE appl_order.id = $P{order_id} and caor.order_type = '行车单'
+union
+SELECT
+		'成本单' AS service_type,
+		amco.order_no AS order_no,
+		amco.create_stamp AS create_stamp,
+		'' AS confirm_stamp,
+		amco.total_amount AS total_amount,
+		(
+						SELECT
+							ifnull(sum(caor.pay_amount), 0)
+						FROM
+							cost_application_order_rel caor
+						WHERE
+							caor.application_order_id = appl_order.id
+						AND caor.cost_order_id = amco.id
+						AND caor.order_type = '成本单'
+		) cost_amount,
+		(
+						amco.total_amount - (
+							SELECT
+								ifnull(sum(caor.pay_amount), 0)
+							FROM
+								cost_application_order_rel caor
+							WHERE
+								caor.cost_order_id = amco.id
+							AND caor.order_type = '成本单'
+						)
+		) cost_balance
+	FROM
+		arap_misc_cost_order amco
+	LEFT JOIN cost_application_order_rel caor ON amco.id = caor.cost_order_id
+	LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
+	WHERE appl_order.id = $P{order_id} and caor.order_type = '成本单']]>
 	</queryString>
 	<field name="service_type" class="java.lang.String"/>
 	<field name="order_no" class="java.lang.String">
