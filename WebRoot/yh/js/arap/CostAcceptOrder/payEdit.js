@@ -269,4 +269,8 @@
     ////付款方式（付款确认）回显控制
     $('#pay_type').val($('#pay_type_show').val());
     payType();
+    
+    
+    //付款银行回显
+    $('#pay_bank').val($('#pay_banks').val());
 });

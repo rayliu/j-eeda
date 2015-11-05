@@ -161,7 +161,7 @@
 	                       <div class="col-lg-4">
 	                       		<div class="form-group">
 	                           	   <label class="search-label">付款方式</label>
-	                           	   <input type="hidden" id="pay_type_show"  name="pay_type_show" value=""> 
+	                           	   <input type="hidden" id="pay_type_show"  name="pay_type_show" value="${invoiceApplication.pay_type!''}"> 
 	                                  <select id="pay_type" class="form-control search-control pay_type" name="pay_type">
 	                                  	<option value="cash">现金</option>
 	                                    <option value="transfers">转账</option>                                             
@@ -170,7 +170,7 @@
 	                            <div id="pay_type_massage">
 		                            <div class="form-group">
 			                            <label class="search-label">支付银行</label>
-			                            <input type="hidden" id="pay_banks" placeholder="请选择支付银行" name="pay_banks"> 
+			                            <input type="hidden" id="pay_banks" placeholder="请选择支付银行" name="pay_banks" value="${invoiceApplication.confirm_bank_id!''}"> 
 			                        	   <select class="form-control search-control pay_bank" name="pay_bank" id="pay_bank" >
 			                        	   		<option></option>
 			                              		<%for(account in accountList){ %>
@@ -185,7 +185,7 @@
 	                                <label class="search-label">申请付款金额</label>
 	                                <input type="text" class="form-control search-control pay_amount" readonly="readonly" id="pay_amount" name="pay_amount">
 	                            </div>
-	                            <%include("/yh/component/form/dateInputField.html", {id:'pay_date', label:'付款时间', value:''}){} %>
+	                            <%include("/yh/component/form/dateInputField.html", {id:'pay_date', label:'付款时间', value:invoiceApplication.pay_time!''}){} %>
 	                        </div>
 	                    </div>
 	                         
