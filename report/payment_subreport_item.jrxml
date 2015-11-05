@@ -67,7 +67,7 @@ SELECT
     '预付单' as service_type,
     appo.order_no as order_no,
     appo.create_date as create_stamp,
-    '' as confirm_stamp,
+    appo.create_date as confirm_stamp,
     appo.total_amount as total_amount,
 (
 		SELECT
@@ -98,7 +98,7 @@ SELECT
 		'行车单' AS service_type,
 		cso.order_no AS order_no,
 		cso.create_data AS create_stamp,
-		'' AS confirm_stamp,
+		cso.create_data AS confirm_stamp,
 		cso.actual_payment_amount AS total_amount,
 		(
 			SELECT
@@ -130,7 +130,7 @@ SELECT
 		'成本单' AS service_type,
 		amco.order_no AS order_no,
 		amco.create_stamp AS create_stamp,
-		'' AS confirm_stamp,
+		amco.create_stamp AS confirm_stamp,
 		amco.total_amount AS total_amount,
 		(
 						SELECT
@@ -166,7 +166,7 @@ SELECT
 	<field name="create_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="confirm_stamp" class="java.lang.Object">
+	<field name="confirm_stamp" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="total_amount" class="java.lang.Double">
