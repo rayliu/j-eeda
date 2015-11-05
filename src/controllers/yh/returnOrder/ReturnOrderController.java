@@ -109,7 +109,6 @@ public class ReturnOrderController extends Controller {
                 + " ) = lo. CODE"
                 + " LEFT JOIN location lo2 ON ifnull(tor.route_to, tor2.route_to) = lo2. CODE"
                 + " LEFT JOIN location lo3 on lo3.`code` = lo2.pcode"
-                + " LEFT JOIN transfer_order_item_detail toid2 ON toid2.id = doi.transfer_item_detail_id"
                 + " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
                 + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
 		
@@ -208,7 +207,10 @@ public class ReturnOrderController extends Controller {
 					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
 					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
 					+ " where d_o.id = r_o.delivery_order_id) serial_no, "
-					+ " ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+					+ " ifnull(CAST(tor.planning_time AS char),(SELECT group_concat(DISTINCT CAST(tor3.planning_time AS char) SEPARATOR '\r\n')"
+					+ " FROM delivery_order dor LEFT JOIN delivery_order_item doi2 ON doi2.delivery_id = dor.id"
+					+ " LEFT JOIN transfer_order tor3 ON tor3.id = doi2.transfer_order_id"
+					+ " WHERE r_o.delivery_order_id = dor.id)) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
 					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' "
@@ -237,16 +239,14 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(sign_no ,'')  like'%" + sign_no + "%'"
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
-					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
+					+ " and ifnull(return_type,'') = '" + return_type + "'"
 					+ " and ifnull(warehouse_name,'') like '%" + warehouse + "%'"
 					+ " and ifnull(to_name,'') like '%" + to_name + "%'"
 					+ " and ifnull(province,'') like '%" + province + "%'"
 					+ " and ifnull(transfer_type,'') like '%" + transfer_type + "%'"
 					+ " and planning_time between '" + time_one + "' and '" + time_two + " 23:59:59' ";
-					
-			
 					// 获取总条数
-					sqlTotal = "select count(1) total "+conFromSql+"";
+					sqlTotal = "select count(1) total from (SELECT distinct * "+ conFromSql+") A";
 					sql = "select * from (SELECT distinct * "+	conFromSql+") A";
 		}
 		
