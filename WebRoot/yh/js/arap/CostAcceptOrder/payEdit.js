@@ -73,8 +73,25 @@
         ]      
     });	
     
+    var orderjson = function(){
+    	var array=[];
+    	var sum=0.0;
+    	$("#CostOrder-table input[name='amount']").each(function(){
+    		var obj={};
+    		obj.id = $(this).parent().parent().attr('id');
+    		obj.order_type = $(this).parent().parent().find('.order_type').text();
+    		obj.value = $(this).val();
+    		sum+=parseFloat(obj.value);
+    		array.push(obj);
+    	});
+    	
+    	$("#total_amount").val(sum);
+    	var str_JSON = JSON.stringify(array);
+    	console.log(str_JSON);
+    	$("#detailJson").val(str_JSON);
+    };
     
-  
+    
     
     
 
@@ -83,24 +100,9 @@
 	$("#saveBtn").on('click',function(){
 		$("#saveBtn").attr("disabled", true);
 		$("#printBtn").attr("disabled", true);
-		
-		var array=[];
-		var sum=0.0;
-		$("#CostOrder-table input[name='amount']").each(function(){
-			var obj={};
-			obj.id = $(this).parent().parent().attr('id');
-			obj.order_type = $(this).parent().parent().find('.order_type').text();
-			obj.value = $(this).val();
-			sum+=parseFloat(obj.value);
-			array.push(obj);
-		});
-		
-		$("#total_amount").val(sum);
-		var str_JSON = JSON.stringify(array);
-		console.log(str_JSON);
-		$("#detailJson").val(str_JSON);
-
-		
+	
+		orderjson();
+	
 		if($("#payment_method").val()=='transfers'){
 			if($("#deposit_bank").val()=='' && $("#bank_no").val()==''&& $("#account_name").val()==''){
 				$.scojs_message('转账的信息不能为空', $.scojs_message.TYPE_FALSE);
@@ -153,7 +155,10 @@
 	  $("#checkBtn").on('click',function(){
 		  	$("#checkBtn").attr("disabled", true);
 		  	$("#saveBtn").attr("disabled", true);
-			$.get("/costPreInvoiceOrder/checkStatus", {application_id:$('#application_id').val()}, function(data){
+		  	
+		  	orderjson();
+		  	
+			$.get("/costPreInvoiceOrder/checkStatus", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val()}, function(data){
 				if(data.ID>0){
 					$("#check_name").val();
 					$("#check_stamp").val(data.CHECK_STAMP);
@@ -172,7 +177,8 @@
 	  //撤回
 	  $("#returnBtn").on('click',function(){
 		  	$("#returnBtn").attr("disabled", true);
-			$.get("/costPreInvoiceOrder/returnOrder", {application_id:$('#application_id').val()}, function(data){
+		  	orderjson();
+			$.get("/costPreInvoiceOrder/returnOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val()}, function(data){
 				if(data.success){
 					$.scojs_message('退回成功', $.scojs_message.TYPE_OK);
 					$("#checkBtn").attr("disabled", false);
@@ -185,10 +191,13 @@
 		});
 	  
 	  
-	  //撤回
+	  //确认
 	  $("#confirmBtn").on('click',function(){
 		  	$("#confirmBtn").attr("disabled", true);
-			$.get("/costPreInvoiceOrder/confirmOrder", {application_id:$('#application_id').val(),pay_time:$('#pay_date').val(),pay_type:$('#pay_type').val(),pay_bank:$('#pay_bank').val()}, function(data){
+		  	
+		  	orderjson();
+		  	
+			$.get("/costPreInvoiceOrder/confirmOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val(),pay_time:$('#pay_date').val(),pay_type:$('#pay_type').val(),pay_bank:$('#pay_bank').val()}, function(data){
 				if(data.success){
 					$("#returnBtn").attr("disabled", true);
 					$.scojs_message('付款成功', $.scojs_message.TYPE_OK);

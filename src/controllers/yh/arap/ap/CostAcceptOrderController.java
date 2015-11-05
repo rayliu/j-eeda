@@ -113,23 +113,17 @@ public class CostAcceptOrderController extends Controller {
       
         //String statusStr = " ('已复核')";
         if(status == null || status.equals("")){
-        	status  = "'已审批','已复核','付款申请中'";        //申请单
-        	status2 = "'新建','已复核','付款申请中'";         //手工单
-        	status3 = "'已审核','已复核','付款申请中'"; //报销单/行车报销单
-        	status4 = "'未付','已复核','付款申请中'";         //往来票据单
-        	status5 = "'已确认','已复核','付款申请中'";         //应付对账单
-        }else if(status.equals("未复核")){
-        	status  = "'已审批','付款申请中'"; 
-        	status2 = "'新建','付款申请中'";
-        	status3 = "'已审核','付款申请中'";
-        	status4 = "'未付','付款申请中'";
-        	status5 = "'已确认','付款申请中'";
-        }else if(status.equals("已复核")){
-        	status  = "'已复核'";
-        	status2 = "'已复核'";
-        	status3 = "'已复核'";
-        	status4 = "'已复核'";
-        	status5 = "'已复核'";
+        	status  = "'已审批','付款申请中','已复核','已付款'";        //申请单
+        	status2 = "'新建','付款申请中','已复核','已付款'";         //手工单
+        	status3 = "'已审核','付款申请中','已复核','已付款'"; //报销单/行车报销单
+        	status4 = "'未付','付款申请中','已复核','已付款'";         //往来票据单
+        	status5 = "'已确认','付款申请中','已复核','已付款'";         //应付对账单
+        }else if(status.equals("部分申请中")){
+        	status = status2 = status3 = status4 = status5 = "'付款申请中'";
+        }else if(status.equals("部分复核中")){
+        	status = status2 = status3 = status4 = status5 = "'已复核'";
+        }else if(status.equals("部分付款中")){
+        	status = status2 = status3 = status4 = status5 = "'已付款'";
         }
         
         String condition = "";
@@ -147,15 +141,7 @@ public class CostAcceptOrderController extends Controller {
 				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
         }
         
-//        String sql = "select * from(select aci.id, aci.order_no,'申请单' as order_type, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
-//        		+ " aci.total_amount total_amount, "
-//        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
-//        		+ " null paid_amount,null nopaid_amount,"//已付未付
-//        		+ " c.abbr cname "
-//        		+ " from arap_cost_invoice_application_order aci "
-//        		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
-//        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
-//        		+ " UNION"
+
         String sql = "select * from( SELECT ro.id, ro.order_no,'报销单' as order_type,ro.payment_type as payment_method,null as payee_name,null as account_id,"
         		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,ro.remark,"
         		+ " ro.amount total_amount,"

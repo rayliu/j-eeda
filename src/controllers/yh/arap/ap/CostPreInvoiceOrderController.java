@@ -1163,7 +1163,7 @@ public class CostPreInvoiceOrderController extends Controller {
 				
 			
 				sql = " SELECT aco.id,aco.payee_id,aco.order_no, '对账单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
-						+ " c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.cost_amount,"
+						+ " c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
 						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '对账单' "
 						+ " ) pay_amount,"
@@ -1179,7 +1179,7 @@ public class CostPreInvoiceOrderController extends Controller {
 						+ " aco.id in(" + dz_id +")"
 						+ " union "
 						+ " SELECT ppo.id,ppo.sp_id payee_id, ppo.order_no, '预付单' order_type, ppo. STATUS, ppo.remark, "
-						+ " ppo.create_date create_stamp, c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, "
+						+ " ppo.create_date create_stamp, c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, "
 						+ " ppo.total_amount cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0 ) "
 						+ " FROM cost_application_order_rel caor "
@@ -1202,8 +1202,8 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " (case when aco.cost_to_type = 'sp' then aco.sp_id"
 						+ " when aco.cost_to_type = 'customer' then aco.customer_id end) payee_id,"
 					    + " aco.order_no, '成本单' order_type, aco.audit_STATUS, aco.remark, aco.create_stamp,"
-						+ " (case when aco.cost_to_type = 'sp' then (select c.abbr from contact c where c.id = aco.sp_id)"
-						+ " when aco.cost_to_type = 'customer' then (select c.abbr from contact c where c.id = aco.customer_id) end) cname,"
+						+ " (case when aco.cost_to_type = 'sp' then (select c.company_name from contact c where c.id = aco.sp_id)"
+						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id) end) cname,"
 						+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
 						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '成本单' "
@@ -1232,7 +1232,7 @@ public class CostPreInvoiceOrderController extends Controller {
 						+ " aco.id in(" + xc_id +")";
 			}else{
 				sql = "select * from( SELECT aco.id,aco.payee_id,aco.order_no, '对账单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
-						+ " c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.cost_amount,"
+						+ " c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
 						+ " WHERE "
 						+ " caor.cost_order_id = aco.id and caor.application_order_id = aciao.id "
@@ -1253,7 +1253,7 @@ public class CostPreInvoiceOrderController extends Controller {
 						
 						+ " union "
 						+ " SELECT ppo.id,ppo.sp_id payee_id, ppo.order_no, '预付单' order_type, ppo. STATUS, ppo.remark, "
-						+ " ppo.create_date create_stamp, c.abbr cname, ifnull(ul.c_name, ul.user_name) creator_name, "
+						+ " ppo.create_date create_stamp, c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, "
 						+ " ppo.total_amount cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0 ) "
 						+ " FROM cost_application_order_rel caor "
@@ -1279,8 +1279,8 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " (case when aco.cost_to_type = 'sp' then aco.sp_id"
 						+ " when aco.cost_to_type = 'customer' then aco.customer_id end) payee_id,"
 					    + " aco.order_no, '成本单' order_type, aco.audit_STATUS, aco.remark, aco.create_stamp,"
-						+ " (case when aco.cost_to_type = 'sp' then (select c.abbr from contact c where c.id = aco.sp_id)"
-						+ " when aco.cost_to_type = 'customer' then (select c.abbr from contact c where c.id = aco.customer_id) end) cname,"
+						+ " (case when aco.cost_to_type = 'sp' then (select c.company_name from contact c where c.id = aco.sp_id)"
+						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id) end) cname,"
 						+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
 						+ " WHERE "
@@ -1371,6 +1371,31 @@ public class CostPreInvoiceOrderController extends Controller {
 	        arapCostInvoiceApplication.set("check_stamp", new Date()).update();
 	        renderJson(arapCostInvoiceApplication);
 	        
+	        //更改原始单据状态
+	        String strJson = getPara("detailJson");
+			Gson gson = new Gson();
+			List<Map> idList = new Gson().fromJson(strJson, 
+					new TypeToken<List<Map>>(){}.getType());
+			for (Map map : idList) {
+				String id = (String)map.get("id");
+				String order_type = (String)map.get("order_type");
+
+				
+				if(order_type.equals("对账单")){
+					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id); 
+					arapCostOrder.set("status", "已复核").update();
+				}else if(order_type.equals("成本单")){
+					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+					arapMiscCostOrder.set("audit_status", "已复核").update();
+				}else if(order_type.equals("行车单")){
+					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
+					carSummaryOrder.set("status", "已复核").update();
+				}else if(order_type.equals("已复核")){
+					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+					arapPrePayOrder.set("status", "已复核").update();
+				}
+			}
+	        
 	    }
 		
 		//退回
@@ -1383,6 +1408,31 @@ public class CostPreInvoiceOrderController extends Controller {
 	        arapCostInvoiceApplication.set("return_by", LoginUserController.getLoginUserId(this));
 	        arapCostInvoiceApplication.set("return_stamp", new Date()).update();
 	        renderJson("{\"success\":true}");
+	        
+	        //更改原始单据状态
+	        String strJson = getPara("detailJson");
+			Gson gson = new Gson();
+			List<Map> idList = new Gson().fromJson(strJson, 
+					new TypeToken<List<Map>>(){}.getType());
+			for (Map map : idList) {
+				String id = (String)map.get("id");
+				String order_type = (String)map.get("order_type");
+
+				
+				if(order_type.equals("对账单")){
+					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
+					arapCostOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("成本单")){
+					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+					arapMiscCostOrder.set("audit_status", "付款申请中").update();
+				}else if(order_type.equals("行车单")){
+					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
+					carSummaryOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("预付单")){
+					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+					arapPrePayOrder.set("status", "付款申请中").update();
+				}
+			}
 	        
 	    }
 	    
@@ -1415,6 +1465,30 @@ public class CostPreInvoiceOrderController extends Controller {
 	        arapCostInvoiceApplication.set("confirm_stamp", new Date());
 	        arapCostInvoiceApplication.update();
 	        
+	        //更改原始单据状态
+	        String strJson = getPara("detailJson");
+			Gson gson = new Gson();
+			List<Map> idList = new Gson().fromJson(strJson, 
+					new TypeToken<List<Map>>(){}.getType());
+			for (Map map : idList) {
+				String id = (String)map.get("id");
+				String order_type = (String)map.get("order_type");
+
+
+				if(order_type.equals("对账单")){
+					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
+					arapCostOrder.set("status", "已付款").update();
+				}else if(order_type.equals("成本单")){
+					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+					arapMiscCostOrder.set("audit_status", "已付款").update();
+				}else if(order_type.equals("行车单")){
+					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
+					carSummaryOrder.set("status", "已付款").update();
+				}else if(order_type.equals("预付单")){
+					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+					arapPrePayOrder.set("status", "已付款").update();
+				}
+			}
 	        
 	        
 	        
