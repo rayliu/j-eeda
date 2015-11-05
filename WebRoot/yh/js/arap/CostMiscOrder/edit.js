@@ -6,7 +6,27 @@ $(document).ready(function() {
 	
 	
 	
-	
+	 //打印
+  	 $("#printBtn").on('click',function(){
+  	    	var order_no = $("#arapMiscCostOrderNo").html();
+  	    	if(order_no != null && order_no != ""){
+  		    	$.post('/report/printArapMiscCost', {order_no:order_no}, function(data){
+  		    		if(data.indexOf(",")>=0){
+  						var file = data.substr(0,data.length-1);
+  		    			var str = file.split(",");
+  		    			for(var i = 0 ;i<str.length;i++){
+  		    				window.open(str[i]);
+  		    			}
+  					}else{
+  						window.open(data);
+  					}
+  		    	});
+  	    	}else{
+  	    		$.scojs_message('当前单号为空', $.scojs_message.TYPE_ERROR);
+  	    	}
+  	    	
+
+  	    });
 	var saveCostMiscOrder = function(e, callback){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -14,7 +34,6 @@ $(document).ready(function() {
         if(!$("#costMiscOrderForm").valid()){
 	       	return;
         }
-        
         
         var tableRows = $("#feeItemList-table tr");
         var itemsArray=[];
