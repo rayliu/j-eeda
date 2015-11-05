@@ -77,7 +77,7 @@
   
     
     
-    
+
     //申请保存
   //付款确认
 	$("#saveBtn").on('click',function(){
@@ -129,7 +129,27 @@
 		
 	});
 	
-	
+    //打印
+	 $("#printBtn").on('click',function(){
+	    	var order_no = $("#application_no").val();
+	    	if(order_no != null && order_no != ""){
+		    	$.post('/report/printPayMent', {order_no:order_no}, function(data){
+		    		if(data.indexOf(",")>=0){
+						var file = data.substr(0,data.length-1);
+		    			var str = file.split(",");
+		    			for(var i = 0 ;i<str.length;i++){
+		    				window.open(str[i]);
+		    			}
+					}else{
+						window.open(data);
+					}
+		    	});
+	    	}else{
+	    		$.scojs_message('当前单号为空', $.scojs_message.TYPE_ERROR);
+	    	}
+	    	
+
+	    });
 	  $("#checkBtn").on('click',function(){
 		  	$("#checkBtn").attr("disabled", true);
 		  	$("#saveBtn").attr("disabled", true);
