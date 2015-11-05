@@ -113,7 +113,7 @@ public class CostAcceptOrderController extends Controller {
       
         //String statusStr = " ('已复核')";
         if(status == null || status.equals("")){
-        	status  = "'新建','已复核','付款申请中'";        //申请单
+        	status  = "'已审批','已复核','付款申请中'";        //申请单
         	status2 = "'新建','已复核','付款申请中'";         //手工单
         	status3 = "'已审核','已复核','付款申请中'"; //报销单/行车报销单
         	status4 = "'未付','已复核','付款申请中'";         //往来票据单
@@ -281,9 +281,9 @@ public class CostAcceptOrderController extends Controller {
       
         //String statusStr = " ('已复核')";
         if(status == null || status.equals("")){
-        	status  = "'新建','已复核','已付款'";        //申请单
+        	status  = "'新建','已审批','已复核','已付款'";        //申请单
         }else if(status.equals("未复核")){
-        	status = "'新建'";
+        	status = "'新建','已审批'";
         }else if(status.equals("已复核")){
         	status  = "'已复核'";
         }else if(status.equals("已付款")){
