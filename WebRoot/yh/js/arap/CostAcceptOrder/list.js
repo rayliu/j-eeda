@@ -162,46 +162,14 @@ $(document).ready(function() {
         "sAjaxSource": "/costAcceptOrder/applicationList",
         "aoColumns": [
             {"mDataProp":"ORDER_NO","sWidth":"90px",
-            	"fnRender": function(obj) {
-            		var A=obj.aData.ORDER_NO.substring(0, 4);
-        			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		if(obj.aData.ORDER_TYPE == '申请单')
+            	 "fnRender": function(obj) {
             			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else if(obj.aData.ORDER_TYPE == '报销单'){
-            			if(A=='YFBX'){
-            				return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            			}
-            			else if(A=='XCBX'){
-            				return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            			}
-            		}
-            		else if(obj.aData.ORDER_TYPE == '行车单')
-            			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else
-            			return obj.aData.ORDER_NO;
-        		}
+            	 }
             },
-            {"mDataProp":"ORDER_TYPE", "sWidth":"80px","sClass":'order_type',
-                "fnRender": function(obj) {
-                	var A=$(obj.aData.ORDER_NO).text().substring(0, 4);
-                	if(A=='YFBX')
-        				return "报销单";
-                	else if(A=='XCBX')
-                		return "行车报销单";
-                	else
-            			return obj.aData.ORDER_TYPE;
-                	}
-            },
+            {"mDataProp":"ORDER_TYPE", "sWidth":"80px","sClass":'order_type'},
             {"mDataProp":"STATUS", "sWidth":"50px"},    
-            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"90px",
-            	"sClass":"pay_amount",
-           	 	"fnRender": function(obj) {
-        		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
-        			 return '<p style="color:red">0<p>';
-        		 }else{
-        			 return obj.aData.TOTAL_AMOUNT;
-        		 }
-        	 }
+            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"90px",
+            	"sClass":"pay_amount"
             } ,
             {"mDataProp":"CNAME",  "sWidth":"200px",
             	"sClass": "cname"

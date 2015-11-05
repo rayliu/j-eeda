@@ -113,17 +113,17 @@ public class CostAcceptOrderController extends Controller {
       
         //String statusStr = " ('已复核')";
         if(status == null || status.equals("")){
-        	status  = "'已审批','付款申请中','已复核','已付款'";        //申请单
-        	status2 = "'新建','付款申请中','已复核','已付款'";         //手工单
-        	status3 = "'已审核','付款申请中','已复核','已付款'"; //报销单/行车报销单
-        	status4 = "'未付','付款申请中','已复核','已付款'";         //往来票据单
-        	status5 = "'已确认','付款申请中','已复核','已付款'";         //应付对账单
+        	status  = "'已审批','付款申请中','部分已复核','部分已付款'";        //申请单
+        	status2 = "'新建','付款申请中','部分已复核','部分已付款'";         //手工单
+        	status3 = "'已审核','付款申请中','部分已复核','部分已付款'"; //报销单/行车报销单
+        	status4 = "'未付','付款申请中','部分已复核','部分已付款'";         //往来票据单
+        	status5 = "'已确认','付款申请中','部分已复核','部分已付款'";         //应付对账单
         }else if(status.equals("部分申请中")){
         	status = status2 = status3 = status4 = status5 = "'付款申请中'";
         }else if(status.equals("部分复核中")){
-        	status = status2 = status3 = status4 = status5 = "'已复核'";
+        	status = status2 = status3 = status4 = status5 = "'部分已复核'";
         }else if(status.equals("部分付款中")){
-        	status = status2 = status3 = status4 = status5 = "'已付款'";
+        	status = status2 = status3 = status4 = status5 = "'部分已付款'";
         }
         
         String condition = "";
@@ -197,7 +197,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " FROM arap_in_out_misc_order aio WHERE aio.pay_status IN (" + status4 + ")"
         		+ " UNION"
         		+ " SELECT aco.id, aco.order_no, '应付对账单' AS order_type, null AS payment_method,"
-        		+ " null AS payee_name, NULL AS account_id, null STATUS, NULL AS invoice_no, aco.create_stamp create_time,"
+        		+ " null AS payee_name, NULL AS account_id, aco.status STATUS, NULL AS invoice_no, aco.create_stamp create_time,"
         		+ " aco.remark, aco.cost_amount total_amount, NULL AS application_amount,"
         		+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "  //-----------------------
 				+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '对账单' "
@@ -205,7 +205,7 @@ public class CostAcceptOrderController extends Controller {
 				+ " (aco.cost_amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
 				+ " FROM cost_application_order_rel caor "
 				+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '对账单'"
-				+ " )) yufu_amount ,"//*-----------------------
+				+ " )) nopaid_amount ,"//*-----------------------
         		+ " c.abbr cname FROM arap_cost_order aco"
         		+ " LEFT JOIN party p ON p.id = aco.payee_id"
         		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE aco.status IN ("+ status5 +")"
