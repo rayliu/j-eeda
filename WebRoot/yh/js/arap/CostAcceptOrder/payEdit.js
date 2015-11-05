@@ -7,7 +7,6 @@
 
 	//datatable, 动态处理
     var ids = $("#ids").val();
-    var application_id = $("#application_id").val();
     var total = 0.00;
     var nopay = 0.00;
     var pay = 0.00;
@@ -20,7 +19,7 @@
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costPreInvoiceOrder/costOrderList?ids="+ids+"&application_id="+application_id,
+        "sAjaxSource": "/costPreInvoiceOrder/costOrderList?ids="+ids+"&application_id="+$("#application_id").val(),
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID});
 			//$(nRow).attr({payee_id:aData.PAYEE_ID});
@@ -82,6 +81,7 @@
     //申请保存
   //付款确认
 	$("#saveBtn").on('click',function(){
+		$("#saveBtn").attr("disabled", true);
 		$("#printBtn").attr("disabled", true);
 		
 		var array=[];
@@ -102,8 +102,8 @@
 
 		
 		if($("#payment_method").val()=='transfers'){
-			if($("#deposit_bank").val()==''){
-				$.scojs_message('转账的账户不能为空', $.scojs_message.TYPE_FALSE);
+			if($("#deposit_bank").val()=='' && $("#bank_no").val()==''&& $("#account_name").val()==''){
+				$.scojs_message('转账的信息不能为空', $.scojs_message.TYPE_FALSE);
 				return false;
 			}
 		}
@@ -113,16 +113,18 @@
 				$("#application_id").val(data.ID);
 				$("#application_no").val(data.ORDER_NO);
 				$("#application_date").val(data.CREATE_STAMP);
+				$("#saveBtn").attr("disabled", false);
 				$("#printBtn").attr("disabled", false);
 				$("#checkBtn").attr('disabled',false);
 				contactUrl("edit?id",data.ID);
+				total = 0.00;
+				nopay = 0.00;
+				pay = 0.00;
+				datatable.fnSettings().sAjaxSource = "/costPreInvoiceOrder/costOrderList?application_id="+$("#application_id").val();;
+				datatable.fnDraw();
 			}else{
 				$.scojs_message('确认失败', $.scojs_message.TYPE_FALSE);
 			}
-//			total = 0.00;
-//			nopay = 0.00;
-//			pay = 0.00;
-			datatable.fnDraw();
 		},'json');
 		
 	});
@@ -242,14 +244,18 @@
 
 	if($('#status').val()=='new'){
 		$("#saveBtn").attr('disabled',false);
-	}else if($('#status').val()=='新建'){
+	}else if($('#status').val()=='新建' || $('#status').val()=='已审批'){
 		if($('#application_id').val()!=''){
 			$("#saveBtn").attr('disabled',false);
+			$("#printBtn").attr('disabled',false);
 			$("#checkBtn").attr('disabled',false);
 		}
 	}else if($('#status').val()=='已复核'){
+		$("#printBtn").attr('disabled',false);
 		$("#returnBtn").attr('disabled',false);
 		$("#confirmBtn").attr('disabled',false);
+	}else if($('#status').val()=='已付款'){
+		$("#printBtn").attr('disabled',false);
 	}
 
 

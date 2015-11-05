@@ -344,7 +344,7 @@ public class CostPreInvoiceOrderController extends Controller {
 				String order_type = (String)map.get("order_type");
 				String value = (String)map.get("value");
 
-				CostApplicationOrderRel costApplicationOrderRel = CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where cost_order_id =?",id);
+				CostApplicationOrderRel costApplicationOrderRel = CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where cost_order_id =? and application_order_id = ?",id,application_id);
 				costApplicationOrderRel.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
 				costApplicationOrderRel.set("cost_order_id", id);
 				costApplicationOrderRel.set("order_type", order_type);
