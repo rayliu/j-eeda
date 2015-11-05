@@ -49,6 +49,16 @@ public class ReportController extends Controller {
 				hm);
 		renderText(file.substring(7));
 	}
+	public void printArapMiscCost() {
+		String order_no = getPara("order_no").trim();
+		String fileName = "report/arap_misc_cost.jasper";
+		String outFileName = "WebRoot/download/手工成本单";
+		HashMap<String, Object> hm = new HashMap<String, Object>();
+		hm.put("order_no", order_no);
+		String file = PrintPatterns.getInstance().print(fileName, outFileName,
+				hm);
+		renderText(file.substring(7));
+	}
 	public void printCustomerOrder() {
 		String order_no = getPara("order_no").trim();
 		String fileName = "report/customer_checkOrder.jasper";
