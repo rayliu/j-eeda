@@ -147,7 +147,9 @@ public class PickupOrderController extends Controller {
         String office = getPara("office");
         String customerId = getPara("customer_filter");
         String sp_filter = getPara("sp_filter");
-        
+        String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -196,7 +198,7 @@ public class PickupOrderController extends Controller {
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
             		+ " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " group by dor.id order by dor.create_stamp desc" + sLimit;
+                    + " group by dor.id ";
         } else {
             if (beginTime == null || "".equals(beginTime)) {
                 beginTime = "1-1-1";
@@ -262,12 +264,16 @@ public class PickupOrderController extends Controller {
 					+ " and c1.abbr like '%" + customerId + "%'"
 					+ " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
             		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-            		+ " group by dor.id order by dor.create_stamp desc" + sLimit;
+            		+ " group by dor.id ";
     
+        }
+        String orderByStr = " order by A.depart_time desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by "+colName+" "+sortBy;
         }
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-        List<Record> warehouses = Db.find(sql);
+        List<Record> warehouses = Db.find(sql + orderByStr + sLimit);
 
         Map map = new HashMap();
         map.put("sEcho", pageIndex);
