@@ -101,14 +101,15 @@ SELECT
 		cso.create_data AS confirm_stamp,
 		cso.actual_payment_amount AS total_amount,
 		(
-			SELECT
-				sum(caor.pay_amount)
-			FROM
-				cost_application_order_rel caor
-			WHERE
-				caor.application_order_id = appl_order.id
-			AND caor.order_type = '行车单'
-		) cost_amount,
+							SELECT
+								ifnull(sum(caor.pay_amount), 0)
+							FROM
+								cost_application_order_rel caor
+							WHERE
+								caor.application_order_id = appl_order.id
+							AND caor.cost_order_id = cso.id
+							AND caor.order_type = '行车单'
+						) cost_amount,
 		(
 							cso.actual_payment_amount - (
 								SELECT
