@@ -731,6 +731,10 @@ public class DeliveryController extends Controller {
 		setAttr("productIds", productIds);
 		setAttr("shippingNumbers", shippingNumbers);
 		setAttr("transferOrderNo", transferOrder.get("order_no"));
+		setAttr("transferOrdercompany_name", transferOrder.get("receiving_unit"));
+		setAttr("transferOrderaddress", transferOrder.get("receiving_address"));
+		setAttr("transferOrderPerson", transferOrder.get("receiving_name"));
+		setAttr("transferOrderPhone", transferOrder.get("receiving_phone"));
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);//货品属性
 		//setAttr("cargoNaturName", "普通货品");
