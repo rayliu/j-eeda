@@ -643,14 +643,7 @@ $(document).ready(function() {
     	refreshData();
     } );
     
-    $("#status_filter8").on('change', function () {
-    	refreshData2();
-    });
-    
-    $('#beginTime_filter8,#endTime_filter8,#orderNo_filter8').on('keyup', function () {
-    	refreshData2();
-    } );
-
+   
 
     var saveConditions=function(){
         var conditions={
@@ -685,13 +678,18 @@ $(document).ready(function() {
     
     
     
+    $("#search2Btn").on('click', function () {
+    	refreshData2();
+    });
+    
+    
   //待付款页面
     var refreshData2=function(){
         var orderNo = $("#orderNo_filter8").val();//单号
         var status = $("#status_filter8").val();
-        var sp = $("#sp_filter8").val();
-        var beginTime = $("#beginTime_filter8").val();
-        var endTime = $("#endTime_filter8").val();
+        var sp = $("#sp_id_input").val();
+        var beginTime = $("#begin_date").val();
+        var endTime = $("#end_date").val();
 
         applicationTab.fnSettings().oFeatures.bServerSide = true;
         applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status

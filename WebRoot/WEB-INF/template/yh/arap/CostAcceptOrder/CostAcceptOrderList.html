@@ -141,26 +141,27 @@
 						<form role="form" style="margin: 15px 15px;">
 							<div class="row search_panel">
 								<div class="col-lg-4">
-									<div class="form-group">
+									<!-- <div class="form-group">
                                             <label class="search-label">供应商</label>
                                             <input type="text" class="form-control search-control sp_filter8" id="sp_filter8" placeholder="请选择供应商">
                                         	<ul id='spList8' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 											</ul>
-                                        </div>
+                                    </div> -->
+                                     <%include("/yh/component/form/inputSpField.html", 
+                                                {
+                                                    id:'sp_id', 
+                                                    label:'供应商名称', 
+                                                    value: ''
+                                                }){} %>
 								</div>
 								<!-- end of col-lg-6-->
 								<div class="col-lg-4">
 									<div class="form-group">
 										<label class="search-label">业务单号</label>
 										<input type="text" class="form-control search-control orderNo_filter8" id="orderNo_filter8" value=""></div>
-									<div class="form-group">
-										<div id="datetimepicker3" class="input-append date ">
-											<label class="search-label">开始时间</label>
-											<input id="beginTime_filter8" class="form-control search-control  beginTime_filter8" type="text">
-											<span class="add-on">
-												<i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-											</span>
-										</div>
+									<div class="form-group">      
+                                         	<%include("/yh/component/form/dateInputField.html", {id:'begin_date', label:'创建开始时间', value:''}){} %>
+                                         
 									</div>
 								</div>
 								<div class="col-lg-4">
@@ -174,18 +175,16 @@
 										</select>
 									</div>
 									<div class="form-group">
-										<span id="datetimepicker4" class="input-append date search-control ">
-											<label class="search-label">结束时间</label>
-											<input id="endTime_filter8" class="form-control search-control endTime_filter8" type="text">
-											<span class="add-on">
-												<i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-											</span>
-										</span>
+										
+                                            <%include("/yh/component/form/dateInputField.html", {id:'end_date', label:'创建结束时间', value:''}){} %>
+                                        
 									</div>
 								</div>
 								<!-- end of col-lg-6-->
 							</div>
 							<!-- end of row-->
+					<button id="search2Btn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查询</button>
+										
 					</form>
 					<div class="table-responsive">
 						<table class="table table-striped table-bordered table-hover" id="application-table" style="width: 1500px;">
