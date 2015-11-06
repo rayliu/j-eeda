@@ -147,11 +147,11 @@ public class CostAcceptOrderController extends Controller {
         		+ " ro.amount total_amount,"
         		+ " ro.amount as application_amount ,"
         		+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "  //已付未付
-				+ " WHERE caor.cost_order_id = ro.id AND caor.order_type = '成本单' "
+				+ " WHERE caor.cost_order_id = ro.id AND caor.order_type = '报销单' "
 				+ " ) paid_amount,"
 				+ " (ro.amount - (SELECT ifnull(sum(caor.pay_amount), 0) "
 				+ " FROM cost_application_order_rel caor "
-				+ " WHERE caor.cost_order_id = ro.id AND caor.order_type = '成本单'"
+				+ " WHERE caor.cost_order_id = ro.id AND caor.order_type = '报销单'"
 				+ " )) nopaid_amount ," //-----------------
         		+ " null as cname"
         		+ " FROM reimbursement_order ro"
