@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 
 import com.jfinal.log.Logger;
+import com.jfinal.plugin.activerecord.Model;
 
 import controllers.yh.damageOrder.DamageOrderController;
 import models.Location;
@@ -71,5 +72,42 @@ public class DbUtils {
         	condition += " and " + key + " between '" + beginTime + "' and '" + endTime+ " 23:59:59' ";
         }
         return condition;
+	}
+	
+	public static void handleList(List<Map<String, String>> itemList, String master_order_id, Class<?> clazz) 
+			throws InstantiationException, IllegalAccessException {
+		Model<?> model = (Model<?>) clazz.newInstance();
+    	for (Map<String, String> rowMap : itemList) {//获取每一行
+    		String rowId = rowMap.get("id");
+    		String action = rowMap.get("action");
+    		if(StringUtils.isEmpty(rowId)){//创建
+    			setModelValues(rowMap, model);
+    			model.set("order_id", master_order_id);
+    			model.save();
+    		}else if("DELETE".equals(action)){//delete
+    			Model<?> deleteModel = model.findById(rowId);
+    			deleteModel.delete();
+    		}else{//UPDATE
+    			Model<?> updateModel = model.findById(rowId);
+    			setModelValues(rowMap, updateModel);
+    			updateModel.update();
+    		}
+		}
+	}
+
+    //遇到 _list 是从表Map, 不处理
+	public static void setModelValues(Map<String, ?> dto, Model<?> model) {
+		logger.debug("----Model:"+model.getClass().toString());
+		for (Entry<String, ?> entry : dto.entrySet()) { 
+			String key = entry.getKey();
+			if(!key.endsWith("_list")){
+            	String value = (String) entry.getValue();
+            	logger.debug(key+":"+value);
+            	//忽略  action 字段
+            	if(StringUtils.isNotEmpty(value) && !"action".equals(key)){
+            		model.set(key, value);
+            	}
+            }
+		}
 	}
 }

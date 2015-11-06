@@ -127,16 +127,12 @@ public class DamageOrderController extends Controller {
 		if (StringUtils.isNotEmpty(id)) {
 			//update
 			DamageOrder order = DamageOrder.dao.findById(id);
-			setModelValues(dto, order);
+			DbUtils.setModelValues(dto, order);
 			order.update();
-			//处理从表
-			handleCargoDetail(dto, id);
-			handleChargeDetail(dto, id);
-			handleCostDetail(dto, id);
 		} else {
 			//create 
 			DamageOrder order = new DamageOrder();
-			setModelValues(dto, order);
+			DbUtils.setModelValues(dto, order);
 			
 			//需后台处理的字段
 			order.set("order_no", OrderNoGenerator.getNextOrderNo("HSD"));
@@ -147,83 +143,25 @@ public class DamageOrderController extends Controller {
 			order.save();
 			id = order.getLong("id").toString();
 
-			//处理从表
-			handleCargoDetail(dto, id);
-			handleChargeDetail(dto, id);
-			handleCostDetail(dto, id);
 		}
+
+		//处理从表
+		//handleCargoDetail(dto, id);
+		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("cargo_list");
+		DbUtils.handleList(itemList, id, DamageOrderItem.class);
+		
+//		List<Map<String, String>> chargeList = (ArrayList<Map<String, String>>)dto.get("charge_list");
+//		handleList(itemList, id, DamageOrderFinItem.class);
+//		
+//		List<Map<String, String>> costList = (ArrayList<Map<String, String>>)dto.get("cost_list");
+//		handleList(itemList, id, DamageOrderFinItem.class);
 		
 		//return dto
 		Record returnDto = getOrderDto(id);
 		renderJson(returnDto);
 	}
-
-	private void handleCargoDetail(Map<String, ?> dto, String id) {
-		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("cargo_list");
-    	for (Map<String, String> rowMap : itemList) {//获取每一行
-    		String rowId = rowMap.get("id");
-    		String action = rowMap.get("action");
-    		if(StringUtils.isEmpty(rowId)){//创建
-    			DamageOrderItem item = new DamageOrderItem();
-    			setModelValues(rowMap, item);
-    			item.set("order_id", id);
-    			item.save();
-    		}else if("DELETE".equals(action)){//delete
-    			DamageOrderItem item = DamageOrderItem.dao.findById(rowId);
-    			item.delete();
-    		}else{//UPDATE
-    			DamageOrderItem item = DamageOrderItem.dao.findById(rowId);
-    			setModelValues(rowMap, item);
-    			item.update();
-    		}
-		}
-	}
 	
-	private void handleChargeDetail(Map<String, ?> dto, String id) {
-		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("charge_list");
-    	handleFinItem(id, itemList);
-	}
 	
-	private void handleCostDetail(Map<String, ?> dto, String id) {
-		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("cost_list");
-    	handleFinItem(id, itemList);
-	}
-
-	private void handleFinItem(String id, List<Map<String, String>> itemList) {
-		for (Map<String, String> rowMap : itemList) {//获取每一行
-    		String rowId = rowMap.get("id");
-    		String action = rowMap.get("action");
-    		if(StringUtils.isEmpty(rowId)){//创建
-    			DamageOrderFinItem item = new DamageOrderFinItem();
-    			setModelValues(rowMap, item);
-    			item.set("order_id", id);
-    			item.save();
-    		}else if("DELETE".equals(action)){//delete
-    			DamageOrderFinItem item = DamageOrderFinItem.dao.findById(rowId);
-    			item.delete();
-    		}else{//UPDATE
-    			DamageOrderFinItem item = DamageOrderFinItem.dao.findById(rowId);
-    			setModelValues(rowMap, item);
-    			item.update();
-    		}
-		}
-	}
-
-    //遇到 _list 是从表Map, 不处理
-	private void setModelValues(Map<String, ?> dto, Model<?> model) {
-		logger.debug("----Model:"+model.getClass().toString());
-		for (Entry<String, ?> entry : dto.entrySet()) { 
-			String key = entry.getKey();
-			if(!key.endsWith("_list")){
-            	String value = (String) entry.getValue();
-            	logger.debug(key+":"+value);
-            	//忽略  action 字段
-            	if(StringUtils.isNotEmpty(value) && !"action".equals(key)){
-            		model.set(key, value);
-            	}
-            }
-		}
-	}
 
 	private Record getOrderDto(String orderId) {
 		String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name, "
