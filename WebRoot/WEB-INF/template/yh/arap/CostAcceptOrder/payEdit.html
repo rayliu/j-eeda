@@ -87,7 +87,7 @@
 	                                </div>
 	                                <div class="form-group">                                  
 	                                    <label class="search-label">账户名</label> 
-	                                    <input type="text" class="form-control search-control account_name" id="account_name" name="account_name"  value="${invoiceApplication.bank_name!''}">
+	                                    <input type="text" class="form-control search-control account_name" id="account_name" name="account_name"  value="${invoiceApplication.bank_name!''}" >
 	                                </div>
                                 </div>
                                 
@@ -104,6 +104,7 @@
                                         <th>应付类别</th>
                                         <th>对账单号</th>
                                         <th>付款给</th>
+                                        <th>收款人</th>
                                         <th>应付金额</th>
                                         <th>待付金额</th>
                                         <th>本次付款</th>
@@ -117,7 +118,7 @@
                                 </tbody>
                                 <tfoot>
                                 	<tr>
-                                        <th colspan="3"><div align="center">合计</div></th>
+                                        <th colspan="4"><div align="center">合计</div></th>
                                         <th><span id="total"></span></th>
                                         <th><span id="nopay"></span></th>
                                         <th><span id="pay"></span></th>

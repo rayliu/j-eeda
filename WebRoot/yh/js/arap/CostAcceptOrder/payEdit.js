@@ -31,13 +31,15 @@
         			//return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             		return obj.aData.ORDER_NO;
         		}},
-        	{"mDataProp":"CNAME","sWidth": "180px"},
+        	{"mDataProp":"CNAME","sWidth": "250px"},
+        	{"mDataProp":"PAYEE_NAME","sWidth": "120px"},
     		{"mDataProp":"COST_AMOUNT","sWidth": "100px",
     			"fnRender": function(obj) {
 					total = total + parseFloat(obj.aData.COST_AMOUNT) ;
 					$("#total").html(total);
 					$("#payee_filter").val(obj.aData.CNAME);
 					$("#payee_id").val(obj.aData.PAYEE_ID);
+					$("#payee_name").val(obj.aData.PAYEE_NAME);
 					return obj.aData.COST_AMOUNT;
     			}
     		},
@@ -54,7 +56,7 @@
 						pay = pay + parseFloat(obj.aData.YUFU_AMOUNT) ;
 						$("#pay").html(pay);
 						$("#pay_amount").val(pay);
-						return "<input type ='text' name='amount' id ='amount' value='"+obj.aData.YUFU_AMOUNT+"'>";
+						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+obj.aData.YUFU_AMOUNT+"'>";
 					}
 					else{
 						if(obj.aData.PAY_AMOUNT==0){
@@ -63,7 +65,7 @@
 						pay = pay + parseFloat(obj.aData.PAY_AMOUNT) ;
 						$("#pay").html(pay);
 						$("#pay_amount").val(pay);
-						return "<input type ='text' name='amount' id ='amount' value='"+obj.aData.PAY_AMOUNT+"'>";
+						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+obj.aData.PAY_AMOUNT+"'>";
 					}
     			}
     		},
