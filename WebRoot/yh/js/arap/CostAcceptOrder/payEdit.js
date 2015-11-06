@@ -37,9 +37,9 @@
     			"fnRender": function(obj) {
 					total = total + parseFloat(obj.aData.COST_AMOUNT) ;
 					$("#total").html(total);
-					$("#payee_filter").val(obj.aData.CNAME);
-					$("#payee_id").val(obj.aData.PAYEE_ID);
-					$("#payee_name").val(obj.aData.PAYEE_NAME);
+//					$("#payee_filter").val(obj.aData.CNAME);
+//					$("#payee_id").val(obj.aData.PAYEE_ID);
+//					$("#payee_name").val(obj.aData.PAYEE_NAME);
 					return obj.aData.COST_AMOUNT;
     			}
     		},
@@ -288,12 +288,28 @@
 	}else if($('#status').val()=='已付款'){
 		$("#printBtn").attr('disabled',false);
 	}
+//	
+//	//根据供应商信息回显账户银行等
+//	if($('#application_id').val()==''){
+//		var payee_id = $('#payee_id').val();
+//		if(payee_id!==''&&payee_id!=null){
+//			$.get('/costPreInvoiceOrder/getSpMassage',{payee_id:payee_id},function(data){
+//				if(data.ID>0){
+//					$('#deposit_bank').val(data.BANK_NAME);
+//					$('#bank_no').val(data.BANK_NO);
+//					$('#account_name').val(data.RECEIVER);
+//				}
+//			});
+//		}
+//	}
+//	
+	
 
 
     //回显
     //付款类型
     $('#payment_method').val($('#payment_method_show').val());
-    payment();
+    
     //开票类型
     $('#invoice_type').val($('#invoice_type_show').val());
     
@@ -304,4 +320,11 @@
     
     //付款银行回显
     $('#pay_bank').val($('#pay_banks').val());
+    
+    if($('#deposit_bank').val()!='' || $('#bank_no').val()!='' || $('#account_name').val()!=''){
+    	$('#payment_method').val('transfers');
+    }else{
+    	$('#payment_method').val('cash');
+    	payment();
+    }
 });

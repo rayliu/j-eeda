@@ -161,14 +161,14 @@ $(document).ready(function() {
 		},
         "sAjaxSource": "/costAcceptOrder/applicationList",
         "aoColumns": [
-            {"mDataProp":"ORDER_NO","sWidth":"90px",
+            {"mDataProp":"ORDER_NO","sWidth":"120px",
             	 "fnRender": function(obj) {
             			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             	 }
             },
-            {"mDataProp":"ORDER_TYPE", "sWidth":"80px","sClass":'order_type'},
-            {"mDataProp":"STATUS", "sWidth":"50px"},    
-            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"90px",
+            {"mDataProp":"ORDER_TYPE", "sWidth":"100px","sClass":'order_type'},
+            {"mDataProp":"STATUS", "sWidth":"80px"},    
+            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"100px",
             	"sClass":"pay_amount"
             } ,
             {"mDataProp":"CNAME",  "sWidth":"200px",
@@ -176,7 +176,7 @@ $(document).ready(function() {
             },  
             {"mDataProp":"PAYEE_NAME", "sWidth":"150px",
             	"sClass": "payee_name"},
-            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
+            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"120px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
                         return '现金';
@@ -186,7 +186,7 @@ $(document).ready(function() {
                     	return obj.aData.PAYMENT_METHOD;
                 }
             },
-            {"mDataProp":"STATUS", "sWidth":"80px",
+            {"mDataProp":"STATUS", "sWidth":"100px",
             	"sClass": "status",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){

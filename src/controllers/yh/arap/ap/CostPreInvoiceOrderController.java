@@ -1130,7 +1130,59 @@ public class CostPreInvoiceOrderController extends Controller {
 		public void create() {
 			String ids = getPara("sids");
 			setAttr("ids", ids);
-
+			
+			String payee_id = "";
+			String payee_name = "";
+			String deposit_bank = "";
+			String bank_no = "";
+			String account_name = "";
+			String[] orderArrId=ids.split(",");
+			for (int i=0;i<orderArrId.length;) {
+					String[] one=orderArrId[i].split(":");
+					String id = one[0];
+					String orderType = one[1];
+					if("应付对账单".equals(orderType)){
+ 						ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
+ 						payee_id = arapCostOrder.getLong("payee_id").toString();
+ 					}else if("预付单".equals(orderType)){
+ 						ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+ 						payee_id = arapPrePayOrder.getLong("sp_id").toString();
+ 					}else if("成本单".equals(orderType)){
+ 						ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+ 						String type = arapMiscCostOrder.getStr("cost_to_type");
+ 						payee_name = arapMiscCostOrder.getStr("others_name");
+ 						if(type.equals("sp")){
+ 							payee_id = arapMiscCostOrder.getLong("sp_id").toString();
+ 						}else if(type.equals("customer")){
+ 							payee_id = arapMiscCostOrder.getLong("customer_id").toString();
+ 						}
+ 					}else if("行车单".equals(orderType)){
+ 						CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
+ 						payee_name = carSummaryOrder.getStr("main_driver_name");
+ 					}else if("报销单".equals(orderType)){
+ 						ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+ 						payee_name = reimbursementOrder.getStr("account_name");
+ 					} else if("往来票据单".equals(orderType)){
+ 						ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+ 						payee_name = arapInOutMiscOrder.getStr("charge_person");
+ 					}
+					break;
+			}
+			
+			if(!payee_id.equals("")){
+				Contact contact = Contact.dao.findById(payee_id);
+				deposit_bank = contact.getStr("bank_name");
+				bank_no = contact.getStr("bank_no");
+				account_name = contact.getStr("receiver");
+				setAttr("deposit_bank", deposit_bank);
+				setAttr("bank_no", bank_no);
+				setAttr("account_name", account_name);
+			}
+			
+			setAttr("payee_id", payee_id);
+			setAttr("payee_name", payee_name);
+			
+				
 			List<Record> Account = null;
 			Account = Db.find("select * from fin_account where bank_name != '现金'");
 			setAttr("accountList", Account);
@@ -1788,10 +1840,7 @@ public class CostPreInvoiceOrderController extends Controller {
 						this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount)));
 						this_aaas.update();
 					}
-					
-					
 				}
 			}
-		}
-	    
+		}	    
 }
