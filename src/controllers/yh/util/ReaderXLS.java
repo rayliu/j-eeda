@@ -13,10 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFFontFormatting;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFCellUtil;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 @SuppressWarnings({"rawtypes","unused","deprecation"})
 public class ReaderXLS{
@@ -190,20 +193,23 @@ public class ReaderXLS{
                 // 判断当前的cell是否为Date
                 if (HSSFDateUtil.isCellDateFormatted(cell)) {
                     // 如果是Date类型则，转化为Data格式
-                    
                     //方法1：这样子的data格式是带时分秒的：2011-10-12 0:00:00
                     //cellvalue = cell.getDateCellValue().toLocaleString();
-                    
                     //方法2：这样子的data格式是不带带时分秒的：2011-10-12
                     Date date = cell.getDateCellValue();
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     cellvalue = sdf.format(date);
-                }
+                }   
                 // 如果是纯数字
                 else {
                     // 取得当前Cell的数值,返回：3.000008976E8
                     //cellvalue = String.valueOf(cell.getNumericCellValue());
-                	cellvalue = String.format("%.0f", cell.getNumericCellValue());
+                	if(!"NaN".equals(String.format("%.0f", cell.getNumericCellValue()))){
+                		cellvalue = String.format("%.0f", cell.getNumericCellValue());
+                	}
+                	else{
+                	cellvalue = String.format( cell.getStringCellValue());
+                	}
                 }
                 break;
             }
