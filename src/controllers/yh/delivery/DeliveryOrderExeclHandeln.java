@@ -558,7 +558,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					}
 					ReturnOrder returnorder =ReturnOrder.dao.findFirst("SELECT * from return_order where delivery_order_id='"+deliveryorder.get("id")+"'");
 					if(returnorder!=null){
-						throw new Exception("序列号 "+content.get(j).get("序列号")+"找不到对应的配送单");
+						throw new Exception("序列号 "+content.get(j).get("序列号")+"已有回单");
 					}
 					deliveryorder.set("status", "已送达");
 					//配送里程碑
