@@ -10,6 +10,7 @@ import java.util.Map;
 import models.DeliveryOrderItem;
 import models.DepartOrder;
 import models.DepartTransferOrder;
+import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItem;
@@ -414,41 +415,43 @@ public class TransferOrderMilestoneController extends Controller {
         		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId;
         		rec = Db.findFirst(sqlTotal);
         		Long departTotal1 = rec.getLong("total");
-        		List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select id,notify_party_id from transfer_order_item_detail where order_id = "+departTransferOrder.get("order_id")+" and depart_id ="+ departOrderId);
-        		for (int i = 0; i < departTotal1; i++) {
-        				DeliveryOrder deliveryOrder = null;
-                		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
-                		Date createDate = Calendar.getInstance().getTime();
-                		deliveryOrder = new DeliveryOrder();
-                		deliveryOrder.set("order_no", orderNo)
-        				.set("customer_id", transferOrder.get("customer_id"))
-        				.set("notify_party_id", transferorderitemdetail.get(i).get("notify_party_id"))
-        				.set("create_stamp", createDate).set("status", "新建")
-        				.set("route_to",transferOrder.get("route_to"))
-        				.set("route_from", transferOrder.get("route_from"))
-        				.set("pricetype", getPara("chargeType"))
-        				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
-        				.set("cargo_nature", transferOrder.get("cargo_nature"))
-        				.set("priceType", departOrder1.get("charge_type"))
-        				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
-        				.set("audit_status", "新建").set("sign_status", "未回单");
-                		deliveryOrder.save();
-						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
-						.set("transfer_order_id",transferOrder.get("id"))
-						.set("transfer_no",transferOrder.get("order_no"))
-						.set("transfer_item_detail_id",transferorderitemdetail.get(i).get("id"))
-						.set("amount", 1);
-						deliveryOrderItem.save();
-						//在单品中设置delivery_id
-						TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
-								.findById(transferorderitemdetail.get(i).get("id"));
-						transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
-						transferOrderItemDetail.set("is_delivered", true);
-						transferOrderItemDetail.update();
+        		Party party=Party.dao.findById(transferOrder.get("customer_id"));
+        		if("Y".equals(party.get("is_auto_ps"))){
+        			List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select id,notify_party_id from transfer_order_item_detail where order_id = "+departTransferOrder.get("order_id")+" and depart_id ="+ departOrderId);
+            		for (int i = 0; i < departTotal1; i++) {
+            				DeliveryOrder deliveryOrder = null;
+                    		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
+                    		Date createDate = Calendar.getInstance().getTime();
+                    		deliveryOrder = new DeliveryOrder();
+                    		deliveryOrder.set("order_no", orderNo)
+            				.set("customer_id", transferOrder.get("customer_id"))
+            				.set("notify_party_id", transferorderitemdetail.get(i).get("notify_party_id"))
+            				.set("create_stamp", createDate).set("status", "新建")
+            				.set("route_to",transferOrder.get("route_to"))
+            				.set("route_from", transferOrder.get("route_from"))
+            				.set("pricetype", getPara("chargeType"))
+            				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
+            				.set("cargo_nature", transferOrder.get("cargo_nature"))
+            				.set("priceType", departOrder1.get("charge_type"))
+            				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
+            				.set("audit_status", "新建").set("sign_status", "未回单");
+                    		deliveryOrder.save();
+    						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+    						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+    						.set("transfer_order_id",transferOrder.get("id"))
+    						.set("transfer_no",transferOrder.get("order_no"))
+    						.set("transfer_item_detail_id",transferorderitemdetail.get(i).get("id"))
+    						.set("amount", 1);
+    						deliveryOrderItem.save();
+    						//在单品中设置delivery_id
+    						TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+    								.findById(transferorderitemdetail.get(i).get("id"));
+    						transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
+    						transferOrderItemDetail.set("is_delivered", true);
+    						transferOrderItemDetail.update();
+            		}
         		}
-        		
-					
+		
         		//运输单中已入库的数量
         		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and status = '已入库'";
         		rec = Db.findFirst(sqlTotal);
