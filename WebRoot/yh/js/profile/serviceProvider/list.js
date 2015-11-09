@@ -67,11 +67,11 @@ $(document).ready(function() {
                 "bVisible":(Provider.isUpdate || Provider.isDel),
                 "fnRender": function(obj) {  
                 	var str ="<nobr>";
-                	if(Provider.isUpdate){
-                		str += "<a class='btn  btn-primary btn-sm' href='/serviceProvider/edit/"+obj.aData.PID+"' target='_blank'>"+
-                        "<i class='fa fa-edit fa-fw'></i>"+
-                        "编辑"+"</a> ";
-                	}
+                	// if(Provider.isUpdate){
+                	// 	str += "<a class='btn  btn-primary btn-sm' href='/serviceProvider/edit/"+obj.aData.PID+"' target='_blank'>"+
+                 //        "<i class='fa fa-edit fa-fw'></i>"+
+                 //        "编辑"+"</a> ";
+                	// }
                 	if(Provider.isDel){
                 		if(obj.aData.IS_STOP != true){
 			                    str += "<a class='btn btn-danger  btn-sm' href='/serviceProvider/delete/"+obj.aData.PID+"'>"+
