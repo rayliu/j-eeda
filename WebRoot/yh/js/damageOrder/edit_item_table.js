@@ -8,7 +8,8 @@ $(document).ready(function() {
         e.preventDefault();
         var tr = $(this).parent().parent();
         deletedTableIds.push(tr.attr('id'))
-        tr.remove();
+        
+        cargoTable.row(tr).remove().draw();
     }); 
 
     damageOrder.buildCargoDetail=function(){
