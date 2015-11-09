@@ -553,7 +553,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController{
 		    			String sql = "select * from transfer_order where customer_id = '" + customer.get("pid") + "' and customer_order_no = '" + customerOrderNo + "'"
 		    					+ " and planning_time = '" + content.get(j).get("计划日期") + "' and arrival_time ='" + content.get(j).get("预计到货日期") + "';";
 		        		TransferOrder order = TransferOrder.dao.findFirst(sql);
-		    			if(order != null){
+		        		//拿到序列号的客户
+		        		if(!"".equals(content.get(j).get("单品序列号"))){
+		        		TransferOrder order1 = TransferOrder.dao.findFirst("SELECT T2.customer_id FROM transfer_order_item_detail T1 LEFT JOIN transfer_order T2 on T1.order_id =T2.id where serial_no='" + content.get(j).get("单品序列号") + "'");
+		        		if(order1!= null){
+		        		if(order1.get("customer_id")==customer.get("pid")){
+		        			throw new Exception(content.get(j).get("单品序列号")+"序列已存在");	
+		        		}
+		        		}
+		        		}
+		        		if(order != null){
 		    				TransferOrderItem tansferOrderItem = null;
 		    				if(content.get(j).get("货品属性")=="ATM"){
 		    					product = Product.dao.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '" + customer.get("pid") + "' and item_no =  '"+content.get(j).get("货品型号")+"';");
