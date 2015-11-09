@@ -135,7 +135,7 @@ public class CostAcceptOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
-		condition = " where nopaid_amount>0 and "
+		condition = " where nopaid_amount!=0 and "
 					+ " ifnull(cname,'') like '%" + spName + "%' "
 					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
 				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
