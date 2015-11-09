@@ -151,7 +151,7 @@
                 <div class="col-lg-12">
                    <div class="form-group">
                         <label>事故描述</label>
-                        <textarea id='remark' class="form-control" rows="3" name="remark">${order.remark!''}</textarea>
+                        <textarea id='accident_desc' class="form-control" rows="3" name="accident_desc">${order.accident_desc!''}</textarea>
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -175,13 +175,14 @@
             <hr>
             <div class="row">
                 <div class="col-lg-12">
-                    保险公司或责任方赔偿
+                    <h4>保险公司或责任方赔偿</h4>
                     <button class="btn btn-success btn-xs" id="add_charge">添加</button>
+                    <!-- field_list: 回显对应的字段名字 -->
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'charge_table', 
-                            headers:['', '状态', '应收描述', '金额', '收取', '收款方式', '名称', '备注'],
-                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'charge_type', 'name', 'remark'],
+                            headers:['', 'id', '状态', '应收描述', '金额', '赔偿方', '赔偿方名称', '收款方式', '备注'],
+                            field_list:['', 'id', 'status', 'fin_item', 'amount', 'party_type', 'party_name', 'fin_method', 'remark'],
                             value_list: order.charge_list![]
                         }){} %>
                     
@@ -190,13 +191,13 @@
             <hr>
             <div class="row">
                 <div class="col-lg-12">
-                    向客户或收货人赔款
+                    <h4>向客户或收货人赔款</h4>
                     <button class="btn btn-success btn-xs" id="add_cost">添加</button>
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'cost_table', 
-                            headers:['', '状态', '应付描述', '金额', '付给', '付款方式', '名称', '备注'],
-                            field_list:['', 'status', 'fin_item', 'amount', 'type', 'cost_type', 'name', 'remark'],
+                            headers:['', 'id', '状态', '应付描述', '金额', '收款方', '客户名称', '付款方式', '备注'],
+                            field_list:['', 'id', 'status', 'fin_item', 'amount', 'party_type', 'party_name', 'fin_method', 'remark'],
                             value_list: order.cost_list![]
                         }){} %>
                 </div>
@@ -204,19 +205,18 @@
             <div class="row">
                 <div class="col-lg-12">
                    <div class="form-group">
-                        <h3>
-                            <label>总金额： 10000</label>
-                            <label>责任方赔付金额：8000</label>
-                            <label>向客户赔付金额：10000</label>
-                            <label>差异金额：-2000</label>
-                        </h3>
+                        <h4>总金额： <span id='total_amount'>${order.amount!0}</span></h4>
+                        <h4>责任方赔付金额：<span id='total_charge'></span></h4>
+                        <h4>向客户赔付金额：<span id='total_cost'></span></h4>
+                        <h4>差异金额：<span id='result'></span></h4>
                     </div>
                 </div>
                 <div class="col-lg-12">
                    <div class="form-group">
                         <label>差异说明</label>
                         <textarea id='remark' class="form-control" rows="3" name="remark">${order.remark!''}
-                        点“已结案” 如果应收应付没确认完，出提示</textarea>
+                        </textarea>
+                        <!-- 点“已结案” 如果应收应付没确认完，出提示 -->
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->

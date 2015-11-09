@@ -4,6 +4,10 @@ $(document).ready(function() {
 	document.title = order_no + ' | ' + document.title;
 
     $('#menu_returnTransfer').addClass('active').find('ul').addClass('in');
+    
+    $('#amount').blur(function(){
+        $('#total_amount').text($(this).val());
+    });
 
     //------------save
     $('#saveBtn').click(function(e){
@@ -30,7 +34,8 @@ $(document).ready(function() {
             biz_order_no: $('#biz_order_no').val(),  
             process_status: $('#process_status').val(),
 
-            accident_type: $('#accident_type').val(),  
+            accident_type: $('#accident_type').val(), 
+            amount: $('#amount').val(),  
             accident_desc: $('#accident_desc').val(),  
             accident_date: $('#accident_date').val(),
 
@@ -75,5 +80,6 @@ $(document).ready(function() {
 
     });
 
-
+    damageOrder.calcTotalCharge();
+    damageOrder.calcTotalCost();
 } );

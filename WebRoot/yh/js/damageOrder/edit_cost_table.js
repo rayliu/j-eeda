@@ -30,8 +30,9 @@ $(document).ready(function() {
                 fin_item: $(row.children[2]).find('input').val(),
                 amount: $(row.children[3]).find('input').val(),
                 party_type: $(row.children[4]).find('select').val(),
-                name: $(row.children[5]).find('input').val(),
-                remark: $(row.children[6]).find('input').val(),
+                party_name: $(row.children[5]).find('input').val(),
+                fin_method: $(row.children[6]).find('select').val(),
+                remark: $(row.children[7]).find('input').val(),
                 type: 'cost',
                 action: $('#order_id').val().length>0?'UPDATE':'CREATE'
             };
@@ -83,7 +84,7 @@ $(document).ready(function() {
             $(row).attr('id', data.ID);
         },
         "columns": [
-            {  "width": "60px",
+            {  "width": "70px",
                 "render": function ( data, type, full, meta ) {
                     if(full.ID){
                         return '<button type="button" class="btn btn-default btn-xs">删除</button> '+
@@ -93,6 +94,7 @@ $(document).ready(function() {
                     }
                 }
             },
+            { "data": "ID", "visible": false },
             { "data": "STATUS", "width": "50px",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
@@ -107,11 +109,11 @@ $(document).ready(function() {
                     return '<input type="text" value="'+data+'" class="form-control"/>';
                 }
             },
-            { "data": "AMOUNT",
+            { "data": "AMOUNT", "width": "60px",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
-                    return '<input type="text" value="'+data+'" class="form-control"/>';
+                    return '<input type="text" value="'+data+'" class="amount form-control"/>';
                 }
             },
             { "data": "PARTY_TYPE",
@@ -126,7 +128,14 @@ $(document).ready(function() {
                     +'</select>';
                 }
             },
-            { "data": "COST_TYPE",
+            { "data": "PARTY_NAME",
+                "render": function ( data, type, full, meta ) {
+                    if(!data)
+                        data='';
+                    return '<input type="text" value="'+data+'" class="form-control"/>';
+                }
+            },
+            { "data": "FIN_METHOD",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -137,15 +146,7 @@ $(document).ready(function() {
                         +'<option >责任方已付款</option>'
                     +'</select>';
                 }
-            },
-            { "data": "NAME",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                    return '<input type="text" value="'+data+'" class="form-control"/>';
-                }
-            },
-            { "data": "REMARK",
+            },{ "data": "REMARK",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -156,10 +157,33 @@ $(document).ready(function() {
     });
 
     $('#add_cost').on('click', function(){
-        var item={};
+        var item={ID: ''};
         
         costTable.row.add(item).draw(false);
     });
 
+    $('#cost_table').on('blur', '.amount', function(){
+        damageOrder.calcTotalCost();
+    });
+
+    damageOrder.calcTotalCost = function(){
+        var table_rows = $("#cost_table tr");
+        var total_cost=0;
+        for(var index=0; index<table_rows.length; index++){
+            var row = table_rows[index];
+            var amount = $(row.children[3]).find('input').val();
+            if($.isNumeric(amount))
+                total_cost +=  parseFloat(amount);
+        }
+        $("#total_cost").text(total_cost);
+
+        var result = parseFloat($("#total_charge").text()) - parseFloat($("#total_cost").text());
+        $('#result').text(result);
+        if(result<0){
+            $('#result').css('color', 'red');
+        }else{
+            $('#result').css('color', 'black');
+        }
+    }
 
 } );
