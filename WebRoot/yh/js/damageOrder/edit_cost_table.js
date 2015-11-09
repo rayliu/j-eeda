@@ -4,11 +4,12 @@ $(document).ready(function() {
 	var deletedTableIds=[];
 
      //删除一行
-    $("#charge_table").on('click', '.delete', function(e){
+    $("#cost_table").on('click', '.delete', function(e){
         e.preventDefault();
         var tr = $(this).parent().parent();
         deletedTableIds.push(tr.attr('id'))
-        tr.remove();
+        costTable.row(tr).remove().draw();
+        damageOrder.calcTotalCost();
     }); 
 
     damageOrder.buildCostDetail=function(){
@@ -87,10 +88,10 @@ $(document).ready(function() {
             {  "width": "70px",
                 "render": function ( data, type, full, meta ) {
                     if(full.ID){
-                        return '<button type="button" class="btn btn-default btn-xs">删除</button> '+
+                        return '<button type="button" class="delete btn btn-default btn-xs">删除</button> '+
                             '<button type="button" class="btn btn-primary btn-xs">确认</button>';
                     }else{
-                        return '<button type="button" class="btn btn-default btn-xs">删除</button> ';
+                        return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
                     }
                 }
             },

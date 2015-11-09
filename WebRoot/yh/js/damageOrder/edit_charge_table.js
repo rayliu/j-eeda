@@ -8,7 +8,8 @@ $(document).ready(function() {
         e.preventDefault();
         var tr = $(this).parent().parent();
         deletedTableIds.push(tr.attr('id'))
-        tr.remove();
+        chargeTable.row(tr).remove().draw();
+        damageOrder.calcTotalCharge();
     }); 
 
     damageOrder.buildChargeDetail=function(){
@@ -87,10 +88,10 @@ $(document).ready(function() {
             {  "width": "70px",
                 "render": function ( data, type, full, meta ) {
                     if(full.ID){
-                        return '<button type="button" class="btn btn-default btn-xs">删除</button> '+
+                        return '<button type="button" class="delete btn btn-default btn-xs">删除</button> '+
                             '<button type="button" class="btn btn-primary btn-xs">确认</button>';
                     }else{
-                        return '<button type="button" class="btn btn-default btn-xs">删除</button> ';
+                        return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
                     }
                 }
             },
@@ -162,7 +163,7 @@ $(document).ready(function() {
             ID: ''
         };
         
-        chargeTable.row.add(item).draw(false);
+        chargeTable.row.add(item).draw(true);
     });
    
     $('#charge_table').on('blur', '.amount', function(){
