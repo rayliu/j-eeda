@@ -40,6 +40,12 @@ $(document).ready(function() {
         }
     };
 
+    $('#hide_menu_btn').mouseenter(function() {
+        $("#hide_menu_btn").css('background-color', 'rgb(231, 231, 231)');
+    }).mouseleave(function() {
+        $("#hide_menu_btn").css('background-color', 'rgb(241, 241, 241)');
+    });
+
 	$('#hide_menu_btn').click(function(){
 		if ($('#left_side_bar:visible').length > 0){//the element is visible
 			hideSideBar();
