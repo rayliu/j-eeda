@@ -194,6 +194,7 @@ public class CustomerController extends Controller {
             party.set("payment", getPara("payment"));
             party.set("receipt", getPara("receipt"));
             party.set("charge_type", getPara("chargeType"));
+            party.set("is_auto_ps", getPara("isAutoPS"));
             if(getPara("insurance_rates") != ""){
             	party.set("insurance_rates", getPara("insurance_rates"));
             }
@@ -206,7 +207,7 @@ public class CustomerController extends Controller {
             contact = new Contact();
             setContact(contact);
             contact.save();
-
+            
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_CUSTOMER);
             party.set("contact_id", contact.getLong("id"));
@@ -217,6 +218,7 @@ public class CustomerController extends Controller {
             party.set("payment", getPara("payment"));
             party.set("charge_type", getPara("chargeType"));
             party.set("office_id", pom.getCurrentOfficeId());
+            party.set("is_auto_ps", getPara("isAutoPS"));
             if(getPara("insurance_rates") != ""){
             	party.set("insurance_rates", getPara("insurance_rates"));
             }

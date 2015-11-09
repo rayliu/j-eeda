@@ -173,6 +173,14 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <input type="hidden" name="AutoPS" id="AutoPS" value="${party.is_auto_ps!''}">
+                                                <label>是否入库生成配送单</label>
+                                                <input type="radio" name="isAutoPS" id="YAutoPS" value="Y" checked="checked">是
+                                                <input type="radio" name="isAutoPS" id="NAutoPS" value="N">否
+                                            </div>
+                                    </div>
 									
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
                                     <div class="col-lg-6" style="clear:both;">
@@ -315,6 +323,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
                 element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
             }
         });
+        
         //获取全国省份
        $(function(){
         	var province = $("#mbProvince");
@@ -412,7 +421,12 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 				}
 			}
 		},'json');
-
+     // 回显入库是否生成配送
+    	$("input[name='isAutoPS']").each(function(){
+    		if($("#AutoPS").val() == $(this).val()){
+    			$(this).attr('checked', true);		
+    		}
+    	});
     // 回显车长
     var chargeTypeOption=$("#chargeType>option");
     var chargeTypeVal=$("#chargeTypeSelect").val();
