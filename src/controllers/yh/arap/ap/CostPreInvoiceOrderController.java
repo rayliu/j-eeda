@@ -1553,7 +1553,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = arapCostOrder.getDouble("cost_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '对账单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapCostOrder.set("status", "部分已复核").update();
 					}else
 						arapCostOrder.set("status", "已复核").update();
@@ -1563,7 +1563,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = arapMiscCostOrder.getDouble("total_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '成本单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapMiscCostOrder.set("audit_status", "部分已复核").update();
 					}else
 						arapMiscCostOrder.set("audit_status", "已复核").update();
@@ -1574,7 +1574,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = carSummaryOrder.getDouble("actual_payment_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '行车单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						carSummaryOrder.set("status", "部分已复核").update();
 					}else
 						carSummaryOrder.set("status", "已复核").update();
@@ -1585,17 +1585,17 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = arapPrePayOrder.getDouble("total_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '预付单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapPrePayOrder.set("status", "部分已复核").update();
 					}else
 						arapPrePayOrder.set("status", "已复核").update();
 					
 				}else if(order_type.equals("报销单")){
 					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
-					Double total_amount = reimbursementOrder.getDouble("total_amount");
+					Double total_amount = reimbursementOrder.getDouble("amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						reimbursementOrder.set("status", "部分已复核").update();
 					}else
 						reimbursementOrder.set("status", "已复核").update();
@@ -1603,10 +1603,10 @@ public class CostPreInvoiceOrderController extends Controller {
 				}else if(order_type.equals("往来票据单")){
 					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 					
-					Double total_amount = arapInOutMiscOrder.getDouble("total_amount");
-					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
+					Double total_amount = arapInOutMiscOrder.getDouble("pay_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '往来票据单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapInOutMiscOrder.set("pay_status", "部分已复核").update();
 					}else
 						arapInOutMiscOrder.set("pay_status", "已复核").update();
@@ -1649,6 +1649,12 @@ public class CostPreInvoiceOrderController extends Controller {
 				}else if(order_type.equals("预付单")){
 					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
 					arapPrePayOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("报销单")){
+					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+					reimbursementOrder.set("status", "付款申请中").update();
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+					arapInOutMiscOrder.set("pay_status", "付款申请中").update();
 				}
 			}
 	        
@@ -1698,7 +1704,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = arapCostOrder.getDouble("cost_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '对账单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapCostOrder.set("status", "部分已付款").update();
 					}else
 						arapCostOrder.set("status", "已付款").update();
@@ -1708,7 +1714,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = arapMiscCostOrder.getDouble("total_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '成本单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapMiscCostOrder.set("audit_status", "部分已付款").update();
 					}else
 						arapMiscCostOrder.set("audit_status", "已付款").update();
@@ -1719,7 +1725,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = carSummaryOrder.getDouble("actual_payment_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '行车单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						carSummaryOrder.set("status", "部分已付款").update();
 					}else
 						carSummaryOrder.set("status", "已付款").update();
@@ -1730,17 +1736,17 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double total_amount = arapPrePayOrder.getDouble("total_amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '预付单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapPrePayOrder.set("status", "部分已付款").update();
 					}else
 						arapPrePayOrder.set("status", "已付款").update();
 					
 				}else if(order_type.equals("报销单")){
 					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
-					Double total_amount = reimbursementOrder.getDouble("total_amount");
+					Double total_amount = reimbursementOrder.getDouble("amount");
 					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						reimbursementOrder.set("status", "部分已付款").update();
 					}else
 						reimbursementOrder.set("status", "已付款").update();
@@ -1748,14 +1754,13 @@ public class CostPreInvoiceOrderController extends Controller {
 				}else if(order_type.equals("往来票据单")){
 					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 					
-					Double total_amount = arapInOutMiscOrder.getDouble("total_amount");
-					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
+					Double total_amount = arapInOutMiscOrder.getDouble("pay_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '往来票据单'",id);
 					Double paid_amount = re.getDouble("total");
-					if(total_amount != paid_amount){
+					if(!total_amount.equals(paid_amount)){
 						arapInOutMiscOrder.set("pay_status", "部分已付款").update();
 					}else
 						arapInOutMiscOrder.set("pay_status", "已付款").update();
-					
 				}
 			}
 	        
@@ -1768,22 +1773,11 @@ public class CostPreInvoiceOrderController extends Controller {
 	        auditLog.set("amount", pay_amount);
 	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
 	        auditLog.set("create_date", pay_time);
-	        if(!pay_bank_id.equals("") && pay_bank_id!=null)
+	        if(pay_bank_id!=null && !pay_bank_id.equals("") )
 	        	auditLog.set("account_id", pay_bank_id);
 	        else
 	        	auditLog.set("account_id", 4);
-	        
-//	        if(order_type.equals("成本单")){
-//	        	auditLog.set("source_order", "成本单");
-//	        }else if(order_type.equals("行车单")){
-//	        	auditLog.set("source_order", "行车单");
-//	        }else if(order_type.equals("报销单")||order_type.equals("行车报销单")){
-//	        	auditLog.set("source_order", "行车报销单");
-//	        }else if(order_type.equals("往来票据单")){
-//	        	auditLog.set("source_order", "往来票据单");
-//	        }else{
-	        	auditLog.set("source_order", "应付开票申请单");
-//	        }
+	        auditLog.set("source_order", "应付开票申请单");
 	        auditLog.set("invoice_order_id", application_id);
 	        auditLog.save();
 	        

@@ -297,17 +297,6 @@ $(document).ready(function() {
     $("#createBtn").on('click', function(){
     	clean();
 		$("#createBtn").attr("disabled",true);
-//		var idArr=[];  	
-//		var orderArr=[];
-//        $("input[name='order_check_box']").each(function(){
-//        	if($(this).prop('checked') == true){
-//        		idArr.push($(this).attr('id'));
-//        		orderArr.push($(this).parent().parent().find('.order_type').text());
-//        	}
-//        });     
-//        console.log(idArr);
-//        var ids = idArr.join(",");
-//        var order= orderArr.join(",");
 		$('#confirmForm').submit();
 	});
     
