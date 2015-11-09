@@ -35,15 +35,7 @@ r_o.order_no,
 IFNULL(tor.planning_time,'')  planning_time,
 ifnull(
 						c4.address,
-						(
-							SELECT
-								c.address
-							FROM
-								contact c
-							LEFT JOIN party p ON p.id = c.id
-							WHERE
-								p.id = tor.notify_party_id
-						)
+						tor.receiving_address
 					) receipt_address,
             (
 							SELECT group_concat(DISTINCT ifnull(p.item_name, ifnull(toi.item_name,'')) SEPARATOR '')
@@ -350,7 +342,7 @@ and aci.ref_order_type='收入单']]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{item_name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="274" y="0" width="96" height="20" uuid="05b6f911-f5e2-4408-adb8-acb4e1e37e00"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="false"/>
@@ -385,7 +377,7 @@ and aci.ref_order_type='收入单']]>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{count}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField pattern="yyyy/MM/dd" isBlankWhenNull="true">
 				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="36" y="0" width="74" height="20" uuid="540d89d5-c867-4dd6-8f15-7872211d5bb3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
