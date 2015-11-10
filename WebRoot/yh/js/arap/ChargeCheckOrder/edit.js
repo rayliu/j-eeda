@@ -240,26 +240,28 @@ $(document).ready(function() {
                     }
                     else{
                         if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null ){
-                            return "<input style='width: 100%;' type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                            return "<input style='width: 80px;' type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                             
                         }
                         else {
                             if(obj.aData.CHARGE_TOTAL_AMOUNT!=null){
-                                return "<input style='width: 100%;' type='text' name='change_amount' value='"+obj.aData.CHARGE_TOTAL_AMOUNT+"'/>";
+                                return "<input style='width: 80px;' type='text' name='change_amount' value='"+obj.aData.CHARGE_TOTAL_AMOUNT+"'/>";
                             }
                             else{
-                                return "<input style='width: 100%;' type='text' name='change_amount' value='0'/>";
+                                return "<input style='width: 80px;' type='text' name='change_amount' value='0'/>";
                             }
                         }
                     }
                 }
             },
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"},     
+            {"mDataProp":"ROUTE_TO", "sWidth":"100px"},  
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"SP", "sWidth":"200px"},
             {"mDataProp":null, "sWidth":"150px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
             {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"},        	
+            	
             {"mDataProp":"TRANSACTION_STATUS", "sWidth": "120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new'){
@@ -278,7 +280,7 @@ $(document).ready(function() {
             },           
             {"mDataProp":"RECEIPT_DATE", "sWidth":"150px"},        	
             {"mDataProp":"ROUTE_FROM", "sWidth":"100px"},                        
-            {"mDataProp":"ROUTE_TO", "sWidth":"100px"},                        
+                                
             /*{"mDataProp":null, "sWidth":"150px"},                         
             {"mDataProp":null, "sWidth":"100px"},*/                        
             {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"150px"},                        
