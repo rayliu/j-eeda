@@ -1,11 +1,11 @@
 
 $(document).ready(function() {
 	
-	 $("input[name='allCheck']").click(function(){
-    	$("input[name='order_check_box']").each(function () {   
-            this.checked = !this.checked;  
-         });  
-	 });
+//	 $("input[name='allCheck']").click(function(){
+//    	$("input[name='order_check_box']").each(function () {   
+//            this.checked = !this.checked;  
+//         });  
+//	 });
 	
 	
 	var cName = [];
