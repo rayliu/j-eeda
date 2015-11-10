@@ -49,25 +49,29 @@ public class ChargeAcceptOrderController extends Controller {
     // billing order 列表
     public void list() {
         String sLimit = "";
-        String status = getPara("status");
-        String orderNo_filter = getPara("orderNo_filter");
-        String customer_filter = getPara("customer_filter");
-        String beginTime = getPara("beginTime_filter");
-        String endTime = getPara("endTime_filter");
+        String status = getPara("status")==null?"":getPara("status");
+        String orderNo_filter = getPara("orderNo_filter")==null?"":getPara("orderNo_filter");
+        String customer_filter = getPara("customer_filter")==null?"":getPara("customer_filter");
+        String beginTime = getPara("beginTime_filter")==null?"":getPara("beginTime_filter");
+        String endTime = getPara("endTime_filter")==null?"":getPara("endTime_filter");
         String status2 = "";
         String status3 = "";
         String status4 = "";       
-        if(status.equals("unCheck")){
-        	status = "已审批";    //开票记录单
-        	status2 = "新建";     //手工单
-        	status3 = "已确认";    //对账单
-        	status4 = "未收";     //往来票据单
-        }else{
-        	status = "已复核";
-        	status2 = "已复核";
-        	status3 = "已复核";
-        	status4 = "已复核";
+        if(status == null || status.equals("")){
+        	status = "'已审批','收款申请中','部分已复核','部分已收款'";    //开票记录单
+        	status2 = "'新建','收款申请中','部分已复核','部分已收款'";     //手工单
+        	status3 = "'已确认','收款申请中','部分已复核','部分已收款'";    //对账单
+        	status4 = "'未收','收款申请中','部分已复核','部分已收款'";     //往来票据单
+        }else if(status.equals("部分申请中")){
+        	status = status2 = status3 = status4 = "'收款申请中'";
+        	
+        }else if(status.equals("部分复核中")){
+        	status = status2 = status3 = status4 = "'部分已复核'";
+        	
+        }else if(status.equals("部分收款中")){
+        	status = status2 = status3 = status4 = "'部分已付款'";
         }
+        
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
@@ -88,54 +92,75 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " (select  group_concat( aco.payee SEPARATOR '<br/>' ) from arap_charge_order aco where aco.invoice_order_id = aci.id ) payee, "
         		+ " (select group_concat( aco.invoice_no SEPARATOR '<br/>' ) "
         		+ " from arap_charge_order aco where aco.invoice_order_id = aci.id ) invoice_no,"
-        		+ " aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr customer,c1.abbr cname "
+        		+ " aci.create_stamp create_time, aci.remark,aci.total_amount total_amount,c.abbr customer,c1.abbr cname ,"
+        		+ " ( SELECT ifnull(sum(caor.receive_amount),0) FROM charge_application_order_rel caor "
+				+ " WHERE caor.charge_order_id = aci.id AND caor.order_type = '开票记录单' "
+				+ " ) receive_amount,"
+				+ " (aci.total_amount - (SELECT ifnull(sum(caor.receive_amount), 0) "
+				+ " FROM charge_application_order_rel caor "
+				+ " WHERE caor.charge_order_id = aci.id AND caor.order_type = '开票记录单'"
+				+ " )) noreceive_amount"
         		+ " from arap_charge_invoice aci "
         		+ " left join party p on p.id = aci.payee_id "
         		+ " left join contact c on c.id = p.contact_id"
         		+ " left join contact c1 on c1.id = aci.sp_id"
-        		+ " where aci.status in('" + status + "') "
+        		+ " where aci.status in(" + status + ") "
         	    + " UNION "
         	    + " select amco.id,'手工收入单' order_type, amco.order_no,amco.status, amco.others_name payee ,"
-        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr customer,c1.company_name cname "
+        	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,c.abbr customer,c1.company_name cname,"
+        	    + " ( SELECT ifnull(sum(caor.receive_amount),0) FROM charge_application_order_rel caor "
+				+ " WHERE caor.charge_order_id = amco.id AND caor.order_type = '手工收入单' "
+				+ " ) receive_amount,"
+				+ " (amco.total_amount - (SELECT ifnull(sum(caor.receive_amount), 0) "
+				+ " FROM charge_application_order_rel caor "
+				+ " WHERE caor.charge_order_id = amco.id AND caor.order_type = '手工收入单'"
+				+ " )) noreceive_amount"
         	    + " from arap_misc_charge_order amco "
         	    + " LEFT JOIN party p ON p.id = amco.customer_id "
         	    + " LEFT JOIN contact c ON c.id = p.contact_id "
         	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
-        	    + " where amco.status = '"+status2+"'"
+        	    + " where amco.status in(" + status2 + ") "
         	    + " and amco.type = 'non_biz'"
         	    + " and amco.total_amount >= 0"
         	    + " UNION "
-        	    + " select amco.id,'对账单' order_type, amco.order_no,amco.status, amco.payee payee ,"
-        	    + " amco.invoice_no invoice_no,amco.create_stamp create_time,amco.remark,amco.charge_amount,c.abbr customer,c1.company_name cname "
+        	    + " select amco.id,'应收对账单' order_type, amco.order_no,amco.status, amco.payee payee ,"
+        	    + " amco.invoice_no invoice_no,amco.create_stamp create_time,amco.remark,amco.charge_amount,c.abbr customer,c1.company_name cname ,"
+        	    + " ( SELECT ifnull(sum(caor.receive_amount),0) FROM charge_application_order_rel caor "
+				+ " WHERE caor.charge_order_id = amco.id AND caor.order_type = '应收对账单' "
+				+ " ) receive_amount,"
+				+ " (amco.charge_amount - (SELECT ifnull(sum(caor.receive_amount), 0) "
+				+ " FROM charge_application_order_rel caor "
+				+ " WHERE caor.charge_order_id = amco.id AND caor.order_type = '应收对账单'"
+				+ " )) noreceive_amount"
         	    + " from arap_charge_order amco "
         	    + " LEFT JOIN party p ON p.id = amco.payee_id "
         	    + " LEFT JOIN contact c ON c.id = p.contact_id "
         	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
-        	    + " where amco.status = '"+status3+"' and amco.have_invoice = 'N'"
+        	    + " where amco.status in(" + status3 + ") and amco.have_invoice = 'N'"
         	    + " UNION"
         		+ " SELECT aio.id, '往来票据单' order_type, aio.order_no, aio.charge_status status , aio.charge_person AS payee,"
         		+ " NULL AS invoice_no, aio.create_date create_stamp,"
-        		+ " aio.remark, aio.charge_amount charge_amount,null customer, null AS cname"
-        		+ " FROM arap_in_out_misc_order aio WHERE aio.charge_status IN ('" + status4 + "')"
+        		+ " aio.remark, aio.charge_amount charge_amount,null customer, null AS cname,"
+        		 + " ( SELECT ifnull(sum(caor.receive_amount),0) FROM charge_application_order_rel caor "
+ 				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单' "
+ 				+ " ) receive_amount,"
+ 				+ " (aio.charge_amount - (SELECT ifnull(sum(caor.receive_amount), 0) "
+ 				+ " FROM charge_application_order_rel caor "
+ 				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单'"
+ 				+ " )) noreceive_amount"
+        		+ " FROM arap_in_out_misc_order aio WHERE aio.charge_status IN (" + status4 + ")"
         	    + " ) A";
         
         
-        String conditions=" where 1=1 ";
+        String conditions=" where 1=1 and noreceive_amount != 0 ";
         if (StringUtils.isNotEmpty(orderNo_filter)){
         	conditions+=" and UPPER(order_no) like '%"+orderNo_filter.toUpperCase()+"%'";
         }
         if (StringUtils.isNotEmpty(customer_filter)){
         	conditions+=" and UPPER(customer) like '%"+customer_filter+"%'";
-        }
-//        if (StringUtils.isNotEmpty(spName)){
-//        	conditions+=" and c1.abbr like '%"+spName+"%'";
-//        }
-//        if (StringUtils.isNotEmpty(receiverName)){
-//        	conditions+=" and cpco.receive_person like '%"+receiverName+"%'";
-//        }
-//        
+        }   
         if (StringUtils.isNotEmpty(beginTime)){
         	beginTime = " and create_time between'"+beginTime+"'";
         }else{
@@ -166,6 +191,86 @@ public class ChargeAcceptOrderController extends Controller {
 
         renderJson(BillingOrderListMap);
     }
+    
+    
+    
+    
+    public void applicationList() {
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        String cname = getPara("cname")!=null?getPara("cname"):"";
+        String beginTime = getPara("beginTime")!=null?getPara("beginTime"):"";
+        String endTime = getPara("endTime")!=null?getPara("endTime"):"";
+        String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
+        String status = getPara("status")!=null?getPara("status"):"";
+		
+//		String sortColIndex = getPara("iSortCol_0");
+//		String sortBy = getPara("sSortDir_0");
+//		String colName = getPara("mDataProp_"+sortColIndex);
+        
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+      
+        //String statusStr = " ('已复核')";
+        if(status == null || status.equals("")){
+        	status  = "'新建','已审批','已复核','已收款'";        //申请单
+        }else if(status.equals("未复核")){
+        	status = "'新建','已审批'";
+        }else if(status.equals("已复核")){
+        	status  = "'已复核'";
+        }else if(status.equals("已收款")){
+        	status  = "'已收款'";
+        }
+        
+        String condition = "";
+        if(cname != null || status != null || beginTime != null || endTime != null|| orderNo != null)
+        {
+        	if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1970-1-1";
+			}
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "2037-12-31";
+			}
+		condition = " where "
+					+ " ifnull(cname,'') like '%" + cname + "%' "
+					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
+				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
+        }
+        
+        String sql = "select * from(select aci.id, aci.order_no,'应收申请单' as order_type, aci.payment_method, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+        		+ " aci.total_amount total_amount, "
+        		+ " ( select sum(cao.receive_amount) from charge_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
+        		+ " c.abbr cname "
+        		+ " from arap_charge_invoice_application_order aci "
+        		+ " left join party p on p.id = aci.payee_id "
+        		+ " left join contact c on c.id = p.contact_id "
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
+        		+ ") A";
+        
+        
+        Record rec = Db.findFirst("select count(*) total from (" + sql + condition + " ) B");
+        logger.debug("total records:" + rec.getLong("total"));
+
+        String orderByStr = " order by A.create_time desc ";
+//        if(colName.length()>0){
+//        	orderByStr = " order by A."+colName+" "+sortBy;
+//        }
+        List<Record> BillingOrders = Db.find(sql+ condition + orderByStr +sLimit);
+
+        Map BillingOrderListMap = new HashMap();
+        BillingOrderListMap.put("sEcho", pageIndex);
+        BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
+        BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+        BillingOrderListMap.put("aaData", BillingOrders);
+
+        renderJson(BillingOrderListMap);
+    }
+    
+    
+    
+    
     
     // 收款
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_COLLECTIONCONFIRM_CONFIRM})

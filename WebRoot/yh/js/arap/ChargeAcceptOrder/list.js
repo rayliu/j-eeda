@@ -2,9 +2,9 @@
 $(document).ready(function() {
 	document.title = '复核收款 | '+document.title;
 	
-	if($("#page").val()=='return'){
-    	$('a[href="#panel-2"]').tab('show');
-    }
+//	if($("#page").val()=='return'){
+//    	$('a[href="#panel-2"]').tab('show');
+//    }
 	
     $('#menu_finance').addClass('active').find('ul').addClass('in');
    
@@ -21,16 +21,17 @@ $(document).ready(function() {
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
+			$(nRow).attr({order_type: aData.ORDER_TYPE}); 
 			return nRow;
 		},
-        "sAjaxSource": "/chargeAcceptOrder/list?status=unCheck",
+        "sAjaxSource": "/chargeAcceptOrder/list",
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
 	            	return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
 	            }
             }, 
-            {"mDataProp":"ORDER_NO","sWidth":"100px",
+            {"mDataProp":"ORDER_NO","sWidth":"150px",
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == '手工收入单'){
 	            		return obj.aData.ORDER_NO;
@@ -42,11 +43,18 @@ $(document).ready(function() {
 	            		return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 	            	}
         		}},
-            {"mDataProp":"ORDER_TYPE","sWidth":"80px",
+            {"mDataProp":"ORDER_TYPE","sWidth":"120px",
         			"sClass":"order_type"
         	},   
-            {"mDataProp":"INVOICE_NO","sWidth":"80px"},
-            {"mDataProp":"STATUS","sWidth":"80px",
+            {"mDataProp":"TOTAL_AMOUNT","sWidth":"120px","sClass":"total_amount"},  
+            {"mDataProp":"RECEIVE_AMOUNT","sWidth":"120px","sClass":"receive_amount"},  
+            {"mDataProp":"NORECEIVE_AMOUNT","sWidth":"120px","sClass":"noreceive_amount"},  
+            {"mDataProp":"CUSTOMER","sWidth":"180px","sClass":"customer"},  
+            {"mDataProp":"CNAME","sWidth":"180px","sClass":"sp"},   
+            {"mDataProp":"PAYEE","sWidth":"120px","sClass":"payee"}, 
+            {"mDataProp":"INVOICE_NO","sWidth":"120px"},     
+            {"mDataProp":null,"sWidth":"120px"},  
+            {"mDataProp":"STATUS","sWidth":"120px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -62,92 +70,87 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            /*{"mDataProp":"CHARGE_ORDER_NO"},
-            {"mDataProp":"OFFICE_NAME"},
-            {"mDataProp":"CNAME"},*/ 
-            {"mDataProp":"TOTAL_AMOUNT","sWidth":"60px"},     
-            {"mDataProp":null,"sWidth":"60px"},     
-            {"mDataProp":null,"sWidth":"60px"},  
-            {"mDataProp":"PAYEE","sWidth":"60px"},
-            {"mDataProp":"CUSTOMER","sWidth":"120px"},
-            {"mDataProp":"CNAME"},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            
-            {"mDataProp":"REMARK","sWidth":"180px"},
-            {"mDataProp":null},     
-            {"mDataProp":null}                        
+            {"mDataProp":"REMARK","sWidth":"180px"},                       
         ]      
     });
     
     
-    
-    $.post('/chargeMiscOrder/searchAllAccount',function(data){
-		 if(data.length > 0){
-			 var accountTypeSelect = $("#accountTypeSelect");
-			 accountTypeSelect.empty();
-			 var hideAccountId = $("#hideAccountId").val();
-			 accountTypeSelect.append("<option ></option>");
-			 for(var i=0; i<data.length; i++){
-				 if(data[i].ID == hideAccountId){
-					 accountTypeSelect.append("<option value='"+data[i].ID+"' selected='selected'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");
-				 }else{
-					 accountTypeSelect.append("<option value='"+data[i].ID+"'>" + data[i].BANK_PERSON+ " " + data[i].BANK_NAME+ " " + data[i].ACCOUNT_NO + "</option>");					 
-				 }
-			}
-		}
-	},'json');
-
-   $("#paymentMethods").on('click', 'input', function(){
-   	if($(this).val() == 'cash'){
-   		$("#accountTypeDiv").hide();
-   	}else{
-   		$("#accountTypeDiv").show();    		
-   	}
-   });    
+   var clean = function(){
+   	sids = [];
+   	payee_names = [];   
+    cnames = [];
+   };
    
-    var ids = [];
-    // 未选中列表
-	$("#chargeNoAccept-table").on('click', '.checkedOrUnchecked', function(e){
-		$("#checkBtn").attr('disabled',false);
+   
+   //待申请列表
+   var sids = [];
+   var cnames = [];
+	var payee_names = [];
+   $("#chargeNoAccept-table").on('click', '.checkedOrUnchecked', function(e){
+   	var this_id = $(this).val();
+		var this_order_type = $(this).parent().parent().attr('order_type');
 		if($(this).prop("checked") == true){
-            var orderNo = $(this).parent().parent().find('.order_type').text();
-            var orderObj=$(this).val()+":"+orderNo;
-			ids.push(orderObj);
-		}else{
-			var array = [];
-			for(id in ids){
-				if($(this).val()+":"+$(this).parent().parent().find('.order_type').text()!= ids[id]){
-					array.push(ids[id]);
+			if($(this).parent().siblings('.total_amount')[0].textContent == 0){
+				$.scojs_message('金额不能为0!', $.scojs_message.TYPE_FALSE);
+				return false;
+			}
+			sids.push(this_id+':'+this_order_type);
+			if(sids.length>0){
+				$("#createBtn").attr("disabled",false);
+				if(sids.length > 1){
+					if(cnames[0] != $(this).parent().siblings('.customer')[0].textContent){
+						$.scojs_message('请选择相同的客户!', $.scojs_message.TYPE_FALSE);
+						var tmpArr1 = [];
+						for(id in sids){
+							if(sids[id] != this_id+':'+this_order_type){
+								tmpArr1.push(sids[id]);
+							}
+						}
+						sids = tmpArr1;
+						return false;
+					}else if(payee_names[0] != $(this).parent().siblings('.payee')[0].textContent){
+						$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
+						var tmpArr2 = [];
+						for(id in sids){
+							if(sids[id] != this_id+':'+this_order_type){
+								tmpArr2.push(sids[id]);
+							}
+						}
+						sids = tmpArr2;
+						return false;
+					}
+				}
+				cnames.push($(this).parent().siblings('.customer')[0].textContent);
+				payee_names.push($(this).parent().siblings('.payee')[0].textContent);
+			}
+			$('#sids').val(sids);
+		}else if($(this).prop("checked") == false){
+			var tmpArr = [];
+			for(id in sids){
+				if(sids[id] != this_id+':'+this_order_type){
+					tmpArr.push(sids[id]);
 				}
 			}
-			ids = array;
-		}	
-		$("#chargeIds").val(ids);
-		if(ids.length != 0 ){
-			$("#checkBtn").attr('disabled',false);
-		}else{
-			$("#checkBtn").attr('disabled',true);
+			sids = tmpArr;
 		}
-	});	
-	
-	
-	$("#checkBtn").on('click', function(){
-		$("#checkBtn").attr('disabled',true);
-		$.post('chargeAcceptOrder/checkOrder?ids='+$("#chargeIds").val(),function(){
-			chargeNoAcceptOrderTab.fnDraw();
-			chargeAcceptOrderTab.fnDraw();
-			ids = [];
-		});
+		
+		$("#sids").val(sids);
+		if(sids.length == 0){
+			$("#createBtn").attr("disabled",true);
+			 cnames = [];
+			 payee_names = [];
+		}
 	});
-	
+   
+   
+   $("#createBtn").on('click', function(){
+   		clean();
+		$("#createBtn").attr("disabled",true);
+		$('#confirmForm').submit();
+	});
+   
+   
+ 
 	
 	$("#status_filter").on('change',function(){
 		var status = $("#status_filter").val();
@@ -159,7 +162,7 @@ $(document).ready(function() {
 	//**
 	//*****
 	//*********
-	//*************已复核
+	//*************已申请列表
 	//*********
 	//*****
 	//**
@@ -180,33 +183,23 @@ $(document).ready(function() {
 			$(nRow).attr({id: aData.ID}); 
 			return nRow;
 		},
-        "sAjaxSource": "/chargeAcceptOrder/list?status=check",
+        "sAjaxSource": "/chargeAcceptOrder/applicationList",
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
-	            "fnRender": function(obj) {
-	            	if(obj.aData.STATUS =="已收款确认"  || obj.aData.STATUS =="收款确认中"){
-	            		return "";
-	            	}else{
-	            		return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
-	            	}
-	              
+	            "fnRender": function(obj) {	
+	            	return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';     
 	            }
             }, 
-            {"mDataProp":"ORDER_NO","sWidth":"100px",
+            {"mDataProp":"ORDER_NO","sWidth":"150px",
             	"fnRender": function(obj) {
-            		if(obj.aData.ORDER_TYPE == '手工收入单'){
-	            		return obj.aData.ORDER_NO;
-	            	}else if(obj.aData.ORDER_TYPE == '往来票据单'){
-                        return "<a href='/inOutMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else{
-	            		return "<a href='/chargeInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-	            	}
-        		}},
-            {"mDataProp":"ORDER_TYPE","sWidth":"80px",
+        			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            	}
+    		},
+            {"mDataProp":"ORDER_TYPE","sWidth":"120px",
         			"sClass":"order_type"
         	},   
-            {"mDataProp":"INVOICE_NO","sWidth":"80px"},
-            {"mDataProp":"STATUS","sWidth":"80px",
+            {"mDataProp":"INVOICE_NO","sWidth":"120px"},
+            {"mDataProp":"STATUS","sWidth":"120px",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -222,27 +215,12 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },     
-            {"mDataProp":"TOTAL_AMOUNT","sWidth":"60px"}, 
-            /*{"mDataProp":"CHARGE_ORDER_NO"},
-            {"mDataProp":"OFFICE_NAME"},
-            {"mDataProp":"CNAME"},*/            
-            {"mDataProp":null,"sWidth":"60px"},     
-            {"mDataProp":null,"sWidth":"60px"},
-            {"mDataProp":"PAYEE","sWidth":"60px"},
-            {"mDataProp":"CUSTOMER","sWidth":"120px"},
-            {"mDataProp":"CNAME"},
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},    
-            {"mDataProp":"REMARK","sWidth":"180px"},
-            {"mDataProp":null},     
-            {"mDataProp":null}                        
+            {"mDataProp":"APPLICATION_AMOUNT","sWidth":"80px"},          
+            {"mDataProp":null,"sWidth":"100px"},     
+            {"mDataProp":null,"sWidth":"100px"},
+            {"mDataProp":null,"sWidth":"100px"},
+            {"mDataProp":"CNAME","sWidth":"200px"},   
+            {"mDataProp":"REMARK","sWidth":"180px"},                     
         ]      
     });
 	
@@ -289,7 +267,7 @@ $(document).ready(function() {
 		var beginTime_filter =  $("#beginTime_filter").val();
 		var endTime_filter =  $("#endTime_filter").val();
 
-        chargeNoAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?status=unCheck&orderNo_filter="+orderNo_filter
+        chargeNoAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?orderNo_filter="+orderNo_filter
         		                                       +"&customer_filter="+customer_filter
         		                                       +"&beginTime_filter="+beginTime_filter
         		                                       +"&endTime_filter="+endTime_filter;
@@ -304,25 +282,32 @@ $(document).ready(function() {
     
     
     
-  //已复核数据条件查询
+    
+    
+  //已申请数据条件查询
 	var refreshData2=function(){
 		var orderNo_filter =  $("#orderNo_filter2").val();
 		var customer_filter =  $("#customer_filter2").val();
 		var beginTime_filter =  $("#beginTime_filter2").val();
 		var endTime_filter =  $("#endTime_filter2").val();
+		var status_filter =  $("#status_filter8").val();
 
-		chargeAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?status=check&orderNo_filter="+orderNo_filter
-        		                                       +"&customer_filter="+customer_filter
-        		                                       +"&beginTime_filter="+beginTime_filter
-        		                                       +"&endTime_filter="+endTime_filter;
+		chargeAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/applicationList?orderNo="+orderNo_filter
+        		                                       +"&cname="+customer_filter
+        		                                       +"&status="+status_filter
+        		                                       +"&beginTime="+beginTime_filter
+        		                                       +"&endTime="+endTime_filter;
        
 		chargeAcceptOrderTab.fnDraw();
     };
     
     
-    $("#orderNo_filter2,#customer_filter2,#beginTime_filter2,#endTime_filter2").on('keyup blur',function(){
+    $("#search2Btn").on('click', function () {
     	refreshData2();
     });
+//    $("#orderNo_filter2,#customer_filter2,#beginTime_filter2,#endTime_filter2").on('keyup blur',function(){
+//    	refreshData2();
+//    });
     
 
 	

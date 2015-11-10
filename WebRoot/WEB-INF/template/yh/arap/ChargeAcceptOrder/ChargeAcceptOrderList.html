@@ -20,13 +20,13 @@
                     <!-- Only required for left/right tabs -->
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a data-toggle="tab" href="#panel-1">未复核单据</a>
+                            <a data-toggle="tab" href="#panel-1">待申请单据</a>
                         </li>
                         <li class="">
-                            <a data-toggle="tab" href="#panel-2">已复核单据</a>
+                            <a data-toggle="tab" href="#panel-2">已申请单据</a>
                         </li>
                         <li class="">
-                            <a data-toggle="tab" href="#panel-3">已收款单据</a>
+                            <a data-toggle="tab" href="#panel-3">已收款单据（旧数据）</a>
                         </li>
                     </ul>
 
@@ -34,7 +34,6 @@
                         <div class="tab-pane active" id="panel-1">
                             <div class="row clearfix">
                                 <div class="col-lg-12">
-
                                     <div class="view">
                                         <div class="row clearfix">
                                             <div class="col-lg-4">
@@ -51,9 +50,6 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div class="form-group">
-                                                    <button type="button" id="checkBtn" disabled="disabled" class="btn  btn-primary" >复核</button>
-                                                </div>
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="form-group">
@@ -68,55 +64,57 @@
                                                         </span>
                                                     </span>
                                                 </div>
-                                                <!-- <div class="form-group">
-                                                    <label class="search-label">开票记录单号</label>
-                                                    <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"/>
-                                                </div> -->
                                             </div>
                                             <div class="col-lg-4">
-                                                <!-- <div class="form-group">
-                                                    <label class="search-label">状态</label>
-                                                    <select id="status_filter" class="form-control search-control status_filter">
-                                                        <option value=""></option>
-                                                        <option value="已审批">已审批</option>
-                                                        <option value="已收款确认">已收款确认</option>
-                                                    </select>
-                                                </div> -->
-                                                
-                                            </div>
-
+												<div class="form-group">
+													<label class="search-labe">状态</label>
+													<select id="status_filter" class="form-control search-control status_filter">
+														<option value=""></option>
+														<option value="部分申请中">部分申请中</option>
+														<option value="部分复核中">部分复核中</option>
+														<option value="部分付款中">部分收款中</option>
+													</select>
+												</div>
+												
+											</div>
                                         </div>
                                     </div>
 
                                 </div>
                             </div>
+                            
+                            
+                            <!--   ------------------------------------------------ -->
+							<div class="row">
+								<form id="confirmForm" action="/chargePreInvoiceOrder/create" method="post">
+									<input id='sids' name='sids' type="hidden"> 
+									<div class="col-lg-6">
+										<div class="form-group">
+											<div class="controls">
+												<button id="createBtn" disabled type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建申请单</button>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+							<!--   ------------------------------------------------ -->
 
-                            <table class="table table-striped table-bordered table-hover" id="chargeNoAccept-table" style="width: 220%;">
+                            <table class="table table-striped table-bordered table-hover" id="chargeNoAccept-table" style="width: 1500px;">
                                 <thead>
                                     <tr>
                                         <th></th>
                                         <th>单号</th>
                                         <th>单据类型</th>
-                                        <th>发票号</th>
-                                        <th>状态</th>
                                         <th>应收金额</th>
-                                        <th>对账单号</th>
-                                        <th>网点</th>
-                                        <th>收款人</th>
+                                        <th>已收金额</th>
+                                        <th>待收金额</th>
                                         <th>客户</th>
                                         <th>供应商</th>
-                                        <th>合计运费</th>
-                                        <th>对账金额</th>
-                                        <th>差异金额</th>
-                                        <th>扣款金额</th>
-                                        <th>代收货款</th>
-                                        <th>退款金额</th>
-                                        <th>返款金额</th>
-                                        <th>罚款金额</th>
-                                        <th>奖励金额</th>
+                                        <th>收款人</th>
+                                        <th>发票号</th>
+                                        <th>网点</th>
+                                        <th>状态</th>
                                         <th>备注</th>
-                                        <th>对账人</th>
-                                        <th>对账时间</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -131,7 +129,7 @@
                                         <div class="row clearfix">
                                             <div class="col-lg-4">
                                                 <div class="form-group">
-                                                    <label class="search-label">客户</label>
+                                                    <label class="search-label">收款对象</label>
                                                     <input type="text" class="form-control search-control customer_filter2" id="customer_filter2"  placeholder="请输入或者选择客户"/>
                                                     <ul id='companyList2' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 28%; left: 32%;">
                                                     </ul>
@@ -144,16 +142,6 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                               <!--  <div class="form-group">
-                                                    <label class="search-label">开票记录单号</label>
-                                                    <input type="text" class="form-control search-control officeName_filter" id="officeName_filter"/>
-                                                </div> -->
-                                                <form id="confirmForm" action="/chargeConfirm/create" method="post">
-                                                <input id="chargeIds2" name="chargeIds2" type="hidden"> 
-                                                <div class="form-group">
-                                                    <button type="button" id="confirmBtn" disabled="disabled" class="btn  btn-primary" >收款确认</button>
-                                                </div>
-                                                </form>
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="form-group">
@@ -170,15 +158,15 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-4">
-                                                <!-- <div class="form-group">
-                                                    <label class="search-label">状态</label>
-                                                    <select id="status_filter" class="form-control search-control status_filter">
-                                                        <option value=""></option>
-                                                        <option value="已审批">已审批</option>
-                                                        <option value="已收款确认">已收款确认</option>
-                                                    </select>
-                                                </div> -->
-                                                
+                                            	<div class="form-group">
+													<label class="search-label">状态</label>
+													<select id="status_filter8" class="form-control search-control status_filter8">
+													<option value=""></option>
+														<option value="未复核">未复核</option>
+														<option value="已复核">已复核</option>
+														<option value="已付款">已收款</option>
+													</select>
+												</div>
                                             </div>
 
                                         </div>
@@ -186,8 +174,12 @@
 
                                 </div>
                             </div>
-
-                            <table class="table table-striped table-bordered table-hover" id="chargeAccept-table" style="width: 220%;">
+                            <div class="form-group">
+								<div class="controls">
+									<button id="search2Btn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查询</button>
+                            	</div>
+							</div>
+							<table class="table table-striped table-bordered table-hover" id="chargeAccept-table" style="width: 1500px;">
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -199,20 +191,8 @@
                                         <th>对账单号</th>
                                         <th>网点</th>
                                         <th>收款人</th>
-                                        <th>客户</th>
-                                        <th>供应商</th>
-                                        <th>合计运费</th>
-                                        <th>对账金额</th>
-                                        <th>差异金额</th>
-                                        <th>扣款金额</th>
-                                        <th>代收货款</th>
-                                        <th>退款金额</th>
-                                        <th>返款金额</th>
-                                        <th>罚款金额</th>
-                                        <th>奖励金额</th>
+                                        <th>收款对象</th>
                                         <th>备注</th>
-                                        <th>对账人</th>
-                                        <th>对账时间</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
