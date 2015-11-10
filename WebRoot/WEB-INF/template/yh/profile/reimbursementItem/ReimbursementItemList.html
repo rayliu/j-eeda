@@ -20,7 +20,7 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="toll_example" style="width: 1237px;">
+                                <table class="table table-striped table-bordered table-hover" id="toll_example">
                                     <thead>
                                         <tr>
                                             <th>条目类型</th>
@@ -81,10 +81,10 @@
    	        },
    	        "sAjaxSource": "/reimbursementItem/list",
    			"aoColumns": [
-   				{ "mDataProp": "TYPE" },
-   				{ "mDataProp": "ACCOUNT_TYPE" },
-   	            { "mDataProp": "NAME" },
-   	            { "mDataProp": "REMARK" },
+   				{ "mDataProp": "TYPE", "sWidth": "8%"},
+   				{ "mDataProp": "ACCOUNT_TYPE", "sWidth": "8%" },
+   	            { "mDataProp": "NAME", "sWidth": "8%" },
+   	            { "mDataProp": "REMARK", "sWidth": "8%" },
    	            { "mDataProp": null,
    	         		"sWidth": "8%", 
    	         		"bVisible":(Toll.isUpdate || Toll.isDel),
