@@ -901,11 +901,6 @@ public class ChargeCheckOrderController extends Controller {
 		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 		orderMap.put("aaData", orders);
 
-		orderMap.put("sEcho", pageIndex);
-		orderMap.put("iTotalRecords", rec.getLong("total"));
-		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-		orderMap.put("aaData", orders);
-
 		renderJson(orderMap);
 	}
 

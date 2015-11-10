@@ -1,5 +1,13 @@
 
 $(document).ready(function() {
+	
+	 $("input[name='allCheck']").click(function(){
+    	$("input[name='order_check_box']").each(function () {   
+            this.checked = !this.checked;  
+         });  
+	 });
+	
+	
 	var cName = [];
     $('#menu_charge').addClass('active').find('ul').addClass('in');
     $('#saveBtn').attr('disabled', true);
@@ -9,7 +17,7 @@ $(document).ready(function() {
         "bFilter": false, //不需要默认的搜索框
     	"bSort": true, // 不要排序
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 10,
+        "iDisplayLength": 100,
         "aLengthMenu": [ [10 ,25 ,50 ,100 ,9999999], [10 ,25 ,50 ,100, "All"] ],
         "bServerSide": true,
     	"oLanguage": {
@@ -17,7 +25,7 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/chargeCheckOrder/createList",
         "aoColumns": [ 
-	          { "mDataProp": null, "sWidth":"20px",
+	          { "mDataProp": null, "sWidth":"20px","bSortable": false,
 	            "fnRender": function(obj) {
 	              return '<input type="checkbox" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
 	            }
