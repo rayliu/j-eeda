@@ -505,7 +505,7 @@ public class ChargeCheckOrderController extends Controller {
 				List<ReturnOrderFinItem> ordeItems = ReturnOrderFinItem.dao.find("select * from return_order_fin_item where return_order_id=?", ref_order_id);
 				Double originTotal = 0.0;
 				for(ReturnOrderFinItem orderItem : ordeItems){
-					originTotal += orderItem.getDouble("amount");
+					originTotal += orderItem.getDouble("amount")==null?0.0:orderItem.getDouble("amount");
 				}
 				
 				for(ReturnOrderFinItem orderItem : ordeItems){
