@@ -291,7 +291,9 @@
     $('#invoice_type').val($('#invoice_type_show').val());
     
     ////收款方式（收款确认）回显控制
-    $('#receive_type').val($('#receive_type_show').val());
+    if($('#receive_type_show').val()!=''){
+    	$('#receive_type').val($('#receive_type_show').val()); 
+    }
     receiveType();
     
     
