@@ -185,6 +185,7 @@
 					$.scojs_message('退回成功', $.scojs_message.TYPE_OK);
 					$("#checkBtn").attr("disabled", false);
 				  	$("#saveBtn").attr("disabled", false);
+				  	$("#confirmBtn").attr("disabled", true);
 				}else{
 					$("#returnBtn").attr("disabled", false);
 					$.scojs_message('退回失败', $.scojs_message.TYPE_FALSE);
