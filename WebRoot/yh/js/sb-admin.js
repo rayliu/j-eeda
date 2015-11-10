@@ -1,21 +1,20 @@
-$(function() {
-    $('#side-menu').metisMenu();
-});
-
-//Loads the correct sidebar on window load,
-//collapses the sidebar on window resize.
-$(function() {
-    $(window).bind("load resize", function() {
-        if ($(this).width() < 768) {
-            $('div.sidebar-collapse').addClass('collapse')
-        } else {
-            $('div.sidebar-collapse').removeClass('collapse')
-        }
-    })
-});
 
 $(document).ready(function() {
-	
+    $('#side-menu').metisMenu();
+
+    $(window).bind("load resize", function() {
+        if ($(this).width() < 768) {
+            $('div.sidebar-collapse').addClass('collapse');
+            $('#hide_menu_btn').hide();
+            $('#left_side_bar').show();
+            $('#page-wrapper').css('margin-left', '0px');
+        } else {
+            $('div.sidebar-collapse').removeClass('collapse');
+            $('#hide_menu_btn').show();
+            $('#hide_menu_btn').css('left', '250px');
+            $('#page-wrapper').css('margin-left', '250px');
+        }
+    });
 
     var showSideBar=function(){
     	$('#left_side_bar').show();
@@ -57,11 +56,13 @@ $(document).ready(function() {
 	var loadSideBar=function(){
         if(!!window.localStorage){//查询条件处理
             var is_show_eeda_side_bar = localStorage.getItem('is_show_eeda_side_bar');
+            
             if(is_show_eeda_side_bar=='false'){
-				hideSideBar();
+                hideSideBar();
             }else{
-            	showSideBar();
+                showSideBar();
             }
+
         }
     };
 
