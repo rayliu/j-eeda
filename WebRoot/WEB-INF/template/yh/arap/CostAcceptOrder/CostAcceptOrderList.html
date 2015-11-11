@@ -137,12 +137,15 @@
                                                     label:'供应商名称', 
                                                     value: ''
                                                 }){} %>
+                                     <div class="form-group">      
+                                         	<%include("/yh/component/form/inputField.html", {id:'orderNo', label:'业务单据号'}){} %>
+									</div>
 								</div>
 								<!-- end of col-lg-6-->
 								<div class="col-lg-4">
 									<div class="form-group">
-										<label class="search-label">业务单号</label>
-										<input type="text" class="form-control search-control orderNo_filter8" id="orderNo_filter8" value=""></div>
+										<label class="search-label">申请单号</label>
+										<input type="text" class="form-control search-control applicationOrderNo" id="applicationOrderNo" value=""></div>
 									<div class="form-group">      
                                          	<%include("/yh/component/form/dateInputField.html", {id:'begin_date', label:'创建开始时间', value:''}){} %>
                                          
@@ -151,7 +154,7 @@
 								<div class="col-lg-4">
 									<div class="form-group">
 										<label class="search-label">状态</label>
-										<select id="status_filter8" class="form-control search-control status_filter8">
+										<select id="status2" class="form-control search-control status2">
 											<option value=""></option>
 											<option value="未复核">未复核</option>
 											<option value="已复核">已复核</option>
@@ -174,11 +177,12 @@
 						<table class="table table-striped table-bordered table-hover" id="application-table" style="width: 1500px;">
 							<thead>
 								<tr>
-									<th>业务单号</th>
+									<th>申请单号</th>
 									<th>单据类型</th>
+									<th>业务单据号</th>
 									<th>状态</th>
 									<th>付款总金额</th>
-									<th>付款给</th>
+									<th>收款单位</th>
 									<th>收款人</th>
 									<th>付款方式</th>
 									<th>状态</th>

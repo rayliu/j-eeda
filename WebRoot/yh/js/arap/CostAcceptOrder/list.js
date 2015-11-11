@@ -142,12 +142,13 @@ $(document).ready(function() {
 		},
         "sAjaxSource": "/costAcceptOrder/applicationList",
         "aoColumns": [
-            {"mDataProp":"ORDER_NO","sWidth":"120px",
+            {"mDataProp":"APPLICATION_ORDER_NO","sWidth":"120px",
             	 "fnRender": function(obj) {
-            			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.APPLICATION_ORDER_NO+"</a>";
             	 }
             },
             {"mDataProp":"ORDER_TYPE", "sWidth":"100px","sClass":'order_type'},
+            {"mDataProp":"ORDER_NO", "sWidth":"120px"},  
             {"mDataProp":"STATUS", "sWidth":"80px"},    
             {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"100px",
             	"sClass":"pay_amount",
@@ -658,15 +659,16 @@ $(document).ready(function() {
     
   //待付款页面
     var refreshData2=function(){
-        var orderNo = $("#orderNo_filter8").val();//单号
-        var status = $("#status_filter8").val();
+        var applicationOrderNo = $("#applicationOrderNo").val();//申请单号
+        var orderNo = $("#orderNo").val();//业务单号
+        var status = $("#status2").val();
         var sp = $("#sp_id_input").val();
         var beginTime = $("#begin_date").val();
         var endTime = $("#end_date").val();
 
         applicationTab.fnSettings().oFeatures.bServerSide = true;
         applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status
-            +"&beginTime="+beginTime+"&endTime="+endTime+"&orderNo="+orderNo+"&sp="+sp;
+            +"&beginTime="+beginTime+"&endTime="+endTime+"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo+"&sp="+sp;
 
         applicationTab.fnDraw(); 
 

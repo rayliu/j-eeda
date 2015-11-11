@@ -260,6 +260,7 @@ public class CostAcceptOrderController extends Controller {
         String spName = getPara("sp")!=null?getPara("sp"):"";
         String beginTime = getPara("beginTime")!=null?getPara("beginTime"):"";
         String endTime = getPara("endTime")!=null?getPara("endTime"):"";
+        String applicationOrderNo = getPara("applicationOrderNo")!=null?getPara("applicationOrderNo"):"";
         String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
         String status = getPara("status")!=null?getPara("status"):"";
 		
@@ -294,17 +295,33 @@ public class CostAcceptOrderController extends Controller {
 		condition = " where "
 					+ " ifnull(cname,'') like '%" + spName + "%' "
 					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
+				    + " and ifnull(application_order_no,'') like '%" + applicationOrderNo + "%' "
 				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
         }
         
-        String sql = "select * from(select aci.id, aci.order_no,'申请单' as order_type, aci.payment_method, aci.payee_name, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
-        		+ " aci.total_amount total_amount, "
-        		+ " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
-        		+ " null paid_amount,null nopaid_amount,"//已付未付
+        String sql = "select * from(select aci.id, aci.order_no application_order_no,'申请单' as order_type,"
+        		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time, aci.remark,"
+                + " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount,"
+                + " GROUP_CONCAT( "
+                + " case "
+                + " when cao.order_type='对账单' "
+                + " then (select order_no from arap_cost_order aco where id = cao.cost_order_id)"
+                + " when cao.order_type='行车单'"
+                + " then (select order_no from car_summary_order aco where id = cao.cost_order_id)"
+                + " when cao.order_type='预付单'"
+                + " then (select order_no from arap_pre_pay_order aco where id = cao.cost_order_id)"
+                + " when cao.order_type='成本单'"
+                + " then (select order_no from arap_misc_cost_order aco where id = cao.cost_order_id)"
+                + " when cao.order_type='报销单'"
+                + " then (select order_no from reimbursement_order aco where id = cao.cost_order_id)"
+                + " when cao.order_type='往来票据单'"
+                + " then (select order_no from arap_in_out_misc_order aco where id = cao.cost_order_id)"
+                + " end SEPARATOR '</br>') order_no, "
         		+ " c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
+        		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
+        		+ " where aci.status in ("+status+") group by aci.id "
         		+ ") A";
         
         
