@@ -223,7 +223,7 @@ public class ChargeCheckOrderController extends Controller {
 		String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_"+sortColIndex);
 		
-		String orderByStr = " order by A.create_date desc ";
+		String orderByStr = " order by A.planning_time desc ";
         if(colName.length()>0){
         	orderByStr = " order by A."+colName+" "+sortBy;
         }
@@ -328,7 +328,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
 				+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
 				+ " WHERE amco. STATUS = '已确认' ";
-		sql3 = " ) order by create_date desc ";
+		sql3 = " ) order by planning_time desc ";
 		if (customer == null && beginTime == null && endTime == null
 				&& orderNo == null && customerNo == null && address == null && planningBeginTime == null && planningEndTime == null) {
 			condition = " ";
@@ -762,7 +762,7 @@ public class ChargeCheckOrderController extends Controller {
 		}
 	}
 
-	// billing order 列表
+	
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_LIST })
 	public void list() {
 		String sLimit = "";
@@ -836,16 +836,16 @@ public class ChargeCheckOrderController extends Controller {
 		} else {
 
 			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
+				beginTime = "1970-1-1";
 			}
 			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
+				endTime = "2037-12-31";
 			}
 			condition = " where ifnull(aao.order_no,'') like '%" + orderNo
 					+ "%' " + " and ifnull(c.abbr,'') like '%" + customer
 					+ "%' " + " and ifnull(aao.status,'') like '%" + status
 					+ "%' " + " and aao.create_stamp between '" + beginTime
-					+ "' and '" + endTime + "' "
+					+ "' and '" + endTime + " 23:59:59' "
 					+ " order by aao.create_stamp desc ";
 		}
 		sqlTotal = "select count(1) total from (" + sql + condition + ") as A";
