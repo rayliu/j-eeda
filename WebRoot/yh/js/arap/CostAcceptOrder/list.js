@@ -65,25 +65,19 @@ $(document).ready(function() {
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"90px",
             	"sClass":"pay_amount",
            	 	"fnRender": function(obj) {
-        		 if(obj.aData.TOTAL_AMOUNT == null || obj.aData.TOTAL_AMOUNT == '' ){
-        			 return '<p style="color:red">0<p>';
-        		 }else{
-        			 return obj.aData.TOTAL_AMOUNT;
-        		 }
-        	 }
+           	 		return "<p align='right'>"+parseFloat(obj.aData.TOTAL_AMOUNT==null?0:obj.aData.TOTAL_AMOUNT).toFixed(2)+"</p>";	
+           	 	}
             },  
-            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"90px",
-            	"sClass": "pay_amount",
-            	 "fnRender": function(obj) {
-            		 if(obj.aData.APPLICATION_AMOUNT == null || obj.aData.APPLICATION_AMOUNT == '' ){
-            			 return '<p>0<p>';
-            		 }else{
-            			 return obj.aData.APPLICATION_AMOUNT;
-            		 }
-            	 }
-            },  
-            {"mDataProp":"PAID_AMOUNT", "sWidth":"80px" },
-            {"mDataProp":"NOPAID_AMOUNT", "sWidth":"80px" },
+            {"mDataProp":"PAID_AMOUNT", "sWidth":"80px" ,
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.PAID_AMOUNT).toFixed(2)+"</p>";	
+            	}
+            },
+            {"mDataProp":"NOPAID_AMOUNT", "sWidth":"80px",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.NOPAID_AMOUNT).toFixed(2)+"</p>";	
+            	}
+            },
             {"mDataProp":"CNAME",  "sWidth":"200px",
             	"sClass": "cname"
             },  
@@ -116,21 +110,8 @@ $(document).ready(function() {
                     }
                     return obj.aData.STATUS;
                 }
-            },          
-            {"mDataProp":null},     
-            {"mDataProp":null},   
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},     
-            {"mDataProp":null},    
-            {"mDataProp":"REMARK"},
-            {"mDataProp":null},     
-            {"mDataProp":null}                        
+            },              
+            {"mDataProp":"REMARK"}               
         ]      
     });
     
@@ -169,8 +150,11 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_TYPE", "sWidth":"100px","sClass":'order_type'},
             {"mDataProp":"STATUS", "sWidth":"80px"},    
             {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"100px",
-            	"sClass":"pay_amount"
-            } ,
+            	"sClass":"pay_amount",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.APPLICATION_AMOUNT).toFixed(2)+"</p>";	
+            	}
+            },
             {"mDataProp":"CNAME",  "sWidth":"200px",
             	"sClass": "cname"
             },  
