@@ -71,7 +71,7 @@ public class ChargeItemConfirmController extends Controller {
 		String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_"+sortColIndex);
 		
-		String orderByStr = " order by A.create_date desc ";
+		String orderByStr = " order by A.planning_time desc ";
         if(colName.length()>0){
         	orderByStr = " order by A."+colName+" "+sortBy;
         }
