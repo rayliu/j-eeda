@@ -335,6 +335,9 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			arapAuditInvoiceApplication.set("num_name", numname);
 			arapAuditInvoiceApplication.set("payee_id", payee_id);
+			if (total_amount != null && !"".equals(total_amount)) {
+				arapAuditInvoiceApplication.set("total_amount",total_amount);
+			}
 			arapAuditInvoiceApplication.update();
 			
 			String strJson = getPara("detailJson");
