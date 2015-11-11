@@ -1,5 +1,5 @@
 ﻿$(document).ready(function() {
-	document.title = '收款作业 | '+document.title;
+	document.title = '收款申请单 | '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
 
@@ -34,14 +34,14 @@
     		{"mDataProp":"CHARGE_AMOUNT","sWidth": "100px",
     			"fnRender": function(obj) {
 					total = total + parseFloat(obj.aData.CHARGE_AMOUNT) ;
-					$("#total").html(total);
+					$("#total").html(parseFloat(total).toFixed(2));
 					return obj.aData.CHARGE_AMOUNT;
     			}
     		},
     		{"mDataProp":"NORECEIVE_AMOUNT","sWidth": "100px","sClass":'yufu_amount',
     			"fnRender": function(obj) {
 					nopay = nopay + parseFloat(obj.aData.NORECEIVE_AMOUNT) ;
-					$("#nopay").html(nopay);
+					$("#nopay").html(parseFloat(nopay).toFixed(2));
 					return obj.aData.NORECEIVE_AMOUNT;
     			}
     		},
@@ -49,8 +49,8 @@
     			"fnRender": function(obj) {
 					if($('#application_id').val()==''){
 						pay = pay + parseFloat(obj.aData.NORECEIVE_AMOUNT) ;
-						$("#pay").html(pay);
-						$("#pay_amount").val(pay);
+						$("#pay").html(parseFloat(pay).toFixed(2));
+						$("#pay_amount").val(parseFloat(pay).toFixed(2));
 						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+obj.aData.NORECEIVE_AMOUNT+"'>";
 					}
 					else{
@@ -58,8 +58,8 @@
 	    					obj.aData.NORECEIVE_AMOUNT = obj.aData.NORECEIVE_AMOUNT;
 	    				}
 						pay = pay + parseFloat(obj.aData.RECEIVE_AMOUNT) ;
-						$("#pay").html(pay);
-						$("#pay_amount").val(pay);
+						$("#pay").html(parseFloat(pay).toFixed(2));
+						$("#pay_amount").val(parseFloat(pay).toFixed(2));
 						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+obj.aData.RECEIVE_AMOUNT+"'>";
 					}
     			}
