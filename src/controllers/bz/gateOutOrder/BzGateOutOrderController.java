@@ -25,6 +25,7 @@ import models.yh.arap.ArapMiscCostOrderDTO;
 import models.yh.arap.ArapMiscCostOrderItem;
 import models.yh.carmanage.CarSummaryDetailOtherFee;
 import models.yh.damageOrder.DamageOrder;
+import models.yh.damageOrder.DamageOrderItem;
 import models.yh.profile.Contact;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.bz.gateOutOrder.models.BzGateOutOrder;
+import controllers.bz.gateOutOrder.models.BzGateOutOrderItem;
 import controllers.yh.LoginUserController;
 import controllers.yh.util.DbUtils;
 import controllers.yh.util.LocationUtil;
@@ -126,7 +128,9 @@ public class BzGateOutOrderController extends Controller {
 			order.save();
 			id = order.getLong("id").toString();
 		}
-		
+		//处理从表
+		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("item_list");
+		DbUtils.handleList(itemList, id, BzGateOutOrderItem.class);
 		//return dto
 		Record returnDto = getOrderDto(id);
 		renderJson(returnDto);
@@ -139,7 +143,10 @@ public class BzGateOutOrderController extends Controller {
 				+ " left join user_login u on u.id = m.creator where 1 =1 and m.id=?";
 		Record orderRec = Db.findFirst(sql, orderId);
 		
-		order.put("itemList", orderRec);
+		String itemSql = "select * from bz_gate_out_order_item where order_id=?";
+		List<Record> itemList = Db.find(itemSql, orderId);
+		orderRec.set("item_list", itemList);
+		
 		
 		return orderRec;
 	}

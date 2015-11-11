@@ -76,8 +76,9 @@ public class DbUtils {
 	
 	public static void handleList(List<Map<String, String>> itemList, String master_order_id, Class<?> clazz) 
 			throws InstantiationException, IllegalAccessException {
-		Model<?> model = (Model<?>) clazz.newInstance();
     	for (Map<String, String> rowMap : itemList) {//获取每一行
+    		Model<?> model = (Model<?>) clazz.newInstance();
+    		
     		String rowId = rowMap.get("id");
     		String action = rowMap.get("action");
     		if(StringUtils.isEmpty(rowId)){//创建
@@ -102,9 +103,9 @@ public class DbUtils {
 			String key = entry.getKey();
 			if(!key.endsWith("_list")){
             	String value = (String) entry.getValue();
-            	logger.debug(key+":"+value);
             	//忽略  action 字段
             	if(StringUtils.isNotEmpty(value) && !"action".equals(key)){
+            		logger.debug(key+":"+value);
             		model.set(key, value);
             	}
             }
