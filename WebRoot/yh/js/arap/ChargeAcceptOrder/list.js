@@ -16,6 +16,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
         "iDisplayLength": 100,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -46,11 +47,22 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_TYPE","sWidth":"120px",
         			"sClass":"order_type"
         	},   
-            {"mDataProp":"TOTAL_AMOUNT","sWidth":"120px","sClass":"total_amount"},  
-            {"mDataProp":"RECEIVE_AMOUNT","sWidth":"120px","sClass":"receive_amount"},  
-            {"mDataProp":"NORECEIVE_AMOUNT","sWidth":"120px","sClass":"noreceive_amount"},  
-            {"mDataProp":"CUSTOMER","sWidth":"180px","sClass":"customer"},  
-            {"mDataProp":"CNAME","sWidth":"180px","sClass":"sp"},   
+            {"mDataProp":"TOTAL_AMOUNT","sWidth":"120px","sClass":"total_amount",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.TOTAL_AMOUNT).toFixed(2)+"</p>";
+            	}  
+            },
+            {"mDataProp":"RECEIVE_AMOUNT","sWidth":"120px","sClass":"receive_amount",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.RECEIVE_AMOUNT).toFixed(2)+"</p>";
+            	}  
+            },  
+            {"mDataProp":"NORECEIVE_AMOUNT","sWidth":"120px","sClass":"noreceive_amount",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.NORECEIVE_AMOUNT).toFixed(2)+"</p>";
+            	}  
+            },    
+            {"mDataProp":"CNAME","sWidth":"180px","sClass":"cname"},   
             {"mDataProp":"PAYEE","sWidth":"120px","sClass":"payee"}, 
             {"mDataProp":"INVOICE_NO","sWidth":"120px"},     
             {"mDataProp":null,"sWidth":"120px"},  
@@ -98,8 +110,8 @@ $(document).ready(function() {
 			if(sids.length>0){
 				$("#createBtn").attr("disabled",false);
 				if(sids.length > 1){
-					if(cnames[0] != $(this).parent().siblings('.customer')[0].textContent){
-						$.scojs_message('请选择相同的客户!', $.scojs_message.TYPE_FALSE);
+					if(cnames[0] != $(this).parent().siblings('.cname')[0].textContent){
+						$.scojs_message('请选择相同的付款单位!', $.scojs_message.TYPE_FALSE);
 						var tmpArr1 = [];
 						for(id in sids){
 							if(sids[id] != this_id+':'+this_order_type){
@@ -109,7 +121,7 @@ $(document).ready(function() {
 						sids = tmpArr1;
 						return false;
 					}else if(payee_names[0] != $(this).parent().siblings('.payee')[0].textContent){
-						$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
+						$.scojs_message('请选择相同的付款人!', $.scojs_message.TYPE_FALSE);
 						var tmpArr2 = [];
 						for(id in sids){
 							if(sids[id] != this_id+':'+this_order_type){
@@ -120,7 +132,7 @@ $(document).ready(function() {
 						return false;
 					}
 				}
-				cnames.push($(this).parent().siblings('.customer')[0].textContent);
+				cnames.push($(this).parent().siblings('.cname')[0].textContent);
 				payee_names.push($(this).parent().siblings('.payee')[0].textContent);
 			}
 			$('#sids').val(sids);
@@ -176,6 +188,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": true,
         "iDisplayLength": 100,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -215,7 +228,11 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },     
-            {"mDataProp":"APPLICATION_AMOUNT","sWidth":"80px"},          
+            {"mDataProp":"APPLICATION_AMOUNT","sWidth":"80px",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.APPLICATION_AMOUNT).toFixed(2)+"</p>";
+            	}  
+            },         
             {"mDataProp":null,"sWidth":"100px"},     
             {"mDataProp":null,"sWidth":"100px"},
             {"mDataProp":null,"sWidth":"100px"},

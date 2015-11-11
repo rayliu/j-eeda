@@ -41,8 +41,22 @@ $(document).ready(function() {
             {"mDataProp":"SOURCE_ORDER", "sWidth":"150px"},
             {"mDataProp":"ORDER_NO", "sWidth":"150px"},
             {"mDataProp":"BANK_NAME", "sWidth":"150px"},
-            {"mDataProp":"CHARGE_AMOUNT", "sWidth":"150px"},
-            {"mDataProp":"COST_AMOUNT", "sWidth":"150px" },         
+            {"mDataProp":"CHARGE_AMOUNT", "sWidth":"150px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.CHARGE_AMOUNT!=null)
+            			return "<p align='right'>"+parseFloat(obj.aData.CHARGE_AMOUNT).toFixed(2)+"</p>";
+            		else
+            			return obj.aData.CHARGE_AMOUNT;
+            	}  
+            },         
+            {"mDataProp":"COST_AMOUNT", "sWidth":"150px" ,
+            	"fnRender": function(obj) {
+            		if(obj.aData.COST_AMOUNT!=null)
+            			return "<p align='right'>"+parseFloat(obj.aData.COST_AMOUNT).toFixed(2)+"</p>";
+            		else
+            			return obj.aData.COST_AMOUNT;
+            	}  
+            },              
             {"mDataProp":"USER_NAME"}
         ]      
     });
