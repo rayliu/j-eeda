@@ -310,12 +310,12 @@ public class CostPreInvoiceOrderController extends Controller {
 		String paymentMethod = getPara("payment_method");//付款方式
 		String bank_no = getPara("bank_no");          //收款账号
 		String payee_name = getPara("payee_name");    //收款人
-		String bank_name = getPara("account_name");   //账户名
+		String numname = getPara("account_name");   //账户名
 		String payee_unit = getPara("payee_unit");      //收款单位
 		String payee_id = getPara("payee_id")==""?null:getPara("payee_id");         //付款给
 		String billing_unit = getPara("billing_unit"); //收款单位
 		String billtype = getPara("invoice_type");   //开票类型
-		String numname = getPara("deposit_bank");   //开户行
+		String bank_name= getPara("deposit_bank");   //开户行
 		String total_amount = getPara("total_amount")==""?"0.00":getPara("total_amount");   //申请总金额
 
 		
