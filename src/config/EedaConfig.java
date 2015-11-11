@@ -334,7 +334,7 @@ public class EedaConfig extends JFinalConfig {
 		//app 
 		me.add("/m", controllers.yh.app.AppController.class, contentPath);
 		
-		me.add("/gateOutOrder", BzGateOutOrderController.class, "bz");
+		me.add("/bzGateOutOrder", BzGateOutOrderController.class, "bz");
 	}
 
     @Override
