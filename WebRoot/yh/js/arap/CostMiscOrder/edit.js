@@ -482,7 +482,8 @@ $(document).ready(function() {
 			 {"mDataProp":"AMOUNT",
 			    "fnRender": function(obj) {
 			        if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-			            return "<input type='text' name='amount' value="+obj.aData.AMOUNT+" class='form-control search-control'>";
+			        	var val = parseFloat(obj.aData.AMOUNT).toFixed(2);
+			            return "<input type='text' name='amount' value="+val+" class='form-control search-control'>";
 			        }else{
 			        	return "<input type='text' name='amount' class='form-control search-control'>";
 			        }
