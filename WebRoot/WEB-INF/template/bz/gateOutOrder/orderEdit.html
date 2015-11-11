@@ -1,4 +1,4 @@
-<%layout("/yh/layout.html"){%>
+<%layout("/bz/layout.html"){%>
 	<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/yh/css/ui/jquery-ui.css">
     <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet"> 
@@ -66,16 +66,17 @@
             <div class="row">
                 <div class="col-lg-12">
                     <button class="btn btn-success btn-xs" id="add_cargo">添加货品</button>
-                    <input type="checkbox" value="fdsa" checked="">回车光标移动到下一行
+                    <input type="checkbox" value="fdsa" checked>回车光标移动到下一行
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'cargo_table', 
-                            list:['', '产品型号', '条码', '备注']
+                            headers:['', 'id', '产品型号', '条码', '备注'],
+                            field_list:['', 'id', 'product_no', 'serial_no', 'remark'],
+                            value_list: order.item_list![]
                         }){} %>
                 </div>
             </div>
             
-            <br>
             <div class="row">
                 <div class="col-lg-12">
                     <a id='saveBtn' class="btn  btn-primary" href="#">保存</a>
@@ -103,6 +104,9 @@
 
 <script src="/yh/js/eeda-common.js"></script>
 <script>
-    var order_no = '${data.order.order_no!'出货单'}'; 
+    var order_no = '${order.order_no!'出货单'}'; 
+    var orderController = {};
 </script>
+
+<script src="/js/bz/gateOutOrder/edit_item_table.js"></script>
 <script src="/js/bz/gateOutOrder/edit.js"></script>
