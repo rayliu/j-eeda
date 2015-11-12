@@ -1165,6 +1165,9 @@ public class CostPreInvoiceOrderController extends Controller {
  					}else if("报销单".equals(orderType)){
  						ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
  						payee_name = reimbursementOrder.getStr("account_name");
+ 						deposit_bank = reimbursementOrder.getStr("account_bank");
+ 						bank_no = reimbursementOrder.getStr("account_no");
+ 						account_name = reimbursementOrder.getStr("account_name");
  					} else if("往来票据单".equals(orderType)){
  						ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
  						payee_name = arapInOutMiscOrder.getStr("charge_person");
@@ -1177,10 +1180,10 @@ public class CostPreInvoiceOrderController extends Controller {
 				deposit_bank = contact.getStr("bank_name");
 				bank_no = contact.getStr("bank_no");
 				account_name = contact.getStr("receiver");
-				setAttr("deposit_bank", deposit_bank);
-				setAttr("bank_no", bank_no);
-				setAttr("account_name", account_name);
 			}
+			setAttr("deposit_bank", deposit_bank);
+			setAttr("bank_no", bank_no);
+			setAttr("account_name", account_name);
 			
 			setAttr("payee_id", payee_id);
 			setAttr("payee_name", payee_name);
