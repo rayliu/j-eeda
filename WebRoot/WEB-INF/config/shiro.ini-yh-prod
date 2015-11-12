@@ -10,7 +10,7 @@
 ds = com.mysql.jdbc.jdbc2.optional.MysqlDataSource
 ds.serverName = localhost
 ds.user = eeda_root
-ds.password =Eeda123
+ds.password =Eeda2160009
 ds.databaseName = eeda_yh
 ds.url = jdbc:mysql://120.24.67.19:3306/eeda_yh
 jdbcRealm = org.apache.shiro.realm.jdbc.JdbcRealm
