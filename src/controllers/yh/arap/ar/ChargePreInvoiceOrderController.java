@@ -958,7 +958,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		} else {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
 			arapAuditInvoiceApplication.set("order_no",
-					OrderNoGenerator.getNextOrderNo("YFSQ"));
+					OrderNoGenerator.getNextOrderNo("YSSQ"));
 			arapAuditInvoiceApplication.set("status", "新建");
 			arapAuditInvoiceApplication.set("create_by", LoginUserController.getLoginUserId(this));
 			arapAuditInvoiceApplication.set("create_stamp", new Date());
