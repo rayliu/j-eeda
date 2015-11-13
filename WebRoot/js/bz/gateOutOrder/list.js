@@ -12,7 +12,7 @@ $(document).ready(function() {
         "searching": false,
         //"serverSide": true,
         "scrollX": true,
-        "scrollY": "200px",
+        //"scrollY": "200px",
         "scrollCollapse": true,
         "autoWidth": false,
         "language": {
