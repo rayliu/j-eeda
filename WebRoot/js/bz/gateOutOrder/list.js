@@ -36,10 +36,10 @@ $(document).ready(function() {
             }, 
             { "data": "REMARK"}, 
             { "render": function ( data, type, full, meta ) {
-                    if(full.STATUS != "已取消"){
+                    // if(full.STATUS != "已取消"){
                         return "<button order_id='"+full.ID+"' class='delete btn btn-danger btn-xs'>取消</button>";
-                    }
-                    return "";
+                    // }
+                    // return "";
                 }
             }
         ]
@@ -83,9 +83,13 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.delete', function(e){
         e.preventDefault();
         var order_id = $(this).attr('order_id');
+        var tr = $(this).parent().parent();
+
         $.post('/bzGateOutOrder/cancel', {id: order_id}, function(data){
             if(data=='ok'){
                 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+                tr.find('td:nth-child(2)').text('已取消');
+
             }else{
                 $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
             }
