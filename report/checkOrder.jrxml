@@ -40,7 +40,8 @@ FROM
 	arap_cost_order aco
 
 LEFT JOIN party p ON p.id = aco.payee_id
-LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id=aco.application_order_id
+LEFT JOIN cost_application_order_rel caor on caor.cost_order_id=aco.id
+LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id=caor.application_order_id
 LEFT JOIN user_login ul ON ul.id = aco.create_by
 LEFT JOIN user_login u ON u.id = aco.confirm_by
 LEFT JOIN office o ON o.id = u.office_id
