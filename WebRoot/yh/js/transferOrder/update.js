@@ -1380,9 +1380,9 @@ $(document).ready(function() {
             	"sClass": "serial_no",
             	"fnRender": function(obj) {
                     if(obj.aData.SERIAL_NO!='' && obj.aData.SERIAL_NO != null){
-                        return "<input type='text' style='width:120px;' name='serial_no' value='"+obj.aData.SERIAL_NO+"'>";
+                        return "<input type='text' style='width:180px;' name='serial_no' value='"+obj.aData.SERIAL_NO+"'>";
                     }else{
-                    	 return "<input type='text' style='width:120px;' name='serial_no'>";
+                    	 return "<input type='text' style='width:180px;' name='serial_no'>";
                     }
             }},
             {
