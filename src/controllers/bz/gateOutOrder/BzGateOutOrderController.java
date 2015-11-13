@@ -76,18 +76,21 @@ public class BzGateOutOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sql = "select m.*,'' product_no, '' serial_no, '' remark,"
+        String sql = "select m.*,"
+        		+ " (select group_concat(distinct d.product_no separator '<br>') from bz_gate_out_order_item d where order_id = m.id) product_no,"
+        		+ " (select group_concat(distinct d.serial_no separator '<br>') from bz_gate_out_order_item d where order_id = m.id) serial_no,"
+        		+ " (select group_concat(distinct d.remark separator '<br>') from bz_gate_out_order_item d where order_id = m.id) remark,"
         		+ " ifnull(u.c_name, u.user_name) creator_name from bz_gate_out_order m"
 				+ " left join user_login u on u.id = m.creator where 1 =1 ";
         logger.debug("sql:" + sql);
         
         String condition = DbUtils.buildConditions(getParaMap());
 
-        String sqlTotal = "select count(1) total from ("+sql+ condition+") B";
+        String sqlTotal = "select count(1) total from ("+sql+") B where 1=1 "+ condition;
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
-        List<Record> BillingOrders = Db.find(sql+ condition + " order by create_date desc " +sLimit);
+        List<Record> BillingOrders = Db.find("select * from ("+sql+") A where 1=1 "+ condition + " order by create_date desc " +sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);
@@ -156,6 +159,18 @@ public class BzGateOutOrderController extends Controller {
 		
 		setAttr("order", getOrderDto(id));
 		render(this.orderEditPage);
+	}
+	
+	public void cancel() {
+		String id = getPara("id");
+		
+		if (StringUtils.isNotEmpty(id)) {
+			//update
+			BzGateOutOrder order = BzGateOutOrder.dao.findById(id);
+			order.set("status", "已取消");
+			order.update();
+		}
+		renderText("ok");
 	}
 	
 }

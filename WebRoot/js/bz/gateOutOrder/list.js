@@ -25,6 +25,7 @@ $(document).ready(function() {
                     return "<a href='/bzGateOutOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
                 }
             },
+            { "data": "STATUS"},
             { "data": "CUSTOMER_NAME"},
             { "data": "PRODUCT_NO"},
             { "data": "SERIAL_NO"},
@@ -33,7 +34,14 @@ $(document).ready(function() {
                     return data.substr(0,10);
                 }
             }, 
-            { "data": "REMARK"}
+            { "data": "REMARK"}, 
+            { "render": function ( data, type, full, meta ) {
+                    if(full.STATUS != "已取消"){
+                        return "<button order_id='"+full.ID+"' class='delete btn btn-danger btn-xs'>取消</button>";
+                    }
+                    return "";
+                }
+            }
         ]
     });
 
@@ -49,6 +57,8 @@ $(document).ready(function() {
    var searchData=function(){
         var order_no = $("#order_no").val();
         var customer_name=$("#customer_name").val();
+        var product_no=$("#product_no").val();
+        var serial_no=$("#serial_no").val();
         
         var beginTime = $("#start_date").val();
         var endTime = $("#end_date").val();
@@ -62,11 +72,28 @@ $(document).ready(function() {
         */
         var url = "/bzGateOutOrder/list?order_no="+order_no
              +"&customer_name="+customer_name
+             +"&product_no="+product_no
+             +"&serial_no="+serial_no
              +"&create_date_begin_time="+beginTime
              +"&create_date_end_time="+endTime;
 
         dataTable.ajax.url(url).load();
     };
     
+    $("#eeda-table").on('click', '.delete', function(e){
+        e.preventDefault();
+        var order_id = $(this).attr('order_id');
+        $.post('/bzGateOutOrder/cancel', {id: order_id}, function(data){
+            if(data=='ok'){
+                $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+            }else{
+                $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+            }
+        }).fail(function() {
+            $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+        });;
+
+        
+    }); 
 
 } );
