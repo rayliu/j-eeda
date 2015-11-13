@@ -36,10 +36,10 @@ $(document).ready(function() {
             }, 
             { "data": "REMARK"}, 
             { "render": function ( data, type, full, meta ) {
-                    // if(full.STATUS != "已取消"){
+                    if(full.STATUS != "已取消"){
                         return "<button order_id='"+full.ID+"' class='delete btn btn-danger btn-xs'>取消</button>";
-                    // }
-                    // return "";
+                    }
+                    return "";
                 }
             }
         ]
