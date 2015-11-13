@@ -22,7 +22,8 @@ $(document).ready(function() {
     //判断全选box是否选中
     var number = 0;
     var datailNumber = 0;
-  //datatable, 动态处理
+
+    //datatable, 已选中的运输单列表
     var pickupOrder1 = $('#eeda-table1').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
     	"bSort": false, // 不要排序
@@ -39,15 +40,15 @@ $(document).ready(function() {
         },
         "aoColumns": [
 				{"mDataProp": "ORDER_NO","sWidth": "100px","sClass": "order_no"},
-				{"mDataProp": "CNAME","sWidth": "120px","sClass": "cname"},
+				{"mDataProp": "CNAME","sWidth": "70px","sClass": "cname"},
+                {"mDataProp": null, "sWidth": "60px", "sClass": "total_amount"},
 				{"mDataProp":"OPERATION_TYPE","sWidth": "60px","sClass": "operation_type"},
-				{"mDataProp": "ROUTE_FROM","sWidth": "70px","sClass": "route_from"},
-				{"mDataProp": "ROUTE_TO","sWidth": "70px","sClass": "route_to"}, 
+				{"mDataProp": "ROUTE_FROM","sWidth": "60px","sClass": "route_from"},
+				{"mDataProp": "ROUTE_TO","sWidth": "60px","sClass": "route_to"}, 
 				{"mDataProp":"ORDER_TYPE","sWidth": "70px","sClass": "order_type"},
-				{"mDataProp":"CARGO_NATURE","sClass": "cargo_nature"},
-				{"mDataProp": null,"sClass": "total_weight"},
-				{"mDataProp": null,"sClass": "total_volume"},
-				{"mDataProp": null,"sClass": "total_amount"},
+				{"mDataProp":"CARGO_NATURE","sWidth": "60px", "sClass": "cargo_nature"},
+				{"mDataProp": null,"sWidth": "60px", "sClass": "total_weight"},
+				{"mDataProp": null,"sWidth": "60px", "sClass": "total_volume"},
 				{"mDataProp": "ADDRESS","sClass": "address"},
 				{"mDataProp":"PICKUP_MODE","sClass": "pickup_mode"},
 				{"mDataProp":"ARRIVAL_MODE","sClass": "arrival_mode"},
@@ -126,16 +127,27 @@ $(document).ready(function() {
             },
             { 
             	"mDataProp": "PLANNING_TIME",
-                "sWidth": "100px",
+                "sWidth": "70px",
             	"sClass": "planning_time"
             },
             { 
+                "mDataProp": null, "sWidth": "60px",
+                "sClass": "total_amount",
+                "fnRender": function(obj) {
+                    if(obj.aData.CARGO_NATURE == "ATM"){
+                        return obj.aData.ATMAMOUNT;
+                    }else{
+                        return obj.aData.TOTAL_AMOUNT;
+                    }
+                }
+            },
+            { 
             	"mDataProp": "CNAME",
-                "sWidth": "100px",
+                "sWidth": "60px",
             	"sClass": "cname"
             },
             {"mDataProp":"OPERATION_TYPE",
-            	"sWidth": "80px",
+            	"sWidth": "60px",
             	"sClass": "operation_type",
     			"fnRender": function(obj) {
     				if(obj.aData.OPERATION_TYPE == "out_source"){
@@ -148,16 +160,16 @@ $(document).ready(function() {
             },
     		{ 
             	"mDataProp": "ROUTE_FROM",
-            	"sWidth": "70px",
+            	"sWidth": "60px",
             	"sClass": "route_from"
             },
     		{ 
             	"mDataProp": "ROUTE_TO",
-            	"sWidth": "70px",
+            	"sWidth": "60px",
             	"sClass": "route_to"
             }, 
 		    {"mDataProp":"ORDER_TYPE",
-            	"sWidth": "80px",
+            	"sWidth": "60px",
             	"sClass": "order_type",
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE == "salesOrder"){
@@ -208,17 +220,7 @@ $(document).ready(function() {
             		}
             	}
             },
-            { 
-            	"mDataProp": null,
-            	"sClass": "total_amount",
-            	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == "ATM"){
-            			return obj.aData.ATMAMOUNT;
-            		}else{
-            			return obj.aData.TOTAL_AMOUNT;
-            		}
-            	}
-            },
+            
             { 
             	"mDataProp": "ADDRESS",
             	"sClass": "address"
@@ -570,8 +572,8 @@ $(document).ready(function() {
 					$("#sumVolume").text((parseFloat($("#sumVolume").text() == "" ? 0 :$("#sumVolume").text()) + volume * 1).toFixed(2));
 					console.log("单品id集合-正式:"+detailIds);
 					//<td>"+planning_time+"</td>
-					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"' amount='' itemids=''><td>"+order_no+"</td><td>"+serial_no+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
-							+ids.length+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
+					ckeckedTransferOrderList.append("<tr value='"+value+"' serial='"+data.ID+"' amount='' itemids=''><td>"+order_no+"</td><td>"+serial_no+"</td><td>"+ids.length+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
+							+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 				},'json');
 			}else{
 				$.get("/pickupOrder/findNumberByOrderId", {order_id:value}, function(data){
@@ -600,8 +602,9 @@ $(document).ready(function() {
 						}
 					}
 					console.log("amount:"+amount+"<>pickup_numbers:"+pickup_numbers);
-					ckeckedTransferOrderList.append("<tr value='"+value+"'serial='' amount='"+itemNumbers+"' itemids='"+idNumbers+"'><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
-							+total_amount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
+                    total_amount = "<input type='text' value='"+total_amount+"' size='8'/>"
+					ckeckedTransferOrderList.append("<tr value='"+value+"'serial='' amount='"+itemNumbers+"' itemids='"+idNumbers+"'><td>"+order_no+"</td><td></td><td>"+total_amount+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+total_weight+"</td><td>"+total_volume+"</td><td>"
+							+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 					console.log("普货选取数量-正式:"+amounts);
 				},'json');
 				//<td>"+planning_time+"</td>
@@ -827,8 +830,8 @@ $(document).ready(function() {
     				//体积、重量
 					var volume = (total_volume * (detailIdsTest.length / total_amount)).toFixed(2);
 					var weight = (total_weight * (detailIdsTest.length / total_amount)).toFixed(2);
-    				ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"' serial='"+detailIdsTest+"' amount='' itemids=''><td>"+order_no+"</td><td>"+serialArray+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
-    					+detailIdsTest.length+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
+    				ckeckedTransferOrderList.append("<tr value='"+$(this).val()+"' serial='"+detailIdsTest+"' amount='' itemids=''><td>"+order_no+"</td><td>"+serialArray+"</td><td>"+detailIdsTest.length+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
+    					+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
     			}else{
     				var input = $(this);
     				//获取普货的全部数量
@@ -853,8 +856,8 @@ $(document).ready(function() {
 	                		var volume = $("#sumVolume").text() == ""?0:$("#sumVolume").text();
 	                		$("#sumWeight").text((weight * 1 + (data.sumWeight) * 1).toFixed(2));	
 	                		$("#sumVolume").text((volume * 1 + (data.sumVolume) * 1).toFixed(2));
-	                		ckeckedTransferOrderList.append("<tr value='"+input.val()+"' serial='' amount='"+itemNumbers+"' itemids='"+idNumbers+"'><td>"+order_no+"</td><td></td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+data.sumWeight+"</td><td>"+data.sumVolume+"</td><td>"
-		    						+sumAmount+"</td><td>"+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
+	                		ckeckedTransferOrderList.append("<tr value='"+input.val()+"' serial='' amount='"+itemNumbers+"' itemids='"+idNumbers+"'><td>"+order_no+"</td><td></td><td>"+sumAmount+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+data.sumWeight+"</td><td>"+data.sumVolume+"</td><td>"
+		    						+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 	    				},'json');
     				},'json');
     			}
