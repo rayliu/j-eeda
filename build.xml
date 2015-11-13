@@ -118,6 +118,9 @@
         <copy todir="/var/tms/WebRoot/yh/js">
             <fileset dir="/root/.jenkins/jobs/TMS-DailyBuild/workspace/WebRoot/yh/js" includes="**/*.js, **/*.css" />
         </copy>
+		<copy todir="/var/tms/WebRoot/js">
+            <fileset dir="/root/.jenkins/jobs/TMS-DailyBuild/workspace/WebRoot/js" includes="**/*.js, **/*.css" />
+        </copy>
         <copy todir="/var/tms/WebRoot/WEB-INF/template">
             <fileset dir="/root/.jenkins/jobs/TMS-DailyBuild/workspace/WebRoot/WEB-INF/template" includes="**/*.html" />
         </copy>
