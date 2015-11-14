@@ -11,6 +11,7 @@
 	
    <path id="project.lib.path">
         <fileset dir="WebRoot/WEB-INF/lib" includes="**/*.jar"/>
+   	    <fileset dir="" includes="servlet-api.jar"/>
     </path>
 
 	
