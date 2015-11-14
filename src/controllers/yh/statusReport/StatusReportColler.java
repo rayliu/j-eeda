@@ -492,12 +492,8 @@ public class StatusReportColler extends Controller{
 	public void dailyReportStatus() {
 		String orderNo = getPara("order_no");
 		String customerId = getPara("customer_id");
-		String customerOrderNo = getPara("customer_order_no");
-		String itemNo = getPara("item_no");
-		String serialNo = getPara("serial_no");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
-		String cargoType = getPara("cargoType");
 		String sLimit = "";
 		
 		Map orderMap = new HashMap();
@@ -507,166 +503,113 @@ public class StatusReportColler extends Controller{
 		}
 		//List<FinItem> payName = FinItem.dao.find("select name,code from fin_item where type = '应付';");
 		//List<FinItem> incomeName = FinItem.dao.find("select name,code from fin_item where type = '应收';");
-		if(beginTime != null && !"".equals(beginTime) && endTime != null && !"".equals(endTime)){
-			if("ATM".equals(cargoType)){
 				
 				// 获取总条数
-				String totalSql = "select count(0) total from transfer_order_item_detail toid"
-						+ " left join transfer_order tor on tor.id = toid.order_id"
-						+ " left join delivery_order dor on dor.id = toid.delivery_id"
-						+ " left join party p on p.id = tor.customer_id"
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join location l1 on tor.route_from = l1.code "
-						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-								+ "  and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-						//+ " group by toid.id "
+				String totalSql = "SELECT count(0) total from (SELECT c.id cid, c.abbr,(SELECT	dor.order_no FROM delivery_order dor	WHERE	dor.id = toid.delivery_id) deliveryno,tor.order_no transferno,toid.serial_no,tor.planning_time, l1. NAME route_from,l2. NAME route_to,toid.pieces,round(toid.weight, 2) weight,round(toid.volume, 2) volume,"
+						+ " round(ifnull((SELECT sum(pofi.amount) FROM pickup_order_fin_item pofi	LEFT JOIN depart_order d_o ON d_o.id = pofi.pickup_order_id	LEFT JOIN depart_transfer dt ON dt.pickup_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = pofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
+						+ " AND pofi.fin_item_id != 7 AND d_o.combine_type = 'PICKUP') / (SELECT count(0)	FROM transfer_order_item_detail	WHERE	pickup_id = toid.pickup_id),0),2) yf_pickup,"
+						+ " round(ifnull((SELECT sum(dofi.amount)	FROM depart_order_fin_item dofi	LEFT JOIN depart_order d_o ON d_o.id = dofi.depart_order_id LEFT JOIN depart_transfer dt ON dt.depart_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
+						+ " AND d_o.combine_type = 'DEPART')/(SELECT count(0) FROM	transfer_order_item_detail WHERE depart_id = toid.depart_id),0),2) yf_depart,"
+						+ " round(ifnull((SELECT(sum(ifi.insurance_amount) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
+						+ " WHERE	i_o.id = tor.insurance_id	AND fi.type = '应付'),0),2) yf_insurance,"
+						+ " round(ifnull((SELECT(sum(ifi.insurance_amount) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
+						+ " WHERE	i_o.id = tor.insurance_id	AND fi.type = '应收'),0),2) ys_insurance,"
+						+ " round(ifnull((SELECT sum(dofi1.amount)FROM delivery_order d_o	LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id	WHERE	d_o.id = toid.delivery_id	AND fi.type = '应付')/(SELECT	count(0) FROM	transfer_order_item_detail"
+						+ " WHERE	delivery_id = toid.delivery_id),0),2) delivery,"
+						+ " ifnull((SELECT ifnull(sum(rof.amount), 0)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id WHERE dor.id = toid.delivery_id),(SELECT ifnull(sum(rof1.amount), 0) FROM	return_order_fin_item rof1"
+						+ " LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE	ror.transfer_order_id = toid.order_id)) return_amount "
+						+ " FROM transfer_order_item_detail toid"
+						+ " LEFT JOIN transfer_order tor ON tor.id = toid.order_id"
+						+ " LEFT JOIN party p ON p.id = tor.customer_id"
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+						+ " WHERE tor.cargo_nature = 'ATM'"
+						+ " UNION"
+						+ " SELECT c.id cid, c.abbr,(SELECT d_o.order_no FROM	delivery_order d_o LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id WHERE doi.transfer_order_id = tor.id) deliveryno,tor.order_no transferno,'' serial_no,tor.planning_time,l1. NAME route_from,l2. NAME route_to,"
+						+ " (SELECT ifnull(sum(amount), 0)	FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) pieces,(SELECT	IFNULL(sum(weight), 0)FROM transfer_order_item toi WHERE toi.order_id = tor.id) weight,(SELECT ifnull(sum(volume), 0)FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) volume,"
+						+ " ROUND(IFNULL(sum((SELECT sum(amount)/(SELECT count(*)	FROM depart_transfer dof WHERE dof.pickup_id = dor1.id)	FROM	pickup_order_fin_item pof	LEFT JOIN depart_order dor1 ON dor1.id = pof.pickup_order_id WHERE dor1.id = dtr.pickup_id	AND pof.fin_item_id != 7)),	0),2) dddd,"
+						+ " ROUND(ifnull(sum((SELECT sum(IFNULL(amount, 0))/(SELECT	count(*) FROM depart_transfer dof	WHERE	dof.depart_id = dor1.id) FROM	depart_order_fin_item dof	LEFT JOIN depart_order dor1 ON dor1.id = dof.depart_order_id WHERE dor1.id = dtr.depart_id AND dof.fin_item_id != 7)),0),2) asd,"
+						+ " round(ifnull((SELECT sum(ifi.insurance_amount) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应付')/(SELECT	COUNT(*) FROM	insurance_order i"
+						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) yf_insurance,"
+						+ " round(ifnull((SELECT sum(ifi.insurance_amount) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应收')/(SELECT	COUNT(*) FROM	insurance_order i"
+						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) ys_insurance,"
+						+ " round((SELECT	ifnull(sum(dofi1.amount), 0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id AND fi.type = '应付'),2) delivery,"
+						+ " ifnull((SELECT ifnull(sum(rof.amount), 0)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id"
+						+ " WHERE	doi.transfer_order_id = tor.id),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id)) return_amount"
+						+ " FROM transfer_order tor"
+						+ " LEFT JOIN depart_transfer dtr ON dtr.order_id = tor.id"
+						+ " LEFT JOIN party p ON p.id = tor.customer_id"
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+						+ " WHERE tor.cargo_nature = 'cargo' GROUP BY	tor.id) a";
 						
 					
-				String sql = "select c.abbr,dor.order_no deliveryno,tor.order_no transferno,toid.serial_no,tor.planning_time,l1.name route_from,l2.name route_to,toid.pieces,round(toid.weight,2) weight,round(toid.volume,2) volume,"
-						+ " (select case when ((select transaction_status from return_order where transfer_order_id = toid.order_id) != '新建') or ((select transaction_status from return_order where delivery_Order_id = toid.delivery_id) != '新建')  then '回单签收' "
-						+ " when ((select transaction_status from return_order where transfer_order_id = toid.order_id) = '新建') or ((select transaction_status from return_order where delivery_Order_id = toid.delivery_id) = '新建')  then '新建回单' "
-						+ " when (select status from delivery_order where id = toid.delivery_id) != '新建' then '配送发车' when (select status from delivery_order where id = toid.delivery_id) = '新建' then '新建配送' "
-						+ " when (select status from depart_order where id = toid.depart_id) = '已收货' then '已收货' when (select status from depart_order where id = toid.depart_id) = '已入库' then '已入库' "
-						+ " when (select status from depart_order where id = toid.depart_id) = '已发车' then '运输在途' when (select status from depart_order where id = toid.depart_id) = '新建' then '新建发车'"
-						+ " when (select status from depart_order where id = toid.pickup_id) != '新建' then '已入货场'when (select status from depart_order where id = toid.pickup_id) = '新建' then '新建提货' else '新建运输' end) as status,"
-						+ " (select case when tor.order_type = 'salesOrder' then '销售订单' when tor.order_type = 'cargoReturnOrder' then '退货订单' when tor.order_type = 'movesOrder' then '移机订单'  end ) as order_type,"
-						+ " (select datediff(ifnull((select create_stamp from delivery_order_milestone where delivery_id = toid.delivery_id and status = '已发车'),curdate()),(select create_stamp from transfer_order_milestone where depart_id = toid.depart_id and type = 'DEPARTORDERMILESTONE' and status = '已发车'))) as warehousenumber,"
+				String sql = "SELECT *,round((yf_pickup+yf_depart+yf_insurance+delivery),2) yf_sum,round((ys_insurance+return_amount),2) ys_sum,round(((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery)),2)yz_amount,round(ifnull((((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery))/(ys_insurance+return_amount)),0),2) maolilv from "
+						+ " (SELECT c.id cid,c.abbr,(SELECT	dor.order_no FROM delivery_order dor	WHERE	dor.id = toid.delivery_id) deliveryno,tor.order_no transferno,tor.STATUS,'' ORDER_TYPE ,toid.serial_no,tor.planning_time,	l1. NAME route_from,	l2. NAME route_to,toid.pieces,round(toid.weight, 2) weight,round(toid.volume, 2) volume,"
+						+ " round(ifnull((SELECT sum(pofi.amount) FROM pickup_order_fin_item pofi	LEFT JOIN depart_order d_o ON d_o.id = pofi.pickup_order_id	LEFT JOIN depart_transfer dt ON dt.pickup_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = pofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
+						+ " AND pofi.fin_item_id != 7 AND d_o.combine_type = 'PICKUP') / (SELECT count(0)	FROM transfer_order_item_detail	WHERE	pickup_id = toid.pickup_id),0),2) yf_pickup,"
+						+ " round(ifnull((SELECT sum(dofi.amount)	FROM depart_order_fin_item dofi	LEFT JOIN depart_order d_o ON d_o.id = dofi.depart_order_id LEFT JOIN depart_transfer dt ON dt.depart_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
+						+ " AND d_o.combine_type = 'DEPART')/(SELECT count(0) FROM	transfer_order_item_detail WHERE depart_id = toid.depart_id),0),2) yf_depart,"
+						+ " round(ifnull((SELECT(sum(ifi.insurance_amount) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
+						+ " WHERE	i_o.id = tor.insurance_id	AND fi.type = '应付'),0),2) yf_insurance,"
+						+ " round(ifnull((SELECT(sum(ifi.insurance_amount) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
+						+ " WHERE	i_o.id = tor.insurance_id	AND fi.type = '应收'),0),2) ys_insurance,"
+						+ " round(ifnull((SELECT sum(dofi1.amount)FROM delivery_order d_o	LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id	WHERE	d_o.id = toid.delivery_id	AND fi.type = '应付')/(SELECT	count(0) FROM	transfer_order_item_detail"
+						+ " WHERE	delivery_id = toid.delivery_id),0),2) delivery,"
+						+ " ifnull((SELECT ifnull(sum(rof.amount), 0)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id WHERE dor.id = toid.delivery_id),(SELECT ifnull(sum(rof1.amount), 0) FROM	return_order_fin_item rof1"
+						+ " LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE	ror.transfer_order_id = toid.order_id)) return_amount "
+						+ " FROM transfer_order_item_detail toid"
+						+ " LEFT JOIN transfer_order tor ON tor.id = toid.order_id"
+						+ " LEFT JOIN party p ON p.id = tor.customer_id"
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+						+ " WHERE tor.cargo_nature = 'ATM'"
+						+ " UNION"
+						+ " SELECT c.id cid,c.abbr,(SELECT	d_o.order_no FROM	delivery_order d_o LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id WHERE doi.transfer_order_id = tor.id) deliveryno,tor.order_no transferno,tor.STATUS,'' ORDER_TYPE,'' serial_no,tor.planning_time,l1. NAME route_from,l2. NAME route_to,"
+						+ " (SELECT ifnull(sum(amount), 0)	FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) pieces,(SELECT	IFNULL(sum(weight), 0)FROM transfer_order_item toi WHERE toi.order_id = tor.id) weight,(SELECT ifnull(sum(volume), 0)FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) volume,"
+						+ " ROUND(IFNULL(sum((SELECT sum(amount)/(SELECT count(*)	FROM depart_transfer dof WHERE dof.pickup_id = dor1.id)	FROM	pickup_order_fin_item pof	LEFT JOIN depart_order dor1 ON dor1.id = pof.pickup_order_id WHERE dor1.id = dtr.pickup_id	AND pof.fin_item_id != 7)),	0),2) dddd,"
+						+ " ROUND(ifnull(sum((SELECT sum(IFNULL(amount, 0))/(SELECT	count(*) FROM depart_transfer dof	WHERE	dof.depart_id = dor1.id) FROM	depart_order_fin_item dof	LEFT JOIN depart_order dor1 ON dor1.id = dof.depart_order_id WHERE dor1.id = dtr.depart_id AND dof.fin_item_id != 7)),0),2) asd,"
+						+ " round(ifnull((SELECT sum(ifi.insurance_amount) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应付')/(SELECT	COUNT(*) FROM	insurance_order i"
+						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) yf_insurance,"
+						+ " round(ifnull((SELECT sum(ifi.insurance_amount) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应收')/(SELECT	COUNT(*) FROM	insurance_order i"
+						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) ys_insurance,"
+						+ " round((SELECT	ifnull(sum(dofi1.amount), 0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id AND fi.type = '应付'),2) delivery,"
+						+ " ifnull((SELECT ifnull(sum(rof.amount), 0)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id"
+						+ " WHERE	doi.transfer_order_id = tor.id),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id)) return_amount"
+						+ " FROM transfer_order tor"
+						+ " LEFT JOIN depart_transfer dtr ON dtr.order_id = tor.id"
+						+ " LEFT JOIN party p ON p.id = tor.customer_id"
+						+ " LEFT JOIN contact c ON c.id = p.contact_id"
+						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+						+ " WHERE tor.cargo_nature = 'cargo' GROUP BY	tor.id) a";
 						
-				/*for (FinItem finItem : payName) {
-					sql += " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '" + finItem.get("name") + "') + "
-							+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-							+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
-							+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-							+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
-							+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-							+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '" + finItem.get("name") + "')) as pay" + finItem.get("code") + ",";
-				}*/
-						//应付-成本
-						+ " ((select ifnull(sum(d.amount),0)/(select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '提货费') + "
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '提货费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '提货费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '提货费')) as paytihuo,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '运输费') as payganxian,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join  fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '运输费') as paypeisong,"
-						
-						+ " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '安装费') + "
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '安装费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '安装费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join  fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '安装费')) as payanzhuang,"
-						+ " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '台阶费') + "
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '台阶费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '台阶费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join  fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '台阶费')) as paytaijie,"
-						+ " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '等待费') + "
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '等待费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '等待费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join  fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '等待费')) as paydengdai,"
-						+ " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '暂存费') + "
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '暂存费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '暂存费') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '暂存费')) as payzancun,"
-						+ " ((select ifnull(sum(d.amount),0) / (select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付' and f.name = '其他费用') + "
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付' and f.name = '其他费用') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付' and f.name = '其他费用') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付' and f.name = '其他费用')) as payqita,"
-						+ " (select round(ifnull(amount,0)*ifnull(rate,0),2) from insurance_fin_item d left join fin_item f on d.fin_item_id = f.id	where	d.transfer_order_item_id = toid.item_id and f.type = '应付' and f.name = '保险费') as paybaoxian,"
-				
-				/*for (FinItem finItem : incomeName) {
-					sql += " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from return_order_fin_item d "
-							+ " left join fin_item f on d.fin_item_id = f.id where d.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '" + finItem.get("name") + "') as income" + finItem.get("code") + ",";
-				}*/
-						//应收-收入
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '提货费') as incometihuo,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '运输费') as incomeyunshu,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '送货费') as incomesonghuo,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '台阶费') as incometaijie,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '安装费') as incomeanzhuang,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '暂存费') as incomezancun,"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收' and f.name = '其它费用') as incomeqita,"
-						+ " (select round(ifnull(amount,0)*ifnull(income_rate,0),2) from insurance_fin_item d where	d.transfer_order_item_id = toid.item_id) as incomebaoxian,"//应收保险费
-						
-						//运作毛利
-						+ " ((select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收') - "
-						+ " ((select ifnull(sum(d.amount),0)/(select sum(amount) from transfer_order_item where order_id = toid.order_id) from transfer_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.order_id and f.type = '应付') + "
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where pickup_id = toid.pickup_id and order_id = toid.order_id) end) from pickup_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id = toid.pickup_id and f.type = '应付') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where depart_id = toid.depart_id and order_id = toid.order_id) end) from depart_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.depart_order_id = toid.depart_id and f.type = '应付') +"
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) from  delivery_order_fin_item d "
-						+ " left join fin_item f on d.fin_item_id = f.id where d.order_id = toid.delivery_id  and f.type = '应付') +"
-						+ " (select round(ifnull(amount,0)*ifnull(rate,0),2) from insurance_fin_item d left join fin_item f on d.fin_item_id = f.id	where	d.transfer_order_item_id = toid.item_id and f.type = '应付' and f.name = '保险费'))) as yunzuomaoli,"
-						//总收入
-						+ " (select ifnull(sum(d.amount),0)/(select case when (select count(0) from delivery_order_item where delivery_id = toid.delivery_id and order_id = toid.order_id) = 0 then 1 else (select count(0) from transfer_order_item_detail where delivery_id = toid.delivery_id and order_id = toid.order_id) end) "
-						+ " from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join return_order ror on ror.id = d.return_order_id where ror.delivery_order_id = toid.delivery_id and f.type = '应收') as zongshouru"
-						+ " from transfer_order_item_detail toid"
-						+ " left join transfer_order tor on tor.id = toid.order_id"
-						+ " left join delivery_order dor on dor.id = toid.delivery_id"
-						+ " left join party p on p.id = tor.customer_id"
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join location l1 on tor.route_from = l1.code "
-						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-								+ "  and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-						//+ " group by toid.id "
-						
-				
-				//有运输单号时
-				if(!"".equals(orderNo) && orderNo != null){
-					totalSql = totalSql + " and tor.order_no = '" + orderNo + "'";
-					sql = sql + " and tor.order_no = '" + orderNo + "'";
+				String condition = "";
+				if(orderNo != null || customerId != null || beginTime != null|| endTime != null){
+					String time ="";
+					if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
+						time = "1970-01-01";
+					}
+		    		if (beginTime == null || "".equals(beginTime)) {
+						beginTime = "1970-01-01";
+					}
+		    		
+					if (endTime == null || "".equals(endTime)) {
+						endTime = "2037-12-31";
+					}
+			    		condition = " where ifnull(cid,'') ="+ customerId + " "
+			    					+ " and transferno like '%" + orderNo + "%' "
+			    					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
 				}
-				
-				//有客户时
-				if(!"".equals(customerId) && customerId != null){
-					totalSql = totalSql + "and tor.customer_id = '" + customerId + "'";
-					sql = sql + "and tor.customer_id = '" + customerId + "'";
-				}
-				
-				totalSql+= " order by tor.planning_time desc";
-				sql += " order by tor.planning_time desc";
 				
 				// 获取总条数
-				Record rec = Db.findFirst(totalSql);
+				Record rec = Db.findFirst(totalSql+ condition);
 				logger.debug("total records:" + rec.getLong("total"));
 				// 获取当前页的数据
-				List<Record> orders =Db.find(sql + sLimit);
-				
-				
+				List<Record> orders =Db.find(sql+ condition +" order by planning_time desc" + sLimit);
 				StringBuffer resultData = new StringBuffer();
 				resultData.append("[");
 				for (Record record : orders) {
@@ -682,121 +625,6 @@ public class StatusReportColler extends Controller{
 				orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 				//orderMap.put("aaData", resultData.toString());
 				orderMap.put("aaData", orders);
-			}else{
-				
-				String totalSql = " select count(0) total from transfer_order tor"
-						+ " left join party p on p.id = tor.customer_id"
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join location l1 on tor.route_from = l1.code "
-						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'"
-						+ " and tor.cargo_nature_detail = 'cargoNatureDetailNo'"
-						+ " and tor.cargo_nature = 'cargo'  and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-								+ "  and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-				
-				
-				
-				String sql = "select c.abbr,(select '') deliveryno,tor.order_no transferno,(select '') serial_no,tor.status,tor.planning_time,l1.name route_from,l2.name route_to,(select '') warehousenumber,(select '') pieces,"
-						+ " (select case when tor.order_type = 'salesOrder' then '销售订单' when tor.order_type = 'cargoReturnOrder' then '退货订单' when tor.order_type = 'movesOrder' then '移机订单'  end ) as order_type,"
-						+ " (select round(sum(ifnull(sum_weight,0)),2) from transfer_order_item where order_id = tor.id) weight,(select round(sum(ifnull(volume,0)),2) from transfer_order_item where order_id = tor.id) volume,"
-						
-						
-				/*for (FinItem finItem : payName) {
-					sql += " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '" + finItem.get("name") + "') + "
-							+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
-							+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '" + finItem.get("name") + "') +"
-							+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '" + finItem.get("name") + "')) as pay" + finItem.get("code") + ",";
-				}*/
-						//成本-应付
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '提货费') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '提货费') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '提货费') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '提货费')) as paytihuo,"
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '安装费') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '安装费') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '安装费') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '安装费')) as payanzhuang,"
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '台阶费') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '台阶费') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '台阶费') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '台阶费')) as paytaijie,"
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '提货费') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '提货费') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '提货费') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '提货费')) as paytihuo,"
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '等待费') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '等待费') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '等待费') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '等待费')) as paydengdai,"
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '暂存费') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '暂存费') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '暂存费') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '暂存费')) as payzancun,"
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付' and f.name = '其他费用') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付' and f.name = '其他费用') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '其他费用') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '暂存费')) as payqita,"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付' and f.name = '运输费') as payganxian,"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付' and f.name = '运输费') as paypeisong,"
-						+ " (select round(sum(ifnull(amount,0)*ifnull(rate,0)),2) from insurance_fin_item d left join fin_item f on d.fin_item_id = f.id	where d.transfer_order_item_id in (select id from transfer_order_item where order_id = tor.id ) and f.type = '应付' and f.name = '保险费') as paybaoxian,"
-				/*for (FinItem finItem : incomeName) {
-					sql += " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '" + finItem.get("name") + "') as income" + finItem.get("code") + ",";
-				}*/
-						//应收
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '提货费') as incometihuo,"
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '运输费') as incomeyunshu,"
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '送货费') as incomesonghuo,"
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '台阶费') as incometaijie,"
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '安装费') as incomeanzhuang,"
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '暂存费') as incomezancun,"
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收' and f.name = '其他费用') as incomeqita,"
-						+ " (select round(sum(ifnull(amount,0)*ifnull(income_rate,0)),2) from insurance_fin_item d where d.transfer_order_item_id in (select id from transfer_order_item where order_id = tor.id )) as incomebaoxian,"//应收保险费
-						
-						//运作毛利
-						+ " ((select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收') -"
-						+ " ((select ifnull(sum(d.amount),0) from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.order_id = tor.id and f.type = '应付') + "
-						+ " (select ifnull(sum(d.amount),0) from pickup_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.pickup_order_id in (select pickup_id from depart_transfer where depart_id is null and order_id = tor.id) and f.type = '应付') +"
-						+ " (select ifnull(sum(d.amount),0) from depart_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.depart_order_id in (select depart_id from depart_transfer where pickup_id is null and order_id = tor.id) and f.type = '应付') +"
-						+ " (select ifnull(sum(d.amount),0) from  delivery_order_fin_item d left join  fin_item f on d.fin_item_id = f.id where d.order_id in (select delivery_id from delivery_order_item where transfer_order_id = tor.id) and f.type = '应付') +"
-						+ " (select round(sum(ifnull(amount,0)*ifnull(rate,0)),2) from insurance_fin_item d left join fin_item f on d.fin_item_id = f.id	where d.transfer_order_item_id in (select id from transfer_order_item where order_id = tor.id ) and f.type = '应付'))) as yunzuomaoli,"
-						//总收入
-						+ " (select ifnull(sum(d.amount),0) from return_order_fin_item d left join fin_item f on d.fin_item_id = f.id where d.transfer_order_id = tor.id and f.type = '应收') as zongshouru"
-						+ " from transfer_order tor"
-						+ " left join party p on p.id = tor.customer_id"
-						+ " left join contact c on c.id = p.contact_id"
-						+ " left join location l1 on tor.route_from = l1.code "
-						+ " left join location l2 on tor.route_to = l2.code"
-						+ " where tor.planning_time between '" + beginTime + "' and '" + endTime + "'"
-						+ " and tor.cargo_nature_detail = 'cargoNatureDetailNo'"
-						+ " and tor.cargo_nature = 'cargo' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-								+ "  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-				
-				//有运输单号时
-				if(!"".equals(orderNo) && orderNo != null){
-					totalSql = totalSql + " and tor.order_no = '" + orderNo + "'";
-					sql = sql + " and tor.order_no = '" + orderNo + "'";
-				}
-				
-				//有客户时
-				if(!"".equals(customerId) && customerId != null){
-					totalSql = totalSql + "and tor.customer_id = '" + customerId + "'";
-					sql = sql + "and tor.customer_id = '" + customerId + "'";
-				}
-				
-				sql += " order by tor.planning_time desc";
-				
-				// 获取总条数
-				Record rec = Db.findFirst(totalSql);
-				logger.debug("total records:" + rec.getLong("total"));
-				// 获取当前页的数据
-				List<Record> orders =Db.find(sql + sLimit);
-				
-				orderMap.put("sEcho", pageIndex);
-				orderMap.put("iTotalRecords", rec.getLong("total"));
-				orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-				orderMap.put("aaData", orders);
-			}
-		}
 		renderJson(orderMap);
 	}
 	

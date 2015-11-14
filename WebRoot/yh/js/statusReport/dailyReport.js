@@ -1,7 +1,6 @@
 $(document).ready(function() {
     document.title = '运营日报表 | '+document.title;
     $('#menu_report').addClass('active').find('ul').addClass('in');
-    $("#queryBtn").prop("disabled",true);
     
 	//datatable, 动态处理
     var statusTable = $('#eeda-table').dataTable({
@@ -26,41 +25,26 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_TYPE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_FROM", "sWidth":"80px"},
             {"mDataProp":"ROUTE_TO", "sWidth":"80px"},
-            {"mDataProp":"WAREHOUSENUMBER", "sWidth":"100px","sClass": "warehouse_number"},
+            {"mDataProp":null, "sWidth":"100px"},
             {"mDataProp":"PIECES", "sWidth":"60px","sClass": "pieces"},
             {"mDataProp":"WEIGHT", "sWidth":"60px"},
             {"mDataProp":"VOLUME", "sWidth":"60px"},
-            {"mDataProp":"YUNZUOMAOLI", "sWidth":"100px"},
-            {"mDataProp":null, "sWidth":"80px",
-            	"fnRender": function(obj) {  
-            		if(obj.aData.ZONGSHOURU != 0 && obj.aData.ZONGSHOURU != ""){
-            			var maolilv = ((obj.aData.YUNZUOMAOLI * 1) / (obj.aData.ZONGSHOURU * 1)).toFixed(2);
-            			return (maolilv * 100) + "%";
-            		}else{
-            			return "";
-            		}
-                }
-            },
-            {"mDataProp":"PAYTIHUO", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"PAYGANXIAN", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"PAYPEISONG", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"PAYBAOXIAN", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"PAYANZHUANG", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"PAYTAIJIE", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":null, "sWidth":"80px",
-            	"fnRender": function(obj) {  
-        			return (obj.aData.PAYTIHUO + obj.aData.PAYGANXIAN + obj.aData.PAYPEISONG + obj.aData.PAYBAOXIAN + obj.aData.PAYANZHUANG + obj.aData.PAYTAIJIE + obj.aData.PAYDENGDAI + obj.aData.PAYZANCUN + obj.aData.PAYQITA) * 1;
-                }
-            },
-            {"mDataProp":"INCOMETIHUO", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"INCOMEYUNSHU", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"INCOMESONGHUO", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"INCOMEQITA", "sWidth":"100px", "bVisible":false},
-            {"mDataProp":"ZONGSHOURU", "sWidth":"80px"}
+            {"mDataProp":"YZ_AMOUNT", "sWidth":"70px"},
+            {"mDataProp":"MAOLILV", "sWidth":"70px"},
+            {"mDataProp":"YF_PICKUP", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"YF_DEPART", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"DELIVERY", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"YF_INSURANCE", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":null, "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"YF_SUM", "sWidth":"70px",},
+            {"mDataProp":"YS_INSURANCE", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"RETURN_AMOUNT", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":null, "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"YS_SUM", "sWidth":"80px"}
         ]
     });	
     
-    //单品与普货查询
+   /* //单品与普货查询
     $("input[name='cargoType']").change(function(){
     	if($(this).val() == "ATM"){
     		statusTable.fnSetColumnVis(1, true);
@@ -73,7 +57,7 @@ $(document).ready(function() {
     		statusTable.fnSetColumnVis(9, false);
     		statusTable.fnSetColumnVis(10, false);
     	}
-    });
+    });*/
     
     
     
@@ -87,7 +71,6 @@ $(document).ready(function() {
     		statusTable.fnSetColumnVis(17, false);
     		statusTable.fnSetColumnVis(18, false);
     		statusTable.fnSetColumnVis(19, false);
-    		statusTable.fnSetColumnVis(20, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
     		statusTable.fnSetColumnVis(15, true);
@@ -95,7 +78,6 @@ $(document).ready(function() {
     		statusTable.fnSetColumnVis(17, true);
     		statusTable.fnSetColumnVis(18, true);
     		statusTable.fnSetColumnVis(19, true);
-    		statusTable.fnSetColumnVis(20, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
@@ -105,45 +87,27 @@ $(document).ready(function() {
     	var type = $(this).attr("alt");
     	//0代表隐藏
     	if(type == 1){
+    		statusTable.fnSetColumnVis(21, false);
     		statusTable.fnSetColumnVis(22, false);
     		statusTable.fnSetColumnVis(23, false);
-    		statusTable.fnSetColumnVis(24, false);
-    		statusTable.fnSetColumnVis(25, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
+    		statusTable.fnSetColumnVis(21, true);
     		statusTable.fnSetColumnVis(22, true);
     		statusTable.fnSetColumnVis(23, true);
-    		statusTable.fnSetColumnVis(24, true);
-    		statusTable.fnSetColumnVis(25, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
     
     
-    $("#beginTime,#endTime").on('keyup click', function () {
-    	var beginTime=$("#beginTime").val();
-    	var endTime=$("#endTime").val();
-    	if((beginTime != "" && endTime != "")){
-    		$("#queryBtn").prop("disabled",false);
-    	}else{
-    		$("#queryBtn").prop("disabled",true);
-    	}
-    });
-    
     $("#queryBtn").on('click', function () {
-    	var beginTime=$("#beginTime").val();
-    	var endTime=$("#endTime").val();
-    	var serial_no = $("#serial_no").val();
+    	var beginTime = $("#start_date").val();
+        var endTime = $("#end_date").val();
     	var order_no = $("#order_no").val();
     	var customer_id = $("#customer_id").val();
-    	var customer_order_no = $("#customer_order_no").val();
-    	var item_no = $("#item_no").val();
-    	var cargoType = $("input[type='radio'][name='cargoType']:checked").val();
-    	if((beginTime != "" && endTime != "")){
     		statusTable.fnSettings().oFeatures.bServerSide = true;
     		statusTable.fnSettings()._iDisplayStart = 0;
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
-	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType;
+	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&order_no="+order_no+"&customer_id="+customer_id;
 	    	statusTable.fnDraw(); 
 	    	/*$.get("/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 		    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType, null, function(data){
@@ -162,7 +126,6 @@ $(document).ready(function() {
 				});  
 				//statusTable.fnDraw();
 	    	});*/
-    	}
     });
     
     //获取客户的list，选中信息在下方展示其他信息
