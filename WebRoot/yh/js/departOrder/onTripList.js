@@ -213,9 +213,9 @@ $(document).ready(function() {
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 	
-    $('#endTime_filter ,#beginTime_filter ,#planBeginTime ,#planEndTime ,#orderNo_filter ,#departNo_filter,#start_filter,#end_filter').on( 'keyup', function () {
-    	
-    	var office =$("#officeSelect").val();
+	
+	var searchMassage = function(){
+		var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();
     	var end =$("#end_filter").val();
     	var customer =$("#customer_filter").val();
@@ -239,31 +239,12 @@ $(document).ready(function() {
 											+"&start="+start
 											+"&end="+end
 											+"&customer="+customer;
-    	detailTable.fnDraw();
-    });
-    $('#status_filter,#officeSelect').on( 'change', function () {
-    	
-    	var office =$("#officeSelect").val();
-    	var start =$("#start_filter").val();
-    	var end =$("#end_filter").val();
-    	var customer =$("#customer_filter").val();
-    	
-    	var orderNo = $("#orderNo_filter").val();
-    	var departNo_filter = $("#departNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
-											+"&departNo="+departNo_filter
-											+"&status="+status
-											+"&sp="+sp
-											+"&beginTime="+beginTime
-											+"&endTime="+endTime
-											+"&office="+office
-											+"&start="+start
-											+"&end="+end
-											+"&customer="+customer;
+	};
+	
+	
+	
+    $("#searchBtn").on('click',function(){
+    	searchMassage();
     	detailTable.fnDraw();
     });
 	
@@ -348,31 +329,7 @@ $(document).ready(function() {
 		console.log($('#cpnameList').is(":focus"));
 		var message = $(this).text();
 		$('#sp_filter').val(message);
-        $('#cpnameList').hide();
-        
-        var office =$("#officeSelect").val();
-    	var start =$("#start_filter").val();
-    	var end =$("#end_filter").val();
-    	var customer =$("#customer_filter").val();
-        
-        var orderNo = $("#orderNo_filter").val();
-    	var departNo_filter = $("#departNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
-    										+"&departNo="+departNo_filter
-    										+"&status="+status
-    										+"&sp="+sp
-    										+"&beginTime="+beginTime
-    										+"&endTime="+endTime
-    										+"&office="+office
-    										+"&start="+start
-    										+"&end="+end
-    										+"&customer="+customer;
-    	detailTable.fnDraw();
-        
+        $('#cpnameList').hide();       
     });
 	 //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){
@@ -396,30 +353,6 @@ $(document).ready(function() {
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-        
-        var office =$("#officeSelect").val();
-    	var start =$("#start_filter").val();
-    	var end =$("#end_filter").val();
-    	var customer =$("#customer_filter").val();
-    	
-        
-        var orderNo = $("#orderNo_filter").val();
-    	var departNo_filter = $("#departNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
-											+"&departNo="+departNo_filter
-											+"&status="+status
-											+"&sp="+sp
-											+"&beginTime="+beginTime
-											+"&endTime="+endTime
-											+"&office="+office
-											+"&start="+start
-											+"&end="+end
-											+"&customer="+customer;
-    	detailTable.fnDraw();
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customer_filter').on('blur', function(){
