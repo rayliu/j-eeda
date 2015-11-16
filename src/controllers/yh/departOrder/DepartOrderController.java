@@ -409,7 +409,7 @@ public class DepartOrderController extends Controller {
 					+ planEndTime
 					+ "'"
 					+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal() + "')" + sLimit;
+					+ currentUser.getPrincipal() + "')";
 
 			sql = "select deo.id,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
 					+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
