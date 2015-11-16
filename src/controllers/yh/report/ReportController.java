@@ -20,114 +20,139 @@ import controllers.yh.util.PrintPatterns;
 public class ReportController extends Controller {
 
 	private Logger logger = Logger.getLogger(ReportController.class);
-
+	private static String contextPath = null;
+			
 	public void index() {
 
 	}
 
-	public static String test(String test) {
-		return "test:" + test;
+	private String getContextPath() {
+		if(contextPath == null){
+			contextPath = getRequest( ).getSession().getServletContext().getRealPath("/");
+		}
+		return contextPath;
 	}
 
 	public void printCheckOrder() {
 		String order_no = getPara("order_no");
 		String fileName = "report/checkOrder.jasper";
-		String outFileName = "WebRoot/download/供应商对账单";
+		String outFileName = "download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
-		renderText(file.substring(7));
+		renderText(file.substring(file.indexOf("download")-1));
 	}
+	
 	public void printManualOrder() {
 		String order_no = getPara("order_no").trim();
 		String fileName = "report/arap_manual.jasper";
-		String outFileName = "WebRoot/download/手工收入单";
+		String outFileName = "download/手工收入单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
-		renderText(file.substring(7));
+		renderText(file.substring(file.indexOf("download")-1));
 	}
 	public void printArapMiscCost() {
 		String order_no = getPara("order_no").trim();
 		String fileName = "report/arap_misc_cost.jasper";
-		String outFileName = "WebRoot/download/手工成本单";
+		String outFileName = "download/手工成本单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
-		renderText(file.substring(7));
+		renderText(file.substring(file.indexOf("download")-1));
 	}
 	public void printCustomerOrder() {
 		String order_no = getPara("order_no").trim();
 		String fileName = "report/customer_checkOrder.jasper";
-		String outFileName = "WebRoot/download/客户对账单";
+		String outFileName = "download/客户对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
-		renderText(file.substring(7));
+		renderText(file.substring(file.indexOf("download")-1));
 	}
+	
 	public String pritCheckOrderByPay(String order_no) {
 		String fileName = "report/checkOrder.jasper";
-		String outFileName = "WebRoot/download/供应商对账单";
+		String outFileName = "download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
+		
 		String file = PrintPatterns.getInstance().print(fileName,
-				outFileName + order_no, hm);
+				outFileName, hm);
 		return file;
 	}
+	
 	public void printReimburse() {
 		String order_no = getPara("order_no");
 		String fileName = "report/reimburse.jasper";
-		String outFileName = "WebRoot/download/报销单";
+		String outFileName = "download/报销单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
+
 		String file = PrintPatterns.getInstance().print(fileName,
-				outFileName + order_no, hm);
-		renderText(file.substring(7));
+				outFileName, hm);
+		renderText(file.substring(file.indexOf("download")-1));
 	}
+	
 	public void printPayMent() {
 		String order_no = getPara("order_no");
 		ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao
 				.findFirst(
 						"select * from arap_cost_invoice_application_order where order_no = ?",
 						order_no);
-		String orderIds = "";
-		String orderNos = "";
+		
+		String checkOrderFile = "";
+		StringBuffer buffer = new StringBuffer();
+		
+	
 		List<CostApplicationOrderRel> list1 = CostApplicationOrderRel.dao
 				.find("select * from cost_application_order_rel where application_order_id = ?",
 						arapAuditInvoiceApplication.get("id"));
 		for (CostApplicationOrderRel costapplication : list1) {
-			orderIds += costapplication.get("cost_order_id") + ",";
-			orderNos += costapplication.get("order_type") + ",";
-		}
-		String checkOrderFile = "";
-		orderIds = orderIds.substring(0, orderIds.length() - 1);
-		orderNos = orderNos.substring(0, orderNos.length() - 1);
-		String[] orderNOsArr = orderNos.split(",");
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < orderNOsArr.length; i++) {
-			if ("对账单".equals(orderNOsArr[i])) {
-				List<ArapCostOrder> list = ArapCostOrder.dao
-						.find("select * FROM arap_cost_order where id in("
-								+ orderIds + ")");
-				for (ArapCostOrder arapCostOrder : list) {
-					checkOrderFile = pritCheckOrderByPay(arapCostOrder
-							.getStr("order_no"));
-					buffer.append(checkOrderFile.substring(7));
-					buffer.append(",");
-				}
+			if ("对账单".equals(costapplication.get("order_type"))) {
+				ArapCostOrder order = ArapCostOrder.dao
+						.findFirst("select * FROM arap_cost_order where id ="+ costapplication.get("cost_order_id") );
+				checkOrderFile = pritCheckOrderByPay(order.getStr("order_no"));
+				buffer.append(checkOrderFile.substring(checkOrderFile.indexOf("download")-1));
+				buffer.append(",");
 			}
+			//TODO 预付单
 		}
+		
+		
 		String fileName = "report/payment.jasper";
-		String outFileName = "WebRoot/download/付款申请单";
+		String outFileName = "download/付款申请单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
+		
 		String file = PrintPatterns.getInstance().print(fileName,
-				outFileName + order_no, hm);
-		buffer.append(file.substring(7));
+				outFileName, hm);
+		buffer.append(file.substring(file.indexOf("download")-1));
 		buffer.append(",");
 		renderText(buffer.toString());
 	}
@@ -137,7 +162,7 @@ public class ReportController extends Controller {
 		String muban = type + ".jasper";
 
 		String fileName = "report/" + muban;
-		String outFileName = "WebRoot/download/";
+		String outFileName = "download/";
 
 		if (type.contains("guoguang")) {
 			outFileName += "国光标准单";
@@ -151,6 +176,8 @@ public class ReportController extends Controller {
 
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		
 		boolean is_one = muban.contains("_one");
 		TransferOrder to = TransferOrder.dao
 				.findFirst(
@@ -168,11 +195,14 @@ public class ReportController extends Controller {
 					if (list.get(i).get("serial_no") != null) {
 						outFileName += "-" + list.get(i).get("serial_no");
 					}
-
+					
+					fileName = getContextPath() + fileName;
+					outFileName = getContextPath() + outFileName;
+					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 
-					buffer.append(file.substring(7));
+					buffer.append(file.substring(file.indexOf("download")-1));
 					buffer.append(",");
 					break;
 				} else {
@@ -181,6 +211,9 @@ public class ReportController extends Controller {
 						outFileName += "-" + list.get(i).get("serial_no");
 					}
 
+					fileName = getContextPath() + fileName;
+					outFileName = getContextPath() + outFileName;
+					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 					try {
@@ -189,7 +222,7 @@ public class ReportController extends Controller {
 						e.printStackTrace();
 					}
 
-					buffer.append(file.substring(7));
+					buffer.append(file.substring(file.indexOf("download")-1));
 					buffer.append(",");
 				}
 
@@ -204,9 +237,12 @@ public class ReportController extends Controller {
 				// hm.put("amount", toi.get("amount"));
 			}
 
+			fileName = getContextPath() + fileName;
+			outFileName = getContextPath() + outFileName;
+			
 			String file = PrintPatterns.getInstance().print(fileName,
 					outFileName, hm);
-			renderText(file.substring(7));
+			renderText(file.substring(file.indexOf("download")-1));
 		}
 
 	}
@@ -216,14 +252,17 @@ public class ReportController extends Controller {
 		String muban = type + ".jasper";
 
 		String fileName = "report/" + muban;
-		String outFileName = "WebRoot/download/";
-		outFileName += "普通签收单";
+		String outFileName = "download/普通签收单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		
+		fileName = getContextPath() + fileName;
+		outFileName = getContextPath() + outFileName + order_no;
+		
 		StringBuffer buffer = new StringBuffer();
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
-		buffer.append(file.substring(7));
+		buffer.append(file.substring(file.indexOf("download")-1));
 		buffer.append(",");
 		renderText(buffer.toString());
 
