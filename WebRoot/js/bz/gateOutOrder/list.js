@@ -19,13 +19,14 @@ $(document).ready(function() {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
         //"ajax": "/damageOrder/list",
+        "order": [[ 4, "desc" ]],
         "columns": [
             { "data": "ORDER_NO", 
                 "render": function ( data, type, full, meta ) {
                     return "<a href='/bzGateOutOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
                 }
             },
-            { "data": "STATUS"},
+            
             { "data": "CUSTOMER_NAME"},
             { "data": "PRODUCT_NO"},
             { "data": "SERIAL_NO"},
@@ -35,6 +36,7 @@ $(document).ready(function() {
                 }
             }, 
             { "data": "REMARK"}, 
+            { "data": "STATUS"},
             { "render": function ( data, type, full, meta ) {
                     if(full.STATUS != "已取消"){
                         return "<button order_id='"+full.ID+"' class='delete btn btn-danger btn-xs'>取消</button>";
