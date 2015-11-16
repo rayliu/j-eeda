@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arap_manual_cost_sub" language="groovy" pageWidth="842" pageHeight="842" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="971fd7ef-ed8b-4f93-ac48-b1747e166b6f">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="order_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     arap_misc_cost_order_item.`id` AS arap_misc_cost_order_item_id,
+     arap_misc_cost_order_item.`fin_item_id` AS arap_misc_cost_order_item_fin_item_id,
+     arap_misc_cost_order_item.`fin_item_code` AS arap_misc_cost_order_item_fin_item_code,
+     arap_misc_cost_order_item.`order_id` AS arap_misc_cost_order_item_order_id
+FROM
+     `arap_misc_cost_order_item` arap_misc_cost_order_item]]>
+	</queryString>
+	<field name="arap_misc_cost_order_item_id" class="java.lang.Long"/>
+	<field name="arap_misc_cost_order_item_fin_item_id" class="java.lang.Long"/>
+	<field name="arap_misc_cost_order_item_fin_item_code" class="java.lang.String"/>
+	<field name="arap_misc_cost_order_item_order_id" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement style="table_TD" x="10" y="10" width="190" height="20" uuid="9e58c768-9c1f-4528-b708-32b9953eba59"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SimSun" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[委托单号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="200" y="10" width="190" height="20" uuid="e1fec12e-fdad-4652-8530-8043c50b47d7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SimSun" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[费用描述]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="389" y="10" width="190" height="20" uuid="79d2d2dc-5391-45e6-9575-45f21c887c24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SimSun" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[费用条目]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="579" y="10" width="190" height="20" uuid="78a29ce3-d7af-498a-80a1-ff0e794b0468"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SimSun" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[金额]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="57" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="42" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

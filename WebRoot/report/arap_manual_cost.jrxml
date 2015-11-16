@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="arap_manual_cost" language="groovy" pageWidth="842" pageHeight="842" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8cc89c41-5a49-4883-b02f-4294a7e385ac">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="company_name" class="java.lang.String">
+		<defaultValueExpression><![CDATA['易达TMS']]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/Users/a13570610691/workspace/j_eeda1/report/"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     arap_misc_cost_order.`id` AS arap_misc_cost_order_id,
+     arap_misc_cost_order.`order_no` AS arap_misc_cost_order_order_no,
+     arap_misc_cost_order.`type` AS arap_misc_cost_order_type,
+     arap_misc_cost_order.`status` AS arap_misc_cost_order_status
+FROM
+     `arap_misc_cost_order` arap_misc_cost_order]]>
+	</queryString>
+	<field name="arap_misc_cost_order_id" class="java.lang.Long"/>
+	<field name="arap_misc_cost_order_order_no" class="java.lang.String"/>
+	<field name="arap_misc_cost_order_type" class="java.lang.String"/>
+	<field name="arap_misc_cost_order_status" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="80" splitType="Stretch">
+			<staticText>
+				<reportElement x="332" y="22" width="127" height="35" uuid="6370ee04-b1d3-43b8-b76e-647912f426f5"/>
+				<textElement>
+					<font fontName="SimHei" size="24"/>
+				</textElement>
+				<text><![CDATA[手工成本单]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="619" y="22" width="70" height="17" uuid="ba230a6d-ec6a-41cc-8eb3-1ada7bbf8fa9"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="SimSun" size="11" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[No：]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="689" y="55" width="111" height="17" uuid="5dda82c5-3057-459e-a90c-9ae33472c43e"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SimSun" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement x="619" y="38" width="70" height="17" uuid="a7752732-3cbd-4866-9f00-93344257c96c"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="SimSun" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[打印日期：]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement x="689" y="38" width="111" height="17" uuid="14f5d05a-7c2b-4630-a3fe-6db6791016c3"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="SimSun" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[java.util.Calendar.getInstance().getTime()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="689" y="22" width="133" height="17" uuid="e689a928-247f-4f8c-862e-6dd7dedad00b"/>
+				<textElement>
+					<font fontName="SimSun" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{arap_misc_cost_order_order_no}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="619" y="55" width="70" height="17" uuid="a47628e5-15a7-45b8-9cd6-01ddf3943047"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="SimSun" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[页  次：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="19" width="100" height="20" uuid="acea2eb8-3f48-494d-a9a7-1a4b6a3ae5b9"/>
+				<textFieldExpression><![CDATA[$P{company_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="800" height="125" uuid="2c05280b-d182-428c-b0e1-660bea93a7f0"/>
+				<subreportParameter name="order_id">
+					<subreportParameterExpression><![CDATA[$F{arap_misc_cost_order_id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "arap_manual_cost_sub.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
