@@ -1086,32 +1086,43 @@ public class CostCheckOrderController extends Controller {
     	String condition = "";
     	if(orderNo != null || sp_id2 != null || serial_no != null || no != null || beginTime != null
     			|| endTime != null || type != null || status != null){
-    		String time ="";
-			if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
-				time = "1970-01-01";
-			}
-    		if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1970-01-01";
-			}
-    		
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "2037-12-31";
-			}
 			if(ispage!=null){
 	    		condition = " where ifnull(serial_no,'') like '%" + serial_no + "%' "
 						+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'";
 						
 	    	}else{
-    		condition = " where ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
-    					+ " and order_no like '%" + no + "%' "
-    					+ " and business_type like '%" + type + "%' "
-    					+ " and status like '%" + status + "%' "
-    					+ " and ifnull(serial_no,'') like '%" + serial_no + "%' "
-    					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
-    					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+    		condition = " where 1=1 ";
     		if(!"".equals(sp_id2)&&sp_id2 != null){
     			condition += " and sp_id = '" + sp_id2 + "' ";
     		}
+    		if(!"".equals(orderNo)&&orderNo != null){
+    			condition += " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' ";
+    		}
+    		if(!"".equals(no)&&no != null){
+    			condition += " and order_no like '%" + no + "%' ";
+    		}
+    		if(!"".equals(type)&&type != null){
+    			condition += " and business_type like '%" + type + "%' ";
+    		}
+    		if(!"".equals(status)&&status != null){
+    			condition += " and status like '%" + status + "%' ";
+    		}
+    		if(!"".equals(serial_no)&&serial_no != null){
+    			condition += " and ifnull(serial_no,'') like '%" + serial_no + "%' ";
+    		}
+    		if(!"".equals(booking_id)&&booking_id != null){
+    			condition += " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'";
+    		}
+    		if ((beginTime != null && !"".equals(beginTime))||(endTime != null && !"".equals(endTime))) {
+        		if (beginTime == null || "".equals(beginTime)) {
+    				beginTime = "1970-01-01";
+    			}
+        		
+    			if (endTime == null || "".equals(endTime)) {
+    				endTime = "2037-12-31";
+    			}
+    			condition += " and ifnull(planning_time,'1970-01-01') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+			}
 	    	}
     	}
         sqlTotal = "select count(1) total from (" + sql + condition + ") as B";  
