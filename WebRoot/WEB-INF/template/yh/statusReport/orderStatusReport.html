@@ -39,7 +39,7 @@
                                 <select id="delivery_status" name="delivery_status" class="form-control search-control status_filter" style="display: none;">
                                     <option value=""></option>
                                     <option value="NEW">新建配送</option>
-                                    <option value="ALL">配送在途</option>
+                                    <option value="ONTRIP">配送在途</option>
                                     <option value="DELIVERY">配送到达</option>
                                     <option value="RETURN">回单签收</option>
                                 </select>
@@ -106,7 +106,8 @@
 	                        <div class="form-group">
 	                            <div class="controls">
 	                              <button id="queryBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查询</button>
-	                              <span>客户名称为必选</span><div align="center"><span class="badge" style="margin-top:12px;"> 货品数量汇总: <span id="total_amount">0</span></span></div>
+	                              <span>客户名称为必选</span>
+	                              <div class="badge" style="float: right"> 货品数量汇总: <span id="total_amount">0</span></div>
 	                            </div>
 	                        </div>
 	                    </div>    

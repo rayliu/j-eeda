@@ -213,13 +213,13 @@ public class StatusReportColler extends Controller{
                     + " )"
                     + " END )) total_amount "
 					+ " from transfer_order tor"
-//					+ " left join party p1 on p1.id = tor.customer_id"
-//					+ " left join contact c1 on c1.id = p1.contact_id"
-//					+ " left join party p2 on p2.id = tor.sp_id"
-//					+ " left join contact c2 on c2.id = p2.contact_id"
-//					+ " left join location l1 on tor.route_from = l1.code "
-//					+ " left join location l2 on tor.route_to = l2.code"
-//					+ " left join office o on o.id = tor.office_id"
+					+ " left join party p1 on p1.id = tor.customer_id"
+					+ " left join contact c1 on c1.id = p1.contact_id"
+					+ " left join party p2 on p2.id = tor.sp_id"
+					+ " left join contact c2 on c2.id = p2.contact_id"
+					+ " left join location l1 on tor.route_from = l1.code "
+					+ " left join location l2 on tor.route_to = l2.code"
+					+ " left join office o on o.id = tor.office_id"
 					+ " where  tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
@@ -303,13 +303,8 @@ public class StatusReportColler extends Controller{
 					+ " FROM depart_order dor "
 					+ " LEFT JOIN depart_transfer dt on dt.depart_id = dor.id "
 					+ " WHERE dt.order_id = tor.id ) departure_time,"
-					//+ " dor.departure_time,"
 					+ " l1.name route_from,l2.name route_to,"
 					+ " tor.status order_status ,"
-//					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
-//					+ " when tor.depart_assign_status = 'ALL' and (dor.status = '已入库' or dor.status = '已收货') then '到达签收' "
-//					+ " when tor.depart_assign_status = 'ALL' and dor.status = '已发车' then '运输在途' "
-//					+ " when tor.depart_assign_status = 'PARTIAL' and dor.status = '已发车' then '部分在途' else '新建运输' end) as order_status, "
 					+" (SELECT CASE"
                     + " WHEN tor.cargo_nature ='ATM' THEN ("
                     + " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
@@ -321,11 +316,6 @@ public class StatusReportColler extends Controller{
                     + " )"
                     + " END ) amount "
 					+ " from transfer_order tor"
-//					+ " left join depart_transfer tr on tr.order_id = tor.id "
-//					+ " left join depart_order dor on dor.id = tr.depart_id"
-//					+ " left join delivery_order_item doi on doi.transfer_order_id = tor.id"
-//					+ " left join delivery_order deo on deo.id = doi.delivery_id"
-//					+ " left join return_order ror on ror.transfer_order_id = tor.id"
 					+ " left join party p1 on p1.id = tor.customer_id"
 					+ " left join contact c1 on c1.id = p1.contact_id"
 					+ " left join party p2 on p2.id = tor.sp_id"
@@ -341,10 +331,7 @@ public class StatusReportColler extends Controller{
 			orderMap.put("sEcho", pageIndex);
 			orderMap.put("iTotalRecords", rec.getLong("total"));
 			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-			//orderMap.put("iTotalRecords", rec.size());
-			//orderMap.put("iTotalDisplayRecords", orders.size());
 			orderMap.put("aaData", orders);
-			orderMap.put("total_amount", total_amount);
 		}else if("deliveryOrder".equals(orderNoType) && "deliveryStatus".equals(orderStatusType)){
 			// 获取总条数
 			String totalSql = "select distinct count(0) total,"
@@ -371,7 +358,7 @@ public class StatusReportColler extends Controller{
 			//有外发日期
 			if(!"".equals(setOutTime) && setOutTime != null){
 				totalSql = totalSql + " and and (dom.status != '新建' and to_days(dom.create_stamp) = to_days('" + setOutTime + "'))";
-				limi = limi + " and and (dom.status != '新建' and to_days(dom.create_stamp) = to_days('" + setOutTime + "'))";
+				limi = limi + " and (dom.status != '新建' and to_days(dom.create_stamp) = to_days('" + setOutTime + "'))";
 			}
 			
 			//计划时间段
@@ -410,19 +397,19 @@ public class StatusReportColler extends Controller{
 			}
 			
 			//配送单状态
-			if(!"".equals(transferOrderStatus) && transferOrderStatus != null){
-				if("NEW".equals(transferOrderStatus)){
+			if(!"".equals(deliveryStatus) && deliveryStatus != null){
+				if("NEW".equals(deliveryStatus)){
 					totalSql = totalSql + " and deo.status = '新建' ";
 					limi = limi + " and deo.status = '新建' ";
-				}else if("ALL".equals(transferOrderStatus)){
+				}else if("ONTRIP".equals(deliveryStatus)){
 					totalSql = totalSql + " and deo.status = '已发车' ";
 					limi = limi + " and deo.status = '已发车' ";
-				}else if("DELIVERY".equals(transferOrderStatus)){
-					totalSql = totalSql + " and deo.status != '已签收' ";
-					limi = limi + " and deo.status != '已签收' ";
-				}else if("RETURN".equals(transferOrderStatus)){
-					totalSql = totalSql + " and ror.transaction_status != '新建' ";
-					limi = limi + " and ror.transaction_status != '新建' ";
+				}else if("DELIVERY".equals(deliveryStatus)){
+					totalSql = totalSql + " and ror.id IS NOT NULL AND ror.transaction_status = '新建' ";
+					limi = limi + " and ror.id IS NOT NULL AND ror.transaction_status = '新建' ";
+				}else if("RETURN".equals(deliveryStatus)){
+					totalSql = totalSql + " and ror.id IS NOT NULL AND ror.transaction_status != '新建'  ";
+					limi = limi + " and ror.id IS NOT NULL AND ror.transaction_status != '新建' ";
 				}
 			}
 			
@@ -440,7 +427,7 @@ public class StatusReportColler extends Controller{
 					+ " LEFT JOIN delivery_order dor1 on dor1.id = doi.delivery_id WHERE "
 					+ " dor1.id = deo.id GROUP BY deo.id ) AS planning_time,"
 					+ " l1.name route_from,l2.name route_to,"
-					+ " (select create_stamp from delivery_order_milestone where delivery_id = deo.id and status = '已发车') as departure_time,"
+					+ " (select GROUP_CONCAT(cast(create_stamp  as char) SEPARATOR '</br>') from delivery_order_milestone where delivery_id = deo.id and status = '已发车') as departure_time,"
 					+ " (select case when ror.id is not null and ror.transaction_status != '新建' then '回单签收' "
 					+ " when ror.id is not null and ror.transaction_status = '新建' then '配送到达'"
 					+ " when deo.status = '已发车' then '配送在途' "
@@ -475,8 +462,6 @@ public class StatusReportColler extends Controller{
 			// 获取当前页的数据
 			List<Record> orders =Db.find(sql  + limi +  "order by tor.planning_time desc "+sLimit);
 			orderMap.put("sEcho", pageIndex);
-			//orderMap.put("iTotalRecords", rec.getLong("total"));
-			//orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 			orderMap.put("iTotalRecords", rec.getLong("total"));
 			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 			orderMap.put("aaData", orders);
