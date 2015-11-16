@@ -1106,10 +1106,12 @@ public class CostCheckOrderController extends Controller {
     					+ " and order_no like '%" + no + "%' "
     					+ " and business_type like '%" + type + "%' "
     					+ " and status like '%" + status + "%' "
-    					+ " and sp_id = '" + sp_id2 + "' "
     					+ " and ifnull(serial_no,'') like '%" + serial_no + "%' "
     					+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
     					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+    		if(!"".equals(sp_id2)&&sp_id2 != null){
+    			condition += " and sp_id = '" + sp_id2 + "' ";
+    		}
 	    	}
     	}
         sqlTotal = "select count(1) total from (" + sql + condition + ") as B";  
