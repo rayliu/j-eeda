@@ -148,7 +148,9 @@
 										<input type="text" class="form-control search-control applicationOrderNo" id="applicationOrderNo" value=""></div>
 									<div class="form-group">      
                                          	<%include("/yh/component/form/dateInputField.html", {id:'begin_date', label:'创建开始时间', value:''}){} %>
-                                         
+									</div>
+									<div class="form-group">      
+                                         	<%include("/yh/component/form/dateInputField.html", {id:'confirmBegin_date', label:'创建开始时间', value:''}){} %>
 									</div>
 								</div>
 								<div class="col-lg-4">
@@ -162,9 +164,10 @@
 										</select>
 									</div>
 									<div class="form-group">
-										
                                             <%include("/yh/component/form/dateInputField.html", {id:'end_date', label:'创建结束时间', value:''}){} %>
-                                        
+									</div>
+									<div class="form-group">
+                                            <%include("/yh/component/form/dateInputField.html", {id:'confirmEnd_date', label:'创建结束时间', value:''}){} %>
 									</div>
 								</div>
 								<!-- end of col-lg-6-->

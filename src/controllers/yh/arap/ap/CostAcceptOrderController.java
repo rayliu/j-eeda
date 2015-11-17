@@ -15,6 +15,7 @@ import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 import models.yh.arap.inoutorder.ArapInOutMiscOrder;
 import models.yh.carmanage.CarSummaryOrder;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -263,6 +264,8 @@ public class CostAcceptOrderController extends Controller {
         String applicationOrderNo = getPara("applicationOrderNo")!=null?getPara("applicationOrderNo"):"";
         String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
         String status = getPara("status")!=null?getPara("status"):"";
+        String confirmBeginTime = getPara("confirmBeginTime")!=null?getPara("confirmBeginTime"):"";
+        String confirmEndTime = getPara("confirmEndTime")!=null?getPara("confirmEndTime"):"";
 		
 		String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
@@ -283,24 +286,42 @@ public class CostAcceptOrderController extends Controller {
         	status  = "'已付款'";
         }
         
-        String condition = "";
-        if(spName != null || status != null || beginTime != null || endTime != null|| orderNo != null)
-        {
-        	if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1970-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "2037-12-31";
-			}
-		condition = " where "
-					+ " ifnull(cname,'') like '%" + spName + "%' "
-					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
-				    + " and ifnull(application_order_no,'') like '%" + applicationOrderNo + "%' "
-				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
+        String conditions = " where 1=1 ";
+        if (StringUtils.isNotEmpty(spName)){
+        	conditions+=" and ifnull(cname,'') like '%" + spName + "%' ";
+        }
+        if (StringUtils.isNotEmpty(beginTime)){
+        	beginTime = " and create_time between'"+beginTime+"'";
+        }else{
+        	beginTime =" and create_time between '1970-1-1'";
+        }
+        if (StringUtils.isNotEmpty(endTime)){
+        	endTime =" and '"+endTime+" 23:59:59'";
+        }else{
+        	endTime =" and '2037-12-31'";
+        }
+        conditions+=beginTime+endTime;
+        
+        if (StringUtils.isNotEmpty(confirmBeginTime)){
+        	confirmBeginTime = "and confirm_time between'"+confirmBeginTime+"'";
+        }else{
+        	confirmBeginTime =" and confirm_time between '0000-00-00'";
+        }
+        if (StringUtils.isNotEmpty(confirmEndTime)){
+        	confirmEndTime =" and '"+confirmEndTime+" 23:59:59'";
+        }else{
+        	confirmEndTime =" and '2037-12-31'";
+        }
+        conditions+=confirmBeginTime+confirmEndTime;
+        if (StringUtils.isNotEmpty(applicationOrderNo)){
+        	conditions+=" and ifnull(application_order_no,'') like '%" + applicationOrderNo + "%' ";
+        }
+        if (StringUtils.isNotEmpty(orderNo)){
+        	conditions+=" and ifnull(order_no,'') like '%" + orderNo + "%' ";
         }
         
         String sql = "select * from(select aci.id, aci.order_no application_order_no,'申请单' as order_type,"
-        		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time, aci.remark,"
+        		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time,aci.confirm_stamp confirm_time ,aci.remark,"
                 + " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount,"
                 + " GROUP_CONCAT( "
                 + " case "
@@ -325,7 +346,7 @@ public class CostAcceptOrderController extends Controller {
         		+ ") A";
         
         
-        Record rec = Db.findFirst("select count(*) total from (" + sql + condition + " ) B");
+        Record rec = Db.findFirst("select count(*) total from (" + sql + conditions + " ) B");
         logger.debug("total records:" + rec.getLong("total"));
 
         String orderByStr = " order by A.create_time desc ";
@@ -335,7 +356,7 @@ public class CostAcceptOrderController extends Controller {
             }
         }
         
-        List<Record> BillingOrders = Db.find(sql+ condition + orderByStr +sLimit);
+        List<Record> BillingOrders = Db.find(sql+ conditions + orderByStr +sLimit);
 
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

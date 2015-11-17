@@ -663,10 +663,12 @@ $(document).ready(function() {
         var sp = $("#sp_id_input").val();
         var beginTime = $("#begin_date").val();
         var endTime = $("#end_date").val();
+        var confirmBeginTime = $("#confirmBegin_date").val();
+        var confirmEndTime = $("#confirmEnd_date").val();
 
         applicationTab.fnSettings().oFeatures.bServerSide = true;
         applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status
-            +"&beginTime="+beginTime+"&endTime="+endTime+"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo+"&sp="+sp;
+            +"&beginTime="+beginTime+"&endTime="+endTime+"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime+"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo+"&sp="+sp;
 
         applicationTab.fnDraw(); 
 
