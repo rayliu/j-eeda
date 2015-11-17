@@ -57,7 +57,6 @@ $(document).ready(function() {
 	//datatable, 动态处理
     var datatable = $('#eeda-table').dataTable({
     	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
-    	"bSort": false, // 不要排序
     	"bFilter": false, //不需要默认的搜索框
     	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -212,8 +211,48 @@ $(document).ready(function() {
     	$(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
-    
-    $("#routeTo_filter ,#endTime_filter ,#beginTime_filter ,#routeFrom_filter ,#customer_filter ,#address_filter ,#status_filter ,#orderNo_filter").on( 'keyup click', function () {    	 	
+    $("#searchBtn").click(function(){
+        saveConditions();
+        findData();
+    });
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+        saveConditions();
+        findData();
+    });
+    var saveConditions=function(){
+        var conditions={
+            order_no:$("#orderNo_filter").val(),
+            status:$("#status_filter").val(),
+    		address:$("#address_filter").val(),
+    		customer:$("#customer_filter").val(),
+    		beginTime:$("#beginTime_filter").val(),
+    		endTime:$("#endTime_filter").val(),
+    		routeFrom:$("#routeFrom_filter").val(),
+    		routeTo:$("#routeTo_filter").val()
+        }
+        if(!!window.localStorage){//查询条件处理
+            localStorage.setItem("query_depart_order_list", JSON.stringify(conditions));
+        }
+    };
+    var loadConditions=function(){
+        if(!!window.localStorage){//查询条件处理
+            var query_to = localStorage.getItem("query_depart_order_list");
+            if(!query_to)
+                return;
+
+            var conditions = JSON.parse(localStorage.getItem("query_depart_order_list"));
+            $("#orderNo_filter").val(conditions.order_no);
+            $("#status_filter").val(conditions.status);
+            $("#address_filter").val(conditions.address);
+            $("#customer_filter").val(conditions.customer);
+            $("#beginTime_filter").val(conditions.beginTime);
+            $("#endTime_filter").val(conditions.endTime);
+            $("#routeFrom_filter").val(conditions.routeFrom);
+            $("#routeTo_filter").val(conditions.routeTo);
+        }
+    };
+    var findData = function(){    	 	
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -224,8 +263,9 @@ $(document).ready(function() {
     	var routeTo = $("#routeTo_filter").val();
     	datatable.fnSettings().sAjaxSource = "/departOrder/createTransferOrderList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
     	datatable.fnDraw();
-    	
-      });
+    	saveConditions();
+      };
+      loadConditions();
     
     //选取运输单
     $("#eeda-table").on('click', '.checkedOrUnchecked', function(e){

@@ -616,6 +616,9 @@ public class DepartOrderController extends Controller {
 		String routeTo = getPara("routeTo");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
 		Record rec = null;
 		String sLimit = "";
 		String sql = "";
@@ -639,7 +642,7 @@ public class DepartOrderController extends Controller {
 				&& customer == null && routeFrom == null && routeTo == null
 				&& beginTime == null && endTime == null) {			
 			sqlTotal = "select count(1) total "+ fromSql;
-			sql = "select * " + fromSql+ " order by planning_time desc, order_no" + sLimit;
+			sql = "select * " + fromSql+"";
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -671,13 +674,15 @@ public class DepartOrderController extends Controller {
 					+ " and vcd.status!='手动删除' "
 					+ " and vcd.is_direct_deliver != 1"
 					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
-					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')"
-					+ " order by planning_time desc, order_no"
-					+ sLimit;
+					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
 		}
+		String orderByStr = " order by planning_time desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by "+colName+" "+sortBy;
+        }
 		rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
-		List<Record> transferOrders = Db.find(sql);
+		List<Record> transferOrders = Db.find(sql + orderByStr + sLimit);
 
 		Map transferOrderListMap = new HashMap();
 		transferOrderListMap.put("sEcho", pageIndex);

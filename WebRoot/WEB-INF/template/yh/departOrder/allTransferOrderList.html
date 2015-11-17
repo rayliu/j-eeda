@@ -63,7 +63,7 @@
 
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                           <form style="margin: 0 15px;" role="form">
+                           <form style="margin: 0 15px;" role="form" id="searchForm">
                             <div class="row search_panel">
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -117,8 +117,11 @@
                                         <input type="text" id="status_filter" class="form-control search-control status_filter">
                                     </div>
                                 </div>
+                                
                                 <!-- end of col-lg-6-->
                             </div><!-- end of row-->    
+                            <button id="searchBtn" class="btn btn-primary" type="button">查询</button>
+                            <button id="resetBtn" class="btn btn-default" type="button">清空条件</button>
                             </form>
                             <div class="table-responsive">
                             	<br>
