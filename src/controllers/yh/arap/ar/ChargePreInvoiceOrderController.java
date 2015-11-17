@@ -907,7 +907,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 		
 		if (!"".equals(application_id) && application_id != null) {
 			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(application_id);
-			arapAuditInvoiceApplication.set("create_stamp", new Date());
 			arapAuditInvoiceApplication.set("last_modified_by",LoginUserController.getLoginUserId(this));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
 			arapAuditInvoiceApplication.set("payee_name", payee_name);
@@ -940,20 +939,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 				chargeApplicationOrderRel.set("receive_amount", value);
 				chargeApplicationOrderRel.update();
 				
-				
-//				if(order_type.equals("应收对账单")){
-//					ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(id);
-//					arapChargeOrder.set("status", "收款申请中").update();
-//				}else if(order_type.equals("手工收入单")){
-//					ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
-//					arapMiscChargeOrder.set("status", "收款申请中").update();
-//				}else if(order_type.equals("开票记录单")){
-//					ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(id);
-//					arapChargeInvoice.set("status", "收款申请中").update();
-//				}else if(order_type.equals("往来票据单")){
-//					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
-//					arapInOutMiscOrder.set("charge_status", "收款申请中").update();
-//				}
 			}
 		} else {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
