@@ -181,6 +181,10 @@ $(document).ready(function() {
         ]      
     });	
     $("#costConfirem-table").on('click', '.finItemdel', function(e){
+    	if($("#costCheckOrderStatus").html()!="新建"){
+    		$.scojs_message('只能撤销新建单据', $.scojs_message.TYPE_ERROR);
+    		return false;
+    	}
     	var changeamount=$("#debitAmount").html();
     	var totalamount=$("#total_amount").val();
     	var delIds = [$("#orderIds").val().split(",")];
