@@ -29,18 +29,52 @@ $(document).ready(function() {
             {"mDataProp":"PIECES", "sWidth":"60px","sClass": "pieces"},
             {"mDataProp":"WEIGHT", "sWidth":"60px"},
             {"mDataProp":"VOLUME", "sWidth":"60px"},
-            {"mDataProp":"YZ_AMOUNT", "sWidth":"70px"},
-            {"mDataProp":"MAOLILV", "sWidth":"70px"},
-            {"mDataProp":"YF_PICKUP", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"YF_DEPART", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"DELIVERY", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"YF_INSURANCE", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"YZ_AMOUNT", "sWidth":"70px",
+            		"fnRender": function(obj) {
+            			return "<p align='right'>"+parseFloat(obj.aData.YZ_AMOUNT).toFixed(2)+"</p>";
+            	}
+            },
+            {"mDataProp":"MAOLILV", "sWidth":"70px",
+        		"fnRender": function(obj) {
+        			return obj.aData.MAOLILV*100+"%";
+           }},
+            {"mDataProp":"YF_PICKUP", "sWidth":"70px", "bVisible":false,
+            		"fnRender": function(obj) {
+            			return "<p align='right'>"+parseFloat(obj.aData.YF_PICKUP).toFixed(2)+"</p>";
+               }
+            },
+            {"mDataProp":"YF_DEPART", "sWidth":"70px", "bVisible":false,
+            		"fnRender": function(obj) {
+            			return "<p align='right'>"+parseFloat(obj.aData.YF_DEPART).toFixed(2)+"</p>";
+            	}
+            },
+            {"mDataProp":"DELIVERY", "sWidth":"70px", "bVisible":false,
+                	"fnRender": function(obj) {
+                		return "<p align='right'>"+parseFloat(obj.aData.DELIVERY).toFixed(2)+"</p>";
+                }
+            },
+            {"mDataProp":"YF_INSURANCE", "sWidth":"70px", "bVisible":false,
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.YF_INSURANCE).toFixed(2)+"</p>";
+            }},
             {"mDataProp":null, "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"YF_SUM", "sWidth":"70px",},
-            {"mDataProp":"YS_INSURANCE", "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"RETURN_AMOUNT", "sWidth":"70px", "bVisible":false},
+            {"mDataProp":"YF_SUM", "sWidth":"70px",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.YF_SUM).toFixed(2)+"</p>";
+            }},
+            {"mDataProp":"YS_INSURANCE", "sWidth":"70px", "bVisible":false,
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.YS_INSURANCE).toFixed(2)+"</p>";
+            }},
+            {"mDataProp":"RETURN_AMOUNT", "sWidth":"70px", "bVisible":false,
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.RETURN_AMOUNT).toFixed(2)+"</p>";
+            }},
             {"mDataProp":null, "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"YS_SUM", "sWidth":"80px"}
+            {"mDataProp":"YS_SUM", "sWidth":"80px",
+            	"fnRender": function(obj) {
+            		return "<p align='right'>"+parseFloat(obj.aData.YS_SUM).toFixed(2)+"</p>";
+            }}
         ]
     });	
     

@@ -585,13 +585,27 @@ public class StatusReportColler extends Controller{
 					if (endTime == null || "".equals(endTime)) {
 						endTime = "2037-12-31";
 					}
-			    		condition = " where ifnull(cid,'') ="+ customerId + " "
-			    					+ " and transferno like '%" + orderNo + "%' "
-			    					+ " and ifnull(planning_time,'"+time+"') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+					condition =" where 1=1";
+					if(!"".equals(customerId)){
+						condition +=" and ifnull(cid,'') ="+ customerId + " ";
+					}
+					if(!"".equals(orderNo)){
+						condition +=" and ifnull(transferno,'') like '%" + orderNo + "%' ";
+					}
+					if ((beginTime != null && !"".equals(beginTime))||(endTime != null && !"".equals(endTime))) {
+		        		if (beginTime == null || "".equals(beginTime)) {
+		    				beginTime = "1970-01-01";
+		    			}
+		        		
+		    			if (endTime == null || "".equals(endTime)) {
+		    				endTime = "2037-12-31";
+		    			}
+		    			condition += " and ifnull(planning_time,'1970-01-01') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+					}
 				}
 				
 				// 获取总条数
-				Record rec = Db.findFirst(totalSql+ condition);
+				Record rec = Db.findFirst(totalSql + condition);
 				logger.debug("total records:" + rec.getLong("total"));
 				// 获取当前页的数据
 				List<Record> orders =Db.find(sql+ condition +" order by planning_time desc" + sLimit);
