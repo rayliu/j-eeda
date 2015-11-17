@@ -321,9 +321,6 @@ public class CostPreInvoiceOrderController extends Controller {
 		
 		if (!"".equals(application_id) && application_id != null) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
-			//arapAuditInvoiceApplication.set("create_by", LoginUserController.getLoginUserId(this));
-			arapAuditInvoiceApplication.set("create_stamp", new Date());
-			//arapAuditInvoiceApplication.set("remark", getPara("remark"));
 			arapAuditInvoiceApplication.set("last_modified_by",LoginUserController.getLoginUserId(this));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
 			arapAuditInvoiceApplication.set("payee_name", payee_name);
