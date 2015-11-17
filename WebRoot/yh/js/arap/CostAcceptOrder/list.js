@@ -132,9 +132,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "order": [
-            [1, 'desc']
-        ],
+        
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
 			$(nRow).attr({order_type: aData.ORDER_TYPE}); 

@@ -264,9 +264,9 @@ public class CostAcceptOrderController extends Controller {
         String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
         String status = getPara("status")!=null?getPara("status"):"";
 		
-//		String sortColIndex = getPara("iSortCol_0");
-//		String sortBy = getPara("sSortDir_0");
-//		String colName = getPara("mDataProp_"+sortColIndex);
+		String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
         
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
@@ -329,9 +329,12 @@ public class CostAcceptOrderController extends Controller {
         logger.debug("total records:" + rec.getLong("total"));
 
         String orderByStr = " order by A.create_time desc ";
-//        if(colName.length()>0){
-//        	orderByStr = " order by A."+colName+" "+sortBy;
-//        }
+        if(colName!=null){
+        	if(colName.length()>0){
+            	orderByStr = " order by A."+colName+" "+sortBy;
+            }
+        }
+        
         List<Record> BillingOrders = Db.find(sql+ condition + orderByStr +sLimit);
 
         Map BillingOrderListMap = new HashMap();
