@@ -1,5 +1,5 @@
 ﻿$(document).ready(function() {
-	document.title = '付款申请复核单| '+document.title;
+	document.title = '付款申请单 | '+document.title;
 
     $('#menu_finance').addClass('active').find('ul').addClass('in');
     
@@ -289,21 +289,44 @@
 	}else if($('#status').val()=='已付款'){
 		$("#printBtn").attr('disabled',false);
 	}
-//	
-//	//根据供应商信息回显账户银行等
-//	if($('#application_id').val()==''){
-//		var payee_id = $('#payee_id').val();
-//		if(payee_id!==''&&payee_id!=null){
-//			$.get('/costPreInvoiceOrder/getSpMassage',{payee_id:payee_id},function(data){
-//				if(data.ID>0){
-//					$('#deposit_bank').val(data.BANK_NAME);
-//					$('#bank_no').val(data.BANK_NO);
-//					$('#account_name').val(data.RECEIVER);
-//				}
-//			});
-//		}
-//	}
-//	
+
+	//开票类型控制
+	 var clean = function(){
+		$('#billing_unit').val('');
+ 		$('#payee_unit').val('');
+ 		$('#payee_name').val('');
+ 		$('#account_name').val('');
+ 		$('#payee_name').attr('disabled',false);
+ 		$('#account_name').attr('disabled',false);
+	 };
+	 
+	 $('#invoice_type').on('change',function(){
+		var value = $('#invoice_type').val();
+    	if(value=='wbill'){
+    		clean();
+    		$('#payment_method').val('cash');
+    		$('#account_name').attr('disabled',true);
+    	}else if(value=='mbill'){
+    		clean();
+    		$('#payment_method').val('transfers');
+   		 	payment();
+    		$('#account_name').val($('#payee_filter').val());
+    		$('#payee_unit').val($('#payee_filter').val());
+    		$('#payee_name').attr('disabled',true);
+    	}else if(value=='dbill'){
+    		clean();
+    		$('#payee_unit').val($('#account_name').val());
+    		$('#payee_name').attr('disabled',true);
+    	}
+	 });
+	 
+	 $('#billing_unit').on('input',function(){
+		 $('#payment_method').val('transfers');
+		 payment();
+		 $('#payee_unit').val($('#billing_unit').val());
+		 $('#account_name').val($('#billing_unit').val());
+	 });
+
 	
 
 
@@ -312,7 +335,11 @@
     $('#payment_method').val($('#payment_method_show').val());
     
     //开票类型
-    $('#invoice_type').val($('#invoice_type_show').val());
+    if($('#invoice_type_show').val()=='')
+    	$('#invoice_type').val('wbill');
+    else{
+    	$('#invoice_type').val($('#invoice_type_show').val());
+    }
     
     ////付款方式（付款确认）回显控制
     $('#pay_type').val($('#pay_type_show').val());

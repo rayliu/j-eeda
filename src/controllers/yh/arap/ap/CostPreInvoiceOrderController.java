@@ -1135,6 +1135,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			setAttr("ids", ids);
 			
 			String payee_id = "";
+			String payee_filter = "";
 			String payee_name = "";
 			String deposit_bank = "";
 			String bank_no = "";
@@ -1177,10 +1178,12 @@ public class CostPreInvoiceOrderController extends Controller {
 			
 			if(!payee_id.equals("")){
 				Contact contact = Contact.dao.findById(payee_id);
+				payee_filter = contact.getStr("company_name");
 				deposit_bank = contact.getStr("bank_name");
 				bank_no = contact.getStr("bank_no");
 				account_name = contact.getStr("receiver");
 			}
+			setAttr("payee_filter", payee_filter);
 			setAttr("deposit_bank", deposit_bank);
 			setAttr("bank_no", bank_no);
 			setAttr("account_name", account_name);
