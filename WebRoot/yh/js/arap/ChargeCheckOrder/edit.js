@@ -225,7 +225,8 @@ $(document).ready(function() {
                     return "未收款";
                 }
             },
-            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"100px"},                        
+            {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"100px"}, 
+            
             {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px",
                 "fnRender": function(obj) {
                     // return "<input style='width: 100%;' type='text' name='change_amount' value='0'/>";
@@ -254,14 +255,15 @@ $(document).ready(function() {
                     }
                 }
             },
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"},     
+            {"mDataProp":"PLANNING_TIME", "sWidth":"120px"},
+            {"mDataProp":"SERIAL_NO", "sWidth":"120px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"}, 
             {"mDataProp":"ROUTE_TO", "sWidth":"100px"},  
             {"mDataProp":"CNAME", "sWidth":"200px"},
             {"mDataProp":"SP", "sWidth":"200px"},
             {"mDataProp":null, "sWidth":"150px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
-            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},
-            	
+            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},	
             {"mDataProp":"TRANSACTION_STATUS", "sWidth": "120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new'){
