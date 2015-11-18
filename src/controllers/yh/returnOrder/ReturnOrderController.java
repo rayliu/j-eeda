@@ -239,7 +239,7 @@ public class ReturnOrderController extends Controller {
 					+ " and ifnull(sign_no ,'')  like'%" + sign_no + "%'"
 					+ " and ifnull(cname,'') like '%" + customer + "%'"
 					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
-					//+ " and ifnull(return_type,'') = '" + return_type + "'"
+					+ " and ifnull(return_type,'') like '" + return_type + "'"
 					+ " and ifnull(warehouse_name,'') like '%" + warehouse + "%'"
 					+ " and ifnull(to_name,'') like '%" + to_name + "%'"
 					+ " and ifnull(province,'') like '%" + province + "%'"
