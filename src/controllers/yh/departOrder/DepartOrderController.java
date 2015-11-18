@@ -109,6 +109,8 @@ public class DepartOrderController extends Controller {
 		String sp = getPara("sp");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String planBeginTime = getPara("planBeginTime");
+		String planEndTime = getPara("planEndTime");
 		String office = getPara("office");
 		String start = getPara("start");
 		String destination = getPara("destination");
@@ -134,7 +136,8 @@ public class DepartOrderController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 		if (orderNo == null && departNo == null && status == null && sp == null
-				&& beginTime == null && endTime == null && office == null
+				&& planEndTime == null && planBeginTime == null
+				&& beginTime == null && endTime == null&& office == null
 				&& start == null && destination == null && customer == null
 				&& booking_note_number == null) {
 			sqlTotal = "select count(1) total from depart_order deo "
@@ -156,6 +159,7 @@ public class DepartOrderController extends Controller {
 					+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
 					//+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where exists (select order_id from depart_transfer dt where dt.order_id= tr.id and dt.depart_id = deo.id )) as transfer_order_no, "
 					+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
+					+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
 					+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
 					+ " deo.transfer_type as trip_type"
 					+ " from depart_order deo"
@@ -188,6 +192,12 @@ public class DepartOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
+			if (planBeginTime == null || "".equals(planBeginTime)) {
+				planBeginTime = "1-1-1";
+			}
+			if (planEndTime == null || "".equals(planEndTime)) {
+				planEndTime = "9999-12-31";
+			}
 			String whereSql = "  where deo.combine_type = '"
 					+ DepartOrder.COMBINE_TYPE_DEPART
 					+ "'"
@@ -214,6 +224,11 @@ public class DepartOrderController extends Controller {
 					+ "' and '"
 					+ endTime
 					+ "'"
+					+ " and tor.planning_time between '"
+					+ planBeginTime
+					+ "' and '"
+					+ planEndTime
+					+ "'"
 					+ " and deo.status!='手动删除' and o.id in (select office_id from user_office where user_name='"
 					+ currentUser.getPrincipal()
 					+ "') "
@@ -237,6 +252,7 @@ public class DepartOrderController extends Controller {
 					+ " o.office_name office_name,deo.departure_time departure_time ,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
 					+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
 					+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
+					+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
 					//+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no , "
 					+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
 					+ " deo.transfer_type as trip_type"

@@ -28,6 +28,7 @@
                 }
             },
             {"mDataProp":"TRANSFER_ORDER_NO"},
+            {"mDataProp":"PLANNING_TIME"},
             {"mDataProp":"OFFICE_NAME"},
             {"mDataProp":null,
             	"fnRender":function(obj){
@@ -66,6 +67,8 @@ function refreshData(){
 	var sp = $("#sp_filter").val();
 	var beginTime = $("#beginTime_filter").val();
 	var endTime = $("#endTime_filter").val();
+	var planBeginTime = $("#beginTime_filter1").val();
+	var planEndTime = $("#endTime_filter1").val();
 	var customer = $("#customer_filter").val();
 	var booking_note_number = $("#booking_note_number").val();
 	var costchebox = $("input[type='checkbox']:checked").val();
@@ -80,6 +83,8 @@ function refreshData(){
 										+"&sp="+sp
 										+"&beginTime="+beginTime
 										+"&endTime="+endTime
+										+"&planBeginTime="+planBeginTime
+										+"&planEndTime="+planEndTime
 										+"&office="+office
 										+"&start="+start
 										+"&destination="+destination
@@ -88,7 +93,7 @@ function refreshData(){
 										+"&costchebox="+costchebox;
 	dataTable.fnDraw();
 }
-$('#departNo_filter,#endTime_filter ,#beginTime_filter  ,#orderNo_filter,#start_filter,#destination_filter,#booking_note_number,#costcheckbox').on( 'keyup click', function () {
+$('#departNo_filter,#endTime_filter ,#beginTime_filter ,#endTime_filter1 ,#beginTime_filter1 ,#orderNo_filter,#start_filter,#destination_filter,#booking_note_number,#costcheckbox').on( 'keyup click', function () {
 	refreshData();
 } );
 //供应商，状态，选择框
@@ -115,6 +120,12 @@ $.post('/transferOrder/searchPartOffice',function(data){
 	}).on('changeDate', function(ev){
 	    $('#beginTime_filter').trigger('keyup');
 	});
+	$('#datetimepicker3').datetimepicker({  
+	    format: 'yyyy-MM-dd',  
+	    language: 'zh-CN'
+	}).on('changeDate', function(ev){
+	    $('#beginTime_filter1').trigger('keyup');
+	});
 
 
 	$('#datetimepicker2').datetimepicker({  
@@ -124,6 +135,14 @@ $.post('/transferOrder/searchPartOffice',function(data){
 	    pickerPosition: "bottom-left"
 	}).on('changeDate', function(ev){
 	    $('#endTime_filter').trigger('keyup');
+	});
+	$('#datetimepicker4').datetimepicker({  
+	    format: 'yyyy-MM-dd',  
+	    language: 'zh-CN', 
+	    autoclose: true,
+	    pickerPosition: "bottom-left"
+	}).on('changeDate', function(ev){
+	    $('#endTime_filter1').trigger('keyup');
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
