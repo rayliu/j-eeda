@@ -86,10 +86,10 @@ $(document).ready(function() {
                 	}                	
                 }
             },
-            {"mDataProp":"PLAN_TIME",
-            	"sWidth": "100px"},
+            {"mDataProp":"PLANNING_TIME",
+            	"sWidth": "70px"},
             {"mDataProp":"DEPARTURE_TIME",
-            	"sWidth": "100px"},
+            	"sWidth": "70px"},
             {"mDataProp":"TRANSFER_ORDER_NO",
             	"sWidth": "100px"},
         	 {"mDataProp":"CUSTOMER_ORDER_NO",
