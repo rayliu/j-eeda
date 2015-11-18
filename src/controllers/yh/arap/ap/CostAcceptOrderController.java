@@ -37,6 +37,8 @@ public class CostAcceptOrderController extends Controller {
     Subject currentUser = SecurityUtils.getSubject();
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTCONFIRM_LIST})
     public void index() {   
+    	String page = getPara("page");
+    	setAttr("page", page);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
     	render("/yh/arap/CostAcceptOrder/CostAcceptOrderList.html");

@@ -3,6 +3,10 @@ $(document).ready(function() {
 	document.title = '复核付款| '+document.title;
     $('#menu_finance').addClass('active').find('ul').addClass('in');
    
+	if($("#page").val()=='return'){
+		$('a[href="#unpay"]').tab('show');
+	}
+    
     var costAcceptOrderTab = $('#costAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": true, 
@@ -652,7 +656,24 @@ $(document).ready(function() {
     
     $("#search2Btn").on('click', function () {
     	refreshData2();
+    	saveConditions2();
     });
+    
+    var saveConditions2=function(){
+        var conditions={
+        	applicationOrderNo : $("#applicationOrderNo").val(),//申请单号
+            orderNo : $("#orderNo").val(),//业务单号
+            status : $("#status2").val(),
+            sp : $("#sp_id_input").val(),
+            beginTime : $("#begin_date").val(),
+            endTime : $("#begin_date").val(),
+            confirmBeginTime : $("#confirmBegin_date").val(),
+            confirmEndTime : $("#confirmEnd_date").val()
+        };
+        if(!!window.localStorage){//查询条件处理
+            localStorage.setItem("query_costAcceptOrder2", JSON.stringify(conditions));
+        }
+    };
     
     
   //待付款页面
@@ -671,10 +692,8 @@ $(document).ready(function() {
             +"&beginTime="+beginTime+"&endTime="+endTime+"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime+"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo+"&sp="+sp;
 
         applicationTab.fnDraw(); 
-
-        saveConditions();
     };
-
+    //未申请界面
     var loadConditions=function(){
         if(!!window.localStorage){//查询条件处理
             var query_json = localStorage.getItem('query_costAcceptOrder');
@@ -691,7 +710,26 @@ $(document).ready(function() {
             $("#endTime_filter2").val(conditions.endTime);
         }
     };
+    //已申请界面
+    var loadConditions2=function(){
+        if(!!window.localStorage){//查询条件处理
+            var query_json = localStorage.getItem('query_costAcceptOrder2');
+            if(!query_json)
+                return;
+
+            var conditions = JSON.parse(query_json);
+            $("#applicationOrderNo").val(conditions.applicationOrderNo);//申请单号
+            $("#orderNo").val(conditions.orderNo);//单号
+            $("#status2").val(conditions.status);
+            $("#sp_id_input").val(conditions.sp);
+            $("#begin_date").val(conditions.beginTime);
+            $("#end_date").val(conditions.endTime);
+            $("#confirmBegin_date").val(conditions.confirmBeginTime);
+            $("#confirmEnd_date").val(conditions.confirmBeginTime);
+        }
+    };
     loadConditions();
+    loadConditions2();
     refreshData();
     refreshData2();
 
