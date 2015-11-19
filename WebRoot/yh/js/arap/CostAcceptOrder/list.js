@@ -120,12 +120,6 @@ $(document).ready(function() {
     });
     
     
-    
-    
-    
-    
-    
-    
     var applicationTab = $('#application-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": true, 
@@ -142,28 +136,28 @@ $(document).ready(function() {
 			$(nRow).attr({order_type: aData.ORDER_TYPE}); 
 			return nRow;
 		},
-        "sAjaxSource": "/costAcceptOrder/applicationList",
+        //"sAjaxSource": "/costAcceptOrder/applicationList",
         "aoColumns": [
             {"mDataProp":"APPLICATION_ORDER_NO","sWidth":"120px",
             	 "fnRender": function(obj) {
             			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.APPLICATION_ORDER_NO+"</a>";
             	 }
             },
-            {"mDataProp":"ORDER_TYPE", "sWidth":"100px","sClass":'order_type'},
+            {"mDataProp":"ORDER_TYPE", "sWidth":"70px","sClass":'order_type'},
             {"mDataProp":"ORDER_NO", "sWidth":"120px"},  
-            {"mDataProp":"STATUS", "sWidth":"80px"},    
-            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"100px",
+            {"mDataProp":"STATUS", "sWidth":"50px"},    
+            {"mDataProp":"APPLICATION_AMOUNT", "sWidth":"70px",
             	"sClass":"pay_amount",
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.APPLICATION_AMOUNT).toFixed(2)+"</p>";	
             	}
             },
-            {"mDataProp":"CNAME",  "sWidth":"200px",
+            {"mDataProp":"CNAME",  "sWidth":"150px",
             	"sClass": "cname"
             },  
-            {"mDataProp":"PAYEE_NAME", "sWidth":"150px",
+            {"mDataProp":"PAYEE_NAME", "sWidth":"100px",
             	"sClass": "payee_name"},
-            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"120px",
+            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"60px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
                         return '现金';
@@ -173,35 +167,37 @@ $(document).ready(function() {
                     	return obj.aData.PAYMENT_METHOD;
                 }
             },
-            {"mDataProp":"STATUS", "sWidth":"100px",
-            	"sClass": "status",
-                "fnRender": function(obj) {
-                    if(obj.aData.STATUS=='new'){
-                        return '新建';
-                    }else if(obj.aData.STATUS=='checking'){
-                        return '已发送对帐';
-                    }else if(obj.aData.STATUS=='confirmed'){
-                        return '已审核';
-                    }else if(obj.aData.STATUS=='completed'){
-                        return '已结算';
-                    }else if(obj.aData.STATUS=='cancel'){
-                        return '取消';
-                    }
-                    return obj.aData.STATUS;
-                }
-            },             
+            {"mDataProp":"CREATE_TIME", "sWidth":"60px",
+        		"fnRender":function(obj){
+    				var create_stamp=obj.aData.CREATE_TIME;
+    				var str=create_stamp.substr(0,10);
+    				return str;
+    			}
+    		},
+        	{"mDataProp":null, "sWidth":"60px",
+        		"fnRender":function(obj){
+    				var create_stamp=obj.aData.CHECK_TIME;
+    				var str='';
+    				if(create_stamp){
+    					str=create_stamp.substr(0,10);
+    				}
+    				return str;
+    			}
+        	},
+        	{"mDataProp":null, "sWidth":"60px",
+        		"fnRender":function(obj){
+    				var create_stamp=obj.aData.CONFIRM_TIME;
+    				var str='';
+    				if(create_stamp){
+	    				str=create_stamp.substr(0,10);
+	    			}
+	    			return str;
+    			}
+        	},
             {"mDataProp":"REMARK", "sWidth":"200px"},
                        
         ]      
     });
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     var clean = function(){
@@ -666,7 +662,9 @@ $(document).ready(function() {
             status : $("#status2").val(),
             sp : $("#sp_id_input").val(),
             beginTime : $("#begin_date").val(),
-            endTime : $("#begin_date").val(),
+            endTime : $("#end_date").val(),
+            check_begin_date : $("#check_begin_date").val(),
+            check_end_date : $("#check_end_date").val(),
             confirmBeginTime : $("#confirmBegin_date").val(),
             confirmEndTime : $("#confirmEnd_date").val()
         };
@@ -684,12 +682,16 @@ $(document).ready(function() {
         var sp = $("#sp_id_input").val();
         var beginTime = $("#begin_date").val();
         var endTime = $("#end_date").val();
+        var check_begin_date = $("#check_begin_date").val();
+        var check_end_date = $("#check_end_date").val();
         var confirmBeginTime = $("#confirmBegin_date").val();
         var confirmEndTime = $("#confirmEnd_date").val();
 
         applicationTab.fnSettings().oFeatures.bServerSide = true;
         applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status
-            +"&beginTime="+beginTime+"&endTime="+endTime+"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime+"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo+"&sp="+sp;
+            +"&beginTime="+beginTime+"&endTime="+endTime
+            +"&check_begin_date="+check_begin_date+"&check_end_date="+check_end_date
+            +"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime+"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo+"&sp="+sp;
 
         applicationTab.fnDraw(); 
     };
@@ -724,6 +726,8 @@ $(document).ready(function() {
             $("#sp_id_input").val(conditions.sp);
             $("#begin_date").val(conditions.beginTime);
             $("#end_date").val(conditions.endTime);
+            $("#check_begin_date").val(conditions.check_begin_date);
+            $("#check_end_date").val(conditions.check_end_date);
             $("#confirmBegin_date").val(conditions.confirmBeginTime);
             $("#confirmEnd_date").val(conditions.confirmBeginTime);
         }
@@ -732,11 +736,5 @@ $(document).ready(function() {
     loadConditions2();
     refreshData();
     refreshData2();
-
-
-
-
-    
-
  
 } );
