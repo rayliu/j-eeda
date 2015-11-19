@@ -27,8 +27,14 @@ $(document).ready(function() {
             {"mDataProp":"ROUTE_TO", "sWidth":"80px"},
             {"mDataProp":null, "sWidth":"100px"},
             {"mDataProp":"PIECES", "sWidth":"60px","sClass": "pieces"},
-            {"mDataProp":"WEIGHT", "sWidth":"60px"},
-            {"mDataProp":"VOLUME", "sWidth":"60px"},
+            {"mDataProp":"WEIGHT", "sWidth":"60px",
+        		"fnRender": function(obj) {
+        			return "<p align='right'>"+parseFloat(obj.aData.WEIGHT).toFixed(2)+"</p>";
+        	}},
+            {"mDataProp":"VOLUME", "sWidth":"60px",
+        		"fnRender": function(obj) {
+        			return "<p align='right'>"+parseFloat(obj.aData.VOLUME).toFixed(2)+"</p>";
+        	}},
             {"mDataProp":"YZ_AMOUNT", "sWidth":"70px",
             		"fnRender": function(obj) {
             			return "<p align='right'>"+parseFloat(obj.aData.YZ_AMOUNT).toFixed(2)+"</p>";
@@ -36,7 +42,7 @@ $(document).ready(function() {
             },
             {"mDataProp":"MAOLILV", "sWidth":"70px",
         		"fnRender": function(obj) {
-        			return obj.aData.MAOLILV*100+"%";
+        			return "<p align='right'>"+parseFloat(obj.aData.MAOLILV*100).toFixed(2)+"%"+"</p>";
            }},
             {"mDataProp":"YF_PICKUP", "sWidth":"70px", "bVisible":false,
             		"fnRender": function(obj) {
@@ -76,25 +82,7 @@ $(document).ready(function() {
             		return "<p align='right'>"+parseFloat(obj.aData.YS_SUM).toFixed(2)+"</p>";
             }}
         ]
-    });	
-    
-   /* //单品与普货查询
-    $("input[name='cargoType']").change(function(){
-    	if($(this).val() == "ATM"){
-    		statusTable.fnSetColumnVis(1, true);
-    		statusTable.fnSetColumnVis(3, true);
-    		statusTable.fnSetColumnVis(9, true);
-    		statusTable.fnSetColumnVis(10, true);
-    	}else{
-    		statusTable.fnSetColumnVis(1, false);
-    		statusTable.fnSetColumnVis(3, false);
-    		statusTable.fnSetColumnVis(9, false);
-    		statusTable.fnSetColumnVis(10, false);
-    	}
-    });*/
-    
-    
-    
+    });	  
     //成本隐藏与展开
     $("#payHandle").click(function(){
     	var type = $(this).attr("alt");
