@@ -181,7 +181,7 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", in_filter);
-				arapaccountauditlog.set("transferOrder_id", transferOrderId);
+				arapaccountauditlog.set("invoice_order_id", transferOrderId);
 				arapaccountauditlog.save();
 			}
 			if(!"".equals(out_filter) && in_filter != null){
@@ -205,7 +205,7 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", out_filter);
-				arapaccountauditlog.set("transferOrder_id", transferOrderId);
+				arapaccountauditlog.set("invoice_order_id", transferOrderId);
 				arapaccountauditlog.save();
 			}
 			
