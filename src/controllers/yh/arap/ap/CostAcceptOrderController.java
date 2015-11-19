@@ -266,6 +266,8 @@ public class CostAcceptOrderController extends Controller {
         String applicationOrderNo = getPara("applicationOrderNo")!=null?getPara("applicationOrderNo"):"";
         String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
         String status = getPara("status")!=null?getPara("status"):"";
+        String check_begin_time = getPara("check_begin_date")!=null?getPara("check_begin_date"):"";
+        String check_end_time = getPara("check_end_date")!=null?getPara("check_end_date"):"";
         String confirmBeginTime = getPara("confirmBeginTime")!=null?getPara("confirmBeginTime"):"";
         String confirmEndTime = getPara("confirmEndTime")!=null?getPara("confirmEndTime"):"";
 		
@@ -304,6 +306,18 @@ public class CostAcceptOrderController extends Controller {
         }
         conditions+=beginTime+endTime;
         
+        if (StringUtils.isNotEmpty(check_begin_time)){
+        	check_begin_time = "and check_time between'"+check_begin_time+"'";
+        }else{
+        	check_begin_time =" and check_time between '0000-00-00'";
+        }
+        if (StringUtils.isNotEmpty(check_end_time)){
+        	check_end_time =" and '"+check_end_time+" 23:59:59'";
+        }else{
+        	check_end_time =" and '2037-12-31'";
+        }
+        conditions+=check_begin_time+check_end_time;
+        
         if (StringUtils.isNotEmpty(confirmBeginTime)){
         	confirmBeginTime = "and confirm_time between'"+confirmBeginTime+"'";
         }else{
@@ -323,7 +337,7 @@ public class CostAcceptOrderController extends Controller {
         }
         
         String sql = "select * from(select aci.id, aci.order_no application_order_no,'申请单' as order_type,"
-        		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time,aci.confirm_stamp confirm_time ,aci.remark,"
+        		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time,aci.check_stamp check_time,aci.confirm_stamp confirm_time ,aci.remark,"
                 + " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount,"
                 + " GROUP_CONCAT( "
                 + " case "
