@@ -191,8 +191,7 @@ SELECT
 		reimbursement_order ror
 	LEFT JOIN cost_application_order_rel caor ON ror.id = caor.cost_order_id
 	LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
-	WHERE appl_order.id = $P{order_id} and  caor.order_type = '报销单'
-]]>
+	WHERE appl_order.id = $P{order_id} and  caor.order_type = '报销单']]>
 	</queryString>
 	<field name="service_type" class="java.lang.String"/>
 	<field name="order_no" class="java.lang.String">
@@ -407,13 +406,13 @@ SELECT
 				<text><![CDATA[复核:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="460" y="59" width="47" height="21" uuid="1e4f1368-0e63-4b18-a5a2-9d5e46b22c86"/>
+				<reportElement x="361" y="59" width="44" height="21" uuid="1e4f1368-0e63-4b18-a5a2-9d5e46b22c86"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement x="424" y="59" width="36" height="21" uuid="72b8214e-ad29-4e27-8f0c-e1abe1d42d1d"/>
+				<reportElement x="329" y="59" width="33" height="21" uuid="72b8214e-ad29-4e27-8f0c-e1abe1d42d1d"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -446,7 +445,7 @@ SELECT
 				<text><![CDATA[审核:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="333" y="59" width="32" height="21" uuid="f265694a-5188-4a6f-be9a-7e28b10d854a"/>
+				<reportElement x="429" y="59" width="32" height="21" uuid="f265694a-5188-4a6f-be9a-7e28b10d854a"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
