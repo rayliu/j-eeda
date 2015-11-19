@@ -29,9 +29,30 @@ var refreshUrl=function(url){
          str = "<a href='/costMiscOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }else if(orderNo.indexOf("SGSK") > -1){
          str = "<a href='/chargeMiscOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
-     }else  if(orderNo.indexOf("BX") > -1){
+     }else if(orderNo.indexOf("BX") > -1){
          str = "<a href='/insuranceOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("XCBX") > -1){
+         str = "<a href='/costReimbursement/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YFBX") > -1){
+         str = "<a href='/costReimbursement/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YFSQ") > -1){
+         str = "<a href='/costPreInvoiceOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YSSQ") > -1){
+         str = "<a href='/chargePreInvoiceOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YFQR") > -1){
+         str = "<a href='/costConfirm/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YSQR") > -1){
+         str = "<a href='/chargeConfirm/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YSFP") > -1){
+         str = "<a href='/chargeInvoiceOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("XCFP") > -1){
+         str = "<a href='/carsummary/edit?carSummaryId="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YSDZ") > -1){
+         str = "<a href='/chargeCheckOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("ZZSQ") > -1){
+         str = "<a href='/transferAccountsOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }
+
      return str;
  };
 

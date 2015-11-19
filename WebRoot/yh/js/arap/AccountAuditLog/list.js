@@ -38,10 +38,17 @@ $(document).ready(function() {
                 	return str;
                 }
             },
-            {"mDataProp":"CREATE_DATE", "sWidth":"180px"},
+            {"mDataProp":"ORDER_NO", "sWidth":"150px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.SOURCE_ORDER=='应付开票申请单'||obj.aData.SOURCE_ORDER=='应收开票申请单'||obj.aData.SOURCE_ORDER=='转账单'){
+            			return eeda.getUrlByNo(obj.aData.INVOICE_ORDER_ID, obj.aData.ORDER_NO);
+            		}else{
+            			return  obj.aData.ORDER_NO;
+            		}
+            		
+            	}
+            },
             {"mDataProp":"SOURCE_ORDER", "sWidth":"150px"},
-            {"mDataProp":"ORDER_NO", "sWidth":"150px"},
-            {"mDataProp":"BANK_NAME", "sWidth":"150px"},
             {"mDataProp":"CHARGE_AMOUNT", "sWidth":"150px",
             	"fnRender": function(obj) {
             		if(obj.aData.CHARGE_AMOUNT!=null)
@@ -57,7 +64,9 @@ $(document).ready(function() {
             		else
             			return obj.aData.COST_AMOUNT;
             	}  
-            },              
+            },          
+            {"mDataProp":"BANK_NAME", "sWidth":"150px"},
+            {"mDataProp":"CREATE_DATE", "sWidth":"180px"},
             {"mDataProp":"USER_NAME"}
         ]      
     });
