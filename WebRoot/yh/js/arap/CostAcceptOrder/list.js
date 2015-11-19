@@ -35,7 +35,7 @@ $(document).ready(function() {
 			        return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
 			    }
 			},
-            {"mDataProp":"ORDER_NO","sWidth":"90px",
+            {"mDataProp":"ORDER_NO","sWidth":"70px",
             	"fnRender": function(obj) {
             		var A=obj.aData.ORDER_NO.substring(0, 4);
         			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -55,7 +55,7 @@ $(document).ready(function() {
             			return obj.aData.ORDER_NO;
         		}
             },
-            {"mDataProp":"ORDER_TYPE", "sWidth":"90px","sClass":'order_type',
+            {"mDataProp":"ORDER_TYPE", "sWidth":"70px","sClass":'order_type',
                 "fnRender": function(obj) {
                 	var A=$(obj.aData.ORDER_NO).text().substring(0, 4);
                 	if(A=='YFBX')
@@ -66,29 +66,29 @@ $(document).ready(function() {
             			return obj.aData.ORDER_TYPE;
                 	}
                 },   
-            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"90px",
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"70px",
             	"sClass":"pay_amount",
            	 	"fnRender": function(obj) {
            	 		return "<p align='right'>"+parseFloat(obj.aData.TOTAL_AMOUNT==null?0:obj.aData.TOTAL_AMOUNT).toFixed(2)+"</p>";	
            	 	}
             },  
-            {"mDataProp":"PAID_AMOUNT", "sWidth":"80px" ,
+            {"mDataProp":"PAID_AMOUNT", "sWidth":"70px" ,
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.PAID_AMOUNT).toFixed(2)+"</p>";	
             	}
             },
-            {"mDataProp":"NOPAID_AMOUNT", "sWidth":"80px",
+            {"mDataProp":"NOPAID_AMOUNT", "sWidth":"70px",
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.NOPAID_AMOUNT).toFixed(2)+"</p>";	
             	}
             },
-            {"mDataProp":"CNAME",  "sWidth":"200px",
+            {"mDataProp":"CNAME",  "sWidth":"150px",
             	"sClass": "cname"
             },  
-            {"mDataProp":"PAYEE_NAME", "sWidth":"150px",
+            {"mDataProp":"PAYEE_NAME", "sWidth":"120px",
             	"sClass": "payee_name"},
             {"mDataProp":"INVOICE_NO", "sWidth":"80px" },
-            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
+            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"60px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
                         return '现金';
