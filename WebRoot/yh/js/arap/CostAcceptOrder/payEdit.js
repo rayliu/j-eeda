@@ -305,18 +305,18 @@
     	if(value=='wbill'){
     		clean();
     		$('#payment_method').val('cash');
-    		$('#account_name').attr('disabled',true);
+    		//$('#account_name').attr('disabled',true);
     	}else if(value=='mbill'){
     		clean();
     		$('#payment_method').val('transfers');
    		 	payment();
     		$('#account_name').val($('#payee_filter').val());
     		$('#payee_unit').val($('#payee_filter').val());
-    		$('#payee_name').attr('disabled',true);
+    		//$('#payee_name').attr('disabled',true);
     	}else if(value=='dbill'){
     		clean();
     		$('#payee_unit').val($('#account_name').val());
-    		$('#payee_name').attr('disabled',true);
+    		//$('#payee_name').attr('disabled',true);
     	}
 	 });
 	 
