@@ -27,6 +27,7 @@
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="order_no" class="java.lang.String"/>
+	<parameter name="application_id" class="java.lang.Long"/>
 	<queryString>
 		<![CDATA[SELECT
 	aco.order_no,
@@ -38,14 +39,13 @@
 	o.office_name
 FROM
 	arap_cost_order aco
-
 LEFT JOIN party p ON p.id = aco.payee_id
 LEFT JOIN cost_application_order_rel caor on caor.cost_order_id=aco.id
 LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id=caor.application_order_id
 LEFT JOIN user_login ul ON ul.id = aco.create_by
 LEFT JOIN user_login u ON u.id = aco.confirm_by
 LEFT JOIN office o ON o.id = u.office_id
-LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no}]]>
+LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} and (caor.order_type='对账单' or caor.order_type is null) and (aciao.id=$P{application_id} or aciao.id is null)]]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>

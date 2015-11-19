@@ -87,11 +87,12 @@ public class ReportController extends Controller {
 		renderText(file.substring(file.indexOf("download")-1));
 	}
 	
-	public String pritCheckOrderByPay(String order_no) {
+	public String pritCheckOrderByPay(String order_no,long application_id) {
 		String fileName = "report/checkOrder.jasper";
 		String outFileName = "download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+		hm.put("application_id", application_id);
 		
 		fileName = getContextPath() + fileName;
 		outFileName = getContextPath() + outFileName + order_no;
@@ -134,7 +135,7 @@ public class ReportController extends Controller {
 			if ("对账单".equals(costapplication.get("order_type"))) {
 				ArapCostOrder order = ArapCostOrder.dao
 						.findFirst("select * FROM arap_cost_order where id ="+ costapplication.get("cost_order_id") );
-				checkOrderFile = pritCheckOrderByPay(order.getStr("order_no"));
+				checkOrderFile = pritCheckOrderByPay(order.getStr("order_no"),arapAuditInvoiceApplication.getLong("id"));
 				buffer.append(checkOrderFile.substring(checkOrderFile.indexOf("download")-1));
 				buffer.append(",");
 			}
