@@ -214,28 +214,34 @@ $(document).ready(function() {
 		$("#returnOrderAccomplish").attr("disabled", true);
 	}
 	
-	// 回单签收
+	// 先保存一次，再回单签收
 	$("#returnOrderAccomplish").on('click', function(e){
-		var receivableTotal = $("#receivableTotal").val();
- 		//if(receivableTotal != null && receivableTotal != ""){
-			e.preventDefault();
+		e.preventDefault();
+		$("#sign_document_no").val($("#sign_no").val());
+		//异步向后台提交数据
+    	$.post('/returnOrder/save', $("#returnOrderForm").serialize(), function(returnOrder){
+			if(returnOrder.ID>0){
+			  	var receivableTotal = $("#receivableTotal").val();
 			
-			$("#saveReturnOrderBtn").attr("disabled", true);
-     	    $("#returnOrderAccomplish").attr("disabled", true);
-	        //异步向后台提交数据
-			var id = $("#returnId").val();
-			$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
-	           //保存成功后，刷新列表
-	           if(data.success){
-	        	   //alert('签收成功！');
-	        	   $("#status span").html("已签收");
-	           }else{
-	               alert('签收失败！');
-	           }
-	        },'json');
-// 		}else{
-// 			alert("请收款(新增应收)后再签收！");
-// 		}
+				$("#saveReturnOrderBtn").attr("disabled", true);
+	     	    $("#returnOrderAccomplish").attr("disabled", true);
+		        //异步向后台提交数据
+				var id = $("#returnId").val();
+				$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
+		           //保存成功后，刷新列表
+		           if(data.success){
+		        	   $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		        	   $("#status span").html("已签收");
+		           }else{
+		               alert('签收失败！');
+		           }
+		        },'json');
+			}else{
+				alert('数据保存失败。');
+			}
+		},'json');
+		
+
 	});
 	
 	//修改序列号
