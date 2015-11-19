@@ -123,6 +123,8 @@ public class AccountAuditLogController extends Controller {
 				    + " (SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>' ) FROM arap_cost_invoice_application_order aci LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.application_order_id = aci.id where acp.order_id = aaal.invoice_order_id))"
 				    + " WHEN aaal.source_order = '应收开票申请单' "
 				    + " then (select order_no from arap_charge_invoice_application_order where id = aaal.invoice_order_id)"
+				    + " WHEN aaal.source_order = '转账单' "
+				    + " then (select order_no from transfer_accounts_order where id = aaal.invoice_order_id)"
 				    + " WHEN aaal.source_order = '应收对账单' "
 				    + " THEN ( SELECT group_concat( DISTINCT aco.order_no SEPARATOR '<br/>' ) FROM arap_charge_order aco LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.dz_order_id = aco.id where acr.order_id = aaal.invoice_order_id )"
 				    + " WHEN aaal.source_order = '应收开票记录单' "
