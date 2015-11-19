@@ -1123,6 +1123,9 @@ public class ChargePreInvoiceOrderController extends Controller {
         arapChargeInvoiceApplication.set("receive_type", receive_type);
         if(receive_bank_id != null && !receive_bank_id.equals(""))
         	arapChargeInvoiceApplication.set("receive_bank_id", receive_bank_id);
+        else{
+        	arapChargeInvoiceApplication.set("receive_bank_id", 4);
+        }
         arapChargeInvoiceApplication.set("receive_time", receive_time);
         arapChargeInvoiceApplication.set("confirm_by", LoginUserController.getLoginUserId(this));
         arapChargeInvoiceApplication.set("confirm_stamp", new Date());

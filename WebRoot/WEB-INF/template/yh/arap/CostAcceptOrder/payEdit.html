@@ -20,10 +20,6 @@
             			<!-- <input id='attribute' name='attribute' type="hidden" value="${attribute!''}"> -->
             			
                             <div class="col-lg-4">
-                                <!-- <div class="form-group">
-                                    <label class="search-label">付款给</label>
-                                    <input type="text" class="form-control search-control sp_filter" id="payee_filter" name="payee_filter" value="${payee_filter!''}">
-                                </div> -->
                                 <div class="form-group">
                                     <label class="search-label">申请单号</label>
                                     <input type="text" class="form-control search-control application_no" id="application_no" name="application_no" readonly="readonly" value="${invoiceApplication.order_no!''}">
@@ -41,9 +37,7 @@
                                     <input type="text" class="form-control search-control sp_filter" id="payee_filter" name="payee_filter" value="${payee_filter!''}">
                                 </div>
                                 <div class="form-group">
-                                </div>
-                                <hr/>
-                                
+                                </div>    
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
@@ -67,8 +61,6 @@
                                     <label class="search-label">收款人</label>
                                     <input type="text" class="form-control search-control payee_name" id="payee_name" name="payee_name"  value="${payee_name!''}${invoiceApplication.payee_name!''}">
                                 </div>
-                                <hr/>
-                               
                             </div>
                             <div class="col-lg-4">
                             	<div class="form-group">
@@ -94,12 +86,9 @@
 	                                    <input type="text" class="form-control search-control account_name" id="account_name" name="account_name"  value="${account_name!''}${invoiceApplication.num_name!''}" >
 	                                </div>
                                 </div>
-                                
-                                <hr/>
-                                
                             </div>
                         </div>
-                        <br/>
+                        <br/><hr>
                         <label class="" style="font-size:18px" >对账单信息列表</label><hr/>
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover" id="CostOrder-table">
@@ -196,12 +185,11 @@
 	                         
                         <div class=".tooltip-demo">
                             <hr/>
-                        	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                            
-                            <button id="confirmBtn" type="button" class="btn  btn-primary" data-toggle="modal" disabled="disabled"  data-target=".bs-example-modal-sm">付款确认</button>
+                            <button id="confirmBtn" type="button" class="btn  btn-primary" data-toggle="modal" disabled="disabled"  data-target=".bs-example-modal-sm">付款确认</button> 
                             <a class="btn  btn-primary" href="/costAcceptOrder?page=return">返回</a>
+                            <button id="returnConfirmBtn" type="button" class="btn  btn-primary"  disabled >撤回</button>
                         </div>
-           				</div>
+           			</div>
            		</div>	
 			</div>
 		</div>

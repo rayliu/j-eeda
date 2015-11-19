@@ -2,6 +2,7 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1541,7 +1542,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	        arapCostInvoiceApplication.set("status", "已复核");
 	        arapCostInvoiceApplication.set("check_by", LoginUserController.getLoginUserId(this));
 	        arapCostInvoiceApplication.set("check_stamp", new Date()).update();
-	        renderJson(arapCostInvoiceApplication);
+	        
 	        
 	        //更改原始单据状态
 	        String strJson = getPara("detailJson");
@@ -1618,7 +1619,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					
 				}
 			}
-	        
+			renderJson(arapCostInvoiceApplication);
 	    }
 		
 		//退回
@@ -1630,7 +1631,6 @@ public class CostPreInvoiceOrderController extends Controller {
 	        arapCostInvoiceApplication.set("status", "新建");
 	        arapCostInvoiceApplication.set("return_by", LoginUserController.getLoginUserId(this));
 	        arapCostInvoiceApplication.set("return_stamp", new Date()).update();
-	        renderJson("{\"success\":true}");
 	        
 	        //更改原始单据状态
 	        String strJson = getPara("detailJson");
@@ -1662,7 +1662,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					arapInOutMiscOrder.set("pay_status", "付款申请中").update();
 				}
 			}
-	        
+			renderJson("{\"success\":true}");
 	    }
 	    
 	    
@@ -1684,6 +1684,9 @@ public class CostPreInvoiceOrderController extends Controller {
 	        arapCostInvoiceApplication.set("pay_type", pay_type);
 	        if(pay_bank_id != null && !pay_bank_id.equals(""))
 	        	arapCostInvoiceApplication.set("confirm_bank_id", pay_bank_id);
+	        else{
+	        	arapCostInvoiceApplication.set("confirm_bank_id", 4);
+	        }
 	        if(pay_time==null || pay_time.equals(""))
 	        	arapCostInvoiceApplication.set("pay_time", new Date());
 	        else
@@ -1702,7 +1705,6 @@ public class CostPreInvoiceOrderController extends Controller {
 			for (Map map : idList) {
 				String id = (String)map.get("id");
 				String order_type = (String)map.get("order_type");
-
 
 				if(order_type.equals("对账单")){
 					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
@@ -1805,14 +1807,16 @@ public class CostPreInvoiceOrderController extends Controller {
 			int this_month = cal.get(Calendar.MONTH)+1;  
 			String year = pay_time.substring(0, 4);
 			String month = pay_time.substring(5, 7);
-			
+			DecimalFormat df = new DecimalFormat("#.00");
 			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
 				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
 						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
 						, acountId, year, month);
 				if(aaas!=null){
-					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
-					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					Double total_cost = aaas.getDouble("total_cost") + Double.parseDouble(pay_amount);
+					aaas.set("total_cost", df.format(total_cost));
+					Double balance_amount = aaas.getDouble("balance_amount")- Double.parseDouble(pay_amount);
+					aaas.set("balance_amount",df.format(balance_amount));
 					aaas.update();
 				}else{//add a new
 					//1.该账户没有记录
@@ -1825,8 +1829,10 @@ public class CostPreInvoiceOrderController extends Controller {
 						, acountId, year, month);
 				
 				if(aaas!=null){
-					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(pay_amount));
-					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					Double total_cost = aaas.getDouble("total_cost") + Double.parseDouble(pay_amount);
+					aaas.set("total_cost", df.format(total_cost));
+					Double balance_amount = aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount);
+					aaas.set("balance_amount", df.format(balance_amount));
 					aaas.update();
 					
 					
@@ -1835,11 +1841,173 @@ public class CostPreInvoiceOrderController extends Controller {
 								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
 								, acountId, this_year, Integer.parseInt(month)+i);
 						
-						this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") - Double.parseDouble(pay_amount)));
-						this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount)));
+						Double init_amount = this_aaas.getDouble("init_amount") - Double.parseDouble(pay_amount);
+						Double balance_amount2 = this_aaas.getDouble("balance_amount") - Double.parseDouble(pay_amount);
+						this_aaas.set("init_amount", df.format(init_amount));
+						this_aaas.set("balance_amount", df.format(balance_amount2));
 						this_aaas.update();
 					}
 				}
 			}
-		}	    
+		}	
+		
+		
+		
+		
+		
+		//付款确认退回
+		//同时更新日记账里面的数据（退回金额）
+		@Before(Tx.class)
+	    public void returnConfirmOrder(){
+	        String application_id=getPara("application_id");
+	        
+	        ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
+	        arapCostInvoiceApplication.set("status", "已复核");
+	        arapCostInvoiceApplication.set("return_confirm_by", LoginUserController.getLoginUserId(this));
+	        arapCostInvoiceApplication.set("return_confirm_stamp", new Date());
+	        arapCostInvoiceApplication.update();
+	       
+	        //更改原始单据状态
+	        String strJson = getPara("detailJson");
+			Gson gson = new Gson();
+			List<Map> idList = new Gson().fromJson(strJson, 
+					new TypeToken<List<Map>>(){}.getType());
+			for (Map map : idList) {
+				String id = (String)map.get("id");
+				String order_type = (String)map.get("order_type");
+
+				if(order_type.equals("对账单")){
+					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
+					Double total_amount = arapCostOrder.getDouble("cost_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '对账单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(!total_amount.equals(paid_amount)){
+						arapCostOrder.set("status", "部分已复核").update();
+					}else
+						arapCostOrder.set("status", "已复核").update();
+				}else if(order_type.equals("成本单")){
+					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+					
+					Double total_amount = arapMiscCostOrder.getDouble("total_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '成本单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(!total_amount.equals(paid_amount)){
+						arapMiscCostOrder.set("audit_status", "部分已复核").update();
+					}else
+						arapMiscCostOrder.set("audit_status", "已复核").update();
+										
+				}else if(order_type.equals("行车单")){
+					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
+					
+					Double total_amount = carSummaryOrder.getDouble("actual_payment_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '行车单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(!total_amount.equals(paid_amount)){
+						carSummaryOrder.set("status", "部分已复核").update();
+					}else
+						carSummaryOrder.set("status", "已复核").update();
+					
+				}else if(order_type.equals("预付单")){
+					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+					
+					Double total_amount = arapPrePayOrder.getDouble("total_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '预付单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(!total_amount.equals(paid_amount)){
+						arapPrePayOrder.set("status", "部分已复核").update();
+					}else
+						arapPrePayOrder.set("status", "已复核").update();
+					
+				}else if(order_type.equals("报销单")){
+					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+					Double total_amount = reimbursementOrder.getDouble("amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '报销单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(!total_amount.equals(paid_amount)){
+						reimbursementOrder.set("status", "部分已复核").update();
+					}else
+						reimbursementOrder.set("status", "已复核").update();
+					
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+					
+					Double total_amount = arapInOutMiscOrder.getDouble("pay_amount");
+					Record re = Db.findFirst("select sum(pay_amount) total from cost_application_order_rel where cost_order_id =? and order_type = '往来票据单'",id);
+					Double paid_amount = re.getDouble("total");
+					if(!total_amount.equals(paid_amount)){
+						arapInOutMiscOrder.set("pay_status", "部分已复核").update();
+					}else
+						arapInOutMiscOrder.set("pay_status", "已复核").update();
+					
+				}
+			}
+			
+			
+			//撤销对应日记账信息
+			Double pay_amount = arapCostInvoiceApplication.getDouble("total_amount");
+			String pay_time = arapCostInvoiceApplication.getDate("pay_time").toString();
+			Long pay_bank_id = arapCostInvoiceApplication.getLong("confirm_bank_id");
+			ArapAccountAuditLog arapAccountAuditLog = ArapAccountAuditLog
+					.dao.findFirst("select * from arap_account_audit_log where source_order = '应付开票申请单' and payment_type = 'COST' and invoice_order_id = ? ",application_id);
+			arapAccountAuditLog.delete();
+			
+             ////撤销功能是更新对应金额
+			deleteAccountSummary(pay_amount.toString(), pay_bank_id ,pay_time);
+			
+			renderJson("{\"success\":true}");
+	        
+	    }
+		
+		//撤销功能是更新对应金额
+		//更新对应金额
+		//更新日记账的账户期初结余
+		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
+		private void deleteAccountSummary(String pay_amount, Long acountId, String pay_time) {
+			Calendar cal = Calendar.getInstance();  
+			int this_year = cal.get(Calendar.YEAR);  
+			int this_month = cal.get(Calendar.MONTH)+1;  
+			String year = pay_time.substring(0, 4);
+			String month = pay_time.substring(5, 7);
+			DecimalFormat df = new DecimalFormat("#.00");
+			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
+				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, acountId, year, month);
+				if(aaas!=null){
+					Double total_cost = aaas.getDouble("total_cost") - Double.parseDouble(pay_amount);
+					aaas.set("total_cost",df.format(total_cost));
+					
+					Double balance_amount = aaas.getDouble("balance_amount") + Double.parseDouble(pay_amount);
+					aaas.set("balance_amount", df.format(balance_amount));
+					aaas.update();
+				}
+			}else{
+				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
+						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+						, acountId, year, month);
+				
+				if(aaas!=null){
+					Double total_cost = aaas.getDouble("total_cost") - Double.parseDouble(pay_amount);
+					aaas.set("total_cost", df.format(total_cost));
+					
+					Double balance_amount = aaas.getDouble("balance_amount") + Double.parseDouble(pay_amount);
+					aaas.set("balance_amount", df.format(balance_amount));
+					aaas.update();
+					
+					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
+						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
+								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
+								, acountId, this_year, Integer.parseInt(month)+i);
+						Double init_amount = this_aaas.getDouble("init_amount") + Double.parseDouble(pay_amount);
+						Double balance_amount2 = this_aaas.getDouble("balance_amount") + Double.parseDouble(pay_amount);
+						this_aaas.set("init_amount", df.format(init_amount));
+						this_aaas.set("balance_amount",df.format(balance_amount2));
+						this_aaas.update();
+					}
+				}
+			}
+		}
+		
+		
+		
 }

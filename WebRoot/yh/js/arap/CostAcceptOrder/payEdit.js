@@ -179,36 +179,59 @@
 	  //撤回
 	  $("#returnBtn").on('click',function(){
 		  	$("#returnBtn").attr("disabled", true);
-		  	orderjson();
-			$.get("/costPreInvoiceOrder/returnOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val()}, function(data){
-				if(data.success){
-					$.scojs_message('退回成功', $.scojs_message.TYPE_OK);
-					$("#checkBtn").attr("disabled", false);
-				  	$("#saveBtn").attr("disabled", false);
-				  	$("#confirmBtn").attr("disabled", true);
-				}else{
-					$("#returnBtn").attr("disabled", false);
-					$.scojs_message('退回失败', $.scojs_message.TYPE_FALSE);
-				}
-			},'json');
+		  	if(confirm("确定撤回未复核状态？")){
+		  		orderjson();
+				$.get("/costPreInvoiceOrder/returnOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val()}, function(data){
+					if(data.success){
+						$.scojs_message('退回成功', $.scojs_message.TYPE_OK);
+						$("#checkBtn").attr("disabled", false);
+					  	$("#saveBtn").attr("disabled", false);
+					  	$("#confirmBtn").attr("disabled", true);
+					}else{
+						$("#returnBtn").attr("disabled", false);
+						$.scojs_message('退回失败', $.scojs_message.TYPE_FALSE);
+					}
+				},'json');
+		  	}else{
+		  		$("#returnBtn").attr("disabled", false);
+		  	}
 		});
 	  
 	  
-	  //确认
+	  //付款确认
 	  $("#confirmBtn").on('click',function(){
 		  	$("#confirmBtn").attr("disabled", true);
-		  	
 		  	orderjson();
-		  	
 			$.get("/costPreInvoiceOrder/confirmOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val(),pay_time:$('#pay_date').val(),pay_type:$('#pay_type').val(),pay_bank:$('#pay_bank').val()}, function(data){
 				if(data.success){
 					$("#returnBtn").attr("disabled", true);
+					$("#returnConfirmBtn").attr("disabled", false);
 					$.scojs_message('付款成功', $.scojs_message.TYPE_OK);
 				}else{
 					$("#confirmBtn").attr("disabled", false);
 					$.scojs_message('付款失败', $.scojs_message.TYPE_FALSE);
 				}
 			},'json');
+		});
+	  
+	  //付款确认撤回未确认状态
+	  $("#returnConfirmBtn").on('click',function(){
+		  	$("#returnConfirmBtn").attr("disabled", true);
+		  	if(confirm("确定撤回未付款确认状态？")){
+		  		orderjson();
+				$.get("/costPreInvoiceOrder/returnConfirmOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val()}, function(data){
+					if(data.success){
+						$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
+					  	$("#confirmBtn").attr("disabled", false);
+					}else{
+						$("#returnConfirmBtn").attr("disabled", false);
+						$("#returnBtn").attr("disabled", false);
+						$.scojs_message('撤回失败', $.scojs_message.TYPE_FALSE);
+					}
+				},'json');
+		  	}else{
+		  		$("#returnConfirmBtn").attr("disabled", false);
+		  	}
 		});
 	
 	
@@ -239,15 +262,11 @@
     
  
     
-    var a = '';
     var payment = function(){
     	if($('#payment_method').val()=='transfers'){
-    		if(a!=''){
-    			$("#transfers_massage").html(a);
-    		}
+    		$("#transfers_massage").show();
     	}else if($('#payment_method').val()=='cash'){
-    		a = $("#transfers_massage").html();
-    		$("#transfers_massage").html("<div class='form-group'></div>"+"<div class='form-group'></div>"+"<div class='form-group'></div>");
+    		$("#transfers_massage").hide();
     	}
     }; 	
     
@@ -273,7 +292,6 @@
     
    
     //按钮控制
-
 	if($('#status').val()=='new'){
 		$("#saveBtn").attr('disabled',false);
 	}else if($('#status').val()=='新建' || $('#status').val()=='已审批'){
@@ -288,6 +306,7 @@
 		$("#confirmBtn").attr('disabled',false);
 	}else if($('#status').val()=='已付款'){
 		$("#printBtn").attr('disabled',false);
+		$("#returnConfirmBtn").attr('disabled',false);
 	}
 
 	//开票类型控制
@@ -342,7 +361,11 @@
     }
     
     ////付款方式（付款确认）回显控制
-    $('#pay_type').val($('#pay_type_show').val());
+    if($('#pay_type_show').val()==''){
+    	 $('#pay_type').val('cash');
+    }else{
+    	 $('#pay_type').val($('#pay_type_show').val());
+    }
     payType();
     
     
