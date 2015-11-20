@@ -220,6 +220,7 @@
 					if(data.success){
 						$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
 					  	$("#confirmBtn").attr("disabled", false);
+					  	$("#returnBtn").attr("disabled", false);
 					}else{
 						$("#returnConfirmBtn").attr("disabled", false);
 						$("#returnBtn").attr("disabled", false);

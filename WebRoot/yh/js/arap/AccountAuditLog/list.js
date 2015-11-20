@@ -38,7 +38,7 @@ $(document).ready(function() {
                 	return str;
                 }
             },
-            {"mDataProp":"ORDER_NO", "sWidth":"150px",
+            {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
             		if(obj.aData.SOURCE_ORDER=='应付开票申请单'||obj.aData.SOURCE_ORDER=='应收开票申请单'||obj.aData.SOURCE_ORDER=='转账单'){
             			return eeda.getUrlByNo(obj.aData.INVOICE_ORDER_ID, obj.aData.ORDER_NO);
@@ -48,8 +48,8 @@ $(document).ready(function() {
             		
             	}
             },
-            {"mDataProp":"SOURCE_ORDER", "sWidth":"150px"},
-            {"mDataProp":"CHARGE_AMOUNT", "sWidth":"150px",
+            {"mDataProp":"SOURCE_ORDER"},
+            {"mDataProp":"CHARGE_AMOUNT",
             	"fnRender": function(obj) {
             		if(obj.aData.CHARGE_AMOUNT!=null)
             			return "<p align='right'>"+parseFloat(obj.aData.CHARGE_AMOUNT).toFixed(2)+"</p>";
@@ -57,7 +57,7 @@ $(document).ready(function() {
             			return obj.aData.CHARGE_AMOUNT;
             	}  
             },         
-            {"mDataProp":"COST_AMOUNT", "sWidth":"150px" ,
+            {"mDataProp":"COST_AMOUNT",
             	"fnRender": function(obj) {
             		if(obj.aData.COST_AMOUNT!=null)
             			return "<p align='right'>"+parseFloat(obj.aData.COST_AMOUNT).toFixed(2)+"</p>";
@@ -65,8 +65,8 @@ $(document).ready(function() {
             			return obj.aData.COST_AMOUNT;
             	}  
             },          
-            {"mDataProp":"BANK_NAME", "sWidth":"150px"},
-            {"mDataProp":"CREATE_DATE", "sWidth":"180px"},
+            {"mDataProp":"BANK_NAME"},
+            {"mDataProp":"CREATE_DATE"},
             {"mDataProp":"USER_NAME"}
         ]      
     });
@@ -101,11 +101,7 @@ $(document).ready(function() {
 	        {"mDataProp": "INIT_AMOUNT"}, //期初
             {"mDataProp": "TOTAL_CHARGE"}, //本期收入
 	        {"mDataProp":"TOTAL_COST"},  //本期支出
-            {"mDataProp":"BALANCE_AMOUNT" //本期结余
-//                 "fnRender": function(obj) {
-//                return obj.aData.INIT_AMOUNT+obj.aData.TOTAL_CHARGE-obj.aData.TOTAL_COST;
-//              }
-            }, //期末结余
+            {"mDataProp":"BALANCE_AMOUNT"}, //期末结余
 	        {"mDataProp":"REMARK", "bVisible": false}           
 	     ]      
     });
