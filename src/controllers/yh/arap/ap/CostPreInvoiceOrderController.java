@@ -1801,6 +1801,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		
 		//更新日记账的账户期初结余
 		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
+		@Before(Tx.class)
 		private void updateAccountSummary(String pay_amount, Long acountId, String pay_time) {
 			Calendar cal = Calendar.getInstance();  
 			int this_year = cal.get(Calendar.YEAR);  
@@ -1962,6 +1963,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		//更新对应金额
 		//更新日记账的账户期初结余
 		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
+		@Before(Tx.class)
 		private void deleteAccountSummary(String pay_amount, Long acountId, String pay_time) {
 			Calendar cal = Calendar.getInstance();  
 			int this_year = cal.get(Calendar.YEAR);  

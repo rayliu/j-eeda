@@ -28,18 +28,15 @@
              {"mDataProp":"ORDER_TYPE","sWidth": "100px","sClass":'order_type'},
              {"mDataProp":"ORDER_NO","sWidth": "120px",
             	"fnRender": function(obj) {
-        			//return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		return obj.aData.ORDER_NO;
-        		}},
+            		return eeda.getUrlByNo(obj.aData.ID,obj.aData.ORDER_NO);
+        		}
+             },
         	{"mDataProp":"CNAME","sWidth": "250px"},
         	{"mDataProp":"PAYEE_NAME","sWidth": "120px"},
     		{"mDataProp":"COST_AMOUNT","sWidth": "100px",
     			"fnRender": function(obj) {
 					total = total + parseFloat(obj.aData.COST_AMOUNT) ;
 					$("#total").html(total);
-//					$("#payee_filter").val(obj.aData.CNAME);
-//					$("#payee_id").val(obj.aData.PAYEE_ID);
-//					$("#payee_name").val(obj.aData.PAYEE_NAME);
 					return obj.aData.COST_AMOUNT;
     			}
     		},
