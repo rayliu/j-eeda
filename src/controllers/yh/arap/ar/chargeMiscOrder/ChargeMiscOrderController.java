@@ -72,7 +72,9 @@ public class ChargeMiscOrderController extends Controller {
 		String sp = getPara("sp");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
-
+		String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
 		String conditions = "";
 		if (orderNo == null && type == null && customer == null && sp == null
 				&& beginTime == null && endTime == null) {
@@ -111,9 +113,12 @@ public class ChargeMiscOrderController extends Controller {
 				+ conditions;
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
-
+		String orderByStr = " order by create_stamp asc ";
+        if(colName!=null && colName.length()>0){
+        	orderByStr = " order by "+colName+" "+sortBy;
+        }
 		String sql = "select * " + sqlFrom + " where 1=1 " + conditions
-				+ " order by create_stamp desc " + sLimit;
+				+ orderByStr + sLimit;
 
 		logger.debug("sql:" + sql);
 		List<Record> BillingOrders = Db.find(sql);

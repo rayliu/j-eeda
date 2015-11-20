@@ -10,7 +10,6 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
-        "bSort": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -97,7 +96,6 @@ $(document).ready(function() {
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-        refreshData();
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customer_filter').on('blur', function(){
@@ -192,7 +190,6 @@ $(document).ready(function() {
             address = '';
         pageSpAddress.append(address);
         $('#spList').hide();
-        refreshData();
     });
 
     //时间控件
@@ -213,12 +210,7 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
-    
-    $("#customer_filter,  #customer_filter, #orderNo_filter, #beginTime_filter, #endTime_filter").on( 'keyup click', function () {
-        refreshData();
-    });
-
-    $("#status_filter").on('change', function () {
+    $("#searchBtn").on('click', function () {
         refreshData();
     });
 
