@@ -26,9 +26,9 @@
              {"mDataProp":"ORDER_TYPE","sWidth": "100px","sClass":'order_type'},
              {"mDataProp":"ORDER_NO","sWidth": "120px",
             	"fnRender": function(obj) {
-        			//return "<a href='/costCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		return obj.aData.ORDER_NO;
-        		}},
+            		return eeda.getUrlByNo(obj.aData.ID,obj.aData.ORDER_NO);
+        		}
+             },
         	{"mDataProp":"CNAME","sWidth": "250px"},
         	{"mDataProp":"PAYEE_NAME","sWidth": "120px"},
     		{"mDataProp":"CHARGE_AMOUNT","sWidth": "100px",
@@ -190,12 +190,11 @@
 	  //确认
 	  $("#confirmBtn").on('click',function(){
 		  	$("#confirmBtn").attr("disabled", true);
-		  	
 		  	orderjson();
-		  	
 			$.get("/chargePreInvoiceOrder/confirmOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val(),receive_time:$('#receive_time').val(),receive_type:$('#receive_type').val(),receive_bank:$('#receive_bank').val()}, function(data){
 				if(data.success){
 					$("#returnBtn").attr("disabled", true);
+					$("#returnConfirmBtn").attr("disabled", false);
 					$.scojs_message('收款成功', $.scojs_message.TYPE_OK);
 				}else{
 					$("#confirmBtn").attr("disabled", false);
@@ -203,7 +202,28 @@
 				}
 			},'json');
 		});
-	
+	  
+	  
+	  
+	//收款确认撤回未确认状态
+	  $("#returnConfirmBtn").on('click',function(){
+		  	$("#returnConfirmBtn").attr("disabled", true);
+		  	if(confirm("确定撤回未收款确认状态？")){
+		  		orderjson();
+				$.get("/chargePreInvoiceOrder/returnConfirmOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val()}, function(data){
+					if(data.success){
+						$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
+					  	$("#confirmBtn").attr("disabled", false);
+					}else{
+						$("#returnConfirmBtn").attr("disabled", false);
+						$("#returnBtn").attr("disabled", false);
+						$.scojs_message('撤回失败', $.scojs_message.TYPE_FALSE);
+					}
+				},'json');
+		  	}else{
+		  		$("#returnConfirmBtn").attr("disabled", false);
+		  	}
+		});
 	
 	  
 	 //异步显示总金额
@@ -231,16 +251,12 @@
 	});	
     
  
-    
-    var a = '';
+
     var payment = function(){
     	if($('#payment_method').val()=='transfers'){
-    		if(a!=''){
-    			$("#transfers_massage").html(a);
-    		}
+    		$("#transfers_massage").show();
     	}else if($('#payment_method').val()=='cash'){
-    		a = $("#transfers_massage").html();
-    		$("#transfers_massage").html("<div class='form-group'></div>"+"<div class='form-group'></div>"+"<div class='form-group'></div>");
+    		$("#transfers_massage").hide();
     	}
     }; 	
     
@@ -279,6 +295,7 @@
 		$("#returnBtn").attr('disabled',false);
 		$("#confirmBtn").attr('disabled',false);
 	}else if($('#status').val()=='已收款'){
+		$("#returnConfirmBtn").attr('disabled',false);
 		$("#printBtn").attr('disabled',false);
 	}
 	
@@ -299,7 +316,6 @@
     
     //收款银行回显
     $('#receive_bank').val($('#receive_banks').val());
-    
     if($('#deposit_bank').val()!='' || $('#bank_no').val()!='' || $('#account_name').val()!=''){
     	$('#payment_method').val('transfers');
     }else{
