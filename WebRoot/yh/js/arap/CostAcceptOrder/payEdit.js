@@ -264,6 +264,9 @@
     	if($('#payment_method').val()=='transfers'){
     		$("#transfers_massage").show();
     	}else if($('#payment_method').val()=='cash'){
+    		$("#deposit_bank").val('');
+    		$("#bank_no").val('');
+    		$("#account_name").val('');
     		$("#transfers_massage").hide();
     	}
     }; 	
