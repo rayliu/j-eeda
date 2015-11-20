@@ -1950,11 +1950,17 @@ public class CostPreInvoiceOrderController extends Controller {
 			Long pay_bank_id = arapCostInvoiceApplication.getLong("confirm_bank_id");
 			ArapAccountAuditLog arapAccountAuditLog = ArapAccountAuditLog
 					.dao.findFirst("select * from arap_account_audit_log where source_order = '应付开票申请单' and payment_type = 'COST' and invoice_order_id = ? ",application_id);
+			Double pay_amount2 = arapAccountAuditLog.getDouble("amount");
 			arapAccountAuditLog.delete();
 			
-             ////撤销功能是更新对应金额
-			deleteAccountSummary(pay_amount.toString(), pay_bank_id ,pay_time);
 			
+			////撤销功能是更新对应金额
+			if(pay_amount.equals(pay_amount2)){
+				deleteAccountSummary(pay_amount.toString(), pay_bank_id ,pay_time);
+			}else{
+				deleteAccountSummary(pay_amount2.toString(), pay_bank_id ,pay_time);
+			}
+             
 			renderJson("{\"success\":true}");
 	        
 	    }
