@@ -322,27 +322,25 @@
     	if(value=='wbill'){
     		clean();
     		$('#payment_method').val('cash');
-    		//$('#account_name').attr('disabled',true);
     	}else if(value=='mbill'){
     		clean();
     		$('#payment_method').val('transfers');
    		 	payment();
     		$('#account_name').val($('#payee_filter').val());
     		$('#payee_unit').val($('#payee_filter').val());
-    		//$('#payee_name').attr('disabled',true);
     	}else if(value=='dbill'){
     		clean();
     		$('#payee_unit').val($('#account_name').val());
-    		//$('#payee_name').attr('disabled',true);
+    		$('#billing_unit').on('input',function(){
+    			 $('#payment_method').val('transfers');
+    			 payment();
+    			 $('#payee_unit').val($('#billing_unit').val());
+    			 $('#account_name').val($('#billing_unit').val());
+    		 });
     	}
 	 });
 	 
-	 $('#billing_unit').on('input',function(){
-		 $('#payment_method').val('transfers');
-		 payment();
-		 $('#payee_unit').val($('#billing_unit').val());
-		 $('#account_name').val($('#billing_unit').val());
-	 });
+	 
 
 	
 
