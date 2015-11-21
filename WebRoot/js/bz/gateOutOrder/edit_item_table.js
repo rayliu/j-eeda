@@ -125,14 +125,16 @@ $(document).ready(function() {
         },
         "createdRow": function ( row, data, index ) {
             $(row).attr('id', data.ID);
+            $('td:eq(1)',row).html(index+1);
         },
         "columns": [
-            { "width": "30px",
+            { "width": "30px", "orderable":false, 
                 "render": function ( data, type, full, meta ) {
                   return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
                 }
             },
             { "data": "ID", "visible":false},
+            { "data": "ID", "orderable":false},
             { "data": "PRODUCT_NO", 
                 "render": function ( data, type, full, meta ) {
                     if(!data)

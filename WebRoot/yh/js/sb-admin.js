@@ -4,6 +4,7 @@ $(document).ready(function() {
 
     $(window).bind("load resize", function() {
         if ($(this).width() < 768) {
+
             $('div.sidebar-collapse').addClass('collapse');
             $('#hide_menu_btn').hide();
             $('#left_side_bar').show();
@@ -13,6 +14,7 @@ $(document).ready(function() {
             $('#hide_menu_btn').show();
             $('#hide_menu_btn').css('left', '250px');
             $('#page-wrapper').css('margin-left', '250px');
+            loadSideBar();
         }
     });
 

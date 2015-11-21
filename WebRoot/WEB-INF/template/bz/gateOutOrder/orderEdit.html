@@ -70,8 +70,8 @@
                     <%include("/yh/component/form/detailTable.html", 
                         {
                             id:'cargo_table', 
-                            headers:['', 'id', '产品型号', '条码', '备注'],
-                            field_list:['', 'id', 'product_no', 'serial_no', 'remark'],
+                            headers:['', 'id', '序号', '产品型号', '条码', '备注'],
+                            field_list:['', 'id', null, 'product_no', 'serial_no', 'remark'],
                             value_list: order.item_list![]
                         }){} %>
                 </div>
@@ -86,6 +86,7 @@
                     %>
                     <a id='saveBtn' class="btn btn-primary ${btn_disabled}" href="#">保存</a>
                     <a class="btn  btn-default" href="/bzGateOutOrder">返回</a>
+                    <a class="btn btn-success" href="/gateOutOrder/create">新增单据</a>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>

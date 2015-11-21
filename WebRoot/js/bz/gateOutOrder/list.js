@@ -28,8 +28,8 @@ $(document).ready(function() {
             },
             
             { "data": "CUSTOMER_NAME"},
-            { "data": "PRODUCT_NO"},
-            { "data": "SERIAL_NO"},
+            { "data": "PRODUCT_NO", "width": "120px"},
+            { "data": "SERIAL_NO", "width": "120px"},
             { "data": "CREATE_DATE",
                 "render": function ( data, type, full, meta ) {
                     return data.substr(0,10);
