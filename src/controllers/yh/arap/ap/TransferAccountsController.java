@@ -227,7 +227,7 @@ public class TransferAccountsController extends Controller {
 			int this_month = cal.get(Calendar.MONTH)+1;  
 			String year = pay_time.substring(0, 4);
 			String month = pay_time.substring(5, 7);
-			
+			DecimalFormat df = new DecimalFormat("#.00");
 			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
 				
 				//支出
@@ -235,8 +235,10 @@ public class TransferAccountsController extends Controller {
 						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
 						, out_filter, year, month);
 				if(aaas!=null){
-					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(amount));
-					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					Double total_cost = aaas.getDouble("total_cost") + Double.parseDouble(amount);
+					Double balance_amount = aaas.getDouble("balance_amount") - Double.parseDouble(amount);
+					aaas.set("total_cost",df.format(total_cost));
+					aaas.set("balance_amount",df.format(balance_amount));
 					aaas.update();
 				}else{
 					ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
@@ -247,8 +249,10 @@ public class TransferAccountsController extends Controller {
 						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
 						, in_filter, year, month);
 				if(aaas2!=null){
-					aaas2.set("total_charge", (aaas2.getDouble("total_charge")==null?0.0:aaas2.getDouble("total_charge")) + Double.parseDouble(amount));
-					aaas2.set("balance_amount", (aaas2.getDouble("init_amount")-aaas2.getDouble("total_cost")+ aaas2.getDouble("total_charge")));
+					Double total_charge = aaas2.getDouble("total_charge") + Double.parseDouble(amount);
+					Double balance_amount = aaas2.getDouble("balance_amount") + Double.parseDouble(amount);
+					aaas2.set("total_charge",df.format(total_charge) );
+					aaas2.set("balance_amount",df.format(balance_amount));
 					aaas2.update();
 				}else{
 					ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
@@ -261,18 +265,20 @@ public class TransferAccountsController extends Controller {
 						, out_filter, year, month);
 				
 				if(aaas!=null){
-					aaas.set("total_cost", (aaas.getDouble("total_cost")==null?0.0:aaas.getDouble("total_cost")) + Double.parseDouble(amount));
-					aaas.set("balance_amount", (aaas.getDouble("init_amount")+aaas.getDouble("total_charge")- aaas.getDouble("total_cost")));
+					Double total_cost = aaas.getDouble("total_cost") + Double.parseDouble(amount);
+					Double balance_amount = aaas.getDouble("balance_amount") - Double.parseDouble(amount);
+					aaas.set("total_cost",df.format(total_cost));
+					aaas.set("balance_amount",df.format(balance_amount));
 					aaas.update();
-					
 					
 					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
 						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
 								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
 								, out_filter, this_year, Integer.parseInt(month)+i);
-						
-						this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") - Double.parseDouble(amount)));
-						this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") - Double.parseDouble(amount)));
+						Double init_amount = this_aaas.getDouble("init_amount") - Double.parseDouble(amount);
+						Double balance_amount2 =  this_aaas.getDouble("balance_amount") - Double.parseDouble(amount);
+						this_aaas.set("init_amount", df.format(init_amount));
+						this_aaas.set("balance_amount",df.format(balance_amount2));
 						this_aaas.update();
 					}
 				}
@@ -283,8 +289,10 @@ public class TransferAccountsController extends Controller {
 						, in_filter, year, month);
 				
 				if(aaas1!=null){
-					aaas1.set("total_charge", (aaas1.getDouble("total_charge")==null?0.0:aaas1.getDouble("total_charge")) + Double.parseDouble(amount));
-					aaas1.set("balance_amount", (aaas1.getDouble("init_amount")+aaas1.getDouble("total_charge")- aaas1.getDouble("total_cost")));
+					Double total_charge = aaas1.getDouble("total_charge") + Double.parseDouble(amount);
+					Double balance_amount = aaas1.getDouble("balance_amount") + Double.parseDouble(amount);;
+					aaas1.set("total_charge",df.format(total_charge) );
+					aaas1.set("balance_amount",df.format(balance_amount));
 					aaas1.update();
 				
 					
@@ -293,8 +301,10 @@ public class TransferAccountsController extends Controller {
 								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
 								, in_filter, this_year, Integer.parseInt(month)+i);
 						
-						this_aaas.set("init_amount", this_aaas.getDouble("init_amount")==null?0.0:(this_aaas.getDouble("init_amount") + Double.parseDouble(amount)));
-						this_aaas.set("balance_amount", this_aaas.getDouble("balance_amount")==null?0.0:(this_aaas.getDouble("balance_amount") + Double.parseDouble(amount)));
+						Double init_amount = this_aaas.getDouble("init_amount") + Double.parseDouble(amount);
+						Double balance_amount2 = this_aaas.getDouble("balance_amount") + Double.parseDouble(amount);
+						this_aaas.set("init_amount",df.format(init_amount));
+						this_aaas.set("balance_amount", df.format(balance_amount2));
 						this_aaas.update();	
 					}
 					
@@ -449,9 +459,14 @@ public class TransferAccountsController extends Controller {
 			String in_filter =getPara("in_filter");
 			String out_filter =getPara("out_filter");
 			String amount =getPara("amount");
-			String transfer_time =getPara("transfer_time");
+			String transfer_time = getPara("transfer_time");
 			String remark =getPara("remark");
 			String transferOrderId =getPara("transferOrderId");
+			
+			if( transfer_time==null||transfer_time.equals("")){
+				transfer_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+	   		}
+			
 			String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name + "'");
@@ -482,8 +497,5 @@ public class TransferAccountsController extends Controller {
 				transferaccounts.save();
 			}
 			renderJson(transferaccounts);
-		}
-		
-		
-		
+		}	
 }

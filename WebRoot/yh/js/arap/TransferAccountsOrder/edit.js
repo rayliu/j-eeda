@@ -49,10 +49,7 @@ $(document).ready(function() {
     });
 	
 	
-	$("#saveBtn").click(function(e){
-		$("#saveBtn").attr("disabled",true);
-		saveTransferOrder();
-	});
+	
 
 	 $("#transfer_filter option").each(function(){ //遍历全部option
 	        var txt = $(this).val(); //获取option的内容
@@ -62,37 +59,12 @@ $(document).ready(function() {
 	        }
 	 });
 	 
-	  
-	 
-	$("#confirmBtn").click(function(e){
-		$("#confirmBtn").attr("disabled",true);
-		confiremBtnTransferOrder();
+	 $("#saveBtn").click(function(e){
+		$("#saveBtn").attr("disabled",true);
+		saveTransferOrder();
 	});
 	 
-	 
-	//确认异步向后台提交数据
-    var confiremBtnTransferOrder = function(e){
-		//异步向后台提交数据
-		$.post('/transferAccountsOrder/confirem',$("#expenseAccountForm").serialize(), function(data){
-			if(data.ID>0){	
-				contactUrl("edit?id",data.ID);
-			  	$("#confirm_stamp").html(data.CREATE_STAMP);
-			  	$.post('/transferAccountsOrder/findUser', {"userId":data.CREATE_ID}, function(data){
- 					$("#confirm_name").html('<strong>'+data.C_NAME+'<strong>');
- 				});
-			  	$("#costPreInvoiceOrderStatus").html(data.STATUS);
-				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-				$("#saveBtn").attr("disabled",true);
-				$("#confirmBtn").attr("disabled",true);
-				$("#returnConfirmBtn").attr("disabled",false);
-			}else{
-				$.scojs_message('保存失败', $.scojs_message.TYPE_FALSE);
-				$("#saveBtn").attr("disabled",false);
-			}
-		},'json');
-	};
-	
-	
+
 	//保存异步向后台提交数据
     var saveTransferOrder = function(e){
 		$.post('/transferAccountsOrder/save',$("#expenseAccountForm").serialize(), function(data){
@@ -107,21 +79,52 @@ $(document).ready(function() {
 			  	$("#remark").val(data.REMARK);
 			  	$("#transferOrderId").val(data.ID);
 				$("#saveBtn").attr("disabled",false);
+				$("#confirmBtn").attr("disabled",false);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 			}else{
 				alert('数据保存失败。');
 			}
 		},'json');
 	};
+	 
+	
+	$("#confirmBtn").click(function(e){
+		$("#confirmBtn").attr("disabled",true);
+		confiremBtnTransferOrder();
+	});
+	
+	 
+	//确认异步向后台提交数据
+    var confiremBtnTransferOrder = function(e){
+		//异步向后台提交数据
+		$.post('/transferAccountsOrder/confirem',$("#expenseAccountForm").serialize(), function(data){
+			if(data.ID>0){	
+				contactUrl("edit?id",data.ID);
+			  	$("#confirm_stamp").html(data.CREATE_STAMP);
+			  	$.post('/transferAccountsOrder/findUser', {"userId":data.CREATE_ID}, function(data){
+ 					$("#confirm_name").html('<strong>'+data.C_NAME+'<strong>');
+ 				});
+			  	$("#costPreInvoiceOrderStatus").html(data.STATUS);
+				$.scojs_message('转账成功', $.scojs_message.TYPE_OK);
+				$("#saveBtn").attr("disabled",true);
+				$("#returnConfirmBtn").attr("disabled",false);
+			}else{
+				$.scojs_message('转账失败', $.scojs_message.TYPE_FALSE);
+				$("#saveBtn").attr("disabled",false);
+			}
+		},'json');
+	};
+	
+	
+	
     	
     	//收款确认撤回未确认状态
     $("#returnConfirmBtn").on('click',function(){
 	  	$("#returnConfirmBtn").attr("disabled", true);
-	  	if(confirm("确定撤回未收款确认状态？")){
+	  	if(confirm("确定撤回未转账确认状态？")){
 			$.get("/transferAccountsOrder/returnConfirmOrder", {id:$('#transferOrderId').val()}, function(data){
 				if(data.success){
 					$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
-				  	$("#confirmBtn").attr("disabled", false);
 				  	$("#saveBtn").attr("disabled", false);
 				}else{
 					$("#returnConfirmBtn").attr("disabled", false);
@@ -142,7 +145,6 @@ $(document).ready(function() {
 		$("#saveBtn").attr("disabled",false);
 	 }else if(order_status=='新建'){
 		 $("#saveBtn").attr("disabled",false);
-		 $("#confirmBtn").attr("disabled",false);
 	 }else if(order_status=='已确认'){
 		$("#saveBtn").attr("disabled",true);
 		$("#confirmBtn").attr("disabled",true);
