@@ -83,6 +83,7 @@ $(document).ready(function() {
 			  	$("#costPreInvoiceOrderStatus").html(data.STATUS);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				$("#saveBtn").attr("disabled",true);
+				$("#confirmBtn").attr("disabled",true);
 				$("#returnConfirmBtn").attr("disabled",false);
 			}else{
 				$.scojs_message('保存失败', $.scojs_message.TYPE_FALSE);
