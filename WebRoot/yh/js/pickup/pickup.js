@@ -396,7 +396,8 @@ $(document).ready(function() {
         var cargoNumbers = "";
         var cargoItemIds = [];
         $("#ckeckedTransferOrderList tr").each(function (){
-        	var cargo_nature = $(this).find("td").eq(6).text();
+        	var cargo_nature = $(this).find("td").eq(7).text();
+        	$("#cargo_nature").val(cargo_nature);
         	if(cargo_nature != 'ATM'){
         		cargoIds.push($(this).attr("value"));
         		var itemNumverArray = $(this).attr("amount");
@@ -413,7 +414,7 @@ $(document).ready(function() {
         tableArr.push(trArr);
         $('#pickupOrder_message').val(tableArr);
         console.log(tableArr);
-        //所有单品id
+        //所有单品id 
         $("#detailIds").val(detailIds);
         //普货运输单(id)
         $("#cargoIds").val(cargoIds);
