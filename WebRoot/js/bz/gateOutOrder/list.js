@@ -28,20 +28,25 @@ $(document).ready(function() {
             },
             
             { "data": "CUSTOMER_NAME"},
-            { "data": "PRODUCT_NO", "width": "120px"},
-            { "data": "SERIAL_NO", "width": "120px"},
+            { "data": "PRODUCT_NO"},
+            { "data": "SERIAL_NO"},
             { "data": "CREATE_DATE",
                 "render": function ( data, type, full, meta ) {
                     return data.substr(0,10);
                 }
             }, 
             { "data": "REMARK"}, 
-            { "data": "STATUS"},
+            { "data": "STATUS", "render": function ( data, type, full, meta ) {
+                    if(full.STATUS != "已取消"){
+                        return "有效";
+                    }
+                    return data;
+                }},
             { "render": function ( data, type, full, meta ) {
                     if(full.STATUS != "已取消"){
                         return "<button order_id='"+full.ID+"' class='delete btn btn-danger btn-xs'>取消</button>";
                     }
-                    return "";
+                    return "有效";
                 }
             }
         ]
@@ -102,4 +107,5 @@ $(document).ready(function() {
         
     }); 
 
+    searchData(); 
 } );

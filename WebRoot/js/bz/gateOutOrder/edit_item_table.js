@@ -72,9 +72,9 @@ $(document).ready(function() {
 
             var item={
                 id: id,
-                product_no: $(row.children[1]).find('input').val(), 
-                serial_no: $(row.children[2]).find('input').val(),
-                remark: $(row.children[3]).find('input').val(),
+                product_no: $(row.children[2]).find('input').val(), 
+                serial_no: $(row.children[3]).find('input').val(),
+                remark: $(row.children[4]).find('input').val(),
                 action: $('#order_id').val().length>0?'UPDATE':'CREATE'
             };
 
@@ -135,7 +135,7 @@ $(document).ready(function() {
             },
             { "data": "ID", "visible":false},
             { "data": "ID", "orderable":false},
-            { "data": "PRODUCT_NO", 
+            { "data": "PRODUCT_NO",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
