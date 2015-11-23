@@ -388,7 +388,7 @@ SELECT
 				<textFieldExpression><![CDATA[$F{order_no}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="192" y="0" width="61" height="20" uuid="3bb4e32a-5f79-4365-8273-93933652d8ae"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="192" y="0" width="61" height="20" uuid="3bb4e32a-5f79-4365-8273-93933652d8ae"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
