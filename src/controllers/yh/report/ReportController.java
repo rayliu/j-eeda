@@ -35,9 +35,14 @@ public class ReportController extends Controller {
 
 	public void printCheckOrder() {
 		String order_no = getPara("order_no");
+		ArapCostOrder arapcostorder = ArapCostOrder.dao.findFirst("select * from arap_cost_order where order_no = ?",order_no);
+		CostApplicationOrderRel costapplicationorderrel =CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where cost_order_id=?",arapcostorder.get("id"));
 		String fileName = "report/checkOrder.jasper";
 		String outFileName = "download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
+		if(costapplicationorderrel!=null){
+			hm.put("application_id", costapplicationorderrel.get("application_order_id"));
+		}
 		hm.put("order_no", order_no);
 		
 		fileName = getContextPath() + fileName;
