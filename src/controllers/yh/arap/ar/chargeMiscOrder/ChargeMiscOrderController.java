@@ -2,7 +2,6 @@ package controllers.yh.arap.ar.chargeMiscOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
@@ -15,16 +14,13 @@ import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
 import models.Party;
 import models.UserLogin;
-import models.yh.arap.ArapMiscCostOrderItem;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrderDTO;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrderItem;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
@@ -37,7 +33,6 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
-import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -239,7 +234,7 @@ public class ChargeMiscOrderController extends Controller {
 			arapMiscChargeOrder.set("create_by", user.getLong("id"));
 			arapMiscChargeOrder.set("create_stamp", new Date());
 			arapMiscChargeOrder.set("office_id", user.getLong("office_id"));
-			arapMiscChargeOrder.set("remark", getPara("remark"));
+			arapMiscChargeOrder.set("remark", remark);
 			arapMiscChargeOrder.save();
 		}
 
