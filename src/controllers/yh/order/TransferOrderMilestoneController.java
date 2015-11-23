@@ -25,9 +25,11 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.departOrder.DepartOrderController;
 import controllers.yh.returnOrder.ReturnOrderController;
@@ -397,7 +399,7 @@ public class TransferOrderMilestoneController extends Controller {
     
     //TODO:  入库确认
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_UPDATE})
-    
+    @Before(Tx.class)
     public void warehousingConfirm() {
     	String departOrderId = getPara("departOrderId");
     	DepartOrder departOrder1= DepartOrder.dao.findById(departOrderId);
@@ -422,11 +424,13 @@ public class TransferOrderMilestoneController extends Controller {
             				DeliveryOrder deliveryOrder = null;
                     		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
                     		Date createDate = Calendar.getInstance().getTime();
+                    		String name = (String) currentUser.getPrincipal();
+                    		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
                     		deliveryOrder = new DeliveryOrder();
                     		deliveryOrder.set("order_no", orderNo)
             				.set("customer_id", transferOrder.get("customer_id"))
             				.set("notify_party_id", transferorderitemdetail.get(i).get("notify_party_id"))
-            				.set("create_stamp", createDate).set("status", "新建")
+            				.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
             				.set("route_to",transferOrder.get("route_to"))
             				.set("route_from", transferOrder.get("route_from"))
             				.set("pricetype", getPara("chargeType"))
