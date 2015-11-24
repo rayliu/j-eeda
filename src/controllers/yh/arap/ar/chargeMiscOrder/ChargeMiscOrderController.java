@@ -264,7 +264,8 @@ public class ChargeMiscOrderController extends Controller {
 				ArapMiscChargeOrderItem arapMiscChargeOrderItem = ArapMiscChargeOrderItem.dao
 						.findById(itemId);
 				if ("DELETE".equals(action)) {
-					arapMiscChargeOrderItem.delete();
+					if(arapMiscChargeOrderItem!=null)
+						arapMiscChargeOrderItem.delete();
 				} else {
 					arapMiscChargeOrderItem.set("customer_order_no",
 							item.get("CUSTOMER_ORDER_NO"));
