@@ -502,17 +502,16 @@ public class TransferOrderMilestoneController extends Controller {
 				transferOrderMilestone.set("status", "已入库");
 				transferOrderMilestone.save();
     		}
-    		
-    		DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
-    		departOrder.set("status", "已入库");
-    		departOrder.update();
-    		TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
-    		departOrderMilestone = milestoneMessages(departOrderMilestone);
-    		departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-    		departOrderMilestone.set("status", "已入库");
-    		departOrderMilestone.set("depart_id", departOrder.get("id"));
-    		departOrderMilestone.save();
     	}
+    	DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
+		departOrder.set("status", "已入库");
+		departOrder.update();
+		TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
+		departOrderMilestone = milestoneMessages(departOrderMilestone);
+		departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+		departOrderMilestone.set("status", "已入库");
+		departOrderMilestone.set("depart_id", departOrder.get("id"));
+		departOrderMilestone.save();
     	DepartOrderController.productInWarehouse(departOrderId);
     	renderJson("{\"success\":true}");        
     }
