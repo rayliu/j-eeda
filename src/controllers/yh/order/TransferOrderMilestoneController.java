@@ -419,8 +419,9 @@ public class TransferOrderMilestoneController extends Controller {
         		Long departTotal1 = rec.getLong("total");
         		Party party=Party.dao.findById(transferOrder.get("customer_id"));
         		if("Y".equals(party.get("is_auto_ps"))){
-        			List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select id,notify_party_id from transfer_order_item_detail where order_id = "+departTransferOrder.get("order_id")+" and depart_id ="+ departOrderId);
+        			List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select id,notify_party_id,delivery_id from transfer_order_item_detail where order_id = "+departTransferOrder.get("order_id")+" and depart_id ="+ departOrderId);
             		for (int i = 0; i < departTotal1; i++) {
+            			if(transferorderitemdetail.get(i).get("delivery_id")==null){
             				DeliveryOrder deliveryOrder = null;
                     		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
                     		Date createDate = Calendar.getInstance().getTime();
@@ -453,6 +454,7 @@ public class TransferOrderMilestoneController extends Controller {
     						transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
     						transferOrderItemDetail.set("is_delivered", true);
     						transferOrderItemDetail.update();
+            			}
             		}
         		}
 		
