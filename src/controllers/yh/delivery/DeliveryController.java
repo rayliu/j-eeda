@@ -934,15 +934,17 @@ public class DeliveryController extends Controller {
 		}
 		String sqlTotal="select count(1) total from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
+					+ " LEFT JOIN depart_order doi on doi.id=t1.depart_id"
+					+ " LEFT JOIN transfer_order_milestone tom on tom.depart_id=doi.id"
 					+ " left join warehouse w on t2.warehouse_id = w.id "
 					+ " left join party p on t2.customer_id = p.id "
 					+ " left join party p2 on t1.notify_party_id = p2.id "
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join office o on o.id = t2 .office_id "
-					/*+ " where (t2.status='已入库' or t2.status ='部分已入库') "*/
 					+ " where delivery_id is null "
 					+ " and t2.cargo_nature = 'ATM' "
+					+ " and tom.`STATUS`='已入库' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
 					+ " and t1.depart_id is not null"
 					+ " and t2.`STATUS` != '手动删除' ";
@@ -952,6 +954,8 @@ public class DeliveryController extends Controller {
 			sql= "select t1.id id,t1.serial_no,t1.item_no,t1.id as tid,t1.notify_party_company as company,t2.*,w.warehouse_name,c.abbr,c2.address as Naddress "
 					+ " from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
+					+ " LEFT JOIN depart_order doi on doi.id=t1.depart_id"
+					+ " LEFT JOIN transfer_order_milestone tom on tom.depart_id=doi.id"
 					+ " left join warehouse w on t2.warehouse_id = w.id "
 					+ " left join party p on t2.customer_id = p.id "
 					+ " left join party p2 on t1.notify_party_id = p2.id "
@@ -963,6 +967,7 @@ public class DeliveryController extends Controller {
 					/*+ " where (t2.status='已入库' or t2.status ='部分已入库') "*/
 					+ " where delivery_id is null "
 					+ " and t2.cargo_nature = 'ATM' "
+					+ " and tom.`STATUS`='已入库' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
 					+ " and t1.depart_id is not null"
 					+ " and t2.`STATUS` != '手动删除' "
@@ -972,6 +977,8 @@ public class DeliveryController extends Controller {
 			 sql ="select  t1.serial_no,t1.item_no,t1.pieces,t2.arrival_time,c3.contact_person driver,c3.phone,o.office_name, t1.id as tid,t1.notify_party_company as company, t2.*,w.warehouse_name,c.abbr "
 			 		+ " from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
+					+ " LEFT JOIN depart_order doi on doi.id=t1.depart_id"
+					+ " LEFT JOIN transfer_order_milestone tom on tom.depart_id=doi.id"
 					+ " left join warehouse w on t2.warehouse_id = w.id "
 					+ " left join party p on t2.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
@@ -983,6 +990,7 @@ public class DeliveryController extends Controller {
 					/*+ " where (t2.status='已入库' or t2.status ='部分已入库') "*/
 					+ " where delivery_id is null "
 					+ " and t2.cargo_nature = 'ATM' "
+					+ " and tom.`STATUS`='已入库' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
 					+ " and t1.depart_id is not null"
 					+ " and t2.`STATUS` != '手动删除' ";
