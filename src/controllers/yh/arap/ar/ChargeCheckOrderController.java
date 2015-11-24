@@ -2,6 +2,7 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -436,7 +437,9 @@ public class ChargeCheckOrderController extends Controller {
 		String endTime_filter = (String)dto.get("endTime_filter");
 		String payee = (String)dto.get("payee");
 		String haveInvoice = (String)dto.get("have_invoice");
-		
+		DecimalFormat df=new DecimalFormat(".##");
+		String changeAmount=df.format(change_amount);
+		String totalAmount=df.format(total_amount);
 		UserLogin user = LoginUserController.getLoginUser(this);
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapChargeOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
@@ -451,8 +454,8 @@ public class ChargeCheckOrderController extends Controller {
 			if (endTime_filter != null) {
 				arapChargeOrder.set("end_time", endTime_filter);
 			}
-			arapChargeOrder.set("total_amount", total_amount);
-			arapChargeOrder.set("charge_amount", change_amount);
+			arapChargeOrder.set("total_amount", totalAmount);
+			arapChargeOrder.set("charge_amount", changeAmount);
 			arapChargeOrder.set("have_invoice", haveInvoice);
 			arapChargeOrder.set("billing_unit", billing_unit);
 			arapChargeOrder.set("payee", payee);
@@ -485,8 +488,8 @@ public class ChargeCheckOrderController extends Controller {
 			if (endTime_filter != null) {
 				arapChargeOrder.set("end_time", endTime_filter);
 			}
-			arapChargeOrder.set("total_amount", total_amount);
-			arapChargeOrder.set("charge_amount", change_amount);
+			arapChargeOrder.set("total_amount", totalAmount);
+			arapChargeOrder.set("charge_amount", changeAmount);
 			arapChargeOrder.set("have_invoice", haveInvoice);
 			arapChargeOrder.set("billing_unit", billing_unit);
 			arapChargeOrder.set("payee", payee);
