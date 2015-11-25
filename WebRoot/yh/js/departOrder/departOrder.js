@@ -186,7 +186,9 @@ $(document).ready(function() {
         });*/
 		$("#ckeckedTransferOrderList tr").each(function (){
 			tableArr.push($(this).attr("value"));
+			if($(this).attr("pickupid")!=''){
 			pickupIds.push($(this).attr("pickupid")+"&");
+			}
 		});
         console.log("单号："+tableArr+",拼车单号："+pickupIds);
         $('#pickupOrder_message').val(tableArr);
