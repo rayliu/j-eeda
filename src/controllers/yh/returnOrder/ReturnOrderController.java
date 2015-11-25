@@ -45,6 +45,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
@@ -1229,6 +1230,7 @@ public class ReturnOrderController extends Controller {
 
 	// 修改应付
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_ADD_REVENUE})
+	@Before(Tx.class)
 	public void updateTransferOrderFinItem() {
 		String paymentId = getPara("paymentId");
 		String name = getPara("name");
@@ -1237,8 +1239,15 @@ public class ReturnOrderController extends Controller {
 			value = "0";
 		}
 		if (paymentId != null && !"".equals(paymentId)) {
+			
 			ReturnOrderFinItem returnOrderFinItem = ReturnOrderFinItem.dao
 					.findById(paymentId);
+			String ggname = (String) currentUser.getPrincipal();
+    		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + ggname + "'");
+    		String createDate =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			if ("amount".equals(name)) {
+				returnOrderFinItem.set("remark",users.get(0).get("c_name")+">"+createDate+">金额"+returnOrderFinItem.get("amount")+"改为"+value+"");
+			}
 			returnOrderFinItem.set(name, value);
 			returnOrderFinItem.update();
 		}

@@ -396,26 +396,18 @@ $(document).ready(function() {
 			 }},
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
-			    	 if(obj.aData.CREATE_NAME == 'user'){
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"' style='width:100px;height:30px'>";
 				         }else{
-				         	 return "<input type='text' name='amount'>";
+				         	 return "<input type='text' name='amount' style='width:100px;height:30px'>";
 				         }
-			    	 }else{
-			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return obj.aData.AMOUNT;
-				         }else{
-				         	 return "";
-				         }
-			    	 }
 			 }},  
 			{"mDataProp":"REMARK",
                 "fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
+                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"' style='width:350px;height:30px' >";
                     }else{
-                    	 return "<input type='text' name='remark'>";
+                    	 return "<input type='text' name='remark' style='width:350px;height:30px'>";
                     }
             }}, 
 			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
