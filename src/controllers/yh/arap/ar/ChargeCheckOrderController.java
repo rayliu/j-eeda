@@ -180,7 +180,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
 				+ " left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 				+ " left join user_login usl on usl.id=ror.creator "
-				+ " where ror.id in("+ returnOrderIds +") group by ror.id,tor2.id";
+				+ " where ror.id in("+ returnOrderIds +") group by ror.id,tor2.id ";
 				
 			String itemMiscSql=" (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
@@ -209,7 +209,7 @@ public class ChargeCheckOrderController extends Controller {
 		}else{
 			return Collections.emptyList();
 		}
-		List<Record> itemList = Db.find(itemSql +" order by create_date desc");
+		List<Record> itemList = Db.find(itemSql +" order by planning_time");
 		return itemList;
 	}
 
