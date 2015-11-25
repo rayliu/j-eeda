@@ -113,7 +113,9 @@ public class DeliveryController extends Controller {
 					+ " where "
 					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') GROUP BY d.id ORDER BY d.create_stamp DESC ) atotal";
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " AND w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+					+ " GROUP BY d.id ORDER BY d.create_stamp DESC ) atotal";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
@@ -158,7 +160,8 @@ public class DeliveryController extends Controller {
 					+ " WHERE"
 					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ "AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
+					+ " AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
+					+ " AND w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 					+ " GROUP BY d.id ) A ";
 
 			
