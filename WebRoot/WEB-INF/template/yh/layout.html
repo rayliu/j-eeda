@@ -270,28 +270,21 @@
                  
                   <%
                   	var gateInPermission = map.WarehouseOrder_inList;
-                  	var gateOutPermission = map.WarehouseOrder_outList;
-                  	var InventoryListPermission = map.InventoryItem_list;
-                  	if(gateInPermission != '' || gateOutPermission != '' || InventoryListPermission != '' && !shiro.hasRole("outuser")){
+                  	
+                  	if(gateInPermission != '' ){
                   %>
                     <li id="menu_warehouse">
-                        <a href="#"><i class="fa fa-th-large fa-fw"></i> 入库管理<span class="fa arrow"></span></a>
+                        <a href="#"><i class="fa fa-th-large fa-fw"></i> 入库管理Ray<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                        	<% if(gateInPermission != ''){%>
-	                            <li>
-	                                <a href="/gateIn">入库计划</a>
-	                            </li>
-                            <%}%>
-                            <% if(gateOutPermission != ''){%>
-	                            <li>
-	                                <a href="/gateOut/outIndex">入库分库</a>
-	                            </li>
-	                        <%}%>
-	                        <% if(InventoryListPermission != ''){%>
-	                            <li>
-	                                <a href="/stock/stockIndex">入库确认</a>
-	                            </li>
-                            <%}%>
+                            <li>
+                                <a href="/gateIn">入库计划</a>
+                            </li>
+                            <li>
+                                <a href="/gateOut/outIndex">入库分库</a>
+                            </li>
+                            <li>
+                                <a href="/stock/stockIndex">入库确认</a>
+                            </li>
                             <li>
                                 <a href="/stock/stockIndex">入库审核</a>
                             </li>
@@ -305,24 +298,22 @@
                         <!-- /.nav-second-level -->
                     </li>
                  <%}%>
+                 <%
+                    var gateOutPermission = map.WarehouseOrder_outList;
+                    if(gateOutPermission != '' ){
+                  %>
                  <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 出库管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <% if(gateInPermission != ''){%>
-                                <li>
-                                    <a href="/gateIn">出库计划</a>
-                                </li>
-                            <%}%>
-                            <% if(gateOutPermission != ''){%>
-                                <li>
-                                    <a href="/gateOut/outIndex">出库分拣</a>
-                                </li>
-                            <%}%>
-                            <% if(InventoryListPermission != ''){%>
-                                <li>
-                                    <a href="/stock/stockIndex">出库确认</a>
-                                </li>
-                            <%}%>
+                            <li>
+                                <a href="/gateIn">出库计划</a>
+                            </li>
+                            <li>
+                                <a href="/gateOut/outIndex">出库分拣</a>
+                            </li>
+                            <li>
+                                <a href="/stock/stockIndex">出库确认</a>
+                            </li>
                             <li>
                                 <a href="/stock/stockIndex">出库审核</a>
                             </li>
@@ -335,24 +326,28 @@
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
+                    <%}%>
+                 
+                  <%
+                    var InventoryListPermission = map.InventoryItem_list;
+                    if(InventoryListPermission != ''){
+                  %>
                  <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 库存管理<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <% if(gateInPermission != ''){%>
-                                <li>
-                                    <a href="/gateIn">期初库存</a>
-                                </li>
-                            <%}%>
-                            <% if(gateOutPermission != ''){%>
-                                <li>
-                                    <a href="/gateOut/outIndex">库存调整</a>
-                                </li>
-                            <%}%>
-                            <% if(InventoryListPermission != ''){%>
-                                <li>
-                                    <a href="/stock/stockIndex">货物下架</a>
-                                </li>
-                            <%}%>
+                           
+                            <li>
+                                <a href="/gateIn">期初库存</a>
+                            </li>
+                        
+                            <li>
+                                <a href="/gateOut/outIndex">库存调整</a>
+                            </li>
+                        
+                            <li>
+                                <a href="/stock/stockIndex">货物下架</a>
+                            </li>
+                           
                             <li>
                                 <a href="/stock/stockIndex">货物上架</a>
                             </li>
@@ -364,7 +359,8 @@
                             </li>
                         </ul>
                         <!-- /.nav-second-level -->
-                    </li>   
+                    </li>
+                <%}%>
                 <%
                     var payListPermission = map.ChargeItem_affirm;
                     var chargeItemPermission = map.ChargeItem_affirm;
@@ -404,14 +400,15 @@
                 	var costConfirmListPermission = map.CostItemConfirm_affirm;
                 	var costCheckListPermission = map.CostCheckOrder_list;
                 	var costPreInvoiceListPermission = map.CostPreInvoiceOrder_list;
-                	var costPrePayOrderListPermission = map.CostPrePayOrder_list;
                 	var costListPermission = map.CostItemConfirm_affirm;
+                    var costPrePayOrderListPermission = map.PrePayOrder_list;
 
                		if(costListPermission!=''
                         ||costConfirmListPermission != '' 
                         || costCheckListPermission != '' 
                         || costPreInvoiceListPermission != ''
                         || costPrePayOrderListPermission != ''){
+
                 %>
                     <li id="menu_cost">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应付管理<span class="fa arrow"></span></a>
