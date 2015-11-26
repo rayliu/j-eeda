@@ -1,0 +1,128 @@
+
+<%layout("/yh/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
+<link href="/yh/js/plugins/datatables-1.10.9/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-list fa-fw"></i>单据状态查询
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            
+                            <div class="">  <!--  form row  -->
+                                <form id="orderForm">
+                                    <div class="row"><!--  第1行  -->
+                                        <div class="col-lg-4"><!--  三列排版  -->
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'transfer_order_no', 
+                                                                    label: '运输单号', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'pickup_order_no', 
+                                                                    label: '调车单号', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'depart_order_no', 
+                                                                    label: '发车单号', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>
+                                    </div>
+
+                                    <div class="row"><!--  第2行  -->
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'delivery_order_no', 
+                                                                    label: '配送单号', 
+                                                                    value: ''
+                                                                }){}%>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                            {   id:'return_order_no', 
+                                                                label:'回单号', 
+                                                                value:''
+                                                                }){} %>
+                                        </div>
+                                        <div class="col-lg-4"> 
+                                            <%include("/yh/component/form/inputField.html", 
+                                                            {   id:'charge_order_no', 
+                                                                label:'应收对账单号', 
+                                                                value:''
+                                                                }){} %>
+                                        </div><!-- /.col-lg-4 -->
+                                    </div><!-- /.row-->
+
+                                    <div class="row"><!--  第3行  -->
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                            {   id:'cost_order_no', 
+                                                                label:'应付对账单号', 
+                                                                value:''
+                                                                }){} %>
+                                        </div><!-- /.col-lg-4 -->
+                                        <div class="col-lg-4">        
+                                            
+                                        </div><!-- /.col-lg-4 -->
+                                        <div class="col-lg-4">
+                                            
+                                        </div><!-- /.col-lg-4 -->
+                                    </div>    
+
+                                    
+                                </form>
+                            </div><!-- /.row -->
+
+                            <div class="form-group button-bar" >
+                                <button id="searchBtn" class="btn btn-primary btn-sm" type="button">查询</button>
+                                <button id="resetBtn" class="btn btn-default btn-sm" type="button">清空条件</button>
+                            </div> 
+
+                            <%include("/yh/component/form/detailTable.html", 
+                                {
+                                    id:'eeda-table', 
+                                    headers:['运输单号', 
+                                        '客户', 
+                                        '调车单号', 
+                                        '发车单号', 
+                                        '配送单号', 
+                                        '回单号', 
+                                        '应收对账单号',
+                                        '应付对账单号']
+                                }){} %>
+                            
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+          
+        </div><!-- end of  .page-wrapper-->
+
+<%}%>
+
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/datatables-1.10.9/js/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/datatables-1.10.9/js/dataTables.bootstrap.js"></script>
+
+
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+
+<script src="/yh/js/statusReport/orderFlowList.js"></script>
+

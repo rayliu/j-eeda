@@ -37,8 +37,30 @@ public class StatusReportColler extends Controller{
 		render("/yh/statusReport/productStatusReport.html");
 	}
 	
-	public void orderFlow() {		
-		render("/yh/statusReport/orderFlow.html");
+	public void orderFlow() {
+		render("/yh/statusReport/orderFlowList.html");
+	}
+	
+	public void orderFlowList() {	
+		String sql = "select tor.order_no transfer_order_no, tor.status transfer_order_status,"
+				+ " '' pickup_order_no,"
+				+ " '' pickup_order_status,"
+				+ " '' depart_order_no,"
+				+ " '' depart_order_status,"
+				+ " '' delivery_order_no,"
+				+ " '' delivery_order_status,"
+				+ " '' return_order_no,"
+				+ " '' return_order_status,"
+				+ " '' charge_order_no,"
+				+ " '' charge_order_status,"
+				+ " '' cost_order_no,"
+				+ " '' cost_order_status"
+				+ " from transfer_order tor"
+				+ " where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+		 List<Record> orderList = Collections.EMPTY_LIST;
+		 orderList = Db.find(sql);
+		 renderJson(orderList);
 	}
 	
 	public void productIndex() {		
