@@ -521,7 +521,11 @@ public class ChargeCheckOrderController extends Controller {
 				for(ReturnOrderFinItem orderItem : ordeItems){
 					Double newAmount=0.0;
 					if(originTotal>0){
-					 newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT")) * (orderItem.getDouble("amount")/originTotal);
+						Double amount=orderItem.getDouble("amount");
+						if(amount==null){
+							amount=0.0;
+						}
+					 newAmount = Double.parseDouble((String)item.get("CHANGE_AMOUNT")) * (amount/originTotal);
 					}
 					else{
 						newAmount=Double.parseDouble((String)item.get("CHANGE_AMOUNT"));
