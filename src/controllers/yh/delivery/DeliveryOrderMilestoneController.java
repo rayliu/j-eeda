@@ -417,7 +417,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         String orderNo = OrderNoGenerator.getNextOrderNo("HD");
         
         ReturnOrder returnOrder = new ReturnOrder();
-        
+        Record  transferDetail= Db
+				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",delivery_id);
         //查询配送单中的运输单,如果是普货配送就验证是否以配送完成
         if(!"ATM".equals(deliveryOrder.get("cargo_nature"))){
         	Record deliveryTotal = Db.findFirst("SELECT * FROM delivery_order_item doi LEFT JOIN delivery_order dor on dor.id = doi.delivery_id LEFT JOIN transfer_order_item toi on toi.id = doi.transfer_item_id where dor.id = '" + delivery_id + "';");
@@ -441,7 +442,14 @@ public class DeliveryOrderMilestoneController extends Controller {
 				Record finishTotal = Db.findFirst("SELECT sum(doi.amount) total FROM `delivery_order_item` doi where doi.transfer_order_id = '" + transferOrderId + "';");
 				if(finishTotal.getDouble("total") == totalamount){
 					//当运输单配送完成时生成回单
-					returnOrder.set("order_no", orderNo);
+					if(transferDetail!=null){
+						Record  returnRefusedOrder= Db
+								.findFirst("select * from return_order where delivery_order_id =?",transferDetail.get("delivery_id"));
+						returnOrder.set("order_no", returnRefusedOrder.get("order_no")+"-1");
+					}else{
+						returnOrder.set("order_no", orderNo);
+					}
+					
 		            returnOrder.set("delivery_order_id", delivery_id);
 		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
 		            returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
@@ -465,8 +473,14 @@ public class DeliveryOrderMilestoneController extends Controller {
 				}
 			}
         }else{
+        	if(transferDetail!=null){
+				Record  returnRefusedOrder= Db
+						.findFirst("select * from return_order where delivery_order_id =?",transferDetail.get("delivery_id"));
+				returnOrder.set("order_no", returnRefusedOrder.get("order_no")+"-1");
+			}else{
+				returnOrder.set("order_no", orderNo);
+			}
         	//如果是配送单生成回单：一张配送单只生成一张回单
-            returnOrder.set("order_no", orderNo);
             returnOrder.set("delivery_order_id", delivery_id);
             returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
             returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));

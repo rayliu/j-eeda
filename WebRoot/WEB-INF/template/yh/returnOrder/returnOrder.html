@@ -52,6 +52,7 @@
                                <div class="col-lg-6">
                                 <input class="form-control" id="snature" type="hidden" >
                                     <form role="form" method="post" action="" id="returnOrderForm">
+                                     <input type="hidden" name="refused" id="refused" value="${isRefused}">
                                      <input type="hidden" name="id" id="returnOrderid" value="${returnOrder.id}">
                                      <input id='sign_document_no' name='sign_document_no' type="hidden"  value="${deliveryOrder.ref_no!''}">
                                    		  <h2>回单信息</h2>  
@@ -350,7 +351,8 @@
                                 	<button id="saveReturnOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
                                 	<%}%>
                                 	<% if(shiro.hasPermission("ReturnOrder.completed")){%>
-                                	<button id="returnOrderAccomplish" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button> 
+                                	<button id="returnOrderAccomplish" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">回单签收</button>
+                                	<button id="returnOrderRefused" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">拒绝签收</button> 
                                 	<%}%>
                                 	<a class="btn  btn-primary" href="/returnOrder">返回</a> 
                                 </div>

@@ -50,6 +50,7 @@ import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.LocationUtil;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 import controllers.yh.util.getCustomFile;
 
@@ -292,7 +293,14 @@ public class ReturnOrderController extends Controller {
 			}
 		} else {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
+			TransferOrderItemDetail detail =TransferOrderItemDetail.dao.findFirst("SELECT * from transfer_order_item_detail where delivery_refused_id=?",deliveryId);
 			// TODO 一张配送单对应多张运输单时回单怎样取出信息
+			if(detail!=null){
+				setAttr("isRefused", "YES");
+			}
+			else{
+				setAttr("isRefused", "NO");
+			}
 			if(deliveryOrder != null){
 				routeTo = deliveryOrder.get("route_to");
 				List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao
@@ -531,7 +539,6 @@ public class ReturnOrderController extends Controller {
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		if (deliveryId != null && !"".equals(deliveryId)) {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(returnOrder.get("delivery_order_id"));
-			deliveryOrder.set("status", "已签收");
 			deliveryOrder.set("sign_status", "已回单");
 			deliveryOrder.update();
 
@@ -1046,38 +1053,68 @@ public class ReturnOrderController extends Controller {
 		}
 		String sqlTotal = "";
 		String sql = "";
-
+		ReturnOrder returnorder=ReturnOrder.dao.findById(returnOrderId);
 		Record transferOrder = Db
 				.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id ="
 						+ transferOrderId);
+		Record  transferDetail= Db
+				.findFirst("select * from transfer_order_item_detail where delivery_refused_id ="
+						+ returnorder.get("delivery_order_id"));
 		//判断是否为ATM机
 		if (transferOrder.get("cargo_nature").equals("ATM")) {
-			sqlTotal = "select distinct count(1) total "
-					+ "from transfer_order_item_detail toid "//TODO 这里性能有问题，用了大表关联小表
-					+ "left join transfer_order_item toi on toid.item_id = toi.id "
-					+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
-					+ "left join product p on toi.product_id = p.id where r.id ="
-					+ returnOrderId;
-
-			sql = "select distinct count(*) as amount ,id,tid,item_no,item_name,width,size,weight,height,volume,unit,remark,tid,serial_no,pieces from ( "
-					+ "select toi.id as id, "
-					+ "toid.id as tid, "
-					+ "ifnull(toid.serial_no,'') serial_no, "
-					+ "toid.pieces pieces, "
-					+ "ifnull(p.item_no, toi.item_no) item_no, "
-					+ "ifnull(p.item_name, toi.item_name) item_name,"
-					+ "ifnull(p.size, toi.size) size, "
-					+ "ifnull(p.width, toi.width) width, "
-					+ "ifnull(p.height, toi.height) height, "
-					+ "ifnull(p.weight, toi.weight) weight, "
-					+ "ifnull(p.volume, toi.volume) volume,"
-					+ "ifnull(p.unit, toi.unit) unit, "
-					+ "toi.remark "
-					+ "from transfer_order_item_detail toid "//TODO: 这里性能有问题，用了大表关联小表
-					+ "left join transfer_order_item toi ON toid.item_id = toi.id "
-					+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
-					+ "left join product p on toi.product_id = p.id where r.id ="
-					+ returnOrderId + ") toid group by tid" + sLimit;
+			if(transferDetail!=null){
+				sqlTotal = "select distinct count(1) total "
+						+ "from transfer_order_item_detail toid "//TODO 这里性能有问题，用了大表关联小表
+						+ "left join transfer_order_item toi on toid.item_id = toi.id "
+						+ "left join return_order r on (toid.delivery_refused_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+						+ "left join product p on toi.product_id = p.id where r.id ="
+						+ returnOrderId;
+				sql = "select distinct count(*) as amount ,id,tid,item_no,item_name,width,size,weight,height,volume,unit,remark,tid,serial_no,pieces from ( "
+						+ "select toi.id as id, "
+						+ "toid.id as tid, "
+						+ "ifnull(toid.serial_no,'') serial_no, "
+						+ "toid.pieces pieces, "
+						+ "ifnull(p.item_no, toi.item_no) item_no, "
+						+ "ifnull(p.item_name, toi.item_name) item_name,"
+						+ "ifnull(p.size, toi.size) size, "
+						+ "ifnull(p.width, toi.width) width, "
+						+ "ifnull(p.height, toi.height) height, "
+						+ "ifnull(p.weight, toi.weight) weight, "
+						+ "ifnull(p.volume, toi.volume) volume,"
+						+ "ifnull(p.unit, toi.unit) unit, "
+						+ "toi.remark "
+						+ "from transfer_order_item_detail toid "//TODO: 这里性能有问题，用了大表关联小表
+						+ "left join transfer_order_item toi ON toid.item_id = toi.id "
+						+ "left join return_order r on (toid.delivery_refused_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+						+ "left join product p on toi.product_id = p.id where r.id ="
+						+ returnOrderId + ") toid group by tid" + sLimit;
+			}else{
+				sqlTotal = "select distinct count(1) total "
+						+ "from transfer_order_item_detail toid "//TODO 这里性能有问题，用了大表关联小表
+						+ "left join transfer_order_item toi on toid.item_id = toi.id "
+						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+						+ "left join product p on toi.product_id = p.id where r.id ="
+						+ returnOrderId;
+				sql = "select distinct count(*) as amount ,id,tid,item_no,item_name,width,size,weight,height,volume,unit,remark,tid,serial_no,pieces from ( "
+						+ "select toi.id as id, "
+						+ "toid.id as tid, "
+						+ "ifnull(toid.serial_no,'') serial_no, "
+						+ "toid.pieces pieces, "
+						+ "ifnull(p.item_no, toi.item_no) item_no, "
+						+ "ifnull(p.item_name, toi.item_name) item_name,"
+						+ "ifnull(p.size, toi.size) size, "
+						+ "ifnull(p.width, toi.width) width, "
+						+ "ifnull(p.height, toi.height) height, "
+						+ "ifnull(p.weight, toi.weight) weight, "
+						+ "ifnull(p.volume, toi.volume) volume,"
+						+ "ifnull(p.unit, toi.unit) unit, "
+						+ "toi.remark "
+						+ "from transfer_order_item_detail toid "//TODO: 这里性能有问题，用了大表关联小表
+						+ "left join transfer_order_item toi ON toid.item_id = toi.id "
+						+ "left join return_order r on (toid.delivery_id= r.delivery_order_id or toi.order_id = r.transfer_order_id) "
+						+ "left join product p on toi.product_id = p.id where r.id ="
+						+ returnOrderId + ") toid group by tid" + sLimit;
+			}
 		} else {
 			sqlTotal = "select distinct count(1) total "
 					+ " from transfer_order_item toi "
@@ -1543,5 +1580,46 @@ public class ReturnOrderController extends Controller {
     	
         renderJson("{\"success\":true}");
     }
-    
+   public void refused(){
+	   	String id =getPara("id");
+	   	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
+		Long deliveryId = returnOrder.get("delivery_order_id");
+		DeliveryOrder delivery=DeliveryOrder.dao.findById(deliveryId);
+		DeliveryOrder deliveryOrder = null;
+		Date createDate = Calendar.getInstance().getTime();
+		String name = (String) currentUser.getPrincipal();
+		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+		deliveryOrder = new DeliveryOrder();
+		deliveryOrder.set("order_no", delivery.get("order_no")+"-1")
+		.set("customer_id", delivery.get("customer_id"))
+		.set("sp_id", delivery.get("sp_id"))
+		.set("notify_party_id", delivery.get("notify_party_id"))
+		.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
+		.set("route_to",delivery.get("route_to"))
+		.set("route_from", delivery.get("route_from"))
+		.set("pricetype", delivery.get("pricetype"))
+		.set("from_warehouse_id", delivery.get("from_warehouse_id"))
+		.set("cargo_nature", delivery.get("cargo_nature"))
+		.set("priceType", delivery.get("priceType"))
+		.set("ltl_price_type", delivery.get("ltl_price_type")).set("car_type", delivery.get("car_type"))
+		.set("audit_status", "新建").set("sign_status", "未回单");
+		deliveryOrder.save();
+		returnOrder.set("transaction_status", "已拒收");
+		returnOrder.update();
+		List<DeliveryOrderItem> deliveryItem =DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryId);
+		for(int i=0;i<deliveryItem.size();i++){
+			DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+			deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+			.set("transfer_order_id",deliveryItem.get(i).get("transfer_order_id"))
+			.set("transfer_no",deliveryItem.get(i).get("transfer_no"))
+			.set("transfer_item_detail_id",deliveryItem.get(i).get("transfer_item_detail_id"))
+			.set("amount", deliveryItem.get(i).get("amount"));
+			deliveryOrderItem.save();
+			TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+					.findById(deliveryItem.get(i).get("transfer_item_detail_id"));
+			transferOrderItemDetail.set("delivery_refused_id",deliveryOrder.get("id"));
+			transferOrderItemDetail.update();
+		}
+		 renderJson("{\"success\":true}");
+   }
 }

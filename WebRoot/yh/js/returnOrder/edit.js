@@ -206,6 +206,13 @@ $(document).ready(function() {
 		$("#status span").append("已签收"); 
 		$("#saveReturnOrderBtn").attr("disabled", true);
 		$("#returnOrderAccomplish").attr("disabled", true);
+		$("#returnOrderRefused").attr("disabled", true);
+		/*$("#addrow2").attr("disabled",true);*/
+	}else if(result=='已拒收'){
+		$("#status span").append("已拒收"); 
+		$("#saveReturnOrderBtn").attr("disabled", true);
+		$("#returnOrderAccomplish").attr("disabled", true);
+		$("#returnOrderRefused").attr("disabled", true);
 		/*$("#addrow2").attr("disabled",true);*/
 	}else{
 		$("#status span").append(result); 
@@ -225,6 +232,7 @@ $(document).ready(function() {
 			
 				$("#saveReturnOrderBtn").attr("disabled", true);
 	     	    $("#returnOrderAccomplish").attr("disabled", true);
+	     	   $("#returnOrderRefused").attr("disabled", true);
 		        //异步向后台提交数据
 				var id = $("#returnId").val();
 				$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
@@ -243,7 +251,20 @@ $(document).ready(function() {
 		
 
 	});
-	
+	$("#returnOrderRefused").on('click', function(e){
+		e.preventDefault();
+		//异步向后台提交数据
+		$.post('/returnOrder/refused', $("#returnOrderForm").serialize(), function(data){
+			 if(data.success){
+	        	   $.scojs_message('拒收成功', $.scojs_message.TYPE_OK);
+	        	   $("#returnOrderRefused").attr("disabled", true);
+	        	   $("#saveReturnOrderBtn").attr("disabled", true);
+		     	    $("#returnOrderAccomplish").attr("disabled", true);
+	           }else{
+	        	   $.scojs_message('拒收失败', $.scojs_message.TYPE_ERROR);
+	           }
+		},'json');
+	});
 	//修改序列号
 	$("#transferOrderTable").on('blur', 'input', function(e){
 		var ids = $(this).parent().parent().attr("id");
@@ -337,12 +358,15 @@ $(document).ready(function() {
  	}else{
  		$("#pickupModeSpan").text(''); 		 		
  	}
- 	
+ 	if($("#refused").val() == 'YES'){
+ 		$("#returnOrderRefused").hide();
+ 	}
  	if($("#arrivalMode").val() == 'gateIn'){
- 		$("#arrivalModeSpan").text('入中转仓');
+ 		$("#arrivalModeSpan").text('入中转仓');		
  	}else if($("#arrivalMode").val() == 'delivery'){
  		$("#arrivalModeSpan").text('货品直送'); 
  		$("#customer_deliver_no").hide();
+ 		$("#returnOrderRefused").hide();
  	}else{
  		$("#arrivalModeSpan").text(''); 		
  	}
