@@ -291,6 +291,7 @@ public class ReturnOrderController extends Controller {
 				setAttr("transferOrder", transferOrder);
 				routeTo = transferOrder.get("route_to");
 			}
+			setAttr("isRefused", "NO");
 		} else {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
 			TransferOrderItemDetail detail =TransferOrderItemDetail.dao.findFirst("SELECT * from transfer_order_item_detail where delivery_refused_id=?",deliveryId);
