@@ -294,6 +294,7 @@ public class ReturnOrderController extends Controller {
 			setAttr("isRefused", "NO");
 		} else {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
+			notify_party_id = deliveryOrder.get("notify_party_id");
 			TransferOrderItemDetail detail =TransferOrderItemDetail.dao.findFirst("SELECT * from transfer_order_item_detail where delivery_refused_id=?",deliveryId);
 			// TODO 一张配送单对应多张运输单时回单怎样取出信息
 			if(detail!=null){
@@ -311,10 +312,9 @@ public class ReturnOrderController extends Controller {
 					break;
 				}
 				setAttr("deliveryOrder", deliveryOrder);
-				notify_party_id = deliveryOrder.get("notify_party_id");
+				setAttr("transferOrder", transferOrder);
 			}
 		}
-		setAttr("transferOrder", transferOrder);
 
 		if(transferOrder != null){
 			Long customer_id = transferOrder.get("customer_id");
@@ -327,7 +327,15 @@ public class ReturnOrderController extends Controller {
 			if (notify_party_id != null) {
 				Party notify = Party.dao.findById(notify_party_id);
 				Contact contact = Contact.dao.findById(notify.get("contact_id"));
-				setAttr("contact", contact);
+				if(contact!=null){
+					setAttr("contact", contact);
+				}
+				else{
+					setAttr("receiving_unit", transferOrder.get("receiving_unit"));
+					setAttr("receiving_address", transferOrder.get("receiving_address"));
+					setAttr("receiving_name", transferOrder.get("receiving_name"));
+					setAttr("receiving_phone", transferOrder.get("receiving_phone"));
+				}
 				Contact locationCode = Contact.dao.findById(notify
 						.get("contact_id"));
 				code = locationCode.get("location");
@@ -1584,6 +1592,8 @@ public class ReturnOrderController extends Controller {
    public void refused(){
 	   	String id =getPara("id");
 	   	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
+	   	java.util.Date utilDate = new java.util.Date();
+		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		DeliveryOrder delivery=DeliveryOrder.dao.findById(deliveryId);
 		DeliveryOrder deliveryOrder = null;
@@ -1605,7 +1615,7 @@ public class ReturnOrderController extends Controller {
 		.set("ltl_price_type", delivery.get("ltl_price_type")).set("car_type", delivery.get("car_type"))
 		.set("audit_status", "新建").set("sign_status", "未回单");
 		deliveryOrder.save();
-		returnOrder.set("transaction_status", "已拒收");
+		returnOrder.set("transaction_status", "已拒收").set("receipt_date", sqlDate).update();;
 		returnOrder.update();
 		List<DeliveryOrderItem> deliveryItem =DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryId);
 		for(int i=0;i<deliveryItem.size();i++){
