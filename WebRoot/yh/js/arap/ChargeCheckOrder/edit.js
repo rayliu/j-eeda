@@ -256,6 +256,7 @@ $(document).ready(function() {
             },
             {"mDataProp":"PLANNING_TIME", "sWidth":"120px"},
             {"mDataProp":"SERIAL_NO", "sWidth":"40px"},
+            {"mDataProp":"REF_NO", "sWidth":"40px"},
             {"mDataProp":"PRVOINCE", "sWidth":"120px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"}, 
             {"mDataProp":"ROUTE_TO", "sWidth":"100px"},  
