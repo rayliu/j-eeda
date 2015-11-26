@@ -28,7 +28,7 @@ import controllers.yh.order.TransferOrderController;
 import controllers.yh.util.PermissionConstant;
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
-public class StatusReportColler extends Controller{
+public class StatusReportController extends Controller{
 	
 	private Logger logger = Logger.getLogger(TransferOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
@@ -42,19 +42,13 @@ public class StatusReportColler extends Controller{
 	}
 	
 	public void orderFlowList() {	
-		String sql = "select tor.order_no transfer_order_no, tor.status transfer_order_status,"
-				+ " '' pickup_order_no,"
-				+ " '' pickup_order_status,"
+		String sql = "select tor.order_no+ transfer_order_no,"
+				+ " ('DC20150012923-已入货场') pickup_order_no,"
 				+ " '' depart_order_no,"
-				+ " '' depart_order_status,"
 				+ " '' delivery_order_no,"
-				+ " '' delivery_order_status,"
 				+ " '' return_order_no,"
-				+ " '' return_order_status,"
 				+ " '' charge_order_no,"
-				+ " '' charge_order_status,"
-				+ " '' cost_order_no,"
-				+ " '' cost_order_status"
+				+ " '' cost_order_no"
 				+ " from transfer_order tor"
 				+ " where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";

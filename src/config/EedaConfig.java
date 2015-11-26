@@ -319,7 +319,7 @@ public class EedaConfig extends JFinalConfig {
         //insuranceOrder
         me.add("/insuranceOrder", controllers.yh.insurance.InsuranceOrderController.class, contentPath);
         me.add("/report", controllers.yh.report.ReportController.class, contentPath);
-        me.add("/statusReport", controllers.yh.statusReport.StatusReportColler.class, contentPath);
+        me.add("/statusReport", controllers.yh.statusReport.StatusReportController.class, contentPath);
         
         me.add("/doc", controllers.yh.doc.DocController.class, contentPath);
         //微信页面路由
