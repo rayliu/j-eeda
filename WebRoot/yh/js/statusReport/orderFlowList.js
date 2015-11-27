@@ -12,7 +12,7 @@ $(document).ready(function() {
         "searching": false,
         //"serverSide": true,
         "scrollX": true,
-        "scrollY": "300px",
+        "scrollY": "500px",
         "scrollCollapse": true,
         "autoWidth": false,
         "language": {
@@ -20,20 +20,20 @@ $(document).ready(function() {
         },
         //"ajax": "/damageOrder/list",
         "columns": [
-            { "data": "TRANSFER_ORDER_NO", 
+            { "data": "TRANSFER_ORDER_NO", "width": "10%",
                 "render": function ( data, type, full, meta ) {
                     return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
                 }
             },
-            { "data": null},
-            { "data": "PICKUP_ORDER_NO"},
-            { "data": "DEPART_ORDER_NO"}, 
-            { "data": "DELIVERY_ORDER_NO"}, 
-            { "data": "RETURN_ORDER_NO"}, 
-            { "data": "CHARGE_ORDER_NO"}, 
-            { "data": "COST_ORDER_NO1"},
-            { "data": "COST_ORDER_NO2"},
-            { "data": "COST_ORDER_NO3"}
+            { "data": null, "width": "5%"},
+            { "data": "PICKUP_ORDER_NO", "width": "10%"},
+            { "data": "DEPART_ORDER_NO", "width": "10%"}, 
+            { "data": "DELIVERY_ORDER_NO", "width": "10%"}, 
+            { "data": "RETURN_ORDER_NO", "width": "10%"}, 
+            { "data": "CHARGE_ORDER_NO", "width": "10%"}, 
+            { "data": "COST_ORDER_NO1", "width": "10%"},
+            { "data": "COST_ORDER_NO2", "width": "10%"},
+            { "data": "COST_ORDER_NO3", "width": "10%"}
         ]
     });
 
