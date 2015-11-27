@@ -240,15 +240,15 @@ $(document).ready(function() {
                     }
                     else{
                         if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null ){
-                            return "<input style='width: 80px;' type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                            return obj.aData.CHANGE_AMOUNT;
                             
                         }
                         else {
                             if(obj.aData.CHARGE_TOTAL_AMOUNT!=null){
-                                return "<input style='width: 80px;' type='text' name='change_amount' value='"+obj.aData.CHARGE_TOTAL_AMOUNT+"'/>";
+                                return obj.aData.CHARGE_TOTAL_AMOUNT;
                             }
                             else{
-                                return "<input style='width: 80px;' type='text' name='change_amount' value='0'/>";
+                                return 0;
                             }
                         }
                     }

@@ -13,6 +13,11 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			$(nRow).attr('order_ty', aData.ORDER_TP);
+			return nRow;
+		},
         "sAjaxSource": "/chargeConfiremList/list",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px",
@@ -26,8 +31,29 @@ $(document).ready(function() {
             		return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
         		}},
             {"mDataProp":"SERIAL_NO", "sWidth":"120px"}, 
-            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"120px"}, 
-            {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px"}, 
+            {"mDataProp":"TOTAL_AMOUNT", "sWidth":"120px", 
+                "fnRender": function(obj) {
+                    if(obj.aData.TOTAL_AMOUNT==null){
+                        return '0';
+                    }
+                    else{
+                    	return obj.aData.TOTAL_AMOUNT;
+                    }
+                }
+            }, 
+            {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px", 
+                "fnRender": function(obj) {
+                    if(obj.aData.CHANGE_AMOUNT!=null&&obj.aData.ORDER_TP=='回单'){
+                        return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                    }
+                    else if(obj.aData.CHANGE_AMOUNT==null&&obj.aData.ORDER_TP=='回单'){
+                    	return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.TOTAL_AMOUNT+"'/>";
+                    }
+                    else{
+                    	return obj.aData.TOTAL_AMOUNT;
+                    }
+                }
+            }, 
             {"mDataProp":"ADDRESS", "sWidth":"150px"},
             {"mDataProp":"REF_NO", "sWidth":"150px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"150px"},
@@ -101,7 +127,34 @@ $(document).ready(function() {
         	}
         },'json');
     });
-    
+    $("#chargeConfirem-table").on('blur', 'input:text', function(e){
+		e.preventDefault();
+		var order_id = $(this).parent().parent().attr("id");
+		var order_ty = $(this).parent().parent().attr("order_ty");
+		var name = $(this).attr("name");
+		var value = $(this).val();
+		if(value==0){      
+			$.scojs_message('调整金额失败,金额不能为0', $.scojs_message.TYPE_ERROR);
+			chargeConfiremTable.fnDraw();
+			 return false; 
+		 }
+		 if(isNaN(value)){      
+			 alert("调整金额为数字类型");
+			 chargeConfiremTable.fnDraw();
+			 return false;
+		 }
+
+		 else{
+			 $.post('/chargeConfiremList/updateOrderFinItem', {order_ty:order_ty,order_id:order_id, name:name, value:value}, function(data){
+				 if(data.success){
+					 $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
+                 }
+				 else{
+					 $.scojs_message('调整金额失败', $.scojs_message.TYPE_ERROR);
+				 }
+		    	},'json');
+		 }
+	});
     //获取所有客户
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();

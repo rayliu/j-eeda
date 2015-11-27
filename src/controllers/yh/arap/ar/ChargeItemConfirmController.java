@@ -2,23 +2,29 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import models.Party;
 import models.ReturnOrder;
+import models.UserLogin;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 import models.yh.profile.Contact;
+import models.yh.returnOrder.ReturnOrderFinItem;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.util.PermissionConstant;
 
@@ -26,6 +32,7 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class ChargeItemConfirmController extends Controller {
 	private Logger logger = Logger.getLogger(ChargeItemConfirmController.class);
+	Subject currentUser = SecurityUtils.getSubject();
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
 	public void index() {
 		render("/yh/arap/ChargeItemConfirm/ChargeItemConfirmList.html");
@@ -300,7 +307,43 @@ public class ChargeItemConfirmController extends Controller {
 
 		renderJson(BillingOrderListMap);
 	}
-	
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE })
+	@Before(Tx.class)
+	public void updateOrderFinItem() {
+		String order_ty = getPara("order_ty");//单据类型
+		String order_id = getPara("order_id");//单据ID
+		String value = getPara("value");//更改值
+		if("回单".equals(order_ty)){
+			List<ReturnOrderFinItem> ordeItems = ReturnOrderFinItem.dao.find("select * from return_order_fin_item where return_order_id=?", order_id);
+			Double originTotal = 0.0;
+			for(ReturnOrderFinItem orderItem : ordeItems){
+				originTotal += orderItem.getDouble("amount")==null?0.0:orderItem.getDouble("amount");
+			}
+			Double newAmount=0.0;
+			if(Double.parseDouble(value)>0){
+				newAmount =Double.parseDouble(value)-originTotal;
+			}
+			else{
+				newAmount =Double.parseDouble(value)+originTotal;
+			}
+			if(newAmount!=0){
+				String name = (String) currentUser.getPrincipal();
+				List<UserLogin> users = UserLogin.dao
+						.find("select * from user_login where user_name='" + name
+								+ "'");
+				ReturnOrderFinItem orderItem1 = new ReturnOrderFinItem();
+				orderItem1.set("return_order_id", order_id);
+				orderItem1.set("amount", newAmount);
+				orderItem1.set("fin_item_id", 4);
+				orderItem1.set("status", "新建");
+				orderItem1.set("creator", users.get(0).get("id"));
+				orderItem1.set("remark", "对账调整金额");
+				orderItem1.set("create_date", new Date());
+				orderItem1.save();
+			}
+		}
+		renderJson("{\"success\":true}");
+	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CI_AFFIRM})
 	public void chargeConfiremReturnOrder() {
 		String orderno = getPara("orderno");
