@@ -68,20 +68,21 @@ public class StatusReportController extends Controller{
 		}if (StringUtils.isNotEmpty(delivery_order_no)){                                          // 配送单
 			conditions+=" and UPPER(deo.order_no) like '%"+delivery_order_no.toUpperCase()+"%'";
 		}if (StringUtils.isNotEmpty(return_order_no)){                                            // 回单
-			conditions+=" and UPPER(ror1.order_no) like '%"+return_order_no.toUpperCase()+"%'"
-					  + " or UPPER(ror2.order_no) like '%"+depart_order_no.toUpperCase()+"%'";
+			conditions+=" and (UPPER(ror1.order_no) like '%"+return_order_no.toUpperCase()+"%'"
+					  + " or UPPER(ror2.order_no) like '%"+return_order_no.toUpperCase()+"%')";
 		}if (StringUtils.isNotEmpty(charge_order_no)){                                            //-- 应收对账单
 			conditions+=" and UPPER(aco.order_no) like '%"+charge_order_no.toUpperCase()+"%'";
 		}if (StringUtils.isNotEmpty(cost_order_no)){                                              //-- 应付对账单
-			conditions+=" and UPPER(acoo1.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
+			conditions+=" and (UPPER(acoo1.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
 					  + " or UPPER(acoo2.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
-					  + " or UPPER(acoo3.order_no) like '%"+cost_order_no.toUpperCase()+"%'";
+					  + " or UPPER(acoo3.order_no) like '%"+cost_order_no.toUpperCase()+"%')";
 		}
 		conditions +=" and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 				   + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 		           + " GROUP BY tor.id ";
 		
 		String sql = " SELECT CONCAT( tor.order_no, '-', tor. STATUS ) transfer_order_no, "
+				+ " (select c.abbr  from contact c where id = tor.customer_id) customer_name,"
 				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( dor.depart_no ,'-',dor.`STATUS` )"
 				+ " FROM depart_order dor "
 				+ " WHERE dor.combine_type = 'PICKUP' AND dor.id = dt.pickup_id ) SEPARATOR '<br/>') pickup_order_no"

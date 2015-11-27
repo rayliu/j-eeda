@@ -1,4 +1,4 @@
-
+﻿
 $(document).ready(function() {
 	document.title = '单据流转查询 | '+document.title;
 
@@ -10,7 +10,9 @@ $(document).ready(function() {
     var dataTable = $('#eeda-table').DataTable({
         "processing": true,
         "searching": false,
-        //"serverSide": true,
+        "paging": true, //翻页功能
+        "pageLength": 10,
+        "aLengthMenu": [ [10 ,25 ,50 ,100 ,9999999], [10 ,25 ,50 ,100, "All"]],
         "scrollX": true,
         "scrollY": "500px",
         "scrollCollapse": true,
@@ -18,14 +20,14 @@ $(document).ready(function() {
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        //"ajax": "/damageOrder/list",
+        //"sAjaxSource": "/statusReport/orderFlowList",
         "columns": [
-            { "data": "TRANSFER_ORDER_NO", "width": "10%",
+            { "data": "TRANSFER_ORDER_NO", 
                 "render": function ( data, type, full, meta ) {
                     return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
                 }
             },
-            { "data": null, "width": "5%"},
+            { "data": "CUSTOMER_NAME","width": "10%"},
             { "data": "PICKUP_ORDER_NO", "width": "10%"},
             { "data": "DEPART_ORDER_NO", "width": "10%"}, 
             { "data": "DELIVERY_ORDER_NO", "width": "10%"}, 
@@ -44,7 +46,7 @@ $(document).ready(function() {
 
     $('#searchBtn').click(function(){
         searchData(); 
-    })
+    });
 
    var searchData=function(){
         var transfer_order_no = $("#transfer_order_no").val();
