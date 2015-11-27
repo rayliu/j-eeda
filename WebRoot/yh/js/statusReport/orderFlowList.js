@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-	document.title = '货损单查询 | '+document.title;
+	document.title = '单据流转查询 | '+document.title;
 
     $('#menu_report').addClass('active').find('ul').addClass('in');
     
@@ -20,26 +20,20 @@ $(document).ready(function() {
         },
         //"ajax": "/damageOrder/list",
         "columns": [
-            { "data": "ORDER_NO", 
+            { "data": "TRANSFER_ORDER_NO", 
                 "render": function ( data, type, full, meta ) {
                     return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
                 }
             },
-            { "data": "CUSTOMER_NAME"},
-            { "data": "SP_NAME"},
-            { "data": "ORDER_TYPE"}, 
-            { "data": "BIZ_ORDER_NO"}, 
-            { "data": "PROCESS_STATUS"}, 
-            { "data": "ACCIDENT_TYPE"}, 
-            { "data": "ACCIDENT_DESC"}, 
-            { "data": "ACCIDENT_DATE",
-                "render": function ( data, type, full, meta ) {
-                    if(data)
-                        return data.substr(0,10);
-                    return '';
-                }
-            }, 
-            { "data": "REMARK"}
+            { "data": null},
+            { "data": "PICKUP_ORDER_NO"},
+            { "data": "DEPART_ORDER_NO"}, 
+            { "data": "DELIVERY_ORDER_NO"}, 
+            { "data": "RETURN_ORDER_NO"}, 
+            { "data": "CHARGE_ORDER_NO"}, 
+            { "data": "COST_ORDER_NO1"},
+            { "data": "COST_ORDER_NO2"},
+            { "data": "COST_ORDER_NO3"}
         ]
     });
 
@@ -53,18 +47,17 @@ $(document).ready(function() {
     })
 
    var searchData=function(){
-        var orderNo = $("#order_no").val();
-        var customer_id=$("#customer_id").val();
-        var sp_id=$("#sp_id").val();
+        var transfer_order_no = $("#transfer_order_no").val();
+        //var customer_id=$("#customer_id").val();
+        var pickup_order_no=$("#pickup_order_no").val();
         
-        var order_type = $("#order_type").val();
-        var biz_order_no = $('#biz_order_no').val();
-        var process_status = $('#process_status').val();
+        var depart_order_no = $("#depart_order_no").val();
+        var delivery_order_no = $('#delivery_order_no').val();
+        var return_order_no = $('#return_order_no').val();
 
-        var accident_type = $('#accident_type').val();
+        var charge_order_no = $('#charge_order_no').val();
 
-        var beginTime = $("#start_date").val();
-        var endTime = $("#end_date").val();
+        var cost_order_no = $("#cost_order_no").val();
         
         /*
             查询规则：参数对应DB字段名
@@ -73,14 +66,13 @@ $(document).ready(function() {
             *_status =
             时间字段需成双定义  *_begin_time *_end_time   between
         */
-        var url = "/statusReport/orderFlowList?order_no="+orderNo
-             +"&customer_id="+customer_id
-             +"&sp_id="+sp_id
-             +"&biz_order_no="+biz_order_no
-             +"&process_status="+process_status
-             +"&accident_type="+accident_type
-             +"&accident_date_begin_time="+beginTime
-             +"&accident_date_end_time="+endTime;
+        var url = "/statusReport/orderFlowList?transfer_order_no="+transfer_order_no
+             +"&pickup_order_no="+pickup_order_no
+             +"&delivery_order_no="+delivery_order_no
+             +"&depart_order_no="+depart_order_no
+             +"&return_order_no="+return_order_no
+             +"&charge_order_no="+charge_order_no
+             +"&cost_order_no="+cost_order_no;
 
         dataTable.ajax.url(url).load();
     };

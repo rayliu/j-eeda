@@ -13,6 +13,7 @@ import models.DepartOrder;
 import models.Party;
 import models.UserLogin;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -42,19 +43,123 @@ public class StatusReportController extends Controller{
 	}
 	
 	public void orderFlowList() {	
-		String sql = "select tor.order_no+ transfer_order_no,"
-				+ " ('DC20150012923-已入货场') pickup_order_no,"
-				+ " '' depart_order_no,"
-				+ " '' delivery_order_no,"
-				+ " '' return_order_no,"
-				+ " '' charge_order_no,"
-				+ " '' cost_order_no"
-				+ " from transfer_order tor"
-				+ " where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-		 List<Record> orderList = Collections.EMPTY_LIST;
-		 orderList = Db.find(sql);
-		 renderJson(orderList);
+		String transfer_order_no = getPara("transfer_order_no");
+		String pickup_order_no = getPara("pickup_order_no");
+		String depart_order_no = getPara("depart_order_no");
+		String delivery_order_no = getPara("delivery_order_no");
+		String return_order_no = getPara("return_order_no");
+		String charge_order_no = getPara("charge_order_no");
+		String cost_order_no = getPara("cost_order_no");
+		
+		String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        
+		String conditions="  where 1=1 ";
+		if (StringUtils.isNotEmpty(transfer_order_no)){                                           //运输单
+			conditions+=" and UPPER(tor.order_no) like '%"+transfer_order_no.toUpperCase()+"%'";
+		}if (StringUtils.isNotEmpty(pickup_order_no)){                                            // 调车单
+			conditions+=" and UPPER(dor_pi.depart_no) like '%"+pickup_order_no.toUpperCase()+"%'";
+		}if (StringUtils.isNotEmpty(depart_order_no)){                                            //发车单
+			conditions+=" and UPPER(dor_de.depart_no) like '%"+depart_order_no.toUpperCase()+"%'"
+					  + " or UPPER(dor_de2.depart_no) like '%"+depart_order_no.toUpperCase()+"%'";
+		}if (StringUtils.isNotEmpty(delivery_order_no)){                                          // 配送单
+			conditions+=" and UPPER(deo.order_no) like '%"+delivery_order_no.toUpperCase()+"%'";
+		}if (StringUtils.isNotEmpty(return_order_no)){                                            // 回单
+			conditions+=" and UPPER(ror1.order_no) like '%"+return_order_no.toUpperCase()+"%'"
+					  + " or UPPER(ror2.order_no) like '%"+depart_order_no.toUpperCase()+"%'";
+		}if (StringUtils.isNotEmpty(charge_order_no)){                                            //-- 应收对账单
+			conditions+=" and UPPER(aco.order_no) like '%"+charge_order_no.toUpperCase()+"%'";
+		}if (StringUtils.isNotEmpty(cost_order_no)){                                              //-- 应付对账单
+			conditions+=" and UPPER(acoo1.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
+					  + " or UPPER(acoo2.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
+					  + " or UPPER(acoo3.order_no) like '%"+cost_order_no.toUpperCase()+"%'";
+		}
+		conditions +=" and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				   + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+		           + " GROUP BY tor.id ";
+		
+		String sql = " SELECT CONCAT( tor.order_no, '-', tor. STATUS ) transfer_order_no, "
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( dor.depart_no ,'-',dor.`STATUS` )"
+				+ " FROM depart_order dor "
+				+ " WHERE dor.combine_type = 'PICKUP' AND dor.id = dt.pickup_id ) SEPARATOR '<br/>') pickup_order_no"
+				+ " ,"
+				+ " group_concat(DISTINCT( ifnull((select group_concat( dor.depart_no ,'-',dor.`STATUS` ) "
+				+ " from depart_order dor "
+				+ " where dor.combine_type='DEPART' and dor.id = dt.depart_id)"
+				+ " ,"
+				+ " (select group_concat( dor.depart_no,'-',dor.`STATUS` )"
+				+ " from depart_order dor "
+				+ " where dor.combine_type='DEPART'  and dor.id = dp.depart_id))) SEPARATOR '<br/>') depart_order_no"
+				+ " ,"
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( deo.order_no ,'-',deo.`STATUS` ) "
+				+ " FROM delivery_order deo "
+				+ " WHERE deo.id = doi.delivery_id ) SEPARATOR '<br/>') delivery_order_no"
+				+ " ,"
+				+ " group_concat(DISTINCT( ifnull((select group_concat(  ror.order_no ,'-',ror.transaction_status ) "
+				+ " from return_order ror"
+				+ " where ror.id = ror1.id )"
+				+ "  ,"
+				+ " (select group_concat( ror.order_no,'-',ror.transaction_status ) "
+				+ " from return_order ror"
+				+ " where ror.id = ror2.id ))) SEPARATOR '<br/>') return_order_no"
+				+ " ,"
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(  aco.order_no ,'-',aco.`STATUS` )"
+				+ " FROM arap_charge_order aco"
+				+ " WHERE aco.id = aci.charge_order_id ) SEPARATOR '<br/>') charge_order_no"
+				+ " ,"
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(  acor.order_no ,'-',acor.`STATUS` )"
+				+ " FROM arap_cost_order acor"
+				+ " WHERE acor.id = acoi1.cost_order_id ) SEPARATOR '<br/>') cost_order_no1"
+				+ " ,"
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( acor.order_no ,'-',acor.`STATUS` )  "
+				+ " FROM arap_cost_order acor "
+				+ " WHERE acor.id = acoi2.cost_order_id ) SEPARATOR '<br/>') cost_order_no2"
+				+ " ,"
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(  acor.order_no ,'-',acor.`STATUS` )"
+				+ " FROM arap_cost_order acor"
+				+ " WHERE acor.id = acoi3.cost_order_id ) SEPARATOR '<br/>') cost_order_no3"
+				+ " FROM"
+				+ " transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt ON dt.order_id = tor.id"
+				+ " LEFT JOIN depart_order dor_pi on dor_pi.id = dt.pickup_id"
+				+ " LEFT JOIN depart_pickup dp ON dt.pickup_id = dp.pickup_id"
+				+ " LEFT JOIN depart_order dor_de on dor_de.id = dt.depart_id"
+				+ " LEFT JOIN depart_order dor_de2 on dor_de2.id = dp.depart_id"
+				+ " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
+				+ " LEFT JOIN delivery_order deo on deo.id = doi.delivery_id"
+				+ " LEFT JOIN return_order ror1 on ror1.transfer_order_id = tor.id"
+				+ " LEFT JOIN return_order ror2 on ror2.delivery_order_id = doi.delivery_id"
+				+ " LEFT JOIN arap_charge_item aci on aci.ref_order_id = IFNULL(ror1.id,ror2.id)"
+				+ " LEFT JOIN arap_charge_order aco on aco.id = aci.charge_order_id"
+				+ " LEFT JOIN arap_cost_item acoi1 on acoi1.ref_order_id = dt.pickup_id and acoi1.ref_order_no = '提货'"
+				+ " LEFT JOIN arap_cost_item acoi2 on acoi2.ref_order_id = dt.depart_id and acoi2.ref_order_no = '零担'"
+				+ " LEFT JOIN arap_cost_item acoi3 on acoi3.ref_order_id = doi.delivery_id and acoi3.ref_order_no = '配送'"
+				+ " LEFT JOIN arap_cost_order acoo1 on acoo1.id = acoi1.cost_order_id"
+				+ " LEFT JOIN arap_cost_order acoo2 on acoo2.id = acoi2.cost_order_id"
+				+ " LEFT JOIN arap_cost_order acoo3 on acoo3.id = acoi3.cost_order_id";
+		
+//	     List<Record> orderList = Collections.EMPTY_LIST;
+//		 orderList = Db.find(sql + conditions);
+//		 renderJson(orderList);
+		 
+		 
+		 //String sqlTotal = "select count(1) total from ("+sql+ conditions+") B";
+         //Record rec = Db.findFirst(sqlTotal);
+         //logger.debug("total records:" + rec.getLong("total"));
+        
+         List<Record> BillingOrders = Db.find(sql+ conditions  +sLimit);
+
+         Map BillingOrderListMap = new HashMap();
+         BillingOrderListMap.put("sEcho", pageIndex);
+         BillingOrderListMap.put("iTotalRecords", BillingOrders.size());
+         BillingOrderListMap.put("iTotalDisplayRecords", BillingOrders.size());
+         BillingOrderListMap.put("aaData", BillingOrders);
+
+         renderJson(BillingOrderListMap);
+		 
 	}
 	
 	public void productIndex() {		
