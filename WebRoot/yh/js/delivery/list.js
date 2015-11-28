@@ -111,7 +111,19 @@ $(document).ready(function() {
 			return false;   
 		}
 	});
-
+	// 获取所有网点
+	 $.post('/transferOrder/searchAllOffice',function(data){
+		 if(data.length > 0){
+			 //console.log(data);
+			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
+			 deliveryOfficeSelect.empty();
+			 var hideDeliveryOfficeSelect = $("#hideDeliveryOfficeSelect").val();
+			 deliveryOfficeSelect.append("<option ></option>");	
+			 for(var i=0; i<data.length; i++){
+						 deliveryOfficeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>"); 
+				 };
+			 };
+	 },'json');
 	$('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
@@ -165,17 +177,20 @@ $(document).ready(function() {
       	var serial_no = $("#serial_no").val();
       	var delivery_no = $("#delivery_no").val();
       	var address_filter = $("#address_filter").val();
-      	var warehouse_filter = $("#warehouse_filter").val();
-      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter+"&plan_endTime_filter="+plan_endTime_filter+"&warehouse_filter="+warehouse_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
+      	var office_filter = $("#deliveryOfficeSelect").val();
+      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter+"&plan_endTime_filter="+plan_endTime_filter+"&office_filter="+office_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
       	dataTable.fnDraw();
     };
     
     
     //条件筛选
-	$("#orderNo_filter,#plan_beginTime_filter,#plan_endTime_filter,#delivery_no,#transfer_filter,#warehouse_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no,#address_filter").on('keyup', function () {    	 	
+	$("#orderNo_filter,#plan_beginTime_filter,#plan_endTime_filter,#delivery_no,#transfer_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no,#address_filter").on('keyup', function () {    	 	
 		refreshData();
       });
 	$("#status_filter").on('change',function(){
+		refreshData();
+	});
+	$("#deliveryOfficeSelect").on('change',function(){
 		refreshData();
 	});
 	/*===================获取客户================================*/

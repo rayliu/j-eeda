@@ -80,7 +80,7 @@ public class DeliveryController extends Controller {
 		String endTime_filter = getPara("endTime_filter");
 		String plan_beginTime_filter = getPara("plan_beginTime_filter");
 		String plan_endTime_filter = getPara("plan_endTime_filter");
-		String warehouse_filter = getPara("warehouse_filter");
+		String office_filter = getPara("office_filter");
 		String serial_no = getPara("serial_no");
 		String delivery_no = getPara("delivery_no");
 		String address_filter = getPara("address_filter");
@@ -96,29 +96,74 @@ public class DeliveryController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
 		Map transferOrderListMap = new HashMap();
-		if (orderNo_filter == null && transfer_filter == null
-				&& status_filter == null && customer_filter == null
-				&& sp_filter == null && beginTime_filter == null
-				&& endTime_filter == null && address_filter == null ) {
-			String sqlTotal = "SELECT count(1) total from (select count(1) total from delivery_order d "
-					+ " left join party p on d.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on d.sp_id = p2.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
-					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where "
-					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
+			String condition = " where 1=1 ";
+			if(!"".equals(orderNo_filter)&&orderNo_filter != null){
+				condition += " and ifnull(tor.customer_order_no,'') like '" + orderNo_filter + "' ";
+			}
+			if(status_filter!=null&&!"".equals(status_filter)){
+				condition += " and ifnull(d.status,'') like '%"+ status_filter+ "%' ";
+			}
+			if(customer_filter!=null&&!"".equals(customer_filter)){
+				condition += " and ifnull(c.abbr,'') like '%"+ customer_filter+ "%'";
+			}
+			if(delivery_no!=null&&!"".equals(delivery_no)){
+				condition += " and ifnull(d.order_no,'') like '%"+ delivery_no+ "%' ";
+			}
+			if(transfer_filter!=null&&!"".equals(transfer_filter)){
+				condition +=" and ifnull(dt2.transfer_no,'') like '%"+ transfer_filter+ "%' ";
+			}
+			if(sp_filter!=null&&!"".equals(sp_filter)){
+				condition +=" and ifnull(c2.abbr,'') like'%"+ sp_filter+ "%' ";
+			}
+			if(serial_no!=null&&!"".equals(serial_no)){
+				condition +=" and ifnull(trid.serial_no,'') like'%"+ serial_no+ "%'";
+			}
+			if(address_filter!=null&&!"".equals(address_filter)){
+				condition +=" and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"+ address_filter+ "%'";
+			}
+			if(office_filter!=null&&!"".equals(office_filter)){
+				condition +=" AND w.office_id IN (SELECT id FROM office WHERE office_name = '"+office_filter+"')";
+			}
+			if ((beginTime_filter != null && !"".equals(beginTime_filter))||(endTime_filter != null && !"".equals(endTime_filter))) {
+        		if (beginTime_filter == null || "".equals(beginTime_filter)) {
+        			beginTime_filter = "1970-01-01";
+    			}
+        		
+    			if (endTime_filter == null || "".equals(endTime_filter)) {
+    				endTime_filter = "2037-12-31";
+    			}
+    			condition += " and d.create_stamp between '"+ beginTime_filter+ "' and '" + endTime_filter + "' ";
+			}
+			if ((plan_beginTime_filter != null && !"".equals(beginTime_filter))||(plan_endTime_filter != null && !"".equals(plan_endTime_filter))) {
+        		if (plan_beginTime_filter == null || "".equals(plan_beginTime_filter)) {
+        			plan_beginTime_filter = "1970-01-01";
+    			}
+        		
+    			if (plan_endTime_filter == null || "".equals(plan_endTime_filter)) {
+    				endTime_filter = "2037-12-31";
+    			}
+    			condition += " and tor.planning_time between '"+ plan_beginTime_filter+ "' and '" + plan_endTime_filter + "' ";
+			}
+			condition += " and d.create_stamp BETWEEN '1970-01-01' AND '2037-12-31'"
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
 					+ " AND w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
-					+ " GROUP BY d.id ORDER BY d.create_stamp DESC ) atotal";
-			Record rec = Db.findFirst(sqlTotal);
-			logger.debug("total records:" + rec.getLong("total"));
-
+					+ " GROUP BY d.id ) A ";
+			String sqlTotal = "SELECT count(1) total from (select count(1) total"
+					+ " FROM delivery_order d"
+					+ " LEFT JOIN party p ON d.customer_id = p.id"
+					+ " LEFT JOIN contact c ON p.contact_id = c.id"
+					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"
+					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
+					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
+					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
+					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
+					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
+					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+					+ " LEFT JOIN office o ON o.id = tor.office_id"
+					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id";
 			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,w.warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
@@ -156,162 +201,24 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
 					+ " LEFT JOIN office o ON o.id = tor.office_id"
-					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
-					+ " WHERE"
-					+ " d.create_stamp BETWEEN '1-1-1' AND '9999-12-31'"
-					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ " AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
-					+ " AND w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
-					+ " GROUP BY d.id ) A ";
+					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id";
 
 			
 			String orderByStr = " order by A.create_stamp desc ";
 	        if(colName.length()>0){
 	        	orderByStr = " order by A."+colName+" "+sortBy;
 	        }
-
-			List<Record> transferOrders = Db.find(sql + orderByStr + sLimit);
-
-			transferOrderListMap.put("sEcho", pageIndex);
-			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-			transferOrderListMap.put("iTotalDisplayRecords",
-					rec.getLong("total"));
-			transferOrderListMap.put("aaData", transferOrders);
-		} else {
-			if (beginTime_filter == null || "".equals(beginTime_filter)) {
-				beginTime_filter = "1970-01-01";
-			}
-			if (endTime_filter == null || "".equals(endTime_filter)) {
-				endTime_filter = "2037-12-31";
-			}
-			if (plan_beginTime_filter == null || "".equals(plan_beginTime_filter)) {
-				plan_beginTime_filter = "1970-01-01";
-			}
-			if (plan_endTime_filter == null || "".equals(plan_endTime_filter)) {
-				plan_endTime_filter = "2037-12-31";
-			}
-
-			String sqlTotal = "SELECT count(1) total from (select count(1) total from delivery_order d "
-					+ " left join party p on d.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on d.sp_id = p2.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
-					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
-					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where ifnull(tor.customer_order_no,'') like '%"
-					+ orderNo_filter
-					+ "%' and ifnull(d.status,'') like '%"
-					+ status_filter
-					+ "%' and ifnull(c.abbr,'') like '%"
-					+ customer_filter
-					+ "%' and ifnull(d.order_no,'') like '%"
-					+ delivery_no
-					+ "%' and ifnull(dt2.transfer_no,'') like '%"
-					+ transfer_filter
-					+ "%' and ifnull(c2.abbr,'') like'%"
-					+ sp_filter
-					+ "%' and ifnull(trid.serial_no,'') like'%"
-					+ serial_no
-					+ "%' and ifnull(w.warehouse_name,'') like'%"
-					+ warehouse_filter
-					+ "%' and d.create_stamp between '"
-					+ beginTime_filter
-					+ "' and '" + endTime_filter + "' "
-					+ " and tor.planning_time between '"
-					+ plan_beginTime_filter
-					+ "' and '" + plan_endTime_filter + "' "
-					+ "and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"
-					+ address_filter
-					+ "%' AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') GROUP BY d.id ORDER BY d.create_stamp DESC ) atotal" ;
-			Record rec = Db.findFirst(sqlTotal);
+	        Record rec = Db.findFirst(sqlTotal+condition);
 			logger.debug("total records:" + rec.getLong("total"));
-
-			String sql = "select * from (SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.status statu,w.warehouse_name, "
-					+ " (SELECT CASE"
-					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
-					+ " 				select count(1) from delivery_order_item doi"
-					+ " 		where doi.delivery_id = d.id"
-					+ " 	 )"
-					+ "  WHEN d.cargo_nature ='cargo' THEN ("
-					+ " 	select sum(doi.amount) from delivery_order_item doi"
-					+ " 	where doi.delivery_id = d.id"
-					+ "  )"
-					+ " 	 END ) amount,"
-					+ " (SELECT CASE"
-					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
-					+ " 				select sum(toid.pieces) from delivery_order_item doi, transfer_order_item_detail toid"
-					+ " 		where doi.transfer_item_detail_id=toid.id and doi.delivery_id = d.id"
-					+ " 	 )"
-					+ "  WHEN d.cargo_nature ='cargo' THEN ("
-					+ " 	select sum(doi.amount) from delivery_order_item doi where doi.delivery_id = d.id"
-					+ "  )"
-					+ " 	 END ) pcs_amount,"
-					+ " tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
-					+ "( SELECT group_concat( DISTINCT doi.transfer_no SEPARATOR '\r\n' ) FROM delivery_order_item doi WHERE delivery_id = d.id ) AS transfer_order_no,"
-					+ " ( SELECT group_concat( trid.serial_no SEPARATOR '\r\n' )"
-					+ " FROM "
-					+ " delivery_order_item doi LEFT JOIN transfer_order_item_detail trid ON trid.id = doi.transfer_item_detail_id"
-					+ " WHERE doi.delivery_id = d.id ) AS serial_no FROM delivery_order d"
-					+ " LEFT JOIN party p ON d.customer_id = p.id"
-					+ " LEFT JOIN contact c ON p.contact_id = c.id"
-					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"
-					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
-					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
-					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
-					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
-					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
-					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
-					+ " LEFT JOIN office o ON o.id = tor.office_id"
-					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
-					+ " where ifnull(tor.customer_order_no,'') like '%"
-					+ orderNo_filter
-					+ "%' and ifnull(d.status,'') like '%"
-					+ status_filter
-					+ "%' and ifnull(c.abbr,'') like '%"
-					+ customer_filter
-					+ "%' and ifnull(d.order_no,'') like '%"
-					+ delivery_no
-					+ "%' and ifnull(dt2.transfer_no,'') like '%"
-					+ transfer_filter
-					+ "%' and ifnull(c2.abbr,'') like'%"
-					+ sp_filter
-					+ "%' and ifnull(trid.serial_no,'') like'%"
-					+ serial_no
-					+ "%' and ifnull(w.warehouse_name,'') like'%"
-					+ warehouse_filter
-					+ "%' and d.create_stamp between '"
-					+ beginTime_filter
-					+ "' and '" + endTime_filter + "' "
-					+ " and tor.planning_time between '"
-					+ plan_beginTime_filter
-					+ "' and '" + plan_endTime_filter + "' "
-					+ " and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"
-					+ address_filter
-					+ "%' AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
-				    + " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-				    + " group by d.id ) A";
-
-			String orderByStr = " order by A.create_stamp desc ";
-	        if(colName.length()>0){
-	        	orderByStr = " order by A."+colName+" "+sortBy;
-	        }
-
-			List<Record> transferOrders = Db.find(sql + orderByStr + sLimit);
+			List<Record> transferOrders = Db.find(sql + condition + orderByStr + sLimit);
 
 			transferOrderListMap.put("sEcho", pageIndex);
 			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
 			transferOrderListMap.put("iTotalDisplayRecords",
 					rec.getLong("total"));
 			transferOrderListMap.put("aaData", transferOrders);
+			renderJson(transferOrderListMap);
 		}
-		// 获取总条数
-
-		renderJson(transferOrderListMap);
-	}
-
 	// 在途配送单list
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
