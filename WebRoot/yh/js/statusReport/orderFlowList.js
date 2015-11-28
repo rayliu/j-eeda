@@ -5,7 +5,7 @@ $(document).ready(function() {
     $('#menu_report').addClass('active').find('ul').addClass('in');
     
     $("#beginTime_filter").val(new Date().getFullYear()+'-'+ (new Date().getMonth()+1));
-    
+
 	  //datatable, 动态处理
     var dataTable = $('#eeda-table').DataTable({
         "processing": true,
@@ -20,14 +20,15 @@ $(document).ready(function() {
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        //"sAjaxSource": "/statusReport/orderFlowList",
+        "serverSide": true,
+        "deferLoading": 0, //初次不查数据
         "columns": [
-            { "data": "TRANSFER_ORDER_NO", 
+            { "data": "TRANSFER_ORDER_NO", "width": "10%",
                 "render": function ( data, type, full, meta ) {
                     return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
                 }
             },
-            { "data": "CUSTOMER_NAME","width": "10%"},
+            { "data": "CUSTOMER_NAME","width": "5%"},
             { "data": "PICKUP_ORDER_NO", "width": "10%"},
             { "data": "DEPART_ORDER_NO", "width": "10%"}, 
             { "data": "DELIVERY_ORDER_NO", "width": "10%"}, 

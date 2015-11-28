@@ -52,9 +52,9 @@ public class StatusReportController extends Controller{
 		String cost_order_no = getPara("cost_order_no");
 		
 		String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        String pageIndex = getPara("draw");
+        if (getPara("start") != null && getPara("length") != null) {
+            sLimit = " LIMIT " + getPara("start") + ", " + getPara("length");
         }
         
 		String conditions="  where 1=1 ";
@@ -147,17 +147,18 @@ public class StatusReportController extends Controller{
 //		 renderJson(orderList);
 		 
 		 
-		 //String sqlTotal = "select count(1) total from ("+sql+ conditions+") B";
-         //Record rec = Db.findFirst(sqlTotal);
-         //logger.debug("total records:" + rec.getLong("total"));
+		 String sqlTotal = "select count(1) total from ("+sql+ conditions+") B";
+         Record rec = Db.findFirst(sqlTotal);
+         logger.debug("total records:" + rec.getLong("total"));
         
-         List<Record> BillingOrders = Db.find(sql+ conditions  +sLimit);
+         List<Record> BillingOrders = Db.find(sql+ conditions + sLimit);
 
+         
          Map BillingOrderListMap = new HashMap();
-         BillingOrderListMap.put("sEcho", pageIndex);
-         BillingOrderListMap.put("iTotalRecords", BillingOrders.size());
-         BillingOrderListMap.put("iTotalDisplayRecords", BillingOrders.size());
-         BillingOrderListMap.put("aaData", BillingOrders);
+         BillingOrderListMap.put("draw", pageIndex);//显示第几页
+         BillingOrderListMap.put("recordsTotal", rec.getLong("total"));
+         BillingOrderListMap.put("recordsFiltered", rec.getLong("total"));
+         BillingOrderListMap.put("data", BillingOrders);
 
          renderJson(BillingOrderListMap);
 		 
