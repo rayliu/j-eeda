@@ -16,7 +16,7 @@
             	</div>
             <div class="panel-body">
             	<div class="row-fluid">
-		 			<table class="table table-striped table-bordered table-hover datatable" id="example" style="width: 1237px;">
+		 			<table class="table table-striped table-bordered table-hover datatable" id="example" style="width: 100%;">
 						<thead>
 							<tr>
 								<th>用户名</th>
@@ -86,7 +86,7 @@ $(document).ready(function() {
 	        },
 	        "sAjaxSource": "/loginUser/listUser",
 			"aoColumns": [
-				{ "mDataProp": "USER_NAME",
+				{ "mDataProp": "USER_NAME", "sWidth": "30%",
 					"fnRender":function(obj){
 						if(User.update){
 							return "<a  href='/loginUser/edit/"+obj.aData.ID+"' target='_blank' >" + obj.aData.USER_NAME + "</a>";
@@ -95,8 +95,8 @@ $(document).ready(function() {
 						}
 						
 					}},
-				{ "mDataProp": "C_NAME" },
-	            { "mDataProp": "PASSWORD_HINT" },
+				{ "mDataProp": "C_NAME", "sWidth": "30%" },
+	            { "mDataProp": "PASSWORD_HINT","sWidth": "30%"},
 	            { 
 	                "mDataProp": null, 
 	                "sWidth": "8%",
