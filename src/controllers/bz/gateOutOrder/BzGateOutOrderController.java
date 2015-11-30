@@ -71,9 +71,9 @@ public class BzGateOutOrderController extends Controller {
 
     public void list() {
         String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        String pageIndex = getPara("draw");
+        if (getPara("start") != null && getPara("length") != null) {
+            sLimit = " LIMIT " + getPara("start") + ", " + getPara("length");
         }
 
         String sql = "select m.*,"

@@ -18,7 +18,9 @@ $(document).ready(function() {
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        //"ajax": "/damageOrder/list",
+        "ajax": "/damageOrder/list",
+        "serverSide": true,
+        "deferLoading": 0, //初次不查数据
         "order": [[ 4, "desc" ]],
         "columns": [
             { "data": "ORDER_NO", 
