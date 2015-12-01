@@ -57,14 +57,14 @@ public class DeliveryController extends Controller {
 	// in config route已经将路径默认设置为/yh
 	// me.add("/yh", controllers.yh.AppController.class, "/yh");
 	Subject currentUser = SecurityUtils.getSubject();
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
+	
+	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
 	public void index() {
 		render("/yh/delivery/deliveryOrderList.html");
-		
 	}
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
 	public void deliverOnTrip(){
-		
 		render("/yh/delivery/deliveryOrderStatus.html");
 	}
 
