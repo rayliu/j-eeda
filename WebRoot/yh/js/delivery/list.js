@@ -112,7 +112,7 @@ $(document).ready(function() {
 		}
 	});
 	// 获取所有网点
-	 $.post('/transferOrder/searchAllOffice',function(data){
+	 $.post('/officeConfig/searchAllOffice',function(data){
 		 if(data.length > 0){
 			 //console.log(data);
 			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");

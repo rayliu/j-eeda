@@ -70,7 +70,7 @@ public class DeliveryController extends Controller {
 	}
 
 	// 配送单list
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
+	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
 	public void deliveryList() {
 		String orderNo_filter = getPara("orderNo_filter");
 		String transfer_filter = getPara("transfer_filter");

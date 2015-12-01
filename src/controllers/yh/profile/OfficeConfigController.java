@@ -6,6 +6,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import models.Office;
 import models.ParentOfficeModel;
@@ -24,6 +25,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
@@ -234,6 +236,13 @@ public class OfficeConfigController extends Controller{
         setAttr("lu", office);
         render("/yh/profile/officeConfig/edit.html");
     }
+	public void searchAllOffice() {
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where (o.id = " + parentID +" or o.belong_office = " + parentID+") and  o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')");
+		renderJson(offices); 
+	}
+	
 	
 	//邮箱发送测试
 	public void test(){
