@@ -101,7 +101,7 @@
                     <%}%>
                     <%  
                     	var map = permissionMap;
-                        if(map.TransferOrder_list != ""){
+                        if(nvl(map.TransferOrder_list, '') != ""){
                     %>
                         <li id="menu_transfer">
                             <a href="#"><i class="fa fa-file-text fa-fw"></i> 运输订单管理<span class="fa arrow"></span></a>
@@ -138,7 +138,7 @@
                     <%  
                         var isPickupOrder = map.PickupOrder_list;
                         var isDepartOrder = map.DepartOrder_list;
-                        if(isPickupOrder != "" || isDepartOrder != ""){
+                        if(nvl(isPickupOrder, '') != "" || nvl(isDepartOrder, '') != ""){
                     %>
                         <li id="menu_assign">
                             <a href="#"><i class="fa fa-truck fa-fw"></i>调度管理<span class="fa arrow"></span></a>
@@ -161,7 +161,9 @@
                     	var carInfoPermission = map.CarInfo_list;
                     	var driverInfoPermission = map.Driver_list;
                     	var carSummaryPermission = map.CarSummary_list;
-                    	if(carInfoPermission != '' || driverInfoPermission != '' || carSummaryPermission != ''){
+                    	if(nvl(carInfoPermission, '') != '' || 
+                            nvl(driverInfoPermission, '') != '' || 
+                            nvl(carSummaryPermission, '') != ''){
                     %>
 	                    <li id="menu_carmanage">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i>自营车辆管理<span class="fa arrow"></span></a>
@@ -232,7 +234,8 @@
                     <%
                     	var deliveryListPermission = map.DeliveryOder_list;
                     	var deliveryOnTripPermission = map.DeliveryOderMilestone_list;
-                    	if(deliveryListPermission != '' || deliveryOnTripPermission != ''){
+                    	if(nvl(deliveryListPermission, '') != '' || 
+                            nvl(deliveryOnTripPermission, '') != ''){
                     %>
 	                    <li id="menu_deliver">
 	                        <a href="#"><i class="fa fa-truck fa-fw"></i> 配送管理<span class="fa arrow"></span></a>
@@ -271,7 +274,7 @@
                   <%
                   	var gateInPermission = map.WarehouseOrder_inList;
                   	
-                  	if(gateInPermission != '' ){
+                  	if(nvl(gateInPermission, '') != '' ){
                   %>
                     <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 入库管理<span class="fa arrow"></span></a>
@@ -300,7 +303,7 @@
                  <%}%>
                  <%
                     var gateOutPermission = map.WarehouseOrder_outList;
-                    if(gateOutPermission != '' ){
+                    if(nvl(gateOutPermission, '') != '' ){
                   %>
                  <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 出库管理<span class="fa arrow"></span></a>
@@ -330,7 +333,7 @@
                  
                   <%
                     var InventoryListPermission = map.InventoryItem_list;
-                    if(gateOutPermission != ''){
+                    if(nvl(gateOutPermission, '') != ''){
                   %>
                  <li id="menu_warehouse">
                         <a href="#"><i class="fa fa-th-large fa-fw"></i> 库存管理<span class="fa arrow"></span></a>
@@ -408,11 +411,11 @@
                 	var costListPermission = map.CostItemConfirm_affirm;
                     var costPrePayOrderListPermission = map.PrePayOrder_list;
 
-               		if(costListPermission!=''
-                        ||costConfirmListPermission != '' 
-                        || costCheckListPermission != '' 
-                        || costPreInvoiceListPermission != ''
-                        || costPrePayOrderListPermission != ''){
+               		if(nvl(costListPermission, '')!=''
+                        || nvl(costConfirmListPermission, '') != '' 
+                        || nvl(costCheckListPermission, '') != '' 
+                        || nvl(costPreInvoiceListPermission, '') != ''
+                        || nvl(costPrePayOrderListPermission, '') != ''){
 
                 %>
                     <li id="menu_cost">
@@ -454,10 +457,10 @@
                		var chunarijiPermission = map.PaymentCheckOrder_list;
                		var TransferAccountPermission = map.TransferAccountsOrder_list;
 
-               		if( chargePermission != '' 
-                        || costConfirmPermission != ''
-               			|| reimbureementPermission != '' 
-                        || chunarijiPermission != '') {
+               		if( nvl(chargePermission, '') != '' 
+                        || nvl(costConfirmPermission, '') != ''
+               			|| nvl(reimbureementPermission, '') != '' 
+                        || nvl(chunarijiPermission, '') != '') {
                	%>
                     <li id="menu_finance">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 财务管理<span class="fa arrow"></span></a>
@@ -505,7 +508,9 @@
                     	var customerContractListPermission = map.ContractCustomer_list;
                     	var providerContractListPermission = map.ContractProvider_list;
                     	var deliveryContractListPermission = map.ContractDelivery_list;
-                   		if(customerContractListPermission != '' || providerContractListPermission != '' || deliveryContractListPermission != ''){
+                   		if(nvl(customerContractListPermission, '') != '' || 
+                            nvl(providerContractListPermission, '') != '' || 
+                            nvl(deliveryContractListPermission, '') != ''){
                     %>
                     <li id="menu_contract">
                         <a href="#"><i class="fa fa-book fa-fw"></i> 合同管理<span class="fa arrow"></span></a>
@@ -534,7 +539,10 @@
                    		var orderIndexPermission = map.OrderIndex_list;
                    		var dailyReportPermission = map.DailyReport_list;
                    		
-                   		if(productIndexPermission != '' || orderIndexPermission !='' || dailyReportPermission !='' || InventoryListPermission !='')
+                   		if(nvl(productIndexPermission, '') != '' || 
+                            nvl(orderIndexPermission, '') !='' || 
+                            nvl(dailyReportPermission, '') !='' || 
+                            nvl(InventoryListPermission, '') !='')
                    {%>
                     <li id="menu_report">
                         <a href="#"><i class="fa fa-table fa-fw"></i> 报表查询<span class="fa arrow"></span></a>
@@ -593,9 +601,16 @@
                     	var tollcostListPermission = map.Pay_list;
                     	var accountListPermission = map.Account_list;
                     	
-                    	if(customerPermission != '' || spListPermission != '' || spCarListPermission != ''
-                    		|| spDriverListPermission != '' || officeListPermission != '' || productListPermission != '' || warehouseListPermission != ''
-                    		|| tollpayListPermission != '' || tollcostListPermission != '' || accountListPermission != ''){
+                    	if(nvl(customerPermission, '') != '' || 
+                            nvl(spListPermission, '') != '' || 
+                            nvl(spCarListPermission, '') != '' || 
+                            nvl(spDriverListPermission, '') != '' || 
+                            nvl(officeListPermission, '') != '' || 
+                            nvl(productListPermission, '') != '' || 
+                            nvl(warehouseListPermission, '') != '' || 
+                            nvl(tollpayListPermission, '') != '' || 
+                            nvl(tollcostListPermission, '') != '' || 
+                            nvl(accountListPermission, '') != ''){
                     %>
                     
 	                    <li id="menu_profile">
@@ -684,10 +699,10 @@
                         var userRoleListPermission = map.UserRole_list;
                         var rolePrivilegeListPermission = map.RolePermission_list;
                        
-                        if(userLoginListPermission != '' 
-                            || roleListPermission != '' 
-                            || userRoleListPermission != ''
-                            || rolePrivilegeListPermission != '' ){
+                        if(nvl(userLoginListPermission, '') != '' 
+                            || nvl(roleListPermission, '') != '' 
+                            || nvl(userRoleListPermission, '') != ''
+                            || nvl(rolePrivilegeListPermission, '') != '' ){
                     %>
                         <li id="menu_sys_profile">
                             <a href="#"><i class="fa fa-cog fa-fw"></i> 系统配置<span class="fa arrow"></span></a>
