@@ -367,7 +367,12 @@
                     var chargeCheckOrderList = map.ChargeCheckOrder_list;
                     var chargePreInvoiceOrder = map.ChargePreInvoiceOrder_list;
                     var ChargeInvoiceOrderPermission = map.ChargeInvoiceOrder_list;
-                    if(payListPermission != '' || chargeItemPermission != '' || chargeCheckOrderList != '' || chargePreInvoiceOrder != '' ||ChargeInvoiceOrderPermission != ''){
+
+                    if(nvl(payListPermission, '') != '' || 
+                        nvl(chargeItemPermission, '') != '' || 
+                        nvl(chargeCheckOrderList, '') != '' || 
+                        nvl(chargePreInvoiceOrder, '') != '' ||
+                        nvl(ChargeInvoiceOrderPermission, '') != ''){
                  %>
                     <li id="menu_charge">
                         <a href="#"><i class="fa fa-cny fa-fw"></i> 应收管理<span class="fa arrow"></span></a>
