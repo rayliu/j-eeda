@@ -115,7 +115,7 @@ public class DeliveryController extends Controller {
 				condition +=" and ifnull(dt2.transfer_no,'') like '%"+ transfer_filter+ "%' ";
 			}
 			if(sp_filter!=null&&!"".equals(sp_filter)){
-				condition +=" and ifnull(c2.abbr,'') like'%"+ sp_filter+ "%' ";
+				condition +=" and ifnull(c3.abbr,'') like'%"+ sp_filter+ "%' ";
 			}
 			if(serial_no!=null&&!"".equals(serial_no)){
 				condition +=" and ifnull(trid.serial_no,'') like'%"+ serial_no+ "%'";
@@ -157,6 +157,8 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN contact c ON p.contact_id = c.id"
 					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"
 					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
+					+ " LEFT JOIN party p3 ON d.sp_id = p3.id"
+					+ " LEFT JOIN contact c3 ON p3.contact_id = c3.id"
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
@@ -195,6 +197,8 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN contact c ON p.contact_id = c.id"
 					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"
 					+ " LEFT JOIN contact c2 ON p2.contact_id = c2.id"
+					+ " LEFT JOIN party p3 ON d.sp_id = p3.id"
+					+ " LEFT JOIN contact c3 ON p3.contact_id = c3.id"
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
