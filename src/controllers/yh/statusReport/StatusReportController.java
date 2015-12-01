@@ -63,8 +63,8 @@ public class StatusReportController extends Controller{
 		}if (StringUtils.isNotEmpty(pickup_order_no)){                                            // 调车单
 			conditions+=" and UPPER(dor_pi.depart_no) like '%"+pickup_order_no.toUpperCase()+"%'";
 		}if (StringUtils.isNotEmpty(depart_order_no)){                                            //发车单
-			conditions+=" and UPPER(dor_de.depart_no) like '%"+depart_order_no.toUpperCase()+"%'"
-					  + " or UPPER(dor_de2.depart_no) like '%"+depart_order_no.toUpperCase()+"%'";
+			conditions+=" and (UPPER(dor_de.depart_no) like '%"+depart_order_no.toUpperCase()+"%'"
+					  + " or UPPER(dor_de2.depart_no) like '%"+depart_order_no.toUpperCase()+"%')";
 		}if (StringUtils.isNotEmpty(delivery_order_no)){                                          // 配送单
 			conditions+=" and UPPER(deo.order_no) like '%"+delivery_order_no.toUpperCase()+"%'";
 		}if (StringUtils.isNotEmpty(return_order_no)){                                            // 回单
