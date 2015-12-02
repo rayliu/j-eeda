@@ -273,7 +273,7 @@ public class StatusReportController extends Controller{
 			}
 			
 			//有客户时
-			if (StringUtils.isNotEmpty(beginTime)){
+			if (StringUtils.isNotEmpty(sign_no)){
 				totalSql = totalSql + " and dor.ref_no LIKE '%" + sign_no + "%'";
 				sql = sql + " and dor.ref_no like '%" + sign_no + "%'";
 			}
