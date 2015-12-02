@@ -405,21 +405,25 @@ $(document).ready(function() {
     		var customer_name = $("#customer_name").val();
     		var plantime = $("#plantime").val();
     		var arrivaltime = $("#arrivaltime").val();
+    		var serial_no = $("#serial_no").val();
+    		var sign_no = $("#sign_no").val();
 
         costConfiremTable.fnSettings().oFeatures.bServerSide = true;
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
-                              +"&sp="+sp
+                              							+"&sp="+sp
 											    		+"&no="+no
 											    		+"&beginTime="+beginTime
 											    		+"&endTime="+endTime
 											    		+"&status="+status
 											    		+"&type="+type
 											    		+"&booking_note_number="+booking_note_number
-                              +"&route_from="+route_from
-                              +"&route_to="+route_to
-                              +"&customer_name="+customer_name
+							                            +"&route_from="+route_from
+							                            +"&route_to="+route_to
+							                            +"&customer_name="+customer_name
     													+"&plantime="+plantime
-    													+"&arrivaltime="+arrivaltime;
+    													+"&arrivaltime="+arrivaltime
+    													+"&serial_no="+serial_no
+    													+"&sign_no="+sign_no;
     	
     		  costConfiremTable.fnDraw();
        };

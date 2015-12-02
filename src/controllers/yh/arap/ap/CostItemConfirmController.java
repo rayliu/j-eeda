@@ -14,6 +14,7 @@ import models.yh.arap.ArapMiscCostOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
@@ -76,6 +77,8 @@ public class CostItemConfirmController extends Controller {
         String route_from =getPara("route_from");
         String route_to=getPara("route_to");
         String customer_name = getPara("customer_name");
+        String serial_no=getPara("serial_no");
+        String sign_no = getPara("sign_no");
        
         String sqlTotal = "";
         String sql = "select cast(planning_time as CHAR) planning_time1, A.* from (select distinct dor.id,"
@@ -385,6 +388,12 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(planning_time, '1970-01-01') between '" + plantime + "' and '" + arrivaltime + " 23:59:59' "
         	        + " and ifnull(cname,'') like '%" + customer_name + "%'"
         	        + " and ifnull(status, '') != '手动删除'";
+        	if (StringUtils.isNotEmpty(serial_no)){
+        		condition += " and serial_no like '%" + serial_no + "%'";
+			}
+        	if (StringUtils.isNotEmpty(sign_no)){
+        		condition += " and ref_no like '%" + sign_no + "%'";
+			}
         }
         if (condition == "" ){
         	condition=" where ifnull(status, '') != '手动删除' ";
