@@ -43,6 +43,9 @@
                                         	<input type="hidden" name="beginTime" value="${beginTime!''}${arapAuditOrder.beginTime!''}"/>
                                         	<input type="hidden" name="endTime" value="${endTime!''}${arapAuditOrder.endTime!''}"/>
                                         	<input type="hidden" name="spId" id="spId" value="${spId!''}"/>
+                                            <input type="hidden" name="addMiscOrder" id="addMiscOrder" value=""/>
+                                            <input type="hidden" name="addReturnOrder" id="addReturnOrder" value=""/>
+                                            <input type="hidden" name="addAmount" id="addAmount" value=""/>
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditOrder.total_amount!''}"/>
                                         	<input type="hidden" id="hiddenDebitAmount" name="debit_amount" value="${debitAmount!''}${arapAuditOrder.debit_amount!''}"/>
                                             <h3>客户信息</h3>
@@ -62,9 +65,9 @@
                                                 <label>电话</label>
                                                 <label class="radio-inline" id="company">${customer.phone!''}</label>
                                             </div>
-                                            <div><label>应收总金额:</label><label class="radio-inline" style="font-weight:bold;">${totalAmount!''}${arapAuditOrder.total_amount!''}</label></div>
+                                            <div><label>应收总金额:</label><label class="radio-inline" id="amount" style="font-weight:bold;">${totalAmount!''}${arapAuditOrder.total_amount!''}</label></div>
                                             <div><label>扣款金额</label><label class="radio-inline" id="debitAmount" style="font-weight:bold;">${arapAuditOrder.debit_amount!''}</label></div>
-                                            <div><label>实收金额</label><label class="radio-inline" id="chargeAmount" style="font-weight:bold;">${totalAmount!''}${arapAuditOrder.charge_amount!''}</label></div>
+                                            <div><label>对账确认金额</label><label class="radio-inline" id="chargeAmount" style="font-weight:bold;">${totalAmount!''}${arapAuditOrder.charge_amount!''}</label></div>
                                             
                                             <div class="form-group">
                                                 <label>备注</label>
@@ -123,7 +126,6 @@
                                         <div class="form-group">
                                             <input type="text" class="form-control input-inline input-large" id="beginTime" value="${beginTime!''}"> - <input type="text" class="form-control input-large input-inline" id="endTime" value="${endTime!''}">
                                         </div>
-                                        
                                     </form> -->
                                 </div>
                                 <!-- /.col-lg-6 (nested) -->
@@ -143,7 +145,6 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="transferOrderMilestoneTbody" >
-                                                    
                                                 </tbody>
                                             </table>
                                         </div>
@@ -153,7 +154,10 @@
                                 </div>
                                 <div class="tab-pane fade" id="arap">
                                     <div class="panel-body">
-                                		<label>应收总金额:</label><label class="radio-inline">${totalAmount!''}${arapAuditOrder.total_amount!''}</label>
+                                		<label>对账确认金额:</label><label class="radio-inline" id="total_amount">${totalAmount!''}${arapAuditOrder.total_amount!''}</label>
+                                        <button id="addOrderBtn" class="btn  btn-primary" disabled="true" data-toggle="modal" data-target="#addOrder" data-backdrop="static">
+                                            加入单据
+                                        </button>
                                         <div class="table-responsive">
 			                                <table class="table table-striped table-bordered table-hover" id="chargeConfirem-table" style="width: 2200px;">
 			                                    <thead>
@@ -177,7 +181,7 @@
 			                                            <th>运输单号</th>
 			                                            <th>配送单号</th>
 			                                            <th>订单状态</th>
-			                                            <th>回单时间</th>                                            
+			                                            <th>回单时间</th>
 			                                            <th>始发地</th>
 			                                            <!-- <th>结算数量？</th>
 			                                            <th>单价？</th> -->
@@ -193,6 +197,7 @@
 			                                            <th>等待费</th>
 			                                            <th>其他费用</th>
 			                                            <th>备注</th>
+                                                        <th>操作</th>
 			                                        </tr>
 			                                    </thead>
 			                                    <tbody>
@@ -214,16 +219,15 @@
                                                             <td class="">${item.CNAME!''}</td>
                                                             <td class="">${item.RECEIPT_ADDRESS!''}</td>
                                                             <td class="">${item.SP!''}</td>
-                                                            <td class=""></td> 
+                                                            <td class=""></td>
                                                             <td class="">${item.TRANSFER_ORDER_NO!''}</td>
                                                             <td class="">${item.DELIVERY_ORDER_NO!''}</td>
                                                             <td class="">${item.TRANSACTION_STATUS!''}</td>
                                                             <td class="">${item.RECEIPT_DATE!''}</td>
                                                             <td class="">${item.ROUTE_FROM!''}</td>
-                                                            
                                                             <td class="">${item.CONTRACT_AMOUNT!''}</td>
                                                             <td class=""></td>
-                                                            <td class=""></td> 
+                                                            <td class=""></td>
                                                             <td class="">${item.INSURANCE_AMOUNT!''}</td>
                                                             <td class=""></td>
                                                             <td class=""></td>
@@ -232,8 +236,8 @@
                                                             <td class=""></td>
                                                             <td class="">${item.WAREHOUSE_AMOUNT!''}</td> 
                                                             <td class=""></td>
-                                                            
                                                             <td class=""></td>
+                                                            <td class=""><a class='btn btn-danger finItemdel' code='"+${item.ID!''}+"' change_amount='"+${item.CHANGE_AMOUNT!''}+"' order_type='"+${item.tporder!''}+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a></td>
                                                         </tr>
                                                     <% }%>
 			                                    </tbody>
@@ -243,6 +247,74 @@
                                     </div>
                                     <!-- /.panel-body -->
 								</div>
+                                <div class="modal fade" id="addOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title" id="myModalLabel">手工单</h4>
+                                      </div>
+                                      <div class="form-group">
+                                        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;回单号:</label>
+                                        <input type="text" class="form-control search-control status_filter" style="" id="ref_no">
+                                      </div>
+                                      <div class="modal-body">
+                                        <form id="addOrderForm" action="">
+                                            <div class="tab-pane fade active in" id="unchecked">
+                                                        <div class="table-responsive datatable-scroll">
+                                                            <table class="table table-striped table-bordered table-hover" id="uncheckedChargeCheck-table" style="width: 2800px;">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th><!-- <input type="checkbox" id="allCheck" name="allCheck"> --></th>
+                                                                        <th></th>
+                                                                        <th>回单号</th>
+                                                                        <th>收入状态</th>
+                                                                        <th>合计收入</th>
+                                                                        <th>客户名称</th>
+                                                                        <th>供应商名称</th>
+                                                                        <th>计划时间</th>
+                                                                        <th>收货地址</th>
+                                                                        <th>发车时间</th>
+                                                                        <th>运输单号</th>
+                                                                        <th>配送单号</th>
+                                                                        <th>客户订单号</th>
+                                                                        <th>订单状态</th>
+                                                                        <th>回单时间</th>
+                                                                        <th>始发地</th>
+                                                                        <th>目的地</th>
+                                                                        <th>合同运费</th>
+                                                                        <th>提货费</th>
+                                                                        <th>送货费</th>
+                                                                        <th>保险费</th>
+                                                                        <th>超里程费</th>
+                                                                        <th>台阶费</th>
+                                                                        <th>安装费</th>
+                                                                        <th>装卸费</th>
+                                                                        <th>仓租费</th>
+                                                                        <th>等待费</th>
+                                                                        <th>其他费用</th>
+                                                                        <th>合计成本</th>
+                                                                        <th>收货地址</th>
+                                                                        <th>确认人</th>
+                                                                        <th>确认时间</th>
+                                                                        <th>备注</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="uncheckedChargeCheckList">
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        </div>
+                                          <div class="modal-footer">
+                                          <br>
+                                            <button type="button" class="btn  btn-primary" data-dismiss="modal">取消</button>
+                                            <button id="addOrderFormBtn" type="button" class="btn  btn-primary">保存</button>
+                                          </div>
+                                        </form>
+                                      </div>
+                                    </div><!-- /.modal-content -->
+                                  </div><!-- /.modal-dialog -->
+                                </div>
                                 <div class="tab-pane fade" id="cargos">
                                     <div class="panel-body">
                                     <div>
