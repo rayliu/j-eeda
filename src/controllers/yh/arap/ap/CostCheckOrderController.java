@@ -2,7 +2,6 @@ package controllers.yh.arap.ap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -312,6 +311,7 @@ public class CostCheckOrderController extends Controller {
         renderJson(BillingOrderListMap);
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CCOI_CREATE, PermissionConstant.PERMSSION_CCOI_UPDATE}, logical=Logical.OR)
+    @Before(Tx.class)
     public void save(){
     	ArapCostOrder arapAuditOrder = null;
     	String costCheckOrderId = getPara("costCheckOrderId");
@@ -782,6 +782,7 @@ public class CostCheckOrderController extends Controller {
         renderJson(BillingOrderListMap);
 	}
 	
+	@Before(Tx.class)
 	public void costConfirmList(){
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -1585,6 +1586,7 @@ public class CostCheckOrderController extends Controller {
         renderJson(BillingOrderListMap);
 	}
 	//保存后，手工单状态转为“已入对账单”。
+	@Before(Tx.class)
 	public void updateCostMiscOrder(){
 		String micsOrderIds = getPara("micsOrderIds");
 		String costCheckOrderId = getPara("costCheckOrderId");
