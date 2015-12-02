@@ -709,7 +709,7 @@ $(document).ready(function() {
           ]          
     });
       $("#addOrderBtn").on('click',function(){
-            addChargeCheckTable.fnDraw();
+            refreshCreateList();
        });
         var returnIds = [];
         var miscOrderIds =[];
@@ -775,14 +775,17 @@ $(document).ready(function() {
         });
      });
        $('#ref_no').on( 'keyup', function () {
-        //alert("OK");
         refreshCreateList();
         } );
      var refreshCreateList = function() {
+            $("#customer_no").val($("#customer_name").val())
             var ref_no = $("#ref_no").val();
+            var customer_no = $("#customer_no").val();
             var ispage = "chargeCheckOrder";
+
             addChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?ref_no="+ref_no
-                                                            +"&ispage="+ispage;
+                                                            +"&ispage="+ispage
+                                                            +"&customer_no="+customer_no;
             addChargeCheckTable.fnDraw();
         };
 } );

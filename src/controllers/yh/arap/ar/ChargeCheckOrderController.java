@@ -332,6 +332,7 @@ public class ChargeCheckOrderController extends Controller {
 		String customerNo = getPara("customerNo");
 		String address = getPara("address");
 		String ref_no = getPara("ref_no");
+		String customer_no = getPara("customer_no");//添加单据的客户名称
 		String ispage = getPara("ispage");
 		String status = getPara("status");
 
@@ -429,7 +430,9 @@ public class ChargeCheckOrderController extends Controller {
 				&& orderNo == null && customerNo == null && address == null && planningBeginTime == null && planningEndTime == null) {
 			condition = " ";
 			if(ispage!=null){
-	    		condition = " and ifnull(ror.order_no,'') like '%" + ref_no + "%' ";
+	    		condition = " and ifnull(ror.order_no,'') like '%" + ref_no + "%' "
+	    				   	+" and ifnull(c.abbr,'') like '%" + customer_no + "%' ";
+	    		condition2 = " and ifnull(c.abbr,'') like '%" + customer_no + "%' ";
 						
 	    	}
 		} else {

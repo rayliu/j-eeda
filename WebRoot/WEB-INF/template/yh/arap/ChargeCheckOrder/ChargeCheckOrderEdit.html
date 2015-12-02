@@ -46,6 +46,7 @@
                                             <input type="hidden" name="addMiscOrder" id="addMiscOrder" value=""/>
                                             <input type="hidden" name="addReturnOrder" id="addReturnOrder" value=""/>
                                             <input type="hidden" name="addAmount" id="addAmount" value=""/>
+                                            <input type="hidden" name="customer_name" id="customer_name" value="${customer.abbr!''}"/>
                                         	<input type="hidden" name="total_amount" value="${totalAmount!''}${arapAuditOrder.total_amount!''}"/>
                                         	<input type="hidden" id="hiddenDebitAmount" name="debit_amount" value="${debitAmount!''}${arapAuditOrder.debit_amount!''}"/>
                                             <h3>客户信息</h3>
@@ -248,7 +249,7 @@
                                     <!-- /.panel-body -->
 								</div>
                                 <div class="modal fade" id="addOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog">
+                                  <div class="modal-dialog" style="width:80%;">
                                     <div class="modal-content">
                                       <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -257,6 +258,10 @@
                                       <div class="form-group">
                                         <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;回单号:</label>
                                         <input type="text" class="form-control search-control status_filter" style="" id="ref_no">
+                                      </div>
+                                      <div class="form-group">
+                                        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客&nbsp;&nbsp;&nbsp;&nbsp;户:</label>
+                                        <input type="text" class="form-control search-control status_filter"  disabled="true" style="" id="customer_no">
                                       </div>
                                       <div class="modal-body">
                                         <form id="addOrderForm" action="">
