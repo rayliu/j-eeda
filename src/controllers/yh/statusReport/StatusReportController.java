@@ -185,6 +185,7 @@ public class StatusReportController extends Controller{
 		String serial_no = getPara("serial_no");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String sign_no = getPara("sign_no");
 		String sLimit = "";
 		
 		Map orderMap = new HashMap();
@@ -193,13 +194,8 @@ public class StatusReportController extends Controller{
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 		
-		if((serial_no != null && !"".equals(serial_no)) || (beginTime != null && !"".equals(beginTime)) || (endTime != null && !"".equals(endTime))){
-			if (beginTime == null || "".equals(beginTime)) 
-				beginTime = "1-1-1";
-			if (endTime == null || "".equals(endTime)) 
-				endTime = "9999-12-31";
-			// 获取总条数
-			String totalSql = "select count(0) total from transfer_order_item_detail toid"
+		// 获取总条数
+		String totalSql = "select count(0) total from transfer_order_item_detail toid"
 						+ " left join transfer_order tor on tor.id = toid.order_id"
 						+ " left join party p on p.id = tor.customer_id"
 						+ " left join contact c on c.id = p.contact_id"
@@ -213,7 +209,7 @@ public class StatusReportController extends Controller{
 						+ " where tor.cargo_nature_detail = 'cargoNatureDetailYes' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 						+ " and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
-			String sql = "select toid.id, toid.serial_no,item_no,c.abbr customer,toid.notify_party_company,tor.status transfer_status,pkdo.status pick_status,dedo.status depart_status,ro.transaction_status,"
+		String sql = "select toid.id, toid.serial_no,item_no,c.abbr customer,toid.notify_party_company,tor.status transfer_status,pkdo.status pick_status,dedo.status depart_status,ro.transaction_status,"
 						+ " dor.status delivery_status,tor.planning_time,tor.customer_order_no,tor.order_no transfer_no,w.warehouse_name,dor.order_no delivery_no,ro.create_date return_stamp, "
 						+ " (select create_stamp from transfer_order_milestone where depart_id = dedo.id and status = '已发车') warehouse_stamp,"
 						+ " (select create_stamp from delivery_order_milestone where delivery_id = dor.id and status = '已发车') delivery_stamp"
@@ -238,11 +234,21 @@ public class StatusReportController extends Controller{
 			}
 			
 			//计划时间段
-			if(beginTime != null && !"".equals(beginTime) && endTime != null && !"".equals(endTime)){
-				totalSql = totalSql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
-				sql = sql + " and tor.planning_time between '" + beginTime + "' and '" + endTime + "'";
-			}
+			if (StringUtils.isNotEmpty(beginTime)){
+	        	beginTime = " and tor.planning_time between'"+beginTime+"'";
+	        }else{
+	        	beginTime =" and tor.planning_time between '1970-1-1'";
+	        }
+	        
+	        if (StringUtils.isNotEmpty(endTime)){
+	        	endTime =" and '"+endTime+" 23:59:59'";
+	        }else{
+	        	endTime =" and '2037-12-31'";
+	        }
+	        totalSql += beginTime+endTime;
+	        sql += beginTime+endTime;
 			
+
 			//有运输单号时
 			if(!"".equals(order_no) && order_no != null){
 				totalSql = totalSql + " and tor.order_no = '" + order_no + "'";
@@ -257,13 +263,19 @@ public class StatusReportController extends Controller{
 			
 			//有货品型号时
 			if(!"".equals(item_no) && item_no != null){
-				totalSql = totalSql + "and toid.item_no = '" + item_no + "'";
-				sql = sql + "and toid.item_no = '" + item_no + "'";
+				totalSql = totalSql + " and toid.item_no = '" + item_no + "'";
+				sql = sql + " and toid.item_no = '" + item_no + "'";
 			}
 			//有客户时
 			if(!"".equals(customer_id) && customer_id != null){
-				totalSql = totalSql + "and tor.customer_id = '" + customer_id + "'";
-				sql = sql + "and tor.customer_id = '" + customer_id + "'";
+				totalSql = totalSql + " and tor.customer_id = '" + customer_id + "'";
+				sql = sql + " and tor.customer_id = '" + customer_id + "'";
+			}
+			
+			//有客户时
+			if (StringUtils.isNotEmpty(beginTime)){
+				totalSql = totalSql + " and dor.ref_no LIKE '%" + sign_no + "%'";
+				sql = sql + " and dor.ref_no like '%" + sign_no + "%'";
 			}
 			
 			// 获取总条数
@@ -275,13 +287,8 @@ public class StatusReportController extends Controller{
 			orderMap.put("iTotalRecords", rec.getLong("total"));
 			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
 			orderMap.put("aaData", orders);
-		}else{
-			orderMap.put("sEcho", 0);
-			orderMap.put("iTotalRecords", 0);
-			orderMap.put("iTotalDisplayRecords", 0);
-			orderMap.put("aaData", null);
-		}
-		renderJson(orderMap);
+	        renderJson(orderMap);
+
 	}
 	
 	public void findAllTransferOrderNo(){

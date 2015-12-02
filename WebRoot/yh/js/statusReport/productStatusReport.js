@@ -1,14 +1,14 @@
 $(document).ready(function() {
 	document.title = '单品状态查询 | '+document.title;
     $('#menu_report').addClass('active').find('ul').addClass('in');
-    $("#queryBtn").prop("disabled",true);
 	//datatable, 动态处理
     var statusTable = $('#eeda-table').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 10,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"bLengthChange":true,
     	"bProcessing": true,
@@ -68,32 +68,23 @@ $(document).ready(function() {
         ]  
     });	
     
-    $("#serial_no,#beginTime,#endTime").on('keyup click', function () {
-    	var beginTime=$("#beginTime").val();
-    	var endTime=$("#endTime").val();
-    	var serial_no = $("#serial_no").val();
-    	if(beginTime != "" || endTime != "" || serial_no != ""){
-    		$("#queryBtn").prop("disabled",false);
-    	}else{
-    		$("#queryBtn").prop("disabled",true);
-    	}
-    });
     
     $("#queryBtn").on('click', function () {
     	var beginTime=$("#beginTime").val();
     	var endTime=$("#endTime").val();
     	var serial_no = $("#serial_no").val();
+    	var sign_no = $("#sign_no").val();
     	var order_no = $("#order_no").val();
     	var customer_id = $("#customer_id").val();
     	var customer_order_no = $("#customer_order_no").val();
     	var item_no = $("#item_no").val();
-    	if(beginTime != "" || endTime != "" || serial_no != ""){
-    		statusTable.fnSettings().oFeatures.bServerSide = true;
-    		statusTable.fnSettings()._iDisplayStart = 0;
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/productStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
-	    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no;
-	    	statusTable.fnDraw(); 
-    	}
+    	
+		statusTable.fnSettings().oFeatures.bServerSide = true;
+		statusTable.fnSettings()._iDisplayStart = 0;
+    	statusTable.fnSettings().sAjaxSource = "/statusReport/productStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
+    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&sign_no="+sign_no;
+    	statusTable.fnDraw(); 
+    	
     });
     
     //获取客户的list，选中信息在下方展示其他信息
