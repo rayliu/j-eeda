@@ -511,12 +511,18 @@ $(document).ready(function() {
 			}
 		}			
 	});
+    $("#addOrderBtn").on('click', function(){
+                refreshCreateList();
+    });
 	 var refreshCreateList = function() {
+            $("#sp_no").val($("#company").html());
 	    	var booking_id = $("#booking_id").val();
 	    	var serial_no = $("#serial_no").val();
+            var sp_no = $("#sp_no").val();
 	    	var ispage = "costCheckOrder";
 	    	addcheckedCostCheck.fnSettings().sAjaxSource = "/costCheckOrder/unSelectedList?booking_id="+booking_id
 	    													+"&serial_no="+serial_no
+                                                            +"&sp_no="+sp_no
 	    													+"&ispage="+ispage;
 	    	addcheckedCostCheck.fnDraw();
 	    	

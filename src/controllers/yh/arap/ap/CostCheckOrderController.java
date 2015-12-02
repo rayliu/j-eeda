@@ -909,12 +909,12 @@ public class CostCheckOrderController extends Controller {
         String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_"+sortColIndex);
-        
         String booking_id= getPara("booking_id");;
         String orderNo = getPara("orderNo");
         String serial_no = getPara("serial_no");
     	String sp_id2 = getPara("sp_id2");
     	String no = getPara("no");
+    	String sp_no = getPara("sp_no");
     	String beginTime = getPara("beginTime");
     	String endTime = getPara("endTime");
     	String type = getPara("type");
@@ -1089,7 +1089,8 @@ public class CostCheckOrderController extends Controller {
     			|| endTime != null || type != null || status != null){
 			if(ispage!=null){
 	    		condition = " where ifnull(serial_no,'') like '%" + serial_no + "%' "
-						+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'";
+						+ " and ifnull(booking_note_number,'')  like '%"+booking_id+"%'"
+						+ " and ifnull(spname,'')  like '%"+sp_no+"%'";
 						
 	    	}else{
     		condition = " where 1=1 ";
