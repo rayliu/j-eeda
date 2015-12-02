@@ -367,9 +367,9 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px"},            	
-            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
-            {"mDataProp":"SERIAL_NO", "sWidth":"200px"},
-            {"mDataProp":"REF_NO", "sWidth":"200px"},
+            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"100px"},
+            {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
+            {"mDataProp":"REF_NO", "sWidth":"100px"},
             {"mDataProp":"TO_NAME", "sWidth":"130px"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"140px"},
             {"mDataProp":"AMOUNT", "sWidth":"40px"},
@@ -393,8 +393,8 @@ $(document).ready(function() {
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
             {"mDataProp":"SPNAME","sClass":"spname", "sWidth":"200px"},
             {"mDataProp":"CUSTOMER_NAME", "sWidth":"120px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"ORDER_NO", "sWidth":"200px", 
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"},
+            {"mDataProp":"ORDER_NO", "sWidth":"120px", 
                 "fnRender": function(obj) {
                 	var str = "";
                     if(obj.aData.ORDER_NO.indexOf("PS") > -1){
@@ -410,14 +410,14 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"RECEIVINGUNIT", "sWidth":"130px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"CREATE_STAMP", "sWidth":"180px"}, 
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
+            {"mDataProp":"CREATE_STAMP", "sWidth":"120px"}, 
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"90px"},  
 		    {"mDataProp":null, "sWidth":"90px",
                 "fnRender": function(obj) {
                     return "未收款";
             }},
-            {"mDataProp":null, "sWidth": "160px", 
+            {"mDataProp":null, "sWidth": "80px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -433,10 +433,10 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },                        
-            {"mDataProp":"FROM_NAME", "sWidth":"150px"},   
+            {"mDataProp":"FROM_NAME", "sWidth":"80px"},   
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                                           
-            {"mDataProp":"REMARK", "sWidth":"150px"}                         
+            {"mDataProp":"REMARK", "sWidth":"100px"}                         
         ]     
     });	
     $("#addExternalMiscOrderBtn").click(function(){
