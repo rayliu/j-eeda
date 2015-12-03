@@ -112,15 +112,14 @@ $(document).ready(function() {
 		}
 	});
 	// 获取所有网点
-	 $.post('/officeConfig/searchAllOffice',function(data){
+	 $.post('/officeConfig/searchAllWarehouse',function(data){
 		 if(data.length > 0){
 			 //console.log(data);
 			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
 			 deliveryOfficeSelect.empty();
-			 var hideDeliveryOfficeSelect = $("#hideDeliveryOfficeSelect").val();
 			 deliveryOfficeSelect.append("<option ></option>");	
 			 for(var i=0; i<data.length; i++){
-						 deliveryOfficeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>"); 
+						 deliveryOfficeSelect.append("<option value='"+data[i].WAREHOUSE_NAME+"'>"+data[i].WAREHOUSE_NAME+"</option>"); 
 				 };
 			 };
 	 },'json');
