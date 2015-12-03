@@ -187,6 +187,7 @@ public class InventoryController extends Controller {
 				
         String sqlCondition = " select sum(i_t.total_quantity) as total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit, p.id as pid, w.warehouse_name,o.office_name,"
        			+ " (select count(1) FROM transfer_order_item_detail toid"
+       			+ " LEFT JOIN transfer_order t_o on t_o.id = toid.order_id"
        			+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id"
        			+ " LEFT JOIN depart_order d_o on d_o.id = toid.depart_id"
        			+ " where d_o.status='已发车'  and toi.product_id = i_t.product_id"  + warehousePredict + ") predict_amount, "
