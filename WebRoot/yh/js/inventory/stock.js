@@ -91,7 +91,7 @@ $(document).ready(function() {
 			
 		}
 	    	
-		$.get('/gateIn/searchAllOffice',{"officeName":$(this).val()}, function(data){
+		$.get('/officeConfig/searchAllOffice',{"officeName":$(this).val()}, function(data){
 			
 			var officeList =$("#officeList");
 			officeList.empty();
