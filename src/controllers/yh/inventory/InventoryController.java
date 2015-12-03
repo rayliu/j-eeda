@@ -120,7 +120,7 @@ public class InventoryController extends Controller {
     }
 
     // 库存list
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void stocklist() {
         String customerId = getPara("customerId");
         String warehouseId = getPara("warehouseId");
