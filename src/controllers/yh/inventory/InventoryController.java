@@ -903,7 +903,7 @@ public class InventoryController extends Controller {
     	if(officeId != null && !"".equals(officeId)){
     		sql = "select w.* from warehouse w where w.office_id = " + officeId;
     	}else{
-    		sql = "select w.* from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +") ";
+    		sql = "select w.* from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +") AND o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') ";
     	}
     	
     	if(warehouseName != null && !"".equals(warehouseName)){
