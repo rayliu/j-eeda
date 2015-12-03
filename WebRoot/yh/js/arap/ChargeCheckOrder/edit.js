@@ -703,10 +703,13 @@ $(document).ready(function() {
           ]          
     });
       $("#addOrderBtn").on('click',function(){
+            $("#initialTotalAmount").val($("#total_amount").html())
+            $("initialAmount").val($("#amount").html())
+            $("initialChargeAmount").val($("#chargeAmount").html())
             refreshCreateList();
        });
-        var returnIds = [];
-        var miscOrderIds =[];
+        var addreturnIds = [];
+        var addmiscOrderIds =[];
         var addamount =[];
 	 $("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(){
         if($("#customer_id").val()!=$(this).attr('customer')){
@@ -721,11 +724,11 @@ $(document).ready(function() {
             addamount.push($(this).attr('change_amount'));
             $("#addAmount").val(addamount);
             if($(this).attr('tporder') == "收入单"){
-                miscOrderIds.push($(this).attr('id'));
-                $("#addMiscOrder").val(miscOrderIds);
+                addmiscOrderIds.push($(this).attr('id'));
+                $("#addMiscOrder").val(addmiscOrderIds);
             }else{
-                returnIds.push($(this).attr('id'));
-                $("#addReturnOrder").val(returnIds);
+                addreturnIds.push($(this).attr('id'));
+                $("#addReturnOrder").val(addreturnIds);
             }
             $("#total_amount").html((parseFloat(total_amount )+parseFloat(change_amount)).toFixed(2));
             $("#amount").html((parseFloat(amount )+parseFloat(change_amount)).toFixed(2));
@@ -734,14 +737,14 @@ $(document).ready(function() {
             addamount.splice($.inArray($(this).attr('change_amount'),addamount), 1);
             $("#addAmount").val(addamount);
             if($(this).attr('tporder') == "收入单"){
-                if(miscOrderIds.length != 0){
-                    miscOrderIds.splice($.inArray($(this).attr('id'), miscOrderIds), 1);
-                    $("#addMiscOrder").val(miscOrderIds);
+                if(addmiscOrderIds.length != 0){
+                    addmiscOrderIds.splice($.inArray($(this).attr('id'), addmiscOrderIds), 1);
+                    $("#addMiscOrder").val(addmiscOrderIds);
                 }
             }else{
-                if(returnIds.length != 0){
-                    returnIds.splice($.inArray($(this).attr('id'), returnIds), 1);
-                    $("#addReturnOrder").val(returnIds);
+                if(addreturnIds.length != 0){
+                    addreturnIds.splice($.inArray($(this).attr('id'), addreturnIds), 1);
+                    $("#addReturnOrder").val(addreturnIds);
                 }
             }
             $("#total_amount").html((parseFloat(total_amount )-parseFloat(change_amount)).toFixed(2));
@@ -749,7 +752,18 @@ $(document).ready(function() {
             $("#chargeAmount").html((parseFloat(chargeAmount )-parseFloat(change_amount)).toFixed(2));
         }
      });
-     $("#addOrderFormBtn").on('click',function(){
+        $("#closeExternalFormBtn").on('click',function(){
+                $("#total_amount").html($("#initialTotalAmount").val());
+                $("#amount").html($("initialAmount").val());
+                $("#chargeAmount").html($("initialChargeAmount").val());
+                $("#addReturnOrder").val($("#closeId").val());
+                $("#addMiscOrder").val($("#closeId").val());
+                $("#addAmount").val($("#closeId").val());
+                addreturnIds = [];
+                addmiscOrderIds =[];
+                addamount =[];
+          });
+        $("#addOrderFormBtn").on('click',function(){
         var chargeCheckOrderId =$("#chargeCheckOrderId").val();
         var addReturnOrder=$("#addReturnOrder").val();
         var addMiscOrder=$("#addMiscOrder").val();
@@ -762,6 +776,12 @@ $(document).ready(function() {
                 chargeConfiremTable.fnSettings().sAjaxSource = "/chargeCheckOrder/returnOrderList?chargeCheckOrderId="+$("#chargeCheckOrderId").val();
                 chargeConfiremTable.fnDraw();
                 $.scojs_message('添加成功', $.scojs_message.TYPE_OK);
+                $("#addReturnOrder").val($("#closeId").val());
+                $("#addMiscOrder").val($("#closeId").val());
+                $("#addAmount").val($("#closeId").val());
+                addreturnIds = [];
+                addmiscOrderIds =[];
+                addamount =[];
             }
             else{
                 $.scojs_message('添加失败', $.scojs_message.TYPE_ERROR);
