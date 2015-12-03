@@ -125,7 +125,7 @@ public class DeliveryController extends Controller {
 				condition +=" and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"+ address_filter+ "%'";
 			}
 			if(office_filter!=null&&!"".equals(office_filter)){
-				condition +=" AND w.office_id IN (SELECT id FROM office WHERE office_name = '"+office_filter+"')";
+				condition +=" AND ifnull(w.warehouse_name,'') like'%"+ office_filter+ "%'";;
 			}
 			if ((beginTime_filter != null && !"".equals(beginTime_filter))||(endTime_filter != null && !"".equals(endTime_filter))) {
         		if (beginTime_filter == null || "".equals(beginTime_filter)) {
