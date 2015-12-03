@@ -2,19 +2,19 @@ $(document).ready(function() {
 	document.title = '库存查询 | '+document.title;
 	$('#menu_warehouse').addClass('active').find('ul').addClass('in');
 	//库存list
-	var tab =$('#example2').dataTable( {
-	   //"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
-	   "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-       //"sPaginationType": "bootstrap",
-	   "iDisplayLength": 10,
-       "bSort": false, // 不要排序
-       "bFilter": false, //不需要默认的搜索框
-       "bServerSide": true,
-       "bAutoWidth":true,
-   	   "oLanguage": {
-           "sUrl": "/eeda/dataTables.ch.txt"
-       },
-       "sAjaxSource":"/stock/stocklist",
+
+   var tab =$('#example').dataTable( {
+	   "bProcessing": false, //table载入数据时，是否显示‘loading...’提示
+	   	"bFilter": false, //不需要默认的搜索框
+	   	"bSort": false, // 不要排序
+	   	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+	   	"iDisplayLength": 10,
+	   	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+	   	"bServerSide": true,
+	   	"oLanguage": {
+	   		"sUrl": "/eeda/dataTables.ch.txt"
+	   	},
+        "sAjaxSource":"/stock/stocklist",
 		"aoColumns": [
 			{"mDataProp":"ITEM_NAME", "sWidth":"100px"},
             {"mDataProp":"ITEM_NO", "sWidth":"80px"}, 
@@ -27,7 +27,7 @@ $(document).ready(function() {
             {"mDataProp":"WAREHOUSE_NAME",'bVisible':false,"sWidth":"120px"},
             {"mDataProp":"OFFICE_NAME",'bVisible':false,"sWidth":"100px"}
            ]
-	} );
+	});
 	
 	//选择仓库 
 	 $('#warehouseSelect').on('keyup click', function(){
@@ -216,10 +216,9 @@ $(document).ready(function() {
 			 $("#warehouseSelect").val("所有仓库");
 			 $("#warehouseId").val("all");
 		 }
-		
-		
-
     }); 
+	
+	
 	$("#queryBtn").click(function(){
 		 var customerId = $("#hiddenCustomerId").val();
 		 var warehouseId = $("#warehouseId").val();
@@ -254,8 +253,9 @@ $(document).ready(function() {
 	     }
 	     
 		 tab.fnDraw();
-		
 	});
+	
+	
 	// 获取产品型号
 	$('#ItemMessage').on('keyup click', function(){
 		if($('#ItemMessage').val() == "" || $('#ItemMessage').val() == null){

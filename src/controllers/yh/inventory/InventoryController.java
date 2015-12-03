@@ -18,7 +18,6 @@ import models.TransferOrder;
 import models.TransferOrderItem;
 import models.UserCustomer;
 import models.UserLogin;
-import models.UserOffice;
 import models.Warehouse;
 import models.WarehouseOrder;
 import models.WarehouseOrderItem;
@@ -130,13 +129,12 @@ public class InventoryController extends Controller {
         String itemName = getPara("itemName");
         
         if ((customerId == null && warehouseId == null && officeId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(officeId))) {
-            Map orderMap = new HashMap();
+        	Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
             orderMap.put("iTotalDisplayRecords", 0);
             orderMap.put("aaData", null);
             renderJson(orderMap);
-            
         }else{
         	searchByCondition(customerId, warehouseId, officeId, itemId);
         }
@@ -188,9 +186,20 @@ public class InventoryController extends Controller {
 					+" where 1=1 and (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (p_o.id = " + parentID + " or p_o.belong_office = " + parentID + ") ";
 				
         String sqlCondition = " select sum(i_t.total_quantity) as total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit, p.id as pid, w.warehouse_name,o.office_name,"
-       			+ "(select count(1) from depart_order d_o left join transfer_order_item_detail toid on toid.depart_id = d_o.id left join transfer_order_item toi on toi.id = toid.item_id left join transfer_order t_o on toid.order_id = t_o.id where d_o.status='已发车'  and toi.product_id = i_t.product_id"  + warehousePredict + ") predict_amount, "
-    		   	+" (select count(1) from delivery_order_item doi  left join delivery_order d_o on doi.delivery_id = d_o.id  left join transfer_order_item_detail toid on doi.transfer_item_detail_id = toid.id left join transfer_order_item toi on toi.id = toid.item_id  where d_o.status='新建'" + warehouseLocal + " and toi.product_id = i_t.product_id and d_o.customer_id = i_t.party_id " + customerLocal + ") lock_amount,"
-				+" (select count(toid.id) as valid_amount from transfer_order tor left join transfer_order_item_detail toid on toid.order_id = tor.id  left join transfer_order_item toi on toi.id = toid.item_id  where toi.product_id = i_t.product_id  and tor.customer_id = i_t.party_id " + customerCondition + " and toid.delivery_id is null and toid.depart_id is not null  and toid.status ='已入库' " + warehouseCondition + ") valid_amount ";
+       			+ " (select count(1) FROM transfer_order_item_detail toid"
+       			+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id"
+       			+ " LEFT JOIN depart_order d_o on d_o.id = toid.depart_id"
+       			+ " where d_o.status='已发车'  and toi.product_id = i_t.product_id"  + warehousePredict + ") predict_amount, "
+    		   	+" (select count(1) "
+    		   	+ " FROM transfer_order_item_detail toid "
+    		   	+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id "
+    		   	+ " LEFT JOIN delivery_order d_o ON  d_o.id = toid.delivery_id  "
+    		   	+ " where d_o.status='新建'" + warehouseLocal + " and toi.product_id = i_t.product_id and d_o.customer_id = i_t.party_id " + customerLocal + ") lock_amount,"
+				+" (select count(toid.id) as valid_amount "
+				+ " FROM transfer_order_item_detail toid "
+				+ " LEFT JOIN transfer_order tor ON toid.order_id = tor.id"
+				+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id  "
+				+ " where toi.product_id = i_t.product_id  and tor.customer_id = i_t.party_id " + customerCondition + " and toid.delivery_id is null and toid.depart_id is not null  and toid.status ='已入库' " + warehouseCondition + ") valid_amount ";
       
         String groupCondition = " group by p.item_name, p.item_no, p.unit";
         
