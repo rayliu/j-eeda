@@ -244,7 +244,7 @@ public class InventoryController extends Controller {
         orderMap.put("aaData", orders);
         renderJson(orderMap);
 	}
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void getTotalAmount() {
         String customerId = getPara("customerId");
         String warehouseId = getPara("warehouseId");
