@@ -50,6 +50,8 @@ public class StatusReportController extends Controller{
 		String return_order_no = getPara("return_order_no");
 		String charge_order_no = getPara("charge_order_no");
 		String cost_order_no = getPara("cost_order_no");
+		String sign_no = getPara("sign_no");
+		String serial_no = getPara("serial_no");
 		
 		String sLimit = "";
         String pageIndex = getPara("draw");
@@ -59,27 +61,40 @@ public class StatusReportController extends Controller{
         
 		String conditions="  where 1=1 ";
 		if (StringUtils.isNotEmpty(transfer_order_no)){                                           //运输单
-			conditions+=" and UPPER(tor.order_no) like '%"+transfer_order_no.toUpperCase()+"%'";
-		}if (StringUtils.isNotEmpty(pickup_order_no)){                                            // 调车单
-			conditions+=" and UPPER(dor_pi.depart_no) like '%"+pickup_order_no.toUpperCase()+"%'";
-		}if (StringUtils.isNotEmpty(depart_order_no)){                                            //发车单
-			conditions+=" and (UPPER(dor_de.depart_no) like '%"+depart_order_no.toUpperCase()+"%'"
-					  + " or UPPER(dor_de2.depart_no) like '%"+depart_order_no.toUpperCase()+"%')";
-		}if (StringUtils.isNotEmpty(delivery_order_no)){                                          // 配送单
-			conditions+=" and UPPER(deo.order_no) like '%"+delivery_order_no.toUpperCase()+"%'";
-		}if (StringUtils.isNotEmpty(return_order_no)){                                            // 回单
-			conditions+=" and (UPPER(ror1.order_no) like '%"+return_order_no.toUpperCase()+"%'"
-					  + " or UPPER(ror2.order_no) like '%"+return_order_no.toUpperCase()+"%')";
-		}if (StringUtils.isNotEmpty(charge_order_no)){                                            //-- 应收对账单
-			conditions+=" and UPPER(aco.order_no) like '%"+charge_order_no.toUpperCase()+"%'";
-		}if (StringUtils.isNotEmpty(cost_order_no)){                                              //-- 应付对账单
-			conditions+=" and (UPPER(acoo1.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
-					  + " or UPPER(acoo2.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
-					  + " or UPPER(acoo3.order_no) like '%"+cost_order_no.toUpperCase()+"%')";
+			conditions += " and UPPER(tor.order_no) like '%"+transfer_order_no.toUpperCase()+"%'";
 		}
-		conditions +=" and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-				   + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-		           + " GROUP BY tor.id ";
+		if (StringUtils.isNotEmpty(pickup_order_no)){                                            // 调车单
+			conditions += " and UPPER(dor_pi.depart_no) like '%"+pickup_order_no.toUpperCase()+"%'";
+		}
+		if (StringUtils.isNotEmpty(depart_order_no)){                                            //发车单
+			conditions += " and (UPPER(dor_de.depart_no) like '%"+depart_order_no.toUpperCase()+"%'"
+					    + " or UPPER(dor_de2.depart_no) like '%"+depart_order_no.toUpperCase()+"%')";
+		}
+		if (StringUtils.isNotEmpty(delivery_order_no)){                                          // 配送单
+			conditions += " and UPPER(deo.order_no) like '%"+delivery_order_no.toUpperCase()+"%'";
+		}
+		if (StringUtils.isNotEmpty(return_order_no)){                                            // 回单
+			conditions += " and (UPPER(ror1.order_no) like '%"+return_order_no.toUpperCase()+"%'"
+					    + " or UPPER(ror2.order_no) like '%"+return_order_no.toUpperCase()+"%')";
+		}
+		if (StringUtils.isNotEmpty(charge_order_no)){                                            //-- 应收对账单
+			conditions += " and UPPER(aco.order_no) like '%"+charge_order_no.toUpperCase()+"%'";
+		}
+		if (StringUtils.isNotEmpty(cost_order_no)){                                              //-- 应付对账单
+			conditions += " and (UPPER(acoo1.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
+					    + " or UPPER(acoo2.order_no) like '%"+cost_order_no.toUpperCase()+"%' "
+					    + " or UPPER(acoo3.order_no) like '%"+cost_order_no.toUpperCase()+"%')";
+		}
+		if (StringUtils.isNotEmpty(sign_no)){                                            //-- 应收对账单
+			conditions += " and UPPER(deo.ref_no) like '%"+sign_no.toUpperCase()+"%'";
+		}
+		if (StringUtils.isNotEmpty(serial_no)){                                            //-- 应收对账单
+			conditions += " and (select GROUP_CONCAT(serial_no) from transfer_order_item_detail"
+					    + " where order_id = tor.id) like '%"+serial_no.toUpperCase()+"%'";
+		}
+		conditions += " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+				    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+		            + " GROUP BY tor.id ";
 		
 		String sql = " SELECT CONCAT( tor.order_no, '-', tor. STATUS ) transfer_order_no, "
 				+ " (select c.abbr  from contact c where id = tor.customer_id) customer_name,"

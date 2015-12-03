@@ -25,7 +25,8 @@ $(document).ready(function() {
         "columns": [
             { "data": "TRANSFER_ORDER_NO", "width": "10%",
                 "render": function ( data, type, full, meta ) {
-                    return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
+                    //return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
+                	return data;
                 }
             },
             { "data": "CUSTOMER_NAME","width": "5%"},
@@ -53,14 +54,13 @@ $(document).ready(function() {
         var transfer_order_no = $("#transfer_order_no").val();
         //var customer_id=$("#customer_id").val();
         var pickup_order_no=$("#pickup_order_no").val();
-        
         var depart_order_no = $("#depart_order_no").val();
         var delivery_order_no = $('#delivery_order_no').val();
         var return_order_no = $('#return_order_no').val();
-
         var charge_order_no = $('#charge_order_no').val();
-
         var cost_order_no = $("#cost_order_no").val();
+        var sign_no = $("#sign_no").val();
+        var serial_no = $("#serial_no").val();
         
         /*
             查询规则：参数对应DB字段名
@@ -75,7 +75,9 @@ $(document).ready(function() {
              +"&depart_order_no="+depart_order_no
              +"&return_order_no="+return_order_no
              +"&charge_order_no="+charge_order_no
-             +"&cost_order_no="+cost_order_no;
+             +"&cost_order_no="+cost_order_no
+             +"&sign_no="+sign_no
+             +"&serial_no="+serial_no;
 
         dataTable.ajax.url(url).load();
     };
