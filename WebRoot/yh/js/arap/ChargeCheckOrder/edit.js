@@ -145,9 +145,9 @@ $(document).ready(function() {
                 chargeConfiremTable.fnSettings().oFeatures.bServerSide=true;
                 chargeConfiremTable.fnSettings().sAjaxSource = "/chargeCheckOrder/returnOrderList?chargeCheckOrderId="+$("#chargeCheckOrderId").val();
                 chargeConfiremTable.fnDraw();
-                $("#total_amount").html(parseInt(total_amount )-parseInt(change_amount));
-                $("#amount").html(parseInt(amount )-parseInt(change_amount));
-                $("#chargeAmount").html(parseInt(chargeAmount )-parseInt(change_amount));
+               $("#total_amount").html((parseFloat(total_amount )-parseFloat(change_amount)).toFixed(2));
+               $("#amount").html((parseFloat(amount )-parseFloat(change_amount)).toFixed(2));
+               $("#chargeAmount").html((parseFloat(chargeAmount )-parseFloat(change_amount)).toFixed(2));
               }else{
                   $.scojs_message('删除失败', $.scojs_message.TYPE_ERROR);
               }
@@ -342,13 +342,7 @@ $(document).ready(function() {
                 }
             } 
         ]      
-    });	
-    
-    $("#chargeCheckOrderItem").click(function(){
-    	chargeConfiremTable.fnSettings().sAjaxSource = "/chargeCheckOrder/returnOrderList?order="+$("#order").val()+"&returnOrderIds="+$("#returnOrderIds").val();
-    	chargeConfiremTable.fnDraw();   
     });
-    
     var chargeMiscListTable = $('#chargeMiscList-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -733,9 +727,9 @@ $(document).ready(function() {
                 returnIds.push($(this).attr('id'));
                 $("#addReturnOrder").val(returnIds);
             }
-            $("#total_amount").html(parseInt(total_amount )+parseInt(change_amount));
-            $("#amount").html(parseInt(amount )+parseInt(change_amount));
-            $("#chargeAmount").html(parseInt(chargeAmount )+parseInt(change_amount));
+            $("#total_amount").html((parseFloat(total_amount )+parseFloat(change_amount)).toFixed(2));
+            $("#amount").html((parseFloat(amount )+parseFloat(change_amount)).toFixed(2));
+            $("#chargeAmount").html((parseFloat(chargeAmount )+parseFloat(change_amount)).toFixed(2));
         }else {
             addamount.splice($.inArray($(this).attr('change_amount'),addamount), 1);
             $("#addAmount").val(addamount);
@@ -750,9 +744,9 @@ $(document).ready(function() {
                     $("#addReturnOrder").val(returnIds);
                 }
             }
-            $("#total_amount").html(parseInt(total_amount )-parseInt(change_amount));
-            $("#amount").html(parseInt(amount )-parseInt(change_amount));
-            $("#chargeAmount").html(parseInt(chargeAmount )-parseInt(change_amount));
+            $("#total_amount").html((parseFloat(total_amount )-parseFloat(change_amount)).toFixed(2));
+            $("#amount").html((parseFloat(amount )-parseFloat(change_amount)).toFixed(2));
+            $("#chargeAmount").html((parseFloat(chargeAmount )-parseFloat(change_amount)).toFixed(2));
         }
      });
      $("#addOrderFormBtn").on('click',function(){
