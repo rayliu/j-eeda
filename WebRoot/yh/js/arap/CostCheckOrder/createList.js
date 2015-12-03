@@ -1,15 +1,36 @@
 
 $(document).ready(function() {
     $('#menu_cost').addClass('active').find('ul').addClass('in');
+    var ids = [];
+    var orderNos = [];
+    var change_amount = [];
+    //var j_amount = [];
+    var sum = 0;
+    var j_sum = 0;
+    var spType =[];
+    var allType =[];
     $("input[name='allCheck']").click(function(){
     	$("#uncheckedCostCheck-table input[name='order_check_box']").each(function () { 
-    		this.checked = !this.checked;
+            if(allType.length!=0){
+                if(allType[0] != $(this).attr("spname")){
+                alert("请选择相同的供应商!");
+                return false;
+                }
+             }
+             if(spType.length!=0){
+                if(spType[0] != $(this).attr("spname")){
+                alert("请选择相同的供应商!");
+                return false;
+                }
+             }
+             this.checked = !this.checked;
     		if($(this).prop("checked") == true){
     			$(this).parent().parent().clone().appendTo($("#checkedCostCheckList"));
     			ids.push($(this).attr("id"));
     			orderNos.push($(this).attr("order_no"));
     			change_amount.push($(this).attr("change_amount"));
-    			$("#checkedCostCheckList").children().length++;
+                allType.push($(this).attr("spname"));
+                spType.push($(this).attr("spname"));
     			sum =eval(change_amount.join("+"));//求和
     			$("#checkedOrderId").val(ids);
     			$("#checkedOrderNo").val(orderNos);
@@ -22,6 +43,8 @@ $(document).ready(function() {
     			ids.splice($.inArray($(this).attr('id'),ids),1);
     			change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
     			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+                allType.splice($.inArray($(this).attr('spname'),allType),1);
+                spType.splice($.inArray($(this).attr('spname'),spType),1);
     			//$("#checkedCostCheckList").remove("tbody",$(this).parent().parent());
     			//$("#checkedCostCheckList").$(this).parent().parent().remove();
     			var id=$(this)[0].id;
@@ -77,14 +100,14 @@ $(document).ready(function() {
 	               		amount = obj.aData.PAY_AMOUNT;
 	               	 }
 	               	 
-                	var strcheck='<input  type="checkbox" name="order_check_box" change_amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';;
+                	var strcheck='<input  type="checkbox" name="order_check_box" change_amount="'+amount+'" spname="'+obj.aData.SPNAME+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">';;
                 	//判断obj.aData.ID 是否存在 list id 
                 	console.log(ids);
                 	 for(var i=0;i<ids.length;i++){
                 		 console.log(i + ":"+ids[i]);
                 		 console.log("obj.aData.ID="+obj.aData.ID);
                          if(ids[i]==obj.aData.ID){                        	 
-                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" change_amount="'+amount+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
+                        	 return strcheck= '<input   checked="checked" type="checkbox" name="order_check_box" change_amount="'+amount+'" spname="'+obj.aData.SPNAME+'" id="'+obj.aData.ID+'" class="checkedOrUnchecked" order_no="'+obj.aData.BUSINESS_TYPE+'">'; 
                         	
                          }
                      }
@@ -223,14 +246,6 @@ $(document).ready(function() {
 		] 
     	
     });
-    
-    var ids = [];
-    var orderNos = [];
-    var change_amount = [];
-    //var j_amount = [];
-    var sum = 0;
-    var j_sum = 0;
-    var spType =[];
     // 未选中列表
 	$("#uncheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){	
 		
