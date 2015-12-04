@@ -123,6 +123,7 @@ $(document).ready(function() {
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -135,7 +136,7 @@ $(document).ready(function() {
 		},
         "sAjaxSource": "/costCheckOrder/costConfirmListById",
         "aoColumns": [ 
-            {"mDataProp":"BUSINESS_TYPE"},            	
+            {"mDataProp":"BUSINESS_TYPE"},
             {"mDataProp":"SPNAME","sWidth":"150px"},
             {"mDataProp":null, 
                 "fnRender": function(obj) {
@@ -152,28 +153,29 @@ $(document).ready(function() {
                     }
                     return obj.aData.STATUS;
                 }
-            },                           
-            {"mDataProp":"RETURN_ORDER_COLLECTION"},  
+            },
+            {"mDataProp":"RETURN_ORDER_COLLECTION"},
 		    {"mDataProp":null, 
                 "fnRender": function(obj) {
                     return "未收款";
             }},
             {"mDataProp":"ORDER_NO"},
+            {"mDataProp":"BOOKING_NOTE_NUMBER"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
-            {"mDataProp":"CREATE_STAMP"},                 	
+            {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"AMOUNT"}, 
             {"mDataProp":"CUSTOMER_NAME"}, 
             {"mDataProp":"ROUTE_FROM"}, 
             {"mDataProp":"ROUTE_TO"}, 
             {"mDataProp":"RECEIVINGUNIT"}, 
-            {"mDataProp":"VOLUME"},                        
-            {"mDataProp":"WEIGHT"},                        
+            {"mDataProp":"VOLUME"},
+            {"mDataProp":"WEIGHT"},
             {"mDataProp":"PAY_AMOUNT"},
             {"mDataProp":"CHANGE_AMOUNT"},
-            {"mDataProp":"OFFICE_NAME"},                       
+            {"mDataProp":"OFFICE_NAME"},
             {"mDataProp":"REMARK"},
             {"mDataProp": null, 
-                "sWidth": "20px",                
+                "sWidth": "20px",
                 "fnRender": function(obj) {
                 	return "<a class='btn btn-danger finItemdel' did='"+obj.aData.DID+"' code='"+obj.aData.ID+"' change_amount='"+obj.aData.CHANGE_AMOUNT+"' order_type='"+obj.aData.BUSINESS_TYPE+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
                 }
