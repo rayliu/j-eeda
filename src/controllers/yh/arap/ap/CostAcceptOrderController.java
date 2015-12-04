@@ -201,8 +201,11 @@ public class CostAcceptOrderController extends Controller {
         		+ " SELECT aio.id, aio.order_no, '往来票据单' AS order_type, NULL AS payment_method, aio.charge_person AS payee_name,"
         		+ " NULL AS account_id, aio.pay_status status, NULL AS invoice_no, aio.create_date create_time,"
         		+ " aio.remark, aio.pay_amount total_amount, NULL AS application_amount,"
-        		+ " null paid_amount,null nopaid_amount,"//已付未付
-        		+ " null AS cname"
+        		+ " ( SELECT ifnull(sum(caor.pay_amount), 0) FROM cost_application_order_rel caor "
+        		+ " WHERE caor.cost_order_id = aio.id AND caor.order_type = '往来票据单'  ) paid_amount, "
+        		+ " ( aio.pay_amount - ( SELECT ifnull(sum(caor.pay_amount), 0) FROM cost_application_order_rel caor "
+        		+ " WHERE caor.cost_order_id = aio.id AND caor.order_type = '往来票据单' ) ) nopaid_amount,"//已付未付
+        		+ " aio.charge_unit AS cname"
         		+ " FROM arap_in_out_misc_order aio WHERE aio.pay_status IN (" + status4 + ")"
         		+ " UNION"
         		+ " SELECT aco.id, aco.order_no, '应付对账单' AS order_type, null AS payment_method,"
