@@ -64,7 +64,7 @@ $(document).ready(function() {
  				$("#status").val(data.STATUS);
  				$("#create_stamp").val(data.CREATE_STAMP);
  				$.post('/costReimbursement/findUser', {"userId":data.CREATE_ID}, function(data){
- 					$("#create_name").val(data.USER_NAME);
+ 					$("#create_name").val(data.C_NAME);
  				});
  				$("#auditBtn,#approvalBtn").prop("disabled",false);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
@@ -130,7 +130,7 @@ $(document).ready(function() {
     $('#account_list').on('mousedown', '.fromLocationItem', function(e){
         console.log($('#account_list').is(":focus"));
         var message = $(this).text();
-        $('#account_name').val(message.substring(0, message.indexOf(" ")));
+        $('#account_name').val($(this).attr("company_name"));
         var pageSpName = $("#pageSpName");
         pageSpName.empty();
         var pageSpAddress = $("#pageSpAddress");
