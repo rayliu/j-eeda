@@ -236,6 +236,7 @@ public class DeliveryController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String status = getPara("status");
+		String serial_no = getPara("serial_no");
 		if(status != null && status != ""){
 			if(status.equals("ok")){
 				status = "('已送达', '已签收')";
@@ -349,6 +350,8 @@ public class DeliveryController extends Controller {
 					+ transferorderNo
 					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp
+					+ "%' and ifnull(trid.serial_no,'') like'%"
+					+ serial_no
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
@@ -396,6 +399,8 @@ public class DeliveryController extends Controller {
 					+ transferorderNo
 					+ "%' and ifnull(c2.abbr,'') like'%"
 					+ sp
+					+ "%' and ifnull(trid.serial_no,'') like'%"
+					+ serial_no
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"

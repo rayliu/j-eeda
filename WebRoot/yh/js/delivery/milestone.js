@@ -228,7 +228,7 @@ $(document).ready(function() {
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
     
-    $('#endTime_filter ,#beginTime_filter  ,#deliveryNo_filter  ,#transferorderNo_filter, #status').on('keyup click', function(){
+    $('#endTime_filter ,#beginTime_filter  ,#deliveryNo_filter  ,#deliveryNo_filter  ,#serial_no, #status').on('keyup click', function(){
     	//console.log($("#sp_filter").val());
     	var deliveryNo = $("#deliveryNo_filter").val();
     	var customer = $("#customer_filter").val();
@@ -237,7 +237,8 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var status  = $("#status").val();
-    	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status;
+      var serial_no  = $("#serial_no").val();
+    	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status+"&serial_no="+serial_no;
     	detailTable.fnDraw();
     });
 	
