@@ -118,9 +118,14 @@ public class AccountAuditLogController extends Controller {
 				    + " THEN ( SELECT group_concat( DISTINCT rei.order_no SEPARATOR '<br/>' ) FROM reimbursement_order rei LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.reimbursement_order_id = rei.id where acp.order_id = aaal.invoice_order_id )"
 				    + " WHEN aaal.source_order = '行车报销单' "
 				    + " THEN ( SELECT group_concat( DISTINCT rei.order_no SEPARATOR '<br/>' ) FROM reimbursement_order rei LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.reimbursement_order_id = rei.id where acp.order_id = aaal.invoice_order_id )"
-				    + " WHEN aaal.source_order = '应付开票申请单' "
-				    + " THEN ifnull((select order_no from arap_cost_invoice_application_order where id = aaal.invoice_order_id),"
-				    + " (SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>' ) FROM arap_cost_invoice_application_order aci LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.application_order_id = aci.id where acp.order_id = aaal.invoice_order_id))"
+				    
+					+ " WHEN aaal.source_order = '应付申请单' "  //旧数据
+					+ " THEN "
+					+ " (SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>' ) FROM arap_cost_invoice_application_order aci LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.application_order_id = aci.id where acp.order_id = aaal.invoice_order_id)"
+
+				     + " WHEN "
+				    + " aaal.source_order = '应付开票申请单' "  //新数据
+				    + " THEN (select order_no from arap_cost_invoice_application_order where id = aaal.invoice_order_id)"
 				    + " WHEN aaal.source_order = '应收开票申请单' "
 				    + " then (select order_no from arap_charge_invoice_application_order where id = aaal.invoice_order_id)"
 				    + " WHEN aaal.source_order = '转账单' "
