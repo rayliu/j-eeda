@@ -508,7 +508,17 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				transferOrderItem.set("amount", itemNumber);
 			}
 			if (product == null) {
-				transferOrderItem.set("item_no", content.get("货品型号"));
+				// 取货地址、收货信息
+				if("普通货品".equals(content.get("货品属性"))){
+					List itemDetailList = (List) content.get("itemDetailList");
+					for (int i = 0; i < itemDetailList.size(); i++) {
+						Map rec = (Map) itemDetailList.get(i);
+						transferOrderItem.set("item_no", rec.get("货品型号"));
+					}
+				}else{
+					transferOrderItem.set("item_no", content.get("货品型号"));
+				}
+				
 			} else {
 				// 创建保存货品明细
 				transferOrderItem.set("item_no", product.get("item_no"))
