@@ -631,7 +631,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						// 检验单据 主表 信息
 						orders.put(customerOrderNo, order);
 						// check 系统中是否已存在
-						alignmentData(orders, customerOrderNo);
+						validateData(orders, customerOrderNo);
 					} else {
 						causeRow++;
 						addItem(lines, j, serialNo, order);
@@ -651,7 +651,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 
 				// 开始建造运输单
 				System.out.println(orders);
-				// 回滚运输单信息
+				
 				List<TransferOrder> orderList = new ArrayList<TransferOrder>();
 
 				// 手动控制提交
@@ -661,48 +661,47 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				for (int j = 0; j < orders.size(); j++) {
 					String customerNo = (String) addCustomerOrderNo.get(j);
 					System.out.println("导入至第【" + causeRow + "】行");
+					Map order = orders.get(customerNo);
 					// 客户名称
 					Party customer = Party.dao
 							.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 									+ Party.PARTY_TYPE_CUSTOMER
 									+ "' and c.abbr ='"
-									+ orders.get(customerNo).get("客户名称(简称)")
+									+ order.get("客户名称(简称)")
 									+ "';");
 					// 仓库
 					Warehouse warehouse = Warehouse.dao
 							.findFirst("select id from warehouse where warehouse_name = '"
-									+ orders.get(customerNo).get("中转仓") + "';");
+									+ order.get("中转仓") + "';");
 					// 始发城市
 					Location location1 = Location.dao
 							.findFirst("select code from location where name = '"
-									+ orders.get(customerNo).get("始发城市") + "';");
+									+ order.get("始发城市") + "';");
 					// 目的地城市
 					Location location2 = Location.dao
 							.findFirst("select code from location where name = '"
-									+ orders.get(customerNo).get("到达城市") + "';");
+									+ order.get("到达城市") + "';");
 					// 供应商名称
 					Party provider = Party.dao
 							.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 									+ Party.PARTY_TYPE_SERVICE_PROVIDER
 									+ "' and c.abbr ='"
-									+ orders.get(customerNo).get("供应商名称(简称)")
+									+ order.get("供应商名称(简称)")
 									+ "';");
 					// 网点
 					Office office = Office.dao
 							.findFirst("select id from office where office_name = '"
-									+ orders.get(customerNo).get("网点") + "';");
+									+ order.get("网点") + "';");
 					// 客户订单号
-					String customerOrderNo = (String) orders.get(customerNo)
-							.get("客户订单号");
+					String customerOrderNo = (String) order.get("客户订单号");
 					// 发货数量
 					double itemNumber = 0;
-					if (!"".equals(orders.get(customerNo).get("发货数量"))) {
-						itemNumber = Double.parseDouble((String) orders.get(
-								customerNo).get("发货数量"));
+					if (!"".equals(order.get("发货数量"))) {
+						itemNumber = Double.parseDouble((String) order.get("发货数量"));
 					}
 					// 创建保存运输单
 					TransferOrder transferOrder = saveTransferOrder(
-							orders.get(customerNo), warehouse, location1,
+							order, warehouse, location1,
 							location2, customer, provider, office);
 					// 已生成的运输单据保存到回滚list中
 					orderList.add(transferOrder);
@@ -710,8 +709,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 					saveTransferOrderMilestone(transferOrder);
 					// 创建保存货品明细
 					// 货品型号
-					List itemDetailList = (List) orders.get(customerOrderNo)
-							.get("itemDetailList");
+					List itemDetailList = (List) order.get("itemDetailList");
 					// check 当前文件 单品重复
 					TransferOrderItem tansferOrderItem = null;
 					String sql = "select * from transfer_order where customer_id = '"
@@ -719,7 +717,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							+ "' and customer_order_no = '"
 							+ customerOrderNo
 							+ "'";
-					TransferOrder order = TransferOrder.dao.findFirst(sql);
+					TransferOrder t_order = TransferOrder.dao.findFirst(sql);
 					for (int i = 0; i < itemDetailList.size(); i++) {
 						Map rec = (Map) itemDetailList.get(i);
 						String orderItem = (String) rec.get("货品型号");
@@ -733,18 +731,18 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						if(product!=null){
 							tansferOrderItem = TransferOrderItem.dao
 									.findFirst("select * from transfer_order_item where order_id = '"
-											+ order.get("id")
+											+ t_order.get("id")
 											+ "' and item_no = '"
 											+ product.get("item_no") + "';");
 						}
 						if (tansferOrderItem == null) {
 							item = updateTransferOrderItem(
-									orders.get(customerNo),rec,itemNumber,
+									order,rec,itemNumber,
 									transferOrder, new TransferOrderItem(),
 									product);
 						} else {
 							item = updateTransferOrderItem(
-									orders.get(customerNo),rec,itemNumber,
+									order,rec,itemNumber,
 									transferOrder, tansferOrderItem, product);
 						}
 						if ("cargoNatureDetailYes".equals(transferOrder
@@ -792,7 +790,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		return importResult;
 	}
 
-	private void alignmentData(Map<String, Map> orders, String customerOrderNo)
+	private void validateData(Map<String, Map> orders, String customerOrderNo)
 			throws Exception {
 		TransferOrder Transferorder = TransferOrder.dao
 				.findFirst(
