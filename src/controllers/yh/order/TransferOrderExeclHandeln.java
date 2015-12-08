@@ -832,11 +832,13 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			throw new Exception("网点有误");
 		}
 		//中转仓
-		Warehouse warehouse = Warehouse.dao
-								.findFirst("select id from warehouse where warehouse_name = '"
-										+ orders.get(customerOrderNo).get("中转仓") + "';");
-		if(warehouse==null){
-			throw new Exception("中转仓有误");
+		if("入中转仓".equals(orders.get(customerOrderNo).get("到达方式"))){
+			Warehouse warehouse = Warehouse.dao
+					.findFirst("select id from warehouse where warehouse_name = '"
+							+ orders.get(customerOrderNo).get("中转仓") + "';");
+			if(warehouse==null){
+				throw new Exception("中转仓有误");
+			}
 		}
 		// 供应商名称
 		if (!"".equals(orders.get(customerOrderNo).get("供应商名称(简称)"))) {
