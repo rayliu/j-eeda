@@ -428,7 +428,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 	 * @param content
 	 * @return
 	 */
-	private TransferOrderItem updateTransferOrderItem(Map content,
+	private TransferOrderItem updateTransferOrderItem(Map content,Map item,
 			double itemNumber, TransferOrder tansferOrder,
 			TransferOrderItem transferOrderItem, Product product)
 			throws Exception {
@@ -505,18 +505,18 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				transferOrderItem.set("amount", 1);
 			} else {
 				// 没单品直接读取“发货数量”为货品总数，不用修改
+				if("普通货品".equals(content.get("货品属性"))){
+					transferOrderItem.set("amount", item.get("发货数量"));
+			}else{
 				transferOrderItem.set("amount", itemNumber);
+			}	
 			}
 			if (product == null) {
 				// 取货地址、收货信息
 				if("普通货品".equals(content.get("货品属性"))){
-					List itemDetailList = (List) content.get("itemDetailList");
-					for (int i = 0; i < itemDetailList.size(); i++) {
-						Map rec = (Map) itemDetailList.get(i);
-						transferOrderItem.set("item_no", rec.get("货品型号"));
-					}
+						transferOrderItem.set("item_no", item.get("货品型号"));
 				}else{
-					transferOrderItem.set("item_no", content.get("货品型号"));
+					transferOrderItem.set("item_no", item.get("货品型号"));
 				}
 				
 			} else {
@@ -739,12 +739,12 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						}
 						if (tansferOrderItem == null) {
 							item = updateTransferOrderItem(
-									orders.get(customerNo), itemNumber,
+									orders.get(customerNo),rec,itemNumber,
 									transferOrder, new TransferOrderItem(),
 									product);
 						} else {
 							item = updateTransferOrderItem(
-									orders.get(customerNo), itemNumber,
+									orders.get(customerNo),rec,itemNumber,
 									transferOrder, tansferOrderItem, product);
 						}
 						if ("cargoNatureDetailYes".equals(transferOrder
@@ -852,15 +852,17 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 	}
 
 	private void addItem(List<Map<String, String>> content, int j,
-			String serialNo, Map order) {
+			String serialNo, Map order) throws Exception {
 		List itemDetailList = (List) order.get("itemDetailList");
 
 		// check 当前文件 单品重复
 		for (int i = 0; i < itemDetailList.size(); i++) {
 			Map rec = (Map) itemDetailList.get(i);
 			String listSerialNo = (String) rec.get("单品序列号");
-			if (serialNo.equals(listSerialNo)) {
-				System.out.println("单品重复");
+			if(!"".equals(serialNo)){
+				if (serialNo.equals(listSerialNo)) {
+					throw new Exception("导入文件存在相同的单品序列号");
+				}
 			}
 		}
 
@@ -878,6 +880,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		serialMap.put("单品收货人", content.get(j).get("单品收货人"));
 		serialMap.put("单品收货人联系电话", content.get(j).get("单品收货人联系电话"));
 		serialMap.put("单品序列号", content.get(j).get("单品序列号"));
+		serialMap.put("发货数量", content.get(j).get("发货数量"));
 		return serialMap;
 	}
 
