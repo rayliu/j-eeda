@@ -148,13 +148,13 @@ public class DamageOrderController extends Controller {
 		//处理从表
 		//handleCargoDetail(dto, id);
 		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("cargo_list");
-		DbUtils.handleList(itemList, id, DamageOrderItem.class);
+		DbUtils.handleList(itemList, id, DamageOrderItem.class, "order_id");
 		
 		List<Map<String, String>> chargeList = (ArrayList<Map<String, String>>)dto.get("charge_list");
-		DbUtils.handleList(chargeList, id, DamageOrderFinItem.class);
+		DbUtils.handleList(chargeList, id, DamageOrderFinItem.class, "order_id");
 		
 		List<Map<String, String>> costList = (ArrayList<Map<String, String>>)dto.get("cost_list");
-		DbUtils.handleList(costList, id, DamageOrderFinItem.class);
+		DbUtils.handleList(costList, id, DamageOrderFinItem.class, "order_id");
 		
 		//return dto
 		Record returnDto = getOrderDto(id);

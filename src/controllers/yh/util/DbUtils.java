@@ -1,5 +1,6 @@
 package controllers.yh.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,9 @@ public class DbUtils {
         return condition;
 	}
 	
-	public static void handleList(List<Map<String, String>> itemList, String master_order_id, Class<?> clazz) 
+	public static void handleList(List<Map<String, String>> itemList,
+	        String master_order_id, Class<?> clazz,
+	        String master_col_name) 
 			throws InstantiationException, IllegalAccessException {
     	for (Map<String, String> rowMap : itemList) {//获取每一行
     		Model<?> model = (Model<?>) clazz.newInstance();
@@ -80,7 +83,7 @@ public class DbUtils {
     		String action = rowMap.get("action");
     		if(StringUtils.isEmpty(rowId)){//创建
     			setModelValues(rowMap, model);
-    			model.set("order_id", master_order_id);
+    			model.set(master_col_name, master_order_id);
     			model.save();
     		}else if("DELETE".equals(action)){//delete
     			Model<?> deleteModel = model.findById(rowId);
@@ -92,8 +95,37 @@ public class DbUtils {
     		}
 		}
 	}
+	
+	
+	public static void handleList(List<Map<String, String>> itemList,
+            Class<?> clazz,
+            Map<String, String> master_ref_col) 
+            throws InstantiationException, IllegalAccessException {
+        for (Map<String, String> rowMap : itemList) {//获取每一行
+            Model<?> model = (Model<?>) clazz.newInstance();
+            
+            String rowId = rowMap.get("id");
+            String action = rowMap.get("action");
+            if(StringUtils.isEmpty(rowId)){//创建
+                model.save();//先创建，获取id以方便创建从表时获取上级 id
+                setModelValues(rowMap, model);
+                for (String col_name : master_ref_col.keySet()) {
+                    model.set(col_name, master_ref_col.get(col_name));
+                }
+                
+                model.update();
+            }else if("DELETE".equals(action)){//delete
+                Model<?> deleteModel = model.findById(rowId);
+                deleteModel.delete();
+            }else{//UPDATE
+                Model<?> updateModel = model.findById(rowId);
+                setModelValues(rowMap, updateModel);
+                updateModel.update();
+            }
+        }
+    }
 
-    //遇到 _list 是从表Map, 不处理
+    //遇到 _list 是从表Map, 递归处理， model = ?_list
 	public static void setModelValues(Map<String, ?> dto, Model<?> model) {
 		logger.debug("----Model:"+model.getClass().toString());
 		for (Entry<String, ?> entry : dto.entrySet()) { 
@@ -103,8 +135,30 @@ public class DbUtils {
             	//忽略  action 字段
             	if(StringUtils.isNotEmpty(value) && !"action".equals(key)){
             		logger.debug(key+":"+value);
-            		model.set(key, value);
+            		try {
+                        model.set(key, value);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
             	}
+            }else{
+                String modelClassName = key.substring(0, key.indexOf("_list"));
+                try {
+                    List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get(key);
+                    Class c = Class.forName("models.yh.structure."+StringUtils.capitalize(modelClassName));
+                   
+                    Map<String, String> master_ref= new HashMap<String, String>();
+                    master_ref.put("structure_id", model.getStr("id"));
+                    handleList(itemList, c, master_ref);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
 		}
 	}

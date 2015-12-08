@@ -133,7 +133,7 @@ public class BzGateOutOrderController extends Controller {
 		}
 		//处理从表
 		List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("item_list");
-		DbUtils.handleList(itemList, id, BzGateOutOrderItem.class);
+		DbUtils.handleList(itemList, id, BzGateOutOrderItem.class, "order_id");
 		//return dto
 		Record returnDto = getOrderDto(id);
 		renderJson(returnDto);

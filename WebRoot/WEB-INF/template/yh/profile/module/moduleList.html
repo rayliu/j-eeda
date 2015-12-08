@@ -1,0 +1,123 @@
+<%layout("/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
+<link href="/yh/js/plugins/datatables-1.10.9/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<div id="page-wrapper">
+<div class="row">
+	<h2>模块定义 <button id="addModuleBtn" type="button" class="btn btn-success btn-xs">添加模块</button></h2>
+	<div class="col-lg-2">
+		
+		<input type="hidden" id="customerId" />
+		<input type="hidden" id="categoryId" />
+		<div id='treeListDiv'>
+	        <ul id="moduleTree" class="ztree"></ul>
+	    </div>
+    </div>
+    <!--end of col4 -->
+    <div class="col-lg-10">
+    	<div id="displayDiv" style="display: none;">
+    		<div class="btn-header">
+		    	<div id="addProductDiv" style="display: block;">
+		    		<h2>单据设计</h2>(module_id:<span id='module_id'></span>)
+				</div>
+			</div>
+			<div>
+				  <!-- Nav tabs -->
+				  <ul class="nav nav-tabs" role="tablist">
+				    <li role="presentation" class="active"><a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">字段</a></li>
+				    <li role="presentation"><a href="#action" aria-controls="action" role="tab" data-toggle="tab">动作</a></li>
+				    <li role="presentation"><a href="#permission" aria-controls="permission" role="tab" data-toggle="tab">权限</a></li>
+				    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">高级</a></li>
+				  </ul>
+
+				  <!-- Tab panes -->
+				  <div class="tab-content">
+				    <div role="tabpanel" class="tab-pane active" id="fields">
+				    	<div class="row">
+				    		<div class="form-group button-bar" >
+						    	<button id="addTableBtn" type="button" class="btn btn-success btn-xs">添加新子表</button>
+								
+						    </div>
+				    	</div>
+						
+						<div class="row" id="fields_body">
+				    		<div class="form-group button-bar" >
+						    	<button id="addTableBtn" type="button" class="btn btn-success btn-xs">添加新子表</button>
+								
+						    </div>
+				    	</div>
+				    </div>
+				    <div role="tabpanel" class="tab-pane" id="action">...</div>
+				    <div role="tabpanel" class="tab-pane" id="permission">...</div>
+				    <div role="tabpanel" class="tab-pane" id="settings">...</div>
+				  </div>
+
+				  <div class="form-group button-bar" >
+				    	<button id="saveBtn" type="button" class="btn btn-success">保存</button>
+				    	<button id="previewBtn" type="button" class="btn btn-default">预览</button>
+				    	<button id="startBtn" type="button" class="btn btn-default">启用</button>
+				    	<button id="stopBtn" type="button" class="btn btn-default">停用</button>
+				  </div>
+			</div>
+	    </div>
+    </div>
+    <!--end of col8 -->
+</div>
+<!--end of row -->   
+
+</div>
+    <!-- 模态框 -->
+	<div class="modal fade" id="editCategory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title" id="myModalLabel">新增类别</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<form id="categoryForm" action="">
+	      		客户<input id="hiddenCustomerId" type="text" name="customerId" /> 
+	      		类别<input id="hiddenCId" type="text" name="categoryId" /> 
+	      		父类<input id="hiddenParentId" type="text" name="parentId" /> 
+	      		<div class="form-group ">
+				<label class="control-label" for="inputSuccess">类别名称</label> <input
+					id="name" class="form-control" type="text"
+					name="name">
+				</div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+			        <button id="categoryFormBtn" type="button" class="btn btn-primary">保存</button>
+			    </div>
+			</form>
+	    </div><!-- /.modal-content -->
+	 </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<%}%>
+
+
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/datatables-1.10.9/js/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/datatables-1.10.9/js/dataTables.bootstrap.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+
+<script>
+       
+       var Module={};
+</script>
+
+<link href="/yh/css/productTree.css" rel="stylesheet" />
+<style type="text/css">
+	.ztree li span.button.add {margin-left:2px; margin-right: -1px; background-position:-144px 0; vertical-align:top; *vertical-align:middle}
+</style>
+
+<link rel="stylesheet" href="/yh/js/plugins/zTree_v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.core-3.5.js"></script>
+<script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.excheck-3.5.js"></script>
+<script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.exedit-3.5.js"></script>
+
+<%include("/yh/component/jsTemplate/detailTable.js", { id:'table_template'}){} %>
+
+<script src="/yh/js/profile/module/fields.js"></script>
+<script src="/yh/js/profile/module/list_tree.js"></script>
+

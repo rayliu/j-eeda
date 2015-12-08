@@ -104,6 +104,7 @@ import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.CustomizeField;
 import models.yh.profile.DriverAssistant;
+import models.yh.profile.Module;
 import models.yh.profile.OfficeCofig;
 import models.yh.profile.PartyInsuranceItem;
 import models.yh.profile.ProviderChargeType;
@@ -136,12 +137,13 @@ import com.jfinal.weixin.demo.WeixinApiController;
 import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
+import controllers.HomeController;
 import controllers.bz.gateOutOrder.BzGateOutOrderController;
 import controllers.bz.gateOutOrder.models.BzGateOutOrder;
 import controllers.bz.gateOutOrder.models.BzGateOutOrderItem;
+import controllers.eeda.ModuleController;
 import controllers.yh.profile.DriverAssistantController;
 import controllers.yh.returnTransfer.ReturnTransferController;
-import controllers.yh.scanorder.ContentletController;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
@@ -335,6 +337,10 @@ public class EedaConfig extends JFinalConfig {
 		me.add("/m", controllers.yh.app.AppController.class, contentPath);
 		
 		me.add("/bzGateOutOrder", BzGateOutOrderController.class, "bz");
+		
+		me.add("/home", HomeController.class, contentPath);
+		me.add("/module", ModuleController.class, contentPath);
+		
 	}
 
     @Override
@@ -500,6 +506,9 @@ public class EedaConfig extends JFinalConfig {
         //bz
         arp.addMapping("bz_gate_out_order", BzGateOutOrder.class);
         arp.addMapping("bz_gate_out_order_item", BzGateOutOrderItem.class);
+        
+        //common
+        arp.addMapping("modules", Module.class);
     }
 
     private void initDBconnector() {
