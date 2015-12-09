@@ -124,7 +124,7 @@ public class CostReimbursementOrder extends Controller {
 		String orderNo = getPara("orderNo");
 		String status = getPara("status");
 		String auditName = getPara("auditName");
-		
+		String accountName = getPara("accountName");
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -148,7 +148,8 @@ public class CostReimbursementOrder extends Controller {
         			+ " left join user_login u on u.id  = ro.audit_id "
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
-	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'";
+	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'"
+        			+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'";	
 	    	 
 	        sql = "select ro.*,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
@@ -160,6 +161,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'"
+	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
 	        		+ " group by ro.id order by ro.create_stamp desc " + sLimit;
         }
         
