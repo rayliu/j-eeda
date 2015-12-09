@@ -1,14 +1,8 @@
 
 $(document).ready(function() {
-	
-//	 $("input[name='allCheck']").click(function(){
-//    	$("input[name='order_check_box']").each(function () {   
-//            this.checked = !this.checked;  
-//         });  
-//	 });
-	
-	
 	var cName = [];
+	var returnIds = [];
+    var miscOrderIds =[];
     $('#menu_charge').addClass('active').find('ul').addClass('in');
     $('#saveBtn').attr('disabled', true);
 	//datatable, 动态处理
@@ -24,12 +18,25 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/chargeCheckOrder/createList",
-        "aoColumns": [ 
+        "aoColumns": [
 	          { "mDataProp": null, "sWidth":"20px","bSortable": false,
 	            "fnRender": function(obj) {
-	              return '<input type="checkbox" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	             var strcheck= '<input type="checkbox" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	              //回单
+	              for(var i=0;i<returnIds.length;i++){
+                         if(returnIds[i]==obj.aData.ID){
+                        	 return strcheck= '<input type="checkbox" checked="checked" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                         }
+                     }
+                  //手工单
+                  for(var i=0;i<miscOrderIds.length;i++){
+                         if(miscOrderIds[i]==obj.aData.ID){
+                        	 return strcheck= '<input type="checkbox" checked="checked" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                         }
+                     }
+                	 return strcheck;
 	            }
-	          },  
+	          },
 	          {"mDataProp":"ID", "bVisible": false},
 	          {"mDataProp":"ORDER_NO","sClass": "order_no",
 	        	  "fnRender": function(obj) {
@@ -38,7 +45,6 @@ $(document).ready(function() {
 	        		  }else{
 	        			  return obj.aData.ORDER_NO;
 	        		  }
-	      			
 	      	  }},
 	      		{"mDataProp":null, "sWidth":"120px",
 	                "fnRender": function(obj) {
@@ -138,39 +144,39 @@ $(document).ready(function() {
 			  {"mDataProp":null, "sWidth":"200px"}                      
 		]          
     });
-    
-    var returnIds = [];
-    var miscOrderIds =[]
-    // 未选中列表
-	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
-		var cname = $(this).parent().siblings('.cname')[0].textContent;		
-		if($(this).prop("checked") == true){
-			if(cname.length != 0){
+	//
+    $("input[name='allCheck']").click(function(){
+    	$("input[name='order_check_box']").each(function () {
+    		var cname = $(this).parent().siblings('.cname')[0].textContent;
+    			if(cName.length != 0){
+						if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
+							alert("请选择同一客户名称的回单");
+							return false;
+						}
+					}
+            this.checked = !this.checked;
+			if($(this).prop("checked") == true){
+				$(this).parent().parent().clone().appendTo($("#checkedChargeCheckList"));
 				cName.push($(this).parent().siblings('.cname')[0].innerHTML);
-				if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
-					alert("请选择同一客户名称的回单");
-					return false;
+				if($(this).attr('tporder') == "收入单"){
+					miscOrderIds.push($(this).val());
+					$("#checkedMiscOrder").val(miscOrderIds);
+				}else{
+					returnIds.push($(this).val());
+					$("#checkedReturnOrder").val(returnIds);
+				}
+				$('#saveBtn').attr('disabled', false);
+			}else{
+			cName.splice($.inArray($(this).parent().siblings('.cname')[0].innerHTML, cName), 1);
+			var id=$(this)[0].value;
+			var rows = $("#checkedChargeCheckList").children();
+			for(var i=0; i<rows.length;i++){
+				var row = rows[i];
+				if(id==$(row).find('input').attr('value')){
+					row.remove();
+					//$("#checkedCostCheckList").children().splice(i,1);
 				}
 			}
-
-			$(this).parent().parent().appendTo($("#checkedChargeCheckList"));
-
-			if($(this).attr('tporder') == "收入单"){
-				miscOrderIds.push($(this).val());
-				$("#checkedMiscOrder").val(miscOrderIds);
-			}else{
-				returnIds.push($(this).val());
-				$("#checkedReturnOrder").val(returnIds);
-			}
-			$('#saveBtn').attr('disabled', false);
-		}			
-	});
-	
-	// 已选中列表
-	$("#checkedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
-		if($(this).prop("checked") == false){
-			$(this).parent().parent().appendTo($("#uncheckedChargeCheckList"));
-
 			if($(this).attr('tporder') == "收入单"){
 				if(miscOrderIds.length != 0){
 					miscOrderIds.splice($.inArray($(this).val(), miscOrderIds), 1);
@@ -185,9 +191,83 @@ $(document).ready(function() {
 			if(returnIds.length == 0 && miscOrderIds.length == 0){
 				$('#saveBtn').attr('disabled', true);
 			}
-		}			
+		}
+         });
+	 });
+    // 未选中列表
+	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == true){
+			if(cName.length != 0){
+				if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
+					alert("请选择同一客户名称的回单");
+					return false;
+				}
+			}
+			$(this).parent().parent().clone().appendTo($("#checkedChargeCheckList"));
+			if($(this).parent().siblings('.cname')[0].innerHTML != ''){
+				cName.push($(this).parent().siblings('.cname')[0].innerHTML);
+			}
+			if($(this).attr('tporder') == "收入单"){
+				miscOrderIds.push($(this).val());
+				$("#checkedMiscOrder").val(miscOrderIds);
+			}else{
+				returnIds.push($(this).val());
+				$("#checkedReturnOrder").val(returnIds);
+			}
+			$('#saveBtn').attr('disabled', false);
+		}
+		else{
+			cName.splice($.inArray($(this).parent().siblings('.cname')[0].innerHTML, cName), 1);
+			var id=$(this)[0].value;
+			var rows = $("#checkedChargeCheckList").children();
+			for(var i=0; i<rows.length;i++){
+				var row = rows[i];
+				if(id==$(row).find('input').attr('value')){
+					row.remove();
+					//$("#checkedCostCheckList").children().splice(i,1);
+				}
+			}
+			if($(this).attr('tporder') == "收入单"){
+				if(miscOrderIds.length != 0){
+					miscOrderIds.splice($.inArray($(this).val(), miscOrderIds), 1);
+					$("#checkedMiscOrder").val(miscOrderIds);
+				}
+			}else{
+				if(returnIds.length != 0){
+					returnIds.splice($.inArray($(this).val(), returnIds), 1);
+					$("#checkedReturnOrder").val(returnIds);
+				}
+			}
+			if(returnIds.length == 0 && miscOrderIds.length == 0){
+				$('#saveBtn').attr('disabled', true);
+			}
+		}
 	});
-	
+	//刷新列表
+	$("#uncheckedChargeCheckOrder").click(function(){
+		uncheckedChargeCheckTable.fnDraw();
+	});
+	// 已选中列表
+	$("#checkedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
+		if($(this).prop("checked") == false){
+			$(this).parent().parent().appendTo($("#uncheckedChargeCheckList"));
+			cName.splice($.inArray($(this).parent().siblings('.cname')[0].innerHTML, cName), 1);
+			if($(this).attr('tporder') == "收入单"){
+				if(miscOrderIds.length != 0){
+					miscOrderIds.splice($.inArray($(this).val(), miscOrderIds), 1);
+					$("#checkedMiscOrder").val(miscOrderIds);
+				}
+			}else{
+				if(returnIds.length != 0){
+					returnIds.splice($.inArray($(this).val(), returnIds), 1);
+					$("#checkedReturnOrder").val(returnIds);
+				}
+			}
+			if(returnIds.length == 0 && miscOrderIds.length == 0){
+				$('#saveBtn').attr('disabled', true);
+			}
+		}
+	});
 	$('#saveBtn').click(function(e){
         e.preventDefault();
         if(returnIds.length>0 || miscOrderIds){
