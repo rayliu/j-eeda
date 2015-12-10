@@ -33,6 +33,11 @@ import org.apache.http.util.EntityUtils;
 
 
 
+
+
+
+
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.jfinal.kit.PropKit;
@@ -41,14 +46,18 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import com.jfinal.weixin.demo.SignKit;
+import com.jfinal.weixin.sdk.api.AccessTokenApi;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.JsTicketApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 
+import controllers.yh.util.EedaHttpKit;
+
 public class WxController extends ApiController {
 	private Logger logger = Logger.getLogger(WxController.class);
-	//private static Map map= new HashMap<String, String>();
+	
+	private static String getMediaUrl = "http://file.api.weixin.qq.com/cgi-bin/media/get";
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
 	 * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
@@ -286,6 +295,15 @@ public class WxController extends ApiController {
 		if(returnOrder==null)
 			returnOrder = new ReturnOrder();
 		renderJson(returnOrder);
+	}
+	
+	public void saveReturnOrderPic(){
+	    String serverId = getPara("serverId");
+	    String access_token = getPara("access_token");
+	    Map<String, String> queryMap = new HashMap<String,String>();
+	    queryMap.put("access_token", AccessTokenApi.getAccessToken().getAccessToken());
+	    queryMap.put("media_id", serverId);
+	    EedaHttpKit.getFile(getMediaUrl, queryMap);
 	}
 	
 	public void saveFile(){

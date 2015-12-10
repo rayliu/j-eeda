@@ -43,12 +43,18 @@ $(document).ready(function() {
 
 	//保存图片
     $("#uploadBtn").click(function(e){
-    	if($("#returnId").val().length==0){
-    		//alert('回单号码不存在，请重新查询.');
-    		$("#uploadDesc").text("请先查询有效的回单号码").show();
-    		return;
-    	}
-    	$("#fileupload").click();
+    	wx.chooseImage({
+		    count: 1, // 默认9
+		    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+		    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+		    success: function (res) {
+		        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+		        $.post('/wx/saveReturnOrderPic',{json:res},function(data){
+		        	if(data)
+		        		$('#uploadDesc').append("<p>图片上传成功!</p>").show();
+		        });
+		    }
+		});
     });
 
 	//获取客户的list，选中信息在下方展示其他信息

@@ -1,6 +1,7 @@
 package com.jfinal.weixin.demo;
 
 import com.jfinal.kit.PropKit;
+import com.jfinal.log.Logger;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.MenuApi;
@@ -8,7 +9,7 @@ import com.jfinal.weixin.sdk.api.UserApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 
 public class WeixinApiController extends ApiController {
-	
+    private static Logger logger = Logger.getLogger(WeixinApiController.class);
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
 	 * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
@@ -36,6 +37,25 @@ public class WeixinApiController extends ApiController {
 		render("/api/index.html");
 	}
 	*/
+	
+	/**
+     * 创建公众号菜单
+     */
+    public void createMenu() {
+        MenuApi ma = new MenuApi();
+        String jsonStr = "{\"button\":["
+                 +"     {    \"type\":\"view\","
+                  +"         \"name\":\"单据签收\","
+                  +"         \"url\":\""+PropKit.get("wxUrl")+"/fileUpload\""
+                  +"    }]"
+                  +" }";
+        logger.debug(jsonStr);
+        ApiResult apiResult = ma.createMenu(jsonStr);
+        if (apiResult.isSucceed())
+            renderText(apiResult.getJson());
+        else
+            renderText(apiResult.getErrorMsg());
+    }
 	
 	/**
 	 * 获取公众号菜单
