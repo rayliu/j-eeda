@@ -135,7 +135,7 @@ public class EedaHttpKit {
              // raw = "attachment; filename=abc.jpg"
              if(raw != null && raw.indexOf("=") != -1) {
                  String fileName = raw.split("=")[1]; //getting value after '='
-                 fileName.replaceAll("\"", "");
+                 fileName = fileName.replaceAll("\"", "");
                  OutputStream  outputStream = new FileOutputStream("/upload/img/"+fileName);//输出到磁盘
                  int bytesWritten = 0;
                  int byteCount = 0;
