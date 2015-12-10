@@ -299,11 +299,11 @@ public class WxController extends ApiController {
 	
 	public void saveReturnOrderPic(){
 	    String serverId = getPara("serverId");
-	    String access_token = getPara("access_token");
 	    Map<String, String> queryMap = new HashMap<String,String>();
 	    queryMap.put("access_token", AccessTokenApi.getAccessToken().getAccessToken());
 	    queryMap.put("media_id", serverId);
 	    EedaHttpKit.getFile(getMediaUrl, queryMap);
+	    renderText("OK");
 	}
 	
 	public void saveFile(){
