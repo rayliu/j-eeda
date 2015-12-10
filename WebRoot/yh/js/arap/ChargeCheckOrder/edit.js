@@ -260,7 +260,6 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"100px"}, 
-            
             {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px",
                 "fnRender": function(obj) {
                     // return "<input style='width: 100%;' type='text' name='change_amount' value='0'/>";
@@ -275,20 +274,20 @@ $(document).ready(function() {
                     }
                     else{
                         if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null ){
-                            return obj.aData.CHANGE_AMOUNT;
-                            
+                            return "<input style='width: 80px;' type='text' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                         }
                         else {
                             if(obj.aData.CHARGE_TOTAL_AMOUNT!=null){
-                                return obj.aData.CHARGE_TOTAL_AMOUNT;
+                                return "<input style='width: 80px;' type='text' name='change_amount' id='change' value='"+obj.aData.CHARGE_TOTAL_AMOUNT+"'/>";
                             }
                             else{
-                                return 0;
+                                return "<input style='width: 80px;' type='text' name='change_amount' id='change' value='0'/>";
                             }
                         }
                     }
                 }
             },
+
             {"mDataProp":"PLANNING_TIME", "sWidth":"120px"},
             {"mDataProp":"SERIAL_NO", "sWidth":"40px"},
             {"mDataProp":"REF_NO", "sWidth":"40px"},
@@ -338,7 +337,7 @@ $(document).ready(function() {
             {"mDataProp": null, 
                 "sWidth": "20px",                
                 "fnRender": function(obj) {
-                    return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' change_amount='"+obj.aData.CHANGE_AMOUNT+"' order_type='"+obj.aData.TPORDER+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+                    return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' order_type='"+obj.aData.TPORDER+"' change_amount='"+$(obj.aData.CHANGE_AMOUNT).attr('value')+"' <i class='fa fa-trash-o fa-fw'> </i>删除</a>";
                 }
             } 
         ]      

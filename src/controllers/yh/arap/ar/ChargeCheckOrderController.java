@@ -80,10 +80,10 @@ public class ChargeCheckOrderController extends Controller {
 
 		ArapMiscChargeOrder arapMiscChargeOrder = null;
 		ReturnOrder rOrder = null;
-		Long customerId =null;
+		Long customerId = null;
 		Long spId = null;
-		String[] returnOrderIdArray = new String[]{};
-		if(!returnOrderIds.equals("")){
+		String[] returnOrderIdArray = new String[] {};
+		if (!returnOrderIds.equals("")) {
 			returnOrderIdArray = returnOrderIds.split(",");
 		}
 		Double totalAmount = 0.0;
@@ -94,21 +94,21 @@ public class ChargeCheckOrderController extends Controller {
 							"select ifnull(round(sum(amount),2),0) as total_amount from return_order_fin_item where return_order_id = ?",
 							rOrder.get("id"));
 			totalAmount = totalAmount + record.getDouble("total_amount");
-			
+
 			customerId = rOrder.getLong("customer_id");
 			if (!"".equals(customerId) && customerId != null) {
 				Party party = Party.dao.findById(customerId);
 				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get(
-						"contact_id").toString());
+				Contact contact = Contact.dao.findById(party.get("contact_id")
+						.toString());
 				setAttr("customer", contact);
 				setAttr("type", "CUSTOMER");
 				setAttr("classify", "");
 			}
 		}
-		
-		String[] miscOrderIdArray = new String[]{};
-		if(!miscOrderIds.equals("")){
+
+		String[] miscOrderIdArray = new String[] {};
+		if (!miscOrderIds.equals("")) {
 			miscOrderIdArray = miscOrderIds.split(",");
 		}
 
@@ -120,10 +120,10 @@ public class ChargeCheckOrderController extends Controller {
 							"select round(sum(total_amount),2) as total_amount from arap_misc_charge_order where id = ?",
 							arapMiscChargeOrder.get("id"));
 			totalAmount = totalAmount + record.getDouble("total_amount");
-			
+
 			spId = arapMiscChargeOrder.getLong("sp_id");
 			setAttr("spId", spId);
-			if(customerId ==null){
+			if (customerId == null) {
 				customerId = arapMiscChargeOrder.getLong("customer_id");
 				if (!"".equals(customerId) && customerId != null) {
 					Party party = Party.dao.findById(customerId);
@@ -132,12 +132,13 @@ public class ChargeCheckOrderController extends Controller {
 							"contact_id").toString());
 					setAttr("customer", contact);
 					setAttr("type", "CUSTOMER");
-					setAttr("classify", "");			
+					setAttr("classify", "");
 				}
 			}
 		}
 
-		setAttr("totalAmount", Double.valueOf(String.format("%.2f",totalAmount)));
+		setAttr("totalAmount",
+				Double.valueOf(String.format("%.2f", totalAmount)));
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
@@ -147,89 +148,108 @@ public class ChargeCheckOrderController extends Controller {
 		setAttr("userLogin", userLogin);
 
 		setAttr("status", "new");
-		
+
 		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds);
 		setAttr("itemList", itemList);
 		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
+
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE })
 	@Before(Tx.class)
-	public void deleteItem(){
+	public void deleteItem() {
 		String id = getPara("chargeCheckOrderId");
-    	String order_id = getPara("order_id");
-    	String order_type = getPara("order_type");
-    	String change_amount = getPara("change_amount");
-    	ArapChargeItem item =ArapChargeItem.dao.findFirst("select *  from arap_charge_item where ref_order_type=? and ref_order_id=? and charge_order_id=?",order_type,order_id,id);
-    	ArapChargeOrder arapchargeorder=ArapChargeOrder.dao.findById(id);
-    	if(item!=null){
-    		item.delete();	
-    	}
-    	if(arapchargeorder!=null){
-    		Double total_amount=arapchargeorder.getDouble("total_amount")-Double.parseDouble(change_amount);
-    		Double charge_amount=arapchargeorder.getDouble("charge_amount")-Double.parseDouble(change_amount);
-    		arapchargeorder.set("total_amount",total_amount);
-    		arapchargeorder.set("charge_amount", charge_amount);
-    		arapchargeorder.update();	
-    	}
-		if("回单".equals(order_type)){
+		String order_id = getPara("order_id");
+		String order_type = getPara("order_type");
+		String change_amount = getPara("change_amount");
+		ArapChargeItem item = ArapChargeItem.dao
+				.findFirst(
+						"select *  from arap_charge_item where ref_order_type=? and ref_order_id=? and charge_order_id=?",
+						order_type, order_id, id);
+		ArapChargeOrder arapchargeorder = ArapChargeOrder.dao.findById(id);
+		if (item != null) {
+			item.delete();
+		}
+		if (arapchargeorder != null) {
+			Double total_amount = arapchargeorder.getDouble("total_amount")
+					- Double.parseDouble(change_amount);
+			Double charge_amount = arapchargeorder.getDouble("charge_amount")
+					- Double.parseDouble(change_amount);
+			arapchargeorder.set("total_amount", total_amount);
+			arapchargeorder.set("charge_amount", charge_amount);
+			arapchargeorder.update();
+		}
+		if ("回单".equals(order_type)) {
 			ReturnOrder returnorder = ReturnOrder.dao.findById(order_id);
 			returnorder.set("transaction_status", "已确认");
 			returnorder.update();
-		}else{
-		    ArapMiscChargeOrder arapmiscchargeorder= ArapMiscChargeOrder.dao.findById(order_id);
-		    arapmiscchargeorder.set("status", "已确认");
-		    arapmiscchargeorder.update();
+		} else {
+			ArapMiscChargeOrder arapmiscchargeorder = ArapMiscChargeOrder.dao
+					.findById(order_id);
+			arapmiscchargeorder.set("status", "已确认");
+			arapmiscchargeorder.update();
 		}
-		
+
 		renderText("ok");
 	}
+
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE })
 	@Before(Tx.class)
-	public void addItem(){
+	public void addItem() {
 		String id = getPara("chargeCheckOrderId");
-    	String addReturnOrder = getPara("addReturnOrder");
-    	String addMiscOrder = getPara("addMiscOrder");
-    	String addAmount = getPara("addAmount");
-    	ArapChargeOrder arapchargeorder=ArapChargeOrder.dao.findById(id);
-    	String name = (String) currentUser.getPrincipal();
-		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-		if(!"".equals(addReturnOrder)){
-    		String addReturnOrders[]=addReturnOrder.split(",");
-    	for(int i=0;i<addReturnOrders.length;i++){
-    		ArapChargeItem item =new ArapChargeItem();
-    		ReturnOrder returnorder = ReturnOrder.dao.findById(addReturnOrders[i]);
-			returnorder.set("transaction_status", "对账中");
-			returnorder.update();
-    		item.set("ref_order_type","回单" ).set("create_by",users.get(0).get("id")).set("create_stamp", new Date())
-    		.set("ref_order_id", addReturnOrders[i]).set("charge_order_id", id);
-    		item.save();
-    		}
+		String addReturnOrder = getPara("addReturnOrder");
+		String addMiscOrder = getPara("addMiscOrder");
+		String addAmount = getPara("addAmount");
+		ArapChargeOrder arapchargeorder = ArapChargeOrder.dao.findById(id);
+		String name = (String) currentUser.getPrincipal();
+		List<UserLogin> users = UserLogin.dao
+				.find("select * from user_login where user_name='" + name + "'");
+		if (!"".equals(addReturnOrder)) {
+			String addReturnOrders[] = addReturnOrder.split(",");
+			for (int i = 0; i < addReturnOrders.length; i++) {
+				ArapChargeItem item = new ArapChargeItem();
+				ReturnOrder returnorder = ReturnOrder.dao
+						.findById(addReturnOrders[i]);
+				returnorder.set("transaction_status", "对账中");
+				returnorder.update();
+				item.set("ref_order_type", "回单")
+						.set("create_by", users.get(0).get("id"))
+						.set("create_stamp", new Date())
+						.set("ref_order_id", addReturnOrders[i])
+						.set("charge_order_id", id);
+				item.save();
+			}
 		}
-		if(!"".equals(addMiscOrder)){
-    		String addMiscOrders[]=addMiscOrder.split(",");
-    	for(int i=0;i<addMiscOrders.length;i++){
-    		ArapChargeItem item =new ArapChargeItem();
-    		ArapMiscChargeOrder arapmiscchargeorder= ArapMiscChargeOrder.dao.findById(addMiscOrders[i]);
-		    arapmiscchargeorder.set("status", "对账中");
-		    arapmiscchargeorder.update();
-    		item.set("ref_order_type","收入单" ).set("create_by",users.get(0).get("id")).set("create_stamp", new Date())
-    		.set("ref_order_id", addMiscOrders[i]).set("charge_order_id", id);
-    		item.save();
-    		}
+		if (!"".equals(addMiscOrder)) {
+			String addMiscOrders[] = addMiscOrder.split(",");
+			for (int i = 0; i < addMiscOrders.length; i++) {
+				ArapChargeItem item = new ArapChargeItem();
+				ArapMiscChargeOrder arapmiscchargeorder = ArapMiscChargeOrder.dao
+						.findById(addMiscOrders[i]);
+				arapmiscchargeorder.set("status", "对账中");
+				arapmiscchargeorder.update();
+				item.set("ref_order_type", "收入单")
+						.set("create_by", users.get(0).get("id"))
+						.set("create_stamp", new Date())
+						.set("ref_order_id", addMiscOrders[i])
+						.set("charge_order_id", id);
+				item.save();
+			}
 		}
-    	Double sum_amount=0.0;
-    	if(!"".equals(addAmount)){
-    		String addAmounts[]=addAmount.split(",");
-    	for(int i=0;i<addAmounts.length;i++){
-    		sum_amount+=Double.parseDouble(addAmounts[i]);
-    		}
-    	}
-    	Double total_amount=arapchargeorder.getDouble("total_amount")+sum_amount;
-		Double charge_amount=arapchargeorder.getDouble("charge_amount")+sum_amount;
-    	arapchargeorder.set("total_amount",total_amount);
+		Double sum_amount = 0.0;
+		if (!"".equals(addAmount)) {
+			String addAmounts[] = addAmount.split(",");
+			for (int i = 0; i < addAmounts.length; i++) {
+				sum_amount += Double.parseDouble(addAmounts[i]);
+			}
+		}
+		Double total_amount = arapchargeorder.getDouble("total_amount")
+				+ sum_amount;
+		Double charge_amount = arapchargeorder.getDouble("charge_amount")
+				+ sum_amount;
+		arapchargeorder.set("total_amount", total_amount);
 		arapchargeorder.set("charge_amount", charge_amount);
 		arapchargeorder.update();
-		
+
 		renderText("ok");
 	}
 
@@ -267,9 +287,10 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
 				+ " left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 				+ " left join user_login usl on usl.id=ror.creator "
-				+ " where ror.id in("+ returnOrderIds +") group by ror.id,tor2.id ";
-				
-			String itemMiscSql=" (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
+				+ " where ror.id in(" + returnOrderIds
+				+ ") group by ror.id,tor2.id ";
+
+		String itemMiscSql = " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
 				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
@@ -284,19 +305,18 @@ public class ChargeCheckOrderController extends Controller {
 				+ " FROM arap_misc_charge_order amco"
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
 				+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
-				+ " WHERE amco.id in ("+ miscOrderIds +")"
-				+ " )  ";
-		String itemSql ="";
-		if(returnOrderIds.length()>0 && miscOrderIds.length()>0){
+				+ " WHERE amco.id in (" + miscOrderIds + ")" + " )  ";
+		String itemSql = "";
+		if (returnOrderIds.length() > 0 && miscOrderIds.length() > 0) {
 			itemSql = itemReturnSql + " UNION " + itemMiscSql;
-		}else if(returnOrderIds.length() > 0 && miscOrderIds.length() == 0){
+		} else if (returnOrderIds.length() > 0 && miscOrderIds.length() == 0) {
 			itemSql = itemReturnSql;
-		}else if(returnOrderIds.length() == 0 && miscOrderIds.length() > 0){
+		} else if (returnOrderIds.length() == 0 && miscOrderIds.length() > 0) {
 			itemSql = itemMiscSql;
-		}else{
+		} else {
 			return Collections.emptyList();
 		}
-		List<Record> itemList = Db.find(itemSql +" order by planning_time");
+		List<Record> itemList = Db.find(itemSql + " order by planning_time");
 		return itemList;
 	}
 
@@ -311,16 +331,16 @@ public class ChargeCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		
-		//升降序
-    	String sortColIndex = getPara("iSortCol_0");
+
+		// 升降序
+		String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
-		String colName = getPara("mDataProp_"+sortColIndex);
-		
+		String colName = getPara("mDataProp_" + sortColIndex);
+
 		String orderByStr = " order by A.planning_time desc ";
-        if(colName.length()>0){
-        	orderByStr = " order by A."+colName+" "+sortBy;
-        }
+		if (colName.length() > 0) {
+			orderByStr = " order by A." + colName + " " + sortBy;
+		}
 
 		// 获取数据
 		String customer = getPara("customer");
@@ -332,7 +352,7 @@ public class ChargeCheckOrderController extends Controller {
 		String customerNo = getPara("customerNo");
 		String address = getPara("address");
 		String ref_no = getPara("ref_no");
-		String customer_no = getPara("customer_no");//添加单据的客户名称
+		String customer_no = getPara("customer_no");// 添加单据的客户名称
 		String ispage = getPara("ispage");
 		String status = getPara("status");
 
@@ -420,21 +440,23 @@ public class ChargeCheckOrderController extends Controller {
 				+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
 				+ " NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
 				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,amco.total_amount charge_total_amount , "
-				+ " c1.abbr sp "
-				+ " FROM arap_misc_charge_order amco"
+				+ " c1.abbr sp " + " FROM arap_misc_charge_order amco"
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
 				+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
 				+ " WHERE amco. STATUS = '已确认' ";
 		sql3 = " ) order by planning_time desc ";
 		if (customer == null && beginTime == null && endTime == null
-				&& orderNo == null && customerNo == null && address == null && planningBeginTime == null && planningEndTime == null) {
+				&& orderNo == null && customerNo == null && address == null
+				&& planningBeginTime == null && planningEndTime == null) {
 			condition = " ";
-			if(ispage!=null){
-	    		condition = " and ifnull(ror.order_no,'') like '%" + ref_no + "%' "
-	    				   	+" and ifnull(c.abbr,'') like '%" + customer_no + "%' ";
-	    		condition2 = " and ifnull(c.abbr,'') like '%" + customer_no + "%' ";
-						
-	    	}
+			if (ispage != null) {
+				condition = " and ifnull(ror.order_no,'') like '%" + ref_no
+						+ "%' " + " and (ifnull(c.abbr,'') like '%"
+						+ customer_no + "%' or ifnull(c2.abbr,'') like '%"
+						+ customer_no + "%' )";
+				condition2 = " and ifnull(c.abbr,'') like '%" + customer_no +"%' ";
+
+			}
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -473,17 +495,18 @@ public class ChargeCheckOrderController extends Controller {
 					+ "%' "
 					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from))  like '%"
 					+ address + "%' ";
-			condition2 = " and c.abbr like '%" + customer
-					+ "%' and (SELECT GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '')FROM arap_misc_charge_order_item amcoi WHERE amcoi.misc_order_id = amco.id) like '%" + customerNo
-					+ "%'";
+			condition2 = " and c.abbr like '%"
+					+ customer
+					+ "%' and (SELECT GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '')FROM arap_misc_charge_order_item amcoi WHERE amcoi.misc_order_id = amco.id) like '%"
+					+ customerNo + "%'";
 		}
 		sqlTotal = "select count(1) total from (" + sql + condition + sql2
 				+ condition2 + sql3 + ") as A";
-		rec = Db.findFirst(sqlTotal + fieldsWhere );
+		rec = Db.findFirst(sqlTotal + fieldsWhere);
 		logger.debug("total records:" + rec.getLong("total"));
-
-		orders = Db.find("select * from ("+sql + condition + sql2 + condition2 + sql3
-				+ fieldsWhere + ") A "+ orderByStr + sLimit) ;
+		orders = Db.find("select * from (" + sql + condition + sql2
+				+ condition2 + sql3 + fieldsWhere + ") A " + orderByStr
+				+ sLimit);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -516,34 +539,34 @@ public class ChargeCheckOrderController extends Controller {
 			PermissionConstant.PERMSSION_CCO_CREATE }, logical = Logical.OR)
 	@Before(Tx.class)
 	public void save() {
-		String jsonStr=getPara("params");
-    	logger.debug(jsonStr);
-    	Gson gson = new Gson();  
-        Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class); 
-         
+		String jsonStr = getPara("params");
+		logger.debug(jsonStr);
+		Gson gson = new Gson();
+		Map<String, ?> dto = gson.fromJson(jsonStr, HashMap.class);
+
 		ArapChargeOrder arapChargeOrder = null;
-		String chargeCheckOrderId = (String)dto.get("chargeCheckOrderId");
-		Double total_amount = (Double)dto.get("total_amount");
-		Double change_amount = (Double)dto.get("change_amount");
-		String remark = (String)dto.get("remark");
-		String customerId = (String)dto.get("customer_id");
-		String spId = (String)dto.get("sp_id");
-		String billing_unit = (String)dto.get("billing_unit");
-		String beginTime_filter = (String)dto.get("beginTime_filter");
-		String endTime_filter = (String)dto.get("endTime_filter");
-		String payee = (String)dto.get("payee");
-		String haveInvoice = (String)dto.get("have_invoice");
-		DecimalFormat df=new DecimalFormat(".##");
-		String changeAmount=df.format(change_amount);
-		String totalAmount=df.format(total_amount);
+		String chargeCheckOrderId = (String) dto.get("chargeCheckOrderId");
+		Double total_amount = (Double) dto.get("total_amount");
+		Double change_amount = (Double) dto.get("change_amount");
+		String remark = (String) dto.get("remark");
+		String customerId = (String) dto.get("customer_id");
+		String spId = (String) dto.get("sp_id");
+		String billing_unit = (String) dto.get("billing_unit");
+		String beginTime_filter = (String) dto.get("beginTime_filter");
+		String endTime_filter = (String) dto.get("endTime_filter");
+		String payee = (String) dto.get("payee");
+		String haveInvoice = (String) dto.get("have_invoice");
+		DecimalFormat df = new DecimalFormat(".##");
+		String changeAmount = df.format(change_amount);
+		String totalAmount = df.format(total_amount);
 		UserLogin user = LoginUserController.getLoginUser(this);
 		if (!"".equals(chargeCheckOrderId) && chargeCheckOrderId != null) {
 			arapChargeOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
-			
+
 			arapChargeOrder.set("remark", remark);
 			arapChargeOrder.set("last_modified_by", user.getLong("id"));
 			arapChargeOrder.set("last_modified_stamp", new Date());
-			
+
 			if (beginTime_filter != null) {
 				arapChargeOrder.set("begin_time", beginTime_filter);
 			}
@@ -555,21 +578,22 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.set("have_invoice", haveInvoice);
 			arapChargeOrder.set("billing_unit", billing_unit);
 			arapChargeOrder.set("payee", payee);
-			
+
 			arapChargeOrder.update();
 
 			boolean isCreate = false;
-			updateItems(arapChargeOrder.getLong("id"), dto, change_amount, isCreate);
+			updateItems(arapChargeOrder.getLong("id"), dto, change_amount,
+					isCreate);
 		} else {
 			arapChargeOrder = new ArapChargeOrder();
 			arapChargeOrder.set("order_no", getPara("order_no"));
 			// arapAuditOrder.set("order_type", );
 			arapChargeOrder.set("status", "新建");
-			
-			if(customerId != null && !customerId.equals("")){
+
+			if (customerId != null && !customerId.equals("")) {
 				arapChargeOrder.set("payee_id", customerId);
 			}
-			if(spId != null && !spId.equals("")){
+			if (spId != null && !spId.equals("")) {
 				arapChargeOrder.set("sp_id", spId);
 			}
 			arapChargeOrder.set("create_by", user.getLong("id"));
@@ -592,36 +616,67 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.save();
 
 			boolean isCreate = true;
-			updateItems(arapChargeOrder.getLong("id"), dto, change_amount, isCreate);
+			updateItems(arapChargeOrder.getLong("id"), dto, change_amount,
+					isCreate);
 		}
 		renderJson(arapChargeOrder);
 	}
 
-	private void updateItems(Long orderId, Map<String, ?> dto, Double change_amount, boolean isCreate) {
-		List<Map> items =  (List<Map>) dto.get("items");
-		for(Map item : items){
-			String str_ref_order_id = (String)item.get("ORDER_ID");
+	private void updateItems(Long orderId, Map<String, ?> dto,
+			Double change_amount, boolean isCreate) {
+		List<Map> items = (List<Map>) dto.get("items");
+		for (Map item : items) {
+			String str_ref_order_id = (String) item.get("ORDER_ID");
 			Long ref_order_id = Long.parseLong(str_ref_order_id);
-			if("回单".equals(item.get("ORDER_TYPE"))){
+			if ("回单".equals(item.get("ORDER_TYPE"))) {
 				ReturnOrder ro = ReturnOrder.dao.findById(ref_order_id);
 				ro.set("transaction_status", "对账中").update();
-				List<ReturnOrderFinItem> ordeItems = ReturnOrderFinItem.dao.find("select * from return_order_fin_item where return_order_id=?", ref_order_id);
-				for(ReturnOrderFinItem orderItem : ordeItems){
+				List<ReturnOrderFinItem> ordeItems = ReturnOrderFinItem.dao
+						.find("select * from return_order_fin_item where return_order_id=?",
+								ref_order_id);
+				Double originTotal = 0.0;
+				for (ReturnOrderFinItem orderItem : ordeItems) {
 					orderItem.set("status", "对账中").update();
+					originTotal += orderItem.getDouble("amount") == null ? 0.0
+							: orderItem.getDouble("amount");
 				}
-				if(isCreate){
-					ArapChargeItem chargeItem = new ArapChargeItem();
-					chargeItem.set("charge_order_id", orderId);
-					chargeItem.set("ref_order_type", "回单");
-					chargeItem.set("ref_order_id", ref_order_id);
-					chargeItem.save();
+				Double newAmount = 0.0;
+				if (Double.parseDouble((String) item.get("CHANGE_AMOUNT")) > 0) {
+					newAmount = Double.parseDouble((String) item
+							.get("CHANGE_AMOUNT")) - originTotal;
+				} else {
+					newAmount = Double.parseDouble((String) item
+							.get("CHANGE_AMOUNT")) + originTotal;
+				}
+				if (newAmount != 0) {
+					String name = (String) currentUser.getPrincipal();
+					List<UserLogin> users = UserLogin.dao
+							.find("select * from user_login where user_name='"
+									+ name + "'");
+					ReturnOrderFinItem orderItem1 = new ReturnOrderFinItem();
+					orderItem1.set("return_order_id", ref_order_id);
+					orderItem1.set("amount", newAmount);
+					orderItem1.set("fin_item_id", 4);
+					orderItem1.set("status", "对账");
+					orderItem1.set("creator", users.get(0).get("id"));
+					orderItem1.set("remark", "对账调整金额");
+					orderItem1.set("create_date", new Date());
+					orderItem1.save();
+					if (isCreate) {
+						ArapChargeItem chargeItem = new ArapChargeItem();
+						chargeItem.set("charge_order_id", orderId);
+						chargeItem.set("ref_order_type", "回单");
+						chargeItem.set("ref_order_id", ref_order_id);
+						chargeItem.save();
 
-				}	
-			}else{
-				//手工单就不允许改确认金额了
-				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(item.get("ORDER_ID"));
+					}
+				}
+			} else {
+				// 手工单就不允许改确认金额了
+				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao
+						.findById(item.get("ORDER_ID"));
 				arapMiscChargeOrder.set("status", "对账中").update();
-				if(isCreate){
+				if (isCreate) {
 					ArapChargeItem chargeItem = new ArapChargeItem();
 					chargeItem.set("charge_order_id", orderId);
 					chargeItem.set("ref_order_type", "收入单");
@@ -629,11 +684,9 @@ public class ChargeCheckOrderController extends Controller {
 					chargeItem.save();
 				}
 			}
-			
 		}
-			
 	}
-	
+
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE })
 	public void edit() throws ParseException {
 		String id = getPara("id");
@@ -668,20 +721,19 @@ public class ChargeCheckOrderController extends Controller {
 				"select * from arap_charge_item where charge_order_id = ?",
 				arapAuditOrder.get("id"));
 		for (ArapChargeItem arapAuditItem : arapAuditItems) {
-			if("回单".equals(arapAuditItem.get("ref_order_type"))){
+			if ("回单".equals(arapAuditItem.get("ref_order_type"))) {
 				returnOrderIds += arapAuditItem.get("ref_order_id") + ",";
-			}else{
+			} else {
 				miscOrderIds += arapAuditItem.get("ref_order_id") + ",";
 			}
 		}
-		//去掉最后一个逗号
-		if(returnOrderIds.length()>0)
+		// 去掉最后一个逗号
+		if (returnOrderIds.length() > 0)
 			returnOrderIds = returnOrderIds.substring(0,
-				returnOrderIds.length() - 1);
-		if(miscOrderIds.length()>0)
-			miscOrderIds = miscOrderIds.substring(0,
-				miscOrderIds.length() - 1);
-		
+					returnOrderIds.length() - 1);
+		if (miscOrderIds.length() > 0)
+			miscOrderIds = miscOrderIds.substring(0, miscOrderIds.length() - 1);
+
 		setAttr("beginTime", beginTime);
 		setAttr("endTime", endTime);
 
@@ -692,31 +744,30 @@ public class ChargeCheckOrderController extends Controller {
 
 	public void returnOrderList() {
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
-		String returnOrderIds="";
-		String miscOrderIds="";
+		String returnOrderIds = "";
+		String miscOrderIds = "";
 		List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find(
 				"select * from arap_charge_item where charge_order_id = ?",
 				chargeCheckOrderId);
 		for (ArapChargeItem arapAuditItem : arapAuditItems) {
-			if("回单".equals(arapAuditItem.get("ref_order_type"))){
+			if ("回单".equals(arapAuditItem.get("ref_order_type"))) {
 				returnOrderIds += arapAuditItem.get("ref_order_id") + ",";
-			}else{
+			} else {
 				miscOrderIds += arapAuditItem.get("ref_order_id") + ",";
 			}
 		}
-		//去掉最后一个逗号
-				if(returnOrderIds.length()>0)
-					returnOrderIds = returnOrderIds.substring(0,
-						returnOrderIds.length() - 1);
-				else if (returnOrderIds.length()==0){
-					returnOrderIds="-1";
-				}
-				if(miscOrderIds.length()>0)
-					miscOrderIds = miscOrderIds.substring(0,
-						miscOrderIds.length() - 1);
-				else if (miscOrderIds.length()==0){
-					miscOrderIds="-1";
-				}
+		// 去掉最后一个逗号
+		if (returnOrderIds.length() > 0)
+			returnOrderIds = returnOrderIds.substring(0,
+					returnOrderIds.length() - 1);
+		else if (returnOrderIds.length() == 0) {
+			returnOrderIds = "-1";
+		}
+		if (miscOrderIds.length() > 0)
+			miscOrderIds = miscOrderIds.substring(0, miscOrderIds.length() - 1);
+		else if (miscOrderIds.length() == 0) {
+			miscOrderIds = "-1";
+		}
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -734,63 +785,65 @@ public class ChargeCheckOrderController extends Controller {
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 		if (arapAuditItems != null) {
-					List<Record> orders = Db
-							.find("select* from (select distinct ror.*, "
-									+ " usl.user_name as creator_name, "
-									+ " ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, "
-									+ " ifnull(CAST(tor.planning_time AS char),(select group_concat(distinct CAST(tor.planning_time AS char) separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) planning_time, "
-									+ " (SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '\r\n' ) FROM transfer_order_item_detail toid LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id WHERE d_o.id = ror.delivery_order_id) serial_no,"
-									+ " dvr.order_no as delivery_order_no, '回单' as tporder,"
-									+ " ifnull(c.abbr,c2.abbr) cname,"
-									+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
-									+ " ifnull((SELECT IFNULL(lo4. NAME, lo3. NAME) FROM location l LEFT JOIN location lo3 ON lo3.`code` = l.pcode LEFT JOIN location lo4 ON lo4.`code` = lo3.pcode WHERE l. CODE = tor.route_to),(SELECT IFNULL(lo4. NAME, lo3. NAME) FROM location l LEFT JOIN location lo3 ON lo3.`code` = l.pcode LEFT JOIN location lo4 ON lo4.`code` = lo3.pcode WHERE l. CODE = dvr.route_to)) province,"
-									+ " ifnull(dvr.ref_no,'') ref_no,"
-									+ " ifnull(c4.address,tor.receiving_address) receipt_address,"
-									+ " ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) route_from,"
-									+ " ifnull((select name from location where code = tor.route_to),(select name from location where code = dvr.route_to)) route_to,"
-									+ " (select sum(rofi.amount) from return_order_fin_item rofi where rofi.return_order_id = ror.id  and rofi.contract_id !='') contract_amount"
-									+ " ,ifnull(dofi.amount,(select sum(dofi.amount) from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id left join depart_transfer dt on dt.order_id = tor.id left join depart_order dor on dor.id = dt.pickup_id and dor.combine_type = 'PICKUP' left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费' where dvr.id = ror.delivery_order_id)) pickup_amount"
-									+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '台阶费') step_amount"
-									+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '仓租费') warehouse_amount"
-									+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '送货费') send_amount"
-									+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount"
-									+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount"
-									+ " ,(select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
-									+ " ifnull((select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收'),0) as charge_total_amount,"
-									+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as change_amount, "
-									+ " null sp"
-									+ " from return_order ror"
-									+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-									+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
-									+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
-									+ " LEFT JOIN party p4 ON p4.id = dvr.notify_party_id"
-									+ " LEFT JOIN contact c4 ON c4.id = p4.contact_id "
-									+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-									+ " left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-									+ " left join user_login usl on usl.id=ror.creator "
-									+ " where ror.id in("+ returnOrderIds +") group by ror.id,tor2.id "
-									+ " union"
-									+ " SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
-									+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
-									+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
-									+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
-									+ " NULL creator_name,NULL transfer_order_no,null planning_time,null serial_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
-									+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
-									+ " 	from arap_misc_charge_order_item amcoi "
-									+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
-									+ " null province,null ref_no, null receipt_address, NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
-									+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,"
-									+ " ifnull(amco.total_amount,0) charge_total_amount,"
-									+ " amco.total_amount change_amount,c1.abbr sp"
-									+ " FROM arap_misc_charge_order amco"
-									+ " LEFT JOIN contact c ON c.id = amco.customer_id"
-									+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
-									+ " WHERE amco.id in ("+ miscOrderIds +")) A");
-					orderMap.put("sEcho", pageIndex);
-					orderMap.put("iTotalRecords", rec.getLong("total"));
-					orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-					orderMap.put("aaData", orders);
-				}
+			List<Record> orders = Db
+					.find("select* from (select distinct ror.*, "
+							+ " usl.user_name as creator_name, "
+							+ " ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, "
+							+ " ifnull(CAST(tor.planning_time AS char),(select group_concat(distinct CAST(tor.planning_time AS char) separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) planning_time, "
+							+ " (SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '\r\n' ) FROM transfer_order_item_detail toid LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id WHERE d_o.id = ror.delivery_order_id) serial_no,"
+							+ " dvr.order_no as delivery_order_no, '回单' as tporder,"
+							+ " ifnull(c.abbr,c2.abbr) cname,"
+							+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
+							+ " ifnull((SELECT IFNULL(lo4. NAME, lo3. NAME) FROM location l LEFT JOIN location lo3 ON lo3.`code` = l.pcode LEFT JOIN location lo4 ON lo4.`code` = lo3.pcode WHERE l. CODE = tor.route_to),(SELECT IFNULL(lo4. NAME, lo3. NAME) FROM location l LEFT JOIN location lo3 ON lo3.`code` = l.pcode LEFT JOIN location lo4 ON lo4.`code` = lo3.pcode WHERE l. CODE = dvr.route_to)) province,"
+							+ " ifnull(dvr.ref_no,'') ref_no,"
+							+ " ifnull(c4.address,tor.receiving_address) receipt_address,"
+							+ " ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) route_from,"
+							+ " ifnull((select name from location where code = tor.route_to),(select name from location where code = dvr.route_to)) route_to,"
+							+ " (select sum(rofi.amount) from return_order_fin_item rofi where rofi.return_order_id = ror.id  and rofi.contract_id !='') contract_amount"
+							+ " ,ifnull(dofi.amount,(select sum(dofi.amount) from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id left join depart_transfer dt on dt.order_id = tor.id left join depart_order dor on dor.id = dt.pickup_id and dor.combine_type = 'PICKUP' left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费' where dvr.id = ror.delivery_order_id)) pickup_amount"
+							+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '台阶费') step_amount"
+							+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '仓租费') warehouse_amount"
+							+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '送货费') send_amount"
+							+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount"
+							+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount"
+							+ " ,(select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
+							+ " ifnull((select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收'),0) as charge_total_amount,"
+							+ " (select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收') as change_amount, "
+							+ " null sp"
+							+ " from return_order ror"
+							+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
+							+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
+							+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
+							+ " LEFT JOIN party p4 ON p4.id = dvr.notify_party_id"
+							+ " LEFT JOIN contact c4 ON c4.id = p4.contact_id "
+							+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
+							+ " left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
+							+ " left join user_login usl on usl.id=ror.creator "
+							+ " where ror.id in("
+							+ returnOrderIds
+							+ ") group by ror.id,tor2.id "
+							+ " union"
+							+ " SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
+							+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
+							+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
+							+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
+							+ " NULL creator_name,NULL transfer_order_no,null planning_time,null serial_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
+							+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
+							+ " 	from arap_misc_charge_order_item amcoi "
+							+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
+							+ " null province,null ref_no, null receipt_address, NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
+							+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,"
+							+ " ifnull(amco.total_amount,0) charge_total_amount,"
+							+ " amco.total_amount change_amount,c1.abbr sp"
+							+ " FROM arap_misc_charge_order amco"
+							+ " LEFT JOIN contact c ON c.id = amco.customer_id"
+							+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
+							+ " WHERE amco.id in (" + miscOrderIds + ")) A");
+			orderMap.put("sEcho", pageIndex);
+			orderMap.put("iTotalRecords", rec.getLong("total"));
+			orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
+			orderMap.put("aaData", orders);
+		}
 
 		renderJson(orderMap);
 	}
@@ -833,7 +886,6 @@ public class ChargeCheckOrderController extends Controller {
 		}
 	}
 
-	
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_LIST })
 	public void list() {
 		String sLimit = "";
@@ -843,17 +895,16 @@ public class ChargeCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		
-		
-		 //升降序
-    	String sortColIndex = getPara("iSortCol_0");
+
+		// 升降序
+		String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
-		String colName = getPara("mDataProp_"+sortColIndex);
-		
+		String colName = getPara("mDataProp_" + sortColIndex);
+
 		String orderByStr = " order by A.create_stamp desc ";
-        if(colName.length()>0){
-        	orderByStr = " order by A."+colName+" "+sortBy;
-        }
+		if (colName.length() > 0) {
+			orderByStr = " order by A." + colName + " " + sortBy;
+		}
 
 		String orderNo = getPara("orderNo");
 		String beginTime = getPara("beginTime");
@@ -864,16 +915,16 @@ public class ChargeCheckOrderController extends Controller {
 		String tihuo = getPara("tihuo");
 		String office = getPara("office");
 		String sqlTotal = "";
-		String sql = "select distinct "//aao.*, 
+		String sql = "select distinct "// aao.*,
 				+ " aao.id,"
 				+ " aao.order_no,"
-			    + " aao.order_type,"
-			    + " aao.payee_id,"
-			    + " aao.remark,"
-			    + " aao.create_stamp,"
-			    + " round(aao.total_amount,2) total_amount,"
-			    + " round(aao.debit_amount,2) debit_amount,"
-			    + " round(aao.charge_amount,2) charge_amount,"
+				+ " aao.order_type,"
+				+ " aao.payee_id,"
+				+ " aao.remark,"
+				+ " aao.create_stamp,"
+				+ " round(aao.total_amount,2) total_amount,"
+				+ " round(aao.debit_amount,2) debit_amount,"
+				+ " round(aao.charge_amount,2) charge_amount,"
 				+ " usl.user_name as creator_name,"
 				+ " c.abbr cname,usl.c_name,"
 				+ " (select case "
@@ -924,7 +975,8 @@ public class ChargeCheckOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// logger.debug("sql:" + sql);
-		List<Record> BillingOrders = Db.find("select * from (" + sql + condition+") A" + orderByStr + sLimit);
+		List<Record> BillingOrders = Db.find("select * from (" + sql
+				+ condition + ") A" + orderByStr + sLimit);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
