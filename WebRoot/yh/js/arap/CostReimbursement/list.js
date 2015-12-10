@@ -5,7 +5,6 @@ $(document).ready(function() {
     //datatable, 动态处理
     var costExpenseAccountTbody = $('#costExpenseAccountTbody').dataTable({
         "bFilter": false, //不需要默认的搜索框
-        "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "bServerSide": true,
@@ -14,7 +13,7 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/costReimbursement/reimbursementList",
         "aoColumns": [ 
-			{"mDataProp":null,"sWidth":"120px",
+			{"mDataProp":"ORDER_NO","sWidth":"120px",
 				"fnRender": function(obj) {
 					return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 				}

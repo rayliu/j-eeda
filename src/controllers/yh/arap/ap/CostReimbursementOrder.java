@@ -125,6 +125,9 @@ public class CostReimbursementOrder extends Controller {
 		String status = getPara("status");
 		String auditName = getPara("auditName");
 		String accountName = getPara("accountName");
+		String sortColIndex = getPara("iSortCol_0");
+	    String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -142,7 +145,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " from reimbursement_order ro "
 	        		+ " left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
-	        		+ " where ro.order_no like 'YFBX%'  group by ro.id order by ro.create_stamp desc " + sLimit;
+	        		+ " where ro.order_no like 'YFBX%'  group by ro.id";
         }else{
         	sqlTotal = "select count(1) total from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
         			+ " left join user_login u on u.id  = ro.audit_id "
@@ -162,12 +165,15 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'"
 	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
-	        		+ " group by ro.id order by ro.create_stamp desc " + sLimit;
+	        		+ " group by ro.id ";
         }
         
 		Record rec = Db.findFirst(sqlTotal);
-		List<Record> orders = Db.find(sql);
-        
+		String orderByStr = " order by ro.create_stamp desc ";
+	    if(colName.length()>0){
+	        orderByStr = " order by "+colName+" "+sortBy;
+	    }
+		List<Record> orders = Db.find(sql+ orderByStr + sLimit);
         HashMap orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
