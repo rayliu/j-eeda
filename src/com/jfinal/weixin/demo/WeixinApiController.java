@@ -43,12 +43,7 @@ public class WeixinApiController extends ApiController {
      */
     public void createMenu() {
         MenuApi ma = new MenuApi();
-        String jsonStr = "{\"button\":["
-                 +"     {    \"type\":\"view\","
-                  +"         \"name\":\"单据签收\","
-                  +"         \"url\":\""+PropKit.get("wxUrl")+"/fileUpload\""
-                  +"    }]"
-                  +" }";
+        String jsonStr = getPara("params");
         logger.debug(jsonStr);
         ApiResult apiResult = ma.createMenu(jsonStr);
         if (apiResult.isSucceed())
