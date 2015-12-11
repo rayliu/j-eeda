@@ -41,7 +41,6 @@ public class AccountAuditLogController extends Controller {
     	String ids = getPara("ids");
     	String beginTime = getPara("beginTime");
     	String endTime = getPara("beginTime");
-    	
     	String sourceOrder = getPara("source_order");
     	String orderNo = getPara("orderNo");
     	String begin = getPara("begin");
@@ -49,7 +48,6 @@ public class AccountAuditLogController extends Controller {
     	String bankName = getPara("bankName");
     	String money = getPara("money");
     	String condiction = "";
-    	
     	//升降序
     	String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
@@ -59,13 +57,9 @@ public class AccountAuditLogController extends Controller {
         if(colName.length()>0){
         	orderByStr = " order by A."+colName+" "+sortBy;
         }
-    	
-    	
     	if(ids != null && !"".equals(ids)){
     		condiction += " and account_id in("+ids+") ";
     	}
-    	
-    	
     	if(beginTime == null || "".equals(beginTime)){
     		beginTime = "1970-01-01";
     	}else{
@@ -111,6 +105,16 @@ public class AccountAuditLogController extends Controller {
         String sql = "";
         if(true){
         	sql = " select * from (select aaal.*,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
+        			+ " (CASE"
+					+ " WHEN aaal.source_order = '应付开票申请单' THEN"
+					+ " (SELECT IFNULL(payee_name,payee_unit) FROM arap_cost_invoice_application_order WHERE id = aaal.invoice_order_id)"
+					+ " WHEN aaal.source_order = '转账单'"
+					+ " THEN(SELECT fa.bank_person FROM transfer_accounts_order tao LEFT JOIN fin_account fa on fa.id= tao.bank_in WHERE tao.id = aaal.invoice_order_id) else ''end) payee_name_in,"
+					+ " (CASE"
+					+ " WHEN aaal.source_order = '应收开票申请单' THEN"
+					+ " (SELECT IFNULL(payee_name,payee_unit) FROM arap_charge_invoice_application_order WHERE id = aaal.invoice_order_id)"
+					+ " WHEN aaal.source_order = '转账单' THEN"
+					+ " (SELECT fa.bank_person FROM transfer_accounts_order tao LEFT JOIN fin_account fa on fa.id= tao.bank_out WHERE tao.id = aaal.invoice_order_id) else '' end) payee_name_out,"
         			+ " (CASE "
         			+ " WHEN aaal.source_order = '手工收入单' "
         			+ " THEN ( SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' ) FROM arap_misc_charge_order amco LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.misc_charge_order_id = amco.id where acr.order_id = aaal.invoice_order_id)"
@@ -118,12 +122,10 @@ public class AccountAuditLogController extends Controller {
 				    + " THEN ( SELECT group_concat( DISTINCT rei.order_no SEPARATOR '<br/>' ) FROM reimbursement_order rei LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.reimbursement_order_id = rei.id where acp.order_id = aaal.invoice_order_id )"
 				    + " WHEN aaal.source_order = '行车报销单' "
 				    + " THEN ( SELECT group_concat( DISTINCT rei.order_no SEPARATOR '<br/>' ) FROM reimbursement_order rei LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.reimbursement_order_id = rei.id where acp.order_id = aaal.invoice_order_id )"
-				    
 					+ " WHEN aaal.source_order = '应付申请单' "  //旧数据
 					+ " THEN "
 					+ " (SELECT group_concat( DISTINCT aci.order_no SEPARATOR '<br/>' ) FROM arap_cost_invoice_application_order aci LEFT JOIN arap_cost_pay_confirm_order_detail acp on acp.application_order_id = aci.id where acp.order_id = aaal.invoice_order_id)"
-
-				     + " WHEN "
+				    + " WHEN "
 				    + " aaal.source_order = '应付开票申请单' "  //新数据
 				    + " THEN (select order_no from arap_cost_invoice_application_order where id = aaal.invoice_order_id)"
 				    + " WHEN aaal.source_order = '应收开票申请单' "

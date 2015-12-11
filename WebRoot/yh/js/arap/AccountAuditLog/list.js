@@ -56,7 +56,8 @@ $(document).ready(function() {
             		else
             			return obj.aData.CHARGE_AMOUNT;
             	}  
-            },         
+            },   
+            {"mDataProp":"PAYEE_NAME_IN"},
             {"mDataProp":"COST_AMOUNT",
             	"fnRender": function(obj) {
             		if(obj.aData.COST_AMOUNT!=null)
@@ -64,7 +65,8 @@ $(document).ready(function() {
             		else
             			return obj.aData.COST_AMOUNT;
             	}  
-            },          
+            },     
+            {"mDataProp":"PAYEE_NAME_OUT"},
             {"mDataProp":"BANK_NAME"},
             {"mDataProp":"CREATE_DATE"},
             {"mDataProp":"USER_NAME"}
