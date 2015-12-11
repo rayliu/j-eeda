@@ -16,8 +16,6 @@ import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
-import com.jfinal.weixin.demo.WeixinApiController;
-import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 public class WeixinConfig extends JFinalConfig {

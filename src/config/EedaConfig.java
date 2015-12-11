@@ -133,8 +133,8 @@ import com.jfinal.plugin.activerecord.SqlReporter;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
 import com.jfinal.plugin.scheduler.SchedulerPlugin;
-import com.jfinal.weixin.demo.WeixinApiController;
-import com.jfinal.weixin.demo.WeixinMsgController;
+import com.jfinal.weixin.eeda.WeixinApiController;
+import com.jfinal.weixin.eeda.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 import controllers.HomeController;
