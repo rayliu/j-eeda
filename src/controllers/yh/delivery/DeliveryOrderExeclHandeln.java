@@ -541,12 +541,14 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			for (int j = 0; j < content.size(); j++) {
 				causeRow = j + 2;
 				System.out.println("更新至第【" + causeRow + "】行");
-				// 通过序列号拿到配送单ID
+				//拿到客户ID
+				Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
+				// 通过客户和序列号拿到配送单ID
 				TransferOrderItemDetail transferorderitemdetail = TransferOrderItemDetail.dao
-						.findFirst("SELECT delivery_id from transfer_order_item_detail where serial_no ='"
-								+ content.get(j).get("序列号") + "'");
+						.findFirst("SELECT delivery_id from transfer_order_item_detail toid LEFT JOIN transfer_order toi on toi.id=toid.order_id where serial_no ='"
+								+ content.get(j).get("序列号") + "' and toi.customer_id='"+customer.getLong("pid")+"'");
 				if(transferorderitemdetail==null){
-					throw new Exception("在配送单中找不到此序列号 "+content.get(j).get("序列号"));
+					throw new Exception("没有找到'"+content.get(j).get("客户名称(简称)")+"-'"+content.get(j).get("序列号"));
 				}
 				if (transferorderitemdetail != null) {
 					DeliveryOrder deliveryorder = DeliveryOrder.dao
