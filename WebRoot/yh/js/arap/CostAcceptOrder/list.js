@@ -35,24 +35,25 @@ $(document).ready(function() {
 			        return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" class="invoice" order_no="'+obj.aData.ORDER_NO+'">';
 			    }
 			},
-            {"mDataProp":"ORDER_NO","sWidth":"70px",
+            {"mDataProp":null,"sWidth":"70px",
             	"fnRender": function(obj) {
-            		var A=obj.aData.ORDER_NO.substring(0, 4);
-        			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		if(obj.aData.ORDER_TYPE == '申请单')
-            			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else if(obj.aData.ORDER_TYPE == '报销单'){
-            			if(A=='YFBX'){
-            				return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            			}
-            			else if(A=='XCBX'){
-            				return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            			}
-            		}
-            		else if(obj.aData.ORDER_TYPE == '行车单')
-            			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		else
-            			return obj.aData.ORDER_NO;
+//            		var A=obj.aData.ORDER_NO.substring(0, 4);
+//        			//return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+//            		if(obj.aData.ORDER_TYPE == '申请单')
+//            			return "<a href='/costPreInvoiceOrder/edit?id="+obj.aData.ID+"&attribute="+obj.aData.ORDER_TYPE+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+//            		else if(obj.aData.ORDER_TYPE == '报销单'){
+//            			if(A=='YFBX'){
+//            				return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+//            			}
+//            			else if(A=='XCBX'){
+//            				return "<a href='/carreimbursement/edit?orderId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+//            			}
+//            		}
+//            		else if(obj.aData.ORDER_TYPE == '行车单')
+//            			return "<a href='/carsummary/edit?carSummaryId="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+//            		else
+//            			return obj.aData.ORDER_NO;
+            		return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
         		}
             },
             {"mDataProp":"ORDER_TYPE", "sWidth":"70px","sClass":'order_type',
