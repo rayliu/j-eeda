@@ -1,7 +1,11 @@
 
 package controllers.yh.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,13 +34,14 @@ import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 
 import com.jfinal.kit.StrKit;
+import com.jfinal.log.Logger;
 
 /**
  * EedaHttpKit
  * 主要是处理文件下载
  */
 public class EedaHttpKit {
-	
+    private static Logger logger = Logger.getLogger(EedaHttpKit.class);
 	private EedaHttpKit() {}
 	
 	/**
@@ -125,27 +130,49 @@ public class EedaHttpKit {
 		}
 	}
 	
-	public static void getFile(String url, Map<String, String> queryParas) {
+	public static String getFile(String url, Map<String, String> queryParas, String uploadFolder) {
 	    HttpURLConnection conn = null;
+	    String fileName = "";
         try {
             conn = getHttpConnection(buildUrlWithQueryString(url, queryParas), GET, null);
             conn.connect();
+            
             InputStream inputStream = conn.getInputStream();
             String raw = conn.getHeaderField("Content-Disposition");
              // raw = "attachment; filename=abc.jpg"
              if(raw != null && raw.indexOf("=") != -1) {
-                 String fileName = raw.split("=")[1]; //getting value after '='
+                 // 把文件写到字节数组保存起来  
+                 BufferedInputStream bis = new BufferedInputStream(inputStream);
+                 ByteArrayOutputStream fos = new ByteArrayOutputStream();
+                 byte[] buffer = new byte[1024];
+                 int len = 0;
+                 while ((len = bis.read(buffer)) != -1) {
+                     fos.write(buffer, 0, len);
+                 }  
+                 byte[] imgBytes = fos.toByteArray();
+                 bis.close();
+                 fos.close();
+                 // 保存图片
+                 fileName = raw.split("=")[1]; //getting value after '='
                  fileName = fileName.replaceAll("\"", "");
-                 OutputStream  outputStream = new FileOutputStream("/upload/img/"+fileName);//输出到磁盘
-                 int bytesWritten = 0;
-                 int byteCount = 0;
-                 byte[] bytes = new byte[1024];
-                 while ((byteCount = inputStream.read(bytes)) != -1) {
-                     outputStream.write(bytes, bytesWritten, byteCount);
-                     bytesWritten += byteCount;
+                 
+                 File file = new File(uploadFolder+fileName);
+
+                 FileOutputStream fop = new FileOutputStream(file);
+                 // if file doesn't exists, then create it
+                 if (!file.exists()) {
+                     file.createNewFile();
                  }
-                 inputStream.close();
-                 outputStream.close();
+                 ByteArrayInputStream in = new ByteArrayInputStream(imgBytes);
+                 BufferedOutputStream bos = new BufferedOutputStream(fop);  
+                 byte[] outBuffer = new byte[1024];  
+                 int length = 0;  
+                 while ((length = in.read(outBuffer)) != -1) {  
+                     bos.write(outBuffer, 0, length);  
+                 }  
+                 bos.close();  
+                 in.close();  
+                 logger.debug("Save file done");
              } else {
                  // fall back to random generated file name?
              }
@@ -159,6 +186,7 @@ public class EedaHttpKit {
                 conn.disconnect();
             }
         }
+        return fileName;
     }
 	
 	
@@ -261,6 +289,7 @@ public class EedaHttpKit {
 				try {value = URLEncoder.encode(value, CHARSET);} catch (UnsupportedEncodingException e) {throw new RuntimeException(e);}
 			sb.append(key).append("=").append(value);
 		}
+		logger.debug("url:"+sb.toString());
 		return sb.toString();
 	}
 	

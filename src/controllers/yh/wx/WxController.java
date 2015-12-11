@@ -29,17 +29,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 //import org.json.JSONObject;
 
-
-
-
-
-
-
-
-
-
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -81,8 +71,11 @@ public class WxController extends ApiController {
 	}
 	
 	private void setPageAttr(String contextPath) {
+	    
+	    
 		//这里动态处理URL
 		HttpServletRequest request = this.getRequest();
+		logger.debug("绝对路径 = " + request.getSession().getServletContext().getRealPath(""));
 		String path = request.getContextPath();
 	    String basePath = request.getScheme()+"://"+request.getServerName();
 	    
@@ -298,12 +291,26 @@ public class WxController extends ApiController {
 	}
 	
 	public void saveReturnOrderPic(){
+	    String return_order_id = getPara("return_order_id");
 	    String serverId = getPara("serverId");
-	    Map<String, String> queryMap = new HashMap<String,String>();
-	    queryMap.put("access_token", AccessTokenApi.getAccessToken().getAccessToken());
-	    queryMap.put("media_id", serverId);
-	    EedaHttpKit.getFile(getMediaUrl, queryMap);
-	    renderText("OK");
+	    ReturnOrder returnOrder = ReturnOrder.dao.findById(return_order_id);
+	    if(returnOrder != null){
+    	    Map<String, String> queryMap = new HashMap<String,String>();
+    	    logger.debug("access_token:" + AccessTokenApi.getAccessToken().getAccessToken());
+    	    queryMap.put("access_token", AccessTokenApi.getAccessToken().getAccessToken());
+    	    queryMap.put("media_id", serverId);
+    	    
+    	    String fileFolder = getRequest().getSession().getServletContext().getRealPath("")+"/upload/img/";
+    	    String fileName = EedaHttpKit.getFile(getMediaUrl, queryMap, fileFolder);
+    	    OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
+            orderAttachmentFile.set("order_id", return_order_id)
+                    .set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN)
+                    .set("file_path", fileName).save();
+    	    renderText("OK");
+	    }else{
+	        renderText("FAIL");
+	    }
+	    
 	}
 	
 	public void saveFile(){

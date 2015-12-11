@@ -58,8 +58,11 @@ $(document).ready(function() {
 					    success: function (res) {
 					        var serverId = res.serverId; // 返回图片的服务器端ID
 					        $.post('/wx/saveReturnOrderPic',{serverId:serverId},function(data){
-					        	if(data)
-					        		$('#uploadDesc').append("<p>图片上传成功!</p>").show();
+					        	if(data == "OK"){
+					        		$('#uploadDesc').empty().append("<p>图片上传成功!</p>").show();
+					        	}else{
+					        		$('#uploadDesc').empty().append("<p>图片上传失败!</p>").show();
+					        	}
 					        });
 					    }
 					});
