@@ -1,7 +1,8 @@
-package com.jfinal.weixin.demo;
+package com.jfinal.weixin.eeda;
 
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
+import com.jfinal.weixin.eeda.WeixinApiController;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.MenuApi;

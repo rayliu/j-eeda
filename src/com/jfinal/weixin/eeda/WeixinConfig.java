@@ -4,9 +4,10 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
 
-package com.jfinal.weixin.demo;
+package com.jfinal.weixin.eeda;
 
 import java.util.Properties;
+
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
@@ -15,6 +16,8 @@ import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.plugin.ehcache.EhCachePlugin;
+import com.jfinal.weixin.demo.WeixinApiController;
+import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 public class WeixinConfig extends JFinalConfig {

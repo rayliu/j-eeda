@@ -29,13 +29,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 //import org.json.JSONObject;
 
+
+
 import com.google.gson.Gson;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-import com.jfinal.weixin.demo.SignKit;
+import com.jfinal.weixin.eeda.SignKit;
 import com.jfinal.weixin.sdk.api.AccessTokenApi;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
@@ -86,7 +88,7 @@ public class WxController extends ApiController {
 	    logger.debug("url = "+url);
 	    
 		String jsapi_ticket = JsTicketApi.getJsTicket().getJsTicket();
-		
+		System.out.println("jsapi_ticket : " + jsapi_ticket);
 		Map<String, String> m = SignKit.sign(jsapi_ticket, url);
 		
 		String appId = ApiConfigKit.getApiConfig().getAppId();
@@ -383,10 +385,10 @@ public class WxController extends ApiController {
 					if(order != null)
 						returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id = ?",order.get("id"));
 				}else{
-					//单号为客户订单号时
-					TransferOrder order = TransferOrder.dao.findFirst("select id from transfer_order where customer_order_no = ?",orderNo);
-					if(order != null)
-						returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id = ?",order.get("id"));
+					//单号可能为序列号
+				    
+				    //单号可能为签收单号
+					
 				}
 			} catch (Exception e) {
 				//单号为客户订单号时

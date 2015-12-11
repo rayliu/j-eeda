@@ -1,4 +1,4 @@
-package com.jfinal.weixin.demo;
+package com.jfinal.weixin.eeda;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

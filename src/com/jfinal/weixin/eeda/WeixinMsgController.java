@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
 
-package com.jfinal.weixin.demo;
+package com.jfinal.weixin.eeda;
 
 import com.jfinal.kit.PropKit;
 import com.jfinal.weixin.sdk.api.ApiConfig;
