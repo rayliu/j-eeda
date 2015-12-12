@@ -653,7 +653,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				System.out.println(orders);
 				
 				List<TransferOrder> orderList = new ArrayList<TransferOrder>();
-
+				int Row=1;
 				// 手动控制提交
 				conn = DbKit.getConfig().getDataSource().getConnection();
 				DbKit.getConfig().setThreadLocalConnection(conn);
@@ -719,6 +719,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							+ "'";
 					TransferOrder t_order = TransferOrder.dao.findFirst(sql);
 					for (int i = 0; i < itemDetailList.size(); i++) {
+						Row++;
 						Map rec = (Map) itemDetailList.get(i);
 						String orderItem = (String) rec.get("货品型号");
 						TransferOrderItem item = null;
@@ -734,6 +735,9 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 											+ t_order.get("id")
 											+ "' and item_no = '"
 											+ product.get("item_no") + "';");
+						}else{
+							causeRow=Row;
+							throw new Exception("客户在系统里不存在货品型号"+orderItem);
 						}
 						if (tansferOrderItem == null) {
 							item = updateTransferOrderItem(
@@ -799,52 +803,71 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		if (Transferorder != null) {
 			throw new Exception("客户订单号已存在");
 		}
+		Map order =orders.get(customerOrderNo);
+		//到达方式
+		String arrival_mode=(String) order.get("到达方式");
+		//运营方式
+		String operation_type =(String) order.get("运营方式");
+		//货品属性
+		String cargo_nature =(String) order.get("货品属性");
+		//到达方式判断
+		if(!"入中转仓".equals(arrival_mode)&&!"货品直送".equals(arrival_mode)){
+			throw new Exception("到达方式只能为入中转仓和货品直送");
+		}
+		//运营方式判断
+		if(!"自营".equals(operation_type)&&!"外包".equals(operation_type)){
+			throw new Exception("运营方式只能为自营和外包");
+		}
+		//货品属性判断
+		if(!"普通货品".equals(cargo_nature)&&!"ATM".equals(cargo_nature)){
+			throw new Exception("货品属性只能为普通货品和ATM");
+		}
 		// 客户名称
 		Party customer = Party.dao
 				.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 						+ Party.PARTY_TYPE_CUSTOMER
 						+ "' and c.abbr ='"
-						+ orders.get(customerOrderNo).get("客户名称(简称)") + "';");
+						+ order.get("客户名称(简称)") + "';");
 		if(customer==null){
 			throw new Exception("客户名称(简称)有误");
 		}
 		// 始发城市
 		Location location1 = Location.dao
 				.findFirst("select code from location where name = '"
-						+ orders.get(customerOrderNo).get("始发城市") + "';");
+						+ order.get("始发城市") + "';");
 		if(location1==null){
 			throw new Exception("始发城市有误");
 		}
 		// 到达城市
 		Location location2 = Location.dao
 				.findFirst("select code from location where name = '"
-						+ orders.get(customerOrderNo).get("到达城市") + "';");
+						+ order.get("到达城市") + "';");
 		if(location2==null){
 			throw new Exception("到达城市有误");
 		}
 		// 网点
 		Office office = Office.dao
 				.findFirst("select id from office where office_name = '"
-						+ orders.get(customerOrderNo).get("网点") + "';");
+						+ order.get("网点") + "';");
 		if(office==null){
 			throw new Exception("网点有误");
 		}
 		//中转仓
-		if("入中转仓".equals(orders.get(customerOrderNo).get("到达方式"))){
+		if("入中转仓".equals(order.get("到达方式"))){
 			Warehouse warehouse = Warehouse.dao
 					.findFirst("select id from warehouse where warehouse_name = '"
-							+ orders.get(customerOrderNo).get("中转仓") + "';");
+							+ order.get("中转仓") + "';");
 			if(warehouse==null){
 				throw new Exception("中转仓有误");
 			}
 		}
 		// 供应商名称
-		if (!"".equals(orders.get(customerOrderNo).get("供应商名称(简称)"))) {
+		if (!"".equals(order.get("供应商名称(简称)"))) {
 			Party	provider = Party.dao
 								.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 										+ Party.PARTY_TYPE_SERVICE_PROVIDER
 										+ "' and c.abbr ='"
-										+ orders.get(customerOrderNo).get("供应商名称(简称)") + "';");
+										+ order.get("供应商名称(简称)") + "';");
 			if(provider==null){
 				throw new Exception("供应商名称(简称)有误");
 			}
@@ -904,7 +927,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		order.put("始发城市", content.get(j).get("始发城市"));
 		order.put("到达城市", content.get(j).get("到达城市"));
 		order.put("预计到货日期", content.get(j).get("预计到货日期"));
-
 		// item_detail_list
 		List itemDetailList = new ArrayList();
 
