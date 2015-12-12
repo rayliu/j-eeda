@@ -134,7 +134,7 @@ $(document).ready(function() {
                 }
             },
             { "data": "ID", "visible":false},
-            { "data": "ID", "orderable":false},
+            { "data": "PRODUCT_NO", "orderable":false},
             { "data": "PRODUCT_NO",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
