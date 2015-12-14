@@ -538,11 +538,13 @@
                    		var productIndexPermission = map.ProductIndex_list;
                    		var orderIndexPermission = map.OrderIndex_list;
                    		var dailyReportPermission = map.DailyReport_list;
+                        var orderFlowPermission = map.OrderFlowReport_list;
                    		
                    		if(nvl(productIndexPermission, '') != '' || 
                             nvl(orderIndexPermission, '') !='' || 
                             nvl(dailyReportPermission, '') !='' || 
-                            nvl(InventoryListPermission, '') !='')
+                            nvl(InventoryListPermission, '') !='' ||
+                            nvl(orderFlowPermission, '') !='')
                    {%>
                     <li id="menu_report">
                         <a href="#"><i class="fa fa-table fa-fw"></i> 报表查询<span class="fa arrow"></span></a>
@@ -573,6 +575,10 @@
                             <li>
                                 <a href="/statusReport/dailyReport">运营（预估）报表</a>
                             </li>
+                            <%}%>
+                            <%
+                                if(orderFlowPermission !=''){
+                            %>
                             <li>
                                 <a href="/statusReport/orderFlow">单据流转查询</a>
                             </li>

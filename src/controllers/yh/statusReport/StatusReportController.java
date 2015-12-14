@@ -38,6 +38,7 @@ public class StatusReportController extends Controller{
 		render("/yh/statusReport/productStatusReport.html");
 	}
 	
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_ORDERINDEX_LIST})
 	public void orderFlow() {
 		render("/yh/statusReport/orderFlowList.html");
 	}

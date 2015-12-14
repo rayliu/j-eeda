@@ -273,8 +273,7 @@ public class PermissionConstant {
 	public static final String PERMSSION_PRODUCTINDEX_LIST = "ProductIndex.list";
 	public static final String PERMSSION_ORDERINDEX_LIST = "OrderIndex.list";
 	public static final String PERMSSION_DAILYREPORT_LIST = "DailyReport.list";
-
-	
+	public static final String PERMSSION_ORDER_FLOW_LIST = "OrderFlowReport.list";
 	
 	
 	
