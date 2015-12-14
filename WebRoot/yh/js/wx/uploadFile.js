@@ -1,5 +1,7 @@
 $(document).ready(function() {
 	
+	$('#orderNo').focus();
+	
 	$("#searchNo").click(function(){  
 		$.post('/wx/findReturnOrder',$("#returnFrom").serialize(), function(data){
 			var returnId = data.ID;
