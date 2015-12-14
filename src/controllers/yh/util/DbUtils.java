@@ -137,6 +137,10 @@ public class DbUtils {
             		logger.debug(key+":"+value);
             		try {
                         model.set(key, value);
+                        if("field_display_name".equals(key)){//对fieldd 的特殊处理
+                            model.set("field_name", PingYinUtil.getFirstSpell(value).toUpperCase());
+                            //需判断当前表是否有相同字段名
+                        }
                     } catch (Exception e) {
                         logger.error(e.getMessage());
                     }
@@ -148,7 +152,7 @@ public class DbUtils {
                     Class c = Class.forName("models.yh.structure."+StringUtils.capitalize(modelClassName));
                    
                     Map<String, String> master_ref= new HashMap<String, String>();
-                    master_ref.put("structure_id", model.getStr("id"));
+                    master_ref.put("structure_id", model.get("id").toString());
                     handleList(itemList, c, master_ref);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();

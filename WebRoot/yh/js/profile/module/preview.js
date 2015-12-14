@@ -2,40 +2,53 @@
 
     
 //$(document).ready(function(template) {
-	document.title = '模块定义 | '+document.title;
+	document.title = '模块预览 | '+document.title;
     $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
 
-    //-------------   子表的动态处理
-    var subIndex=0;
-    //添加一个新子表
-    $('#addTableBtn').click(function function_name (argument) {
+    $.post('/module/getOrderStructure', {module_id: $("#module_id").val()}, function(json){
+        console.log('getOrderStructure....');
+        console.log(json);
+        $('#fields_body').empty();
 
-        var structure_names = [];
-        var s_names = $('section .s_name');
-        for(var i=0; i<s_names.length; i++){
-            structure_names.push($(s_names[i]).val());
-        }
-
-        var html = template('table_template', {s_name: 'sub'+subIndex, structure_names: structure_names});
-        $('#fields_body').append(html);
-        $('#fields_body table:last').DataTable(tableSetting);
-        subIndex++;
-    });
-
-    $('#fields_body').on('click', 'button[name=addFieldBtn]', function(event) {
-        var section = $(this).parent().parent();
-        var sectionDataTable = $(section.find('table:first')[0]).DataTable();
-        var item={
-            "ID": '',
-            "FIELD_NAME": '',
-            "FIELD_TYPE": '',
-            "REQUIRED": '',
-            "LISTED": '',
-            "FIELD_TEMPLATE_PATH": '',
-            "INDEX_NAME": ''
-        };
-        sectionDataTable.row.add(item).draw(false);
-    });
+        for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
+            var structure = json.STRUCTURE_LIST[i];
+            
+                if(!structure.FIELDS_LIST)
+                    continue;
+                if(structure.STRUCTURE_TYPE == '字段'){
+                    for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
+                        var field = structure.FIELDS_LIST[j];
+                        
+                        var field_html = template('input_field', 
+                            {
+                                id: field.FIELD_NAME,
+                                label: field.FIELD_DISPLAY_NAME
+                            }
+                        );
+                        $('#fields').append(field_html);
+                    }
+                }else{
+                    var list_html = template('table_template', 
+                            {
+                                id: structure.ID,
+                                label: structure.NAME,
+                                field_list: structure.FIELDS_LIST
+                            }
+                        );
+                    $('#list').append(list_html);
+                    $('#list table:last').DataTable({
+                            paging: false,
+                            info: false,
+                            searching: false,
+                            autoWidth: true,
+                            language: {
+                                url: "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
+                            }
+                        });
+                }
+            
+        }//end of for
+    }, 'json');
     //-------------   子表的动态处理
 
     var tableSetting = {
@@ -54,12 +67,11 @@
         "columns": [
             { "width": "30px", "orderable":false, 
                 "render": function ( data, type, full, meta ) {
-                  return '<a class="remove delete" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i> </a>&nbsp;&nbsp;'+
-                    '<a class="remove delete" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i> </a>';
+                  return '<a class="remove delete" href="javascript:void(0)" title="Remove"><i class="glyphicon glyphicon-remove"></i></a>';
                 }
             },
-            { "data": "ID", visible: false},
-            { "data": "FIELD_DISPLAY_NAME",
+            { "data": "ID"},
+            { "data": "FIELD_NAME",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -75,8 +87,8 @@
                         +'    <option '+(data=='仅显示值'?'selected':'')+'>仅显示值</option>'
                         +'    <option '+(data=='隐藏值'?'selected':'')+'>隐藏值</option>'
                         +'    <option '+(data=='日期编辑框'?'selected':'')+'>日期编辑框</option>'
-                        +'    <option '+(data=='下拉列表'?'selected':'')+'>下拉列表</option>'
-                        +'    <option '+(data=='从其它单据中选取'?'selected':'')+'>从其它单据中选取</option>'
+                        +'    <option '+(data=='下拉框'?'selected':'')+'>下拉框</option>'
+                        +'    <option '+(data=='多项勾选框'?'selected':'')+'>多项勾选框</option>'
                         +'</select>';
                 }
             },
@@ -158,21 +170,19 @@
                 id='';
             }
 
-            var col_index= 1;
             var item={
                 id: id,
-                //field_name: $(row.children[2]).find('input').val(), 
-                field_display_name: $(row.children[col_index]).find('input').val(), 
-                field_type: $(row.children[col_index+1]).find('select').val(),
-                field_data_type: $(row.children[col_index+2]).find('select').val(),
-                required: $(row.children[col_index+3]).find('select').val(),
-                listed: $(row.children[col_index+4]).find('select').val(),
-                field_template_path: $(row.children[col_index+5]).find('input').val(),
+                field_name: $(row.children[2]).find('input').val(), 
+                field_type: $(row.children[3]).find('select').val(),
+                field_data_type: $(row.children[4]).find('select').val(),
+                required: $(row.children[5]).find('select').val(),
+                listed: $(row.children[6]).find('select').val(),
+                field_template_path: $(row.children[7]).find('input').val(),
                 index_name:'',
                 action: $('#module_id').val().length>0?'UPDATE':'CREATE'
             };
 
-            if(item.field_display_name.length>0){
+            if(item.field_name.length>0){
                 items_array.push(item);
             }
         }

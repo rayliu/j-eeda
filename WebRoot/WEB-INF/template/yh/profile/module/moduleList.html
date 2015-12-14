@@ -48,7 +48,27 @@
 						    </div>
 				    	</div>
 				    </div>
-				    <div role="tabpanel" class="tab-pane" id="action">...</div>
+				    <div role="tabpanel" class="tab-pane" id="action">
+				    	<section class=''>
+				    		<div class="form-group button-bar" >
+					            <button id="addActionBtn" type="button" class="btn btn-success btn-xs">添加新动作定义</button>
+					        </div>
+					        <table id="action_table" class="display" cellspacing="0" style="width: 100%;">
+					            <thead class="eeda">
+					                <tr>
+					                    <th></th>
+					                    <th>id</th>
+					                    <th>动作</th>
+					                    <th>动作类型</th>
+					                    <th>动作触发点</th>
+					                    <th>执行命令</th>
+					                </tr>
+					            </thead>
+					            <tbody>
+					            </tbody>
+					        </table>
+				    	</section>
+				    </div>
 				    <div role="tabpanel" class="tab-pane" id="permission">...</div>
 				    <div role="tabpanel" class="tab-pane" id="settings">...</div>
 				  </div>
@@ -116,8 +136,8 @@
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.excheck-3.5.js"></script>
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.exedit-3.5.js"></script>
 
-<%include("/yh/component/jsTemplate/detailTable.js", { id:'table_template'}){} %>
+<%include("/yh/component/jsTemplate/moduleDetailTable.js", { id:'table_template'}){} %>
 
 <script src="/yh/js/profile/module/fields.js"></script>
 <script src="/yh/js/profile/module/list_tree.js"></script>
-
+<script src="/yh/js/profile/module/action.js"></script>

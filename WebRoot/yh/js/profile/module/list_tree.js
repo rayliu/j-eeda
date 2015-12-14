@@ -170,6 +170,7 @@
                     var item={
                         "ID": field.ID,
                         "FIELD_NAME": field.FIELD_NAME,
+                        "FIELD_DISPLAY_NAME": field.FIELD_DISPLAY_NAME,
                         "FIELD_TYPE": field.FIELD_TYPE,
                         "REQUIRED": field.REQUIRED,
                         "LISTED": field.LISTED,

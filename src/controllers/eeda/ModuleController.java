@@ -190,6 +190,13 @@ public class ModuleController extends Controller {
         renderJson(rec);
     }
     
+    
+    public void preview(){
+        String module_id =getPara();
+        setAttr("module_id", module_id);
+        render("/yh/profile/module/preview.html");
+    }
+    
     //------------------------------------------------
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void list() {
