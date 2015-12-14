@@ -298,7 +298,8 @@ public class WxController extends ApiController {
 	    ReturnOrder returnOrder = ReturnOrder.dao.findById(return_order_id);
 	    if(returnOrder != null){
     	    Map<String, String> queryMap = new HashMap<String,String>();
-    	    logger.debug("access_token:" + AccessTokenApi.getAccessToken().getAccessToken());
+    	    System.out.println("access_token:" + AccessTokenApi.getAccessToken().getAccessToken());
+    	    System.out.println("media_id:" + serverId);
     	    queryMap.put("access_token", AccessTokenApi.getAccessToken().getAccessToken());
     	    queryMap.put("media_id", serverId);
     	    
