@@ -391,6 +391,8 @@ public class WxController extends ApiController {
 			List<Record> list = Db.find(sql);
 			if(list.size() == 1){
 			    renderJson(list.get(0));
+			}else{
+			    renderJson(new Record());
 			}
 		}
 	}
