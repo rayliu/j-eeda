@@ -324,6 +324,9 @@
 		var value = $('#invoice_type').val();
     	if(value=='wbill'){
     		clean();
+    		$('#account_name').attr("readonly",false);
+	    	$('#payee_unit').attr("readonly",false);
+	    	$('#payee_name').attr("readonly",false);
     		$('#payment_method').val('cash');
     	}else if(value=='mbill'){
     		clean();
@@ -331,16 +334,30 @@
    		 	payment();
     		$('#account_name').val($('#payee_filter').val());
     		$('#payee_unit').val($('#payee_filter').val());
+    		$('#payee_name').val("");
+    		$('#account_name').attr("readonly","readonly");
+    		$('#payee_unit').attr("readonly","readonly");
+    		$('#payee_name').attr("readonly","readonly");
     	}else if(value=='dbill'){
     		clean();
     		$('#payee_unit').val($('#account_name').val());
+    		$('#account_name').attr("readonly","readonly");
+	    	$('#payee_unit').attr("readonly","readonly");
+	    	$('#payee_name').attr("readonly","readonly");
     		$('#billing_unit').on('input',function(){
     			 $('#payment_method').val('transfers');
     			 payment();
-    			 $('#payee_unit').val($('#billing_unit').val());
-    			 $('#account_name').val($('#billing_unit').val());
     		 });
     	}
+	 });
+	 $('#billing_unit').on('input',function(){
+		 if($('#invoice_type').val()=='dbill'){
+			$('#payment_method').val('transfers');
+			payment();
+			$('#payee_unit').val($('#billing_unit').val());
+			$('#account_name').val($('#billing_unit').val());
+			$('#payee_name').val(""); 
+		 } 
 	 });
 	 
 	 
