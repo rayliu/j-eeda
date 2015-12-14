@@ -1,0 +1,16 @@
+.wxapi_container{
+    padding: 0 15px;
+}
+
+.page_title {
+    text-align: center;
+    font-size: 34px;
+    color: #225FBA;
+    font-weight: 400;
+    margin: 0 15%;
+}
+.page_desc {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
