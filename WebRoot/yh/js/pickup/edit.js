@@ -132,6 +132,7 @@
          "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
          //"sPaginationType": "bootstrap",
          "iDisplayLength": 10,
+         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
          "bServerSide": false,
          "bDestroy": true,
      	 "oLanguage": {
@@ -220,6 +221,7 @@
 	var detailTable= $('#pickupDetail-table').dataTable({           
          "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",  
          "iDisplayLength": 10,
+         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
          "bServerSide": true, 
      	 "oLanguage": {
              "sUrl": "/eeda/dataTables.ch.txt"
@@ -873,7 +875,8 @@
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "iDisplayLength": 8,
+        "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
         "bLengthChange":false,
     	"oLanguage": {
@@ -1002,6 +1005,7 @@
         "bFilter": false, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
         "sAjaxSource": "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
@@ -1104,6 +1108,7 @@
         "bFilter": false, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
         "sAjaxSource": "/pickupOrder/pickupOrderPaymentList?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
@@ -1215,6 +1220,7 @@
         "bFilter": false, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
         "sAjaxSource": "/pickupOrder/incomePayable?pickupOrderId="+pickupOrderId,
     	"oLanguage": {
@@ -1303,6 +1309,7 @@
         "bSort": false, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 25,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"

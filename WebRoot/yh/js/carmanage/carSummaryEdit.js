@@ -218,7 +218,8 @@ $(document).ready(function() {
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
@@ -269,7 +270,8 @@ $(document).ready(function() {
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
@@ -322,7 +324,8 @@ $(document).ready(function() {
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
@@ -362,7 +365,8 @@ $(document).ready(function() {
  		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"bLengthChange":false,
     	"oLanguage": {
@@ -531,7 +535,8 @@ $(document).ready(function() {
  		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"bLengthChange":false,
     	"oLanguage": {
@@ -868,7 +873,8 @@ $(document).ready(function() {
  		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"bLengthChange":false,
     	"oLanguage": {
@@ -1038,7 +1044,8 @@ $(document).ready(function() {
  		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 12,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
@@ -1229,7 +1236,8 @@ $(document).ready(function() {
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 20,
+    	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": false,
     	"bLengthChange":false,
     	"oLanguage": {

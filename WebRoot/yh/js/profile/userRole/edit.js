@@ -12,6 +12,7 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
     	"bStateSave":true,
     	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"

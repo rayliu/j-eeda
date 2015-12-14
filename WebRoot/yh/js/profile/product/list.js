@@ -51,6 +51,7 @@ $(document).ready(function() {
         "bFilter": true, //不需要默认的搜索框
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "bServerSide": true,
         "sAjaxSource": "/product/list",
     	"oLanguage": {

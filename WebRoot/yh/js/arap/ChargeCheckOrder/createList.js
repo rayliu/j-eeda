@@ -105,6 +105,7 @@ $(document).ready(function() {
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 25,
+    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"bServerSide": true,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
