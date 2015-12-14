@@ -4,25 +4,30 @@
   <meta charset="utf-8">
   <title id="titleName">创诚易达-回单签收</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-  <link rel="stylesheet" href="/yh/css/plugins/wx/style.css">
+  <link rel="stylesheet" href="/yh/css/weui/weui.css">
+  <link rel="stylesheet" href="/yh/css/eeda-weui.css">
 
 </head>
 <body ontouchstart="">
 <div class="wxapi_container">
-    
+    <h1 class="page_title">回单签收</h1>
+    <p class="page_desc">单据照片上传</p>
     <div class="lbox_close wxapi_form">
     	<form id="returnFrom" method="post">
-	      	<div id="defaultDiv" class="form-group">
-	        	<label class="control-label">请输入单号（序列号/运输单号/签收单号）</label>
-	        	<input type="text" class="form-control" id="orderNo" name='orderNo' value="${orderNo!''}" />
-	        </div>
+          <div class="weui_cell">
+              <div class="weui_cell_hd"><label class="weui_label">单号</label></div>
+              <div class="weui_cell_bd weui_cell_primary">
+                  <input class="weui_input" type="text" id="orderNo" name='orderNo' value="${orderNo!''}" placeholder="请输入单号（序列号/运输单号/签收单号）">
+              </div>
+          </div>
       </form>
       
         <h3 id="menu-image1"></h3>
         <input type="hidden" id="returnId" name='returnId' value="" />
-        <button class="btn btn_primary" id="searchNo">查询</button>
+        <button class="weui_btn weui_btn_primary" id="searchNo">查询</button>
         <span id='orderDesc' class="desc" style='display:none;'></span>
 
+        <br/>
         <h3 id="menu-image"></h3>
         <span id='imgDesc' class="desc" style='display:none;'>已选择 0 张图片</span>
         <button class="btn btn_primary" id="chooseImage" style='display:none;'>拍照或从手机相册中选图</button>
@@ -34,7 +39,7 @@
 
         <input type="file" id="fileupload" name="fileupload" size="1" multiple="" style="position:absolute; filter:alpha(opacity=0); opacity:0; width:0px;"  >
        
-        <button class="btn btn_primary" id="uploadBtn">上传图片</button>
+        <button class="weui_btn weui_btn_primary" id="uploadBtn">上传图片</button>
      	<span id='uploadDesc' class="desc" style='display:none;'></span>
     </div>
   </div>

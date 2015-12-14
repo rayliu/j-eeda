@@ -1,40 +1,15 @@
 $(document).ready(function() {
 	
 	$("#searchNo").click(function(){  
-		$.post('/wx/findReturnOrder',$("#returnFrom").serialize(),function(data){
+		$.post('/wx/findReturnOrder',$("#returnFrom").serialize(), function(data){
 			var returnId = data.ID;
 			if(returnId > 0){
 				$('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
 				$("#uploadDesc").text("");
 				$('#returnId').val(returnId);
-				//图片上传
-				$('#fileupload').fileupload({
-			    	autoUpload: true, //自选择后自动上传图片
-			    	disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator && navigator.userAgent),
-			        dataType: 'json',
-			        url: '/wx/saveFile?return_id='+$('#returnId').val(),//上传地址
-			        validation: {allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']},
-			        imageMaxWidth: 1200,
-			    	imageMaxHeight: 900,
-			    	imageCrop: false, // 自动高宽比缩放
-			        done: function (e, data) {
-			        	console.log("data.result.cause:"+data.result.cause);
-			        	if(data.result.result == "true"){
-			        		$('#uploadDesc').append("<p>文件名："+data.result.cause+"  上传成功!</p>").show();
-			        	}else{
-			        		$("#uploadDesc").empty().append("<p>"+data.result.cause+"</p>").show();
-			        	}
-			        	$("#uploadBtn").text("上传图片");
-			    		$("#uploadBtn").prop("disabled",false);
-			        },  
-			        progressall: function (e, data) {//设置上传进度事件的回调函数
-			        	$("#uploadBtn").prop("disabled",true);
-			        	var progress = parseInt(data.loaded / data.total * 100, 10);
-			            $('#uploadBtn').text("上传中(" + progress + "%)");
-			        } 
-				});
+				
 			}else{
-				$('#orderDesc').text('请先查询有效的回单号码');
+				$('#orderDesc').text('未找到对应有效的回单号码');
 				$('#returnId').val("");
 			}
 			$('#orderDesc').show();
@@ -43,6 +18,11 @@ $(document).ready(function() {
 
 	//保存图片
     $("#uploadBtn").click(function(e){
+    	if($('#returnId').val() == ''){
+    		$('#orderDesc').text('请先查找对应有效的回单号码');
+    		$('#orderDesc').show();
+    		return;
+    	}
     	wx.chooseImage({
 		    count: 1, // 默认9
 		    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有

@@ -368,52 +368,32 @@ public class WxController extends ApiController {
         renderJson(locationList);
 	}
 	
-	//获取回单数据
+	//查找回单
 	public void findReturnOrder() {
 		String orderNo = getPara("orderNo").toUpperCase();
-		String serialNo = getPara("serialNo");
-		String customerId = getPara("customerId");
-		ReturnOrder returnOrder = null;
 		//单号不为空时
 		if(orderNo != null && !"".equals(orderNo)){
-			try {
-				String orderHead = orderNo.substring(0, 2);
-				if(orderHead.equals("HD")){
-					returnOrder = ReturnOrder.dao.findFirst("select * from return_order where order_no=?",orderNo);
-				}else if(orderHead.equals("YS")){
-					TransferOrder order = TransferOrder.dao.findFirst("select id from transfer_order where order_no = ?",orderNo);
-					if(order != null)
-						returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id = ?",order.get("id"));
-				}else{
-					//单号可能为序列号
-				    
-				    //单号可能为签收单号
-					
-				}
-			} catch (Exception e) {
-				//单号为客户订单号时
-				TransferOrder order = TransferOrder.dao.findFirst("select id from transfer_order where customer_order_no = ?",orderNo);
-				if(order != null)
-					returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id = ?",order.get("id"));
+			//单号可能为序列号/签收单号/运输单号
+		    String sql ="select * from(select ro.id, toid.serial_no, dor.ref_no, tor.order_no to_order_no, ro.order_no, toid.order_id, toid.delivery_id from transfer_order_item_detail toid"
+		            + " left join return_order ro on toid.order_id=ro.transfer_order_id "
+		            + " left join delivery_order dor on dor.id = toid.delivery_id"
+		            + " left join transfer_order tor on tor.id = toid.order_id"
+		            + " union "
+		           + "select ro.id, toid.serial_no, dor.ref_no, tor.order_no to_order_no, ro.order_no, toid.order_id, toid.delivery_id from transfer_order_item_detail toid"
+		            + " left join return_order ro on toid.delivery_id=ro.delivery_order_id "
+		            + " left join delivery_order dor on dor.id = toid.delivery_id"
+		            + " left join transfer_order tor on tor.id = toid.order_id"
+		            + ") A"
+		           + " where A.order_no is not null and ("
+		               + "A.serial_no = '"+orderNo+"'"
+		               + " or A.ref_no = '"+orderNo+"'"
+		               + " or A.to_order_no = '"+orderNo+"')";
+			List<Record> list = Db.find(sql);
+			if(list.size() == 1){
+			    renderJson(list.get(0));
 			}
-		}else{
-			//单号为空，则默认为配送签收
-			List<TransferOrderItemDetail> detailList = new ArrayList<TransferOrderItemDetail>();
-			if(serialNo != null && !"".equals(serialNo) && customerId != null && !"".equals(customerId)){
-				detailList = TransferOrderItemDetail.dao.find("select toid.delivery_id from transfer_order_item_detail toid left join transfer_order tor on tor.id = toid.order_id where toid.serial_no = ? and tor.customer_id = ? and toid.delivery_id is not null",serialNo,customerId);
-			}else if(serialNo != null && !"".equals(serialNo)){
-				detailList = TransferOrderItemDetail.dao.find("select delivery_id from transfer_order_item_detail where serial_no = ? and delivery_id is not null",serialNo);
-			}
-			//序列号唯一
-			if(detailList.size() == 1)
-				returnOrder = ReturnOrder.dao.findFirst("select * from return_order where delivery_order_id = ?",detailList.get(0).get("delivery_id"));
 		}
-		if(returnOrder==null)
-			returnOrder = new ReturnOrder();
-		renderJson(returnOrder);
 	}
-	
-	
 	
 	public void findOrderNo(){
 		String serialNo = getPara("serialNo").trim();
