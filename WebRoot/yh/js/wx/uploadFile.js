@@ -36,7 +36,6 @@ $(document).ready(function() {
 					    localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
 					    isShowProgressTips: 1, // 默认为1，显示进度提示
 					    success: function (res) {
-					    	$('#loadingToast').show();
 					        var serverId = res.serverId; // 返回图片的服务器端ID
 					        $.post('/wx/saveReturnOrderPic',{serverId:serverId, return_order_id: $('#returnId').val()},function(data){
 					        	if(data == "OK"){
@@ -44,7 +43,6 @@ $(document).ready(function() {
 					        	}else{
 					        		$('#uploadDesc').empty().append("<p>图片上传失败!</p>").show();
 					        	}
-					        	$('#loadingToast').hide();
 					        });
 					    }
 					});
