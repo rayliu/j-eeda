@@ -80,14 +80,14 @@ public class CostCheckOrderController extends Controller {
 			Record rec1 = null;
 			if ("提货".equals(orderNoArr[i])) {
 				rec = Db.findFirst(
-						"select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,'') != '对账调整金额'",
+						"select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付' and dofi.fin_item_id!=7 and IFNULL(dofi.cost_source,'') != '对账调整金额'",
 						orderIdsArr[i]);
 				if (rec.getDouble("sum_amount") != null) {
 					totalAmount = totalAmount + rec.getDouble("sum_amount");
 				}
 				rec1 = Db
 						.findFirst(
-								"select sum(amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?",
+								"select sum(amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and dofi.fin_item_id!=7",
 								orderIdsArr[i]);
 				if (rec1.getDouble("change_amount") != null) {
 					changeAmount = changeAmount
@@ -576,11 +576,11 @@ public class CostCheckOrderController extends Controller {
 			} else if ("零担".equals(orderNoArr[i])) {
 				rec1 = Db
 						.findFirst(
-								"select ifnull(sum(amount),0) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,'') !='对账调整金额'",
+								"select ifnull(sum(amount),0) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付' and dofi.fin_item_id!=7 and IFNULL(dofi.cost_source,'') !='对账调整金额'",
 								orderIdsArr[i]);
 				totalamount = totalamount + rec1.getDouble("sum_amount");
 				rec = Db.findFirst(
-						"select sum(amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ?",
+						"select sum(amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and dofi.fin_item_id!=7",
 						orderIdsArr[i]);
 				if (rec.getDouble("change_amount") != null) {
 					changeamount = changeamount
@@ -1181,7 +1181,7 @@ public class CostCheckOrderController extends Controller {
 				+ " toi.amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dpr.create_stamp create_stamp,ul.user_name creator,"
 				+ " '提货' business_type, '' booking_note_number,"
 				+ " ifnull((SELECT NAME FROM location WHERE CODE = dpr.route_from),'') route_from,ifnull((SELECT NAME FROM location WHERE CODE = dpr.route_to),'') route_to,"
-				+ " (select ifnull(sum(amount),0) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付' and IFNULL(dofi.cost_source,'') != '对账调整金额') pay_amount,(SELECT ROUND(ifnull(sum(amount),0),2) FROM pickup_order_fin_item dofi WHERE dofi.pickup_order_id = dpr.id) change_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '<br/>') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
+				+ " (select ifnull(sum(amount),0) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = dpr.id and fi.type = '应付' and dofi.fin_item_id!=7 and IFNULL(dofi.cost_source,'') != '对账调整金额') pay_amount,(SELECT ROUND(ifnull(sum(amount),0),2) FROM pickup_order_fin_item dofi WHERE dofi.pickup_order_id = dpr.id and dofi.fin_item_id!=7) change_amount, group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '<br/>') transfer_order_no,dpr.sign_status return_order_collection,dpr.remark,oe.office_name office_name "
 				+ " from depart_order dpr "
 				+ " left join depart_transfer dtr on dtr.pickup_id = dpr.id"
 				+ " LEFT JOIN pickup_order_fin_item dofi on dofi.pickup_order_id=dpr.id"
