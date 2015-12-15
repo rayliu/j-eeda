@@ -80,7 +80,7 @@ public class CostCheckOrderController extends Controller {
 			Record rec1 = null;
 			if ("提货".equals(orderNoArr[i])) {
 				rec = Db.findFirst(
-						"select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,) != '对账调整金额'",
+						"select sum(amount) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,'') != '对账调整金额'",
 						orderIdsArr[i]);
 				if (rec.getDouble("sum_amount") != null) {
 					totalAmount = totalAmount + rec.getDouble("sum_amount");
@@ -103,7 +103,7 @@ public class CostCheckOrderController extends Controller {
 				spId = departOrder.getLong("sp_id");
 			} else if ("零担".equals(orderNoArr[i]) || "整车".equals(orderNoArr[i])) {
 				rec = Db.findFirst(
-						"select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,) != '对账调整金额'",
+						"select sum(amount) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,'') != '对账调整金额'",
 						orderIdsArr[i]);
 				if (rec.getDouble("sum_amount") != null) {
 					totalAmount = totalAmount + rec.getDouble("sum_amount");
@@ -128,7 +128,7 @@ public class CostCheckOrderController extends Controller {
 				// DeliveryOrderFinItem deliveryorderfinitem
 				// =DeliveryOrderFinItem.dao.findById(paymentId);
 				rec = Db.findFirst(
-						"select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,) != '对账调整金额'",
+						"select sum(amount) sum_amount from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,'') != '对账调整金额'",
 						orderIdsArr[i]);
 				if (rec.getDouble("sum_amount") != null) {
 					totalAmount = totalAmount + rec.getDouble("sum_amount");
@@ -182,14 +182,14 @@ public class CostCheckOrderController extends Controller {
 			} else {
 				// 这是保险单的应付
 				rec = Db.findFirst(
-						"select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付' and IFNULL(dofi.cost_source,) != '对账调整金额'",
+						"select sum(insurance_amount) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付' and IFNULL(ifi.cost_source,'') != '对账调整金额'",
 						orderIdsArr[i]);
 				if (rec.getDouble("sum_amount") != null) {
 					totalAmount = totalAmount + rec.getDouble("sum_amount");
 				}
 				rec1 = Db
 						.findFirst(
-								"select sum(amount) change_amount from insurance_fin_item ifi where ifi.insurance_order_id = ?",
+								"select sum(insurance_amount) change_amount from insurance_fin_item ifi where ifi.insurance_order_id = ?",
 								orderIdsArr[i]);
 				if (rec1.getDouble("change_amount") != null) {
 					changeAmount = changeAmount
@@ -848,7 +848,7 @@ public class CostCheckOrderController extends Controller {
 			} else {
 				rec1 = Db
 						.findFirst(
-								"select ifnull(sum(insurance_amount),0) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付' and IFNULL(dofi.cost_source,) != '对账调整金额' ",
+								"select ifnull(sum(insurance_amount),0) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付' and IFNULL(dofi.cost_source,'') != '对账调整金额' ",
 								orderIdsArr[i]);
 				totalamount = totalamount + rec1.getDouble("sum_amount");
 				rec = Db.findFirst(
@@ -1175,7 +1175,7 @@ public class CostCheckOrderController extends Controller {
 				+ " con.id sp_id, con.abbr spname,c_c.abbr customer_name,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,"
 				+ " '保险' business_type, "
 				+ " round((select sum(insurance_amount) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付' and IFNULL(dofi.cost_source,'') !='对账调整金额'),2) pay_amount, "
-				+ " round((SELECT ROUND(sum(amount),2) FROM insurance_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id WHERE dofi.insurance_order_id = ior.id AND fi.type = '应付' ),2) change_amount,"
+				+ " round((SELECT ROUND(sum(insurance_amount),2) FROM insurance_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id WHERE dofi.insurance_order_id = ior.id AND fi.type = '应付' ),2) change_amount,"
 				+ " ((select sum(ifi.insurance_amount) from insurance_fin_item ifi  where ifi.insurance_order_id = ior.id )-(select sum(tofi.amount)"
 				+ " from transfer_order tor"
 				+ " left join transfer_order_fin_item tofi on tofi.order_id = tor.id"
@@ -1432,7 +1432,7 @@ public class CostCheckOrderController extends Controller {
 				+ " union "
 				+ " select distinct ior.id,ifi.id did,ior.order_no order_no,ior.status,'保险公司' spname,c1.abbr customer_name,'' receivingunit,sum(toi.amount) amount,sum(ifnull(prod.volume,toi.volume)) volume,sum(ifnull(prod.weight,toi.weight)) weight,ior.create_stamp create_stamp,ul.user_name creator,"
 				+ " '保险' business_type, '' booking_note_number, '' route_from ,'' route_to,"
-				+ " (select ifnull(sum(insurance_amount),0) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付' and IFNULL(dofi.cost_source,'') != '对账调整金额') pay_amount,(SELECT ROUND(ifnull(sum(amount),0),2) FROM insurance_fin_item dofi WHERE dofi.insurance_order_id = ior.id) change_amount, group_concat(distinct tor.order_no separator '<br/>') transfer_order_no,ior.sign_status return_order_collection,ior.remark,oe.office_name office_name "
+				+ " (select ifnull(sum(insurance_amount),0) from insurance_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.insurance_order_id = ior.id and fi.type = '应付' and IFNULL(dofi.cost_source,'') != '对账调整金额') pay_amount,(SELECT ROUND(ifnull(sum(insurance_amount),0),2) FROM insurance_fin_item dofi WHERE dofi.insurance_order_id = ior.id) change_amount, group_concat(distinct tor.order_no separator '<br/>') transfer_order_no,ior.sign_status return_order_collection,ior.remark,oe.office_name office_name "
 				+ " from insurance_order ior "
 				+ " left join transfer_order tor on ior.id = tor.insurance_id "
 				+ " LEFT JOIN insurance_fin_item ifi ON ifi.insurance_order_id=ior.id"
@@ -1557,7 +1557,7 @@ public class CostCheckOrderController extends Controller {
 				pofi.set("cost_source", "对账调整金额");
 				pofi.save();
 			}
-		} else if ("零担".equals(type)) {
+		} else if ("零担".equals(type)||"整车".equals(type)) {
 			rec1 = Db
 					.findFirst(
 							"select ifnull(sum(amount),0) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'",
