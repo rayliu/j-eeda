@@ -4,6 +4,27 @@ $(document).ready(function() {
 	}
 	$('#menu_cost').addClass('active').find('ul').addClass('in');
 
+	
+	$('#datetimepicker').datetimepicker({  
+        format: 'yyyy-MM-dd',  
+        language: 'zh-CN', 
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+        $(".bootstrap-datetimepicker-widget").hide();
+        $('#departure_time').trigger('keyup');
+    });	 
+    
+    $('#datetimepicker2').datetimepicker({  
+    	format: 'yyyy-MM-dd',  
+    	language: 'zh-CN', 
+    	autoclose: true,
+    	pickerPosition: "bottom-left"
+    }).on('changeDate', function(ev){
+    	$(".bootstrap-datetimepicker-widget").hide();
+    	$('#arrival_time').trigger('keyup');
+    });
+	
 	//设置一个变量值，用来保存当前的ID
 	var parentId = "costCheckOrderbasic";
 	$("#transferOrderMilestoneList").click(function(e){
@@ -263,25 +284,7 @@ $(document).ready(function() {
     	costMiscListTable.fnDraw();  
     });
 
-    $('#datetimepicker').datetimepicker({  
-        format: 'yyyy-MM-dd',  
-        language: 'zh-CN', 
-        autoclose: true,
-        pickerPosition: "bottom-left"
-    }).on('changeDate', function(ev){
-        $(".bootstrap-datetimepicker-widget").hide();
-        $('#departure_time').trigger('keyup');
-    });	 
-    
-    $('#datetimepicker2').datetimepicker({  
-    	format: 'yyyy-MM-dd',  
-    	language: 'zh-CN', 
-    	autoclose: true,
-    	pickerPosition: "bottom-left"
-    }).on('changeDate', function(ev){
-    	$(".bootstrap-datetimepicker-widget").hide();
-    	$('#arrival_time').trigger('keyup');
-    });	
+    	
     
     var externalTab = $('#external-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
