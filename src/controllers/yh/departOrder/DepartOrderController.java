@@ -2536,7 +2536,7 @@ public class DepartOrderController extends Controller {
 				+ " null route_to" + " from depart_order_fin_item d "
 				+ " left join fin_item f on d.fin_item_id = f.id "
 				+ " where d.depart_order_id =" + id
-				+ " and f.type='应付' and cost_source is null";
+				+ " and f.type='应付'";
 
 		/*
 		 * String querySql = "select d.*," + " f.name," +
