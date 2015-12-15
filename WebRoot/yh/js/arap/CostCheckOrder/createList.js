@@ -352,10 +352,11 @@ $(document).ready(function() {
 		 }
 		 else{
 			 $.post('/costCheckOrder/updateDepartOrderFinItem', {ty:ty,departId:departId,paymentId:paymentId, name:name, value:value}, function(data){
-				 $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
-				 $("#debitAmount").html(data.changeAmount);
-				 $("#costAmount").html(data.actualAmount); 
-				 $("#total_amount").val(data.changeAmount);
+				 if(data.success){
+                    $.scojs_message('调整金额成功', $.scojs_message.TYPE_OK);
+                 }else{
+                    $.scojs_message('调整金额失败', $.scojs_message.TYPE_ERROR);
+                 }
 		    	},'json');
 			 uncheckedCostCheckTable.fnDraw();
 		 }
