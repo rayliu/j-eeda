@@ -73,3 +73,57 @@
     };
 
     var action_table = $('#action_table').DataTable(action_tableSetting);
+
+    var $action_table = $("#action_table");
+
+    var deletedActionIds=[];
+    //删除表中一行
+    $action_table.on('click', '.delete', function(e){
+        e.preventDefault();
+        var tr = $(this).parent().parent();
+        deletedActionIds.push(tr.attr('id'))
+
+        action_table.row(tr).remove().draw();
+    });
+
+    var buildActionArray=function(){
+        var table_rows = $action_table.find('tr');
+        var items_array=[];
+        for(var index=0; index<table_rows.length; index++){
+            if(index==0)
+                continue;
+
+            var row = table_rows[index];
+            var id = $(row).attr('id');
+            if(!id){
+                id='';
+            }
+
+            var col_index= 1;
+            var item={
+                id: id,
+                //field_name: $(row.children[2]).find('input').val(), 
+                action_name: $(row.children[col_index]).find('input').val(), 
+                action_type: $(row.children[col_index+1]).find('select').val(),
+                action_trigger: $(row.children[col_index+2]).find('select').val(),
+                action_script: $(row.children[col_index+3]).find('textarea').val(),
+                action: $('#module_id').val().length>0?'UPDATE':'CREATE'
+            };
+
+            if(item.action_name.length>0){
+                items_array.push(item);
+            }
+        }
+
+        //add deleted items
+        for(var index=0; index<deletedActionIds.length; index++){
+            var id = deletedActionIds[index];
+            var item={
+                id: id,
+                action: 'DELETE'
+            };
+            items_array.push(item);
+        }
+        return items_array;
+    };
+

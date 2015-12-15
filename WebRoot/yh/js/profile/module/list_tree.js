@@ -164,6 +164,7 @@
 
                 if(!structure.FIELDS_LIST)
                     return;
+                
 
                 for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
                     var field = structure.FIELDS_LIST[j];
@@ -179,6 +180,22 @@
                     };
                     dataTable.row.add(item).draw(false);
                 }
+            }
+
+            if(!json.ACTION_LIST)
+                    return;
+
+            action_table.clear().draw(false);
+            for (var k = 0; k < json.ACTION_LIST.length; k++) {
+                var action = json.ACTION_LIST[k];
+                var item={
+                    "ID": action.ID,
+                    "ACTION_NAME": action.ACTION_NAME,
+                    "ACTION_TYPE": action.ACTION_TYPE,
+                    "ACTION_TRIGGER": action.ACTION_TRIGGER,
+                    "ACTION_SCRIPT": action.ACTION_SCRIPT
+                };
+                action_table.row.add(item).draw(false);
             }
         }, 'json');
     };

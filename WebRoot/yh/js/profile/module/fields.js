@@ -240,10 +240,12 @@
         // }
 
         var structure_list=buildStructureTableArray();
+        var action_list=buildActionArray();
 
         var dto = {
             module_id: $('#module_id').text(),
-            structure_list: structure_list
+            structure_list: structure_list,
+            action_list: action_list
         };
 
         console.log('saveBtn.click....');

@@ -100,6 +100,7 @@ import models.yh.delivery.DeliveryPlanOrderCarinfo;
 import models.yh.delivery.DeliveryPlanOrderDetail;
 import models.yh.delivery.DeliveryPlanOrderMilestone;
 import models.yh.pickup.PickupDriverAssistant;
+import models.yh.profile.Action;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.CustomizeField;
@@ -509,6 +510,8 @@ public class EedaConfig extends JFinalConfig {
         
         //common
         arp.addMapping("modules", Module.class);
+        arp.addMapping("structure_action", Action.class);
+        
     }
 
     private void initDBconnector() {

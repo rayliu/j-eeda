@@ -16,6 +16,7 @@ import models.ParentOfficeModel;
 import models.Party;
 import models.Product;
 import models.UserLogin;
+import models.yh.profile.Action;
 import models.yh.profile.Contact;
 import models.yh.profile.Module;
 import models.yh.structure.Field;
@@ -169,6 +170,10 @@ public class ModuleController extends Controller {
         Map<String, String> master_ref= new HashMap<String, String>();
         master_ref.put("module_id", module_id);
         DbUtils.handleList(structure_list, Structure.class, master_ref);
+        
+        //Action
+        List<Map<String, String>> action_list = (ArrayList<Map<String, String>>)dto.get("action_list");
+        DbUtils.handleList(action_list, Action.class, master_ref);
 
         renderJson(dto);
     }
@@ -184,9 +189,12 @@ public class ModuleController extends Controller {
             structure.set("fields_list", fieldList);
         }
         
+        List<Record> aRecs = Db.find("select * from structure_action where module_id=?", module_id);
+        
         Record rec = new Record();
         rec.set("module_id", module_id);
         rec.set("structure_list", sRecs);
+        rec.set("action_list", aRecs);
         renderJson(rec);
     }
     
