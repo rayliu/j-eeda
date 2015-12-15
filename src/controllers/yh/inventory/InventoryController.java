@@ -22,6 +22,7 @@ import models.Warehouse;
 import models.WarehouseOrder;
 import models.WarehouseOrderItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -127,6 +128,9 @@ public class InventoryController extends Controller {
         String officeId = getPara("officeId");
         String itemId = getPara("itemId");
         String itemName = getPara("itemName");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+        
         
         if ((customerId == null && warehouseId == null && officeId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(officeId))) {
         	Map orderMap = new HashMap();
@@ -136,112 +140,118 @@ public class InventoryController extends Controller {
             orderMap.put("aaData", null);
             renderJson(orderMap);
         }else{
-        	searchByCondition(customerId, warehouseId, officeId, itemId);
+        	searchByCondition(customerId, warehouseId, officeId, itemId, beginTime, endTime);
         }
     }
+    
+    
 	private void searchByCondition(String customerId, String warehouseId,
-			String officeId, String itemId) {
+			String officeId, String itemId, String beginTime, String endTime) {
+		
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " limit " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-       
-       String warehouseCondition = ""; 
-       String customerCondition = "";
-       String warehousePredict = "";
-       String warehouseLocal = "";
-       String customerLocal = "";
-       if("all".equalsIgnoreCase(officeId)){
+        if("all".equalsIgnoreCase(officeId)){
     	   officeId = "";
-       }
-       if("all".equalsIgnoreCase(warehouseId)){
+        }
+        if("all".equalsIgnoreCase(warehouseId)){
    			warehouseId = "";
    		}
-       if(warehouseId != null && !"".equals(warehouseId) || "all".equalsIgnoreCase(warehouseId)){
-    	   warehouseCondition = " and tor.warehouse_id = i_t.warehouse_id ";
-    	   warehousePredict = " and t_o.warehouse_id=i_t.warehouse_id ";
-    	   warehouseLocal = " and d_o.from_warehouse_id=i_t.warehouse_id";
-       }
-      
-       if((customerId != null) && !"".equals(customerId)){
-    	   customerCondition = " and tor.customer_id = i_t.party_id ";
-    	   customerLocal = "and d_o.customer_id = i_t.party_id";
-       }
-        
+       
+        String groupConditions = " group by product_id ";
+        String conditions = " where 1=1 ";
+        if (StringUtils.isNotEmpty(customerId)){
+        	conditions += " and customer_id = " + customerId;
+        	//groupConditions += " and customer_id";
+        }
+		if (StringUtils.isNotEmpty(warehouseId)){
+			conditions += " and warehouse_id = " + warehouseId;
+			//groupConditions += " and warehouse_id";
+		}
+		if (StringUtils.isNotEmpty(officeId)){
+			conditions += " and office_id = " + officeId;
+			//groupConditions += " and office_id";
+		}
+		if (StringUtils.isNotEmpty(itemId)){
+			conditions += " and product_id = " + itemId;
+		}
+        if (StringUtils.isNotEmpty(beginTime)){
+       	 	beginTime = " and planning_time between'"+beginTime+"'";
+        }else{
+       	 	beginTime =" and planning_time between '1970-1-1'";
+        }
+       
+        if (StringUtils.isNotEmpty(endTime)){
+       		endTime =" and '"+endTime+"'";
+        }else{
+       		endTime =" and '3000-1-1'";
+        }
+        conditions += beginTime+endTime;
+
        //获取当前用户的总公司
-       ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+//       ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+//       
+//       Long parentID = pom.getParentOfficeId();
        
-       Long parentID = pom.getParentOfficeId();
-       
-       
-       String sql = " from inventory_item i_t "
-					+" left join product p on  i_t.product_id = p.id "
-					+" left join party p2 on i_t.party_id = p2.id  "
-					+" left join contact c on p2.contact_id = c.id "
-					+" left join warehouse w on  i_t.warehouse_id = w.id "
-					+" left join office o on w.office_id = o.id "
-					+" left join office p_o on p2.office_id = p_o.id "
-					+" where 1=1 and (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (p_o.id = " + parentID + " or p_o.belong_office = " + parentID + ") ";
-				
-        String sqlCondition = " select sum(i_t.total_quantity) as total_quantity,o.id as oid,w.id as wid,p2.id as party_id, c.company_name, p.item_name, p.item_no, p.unit, p.id as pid, w.warehouse_name,o.office_name,"
-       			+ " (select count(1) FROM transfer_order_item_detail toid"
-       			+ " LEFT JOIN transfer_order t_o on t_o.id = toid.order_id"
-       			+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id"
-       			+ " LEFT JOIN depart_order d_o on d_o.id = toid.depart_id"
-       			+ " where d_o.status='已发车'  and toi.product_id = i_t.product_id"  + warehousePredict + ") predict_amount, "
-    		   	+" (select count(1) "
-    		   	+ " FROM transfer_order_item_detail toid "
-    		   	+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id "
-    		   	+ " LEFT JOIN delivery_order d_o ON  d_o.id = toid.delivery_id  "
-    		   	+ " where d_o.status='新建'" + warehouseLocal + " and toi.product_id = i_t.product_id and d_o.customer_id = i_t.party_id " + customerLocal + ") lock_amount,"
-				+" (select count(toid.id) as valid_amount "
-				+ " FROM transfer_order_item_detail toid "
-				+ " LEFT JOIN transfer_order tor ON toid.order_id = tor.id"
-				+ " LEFT JOIN transfer_order_item toi ON toi.id = toid.item_id  "
-				+ " where toi.product_id = i_t.product_id  and tor.customer_id = i_t.party_id " + customerCondition + " and toid.delivery_id is null and toid.depart_id is not null  and toid.status ='已入库' " + warehouseCondition + ") valid_amount ";
-      
-        String groupCondition = " group by p.item_name, p.item_no, p.unit";
+        String sql = " SELECT toi.id, p.item_name, p.item_no,tor.customer_id,tor.office_id,tor.warehouse_id,tor.planning_time,c.abbr customer_name,w.warehouse_name,o.office_name, toi.product_id ,"
+        		+ " (select count(*) from transfer_order_item_detail toid"
+        		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
+        		+ " where toid.item_id = toi.id and toid.delivery_id is null and (toid.depart_id is null or dor.`STATUS` != '已入库')"
+        		+ " ) pre_amount,"
+        		+ " (select count(*) from transfer_order_item_detail toid"
+        		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
+        		+ " where toid.item_id = toi.id"
+        		+ " and dor.`STATUS` = '已入库'"
+        		+ " and toid.delivery_id is null"
+        		+ " ) effective_amount,"
+        		+ " (select count(*) from transfer_order_item_detail toid"
+        		+ " LEFT JOIN delivery_order deo on deo.id = toid.delivery_id"
+        		+ " where toid.item_id = toi.id"
+        		+ " and deo.`STATUS` = '新建'"
+        		+ " ) lock_amount,"
+        		+ " (select count(*) from transfer_order_item_detail toid"
+        		+ " LEFT JOIN delivery_order deo on deo.id = toid.delivery_id"
+        		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
+        		+ " where toid.item_id = toi.id"
+        		+ " and (deo.`STATUS` = '新建' or ( dor.`STATUS` = '已入库'  and toid.delivery_id is null))"
+        		+ " ) actually_amount,"
+        		+ " (select count(*) from transfer_order_item_detail toid "
+        		+ " LEFT JOIN delivery_order deo on deo.id = toid.delivery_id"
+        		+ " where toid.item_id = toi.id"
+        		+ " and deo.`STATUS` != '新建' "
+        		+ " and deo.`STATUS` is not null"
+        		+ " ) have_delivery_amount ,"
+        		+ " (select count(*) from transfer_order_item_detail toid "
+        		+ " where toid.item_id = toi.id"
+        		+ " ) all_status,p.unit"
+        		+ " FROM `transfer_order_item` toi"
+        		+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id"
+        		+ " LEFT JOIN contact c on c.id = tor.customer_id "
+        		+ " LEFT JOIN office o on o.id = tor.office_id"
+        		+ " left join product p on p.id = toi.product_id"
+        		+ " LEFT JOIN warehouse w on w.id = tor.warehouse_id ";
         
-	    if((customerId != null) && !"".equals(customerId)){
-	    	sql = sql + " and i_t.party_id =" + customerId ;
-	    	
-	    	groupCondition = groupCondition + ",c.company_name";
-	    }
-        if(warehouseId != null && !"".equals(warehouseId)){
-        	
-        	sql = sql + " and i_t.warehouse_id =" + warehouseId ;
-        	
-        	groupCondition = groupCondition + ",w.warehouse_name";
-        }
-        
-        if((officeId != null) && !"".equals(officeId)){
-        	sql = sql + " and w.office_id =" + officeId ;
-        	groupCondition = groupCondition + ",o.office_name";
-        }
-        
-        if(itemId != null && !"".equals(itemId)){
-        	sql = sql + " and i_t.product_id =" + itemId;
-        	
-        }
-        
-        String sqlTotal = "select count(1) total " + sql +  groupCondition;// 获取总条数
-        
-        //String totalAmountSql = "select sum(i_t.total_quantity) total" + sql ;
-        sql = sqlCondition + sql + groupCondition + sLimit;
-       
-        List<Record> rec = Db.find(sqlTotal);
-        // 获取当前页的数据
-        List<Record> orders = Db.find(sql);
-        /*Record amoutRec = Db.findFirst(totalAmountSql);
-        setAttr("totalAmount", amoutRec.get("total"));*/
+        String totalSql = "select item_no, customer_id, office_id, warehouse_id,GROUP_CONCAT(cast( planning_time as char)) planning_time, "
+        		+ " customer_name, warehouse_name, office_name, product_id, unit, "
+        		+ " sum(ifnull(pre_amount, 0)) pre_amount, "
+        		+ " sum( ifnull(have_delivery_amount, 0) ) have_delivery_amount, "
+        		+ " sum(ifnull(effective_amount, 0)) effective_amount,"
+        		+ " sum(ifnull(lock_amount, 0)) lock_amount,"
+        		+ " sum(ifnull(actually_amount, 0)) actually_amount from ("
+        		+ sql + ") A" + conditions + groupConditions;
+        		
+        Record re = Db.findFirst("select count(*) total from ("+ totalSql
+        		+") B");
+        System.out.println("总数："+re.get("total"));
+        List<Record> rec = Db.find(totalSql + sLimit);
         Map orderMap = new HashMap();
-    	orderMap.put("iTotalRecords", rec.size());
-        orderMap.put("iTotalDisplayRecords", rec.size());
-       
+    	orderMap.put("iTotalRecords", re.get("total"));
+        orderMap.put("iTotalDisplayRecords", re.get("total"));
         orderMap.put("sEcho", pageIndex);
-        orderMap.put("aaData", orders);
+        orderMap.put("aaData", rec);
         renderJson(orderMap);
 	}
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
@@ -250,55 +260,106 @@ public class InventoryController extends Controller {
         String warehouseId = getPara("warehouseId");
         String officeId = getPara("officeId");
         String itemId = getPara("itemId");
+        String beginTime = getPara("beginTime");
+        String endTime = getPara("endTime");
+        
         if("all".equalsIgnoreCase(officeId)){
      	   officeId = "";
         }
         if("all".equalsIgnoreCase(warehouseId)){
     			warehouseId = "";
-    		}
+    	}
        //获取当前用户的总公司
        ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
        
        Long parentID = pom.getParentOfficeId();
        
        
-       String sql = " from inventory_item i_t "
-					+" left join product p on  i_t.product_id = p.id "
-					+" left join party p2 on i_t.party_id = p2.id  "
-					+" left join contact c on p2.contact_id = c.id "
-					+" left join warehouse w on  i_t.warehouse_id = w.id "
-					+" left join office o on w.office_id = o.id "
-					+" left join office p_o on p2.office_id = p_o.id "
-					+" where 1=1 and (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (p_o.id = " + parentID + " or p_o.belong_office = " + parentID + ") ";
-				
-        
-	    if((customerId != null) && !"".equals(customerId)){
-	    	sql = sql + " and i_t.party_id =" + customerId ;
-	    	
-	    }
-        if(warehouseId != null && !"".equals(warehouseId)){
-        	
-        	sql = sql + " and i_t.warehouse_id =" + warehouseId ;
+//       String sql = " from inventory_item i_t "
+//					+" left join product p on  i_t.product_id = p.id "
+//					+" left join party p2 on i_t.party_id = p2.id  "
+//					+" left join contact c on p2.contact_id = c.id "
+//					+" left join warehouse w on  i_t.warehouse_id = w.id "
+//					+" left join office o on w.office_id = o.id "
+//					+" left join office p_o on p2.office_id = p_o.id "
+//					+" where 1=1 and (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (p_o.id = " + parentID + " or p_o.belong_office = " + parentID + ") ";
+//		
+
+       
+        String conditions = " where 1=1 ";
+        if (StringUtils.isNotEmpty(customerId)){
+        	conditions += " and customer_id = " + customerId;
         }
-        
-        if((officeId != null) && !"".equals(officeId)){
-        	sql = sql + " and w.office_id =" + officeId ;
-        }
-        
-        if(itemId != null && !"".equals(itemId)){
-        	sql = sql + " and i_t.product_id =" + itemId;
-        	
-        }
-        
-        String totalAmountSql = "select sum(i_t.total_quantity) total" + sql ;
-        Record amoutRec = Db.findFirst(totalAmountSql);
-        if(amoutRec.get("total") == null || "" .equals(amoutRec.get("total"))){
-        	renderJson(0);
+		if (StringUtils.isNotEmpty(warehouseId)){
+			conditions += " and warehouse_id = " + warehouseId;
+		}
+		if (StringUtils.isNotEmpty(officeId)){
+			conditions += " and office_id = " + officeId;
+		}
+		if (StringUtils.isNotEmpty(itemId)){
+			conditions += " and product_id = " + itemId;
+		}
+        if (StringUtils.isNotEmpty(beginTime)){
+       	 	beginTime = " and planning_time between'"+beginTime+"'";
         }else{
-        	renderJson(amoutRec.get("total"));
+       	 	beginTime =" and planning_time between '1970-1-1'";
         }
-        	
+       
+        if (StringUtils.isNotEmpty(endTime)){
+       		endTime =" and '"+endTime+"'";
+        }else{
+       		endTime =" and '3000-1-1'";
+        }
+        conditions += beginTime+endTime;
         
+       String sql = " SELECT toi.id, p.item_name, p.item_no,tor.customer_id,tor.office_id,tor.warehouse_id,tor.planning_time,c.abbr customer_name,w.warehouse_name,o.office_name, toi.product_id ,"
+       		+ " (select count(*) from transfer_order_item_detail toid"
+       		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
+       		+ " where toid.item_id = toi.id and toid.delivery_id is null and (toid.depart_id is null or dor.`STATUS` != '已入库')"
+       		+ " ) pre_amount,"
+       		+ " (select count(*) from transfer_order_item_detail toid"
+       		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
+       		+ " where toid.item_id = toi.id"
+       		+ " and dor.`STATUS` = '已入库'"
+       		+ " and toid.delivery_id is null"
+       		+ " ) effective_amount,"
+       		+ " (select count(*) from transfer_order_item_detail toid"
+       		+ " LEFT JOIN delivery_order deo on deo.id = toid.delivery_id"
+       		+ " where toid.item_id = toi.id"
+       		+ " and deo.`STATUS` = '新建'"
+       		+ " ) lock_amount,"
+       		+ " (select count(*) from transfer_order_item_detail toid"
+       		+ " LEFT JOIN delivery_order deo on deo.id = toid.delivery_id"
+       		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
+       		+ " where toid.item_id = toi.id"
+       		+ " and (deo.`STATUS` = '新建' or ( dor.`STATUS` = '已入库'  and toid.delivery_id is null))"
+       		+ " ) actually_amount,"
+       		+ " (select count(*) from transfer_order_item_detail toid "
+       		+ " LEFT JOIN delivery_order deo on deo.id = toid.delivery_id"
+       		+ " where toid.item_id = toi.id"
+       		+ " and deo.`STATUS` != '新建' "
+       		+ " and deo.`STATUS` is not null"
+       		+ " ) have_delivery_amount ,"
+       		+ " (select count(*) from transfer_order_item_detail toid "
+       		+ " where toid.item_id = toi.id"
+       		+ " ) all_amount,p.unit"
+       		+ " FROM `transfer_order_item` toi"
+       		+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id"
+       		+ " LEFT JOIN contact c on c.id = tor.customer_id "
+       		+ " LEFT JOIN office o on o.id = tor.office_id"
+       		+ " left join product p on p.id = toi.product_id"
+       		+ " LEFT JOIN warehouse w on w.id = tor.warehouse_id ";
+       Record re = Db.findFirst("select sum(ifnull(pre_amount,0)) pre_amount,sum(ifnull(have_delivery_amount,0)) have_delivery_amount,sum(ifnull(effective_amount,0)) effective_amount,sum(ifnull(lock_amount,0)) lock_amount,sum(ifnull(actually_amount,0)) actually_amount from ("+ sql + ") A "+ conditions);
+       System.out.println("总数："+re.get("total"));
+       
+       Map orderMap = new HashMap();
+       orderMap.put("pre_amount", re.get("pre_amount"));
+       orderMap.put("effective_amount", re.get("effective_amount"));
+       orderMap.put("lock_amount", re.get("lock_amount"));
+       orderMap.put("have_delivery_amount", re.get("have_delivery_amount"));
+       orderMap.put("actually_amount", re.get("actually_amount"));
+       
+       renderJson(orderMap);  
     }
     // 入库单添加
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_WO_INCREATE})

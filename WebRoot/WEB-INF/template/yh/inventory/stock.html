@@ -54,8 +54,17 @@
                   </div> 
                   <div class="col-lg-3" style='float:right'>
 	                 <div class="form-group">
-	                 	<label>数量汇总: </label>
-	                 	<strong><span id="totalAmount" style="color:green;">0</span></strong>
+	                 	<label>汇总</label><br/>
+	                 	<label>预入库存: </label>
+	                 	<strong><span id="preAmount" style="color:green;">0</span></strong><br/>
+	                 	<label>有效库存: </label>
+	                 	<strong><span id="effectiveAmount" style="color:green;">0</span></strong><br/>
+	                 	<label>锁定库存: </label>
+	                 	<strong><span id="lockAmount" style="color:green;">0</span></strong><br/>
+	                 	<label>已配送库存: </label>
+	                 	<strong><span id="have_deliveryAmount" style="color:green;">0</span></strong><br/>
+	                 	<label>当前实际库存: </label>
+	                 	<strong><span id="actuallyAmount" style="color:red;">0</span></strong>
 	                  	<!-- <input class="form-control search-control" id="totalAmount" value="0" style="text-align:right" disabled> -->               
 	                 </div>
 	             </div>    
@@ -65,16 +74,16 @@
 		 			<table class="table table-striped table-bordered table-hover datatable" id="example">
 						<thead>
 							<tr>
-								<th>产品名称</th>
 								<th>产品型号</th>
 								<th>客户</th>
 								<th>预入库存</th>
 								<th>有效库存</th>
 								<th>锁定库存</th>
+								<th>已配送库存</th>
 								<th>当前实际库存</th>
 								<th>单位</th>
-								<th>仓库</th>
 								<th>网点</th>
+								<th>仓库</th>
 							</tr>
 						</thead>
 						<tbody>

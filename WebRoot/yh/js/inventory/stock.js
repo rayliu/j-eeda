@@ -16,16 +16,16 @@ $(document).ready(function() {
 	   	},
         "sAjaxSource":"/stock/stocklist",
 		"aoColumns": [
-			{"mDataProp":"ITEM_NAME", "sWidth":"100px"},
             {"mDataProp":"ITEM_NO", "sWidth":"80px"}, 
-            {"mDataProp":"COMPANY_NAME", "sWidth":"130px"},
-            {"mDataProp":"PREDICT_AMOUNT","sWidth":"40px"},
-            {"mDataProp":"VALID_AMOUNT","sWidth":"40px"},
+            {"mDataProp":"CUSTOMER_NAME", "sWidth":"130px"},
+            {"mDataProp":"PRE_AMOUNT","sWidth":"40px"},
+            {"mDataProp":"EFFECTIVE_AMOUNT","sWidth":"40px"},
             {"mDataProp":"LOCK_AMOUNT","sWidth":"40px"},
-            {"mDataProp":"TOTAL_QUANTITY", "sWidth":"80px"},
+            {"mDataProp":"HAVE_DELIVERY_AMOUNT","sWidth":"40px"},
+            {"mDataProp":"ACTUALLY_AMOUNT", "sWidth":"80px"},
             {"mDataProp":"UNIT", "sWidth":"30px"},
-            {"mDataProp":"WAREHOUSE_NAME",'bVisible':false,"sWidth":"120px"},
-            {"mDataProp":"OFFICE_NAME",'bVisible':false,"sWidth":"100px"}
+            {"mDataProp":"OFFICE_NAME",'bVisible':false,"sWidth":"100px"},
+            {"mDataProp":"WAREHOUSE_NAME",'bVisible':false,"sWidth":"120px"}
            ]
 	});
 	
@@ -40,9 +40,6 @@ $(document).ready(function() {
 			$.get('/gateIn/findWarehouseById',{"warehouseName":warehouseName,"officeId":officeId,"customerId":customerId}, function(data){
 				var warehouseList =$("#warehouseList");
 				warehouseList.empty();
-				if(data.length > 1){
-					warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='All'>所有仓库</a></li>");
-				}
 				for(var i = 0; i < data.length; i++)
 				{
 					warehouseList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</a></li>");
@@ -96,9 +93,6 @@ $(document).ready(function() {
 			var officeList =$("#officeList");
 			officeList.empty();
 			var customerId = $("#hiddenCustomerId").val();
-			if(customerId != null && customerId != "" && data.length>1){
-				officeList.append("<li><a tabindex='-1' class='fromLocationItem'  code='all'>所有网点</a></li>");
-			}
 			for(var i = 0; i < data.length; i++)
 			{
 				officeList.append("<li><a tabindex='-1' class='fromLocationItem'  code='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</a></li>");
@@ -117,16 +111,8 @@ $(document).ready(function() {
 		$('#officeSelect').val($(this).text());
 		$('#officeList').hide();
 		$("#hiddenOfficeId").val(id);
-		
-		
-		 var warehouseId = $("#warehouseId").val();
-		 
-		 if(warehouseId == ""){
-			 $("#warehouseSelect").val("所有仓库");
-			 $("#warehouseId").val("all");
-		 }
-		
 	});
+	
 	$('#officeSelect').on('blur', function(){
 		$("#officeList").hide();
 	});
@@ -181,8 +167,8 @@ $(document).ready(function() {
         	top:$(this).position().top+32+"px" 
         }); 
         $('#customerList').show();
-
 	});
+	
 
  	// 没选中客户，焦点离开，隐藏列表
 	$('#customerMessage').on('blur', function(){
@@ -205,40 +191,19 @@ $(document).ready(function() {
 		$("#hiddenCustomerId").val($(this).attr('partyId'));
 		$('#customerList').hide();
 		
-		
-		 var warehouseId = $("#warehouseId").val();
-		 var officeId = $("#hiddenOfficeId").val();
-		 if(officeId == ""){
-			 $("#officeSelect").val("所有网点");
-			 $("#hiddenOfficeId").val("all");
-		 }
-		 if(warehouseId == ""){
-			 $("#warehouseSelect").val("所有仓库");
-			 $("#warehouseId").val("all");
-		 }
     }); 
 	
 	
-	$("#queryBtn").click(function(){
+	$("#queryBtn").on("click",function(){
 		 var customerId = $("#hiddenCustomerId").val();
 		 var warehouseId = $("#warehouseId").val();
 		 var officeId = $("#hiddenOfficeId").val();
 		 var itemId = $("#hiddenItemId").val();
 		 
-		 if(warehouseId == "" || warehouseId == "all"){
-			 tab.fnSetColumnVis( 8, false);
-		 }else{
-			 tab.fnSetColumnVis( 8, true);
-		 }
-		 if(officeId == "" || officeId == "all"){
-			 tab.fnSetColumnVis( 9, false);
-		 }else{
-			 tab.fnSetColumnVis( 9, true);
-		 }
-		 
-	     tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId
+         tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId
 	     					+"&warehouseId="+warehouseId+"&officeId="+officeId
 	     					+"&itemId="+itemId;
+
 	     if(customerId !="" || warehouseId != "" || officeId != ""){
 	    	 $.ajax({  
 		            type : "post",  
@@ -246,8 +211,12 @@ $(document).ready(function() {
 		            dataType: "json",
 		            data : {customerId: customerId, warehouseId: warehouseId, officeId: officeId, itemId: itemId},  
 		            success : function(data){  
-		            	/*$("#totalAmount").val(data);*/
-		            	$("#totalAmount").text(data);
+		            	$("#preAmount").text(data.pre_amount==null?0:data.pre_amount);
+		            	$("#effectiveAmount").text(data.effective_amount==null?0:data.effective_amount);
+		            	$("#lockAmount").text(data.lock_amount==null?0:data.lock_amount);
+		            	$("#have_deliveryAmount").text(data.have_delivery_amount==null?0:data.have_delivery_amount);
+		            	$("#actuallyAmount").text(data.actually_amount==null?0:data.actually_amount);
+
 		            }  
 		        });
 	     }
