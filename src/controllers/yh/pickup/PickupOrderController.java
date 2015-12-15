@@ -2097,6 +2097,7 @@ public class PickupOrderController extends Controller {
         	departOrderFinItem.set("fin_item_id", finItem.get("id"));
         	departOrderFinItem.set("amount", avg);
         	departOrderFinItem.set("create_date", new Date());
+        	departOrderFinItem.set("cost_source", "分摊费用");
         	departOrderFinItem.save();
         }
         renderJson("{\"success\":true}");
