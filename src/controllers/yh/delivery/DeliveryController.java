@@ -236,7 +236,7 @@ public class DeliveryController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String status = getPara("status");
-		String serial_no = getPara("serial_no");
+		String serial_no = getPara("serial_no")==null?"":getPara("serial_no");
 		if(status != null && status != ""){
 			if(status.equals("ok")){
 				status = "('已送达', '已签收')";
@@ -280,8 +280,8 @@ public class DeliveryController extends Controller {
 				+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
 				+ " WHERE doi.delivery_id = d.id"
 				+ " ) serial_no,"
-				+ " (select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
-				+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+				+ " (select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
+				//+ " ,(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 				+ " from delivery_order d "
 				+ " left join party p on d.customer_id = p.id "
 				+ " left join contact c on p.contact_id = c.id "
@@ -302,8 +302,8 @@ public class DeliveryController extends Controller {
 					+ "c.abbr as customer,"
 					+ "c2.company_name as c2,"
 					+ ""
-					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
-					+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
+					//+ ",(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 					+ "from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
@@ -329,8 +329,8 @@ public class DeliveryController extends Controller {
 					+ "c.abbr as customer,"
 					+ "c2.company_name as c2,"
 					+ ""
-					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
-					+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
+					//+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 					+ "from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
@@ -378,8 +378,8 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
 					+ " WHERE doi.delivery_id = d.id"
 					+ " ) serial_no,"
-					+ " (select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no, "
-					+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
+					+ " (select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
+					//+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
