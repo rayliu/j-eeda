@@ -279,7 +279,7 @@ public class CostItemConfirmController extends Controller {
 				+ " null as booking_note_number,"
 				+ " null as customer_delivery_no,"
 				+ " (select ifnull(sum(ifi.insurance_amount),0) from insurance_fin_item ifi  where ifi.insurance_order_id = ior.id and IFNULL(ifi.cost_source,'') != '对账调整金额') pay_amount, "
-				+ " round((SELECT sum(amount) FROM insurance_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id WHERE dofi.insurance_order_id = ior.id AND fi.type = '应付' ),2) change_amount,"
+				+ " round((SELECT sum(insurance_amount) FROM insurance_fin_item dofi LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id WHERE dofi.insurance_order_id = ior.id AND fi.type = '应付' ),2) change_amount,"
 				+ " group_concat(distinct tor.order_no separator '\r\n') transfer_order_no,"
 				+ " ior.sign_status return_order_collection,"
 				+ " ior.remark,"
