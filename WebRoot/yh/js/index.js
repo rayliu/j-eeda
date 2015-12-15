@@ -1,9 +1,9 @@
-$(document).ready(function() {
-	document.title = '管理看板 | '+document.title;
-    
-	console.log("当前选择："+$("input[name='optionsRadiosInline'][checked]").val());
-	
-	var transferOrderTypeTbody = $('#transferOrderTypeTbody').dataTable({
+$(document).ready(function () {
+    document.title = '管理看板 | ' + document.title;
+
+    console.log("当前选择：" + $("input[name='optionsRadiosInline'][checked]").val());
+
+    var todoListTable = $('#todo_list_table').dataTable({
 		"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -14,82 +14,19 @@ $(document).ready(function() {
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	"sAjaxSource": "/transferOrder/findTransferOrderType?pointInTime="+$("input[name='optionsRadiosInline'][checked]").val(),
+    	"sAjaxSource": "/getTodoList",
         "aoColumns": [
-            { "mDataProp": "ORDER_NO","sWidth":"100px",
-            	"fnRender":function(obj){
-            		return "<a href='/transferOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            	}},
-            {"mDataProp":null, "sWidth":"150px",
-            	"fnRender": function(obj) {
-            		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO;
-            	}
-            },
-            { "mDataProp": "STATUS", "sWidth":"100px"},
-            { "mDataProp": "CREATE_STAMP", "sWidth":"150px"},
-            { "mDataProp": null,"sWidth":"100px"},
-        ]
-    });
-	
-	var deliveryOrderTypeTbody = $('#deliveryOrderTypeTbody').dataTable({
-		"bFilter": false, //不需要默认的搜索框
-    	"bSort": false, // 不要排序
-    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 10,
-    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-    	"bServerSide": true,
-    	"bLengthChange":false,
-    	"oLanguage": {
-    		"sUrl": "/eeda/dataTables.ch.txt"
-    	},
-    	"sAjaxSource": "/delivery/findDeliveryOrderType?pointInTime="+$("input[name='optionsRadiosInline'][checked]").val(),
-        "aoColumns": [
-            { "mDataProp": "ORDER_NO","sWidth":"100px",
+            { "mDataProp": "ORDER_NO", "sWidth":"100px",
             	"fnRender":function(obj){
             		return  "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
             	}},
-            {"mDataProp":null, "sWidth":"150px",
+            {"mDataProp":null,
             	"fnRender": function(obj) {
-            		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO;
+            		return " 该配送单业务要求配送时间为：" + obj.aData.BUSINESS_STAMP  + ", 请安排配送。";
             	}
-            },
-            { "mDataProp": "STATUS", "sWidth":"100px"},
-            { "mDataProp": "CREATE_STAMP", "sWidth":"150px"},
-            { "mDataProp": null,"sWidth":"100px"},
+            }
         ]
     });
-	
-	var returnOrderTypeTbody = $('#returnOrderTypeTbody').dataTable({
-		"bFilter": false, //不需要默认的搜索框
-    	"bSort": false, // 不要排序
-    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 10,
-    	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-    	"bServerSide": true,
-    	"bLengthChange":false,
-    	"oLanguage": {
-    		"sUrl": "/eeda/dataTables.ch.txt"
-    	},
-    	"sAjaxSource": "/returnOrder/findReturnOrderType?pointInTime="+$("input[name='optionsRadiosInline'][checked]").val(),
-        "aoColumns": [
-            { "mDataProp": "ORDER_NO","sWidth":"100px",
-            	"fnRender":function(obj){
-            		return "<a href='/returnOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            	}},
-            { "mDataProp": "NOTIFY_PARTY_NAME", "sWidth":"150px"},
-            // {"mDataProp":null, "sWidth":"150px",
-            // 	"fnRender": function(obj) {
-            // 		return obj.aData.ROUTE_FROM + " —— " + obj.aData.ROUTE_TO
-            // 	}
-            // },
-            { "mDataProp": "TRANSACTION_STATUS", "sWidth":"70px"},
-            { "mDataProp": "CREATE_DATE", "sWidth":"150px"},
-            { "mDataProp": "AMOUNT","sWidth":"100px"},
-        ]
-    });
-	$("#btn,#clbtn").on('click',function(){
-		$("#exampleModal").css("display","none");
-	});
 	
 	var findAllCount = function(pointInTime){
 		//查询系统单据数量合计
@@ -106,12 +43,9 @@ $(document).ready(function() {
 	//切换查询
 	$("input[name='optionsRadiosInline']").change(function() {
 		findAllCount($(this).val());
-		transferOrderTypeTbody.fnSettings().sAjaxSource = "/transferOrder/findTransferOrderType?pointInTime="+$(this).val();
-		transferOrderTypeTbody.fnDraw(); 
-		deliveryOrderTypeTbody.fnSettings().sAjaxSource = "/delivery/findDeliveryOrderType?pointInTime="+$(this).val();
-		deliveryOrderTypeTbody.fnDraw();
-		returnOrderTypeTbody.fnSettings().sAjaxSource = "/returnOrder/findReturnOrderType?pointInTime="+$(this).val();
-		returnOrderTypeTbody.fnDraw();
+		
+		// deliveryOrderTypeTbody.fnSettings().sAjaxSource = "/delivery/findDeliveryOrderType?pointInTime="+$(this).val();
+		// deliveryOrderTypeTbody.fnDraw();
 	}); 
 	
 	
