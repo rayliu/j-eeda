@@ -1448,7 +1448,7 @@ public class CostCheckOrderController extends Controller {
 				+ " union "
 				+ " SELECT DISTINCT amco.id,amcoi.id did,amco.order_no,amco. STATUS,c.abbr spname,c1.abbr customer_name,'' receivingunit,amco.total_amount,NULL AS volume,NULL AS weight,amco.create_stamp,ul.user_name creator,"
 				+ " '成本单' business_type, '' booking_note_number, '' route_from ,'' route_to,"
-				+ " (SELECT ifnull(sum(amount),0) FROM arap_misc_cost_order_item amcoi LEFT JOIN fin_item fi ON fi.id = amcoi.fin_item_id WHERE amcoi.misc_order_id= amco.id ) pay_amount,(SELECT ROUND(ifnull(sum(change_amount),0),2) FROM arap_misc_cost_order_item amcoi LEFT JOIN fin_item fi ON fi.id = amcoi.fin_item_id WHERE amcoi.misc_order_id= amco.id ) AS change_amount,NULL AS transfer_order_no,NULL AS return_order_collection,amco.remark remark,NULL AS office_name "
+				+ " (SELECT ifnull(sum(amount),0) FROM arap_misc_cost_order_item amcoi LEFT JOIN fin_item fi ON fi.id = amcoi.fin_item_id WHERE amcoi.misc_order_id= amco.id ) pay_amount,(SELECT ROUND(ifnull(sum(amount),0),2) FROM arap_misc_cost_order_item amcoi LEFT JOIN fin_item fi ON fi.id = amcoi.fin_item_id WHERE amcoi.misc_order_id= amco.id ) AS change_amount,NULL AS transfer_order_no,NULL AS return_order_collection,amco.remark remark,NULL AS office_name "
 				+ " FROM arap_misc_cost_order amco "
 				+ " LEFT JOIN arap_misc_cost_order_item amcoi ON amcoi.misc_order_id = amco.id "
 				+ " LEFT JOIN user_login ul ON ul.id = amco.create_by "

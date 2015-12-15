@@ -124,18 +124,22 @@ $(document).ready(function() {
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
             {"mDataProp":"CHANGE_AMOUNT","sWidth":"60px",
             	"fnRender": function(obj) {
-                    if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
-                        return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
-                        
-                    }
-                    else {
-                    	if(obj.aData.PAY_AMOUNT!=null){
-                        return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
-                    	}
-                    	else{
-                    		return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
-                    	}
-                    }
+            		if(obj.aData.BUSINESS_TYPE!="成本单"){
+            			if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+            				return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";   
+            			}
+            			else {
+            				if(obj.aData.PAY_AMOUNT!=null){
+            					return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+            				}
+            				else{
+            					return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
+            				}
+            			}
+              	  	}
+            		else{
+            			return ""+obj.aData.PAY_AMOUNT;
+            		}
                 }
             },
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
@@ -252,14 +256,10 @@ $(document).ready(function() {
 		
 		if($(this).prop("checked") == true){
 			if(spType.length!=0){
-			if(spType[0] != $(this).parent().siblings('.spname')[0].innerHTML){
-				alert("请选择相同的供应商!");
-				return false;
-			}
-			}
-			if($(this).attr('change_amount')==0){
-				$.scojs_message('金额不能为0', $.scojs_message.TYPE_ERROR);
-				return false;
+				if(spType[0] != $(this).parent().siblings('.spname')[0].innerHTML){
+					alert("请选择相同的供应商!");
+					return false;
+				}
 			}
 			if($(this).parent().siblings('.spname')[0].innerHTML != ''){
 				spType.push($(this).parent().siblings('.spname')[0].innerHTML);
