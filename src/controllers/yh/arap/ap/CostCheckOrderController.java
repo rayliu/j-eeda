@@ -417,143 +417,26 @@ public class CostCheckOrderController extends Controller {
 								.findById(orderIdsArr[i]);
 						departOrder.set("audit_status", "对账中");
 						departOrder.update();
-						double amount = 0.0;
-						List<Record> BillingOrders = Db
-								.find("select id,amount,change_amount from pickup_order_fin_item where fin_item_id!=7 and pickup_order_id= ?",
-										orderIdsArr[i]);
-						for (int j = 0; j < BillingOrders.size(); j++) {
-							Record b = BillingOrders.get(j);
-							if (b.getDouble("CHANGE_AMOUNT") == null) {
-								if (b.getDouble("AMOUNT") == null) {
-									amount = 0.0;
-								} else {
-									amount = b.getDouble("AMOUNT");
-								}
-							} else {
-								amount = b.getDouble("CHANGE_AMOUNT");
-							}
-							Long id = b.getLong("ID");
-							DecimalFormat df = new DecimalFormat("0.00");
-							String num = df.format(amount);
-							PickupOrderFinItem pickuporderfinitem = PickupOrderFinItem.dao
-									.findById(id);
-							pickuporderfinitem.set("change_amount", num);
-							pickuporderfinitem.update();
-						}
 					} else if ("零担".equals(orderNoArr[i])) {
 						DepartOrder departOrder = DepartOrder.dao
 								.findById(orderIdsArr[i]);
 						departOrder.set("audit_status", "对账中");
 						departOrder.update();
-						double amount = 0.0;
-						List<Record> BillingOrders = Db
-								.find("select id,amount,change_amount from depart_order_fin_item where depart_order_id=?",
-										orderIdsArr[i]);
-						for (int j = 0; j < BillingOrders.size(); j++) {
-							Record b = BillingOrders.get(j);
-							if (b.getDouble("CHANGE_AMOUNT") == null) {
-								if (b.getDouble("AMOUNT") == null) {
-									amount = 0.0;
-								} else {
-									amount = b.getDouble("AMOUNT");
-								}
-							} else {
-								amount = b.getDouble("CHANGE_AMOUNT");
-							}
-							Long id = b.getLong("ID");
-							DecimalFormat df = new DecimalFormat("0.00");
-							String num = df.format(amount);
-							DepartOrderFinItem departorfinitem = DepartOrderFinItem.dao
-									.findById(id);
-							departorfinitem.set("change_amount", num);
-							departorfinitem.update();
-						}
 					} else if ("配送".equals(orderNoArr[i])) {
 						DeliveryOrder deliveryOrder = DeliveryOrder.dao
 								.findById(orderIdsArr[i]);
 						deliveryOrder.set("audit_status", "对账中");
 						deliveryOrder.update();
-						double amount = 0.0;
-						List<Record> BillingOrders = Db
-								.find("select id,amount,change_amount from delivery_order_fin_item where order_id=?",
-										orderIdsArr[i]);
-						for (int j = 0; j < BillingOrders.size(); j++) {
-							Record b = BillingOrders.get(j);
-							if (b.getDouble("CHANGE_AMOUNT") == null) {
-								if (b.getDouble("AMOUNT") == null) {
-									amount = 0.0;
-								} else {
-									amount = b.getDouble("AMOUNT");
-								}
-							} else {
-								amount = b.getDouble("CHANGE_AMOUNT");
-							}
-							Long id = b.getLong("ID");
-							DecimalFormat df = new DecimalFormat("0.00");
-							String num = df.format(amount);
-							DeliveryOrderFinItem deliveryfinitem = DeliveryOrderFinItem.dao
-									.findById(id);
-							deliveryfinitem.set("change_amount", num);
-							deliveryfinitem.update();
-						}
 					} else if ("成本单".equals(orderNoArr[i])) {
 						ArapMiscCostOrder arapmisc = ArapMiscCostOrder.dao
 								.findById(orderIdsArr[i]);
 						arapmisc.set("audit_status", "对账中");
 						arapmisc.update();
-						double amount = 0.0;
-						List<Record> BillingOrders = Db
-								.find("select id,amount,change_amount from arap_misc_cost_order_item amcoi where misc_order_id=?",
-										orderIdsArr[i]);
-						for (int j = 0; j < BillingOrders.size(); j++) {
-							Record b = BillingOrders.get(j);
-							if (b.getDouble("CHANGE_AMOUNT") == null) {
-								if (b.getDouble("AMOUNT") == null) {
-									amount = 0.0;
-								} else {
-									amount = b.getDouble("AMOUNT");
-								}
-							} else {
-								amount = b.getDouble("CHANGE_AMOUNT");
-							}
-							Long id = b.getLong("ID");
-							DecimalFormat df = new DecimalFormat("0.00");
-							String num = df.format(amount);
-							ArapMiscCostOrderItem arapmiscorderitem = ArapMiscCostOrderItem.dao
-									.findById(id);
-							arapmiscorderitem.set("change_amount", num);
-							arapmiscorderitem.update();
-						}
-
 					} else {
 						InsuranceOrder insuranceOrder = InsuranceOrder.dao
 								.findById(orderIdsArr[i]);
 						insuranceOrder.set("audit_status", "对账中");
 						insuranceOrder.update();
-						double amount = 0.0;
-						List<Record> BillingOrders = Db
-								.find("select id,insurance_amount,change_amount from insurance_fin_item ifi where ifi.insurance_order_id=?",
-										orderIdsArr[i]);
-						for (int j = 0; j < BillingOrders.size(); j++) {
-							Record b = BillingOrders.get(j);
-							if (b.getDouble("CHANGE_AMOUNT") == null) {
-								if (b.getDouble("INSURANCE_AMOUNT") == null) {
-									amount = 0.0;
-								} else {
-									amount = b.getDouble("INSURANCE_AMOUNT");
-								}
-							} else {
-								amount = b.getDouble("CHANGE_AMOUNT");
-							}
-							Long id = b.getLong("ID");
-							DecimalFormat df = new DecimalFormat("0.00");
-							String num = df.format(amount);
-							InsuranceFinItem insurancefinitem = InsuranceFinItem.dao
-									.findById(id);
-							insurancefinitem.set("change_amount", num);
-							insurancefinitem.update();
-						}
-
 					}
 				}
 			}
@@ -605,143 +488,27 @@ public class CostCheckOrderController extends Controller {
 						.findById(orderIdsArr[i]);
 				departOrder.set("audit_status", "对账中");
 				departOrder.update();
-				double amount = 0.0;
-				List<Record> BillingOrders = Db
-						.find("select id,amount,change_amount from pickup_order_fin_item where fin_item_id!=7 and pickup_order_id= ?",
-								orderIdsArr[i]);
-				for (int j = 0; j < BillingOrders.size(); j++) {
-					Record b = BillingOrders.get(j);
-					if (b.getDouble("CHANGE_AMOUNT") == null) {
-						if (b.getDouble("AMOUNT") == null) {
-							amount = 0.0;
-						} else {
-							amount = b.getDouble("AMOUNT");
-						}
-					} else {
-						amount = b.getDouble("CHANGE_AMOUNT");
-					}
-					Long id = b.getLong("ID");
-					DecimalFormat df = new DecimalFormat("0.00");
-					String num = df.format(amount);
-					PickupOrderFinItem pickuporderfinitem = PickupOrderFinItem.dao
-							.findById(id);
-					pickuporderfinitem.set("change_amount", num);
-					pickuporderfinitem.update();
-				}
 			} else if ("零担".equals(orderNoArr[i])) {
 				DepartOrder departOrder = DepartOrder.dao
 						.findById(orderIdsArr[i]);
 				departOrder.set("audit_status", "对账中");
 				departOrder.update();
-				double amount = 0.0;
-				List<Record> BillingOrders = Db
-						.find("select id,amount,change_amount from depart_order_fin_item where depart_order_id=?",
-								orderIdsArr[i]);
-				for (int j = 0; j < BillingOrders.size(); j++) {
-					Record b = BillingOrders.get(j);
-					if (b.getDouble("CHANGE_AMOUNT") == null) {
-						if (b.getDouble("AMOUNT") == null) {
-							amount = 0.0;
-						} else {
-							amount = b.getDouble("AMOUNT");
-						}
-					} else {
-						amount = b.getDouble("CHANGE_AMOUNT");
-					}
-					Long id = b.getLong("ID");
-					DecimalFormat df = new DecimalFormat("0.00");
-					String num = df.format(amount);
-					DepartOrderFinItem departorfinitem = DepartOrderFinItem.dao
-							.findById(id);
-					departorfinitem.set("change_amount", num);
-					departorfinitem.update();
-				}
 			} else if ("配送".equals(orderNoArr[i])) {
 				DeliveryOrder deliveryOrder = DeliveryOrder.dao
 						.findById(orderIdsArr[i]);
 				deliveryOrder.set("audit_status", "对账中");
 				deliveryOrder.update();
-				double amount = 0.0;
-				List<Record> BillingOrders = Db
-						.find("select id,amount,change_amount from delivery_order_fin_item where order_id=?",
-								orderIdsArr[i]);
-				for (int j = 0; j < BillingOrders.size(); j++) {
-					Record b = BillingOrders.get(j);
-					if (b.getDouble("CHANGE_AMOUNT") == null) {
-						if (b.getDouble("AMOUNT") == null) {
-							amount = 0.0;
-						} else {
-							amount = b.getDouble("AMOUNT");
-						}
-					} else {
-						amount = b.getDouble("CHANGE_AMOUNT");
-					}
-					Long id = b.getLong("ID");
-					DecimalFormat df = new DecimalFormat("0.00");
-					String num = df.format(amount);
-					DeliveryOrderFinItem deliveryfinitem = DeliveryOrderFinItem.dao
-							.findById(id);
-					deliveryfinitem.set("change_amount", num);
-					deliveryfinitem.update();
-				}
 			} else if ("成本单".equals(orderNoArr[i])) {
 				ArapMiscCostOrder arapmisc = ArapMiscCostOrder.dao
 						.findById(orderIdsArr[i]);
 				arapmisc.set("audit_status", "对账中");
 				arapmisc.update();
-				double amount = 0.0;
-				List<Record> BillingOrders = Db
-						.find("select id,amount,change_amount from arap_misc_cost_order_item amcoi where misc_order_id=?",
-								orderIdsArr[i]);
-				for (int j = 0; j < BillingOrders.size(); j++) {
-					Record b = BillingOrders.get(j);
-					if (b.getDouble("CHANGE_AMOUNT") == null) {
-						if (b.getDouble("AMOUNT") == null) {
-							amount = 0.0;
-						} else {
-							amount = b.getDouble("AMOUNT");
-						}
-					} else {
-						amount = b.getDouble("CHANGE_AMOUNT");
-					}
-					Long id = b.getLong("ID");
-					DecimalFormat df = new DecimalFormat("0.00");
-					String num = df.format(amount);
-					ArapMiscCostOrderItem arapmiscorderitem = ArapMiscCostOrderItem.dao
-							.findById(id);
-					arapmiscorderitem.set("change_amount", num);
-					arapmiscorderitem.update();
-				}
 
 			} else {
 				InsuranceOrder insuranceOrder = InsuranceOrder.dao
 						.findById(orderIdsArr[i]);
 				insuranceOrder.set("audit_status", "对账中");
 				insuranceOrder.update();
-				double amount = 0.0;
-				List<Record> BillingOrders = Db
-						.find("select id,insurance_amount,change_amount from insurance_fin_item ifi where ifi.insurance_order_id=?",
-								orderIdsArr[i]);
-				for (int j = 0; j < BillingOrders.size(); j++) {
-					Record b = BillingOrders.get(j);
-					if (b.getDouble("CHANGE_AMOUNT") == null) {
-						if (b.getDouble("INSURANCE_AMOUNT") == null) {
-							amount = 0.0;
-						} else {
-							amount = b.getDouble("INSURANCE_AMOUNT");
-						}
-					} else {
-						amount = b.getDouble("CHANGE_AMOUNT");
-					}
-					Long id = b.getLong("ID");
-					DecimalFormat df = new DecimalFormat("0.00");
-					String num = df.format(amount);
-					InsuranceFinItem insurancefinitem = InsuranceFinItem.dao
-							.findById(id);
-					insurancefinitem.set("change_amount", num);
-					insurancefinitem.update();
-				}
-
 			}
 		}
 
