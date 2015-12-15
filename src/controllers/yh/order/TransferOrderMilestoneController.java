@@ -433,6 +433,7 @@ public class TransferOrderMilestoneController extends Controller {
             				.set("notify_party_id", transferorderitemdetail.get(i).get("notify_party_id"))
             				.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
             				.set("route_from",transferOrder.get("route_to"))
+            				.set("route_to",transferOrder.get("route_to"))
             				.set("pricetype", getPara("chargeType"))
             				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
             				.set("cargo_nature", transferOrder.get("cargo_nature"))
