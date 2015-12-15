@@ -474,7 +474,6 @@ $(document).ready(function() {
 				         }
 			    	 }
 			 }},
-			 {"mDataProp":"CHANGE_AMOUNT"},
 			/*
 			 * {"mDataProp":"FIN_ITEM_NAME","sWidth":
 			 * "80px","sClass": "name"},
