@@ -53,6 +53,10 @@ $(document).ready(function() {
             {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},
             {"mDataProp":"CHANGE_AMOUNT","sWidth":"100px",
               "fnRender": function(obj) {
+            	  if(obj.aData.BUSINESS_TYPE=="成本单"){
+            		  return obj.aData.CHANGE_AMOUNT;
+            	  }
+            	  else{
                     if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
                         return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                         
@@ -65,6 +69,7 @@ $(document).ready(function() {
                         return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
                       }
                     }
+            	  }
                 }
             },
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
