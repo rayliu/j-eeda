@@ -8,11 +8,11 @@
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/pickupOrder/pickuplist",
+        //"sAjaxSource": "/pickupOrder/pickuplist",
         "aoColumns": [   
 		    {"mDataProp":"DEPART_NO", "sWidth":"70px",
             	"fnRender": function(obj) {
@@ -78,6 +78,14 @@
                alert('取消失败');
        },'json');
 	});
+
+	$("#searchBtn").click(function(){
+        refreshData();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
     
     var refreshData=function(){
     	var sp_filter = $("#sp_filter").val();
@@ -90,17 +98,12 @@
 		var departNo_filter = $("#departNo_filter").val();
 		var beginTime = $("#beginTime_filter").val();
 		var endTime = $("#endTime_filter").val();
+
+		pickupOrder.fnSettings().oFeatures.bServerSide = true;
 		pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime+"&carNo="+carNo+"&take="+take+"&status="+status+"&office="+office+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter;
 		pickupOrder.fnDraw();
     };
-        
-    $('#endTime_filter, #beginTime_filter, #orderNo_filter ,#departNo_filter,#carNo_filter').on('keyup click', function () {
-    	refreshData();
-    });
-    
-	$("#status_filter, #officeSelect, #take_filter").on('change',function(){
-		refreshData();
-    });
+
 	//获取所有的网点
     $.post('/transferOrder/searchPartOffice',function(data){
     	if(data.length > 0){
@@ -118,7 +121,6 @@
         var companyList = $("#companyList");
         if(inputStr == ""){
         	$("#customer_id").val(null);
-        	refreshData();
         }
     	$.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
 	        companyList.empty();
@@ -135,7 +137,6 @@
         $('#customer_filter').val($(this).text());
         $('#customer_id').val($(this).attr('partyId'));
         $('#companyList').hide();
-    	refreshData();
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customer_filter').on('blur', function(){
@@ -250,7 +251,6 @@
 			address = '';
 		pageSpAddress.append(address);
         $('#spList').hide();
-        refreshData();
     });
 	
 });
