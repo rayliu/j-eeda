@@ -116,13 +116,13 @@ public class ReturnTransferController extends Controller{
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " where t.status !='取消' and t.order_type = 'cargoReturnOrder' "
-					+ " and t.order_no like '%"+ orderNo 
-					+ "%' and t.status like '%" + status
-					+ "%' and t.address like '%" + address
-					+ "%' and c1.abbr like '%" + customer
-					+ "%' and ifnull(c2.abbr,'') like '%" + sp
-					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
-					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
+					+ " and t.order_no like '%"+ orderNo.trim() 
+					+ "%' and t.status like '%" + status.trim()
+					+ "%' and t.address like '%" + address.trim()
+					+ "%' and c1.abbr like '%" + customer.trim()
+					+ "%' and ifnull(c2.abbr,'') like '%" + sp.trim()
+					+ "%' and ifnull(o.office_name,'')  like '%" + officeName.trim()
+					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no.trim()
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
 					+ "%' and t.create_stamp between '" + beginTime + "' and '" + endTime + "'  "
@@ -147,13 +147,13 @@ public class ReturnTransferController extends Controller{
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " where t.status !='取消' and t.order_type = 'cargoReturnOrder'"
-					+ " and t.order_no like '%" + orderNo
-					+ "%' and t.status like '%" + status
-					+ "%' and t.address like '%" + address
-					+ "%' and c1.abbr like '%" + customer
-					+ "%' and ifnull(c2.abbr,'') like '%" + sp
-					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
-					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
+					+ " and t.order_no like '%" + orderNo.trim()
+					+ "%' and t.status like '%" + status.trim()
+					+ "%' and t.address like '%" + address.trim()
+					+ "%' and c1.abbr like '%" + customer.trim()
+					+ "%' and ifnull(c2.abbr,'') like '%" + sp.trim()
+					+ "%' and ifnull(o.office_name,'')  like '%" + officeName.trim()
+					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no.trim()
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
 					+ "%' and t.create_stamp between '" + beginTime

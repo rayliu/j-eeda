@@ -18,11 +18,11 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/returnTransfer/list",
+        //"sAjaxSource": "/returnTransfer/list",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO", "sWidth":"70px",
             	"fnRender": function(obj) {
@@ -154,6 +154,8 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
+
+        transferOrder.fnSettings().oFeatures.bServerSide = true;
     	transferOrder.fnSettings().sAjaxSource = "/returnTransfer/list?orderNo="+orderNo +"&status="+status+"&address=" +address
     											+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
     											+"&endTime="+endTime+"&officeName="+officeName
@@ -162,25 +164,6 @@ $(document).ready(function() {
     											+"&customer_order_no="+customer_order_no;
     	transferOrder.fnDraw(); 
     };
-    $("#oname_filter,#orderNo_filter,#customer_order_no_filter").on( 'keyup click', function () {
-    	refreshData();
-    });
-
-    $("#plantime,#arrivaltime").on('keyup click', function () {
-		refreshData();
-	});
-  
-    $('#status_filter,#order_type_filter').on( 'change', function () {
-    	refreshData();
-    });
-    
-    $("#officeSelect").on('change',function(){
-    	refreshData();
-    });
-    
-    $('input.address_filter').on( 'keyup click', function () {
-    	refreshData();
-    });
     
     //获取所有的网点
 	$.post('/transferOrder/searchPartOffice',function(data){
@@ -215,7 +198,6 @@ $(document).ready(function() {
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-    	refreshData();
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customer_filter').on('blur', function(){
@@ -307,45 +289,15 @@ $(document).ready(function() {
 			address = '';
 		pageSpAddress.append(address);
         $('#spList').hide();
+    });
+
+    
+    $("#searchBtn").click(function(){
         refreshData();
     });
-    
-    
-    //根据输入的名称过滤
-   /* $('input.customer_filter').on('keyup click', function () {
-    	refreshData();
-    });
-    
-    $('input.sp_filter').on('keyup click', function () {
-    	refreshData();
-    });*/
-    
-    
-    $('#beginTime_filter').on('keyup click', function () {
-    	refreshData();
-    });    
-    
-    $('#endTime_filter').on('keyup click', function () {
-    	refreshData();
-    });
-    
-    // 导入运输单
-    $("#fileUploadBtn").click(function(){
-    	$("#toFileUpload").click();
-    });
-    
-	$('#toFileUpload').fileupload({
-        dataType: 'json',
-        done: function (e, data) {
-        	$("#footer").show();
-        	$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
-        	transferOrder.fnDraw();
-        },  
-        progressall: function (e, data) {//设置上传进度事件的回调函数  
-        	$('#centerBody').empty().append('<img src="/yh/image/loading5.gif" width="20%"><h4>导入过程可能需要一点时间，请勿退出页面！</h4>');
-        	$('#myModal').modal('show');
-        	$("#footer").hide();
-        } 
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
     });
 
     $('#datetimepicker').datetimepicker({  
