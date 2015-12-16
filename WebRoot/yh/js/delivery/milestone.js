@@ -230,7 +230,7 @@ $(document).ready(function() {
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
     
-    $('#endTime_filter ,#beginTime_filter  ,#deliveryNo_filter  ,#deliveryNo_filter  ,#serial_no, #status').on('keyup click', function(){
+    $('#endTime_filter ,#beginTime_filter  ,#deliveryNo_filter  ,#transferorderNo_filter,#deliveryNo_filter  ,#serial_no, #status').on('keyup click', function(){
     	//console.log($("#sp_filter").val());
     	var deliveryNo = $("#deliveryNo_filter").val();
     	var customer = $("#customer_filter").val();
