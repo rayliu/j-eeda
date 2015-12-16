@@ -622,6 +622,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				for (int j = 0; j < lines.size(); j++) {
 					String serialNo = lines.get(j).get("单品序列号");
 					String customerOrderNo = lines.get(j).get("客户订单号");
+					String customer = lines.get(j).get("客户名称(简称)");
 					Map order = orders.get(customerOrderNo);
 					if (order == null) {
 						causeRow++;
@@ -637,10 +638,17 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						addItem(lines, j, serialNo, order);
 						// check 系统中是否已存在
 						if(!"".equals(serialNo)){
+							// 客户名称
+							Party customerID = Party.dao
+									.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
+											+ Party.PARTY_TYPE_CUSTOMER
+											+ "' and c.abbr ='"
+											+ customer
+											+ "';");
 							TransferOrderItemDetail detail = TransferOrderItemDetail.dao
 									.findFirst(
-											"SELECT * from transfer_order_item_detail where serial_no=?",
-											serialNo);
+											"SELECT * from transfer_order_item_detail toid LEFT JOIN transfer_order tor on tor.id=toid.order_id where toid.serial_no=? and tor.customer_id=?",
+											serialNo,customerID);
 								if(detail!=null){
 									throw new Exception("序列号已存在");
 								}
