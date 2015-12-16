@@ -2,18 +2,18 @@
     var subIndex=0;
    
 
-    $('#addActionBtn').on('click', function(event) {
+    $('#addCommandBtn').on('click', function(event) {
         var item={
             "ID": '',
-            "ACTION_NAME": '',
-            "ACTION_TYPE": '',
-            "ACTION_DESC": ''
+            "NAME": '',
+            "CONDITIONS": '',
+            "SCRIPT": ''
         };
-        action_table.row.add(item).draw(false);
+        action_command_table.row.add(item).draw(false);
     });
     //-------------   子表的动态处理
 
-    var action_tableSetting = {
+    var action_command_tableSetting = {
         paging: false,
         "info": false,
         "processing": true,
@@ -33,14 +33,14 @@
                 }
             },
             { "data": "ID", visible: false},
-            { "data": "ACTION_NAME", width: '150px',
+            { "data": "NAME", width: '150px',
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
                   return '<input type="text" value="'+data+'" class="product_no form-control"/>';
                 }
             },
-            { "data": "ACTION_TYPE", width: '150px',
+            { "data": "CONDITIONS", width: '100px',
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -50,7 +50,7 @@
                         +'</select>';
                 }
             },
-            { "data": "ACTION_TRIGGER", width: '150px',
+            { "data": "SCRIPT", width: '150px',
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -58,39 +58,32 @@
                         +'    <option '+(data=='点击'?'selected':'')+'>点击</option>'
                         +'</select>';
                 }
-            },
-            { "data": "ACTION_SCRIPT",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                    return '<p>新建</p><p>更新</p><input class="btn btn-default btn-xs defineAction" type="button" value="编辑命令">';
-                }
             }
         ]
     };
 
-    var action_table = $('#action_table').DataTable(action_tableSetting);
+    var action_command_table = $('#action_command_table').DataTable(action_command_tableSetting);
 
-    var $action_table = $("#action_table");
+    var $action_command_table = $("#action_command_table");
 
     //删除表中一行
-    $action_table.on('click', '.defineAction', function(e){
+    $action_command_table.on('click', '.defineAction', function(e){
         e.preventDefault();
         $('#actionModal').modal('show');
     });
 
     var deletedActionIds=[];
     //删除表中一行
-    $action_table.on('click', '.delete', function(e){
+    $action_command_table.on('click', '.delete', function(e){
         e.preventDefault();
         var tr = $(this).parent().parent();
         deletedActionIds.push(tr.attr('id'))
 
-        action_table.row(tr).remove().draw();
+        action_command_table.row(tr).remove().draw();
     });
 
-    var buildActionArray=function(){
-        var table_rows = $action_table.find('tr');
+    var buildActionCommandArray=function(){
+        var table_rows = $action_command_table.find('tr');
         var items_array=[];
         for(var index=0; index<table_rows.length; index++){
             if(index==0)

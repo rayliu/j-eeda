@@ -26,7 +26,7 @@
 				  <!-- Nav tabs -->
 				  <ul class="nav nav-tabs" role="tablist">
 				    <li role="presentation" class="active"><a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">字段</a></li>
-				    <li role="presentation"><a href="#action" aria-controls="action" role="tab" data-toggle="tab">动作</a></li>
+				    <li role="presentation"><a href="#action" aria-controls="action" role="tab" data-toggle="tab">按钮及操作</a></li>
 				    <li role="presentation"><a href="#permission" aria-controls="permission" role="tab" data-toggle="tab">权限</a></li>
 				    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">高级</a></li>
 				  </ul>
@@ -37,36 +37,58 @@
 				    	<div class="row">
 				    		<div class="form-group button-bar" >
 						    	<button id="addTableBtn" type="button" class="btn btn-success btn-xs">添加新子表</button>
-								
 						    </div>
 				    	</div>
 						
 						<div class="row" id="fields_body">
 				    		<div class="form-group button-bar" >
 						    	<button id="addTableBtn" type="button" class="btn btn-success btn-xs">添加新子表</button>
-								
 						    </div>
 				    	</div>
 				    </div>
 				    <div role="tabpanel" class="tab-pane" id="action">
 				    	<section class=''>
 				    		<div class="form-group button-bar" >
-					            <button id="addActionBtn" type="button" class="btn btn-success btn-xs">添加新动作定义</button>
+					            <button id="addActionBtn" type="button" class="btn btn-success btn-xs">添加新按钮</button>
 					        </div>
 					        <table id="action_table" class="display" cellspacing="0" style="width: 100%;">
 					            <thead class="eeda">
 					                <tr>
 					                    <th></th>
 					                    <th>id</th>
-					                    <th>动作</th>
-					                    <th>动作类型</th>
-					                    <th>动作触发点</th>
-					                    <th>执行命令</th>
+					                    <th>按钮名称</th>
+					                    <th>类型</th>
+					                    <th>触发点</th>
+					                    <th>根据条件执行以下命令</th>
 					                </tr>
 					            </thead>
 					            <tbody>
 					            </tbody>
 					        </table>
+					        <!-- Modal 按钮命令定义-->
+							<div class="modal fade" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+							 	<div class="modal-dialog" role="document"  style=" width: 80%; ">
+								    <div class="modal-content">
+								        <div class="modal-header">
+								        	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								        	<h4 class="modal-title" id="myModalLabel">命令定义</h4>
+								      	</div>
+								        <div class="modal-body">
+								      	 	<button class="btn btn-success btn-xs" id="addCommandBtn">添加命令</button>
+										 	<%include("/yh/component/form/detailTable.html", 
+						                        {
+						                            id:'action_command_table', 
+						                            headers:['', 'id', '名称', '条件', '命令脚本'],
+						                            field_list:['', 'id', 'name', 'conditions', 'script']
+						                        }){} %>
+								        </div>
+								      	<div class="modal-footer">
+									        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+									        <button type="button" class="btn btn-primary">OK</button>
+								      	</div>
+								    </div>
+							    </div>
+							</div>
 				    	</section>
 				    </div>
 				    <div role="tabpanel" class="tab-pane" id="permission">...</div>
@@ -141,3 +163,4 @@
 <script src="/yh/js/profile/module/fields.js"></script>
 <script src="/yh/js/profile/module/list_tree.js"></script>
 <script src="/yh/js/profile/module/action.js"></script>
+<script src="/yh/js/profile/module/action_command.js"></script>
