@@ -10,8 +10,8 @@ wxUrl = http://yh.eeda123.com/wx
 token=123456
 
 # 测试用的账号
-appId=432432432
-appSecret=ewqewq432
+appId=wxec5f1ff433743711
+appSecret=9b2a9866bbfeef2cf66eb44de1e264af
 
 #是否对消息进行加密，是否对消息进行加密，对应于微信平台的消息加解密方式，false支持明文模式及兼容模式，true支持安全模式及兼容模式
 #encryptMessage=true
