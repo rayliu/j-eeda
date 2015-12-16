@@ -9,15 +9,15 @@ $(document).ready(function() {
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        //"bServerSide": true,
         "bSort": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/delivery/deliveryList",
+        //"sAjaxSource": "/delivery/deliveryList",
         "aoColumns": [  
 			{"mDataProp":"ORDER_NO",//运输单号
-				"sWidth":"120px",
+				"sWidth":"130px",
 				"fnRender": function(obj) {
 					if(Delivery.isUpdate || Delivery.isComplete){
 						return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -163,6 +163,14 @@ $(document).ready(function() {
         $('#plan_endTime_filter').trigger('keyup');
     });
 	
+    $("#searchBtn").click(function(){
+        refreshData();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+
     var refreshData=function(){
     	var orderNo_filter = $("#orderNo_filter").val();
       	var transfer_filter = $("#transfer_filter").val();
@@ -178,21 +186,12 @@ $(document).ready(function() {
       	var delivery_no = $("#delivery_no").val();
       	var address_filter = $("#address_filter").val();
       	var office_filter = $("#deliveryOfficeSelect").val();
+
+        dataTable.fnSettings().oFeatures.bServerSide = true;
       	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter+"&plan_endTime_filter="+plan_endTime_filter+"&office_filter="+office_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
       	dataTable.fnDraw();
     };
-    
-    
-    //条件筛选
-	$("#orderNo_filter,#plan_beginTime_filter,#plan_endTime_filter,#delivery_no,#transfer_filter ,#status_filter,#beginTime_filter,#endTime_filter,#warehouse,#serial_no,#address_filter").on('keyup', function () {    	 	
-		refreshData();
-      });
-	$("#status_filter").on('change',function(){
-		refreshData();
-	});
-	$("#deliveryOfficeSelect").on('change',function(){
-		refreshData();
-	});
+
 	/*===================获取客户================================*/
 	 //获取所有客户
 	 $('#customer_filter').on('keyup click', function(){
@@ -224,9 +223,6 @@ $(document).ready(function() {
         $('#customer_filter').val($(this).text());
         $("#companyList").hide();
         var inputStr = $('#customer_filter').val();
-        if(inputStr!=null){
-        	refreshData();
-        }
     });
 	// 没选中客户，焦点离开，隐藏列表
     $('#customer_filter').on('blur', function(){
@@ -331,8 +327,6 @@ $(document).ready(function() {
 		}
 		pageSpAddress.append(address);
         $('#spList').hide();
-        
-        refreshData();
     });
 	
 	// 导入配送单

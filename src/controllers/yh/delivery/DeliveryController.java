@@ -101,31 +101,31 @@ public class DeliveryController extends Controller {
 		Map transferOrderListMap = new HashMap();
 			String condition = " where 1=1 ";
 			if(!"".equals(orderNo_filter)&&orderNo_filter != null){
-				condition += " and ifnull(tor.customer_order_no,'') like '" + orderNo_filter + "' ";
+				condition += " and ifnull(tor.customer_order_no,'') like '" + orderNo_filter.trim() + "' ";
 			}
 			if(status_filter!=null&&!"".equals(status_filter)){
-				condition += " and ifnull(d.status,'') like '%"+ status_filter+ "%' ";
+				condition += " and ifnull(d.status,'') like '%"+ status_filter.trim()+ "%' ";
 			}
 			if(customer_filter!=null&&!"".equals(customer_filter)){
-				condition += " and ifnull(c.abbr,'') like '%"+ customer_filter+ "%'";
+				condition += " and ifnull(c.abbr,'') like '%"+ customer_filter.trim()+ "%'";
 			}
 			if(delivery_no!=null&&!"".equals(delivery_no)){
-				condition += " and ifnull(d.order_no,'') like '%"+ delivery_no+ "%' ";
+				condition += " and ifnull(d.order_no,'') like '%"+ delivery_no.trim()+ "%' ";
 			}
 			if(transfer_filter!=null&&!"".equals(transfer_filter)){
-				condition +=" and ifnull(dt2.transfer_no,'') like '%"+ transfer_filter+ "%' ";
+				condition +=" and ifnull(dt2.transfer_no,'') like '%"+ transfer_filter.trim()+ "%' ";
 			}
 			if(sp_filter!=null&&!"".equals(sp_filter)){
-				condition +=" and ifnull(c3.abbr,'') like'%"+ sp_filter+ "%' ";
+				condition +=" and ifnull(c3.abbr,'') like'%"+ sp_filter.trim()+ "%' ";
 			}
 			if(serial_no!=null&&!"".equals(serial_no)){
-				condition +=" and ifnull(trid.serial_no,'') like'%"+ serial_no+ "%'";
+				condition +=" and ifnull(trid.serial_no,'') like'%"+ serial_no.trim()+ "%'";
 			}
 			if(address_filter!=null&&!"".equals(address_filter)){
-				condition +=" and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"+ address_filter+ "%'";
+				condition +=" and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"+ address_filter.trim()+ "%'";
 			}
 			if(office_filter!=null&&!"".equals(office_filter)){
-				condition +=" AND ifnull(w.warehouse_name,'') like'%"+ office_filter+ "%'";;
+				condition +=" AND ifnull(w.warehouse_name,'') like'%"+ office_filter.trim()+ "%'";;
 			}
 			if ((beginTime_filter != null && !"".equals(beginTime_filter))||(endTime_filter != null && !"".equals(endTime_filter))) {
         		if (beginTime_filter == null || "".equals(beginTime_filter)) {
