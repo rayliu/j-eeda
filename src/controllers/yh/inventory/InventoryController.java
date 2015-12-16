@@ -127,17 +127,16 @@ public class InventoryController extends Controller {
         String warehouseId = getPara("warehouseId");
         String officeId = getPara("officeId");
         String itemId = getPara("itemId");
-        String itemName = getPara("itemName");
-        String beginTime = getPara("beginTime");
-        String endTime = getPara("endTime");
-        
+        String beginTime = getPara("starDate");
+        String endTime = getPara("endDate");
         
         if ((customerId == null && warehouseId == null && officeId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(officeId))) {
+        	List<Record> rec = Db.find("select * from product where id = -1");
         	Map orderMap = new HashMap();
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
             orderMap.put("iTotalDisplayRecords", 0);
-            orderMap.put("aaData", null);
+            orderMap.put("aaData", rec);
             renderJson(orderMap);
         }else{
         	searchByCondition(customerId, warehouseId, officeId, itemId, beginTime, endTime);
@@ -154,42 +153,40 @@ public class InventoryController extends Controller {
             sLimit = " limit " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-        if("all".equalsIgnoreCase(officeId)){
-    	   officeId = "";
-        }
-        if("all".equalsIgnoreCase(warehouseId)){
-   			warehouseId = "";
-   		}
+        
+        
        
         String groupConditions = " group by product_id ";
         String conditions = " where 1=1 ";
         if (StringUtils.isNotEmpty(customerId)){
         	conditions += " and customer_id = " + customerId;
-        	//groupConditions += " and customer_id";
         }
 		if (StringUtils.isNotEmpty(warehouseId)){
 			conditions += " and warehouse_id = " + warehouseId;
-			//groupConditions += " and warehouse_id";
 		}
 		if (StringUtils.isNotEmpty(officeId)){
-			conditions += " and office_id = " + officeId;
-			//groupConditions += " and office_id";
+			Record re  = Db.findFirst("select GROUP_CONCAT(cast(id as char)) ids from warehouse w where w.office_id = ?", officeId);
+			if(re.getStr("ids")!=null && !re.getStr("ids").equals(""))
+				conditions += " and warehouse_id in (" + re.getStr("ids") +")";
 		}
 		if (StringUtils.isNotEmpty(itemId)){
 			conditions += " and product_id = " + itemId;
 		}
+		
+		
+		 String conditions2 = " where 1=1 ";
         if (StringUtils.isNotEmpty(beginTime)){
-       	 	beginTime = " and planning_time between'"+beginTime+"'";
+       	 	beginTime = " and tor.planning_time between'"+beginTime+"'";
         }else{
-       	 	beginTime =" and planning_time between '1970-1-1'";
+       	 	beginTime =" and tor.planning_time between '1970-1-1'";
         }
-       
+
         if (StringUtils.isNotEmpty(endTime)){
        		endTime =" and '"+endTime+"'";
         }else{
        		endTime =" and '3000-1-1'";
         }
-        conditions += beginTime+endTime;
+        conditions2 += beginTime+endTime;
 
        //获取当前用户的总公司
 //       ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
@@ -241,7 +238,7 @@ public class InventoryController extends Controller {
         		+ " sum(ifnull(effective_amount, 0)) effective_amount,"
         		+ " sum(ifnull(lock_amount, 0)) lock_amount,"
         		+ " sum(ifnull(actually_amount, 0)) actually_amount from ("
-        		+ sql + ") A" + conditions + groupConditions;
+        		+ sql +conditions2 + ") A" + conditions + groupConditions;
         		
         Record re = Db.findFirst("select count(*) total from ("+ totalSql
         		+") B");
@@ -260,32 +257,14 @@ public class InventoryController extends Controller {
         String warehouseId = getPara("warehouseId");
         String officeId = getPara("officeId");
         String itemId = getPara("itemId");
-        String beginTime = getPara("beginTime");
-        String endTime = getPara("endTime");
+        String beginTime = getPara("starDate");
+        String endTime = getPara("endDate");
         
-        if("all".equalsIgnoreCase(officeId)){
-     	   officeId = "";
-        }
-        if("all".equalsIgnoreCase(warehouseId)){
-    			warehouseId = "";
-    	}
        //获取当前用户的总公司
        ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
        
        Long parentID = pom.getParentOfficeId();
-       
-       
-//       String sql = " from inventory_item i_t "
-//					+" left join product p on  i_t.product_id = p.id "
-//					+" left join party p2 on i_t.party_id = p2.id  "
-//					+" left join contact c on p2.contact_id = c.id "
-//					+" left join warehouse w on  i_t.warehouse_id = w.id "
-//					+" left join office o on w.office_id = o.id "
-//					+" left join office p_o on p2.office_id = p_o.id "
-//					+" where 1=1 and (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (p_o.id = " + parentID + " or p_o.belong_office = " + parentID + ") ";
-//		
-
-       
+    
         String conditions = " where 1=1 ";
         if (StringUtils.isNotEmpty(customerId)){
         	conditions += " and customer_id = " + customerId;
@@ -294,23 +273,28 @@ public class InventoryController extends Controller {
 			conditions += " and warehouse_id = " + warehouseId;
 		}
 		if (StringUtils.isNotEmpty(officeId)){
-			conditions += " and office_id = " + officeId;
+			Record re  = Db.findFirst("select GROUP_CONCAT(cast(id as char)) ids from warehouse w where w.office_id = ?", officeId);
+			if(re.getStr("ids")!=null && !re.getStr("ids").equals(""))
+				conditions += " and warehouse_id in (" + re.getStr("ids") +")";
 		}
 		if (StringUtils.isNotEmpty(itemId)){
 			conditions += " and product_id = " + itemId;
 		}
+		
+		String conditions2 = " where 1 = 1 ";
         if (StringUtils.isNotEmpty(beginTime)){
-       	 	beginTime = " and planning_time between'"+beginTime+"'";
+       	 	beginTime = " and tor.planning_time between'"+beginTime+"'";
         }else{
-       	 	beginTime =" and planning_time between '1970-1-1'";
+       	 	beginTime =" and tor.planning_time between '1970-1-1'";
         }
        
+        
         if (StringUtils.isNotEmpty(endTime)){
        		endTime =" and '"+endTime+"'";
         }else{
        		endTime =" and '3000-1-1'";
         }
-        conditions += beginTime+endTime;
+        conditions2 += beginTime+endTime;
         
        String sql = " SELECT toi.id, p.item_name, p.item_no,tor.customer_id,tor.office_id,tor.warehouse_id,tor.planning_time,c.abbr customer_name,w.warehouse_name,o.office_name, toi.product_id ,"
        		+ " (select count(*) from transfer_order_item_detail toid"
@@ -348,7 +332,7 @@ public class InventoryController extends Controller {
        		+ " LEFT JOIN contact c on c.id = tor.customer_id "
        		+ " LEFT JOIN office o on o.id = tor.office_id"
        		+ " left join product p on p.id = toi.product_id"
-       		+ " LEFT JOIN warehouse w on w.id = tor.warehouse_id ";
+       		+ " LEFT JOIN warehouse w on w.id = tor.warehouse_id " + conditions2 ;
        Record re = Db.findFirst("select sum(ifnull(pre_amount,0)) pre_amount,sum(ifnull(have_delivery_amount,0)) have_delivery_amount,sum(ifnull(effective_amount,0)) effective_amount,sum(ifnull(lock_amount,0)) lock_amount,sum(ifnull(actually_amount,0)) actually_amount from ("+ sql + ") A "+ conditions);
        System.out.println("总数："+re.get("total"));
        

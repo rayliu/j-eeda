@@ -4,7 +4,7 @@ $(document).ready(function() {
 	//库存list
 
    var tab =$('#example').dataTable( {
-	   "bProcessing": false, //table载入数据时，是否显示‘loading...’提示
+	    "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
 	   	"bFilter": false, //不需要默认的搜索框
 	   	"bSort": false, // 不要排序
 	   	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -71,20 +71,16 @@ $(document).ready(function() {
 		var id =$(this).attr('code');
 		$('#warehouseSelect').val($(this).text());
 		$("#warehouseId").val(id);
-		$('#warehouseList').hide();
-	
-		
+		$('#warehouseList').hide();	
 	});
 	
 	// 获取所有网点
 	$('#officeSelect').on('keyup click', function(){
 		if($("#officeSelect").val() == ""){
 			$("#hiddenOfficeId").val("");
-			if($("#hiddenCustomerId").val() == ""){
 				$("#warehouseList").empty();
 				$("#warehouseId").val("");
 				$('#warehouseSelect').val("");
-			};
 			
 		}
 	    	
@@ -199,9 +195,15 @@ $(document).ready(function() {
 		 var warehouseId = $("#warehouseId").val();
 		 var officeId = $("#hiddenOfficeId").val();
 		 var itemId = $("#hiddenItemId").val();
+		 var starDate = $("#star_date").val();
+		 var endDate = $("#end_date").val();
+		 
+		 if(warehouseId != null && warehouseId != ''){
+			 officeId = ''; 
+		 }
 		 
          tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId
-	     					+"&warehouseId="+warehouseId+"&officeId="+officeId
+	     					+"&warehouseId="+warehouseId+"&officeId="+officeId+"&starDate="+starDate+"&endDate="+endDate
 	     					+"&itemId="+itemId;
 
 	     if(customerId !="" || warehouseId != "" || officeId != ""){
@@ -209,7 +211,7 @@ $(document).ready(function() {
 		            type : "post",  
 		            url : "/stock/getTotalAmount",
 		            dataType: "json",
-		            data : {customerId: customerId, warehouseId: warehouseId, officeId: officeId, itemId: itemId},  
+		            data : {customerId: customerId, warehouseId: warehouseId, officeId: officeId, itemId: itemId,starDate:starDate,endDate:endDate},  
 		            success : function(data){  
 		            	$("#preAmount").text(data.pre_amount==null?0:data.pre_amount);
 		            	$("#effectiveAmount").text(data.effective_amount==null?0:data.effective_amount);
