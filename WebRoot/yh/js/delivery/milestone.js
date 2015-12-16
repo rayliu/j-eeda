@@ -229,20 +229,30 @@ $(document).ready(function() {
 	
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
-    
-    $('#endTime_filter ,#beginTime_filter  ,#deliveryNo_filter  ,#transferorderNo_filter,#deliveryNo_filter  ,#serial_no, #status').on('keyup click', function(){
-    	//console.log($("#sp_filter").val());
-    	var deliveryNo = $("#deliveryNo_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var transferorderNo = $("#transferorderNo_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var status  = $("#status").val();
-      var serial_no  = $("#serial_no").val();
-    	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status+"&serial_no="+serial_no;
-    	detailTable.fnDraw();
+
+
+    $("#searchBtn").click(function(){
+        refreshData();
     });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+    
+    var refreshData=function () {
+      var deliveryNo = $("#deliveryNo_filter").val();
+      var customer = $("#customer_filter").val();
+      var transferorderNo = $("#transferorderNo_filter").val();
+      var sp = $("#sp_filter").val();
+      var beginTime = $("#beginTime_filter").val();
+      var endTime = $("#endTime_filter").val();
+      var status  = $("#status").val();
+      var serial_no  = $("#serial_no").val();
+
+      detailTable.fnSettings().oFeatures.bServerSide = true;
+      detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status+"&serial_no="+serial_no;
+      detailTable.fnDraw();
+    }
 	
     $('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
@@ -307,18 +317,6 @@ $(document).ready(function() {
       $('#companyList').on('click', '.fromLocationItem', function(e){        
            $('#customer_filter').val($(this).text());
            $("#companyList").hide();
-         
-           var inputStr = $('#customer_filter').val();
-           if(inputStr!=null){
-        	   var deliveryNo = $("#deliveryNo_filter").val();
-	           	var customer = $("#customer_filter").val();
-	           	var transferorderNo = $("#transferorderNo_filter").val();
-	           	var sp = $("#sp_filter").val();
-	           	var beginTime = $("#beginTime_filter").val();
-	           	var endTime = $("#endTime_filter").val();
-	           	detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
-	           	detailTable.fnDraw();
-           }
        });
     // 没选中客户，焦点离开，隐藏列表
        $('#customer_filter').on('blur', function(){
@@ -425,18 +423,9 @@ $(document).ready(function() {
        			address = '';
        		}
        		pageSpAddress.append(address);
-               $('#spList').hide();
-               
-           	var deliveryNo = $("#deliveryNo_filter").val();
-	    	var customer = $("#customer_filter").val();
-	    	var transferorderNo = $("#transferorderNo_filter").val();
-	    	var sp = $("#sp_filter").val();
-	    	var beginTime = $("#beginTime_filter").val();
-	    	var endTime = $("#endTime_filter").val();
-	    	console.log(sp);
-    		detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime;
-	    	detailTable.fnDraw();	
-           });
+          $('#spList').hide();
+           
+        });
        	
 	        
 } );

@@ -341,17 +341,17 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
-					+ deliveryNo
+					+ deliveryNo.trim()
 					+ "%' and ifnull(c.abbr,'') like '%"
-					+ customer
+					+ customer.trim()
 					+ "%' and ifnull(d.status,'') in "
 					+ status
 					+ " and ifnull(dt2.transfer_no,'') like '%"
-					+ transferorderNo
+					+ transferorderNo.trim()
 					+ "%' and ifnull(c2.abbr,'') like'%"
-					+ sp
+					+ sp.trim()
 					+ "%' and ifnull(trid.serial_no,'') like'%"
-					+ serial_no
+					+ serial_no.trim()
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
@@ -390,17 +390,17 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 					+ " where  !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d.order_no,'') like '%"
-					+ deliveryNo
+					+ deliveryNo.trim()
 					+ "%' and ifnull(c.abbr,'') like '%"
-					+ customer
+					+ customer.trim()
 					+ "%' and ifnull(d.status,'') in "
 					+ status
 					+ " and ifnull(dt2.transfer_no,'') like '%"
-					+ transferorderNo
+					+ transferorderNo.trim()
 					+ "%' and ifnull(c2.abbr,'') like'%"
-					+ sp
+					+ sp.trim()
 					+ "%' and ifnull(trid.serial_no,'') like'%"
-					+ serial_no
+					+ serial_no.trim()
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
