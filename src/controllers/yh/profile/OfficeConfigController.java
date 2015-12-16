@@ -237,9 +237,11 @@ public class OfficeConfigController extends Controller{
         render("/yh/profile/officeConfig/edit.html");
     }
 	public void searchAllOffice() {
+		String officeName = getPara("officeName")==null?"":getPara("officeName");
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
-		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where (o.id = " + parentID +" or o.belong_office = " + parentID+") and  o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')");
+		
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where (o.id = " + parentID +" or o.belong_office = " + parentID+") and  o.id IN (SELECT office_id FROM user_office WHERE office_name like '%" + officeName  + "%' and user_name = '"+currentUser.getPrincipal()+"')");
 		renderJson(offices); 
 	}
 	public void searchAllWarehouse() {
