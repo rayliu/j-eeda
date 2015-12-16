@@ -35,7 +35,8 @@
                                 <div class="row">
                                    <form id="orderForm" method="post" action="">
                                       <div class="col-lg-6">
-                                      	<input type="hidden" name="transfer_type" value="${transfer_type!''}"/>
+                                          <input type="hidden" id="depart_order_token" name="depart_order_token" value="${depart_order_token!}"/>
+                                      	  <input type="hidden" name="transfer_type" value="${transfer_type!''}"/>
                                           <input class="" id="last_detail_size" value="${last_detail_size!''}" type="hidden">
             	                            <input class="" id="depart_id" value="${departOrder.id!''}" type="hidden" name="depart_id" >
             	                            <input class="" id="type" value="${type!''}" type="hidden" >

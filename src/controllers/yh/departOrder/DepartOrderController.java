@@ -52,6 +52,8 @@ public class DepartOrderController extends Controller {
 
 	private Logger logger = Logger.getLogger(DepartOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
+	
+	private static final String DEPART_ORDER_TOKEN="depart_order_token";
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
 	public void index() {
 		render("/yh/departOrder/departOrderList.html");
@@ -521,6 +523,8 @@ public class DepartOrderController extends Controller {
 	// 修改发车单页面
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_UPDATE})
 	public void edit() {
+        createToken(DEPART_ORDER_TOKEN);
+        
 		String sql = "select do.*,co.contact_person,co.phone,u.user_name,(select group_concat(dt.order_id  separator',')  from depart_transfer  dt "
 				+ "where dt.depart_id =do.id)as order_id from depart_order  do "
 				+ "left join contact co on co.id in( select p.contact_id  from party p where p.id=do.driver_id ) "
@@ -620,6 +624,8 @@ public class DepartOrderController extends Controller {
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("paymentItemList", paymentItemList);
+		
+		createToken("eedaToken");
 		render("/yh/departOrder/editDepartOrder.html");
 	}
 
@@ -896,6 +902,7 @@ public class DepartOrderController extends Controller {
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
 	public void createDepartOrder() {
+	    createToken(this.DEPART_ORDER_TOKEN);
 		String list = this.getPara("localArr");
 		setAttr("localArr", list);
 		setAttr("routeSp", getPara("routeSp"));
@@ -991,6 +998,10 @@ public class DepartOrderController extends Controller {
 
 	// 保存发车单
 	public void saveDepartOrder() {
+	    if(!validateToken(DEPART_ORDER_TOKEN)){
+	        renderJson(new DepartOrder());
+	        return;
+	    }
 		String depart_id = getPara("depart_id");// 发车单id
 		String charge_type = getPara("chargeType");// 供应商计费类型
 		String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
@@ -1231,7 +1242,9 @@ public class DepartOrderController extends Controller {
 			}
 			
 		}
-		
+		createToken(DEPART_ORDER_TOKEN);
+		String serverTokenId = getSessionAttr(DEPART_ORDER_TOKEN);
+		dp.put(DEPART_ORDER_TOKEN, serverTokenId);
 		renderJson(dp);
 	}
 
