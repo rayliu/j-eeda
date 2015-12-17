@@ -15,18 +15,16 @@ $(document).ready(function() {
 	});
 	
 	if($("#chargeCheckOrderId").val() == ""){
+		$('#saveChargeCheckOrderBtn').attr('disabled', false);
 		$('#auditBtn').attr('disabled', true);
 	}else{
-		if($("#chargeCheckOrderStatus").text() == "已确认"){
-			$('#auditBtn').attr('disabled', true);
-			$('#saveChargeCheckOrderBtn').attr('disabled', true);
-		}else if($("#chargeCheckOrderStatus").text() == "开票申请中"||$("#chargeCheckOrderStatus").text() == "收款申请中"){
-			$('#auditBtn').attr('disabled', true);
-			$('#saveChargeCheckOrderBtn').attr('disabled', true);
-		}else{
+		if($("#chargeCheckOrderStatus").text() == "新建"){
 			$('#auditBtn').attr('disabled', false);
+			$('#saveChargeCheckOrderBtn').attr('disabled', false);
 		}
 	}
+		
+	
 	$("#printBtn").on('click',function(){
     	var order_no = $("#arap_order_no").text();
     	if(order_no != null && order_no != ""){
