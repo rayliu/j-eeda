@@ -227,8 +227,8 @@ $(document).ready(function() {
 				$("#orderNos").val(delorderNos);
 				var orderNos=$("#orderNos").val();
 				var orderIds=$("#orderIds").val();
-	    		$("#debitAmount").html(parseInt(changeamount )-parseInt(value2));
-	    		$("#total_amount").val(parseInt(totalamount )-parseInt(value2));
+	    		$("#debitAmount").html(parseFloat(changeamount )-parseFloat(value2));
+	    		$("#total_amount").val(parseFloat(totalamount )-parseFloat(value2));
 				costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
 		    	costConfiremTable.fnDraw(); 
 		    	addcheckedCostCheck.fnDraw();
@@ -484,8 +484,8 @@ $(document).ready(function() {
     		$("#orderIds").val(addIds);
     		$("#orderNos").val(orderNos);
     		var value2 = $(this).attr('changeamount');
-    		$("#debitAmount").html(parseInt(changeamount )+parseInt(value2));
-    		$("#total_amount").val(parseInt(totalamount )+parseInt(value2));
+    		$("#debitAmount").html(parseFloat(changeamount )+parseFloat(value2));
+    		$("#total_amount").val(parseFloat(totalamount )+parseFloat(value2));
     	}
     	else{
     			addIds.splice($.inArray($(this).attr('id'),addIds),1);
@@ -497,8 +497,8 @@ $(document).ready(function() {
 
     		
     		var value2 = $(this).attr('changeamount');
-    		$("#debitAmount").html(parseInt(changeamount )-parseInt(value2));
-    		$("#total_amount").val(parseInt(totalamount )-parseInt(value2));
+    		$("#debitAmount").html(parseFloat(changeamount )-parseFloat(value2));
+    		$("#total_amount").val(parseFloat(totalamount )-parseFloat(value2));
     	}
     });
     // 未选中列表
