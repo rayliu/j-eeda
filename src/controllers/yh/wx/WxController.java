@@ -297,6 +297,10 @@ public class WxController extends ApiController {
 	    String serverId = getPara("serverId");
 	    ReturnOrder returnOrder = ReturnOrder.dao.findById(return_order_id);
 	    if(returnOrder != null){
+	        System.out.println("appId:" + PropKit.get("appId"));
+            System.out.println("appSecret:" + PropKit.get("appSecret"));
+            System.out.println("token:" + PropKit.get("token"));
+	        
     	    Map<String, String> queryMap = new HashMap<String,String>();
     	    System.out.println("access_token:" + AccessTokenApi.getAccessToken().getAccessToken());
     	    System.out.println("media_id:" + serverId);
