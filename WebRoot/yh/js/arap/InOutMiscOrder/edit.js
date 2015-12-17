@@ -4,8 +4,23 @@ $(document).ready(function() {
 	}
 	$('#menu_finance').addClass('active').find('ul').addClass('in');
 
+
 	
-	
+	$('#charge_unit').keyup(function(){
+			$('#pay_unit').val($(this).val());
+	});
+
+	$('#charge_person').keyup(function(){
+		
+		$('#pay_person').val($(this).val());
+		
+	});
+
+	$('#pay_amount').keyup(function(){
+			$('#charge_amount').val($(this).val());
+		
+	});
+
 	$('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'
