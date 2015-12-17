@@ -34,7 +34,7 @@ $(document).ready(function() {
     			sum =eval(change_amount.join("+"));//求和
     			$("#checkedOrderId").val(ids);
     			$("#checkedOrderNo").val(orderNos);
-    			$("#amount").html(sum);
+    			$("#amount").html(parseFloat(sum).toFixed(2));
     			if(ids.length>0){
     				$("#saveBtn").attr("disabled",false);
     			}
@@ -61,7 +61,7 @@ $(document).ready(function() {
     			sum=parseInt(sum)-parseInt(sum_f);
     			$("#checkedOrderId").val(ids);
     			$("#checkedOrderNo").val(orderNos);
-    			$("#amount").html(x_sum);
+    			$("#amount").html(parseFloat(x_sum).toFixed(2));
     			if(ids.length<=0){
     				$("#saveBtn").attr("disabled",true);
     			}
@@ -271,7 +271,7 @@ $(document).ready(function() {
 			sum =eval(change_amount.join("+"));//求和
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
-			$("#amount").html(sum);
+			$("#amount").html(parseFloat(sum).toFixed(2));
 			if(ids.length>0){
 				$("#saveBtn").attr("disabled",false);
 			}
@@ -299,7 +299,7 @@ $(document).ready(function() {
 			sum=parseFloat(sum)-parseFloat(sum_f);
 			$("#checkedOrderId").val(ids);
 			$("#checkedOrderNo").val(orderNos);
-			$("#amount").html(x_sum);
+			$("#amount").html(parseFloat(x_sum).toFixed(2));
 			if(ids.length<=0){
 				$("#saveBtn").attr("disabled",true);
 			}
@@ -314,7 +314,7 @@ $(document).ready(function() {
 			var xj_sum=parseFloat(sum)-parseFloat(j_sum);
 			sum=parseFloat(sum)-parseFloat(j_sum);
 			//amount=parseFloat(a);
-			$("#amount").html(xj_sum);
+			$("#amount").html(parseFloat(xj_sum).toFixed(2));
 			//j_amount.splice($.inArray($(this).attr('id'),j_amount),1);
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
