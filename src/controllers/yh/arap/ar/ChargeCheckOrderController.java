@@ -858,32 +858,24 @@ public class ChargeCheckOrderController extends Controller {
 			arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderId);
 			arapAuditOrder.set("status", "已确认");
 			arapAuditOrder.update();
-			List<ArapMiscChargeOrder> list = ArapMiscChargeOrder.dao
-					.find("select * from arap_misc_charge_order where charge_order_id = ?",
+			List<ArapChargeItem> list = ArapChargeItem.dao
+					.find("select * from arap_charge_item where charge_order_id = ?",
 							arapAuditOrder.get("id"));
 			if (list.size() > 0) {
-				for (ArapMiscChargeOrder arapMiscChargeOrder : list) {
-					arapMiscChargeOrder.set("status", "对账已确认");
-					arapMiscChargeOrder.update();
+				for (ArapChargeItem arapChargeItem : list) {
+					if("回单".equals(arapChargeItem.get("ref_order_type"))){
+						ReturnOrder returnOrder = ReturnOrder.dao.findById(arapChargeItem.get("ref_order_id"));
+						returnOrder.set("transaction_status", "对账已确认"); 
+						returnOrder.update();
+					}else{
+						ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(arapChargeItem.get("ref_order_id"));
+						arapMiscChargeOrder.set("status", "对账已确认"); 
+						arapMiscChargeOrder.update();
+					}
 				}
 			}
-			updateReturnOrderStatus(arapAuditOrder, "对账已确认");
 		}
 		renderJson(arapAuditOrder);
-	}
-
-	// 更新回单状态
-	private void updateReturnOrderStatus(ArapChargeOrder arapAuditOrder,
-			String status) {
-		List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find(
-				"select * from arap_charge_item where charge_order_id = ?",
-				arapAuditOrder.get("id"));
-		for (ArapChargeItem arapAuditItem : arapAuditItems) {
-			ReturnOrder returnOrder = ReturnOrder.dao.findById(arapAuditItem
-					.get("ref_order_id"));
-			returnOrder.set("transaction_status", status);
-			returnOrder.update();
-		}
 	}
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_LIST })
