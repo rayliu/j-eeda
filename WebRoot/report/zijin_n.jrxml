@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="zijin_n" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0ad70e3f-e9f0-4944-b70f-531a1df6ff02">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="118"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F8F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFBFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="order_no" class="java.lang.String"/>
+	<parameter name="id" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+	ifnull(tor.receiving_unit,'') as receiving_unit,
+	ifnull(toid.notify_party_company,'') as address,
+	ifnull(toid.notify_party_name,'') as phone_name,
+	ifnull(toid.notify_party_phone,'') as phone,
+	ifnull(tor.order_no,'') as order_no,
+	ifnull(toid.item_no,'') as item_no,
+            ifnull(toid.order_id,'') as order_id,
+            ifnull(toid.serial_no,'') as serial_no,
+            ifnull(toid.receive_address,'') as rec_address,
+	ifnull(cg.name,'') as category_name,
+             toid.id as id,
+	if (toid.pieces > 1,pieces,pieces) as pieces
+from
+	transfer_order tor
+	left join transfer_order_item_detail toid on toid.order_id = tor.id
+	left join transfer_order_item toi on toi.order_id = tor.id
+            left join product p on p.id=toi.product_id
+  	left join category cg on cg.id=p.category_id
+            left join contact c on toid.order_id = c.id
+where tor.order_no = $P{order_no}]]>
+	</queryString>
+	<field name="receiving_unit" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="address" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="phone_name" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="order_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="item_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="order_id" class="java.lang.Object">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="serial_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="rec_address" class="java.lang.String"/>
+	<field name="category_name" class="java.lang.String"/>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pieces" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="53" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="5" width="510" height="48" uuid="3a4fcf17-2ce5-4872-b9a6-57819bb0c076"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="14" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[到货签收单]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="33" width="34" height="20" uuid="12ca5f40-7da6-42a0-a4df-726d133a0978"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[NO:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="259" splitType="Stretch">
+			<frame>
+				<reportElement style="table_TD" x="20" y="0" width="510" height="259" uuid="3e8ac7e4-ed81-4fdd-bf61-92de66eab099"/>
+				<staticText>
+					<reportElement x="3" y="126" width="112" height="25" uuid="ee460f7b-c744-4911-b2fb-81e88383be72"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[ 物品清单： 货物件数]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="209" y="126" width="22" height="25" uuid="2419cbe1-4c2d-4a89-8ec1-4fb3f11ca705"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[件]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="210" y="158" width="22" height="25" uuid="0907c166-9df1-4bfb-951d-e4eac9dad1f6"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[件]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="210" y="228" width="22" height="25" uuid="e029630f-ffbf-42ea-9336-372554d1359c"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[件]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="210" y="192" width="22" height="25" uuid="142c486b-4a6d-41bb-892b-fdc2c1970a23"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[件]]></text>
+				</staticText>
+				<line>
+					<reportElement x="113" y="150" width="96" height="1" uuid="db1789f2-d063-4440-a734-dbe57002001f"/>
+				</line>
+				<line>
+					<reportElement x="113" y="183" width="95" height="1" uuid="f66c35b3-8b39-4129-94b5-8df68eb4ced1"/>
+				</line>
+				<line>
+					<reportElement x="112" y="215" width="96" height="1" uuid="f09810f4-343e-43da-94cf-e086d90a6260"/>
+				</line>
+				<line>
+					<reportElement x="113" y="252" width="95" height="1" uuid="b0659720-2b00-4113-b251-a51377446743"/>
+				</line>
+				<textField isBlankWhenNull="true">
+					<reportElement style="table_TD" x="0" y="50" width="510" height="25" uuid="d8428161-d189-4a74-adac-299d0c1cd30b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["收货地址"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="table_TD" x="255" y="75" width="255" height="25" uuid="7b2de14c-85d7-40fb-968e-f0360d35fc7a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["收货联系人电话："]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0" isBlankWhenNull="true">
+					<reportElement x="113" y="125" width="97" height="25" uuid="2289f62d-b5c2-421e-b11b-d5f329346d1b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pieces}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="245" y="133" width="33" height="20" uuid="348dfb3f-eac6-4401-b232-0f5352fe60d3">
+						<printWhenExpression><![CDATA[new java.lang.Boolean($F{pieces}!=1.0)]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["(1 件 + "]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="278" y="133" width="97" height="20" uuid="c755a27d-a24c-416f-8cb4-1f397a6973d1">
+						<printWhenExpression><![CDATA[new java.lang.Boolean($F{pieces}!=1.0)]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pieces}-1+"配件)"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="table_TD" x="0" y="100" width="510" height="25" uuid="4e4adb7f-f849-4e5f-aa19-6e16398d4fb9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" 运单号/载货车号："]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="table_TD" mode="Transparent" x="0" y="0" width="510" height="25" uuid="4daccd31-31ef-465e-886f-566969fc8260"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["发货单位："]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="table_TD" x="0" y="25" width="510" height="25" uuid="c1a3a2fa-ddcc-4147-acb7-6ad67fd7a79e"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["收发单位："]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="0" y="75" width="255" height="25" uuid="6e416283-6360-490f-9541-5a9d66535f39"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["收货联系人："]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="440" splitType="Stretch">
+			<frame>
+				<reportElement style="table_TD" x="21" y="229" width="510" height="88" uuid="8c0a2c98-603b-41ae-9d85-e4c1c5ca5a25"/>
+				<staticText>
+					<reportElement x="255" y="63" width="255" height="25" uuid="c5fd237f-ae99-4649-9a81-a76d08e5ca23"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[ 验收小组成员签名：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="0" width="124" height="25" uuid="75532302-1ebf-4cc0-bba1-8d46d1c3387b"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[ 验收情况总评：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="63" width="255" height="25" uuid="8c27d984-6488-4be5-b983-9926de7a532e"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[ 验收小组负责人签名：]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement style="table_TD" x="21" y="317" width="255" height="121" uuid="908af86a-f4d6-40b3-943e-520dcdf8f29f"/>
+				<staticText>
+					<reportElement x="0" y="0" width="189" height="24" uuid="2f585a12-e0ee-4e44-ba3a-a1aac5843b63"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[甲方验收部门负责人签名：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="136" y="97" width="19" height="24" uuid="8c49167a-542f-4bf9-8d9f-a19535c46453"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[年]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="173" y="97" width="17" height="24" uuid="8146fc07-7f08-479e-8095-014de0db4588"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[月]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="206" y="97" width="23" height="24" uuid="e1a8ea59-b27c-46c1-a031-6ffcfa941679"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[日]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="49" width="136" height="24" uuid="da50182f-c8f7-463f-8860-789ac20b5ebf"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[甲方验收部门公章:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement style="table_TD" x="276" y="317" width="255" height="121" uuid="cb92ec8d-4eef-4153-aab6-9f2216532a80"/>
+				<staticText>
+					<reportElement x="0" y="0" width="135" height="24" uuid="fac754c5-ed8b-4425-8d41-7b6cfd2a87ab"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[乙方经办人签名：]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="135" y="97" width="18" height="24" uuid="45b8a758-8dc8-4e65-a295-714050627d06"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[年]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="177" y="97" width="16" height="24" uuid="8f2485f3-30fa-4c3b-a77e-7152d98cfde4"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[月]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="219" y="97" width="22" height="24" uuid="3388d48c-40d3-4e5b-8ed0-92680b760f66"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<paragraph leftIndent="4"/>
+					</textElement>
+					<text><![CDATA[日]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="35" y="49" width="100" height="24" uuid="1b84b651-7efa-406f-8ba2-6f385dcc594c"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[乙方盖章：]]></text>
+				</staticText>
+			</frame>
+			<staticText>
+				<reportElement style="table_TD" x="21" y="88" width="34" height="47" uuid="48d09ee5-51ea-4bab-b266-a69ee13cfc5e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="21" y="1" width="34" height="40" uuid="7665dac3-d273-4f68-b881-67c91d9000d1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[序号]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="157" y="182" width="71" height="47" uuid="ca80a6de-d7e3-4356-87ea-6d5f24c984e8"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="157" y="1" width="71" height="40" uuid="b8261c77-90e4-4f99-8e3a-cffcdd7ae5e6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[设备序列号]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="479" y="41" width="52" height="47" uuid="26956099-e458-48d5-85bc-a4e5a461b607"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="228" y="182" width="85" height="47" uuid="3350cb5c-4fb0-476f-8b8f-71536bbce10a"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="55" y="88" width="55" height="47" uuid="0f5e93b2-b4a4-4f85-bd0e-8412d0a2b10e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="313" y="182" width="84" height="47" uuid="65da0425-ead6-432a-bb3c-2c28e46b2382"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="397" y="41" width="82" height="47" uuid="2e5bf7fa-6dce-4809-85fe-ecca7986757d"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="397" y="135" width="82" height="47" uuid="7098ae30-2a92-4abe-8a7e-127a13315f8f"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="313" y="1" width="84" height="40" uuid="35d1a96e-7b1a-44c4-b4fb-c4af792cf2dc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[防震标志状态]]></text>
+			</staticText>
+			<frame>
+				<reportElement style="table_TD" x="110" y="41" width="47" height="47" uuid="1f18beb3-aa28-4e22-9c4e-cae284be8f17"/>
+				<textField>
+					<reportElement x="0" y="12" width="47" height="20" uuid="79ae2fa4-f934-44fc-be38-2ac2c8955c8f"/>
+					<textElement>
+						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{category_name}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement style="table_TD" x="479" y="1" width="52" height="40" uuid="68b73204-f03d-4dc3-9a91-b8382e72048e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[其他异常]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="397" y="1" width="82" height="40" uuid="24eef79e-06b1-4f65-b87e-58d515eb806a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[外包装状态]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="157" y="41" width="71" height="47" uuid="44ddb479-ed0c-4529-b709-3965fc8de7a0"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="21" y="182" width="34" height="47" uuid="fdb96f9a-4187-4bf4-bf86-9e03a02d369c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[4]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="313" y="41" width="84" height="47" uuid="39fb3e98-2f00-44f0-90a6-598f4f94acba"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="21" y="41" width="34" height="47" uuid="71185019-ae06-456b-a792-67808da42c43"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="313" y="88" width="84" height="47" uuid="c07e670e-92a0-4b1c-822f-7f900cf3e45c"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="479" y="88" width="52" height="47" uuid="6b9798dd-b9d5-4d51-a599-0eaf15fbfcfc"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="313" y="135" width="84" height="47" uuid="940d6c1a-62ea-4e1a-96ee-f3655332e868"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="228" y="1" width="85" height="40" uuid="c541cccf-3ee4-467a-bc6e-e4bee2161b35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[防倾斜标志状态]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="397" y="88" width="82" height="47" uuid="fb2d7833-5b4c-4e3a-8f5c-2caa53f54160"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<frame>
+				<reportElement style="table_TD" x="110" y="182" width="47" height="47" uuid="1844030c-c56a-4092-96d9-2014a497271a"/>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="397" y="182" width="82" height="47" uuid="e8af2405-b990-4589-b3df-ddd05edeb12e"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="21" y="135" width="34" height="47" uuid="48892891-aea0-42a1-9566-65e99f3031d0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[3]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="55" y="182" width="55" height="47" uuid="57022a7a-0219-4ccd-b55e-7d599f847830"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="228" y="88" width="85" height="47" uuid="65c6913a-ecdf-4eb0-9cc2-5f4c67e1dcf0"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="228" y="135" width="85" height="47" uuid="20f34447-7e0f-4e4c-b062-08812635afff"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<frame>
+				<reportElement style="table_TD" x="110" y="135" width="47" height="47" uuid="c4047872-85fc-42c1-8f36-04c21033a439"/>
+			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="55" y="135" width="55" height="47" uuid="1540283a-263d-4d10-92a0-bb61a2d5170c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="228" y="41" width="85" height="47" uuid="6e7d722a-d212-470f-ab1d-13ca15a685d5"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="55" y="41" width="55" height="47" uuid="0b0dd605-40ab-4a60-a91e-7f8b38e05ceb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item_no}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="157" y="88" width="71" height="47" uuid="661b3c70-1587-45a8-a037-202c14f9208e"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="110" y="1" width="47" height="40" uuid="092c92b4-fa1d-41ce-99e7-5d4717118eb4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[类型]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="479" y="182" width="52" height="47" uuid="97988aaa-c593-4d85-91fb-00459efd1808"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="479" y="135" width="52" height="47" uuid="40375121-edc6-49e4-9d78-4e2cc20dff5c"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="55" y="1" width="55" height="40" uuid="b79f2e16-e6aa-4463-a908-24db8823c5e2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[设备型号]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement style="table_TD" x="157" y="135" width="71" height="47" uuid="16307393-6746-4210-a839-87378a163bb9"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+			</textField>
+			<frame>
+				<reportElement style="table_TD" x="110" y="88" width="47" height="47" uuid="39724dcf-5d42-48e8-98cb-63702e650d65"/>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+		<band/>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
