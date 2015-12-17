@@ -655,13 +655,32 @@ public class CostCheckOrderController extends Controller {
 			arapAuditOrder.set("confirm_by", users.get(0).get("id"));
 			arapAuditOrder.set("confirm_stamp", new Date());
 			arapAuditOrder.update();
-			List<ArapMiscCostOrder> list = ArapMiscCostOrder.dao
-					.find("select * from arap_misc_cost_order where cost_order_id = ?",
+			List<ArapCostItem> list = ArapCostItem.dao
+					.find("select * from arap_cost_item where cost_order_id = ?",
 							arapAuditOrder.get("id"));
 			if (list.size() > 0) {
-				for (ArapMiscCostOrder arapMiscCostOrder : list) {
-					arapMiscCostOrder.set("status", "对账已确认");
-					arapMiscCostOrder.update();
+				for (ArapCostItem arapCostItem : list) {
+					if("零担".equals(arapCostItem.get("ref_order_no"))){
+						DepartOrder departOrder =DepartOrder.dao.findById(arapCostItem.get("ref_order_id"));
+						departOrder.set("audit_status", "对账已确认"); 
+						departOrder.update();
+					}else if("保险".equals(arapCostItem.get("ref_order_no"))){
+						InsuranceOrder insuranceOrder =InsuranceOrder.dao.findById(arapCostItem.get("ref_order_id"));
+						insuranceOrder.set("audit_status", "对账已确认"); 
+						insuranceOrder.update();
+					}else if("提货".equals(arapCostItem.get("ref_order_no"))){
+						DepartOrder pickupOrder =DepartOrder.dao.findById(arapCostItem.get("ref_order_id"));
+						pickupOrder.set("audit_status", "对账已确认"); 
+						pickupOrder.update();
+					}else if("配送".equals(arapCostItem.get("ref_order_no"))){
+						DeliveryOrder deliveryOrder=DeliveryOrder.dao.findById(arapCostItem.get("ref_order_id"));
+						deliveryOrder.set("audit_status", "对账已确认"); 
+						deliveryOrder.update();
+					}else{
+						ArapMiscCostOrder arapMiscCostOrder=ArapMiscCostOrder.dao.findById(arapCostItem.get("ref_order_id"));
+						arapMiscCostOrder.set("audit_status", "对账已确认"); 
+						arapMiscCostOrder.update();
+					}
 				}
 			}
 
