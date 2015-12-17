@@ -30,9 +30,9 @@
     			}
 		    }, 
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"80px"},
-            {"mDataProp":"OFFICE_NAME", "sWidth":"100px"},
-		    {"mDataProp":"STATUS", "sWidth":"80px"},
-		    {"mDataProp":"PICKUP_MODE", "sWidth":"120px",
+            {"mDataProp":"OFFICE_NAME", "sWidth":"70px"},
+		    {"mDataProp":"STATUS", "sWidth":"60px"},
+		    {"mDataProp":"PICKUP_MODE", "sWidth":"90px",
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == "routeSP")
             			return "干线供应商自提";
@@ -44,8 +44,9 @@
             			return "";
             	}
 		    },
-            {"mDataProp":"CAR_NO", "sWidth":"80px"},	 
+            {"mDataProp":"CAR_NO", "sWidth":"70px"},
 		    {"mDataProp":"SP_NAME", "sWidth":"60px"},
+		    {"mDataProp":"COST_AMOUNT", "sWidth":"60px"},
 		    {"mDataProp":"PHONE", "sWidth":"80px"},
 		    {"mDataProp":"CARTYPE", "sWidth":"80px"},     
 		    
