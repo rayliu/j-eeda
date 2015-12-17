@@ -88,11 +88,13 @@ public class TransferOrderController extends Controller {
 		String plantime=getPara("plantime");
 		String arrivarltime=getPara("arrivarltime");
 		String customer_order_no=getPara("customer_order_no");
+		String to_route=getPara("to_route");
 		
 		if (orderNo == null && status == null && address == null
 				&& customer == null && sp == null && beginTime == null
 				&& endTime == null&& order_type == null&& plantime == null
-				&& arrivarltime == null&& customer_order_no == null && operation_type == null) {
+				&& arrivarltime == null&& customer_order_no == null 
+				&& operation_type == null&& to_route == null) {
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
 			if (getPara("iDisplayStart") != null
@@ -168,9 +170,11 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
+					+ " left join location l on l.CODE = t.route_to"
 					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' "
 					+ " and t.order_no like '%"+ orderNo 
 					+ "%' and t.status like '%" + status
+					+ "%' and l.name like '%" + to_route
 					+ "%' and t.address like '%" + address
 					+ "%' and c1.abbr like '%" + customer
 					+ "%' and ifnull(c2.abbr,'') like '%" + sp
@@ -194,8 +198,8 @@ public class TransferOrderController extends Controller {
                     + " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = t.id),2) volume, "
                     + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = t.id),2) weight, "
                     + " (select sum(toid.pieces) from transfer_order_item_detail toid where toid.order_id=t.id) pieces, "
-					+ " ifnull((select name from location where code = t.route_from),'') route_from,"
-					+ " ifnull((select name from location where code = t.route_to),'') route_to, "
+					+ " ifnull(l_f.name,'') route_from,"
+					+ " ifnull(l_t.name,'') route_to, "
 					+ " ul.user_name user_name"
 					+ " from transfer_order t "
 					+ " left join party p1 on t.customer_id = p1.id "
@@ -204,9 +208,12 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
+					+ " left join location l_f on l_f.CODE = t.route_from "
+					+ " left join location l_t on l_t.CODE = t.route_to "
 					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' "
 					+ " and t.order_no like '%" + orderNo
 					+ "%' and t.status like '%" + status
+					+ "%' and ifnull(l_t.name,'') like '%" + to_route
 					+ "%' and t.address like '%" + address
 					+ "%' and c1.abbr like '%" + customer
 					+ "%' and ifnull(c2.abbr,'') like '%" + sp

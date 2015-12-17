@@ -344,8 +344,9 @@ $(document).ready(function() {
             beginTime : $("#beginTime_filter").val(),
             endTime : $("#endTime_filter").val(),
             officeName : $("#officeSelect").val(),
-            operation_type : $("#operation_type_filter").val()
-        }
+            operation_type : $("#operation_type_filter").val(),
+            to_route : $("#to_route").val()
+        };
         if(!!window.localStorage){//查询条件处理
             localStorage.setItem("query_to", JSON.stringify(conditions));
         }
@@ -365,6 +366,7 @@ $(document).ready(function() {
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeSelect").val();
         var operation_type = $("#operation_type_filter").val();
+        var to_route = $("#to_route").val();
 
         transferOrder.fnSettings().oFeatures.bServerSide = true;
         transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address
@@ -373,6 +375,7 @@ $(document).ready(function() {
                                                 +"&order_type="+order_type
                                                 +"&plantime="+plantime+"&arrivarltime="+arrivarltime
                                                 +"&customer_order_no="+customer_order_no
+                                                +"&to_route="+to_route
                                                 +"&operation_type="+operation_type;
         transferOrder.fnDraw(); 
         saveConditions();
@@ -398,6 +401,7 @@ $(document).ready(function() {
             $("#endTime_filter").val(conditions.endTime);
             $("#officeSelect").val(conditions.officeName);
             $("#operation_type_filter").val(conditions.operation_type);
+            $("#to_route").val(conditions.to_route);
         }
     };
 
