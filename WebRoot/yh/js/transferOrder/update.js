@@ -2662,6 +2662,10 @@ $(document).ready(function() {
         		$("#nonghangMu").hide();
         		$("#postMu").hide();
         		$("#postalMu").hide();
+        	}else if(customer=="深圳市紫金支点技术股份有限公司"){
+        		$("#muban").show();
+        		$("#zijin").show();
+        		$("#biaozhun").hide();
         	}else{
         		$("#muban").show();
         		$("#putong").show();
@@ -2675,12 +2679,15 @@ $(document).ready(function() {
         		$("#putong").hide();
         		$("#biaozhun").show();
         		//$("#pdfSign_n").show();
+        	}else if(customer=="深圳市紫金支点技术股份有限公司"){
+        		$("#muban").show();
+        		$("#zijin").show();
+        		$("#biaozhun").hide();
         	}else{
         		$("#printBtn").removeAttr('data-target');
         		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
         	}
     	}
-    	
     });
 
     $("#cancelBtn").on('click',function(){
@@ -2691,11 +2698,11 @@ $(document).ready(function() {
     			$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
     		}
     	});
-    	
     });
 
     $("#btnOK").on('click',function(){
     	var signNO = $("input[name='sign']:checked").val();
+    	var zjSignNO = $("input[name='zjsign']:checked").val();
     	/*var shzm = $("input[name='shmb']:checked").val();*/
     	//打印签收单
     	var customer = $("#customerMessage").val();
@@ -2703,13 +2710,17 @@ $(document).ready(function() {
     	var pdf_sign = $("input[name='pdfSign']:checked").val();
     	if(pdf_sign == null)
     		pdf_sign = 'n';//多张pdf
-    	
     	var pdf_muban = signNO + "_" + pdf_sign;
+    	var zj_pdf_muban = zjSignNO + "_" + pdf_sign;
     	var cargoNature = $("input[name='cargoNature']:checked").val();
     	if(cargoNature == 'cargo'){
     		if(customer=="江苏国光信息产业股份有限公司"){
     			 pdf_muban = signNO + "_puhuo";
     			$.post('/report/printSign', {order_no:order_no,sign:pdf_muban}, function(data){
+        			openData(data);
+            	});
+    		}else if(customer=="深圳市紫金支点技术股份有限公司"){
+				$.post('/report/printZJSign', {order_no:order_no,sign:zj_pdf_muban}, function(data){
         			openData(data);
             	});
     		}else{
@@ -2724,7 +2735,11 @@ $(document).ready(function() {
         			openData(data);
             	});   		
             	$("#close").click();
-        	}else{
+        	}else if(customer=="深圳市紫金支点技术股份有限公司"){
+        		$.post('/report/printZJSign', {order_no:order_no,sign:zj_pdf_muban}, function(data){
+        			openData(data);
+            	});
+    		}else{
         		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);
         	}
     	}

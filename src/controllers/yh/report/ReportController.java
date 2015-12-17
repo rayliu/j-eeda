@@ -166,7 +166,6 @@ public class ReportController extends Controller {
 		String type = getPara("sign");
 		String order_no = getPara("order_no");
 		String muban = type + ".jasper";
-
 		String fileName = "report/" + muban;
 		String outFileName = "download/";
 
@@ -252,6 +251,82 @@ public class ReportController extends Controller {
 		}
 
 	}
+	public void printZJSign() {
+		String type = getPara("sign");
+		String order_no = getPara("order_no");
+		String muban = type + ".jasper";
+		String fileName = "report/" + muban;
+		String outFileName = "download/签收单";
+		HashMap<String, Object> hm = new HashMap<String, Object>();
+		hm.put("order_no", order_no);
+		
+		
+		boolean is_one = muban.contains("_one");
+		TransferOrder to = TransferOrder.dao
+				.findFirst(
+						"select id,cargo_nature_detail from transfer_order where order_no = ?",
+						order_no);
+		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
+				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
+						to.get("id"));
+
+		if (list.size() > 0) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < list.size(); i++) {
+				if (is_one) {
+					hm.put("id", list.get(i).get("id"));
+					if (list.get(i).get("serial_no") != null) {
+						outFileName += "-" + list.get(i).get("serial_no");
+					}
+					
+					fileName = getContextPath() + fileName;
+					outFileName = getContextPath() + outFileName;
+					
+					String file = PrintPatterns.getInstance().print(fileName,
+							outFileName, hm);
+					buffer.append(file.substring(file.indexOf("download")-1));
+					buffer.append(",");
+					break;
+				} else {
+					hm.put("id", list.get(i).get("id"));
+					if (list.get(i).get("serial_no") != null) {
+						outFileName += "-" + list.get(i).get("serial_no");
+					}
+
+					fileName = getContextPath() + fileName;
+					outFileName = getContextPath() + outFileName;
+					
+					String file = PrintPatterns.getInstance().print(fileName,
+							outFileName, hm);
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					buffer.append(file.substring(file.indexOf("download")-1));
+					buffer.append(",");
+				}
+
+			}
+
+			renderText(buffer.toString());
+		} else {
+			if ("cargoNatureDetailNo".equals(to.get("cargo_nature_detail"))) {
+				TransferOrderItem toi = TransferOrderItem.dao
+						.findFirst("select * from transfer_order_item where order_id = "
+								+ to.get("id"));
+				// hm.put("amount", toi.get("amount"));
+			}
+
+			fileName = getContextPath() + fileName;
+			outFileName = getContextPath() + outFileName;
+			
+			String file = PrintPatterns.getInstance().print(fileName,
+					outFileName, hm);
+			renderText(file.substring(file.indexOf("download")-1));
+		}
+
+	}
 	public void printSignCargo() {
 		String type = getPara("sign");
 		String order_no = getPara("order_no");
@@ -271,7 +346,6 @@ public class ReportController extends Controller {
 		buffer.append(file.substring(file.indexOf("download")-1));
 		buffer.append(",");
 		renderText(buffer.toString());
-
 	}
 
 }
