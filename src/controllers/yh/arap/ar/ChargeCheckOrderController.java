@@ -662,14 +662,14 @@ public class ChargeCheckOrderController extends Controller {
 					orderItem1.set("remark", "对账调整金额");
 					orderItem1.set("create_date", new Date());
 					orderItem1.save();
-					if (isCreate) {
-						ArapChargeItem chargeItem = new ArapChargeItem();
-						chargeItem.set("charge_order_id", orderId);
-						chargeItem.set("ref_order_type", "回单");
-						chargeItem.set("ref_order_id", ref_order_id);
-						chargeItem.save();
+				}
+				if (isCreate) {
+					ArapChargeItem chargeItem = new ArapChargeItem();
+					chargeItem.set("charge_order_id", orderId);
+					chargeItem.set("ref_order_type", "回单");
+					chargeItem.set("ref_order_id", ref_order_id);
+					chargeItem.save();
 
-					}
 				}
 			} else {
 				// 手工单就不允许改确认金额了
