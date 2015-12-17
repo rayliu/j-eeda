@@ -147,13 +147,11 @@ $(document).ready(function() {
 	
 	
 	if($("#chargeInvoiceOrderId").val() == ""){
-		$('#departureConfirmationBtn').attr('disabled', true);
+		$('#saveChargeInvoiceOrderBtn').attr('disabled', false);
 	}else{
 		if($("#chargeInvoiceOrderStatus").text() == "新建"){
+			$('#saveChargeInvoiceOrderBtn').attr('disabled', false);
 			$('#departureConfirmationBtn').attr('disabled', false);
-		}else if($("#chargeInvoiceOrderStatus").text() == "已审批"){
-			$('#departureConfirmationBtn').attr('disabled', true);
-			$('#saveChargeInvoiceOrderBtn').attr('disabled', true);
 		}
 	}
 } );
