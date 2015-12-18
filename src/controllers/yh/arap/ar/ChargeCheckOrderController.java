@@ -867,6 +867,10 @@ public class ChargeCheckOrderController extends Controller {
 						ReturnOrder returnOrder = ReturnOrder.dao.findById(arapChargeItem.get("ref_order_id"));
 						returnOrder.set("transaction_status", "对账已确认"); 
 						returnOrder.update();
+					}else if("保险".equals(arapChargeItem.get("ref_order_type"))){
+						InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(arapChargeItem.get("ref_order_id"));
+						insuranceOrder.set("transaction_status", "对账已确认"); 
+						insuranceOrder.update();
 					}else{
 						ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(arapChargeItem.get("ref_order_id"));
 						arapMiscChargeOrder.set("status", "对账已确认"); 
