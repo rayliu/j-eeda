@@ -57,7 +57,7 @@ $(document).ready(function() {
                 $("#creator_name").val(order.CREATOR_NAME);
                 $("#create_date").val(order.CREATE_DATE);
                 $("#status").val(order.STATUS);
-
+                $("#order_id").val(order.ID);
                 contactUrl("edit?id",order.ID);
                 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 

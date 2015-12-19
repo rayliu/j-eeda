@@ -63,7 +63,7 @@ $(document).ready(function() {
                 "FIN_ITEM": item.FIN_ITEM,
                 "AMOUNT": item.AMOUNT,
                 "PARTY_TYPE": item.PARTY_TYPE,
-                "NAME": item.NAME,
+                "PARTY_NAME": item.PARTY_NAME,
                 "REMARK": item.REMARK
             };
     
