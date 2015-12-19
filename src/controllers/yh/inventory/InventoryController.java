@@ -153,25 +153,33 @@ public class InventoryController extends Controller {
             sLimit = " limit " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         
-        
-        
-       
+      //获取当前用户的总公司
+        ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+        Long parentID = pom.getParentOfficeId();
+
         String groupConditions = " group by product_id ";
         String conditions = " where 1=1 ";
         if (StringUtils.isNotEmpty(customerId)){
         	conditions += " and customer_id = " + customerId;
         }
-		if (StringUtils.isNotEmpty(warehouseId)){
-			conditions += " and warehouse_id = " + warehouseId;
-		}
-		if (StringUtils.isNotEmpty(officeId)){
+        if (StringUtils.isNotEmpty(officeId)){
 			Record re  = Db.findFirst("select GROUP_CONCAT(cast(id as char)) ids from warehouse w where w.office_id = ?", officeId);
 			if(re.getStr("ids")!=null && !re.getStr("ids").equals(""))
 				conditions += " and warehouse_id in (" + re.getStr("ids") +")";
 		}
+        else{
+        	Record re  = Db.findFirst("select GROUP_CONCAT(cast(w.id as char)) ids from warehouse w "
+					+ " LEFT JOIN office o on o.id = w.office_id where o.id in (select office_id FROM user_office WHERE user_name='"+currentUser.getPrincipal()+"')");
+        	conditions += " and warehouse_id in ("+ re.getStr("ids") +")";
+		}
+		if (StringUtils.isNotEmpty(warehouseId)){
+			conditions += " and warehouse_id = " + warehouseId;
+		}
 		if (StringUtils.isNotEmpty(itemId)){
 			conditions += " and product_id = " + itemId;
 		}
+		
+		//conditions += " and customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 		
 		
 		 String conditions2 = " where 1=1 ";
@@ -188,12 +196,9 @@ public class InventoryController extends Controller {
         }
         conditions2 += beginTime+endTime;
 
-       //获取当前用户的总公司
-//       ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
-//       
-//       Long parentID = pom.getParentOfficeId();
        
-        String sql = " SELECT toi.id, p.item_name, p.item_no,tor.customer_id,tor.office_id,tor.warehouse_id,tor.planning_time,c.abbr customer_name,w.warehouse_name,o.office_name, toi.product_id ,"
+       
+        String sql = " SELECT toi.id, p.item_name, p.item_no,tor.customer_id,tor.office_id,o.belong_office,tor.warehouse_id,tor.planning_time,c.abbr customer_name,w.warehouse_name,o.office_name, toi.product_id ,"
         		+ " (select count(*) from transfer_order_item_detail toid"
         		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
         		+ " where toid.item_id = toi.id and toid.delivery_id is null and (toid.depart_id is null or dor.`STATUS` != '已入库')"
@@ -269,17 +274,24 @@ public class InventoryController extends Controller {
         if (StringUtils.isNotEmpty(customerId)){
         	conditions += " and customer_id = " + customerId;
         }
-		if (StringUtils.isNotEmpty(warehouseId)){
-			conditions += " and warehouse_id = " + warehouseId;
-		}
 		if (StringUtils.isNotEmpty(officeId)){
 			Record re  = Db.findFirst("select GROUP_CONCAT(cast(id as char)) ids from warehouse w where w.office_id = ?", officeId);
 			if(re.getStr("ids")!=null && !re.getStr("ids").equals(""))
 				conditions += " and warehouse_id in (" + re.getStr("ids") +")";
+		} 
+		else{
+			Record re  = Db.findFirst("select GROUP_CONCAT(cast(w.id as char)) ids from warehouse w "
+					+ " LEFT JOIN office o on o.id = w.office_id where o.id in (select office_id FROM user_office WHERE user_name='"+currentUser.getPrincipal()+"')");
+        	conditions += " and warehouse_id in ("+ re.getStr("ids") +")";
+		}
+		if (StringUtils.isNotEmpty(warehouseId)){
+			conditions += " and warehouse_id = " + warehouseId;
 		}
 		if (StringUtils.isNotEmpty(itemId)){
 			conditions += " and product_id = " + itemId;
 		}
+		
+		//conditions += " and customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 		
 		String conditions2 = " where 1 = 1 ";
         if (StringUtils.isNotEmpty(beginTime)){
@@ -296,7 +308,7 @@ public class InventoryController extends Controller {
         }
         conditions2 += beginTime+endTime;
         
-       String sql = " SELECT toi.id, p.item_name, p.item_no,tor.customer_id,tor.office_id,tor.warehouse_id,tor.planning_time,c.abbr customer_name,w.warehouse_name,o.office_name, toi.product_id ,"
+       String sql = " SELECT toi.id, p.item_name, p.item_no,tor.customer_id,tor.office_id,o.belong_office ,tor.warehouse_id,tor.planning_time,c.abbr customer_name,w.warehouse_name,o.office_name, toi.product_id ,"
        		+ " (select count(*) from transfer_order_item_detail toid"
        		+ " LEFT JOIN depart_order dor on dor.id = toid.depart_id"
        		+ " where toid.item_id = toi.id and toid.delivery_id is null and (toid.depart_id is null or dor.`STATUS` != '已入库')"
