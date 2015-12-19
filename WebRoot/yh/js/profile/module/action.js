@@ -92,7 +92,7 @@
 
     var $action_table = $("#action_table");
 
-    //增加一个按钮动作
+    //按钮行中增加一个动作命令
     $action_table.on('click', '.add_command', function(e){
         e.preventDefault();
         //$('#actionModal').modal('show');
@@ -104,7 +104,7 @@
         $(this).parent().find('ul').append(html);
     });
 
-    //删除一个按钮命令
+    //按钮行中删除一个动作命令
     $action_table.on('click', '.delete_command', function(e){
         e.preventDefault();
         //$('#actionModal').modal('show');
@@ -112,7 +112,7 @@
     });
 
     var deletedActionIds=[];
-    //删除表中一行
+    //删除表中一个按钮
     $action_table.on('click', '.delete', function(e){
         e.preventDefault();
         var tr = $(this).parent().parent();

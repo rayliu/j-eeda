@@ -504,4 +504,8 @@ table .form-control{
 .button-bar{
 	margin-top: 10px;
 }
+
+.button-bar button{
+    margin-right: 5px;
+}
 /* ray added */

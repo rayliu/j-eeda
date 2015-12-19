@@ -10,21 +10,80 @@
         console.log(json);
         $('#fields_body').empty();
 
+        buildStructureUI(json);
+        buildButtonUI(json);
+    }, 'json');
+
+    var buildButtonUI = function(json){
+        for (var i = 0; i < json.ACTION_LIST.length; i++) {
+            var buttonObj = json.ACTION_LIST[i];
+            var button_html = template('button_template', 
+                    {
+                        id: buttonObj.ID,
+                        label: buttonObj.ACTION_NAME
+                    }
+                );
+            $('#button-bar').append(button_html);
+        }
+    };
+
+    var buildStructureUI = function(json){
         for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
             var structure = json.STRUCTURE_LIST[i];
-            
+
                 if(!structure.FIELDS_LIST)
                     continue;
                 if(structure.STRUCTURE_TYPE == '字段'){
                     for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
                         var field = structure.FIELDS_LIST[j];
+
+                        var field_html = '';
+                        if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '仅显示值'){
+                            field_html = template('input_field', 
+                                {
+                                    id: field.FIELD_NAME,
+                                    label: field.FIELD_DISPLAY_NAME,
+                                    disabled: "disabled"
+                                }
+                            );
+                        }else if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '文本编辑框'){
+                            field_html = template('input_field', 
+                                {
+                                    id: field.FIELD_NAME,
+                                    label: field.FIELD_DISPLAY_NAME
+                                }
+                            );
+                        }else if(field.FIELD_TYPE == '日期编辑框'){
+                            field_html = template('input_date_field_template', 
+                                {
+                                    id: field.FIELD_NAME,
+                                    label: field.FIELD_DISPLAY_NAME
+                                }
+                            );
+                        }else if(field.FIELD_DISPLAY_NAME == '客户'){
+                            field_html = template('input_customer_template', 
+                                {
+                                    id: field.FIELD_NAME,
+                                    label: field.FIELD_DISPLAY_NAME
+                                }
+                            );
+                        }else if(field.FIELD_DISPLAY_NAME == '供应商'){
+                            field_html = template('input_sp_template', 
+                                {
+                                    id: field.FIELD_NAME,
+                                    label: field.FIELD_DISPLAY_NAME,
+                                    value: ''
+                                }
+                            );
+                        }else{
+                            field_html = template('input_field', 
+                                {
+                                    id: field.FIELD_NAME,
+                                    label: field.FIELD_DISPLAY_NAME
+                                }
+                            );
+                        }
                         
-                        var field_html = template('input_field', 
-                            {
-                                id: field.FIELD_NAME,
-                                label: field.FIELD_DISPLAY_NAME
-                            }
-                        );
                         $('#fields').append(field_html);
                     }
                 }else{
@@ -36,113 +95,35 @@
                             }
                         );
                     $('#list').append(list_html);
-                    $('#list table:last').DataTable({
-                            paging: false,
-                            info: false,
-                            searching: false,
-                            autoWidth: true,
-                            language: {
-                                url: "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
-                            }
-                        });
-                }
-            
-        }//end of for
-    }, 'json');
-    //-------------   子表的动态处理
 
-    var tableSetting = {
-        paging: false,
-        "info": false,
-        "processing": true,
-        "searching": false,
-        "autoWidth": true,
-        "language": {
-            "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
-        },
-        "createdRow": function ( row, data, index ) {
-            $(row).attr('id', data.ID);
-        },
-        //"ajax": "/damageOrder/list",
-        "columns": [
-            { "width": "30px", "orderable":false, 
-                "render": function ( data, type, full, meta ) {
-                  return '<a class="remove delete" href="javascript:void(0)" title="Remove"><i class="glyphicon glyphicon-remove"></i></a>';
+                    //setting 是动态跟随table生成的
+                    var table_setting = window['table_' + structure.ID + '_setting'];
+                    $('#list table:last').DataTable(table_setting);
                 }
-            },
-            { "data": "ID"},
-            { "data": "FIELD_NAME",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<input type="text" value="'+data+'" class="product_no form-control"/>';
-                }
-            },
-            { "data": "FIELD_TYPE",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<select class="form-control">'
-                        +'    <option '+(data=='文本编辑框'?'selected':'')+'>文本编辑框</option>'
-                        +'    <option '+(data=='仅显示值'?'selected':'')+'>仅显示值</option>'
-                        +'    <option '+(data=='隐藏值'?'selected':'')+'>隐藏值</option>'
-                        +'    <option '+(data=='日期编辑框'?'selected':'')+'>日期编辑框</option>'
-                        +'    <option '+(data=='下拉框'?'selected':'')+'>下拉框</option>'
-                        +'    <option '+(data=='多项勾选框'?'selected':'')+'>多项勾选框</option>'
-                        +'</select>';
-                }
-            },
-            { "data": "FIELD_DATA_TYPE",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<select class="form-control">'
-                        +'    <option '+(data=='文本'?'selected':'')+'>文本</option>'
-                        +'    <option '+(data=='数值'?'selected':'')+'>数值</option>'
-                        +'    <option '+(data=='日期'?'selected':'')+'>日期</option>'
-                        +'</select>';
-                }
-            },
-            { "data": "REQUIRED",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<select class="form-control">'
-                        +'   <option '+(data=='N'?'selected':'')+'>N</option>'
-                        +'   <option '+(data=='Y'?'selected':'')+'>Y</option>'
-                        +'</select>';
-                }
-            }, 
-            { "data": "LISTED",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<select class="form-control">'
-                        +'   <option '+(data=='Y'?'selected':'')+'>Y</option>'
-                        +'    <option '+(data=='N'?'selected':'')+'>N</option>'
-                        +'</select>';
-                }
-            },
-            { "data": "FIELD_TEMPLATE_PATH",
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<input type="text" value="'+data+'" class="product_no form-control"/>';
-                }
-            },
-            { "data": "INDEX_NAME", visible: false,
-                "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<input type="text" value="'+data+'" class="product_no form-control"/>';
-                }
-            }
-        ]
+        }//end of for
     };
 
-    var dataTable = $('#fields-table').DataTable(tableSetting);
+    //-------------table add button click
+    $('#list').on('click', 'button', function(event) {
+        if($(this).attr('name') == 'addRowBtn'){
+            var table_id = $(this).attr('table_id');
+            var dataTable = $('#' + table_id).DataTable();
+            var row = window[table_id + '_row'];
+            dataTable.row.add(row).draw(false);
+        }
+    });
+    //-------------table delete button click
+    $('#list').on('click', 'a', function(event) {
+        if($(this).attr('class') == 'delete'){
+            var table_id = $(this).attr('table_id');
+            var dataTable = $('#' + table_id).DataTable();
+            var tr = $(this).parent().parent();
+            //deletedTableIds.push(tr.attr('id'))
 
-    Module.dataTable = dataTable;
+            dataTable.row(tr).remove().draw();
+        }
+    });
+
 
     var deletedTableIds=[];
 
