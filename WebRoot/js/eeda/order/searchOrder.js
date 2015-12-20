@@ -1,8 +1,6 @@
- 
 
-    
 //$(document).ready(function(template) {
-	
+
     //$('#menu_sys_profile').addClass('active').find('ul').addClass('in');
 
     $.post('/module/getOrderStructure', {module_id: $("#module_id").val()}, function(json){
@@ -10,101 +8,92 @@
         console.log(json);
 
         $('#module_name').text(json.MODULE_NAME);
-        document.title = json.MODULE_NAME + ' | ' + document.title;
+        document.title = json.MODULE_NAME + '查询  ' + document.title;
 
         $('#fields_body').empty();
 
         buildStructureUI(json);
-        buildButtonUI(json);
     }, 'json');
 
-    var buildButtonUI = function(json){
-        for (var i = 0; i < json.ACTION_LIST.length; i++) {
-            var buttonObj = json.ACTION_LIST[i];
-            var button_html = template('button_template', 
-                    {
-                        id: buttonObj.ID,
-                        label: buttonObj.ACTION_NAME
-                    }
-                );
-            $('#button-bar').append(button_html);
-        }
+    var buildStructureUI = function(json){
+            var structure = json.STRUCTURE_LIST[0];//主表结构
+
+            if(!structure.FIELDS_LIST)
+                return;
+
+            if(structure.STRUCTURE_TYPE == '字段'){
+                buildQueryFields(structure);
+                buildResultList(structure);
+            }
     };
 
-    var buildStructureUI = function(json){
-        for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
-            var structure = json.STRUCTURE_LIST[i];
-
-                if(!structure.FIELDS_LIST)
-                    continue;
-                if(structure.STRUCTURE_TYPE == '字段'){
-                    for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
-                        var field = structure.FIELDS_LIST[j];
-
-                        var field_html = '';
-                        if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '仅显示值'){
-                            field_html = template('input_field', 
-                                {
-                                    id: field.FIELD_NAME,
-                                    label: field.FIELD_DISPLAY_NAME,
-                                    disabled: "disabled"
-                                }
-                            );
-                        }else if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '文本编辑框'){
-                            field_html = template('input_field', 
-                                {
-                                    id: field.FIELD_NAME,
-                                    label: field.FIELD_DISPLAY_NAME
-                                }
-                            );
-                        }else if(field.FIELD_TYPE == '日期编辑框'){
-                            field_html = template('input_date_field_template', 
-                                {
-                                    id: field.FIELD_NAME,
-                                    label: field.FIELD_DISPLAY_NAME
-                                }
-                            );
-                        }else if(field.FIELD_DISPLAY_NAME == '客户'){
-                            field_html = template('input_customer_template', 
-                                {
-                                    id: field.FIELD_NAME,
-                                    label: field.FIELD_DISPLAY_NAME
-                                }
-                            );
-                        }else if(field.FIELD_DISPLAY_NAME == '供应商'){
-                            field_html = template('input_sp_template', 
-                                {
-                                    id: field.FIELD_NAME,
-                                    label: field.FIELD_DISPLAY_NAME,
-                                    value: ''
-                                }
-                            );
-                        }else{
-                            field_html = template('input_field', 
-                                {
-                                    id: field.FIELD_NAME,
-                                    label: field.FIELD_DISPLAY_NAME
-                                }
-                            );
-                        }
-                        
-                        $('#fields').append(field_html);
-                    }
-                }else{
-                    var list_html = template('table_template', 
-                            {
-                                id: structure.ID,
-                                label: structure.NAME,
-                                field_list: structure.FIELDS_LIST
-                            }
-                        );
-                    $('#list').append(list_html);
-
-                    //setting 是动态跟随table生成的
-                    var table_setting = window['table_' + structure.ID + '_setting'];
-                    $('#list table:last').DataTable(table_setting);
+    var buildResultList = function(structure){
+        var list_html = template('table_template', 
+                {
+                    id: structure.ID,
+                    label: structure.NAME,
+                    field_list: structure.FIELDS_LIST
                 }
-        }//end of for
+            );
+        $('#list').append(list_html);
+
+        //setting 是动态跟随table生成的
+        var table_setting = window['table_' + structure.ID + '_setting'];
+        $('#list table:last').DataTable(table_setting);
+    };
+
+    var buildQueryFields = function(structure){
+        for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
+            var field = structure.FIELDS_LIST[j];
+
+            var field_html = '';
+            if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '仅显示值'){
+                field_html = template('input_field', 
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME,
+                    }
+                );
+            }else if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '文本编辑框'){
+                field_html = template('input_field', 
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME
+                    }
+                );
+            }else if(field.FIELD_TYPE == '日期编辑框'){
+                field_html = template('input_date_query_template', 
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME
+                    }
+                );
+            }else if(field.FIELD_DISPLAY_NAME == '客户'){
+                field_html = template('input_customer_template', 
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME
+                    }
+                );
+            }else if(field.FIELD_DISPLAY_NAME == '供应商'){
+                field_html = template('input_sp_template', 
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME,
+                        value: ''
+                    }
+                );
+            }else{
+                field_html = template('input_field', 
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME
+                    }
+                );
+            }
+            
+            $('#fields').append(field_html);
+        }
     };
 
     //-------------table add button click
@@ -224,9 +213,7 @@
     };
 
 
-    $('#saveBtn').on('click', function(e){
-        $(this).attr('disabled', true);
-
+    $('#searchBtn').on('click', function(e){
         //阻止a 的默认响应行为，不需要跳转
         e.preventDefault();
         //提交前，校验数据
@@ -241,31 +228,28 @@
             structure_list: structure_list
         };
 
-        console.log('saveBtn.click....');
+        console.log('searchBtn.click....');
         console.log(dto);
 
         //异步向后台提交数据
-        $.post('/module/saveStructure', {params:JSON.stringify(dto)}, function(data){
-            var order = data;
-            console.log(order);
-            if(order.ID>0){
-                $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+        // $.post('/module/saveStructure', {params:JSON.stringify(dto)}, function(data){
+        //     var order = data;
+        //     console.log(order);
+        //     if(order.ID>0){
+        //         $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
-                $('#saveBtn').attr('disabled', false);
+        //         $('#saveBtn').attr('disabled', false);
 
-                damageOrder.reDrawTable(order);
-            }else{
-                $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-                $('#saveBtn').attr('disabled', false);
-            }
-        },'json').fail(function() {
-            $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-            $('#saveBtn').attr('disabled', false);
-        });
+        //         damageOrder.reDrawTable(order);
+        //     }else{
+        //         $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+        //         $('#saveBtn').attr('disabled', false);
+        //     }
+        // },'json').fail(function() {
+        //     $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+        //     $('#saveBtn').attr('disabled', false);
+        // });
     });
 
-    //单据预览
-    $('#previewBtn').click(function(){
-        window.open('/module/preview/'+$("#module_id").text());
-    });
+
 //});

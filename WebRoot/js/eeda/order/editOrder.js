@@ -95,7 +95,8 @@
                             {
                                 id: structure.ID,
                                 label: structure.NAME,
-                                field_list: structure.FIELDS_LIST
+                                field_list: structure.FIELDS_LIST,
+                                is_edit_order: true
                             }
                         );
                     $('#list').append(list_html);

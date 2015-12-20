@@ -180,6 +180,7 @@ public class ModuleController extends Controller {
     
     public void getOrderStructure(){
         String module_id = getPara("module_id");
+        Record module = Db.findFirst("select * from modules where id=?", module_id);
         
         List<Record> sRecs = Db.find("select * from structure where module_id=?", module_id);
         for (Record structure : sRecs) {
@@ -193,6 +194,7 @@ public class ModuleController extends Controller {
         
         Record rec = new Record();
         rec.set("module_id", module_id);
+        rec.set("module_name", module.get("module_name"));
         rec.set("structure_list", sRecs);
         rec.set("action_list", aRecs);
         renderJson(rec);
@@ -202,7 +204,19 @@ public class ModuleController extends Controller {
     public void preview(){
         String module_id =getPara();
         setAttr("module_id", module_id);
-        render("/yh/profile/module/preview.html");
+        
+        UserLogin user = LoginUserController.getLoginUser(this);
+        //查询当前用户菜单
+        String sql ="select * from modules where parent_id is null and office_id=? order by seq";
+        List<Record> modules = Db.find(sql, user.get("office_id"));
+        for (Record module : modules) {
+            sql ="select * from modules where parent_id =? order by seq";
+            List<Record> orders = Db.find(sql, module.get("id"));
+            module.set("orders", orders);
+        }
+        setAttr("modules", modules);
+        
+        render("/yh/profile/module/editOrder.html");
     }
     
     //------------------------------------------------

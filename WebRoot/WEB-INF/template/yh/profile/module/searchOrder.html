@@ -1,0 +1,56 @@
+<%layout("/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
+<link href="/yh/js/plugins/datatables-1.10.9/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<div id="page-wrapper">
+	<div class="row">
+		<input type="hidden" id='module_id' value="${module_id}">
+		<h2><span id='module_name'></span>查询</h2>
+	    <section id='fields'  class="row">
+
+	    </section>
+	    <section id='actions'  class="row">
+	    	<div class="col-lg-12">
+				<div id ='button-bar' class="form-group button-bar" >
+					<button id="searchBtn" class="btn  btn-primary" type="button">查询</button>
+                    <button id="resetBtn" class="btn  btn-default" type="button">清空条件</button>
+                    <a class="btn btn-success" href="/m/${module_id}-add">新建</a>
+			    </div>
+			</div>
+	    </section>
+	    <section id='list' class="row">
+
+	    </section>
+	    
+	</div>
+	<!--end of row -->   
+
+</div>
+
+<%}%>
+
+
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/datatables-1.10.9/js/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/datatables-1.10.9/js/dataTables.bootstrap.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<script>
+       
+       var Module={};
+</script>
+
+
+<%include("/yh/component/jsTemplate/inputField.js", {id:'input_field'}){} %>
+<%include("/yh/component/jsTemplate/inputDateQueryField.js",{}){} %>
+<%include("/yh/component/jsTemplate/inputCustomerField.js",{}){} %>
+<%include("/yh/component/jsTemplate/inputSpField.js",{}){} %>
+<%include("/yh/component/jsTemplate/detailTable.js", { id:'table_template'}){} %>
+<%include("/yh/component/jsTemplate/button.js", { id:'button_template'}){} %>
+
+<script src="/js/eeda/order/searchOrder.js"></script>
+

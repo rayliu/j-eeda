@@ -244,7 +244,7 @@
 
 /* DataTables Overrides */
 
- table.dataTable thead .sorting,
+table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc:after,
 table.dataTable thead .sorting_desc,
 table.dataTable thead .sorting_asc_disabled,
@@ -371,8 +371,18 @@ label.error {
 }
 
 .search-control{
-    display: inline;  
+    display: inline;
     width: 65%;
+}
+
+.form-group .input-date{
+    display: inline;
+}
+
+.search-control.date{
+    width:25%;
+    font-size: 7px;
+    padding: 0 3px;
 }
 
 .search-label{
@@ -487,7 +497,7 @@ label.error {
 
 .col-lg-4 .date .add-on{
 	position: absolute;
-    right: 12%;
+    right: 8%;
     margin-top: 10px;
 }
 
