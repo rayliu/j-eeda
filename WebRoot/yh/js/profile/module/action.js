@@ -128,7 +128,12 @@
             if(index==0)
                 continue;
 
+
             var row = table_rows[index];
+
+            if($(row).find('td').text() == '表中数据为空')
+                continue;
+
             var id = $(row).attr('id');
             if(!id){
                 id='';

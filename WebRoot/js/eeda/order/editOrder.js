@@ -45,7 +45,7 @@
                         if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '仅显示值'){
                             field_html = template('input_field', 
                                 {
-                                    id: field.FIELD_NAME,
+                                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
                                     label: field.FIELD_DISPLAY_NAME,
                                     disabled: "disabled"
                                 }
@@ -53,28 +53,28 @@
                         }else if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '文本编辑框'){
                             field_html = template('input_field', 
                                 {
-                                    id: field.FIELD_NAME,
+                                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
                                     label: field.FIELD_DISPLAY_NAME
                                 }
                             );
                         }else if(field.FIELD_TYPE == '日期编辑框'){
                             field_html = template('input_date_field_template', 
                                 {
-                                    id: field.FIELD_NAME,
+                                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
                                     label: field.FIELD_DISPLAY_NAME
                                 }
                             );
                         }else if(field.FIELD_DISPLAY_NAME == '客户'){
                             field_html = template('input_customer_template', 
                                 {
-                                    id: field.FIELD_NAME,
+                                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
                                     label: field.FIELD_DISPLAY_NAME
                                 }
                             );
                         }else if(field.FIELD_DISPLAY_NAME == '供应商'){
                             field_html = template('input_sp_template', 
                                 {
-                                    id: field.FIELD_NAME,
+                                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
                                     label: field.FIELD_DISPLAY_NAME,
                                     value: ''
                                 }
@@ -82,7 +82,7 @@
                         }else{
                             field_html = template('input_field', 
                                 {
-                                    id: field.FIELD_NAME,
+                                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
                                     label: field.FIELD_DISPLAY_NAME
                                 }
                             );

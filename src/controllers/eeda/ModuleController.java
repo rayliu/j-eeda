@@ -186,45 +186,69 @@ public class ModuleController extends Controller {
         List<Map<String, String>> action_list = (ArrayList<Map<String, String>>)dto.get("action_list");
         DbUtils.handleList(action_list, Action.class, master_ref);
         
-        Object is_start = dto.get("is_start");
+        Object is_start = dto.get("is_start");//是否启用？
         if((Boolean)is_start){
-            logger.debug("start to generate tables....");
-            //module 运输单 id=13，那么table_name 生成： M13_YSD
-            //find table record
-            String structureSql = "select * from structure where module_id=?";
-            List<Record> sList = Db.find(structureSql, module_id);
-            
-            for (Record structure : sList) {
-                String tableName = structure.getStr("table_name");
-                //每个子表中默认有ID, PARENT_ID两个字段，请勿添加同名字段。
-                String createTableSql = "CREATE TABLE `"+tableName+"` ("
-                  +" `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '',"
-                  +" `parent_id` BIGINT(20) NULL COMMENT '',"
-                  + "PRIMARY KEY (`id`)  COMMENT '')";
-                Db.update(createTableSql);
-                
-                String fieldSql = "select * from field where structure_id=?";
-                List<Record> fieldList = Db.find(fieldSql, structure.get("id"));
-                for (Record field : fieldList) {
-                    String createField ="";
-                    if("日期编辑框".equals(field.getStr("field_type"))){
-                        createField = "ALTER TABLE `"+tableName+"` ADD COLUMN `"
-                            +field.getStr("field_name")+"` TIMESTAMP NULL COMMENT ''";
-                    }else{
-                        createField = "ALTER TABLE `"+tableName+"` ADD COLUMN `"
-                                +field.getStr("field_name")+"` VARCHAR(45) NULL COMMENT ''";
-                    }
-                    Db.update(createField);
-                }
-            }
-            
+            activateModule(module_id);
+        }else{
+            Db.update(" update modules set status = '停用' where id=?", module_id);
         }
 
-        renderJson(dto);
+        Record orderDto = getOrderStructureDto(module_id);
+        renderJson(orderDto);
+    }
+
+    private void activateModule(String module_id) {
+        logger.debug("start to generate tables....");
+        Db.update(" update modules set status = '启用' where id=?", module_id);
+        //module 运输单 id=13，那么table_name 生成： T_13
+        //find table record
+        String structureSql = "select * from structure where module_id=?";
+        List<Record> sList = Db.find(structureSql, module_id);
+        
+        for (Record structure : sList) {
+            String structureId = structure.get("id").toString();
+            
+            String tableName = "T_"+ structureId;
+            
+            //每个子表中默认有ID, PARENT_ID两个字段，请勿添加同名字段。
+            String createTableSql = "CREATE TABLE if not exists `"+tableName+"` ("
+              +" `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '',"
+              +" `parent_id` BIGINT(20) NULL COMMENT '',"
+              + "PRIMARY KEY (`id`)  COMMENT '')";
+            Db.update(createTableSql);
+            
+            String fieldSql = "select * from field where structure_id=?";
+            List<Record> fieldList = Db.find(fieldSql, structureId);
+            for (Record field : fieldList) {
+                String fieldName = "F"+field.get("id").toString()+"_"+field.getStr("field_name");
+                String createField ="";
+                //根据ID判断字段是否已存在
+                Record oldFieldRec = Db.findFirst("show columns from "+tableName+" like '"+"F"+field.get("id").toString()+"_%'");
+                if("日期编辑框".equals(field.getStr("field_type"))){
+                    if(oldFieldRec != null){
+                        createField = "ALTER TABLE `"+tableName+"` " + "CHANGE COLUMN `"+oldFieldRec.getStr("field")+"` `"+fieldName+"` TIMESTAMP NULL DEFAULT NULL COMMENT ''";
+                    }else{
+                        createField = "ALTER TABLE `"+tableName+"` ADD COLUMN `" + fieldName+"` TIMESTAMP NULL COMMENT ''";
+                    }
+                }else{
+                    if(oldFieldRec != null){
+                        createField = "ALTER TABLE `"+tableName+"` " + "CHANGE COLUMN `" + oldFieldRec.getStr("field")+"` `" + fieldName + "` VARCHAR(255) NULL DEFAULT NULL COMMENT ''";
+                    }else{
+                        createField = "ALTER TABLE `" + tableName+"` ADD COLUMN `" + fieldName + "` VARCHAR(255) NULL COMMENT ''";
+                    }
+                }
+                Db.update(createField);
+            }
+        }
     }
     
     public void getOrderStructure(){
         String module_id = getPara("module_id");
+        Record rec = getOrderStructureDto(module_id);
+        renderJson(rec);
+    }
+
+    private Record getOrderStructureDto(String module_id) {
         Record module = Db.findFirst("select * from modules where id=?", module_id);
         
         List<Record> sRecs = Db.find("select * from structure where module_id=?", module_id);
@@ -242,7 +266,7 @@ public class ModuleController extends Controller {
         rec.set("module_name", module.get("module_name"));
         rec.set("structure_list", sRecs);
         rec.set("action_list", aRecs);
-        renderJson(rec);
+        return rec;
     }
     
     //针对字段设置生成预览页面

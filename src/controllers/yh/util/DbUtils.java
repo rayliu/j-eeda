@@ -127,7 +127,8 @@ public class DbUtils {
 
     //遇到 _list 是从表Map, 递归处理， model = ?_list
 	public static void setModelValues(Map<String, ?> dto, Model<?> model) {
-		logger.debug("----Model:"+model.getClass().toString());
+	    String modelName = model.getClass().getSimpleName();
+		logger.debug("----Model:"+modelName);
 		for (Entry<String, ?> entry : dto.entrySet()) { 
 			String key = entry.getKey();
 			if(!key.endsWith("_list")){
@@ -137,7 +138,7 @@ public class DbUtils {
             		logger.debug(key+":"+value);
             		try {
                         model.set(key, value);
-                        if("field_display_name".equals(key)){//对fieldd 的特殊处理
+                        if("Field".equals(modelName) && "field_display_name".equals(key)){//对field 的特殊处理
                             model.set("field_name", PingYinUtil.getFirstSpell(value).toUpperCase());
                             //需判断当前表是否有相同字段名
                         }

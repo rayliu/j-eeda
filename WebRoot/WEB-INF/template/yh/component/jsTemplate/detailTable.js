@@ -40,7 +40,7 @@
                     }
                 },
                 {{each field_list as field}}
-                    { "data": "{{field.FIELD_NAME}}",
+                    { "data": "F{{field.ID}}_{{field.FIELD_NAME}}",
                         "render": function ( data, type, full, meta ) {
                             if(!data)
                                 data = '';
@@ -53,7 +53,7 @@
 
         var table_{{id}}_row = {
             {{each field_list as field}}
-                {{field.FIELD_NAME}}: '',
+                F{{field.ID}}_{{field.FIELD_NAME}}: '',
             {{/each}}
         };
     </script>

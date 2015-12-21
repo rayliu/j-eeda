@@ -247,7 +247,7 @@
         $.post('/module/saveStructure', {params:JSON.stringify(dto)}, function(data){
             var order = data;
             console.log(order);
-            if(order.ID>0){
+            if(order.MODULE_ID>0){
                 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
                 btn.attr('disabled', false);
