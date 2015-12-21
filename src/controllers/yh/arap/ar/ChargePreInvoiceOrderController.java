@@ -284,7 +284,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 //	}
 	
 	// 审核
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_APPROVAL})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_APPROVAL})
 	public void auditChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		ArapChargeInvoiceApplication arapAuditOrder = null;
@@ -305,7 +305,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	}
 	
 	// 审批
-    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CONFIRMATION})
+    //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CONFIRMATION})
 	public void approvalChargePreInvoiceOrder(){
 		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
 		Map map =new HashMap();
@@ -606,7 +606,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	
 	
 	//新模块
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
+	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void create() {
 		String ids = getPara("sids");
 		setAttr("ids", ids);
@@ -858,7 +858,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 	}
 	
 	
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
+	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
 	public void edit() throws ParseException {
 		String id = getPara("id");
 		setAttr("application_id", id);
