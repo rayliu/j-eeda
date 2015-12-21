@@ -209,26 +209,6 @@ public class WxController extends ApiController {
 		setPageAttr("/wx/myLocation");		
 		render("/yh/wx/location.html");
 	}
-	//回单上传附件页面
-	public void ro_filing() {
-		setAttr("type", "default");
-		setAttr("orderNo", getPara());
-		setPageAttr("/wx/ro_filing");
-		render("/yh/returnOrder/returnOrderFiling.html");
-	}
-	//回单上传附件页面 - 直送
-	public void directSend() {
-		setAttr("type", "directSend");
-		setAttr("transferOrderNo", getPara());
-		setPageAttr("/wx/directSend");
-		render("/yh/returnOrder/returnOrderFiling.html");
-	}
-	//回单上传附件页面 - 配送
-	public void distribution() {
-		setAttr("type", "distribution");
-		setPageAttr("/wx/distribution");
-		render("/yh/returnOrder/returnOrderFiling.html");
-	}
 	
 	//回单上传附件页面 - 统一单号
 	public void fileUpload() {
@@ -237,11 +217,22 @@ public class WxController extends ApiController {
 		render("/yh/returnOrder/returnOrderUploadFile.html");
 	}
 	
-	//客户查询
-	public void searchOrder() {
-		setPageAttr("/wx/searchOrder");
-		render("/yh/wx/searchOrder.html");
-	}
+	//单据状态查询
+    public void queryStatus() {
+        setAttr("orderNo", getPara());
+        setPageAttr("/wx/queryStatus");
+        render("/yh/wx/queryStatus.html");
+    }
+    
+    //单据状态查询
+    public void queryStatusJson() {
+        String orderNo = getPara("orderNo").toUpperCase();
+        String sql = "select * from transfer_order_item_detail toid where upper(toid.serial_no) = ?";
+        Record rec = Db.findFirst(sql, orderNo);
+        if(rec == null)
+            rec = new Record();
+        renderJson(rec);
+    }
 	
 	//扫单助手
 	public void scanOrder() {
