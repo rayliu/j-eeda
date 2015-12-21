@@ -263,7 +263,8 @@ public class CostAcceptOrderController extends Controller {
     public void applicationList() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        String spName = getPara("sp")!=null?getPara("sp"):"";
+        String spNameNo = getPara("sp")!=null?getPara("sp"):"";
+        String spName=spNameNo.replace("\\", "%");
         String beginTime = getPara("beginTime")!=null?getPara("beginTime"):"";
         String endTime = getPara("endTime")!=null?getPara("endTime"):"";
         String applicationOrderNo = getPara("applicationOrderNo")!=null?getPara("applicationOrderNo"):"";
