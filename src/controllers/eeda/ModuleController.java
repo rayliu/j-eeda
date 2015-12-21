@@ -56,6 +56,16 @@ public class ModuleController extends Controller {
     
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_PT_LIST})
     public void index() {
+      //查询当前用户菜单
+        String sql ="select distinct module.* from modules o, modules module "
+                +"where o.parent_id = module.id and o.office_id=? and o.status = '启用' order by seq";
+        List<Record> modules = Db.find(sql, pom.getParentOfficeId());
+        for (Record module : modules) {
+            sql ="select * from modules where parent_id =? order by seq";
+            List<Record> orders = Db.find(sql, module.get("id"));
+            module.set("orders", orders);
+        }
+        setAttr("modules", modules);
         render("/yh/profile/module/moduleList.html");
     }
     
@@ -207,7 +217,8 @@ public class ModuleController extends Controller {
         
         UserLogin user = LoginUserController.getLoginUser(this);
         //查询当前用户菜单
-        String sql ="select * from modules where parent_id is null and office_id=? order by seq";
+        String sql ="select distinct module.* from modules o, modules module "
+                +"where o.parent_id = module.id and o.office_id=? and o.status = '启用' order by seq";
         List<Record> modules = Db.find(sql, user.get("office_id"));
         for (Record module : modules) {
             sql ="select * from modules where parent_id =? order by seq";
