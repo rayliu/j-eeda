@@ -173,8 +173,59 @@ $(document).ready(function() {
 	        ]      
 	    });	
 	}
-	
-	
+	// 获取所有网点
+	 $.post('/transferOrder/searchAllOffice',function(data){
+		 if(data.length > 0){
+			 //console.log(data);
+			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
+			 deliveryOfficeSelect.empty();
+			 var hideDeliveryOfficeSelect = $("#hideDeliveryOfficeSelect").val();
+			 deliveryOfficeSelect.append("<option ></option>");	
+			 for(var i=0; i<data.length; i++){
+				 if(data[i].ID == hideDeliveryOfficeSelect){
+					 deliveryOfficeSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+				 }else{
+					 if(data[i].IS_STOP != true){
+						 deliveryOfficeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
+					 };
+				 };
+			 };
+		 };
+	 },'json');
+	 //RDC仓库操作
+	 $('#deliveryOfficeSelect').on('change', function(){ 
+		 if($(this).val() != ""){
+			 // 获取所有仓库
+			 findWarehouseForOffice($(this).val());
+		 }else{
+			 $("#gateInSelect").empty();
+		 }
+	 });
+	 var findWarehouseForOffice = function(officeId){
+		 $.post('/transferOrder/searchAllWarehouse', {officeId: officeId},function(data){
+			 if(data.length > 0){
+				 var gateInSelect = $("#gateInSelect");
+				 gateInSelect.empty();
+				 var hideWarehouseId = $("#hideWarehouseId").val();
+				 for(var i=0; i<data.length; i++){
+					 if(data[i].ID == hideWarehouseId){
+						 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");
+						 //$("#gateInSelect").val(data[i].ID);
+					 }else{
+						 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+					 }
+				 }
+				 if($("#gateInSelect").val() != "" && $("#gateInSelect").val() != null)
+					 $("#gateInSelect").change();
+			 }else{
+				 $("#gateInSelect").empty();
+			 }
+		 },'json');	
+	 };
+	 var deliveryOfficeId = $("#hideDeliveryOfficeSelect").val();
+	 if(deliveryOfficeId != null && deliveryOfficeId != ""){
+		 findWarehouseForOffice(deliveryOfficeId);
+	 };
 	$("#eeda-table").on('blur', 'input,select', function(e){
 		e.preventDefault();
 		var delivery_id = $("#delivery_id").val();
@@ -189,7 +240,24 @@ $(document).ready(function() {
 			}
     	},'json');
 	});
-	
+	$("input[name='warehouseNature']").each(function(){
+		 if($(this).val()==$("#warehouseNatureRadio").val()){
+		 	$(this).attr('checked','checked');
+		 	$("#gateInDiv").show();
+		 }else{
+		 	$("#gateInDiv").hide();
+		 }
+	});
+	$("input[name='warehouseNature']").on('click', function(){
+    	console.log(this);
+    	var inputId  = $(this).attr('id');
+    	if(inputId=='warehouseNature1'){
+    		//$("#gateInSelect").hide();
+    		$("#gateInDiv").hide();
+    	}else{
+    		$("#gateInDiv").show();
+    	}
+    });
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
 	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
 	    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
@@ -199,7 +267,6 @@ $(document).ready(function() {
 	$('#message_trigger_err').on('click', function(e) {
 		e.preventDefault();
 	});
-			
 	var saveDelivery = function(){
 		
 		$("#sign_document_no").val($("#sign_no").val());

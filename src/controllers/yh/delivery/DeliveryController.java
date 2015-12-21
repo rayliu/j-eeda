@@ -163,11 +163,12 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
+					+ " LEFT JOIN warehouse w1 ON d.change_warehouse_id = w1.id "
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
 					+ " LEFT JOIN office o ON o.id = tor.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id";
-			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,w.warehouse_name, "
+			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w1.warehouse_name,w.warehouse_name) warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -203,6 +204,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN warehouse w ON d.from_warehouse_id = w.id"
+					+ " LEFT JOIN warehouse w1 ON d.change_warehouse_id = w1.id "
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
 					+ " LEFT JOIN office o ON o.id = tor.office_id"
@@ -525,10 +527,15 @@ public class DeliveryController extends Controller {
 		Warehouse warehouse = Warehouse.dao
 				.findById(tOrder.get("from_warehouse_id"));
 		Office office =  Office.dao.findById(warehouse.get("office_id"));
-		
 		setAttr("warehouse", warehouse);
 		setAttr("office", office);
-
+		//RDC
+		Warehouse changeWarehouse = Warehouse.dao.findById(tOrder.get("change_warehouse_id"));
+		if(changeWarehouse!=null){
+			Office changeOffice =  Office.dao.findById(changeWarehouse.get("office_id"));
+			setAttr("changeOffice", changeOffice);
+		}
+		setAttr("changeWarehouse", changeWarehouse);
 		setAttr("deliveryId", tOrder);
 		setAttr("customer", customerContact);
 		setAttr("spContact", spContact);
@@ -1140,6 +1147,8 @@ public class DeliveryController extends Controller {
 		String deliveryid = getPara("delivery_id");
 		DeliveryOrder deliveryOrder = null;
 		String notifyId = getPara("notify_id");
+		String warehouseNature = getPara("warehouseNature");
+		String gateInSelect = getPara("gateInSelect");
 		String sign_document_no = getPara("sign_document_no");//签收单据号
 		String spId = getPara("sp_id");
 		String cargoNature = getPara("cargoNature");
@@ -1200,12 +1209,17 @@ public class DeliveryController extends Controller {
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", warehouseId)
 					.set("cargo_nature", cargoNature)
+					.set("warehouse_nature", warehouseNature)
 					.set("receivingunit", receivingunit)
 					.set("ref_no", sign_document_no)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
-
+			if("warehouseNatureYes".equals(warehouseNature)){
+				deliveryOrder.set("change_warehouse_id", gateInSelect);
+			} else{
+				deliveryOrder.set("change_warehouse_id", null);
+			}
 			if (notifyId == null || notifyId.equals("")) {
 				deliveryOrder.set("notify_party_id", party.get("id"));
 			} else {
@@ -1306,10 +1320,16 @@ public class DeliveryController extends Controller {
 					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))
 					.set("receivingunit", receivingunit)
+					.set("warehouse_nature", warehouseNature)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no", getPara("customerDelveryNo"))
 					.set("ref_no", sign_document_no);
+			if("warehouseNatureYes".equals(warehouseNature)){
+				deliveryOrder.set("change_warehouse_id", gateInSelect);
+			}else{
+				deliveryOrder.set("change_warehouse_id", null);
+			}
 			if("".equals(getPara("notify_id")) || getPara("notify_id") == null)
 				deliveryOrder.set("notify_party_id", party.get("id"));
             else{

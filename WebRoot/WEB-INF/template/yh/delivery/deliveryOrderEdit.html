@@ -115,7 +115,7 @@
                                         	
                                         	</div>
                                         	<div class="form-group">
-		                                       <label>始发地城市（默认RDC城市）</label>
+		                                       <label>始发地城市</label>
 		                                       <div class="form-control" style="padding: 0px 0px;box-shadow:none;border:none;height:35px;" >
 		                                           <input id="locationForm" type="hidden" name="route_from" value="${deliveryId.route_from!''}">
 	                                               <label>省</label>
@@ -192,12 +192,29 @@
                                               <label class="radio-inline">
                                                   <input type="radio" name="ltlUnitType" id="optionsRadiosIn2" value="perTon">按重量（每吨）
                                               </label>
-                                          </div>                                             
-                                             
+                                          </div>
                                              <div class="form-group">
 	                                        	<label>配送仓库：</label><lable>${warehouse.WAREHOUSE_NAME!''}</lable>
 	                                        	<input type="hidden" id="warehouse_id" name="warehouse_id" value ="${warehouse.id!''}">
+	                                        	<span id="warehouseNatureSpan">
+		                                                (<label class="label-margin">是否需要调拨?</label>
+	                                                	<input id="warehouseNatureRadio" type="hidden" value="${deliveryOrder.warehouse_nature!''}"/>
+	                                                	<label class="radio-inline">
+		                                                    <input type="radio" name="warehouseNature" id="warehouseNature1" value="warehouseNatureNo" checked="">否
+		                                                </label>
+		                                                <label class="radio-inline">
+		                                                    <input type="radio" name="warehouseNature" id="warehouseNature2" value="warehouseNatureYes">是
+		                                                </label>)
+	                                            </span>
 	                                         </div>
+	                                         <div id="gateInDiv" style="display: none;">
+	                                                <input id="hideWarehouseId" type="hidden" value="${changeWarehouse.warehouse_id!''}" />
+	                                                <input id="hideDeliveryOfficeSelect" type="hidden" value="${changeOffice.id!''}" />
+	                                                <label class="label-margin">调拨RDC仓 </label>
+	                                                <select id="deliveryOfficeSelect" name="deliveryOfficeSelect"></select>
+	                                                <label class="label-margin">调拨仓库 </label>
+	                                                <select id="gateInSelect" name="gateInSelect"></select> 
+                                             </div>
 	                                         <div class="form-group">
 	                                            <%
 	                                            	var cargoNaturName="ATM";
@@ -210,7 +227,7 @@
 	                                        	<input type="hidden" id="cargoNature" name="cargoNature" value ="${cargoNature!''}">
 	                                        </div>
 	                                    </div>
-	                                    
+
 	                                 	<div class="col-lg-6">
                                  			<div>
                                  			<div id="tranferdiv"  style='display:none'>
