@@ -566,13 +566,13 @@ public class CostCheckOrderController extends Controller {
 			if ("提货".equals(orderNoArr[i])) {
 				rec1 = Db
 						.findFirst(
-								"select ifnull(sum(amount),0) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,'') !='对账调整金额'",
+								"select ifnull(sum(amount),0) sum_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and fi.type = '应付' and IFNULL(dofi.cost_source,'') !='对账调整金额' and dofi.fin_item_id!=7",
 								orderIdsArr[i]);
 				if (rec1.getDouble("sum_amount") != null) {
 					totalamount = totalamount + rec1.getDouble("sum_amount");
 				}
 				rec = Db.findFirst(
-						"select sum(amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ?",
+						"select sum(amount) change_amount from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = ? and dofi.fin_item_id!=7",
 						orderIdsArr[i]);
 				if (rec.getDouble("change_amount") != null) {
 					changeamount = changeamount
@@ -581,11 +581,11 @@ public class CostCheckOrderController extends Controller {
 			} else if ("零担".equals(orderNoArr[i])) {
 				rec1 = Db
 						.findFirst(
-								"select ifnull(sum(amount),0) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付' and dofi.fin_item_id!=7 and IFNULL(dofi.cost_source,'') !='对账调整金额'",
+								"select ifnull(sum(amount),0) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'  and IFNULL(dofi.cost_source,'') !='对账调整金额'",
 								orderIdsArr[i]);
 				totalamount = totalamount + rec1.getDouble("sum_amount");
 				rec = Db.findFirst(
-						"select sum(amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and dofi.fin_item_id!=7",
+						"select sum(amount) change_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? ",
 						orderIdsArr[i]);
 				if (rec.getDouble("change_amount") != null) {
 					changeamount = changeamount
