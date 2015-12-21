@@ -80,7 +80,7 @@
                         +'</select>';
                 }
             },
-            { "data": "FIELD_DATA_TYPE",
+            { "data": "FIELD_DATA_TYPE", visible: false,
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -228,24 +228,16 @@
         }
     };
 
-
-    $('#saveBtn').on('click', function(e){
-        $(this).attr('disabled', true);
-
-        //阻止a 的默认响应行为，不需要跳转
-        e.preventDefault();
-        //提交前，校验数据
-        // if(!$("#orderForm").valid()){
-        //     return;
-        // }
-
+    var saveAction=function(btn, is_start){
+        is_start = is_start || false; 
         var structure_list=buildStructureTableArray();
         var action_list=buildActionArray();
 
         var dto = {
             module_id: $('#module_id').text(),
             structure_list: structure_list,
-            action_list: action_list
+            action_list: action_list,
+            is_start: is_start
         };
 
         console.log('saveBtn.click....');
@@ -258,21 +250,44 @@
             if(order.ID>0){
                 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
-                $('#saveBtn').attr('disabled', false);
+                btn.attr('disabled', false);
 
                 damageOrder.reDrawTable(order);
             }else{
                 $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-                $('#saveBtn').attr('disabled', false);
+                btn.attr('disabled', false);
             }
         },'json').fail(function() {
             $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-            $('#saveBtn').attr('disabled', false);
+            btn.attr('disabled', false);
         });
+    };
+
+
+    $('#saveBtn').on('click', function(e){
+        $(this).attr('disabled', true);
+
+        //阻止a 的默认响应行为，不需要跳转
+        e.preventDefault();
+        //提交前，校验数据
+        // if(!$("#orderForm").valid()){
+        //     return;
+        // }
+
+        saveAction($(this));
     });
 
     //单据预览
     $('#previewBtn').click(function(){
         window.open('/module/preview/'+$("#module_id").text());
+    });
+
+    $('#startBtn').click(function(e){
+        $(this).attr('disabled', true);
+
+        //阻止a 的默认响应行为，不需要跳转
+        e.preventDefault();
+
+        saveAction($(this), true);
     });
 //});

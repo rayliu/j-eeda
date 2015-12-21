@@ -42,14 +42,14 @@
                     class="s_parent_id"
                     value="{{s_parent_id}}">
         </div>
-        <div class="col-lg-4">
-            <label class="search-label">s_parent_name</label>
-            <input type="text" 
-                    class="s_parent_name"
-                    value="{{s_parent_name}}">
+        
+        <div class="col-lg-12">
+            
+            
         </div>
-        <div class="form-group button-bar" >
+        <div class="col-lg-12 form-group button-bar" >
             <button section_index="{{id}}" name="addFieldBtn" type="button" class="btn btn-success btn-xs">添加新字段</button>
+            <label style="margin-top: 5px;">注意: 每个子表中默认有ID, PARENT_ID两个字段，请勿添加同名字段。</label>
         </div>
         <table id="{{id}}_table" class="display" cellspacing="0" style="width: 100%;">
             <thead class="eeda">
