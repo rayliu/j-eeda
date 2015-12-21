@@ -205,10 +205,9 @@ $(document).ready(function() {
         });
         var refreshList = function(){
           var order_no = $("#order_no").val();
-          var status = $("#order_status_filter").val();
+          var status = $("#status_filter").val();
         	var sp = $("#sp_filter").val();
         	var shifadi = $("#shifadi_filter").val();
-        	var customer = $("#customer_filter").val();
         	var mudidi = $("#mudidi_filter").val();
         	var beginTime = $("#kaishi_filter").val();
         	var endTime = $("#jieshu_filter").val();
@@ -216,7 +215,6 @@ $(document).ready(function() {
                                 +"&status="+status
                                 +"&sp="+sp
 																+"&shifadi="+shifadi
-																+"&customer="+customer
 																+"&mudidi="+mudidi
 																+"&beginTime="+beginTime
 																+"&endTime="+endTime;
@@ -227,7 +225,7 @@ $(document).ready(function() {
         	refreshList();
         });
 
-        $("#order_status_filter").on('change',function(){
+        $("#status_filter").on('change',function(){
           refreshList();
         });
 } );

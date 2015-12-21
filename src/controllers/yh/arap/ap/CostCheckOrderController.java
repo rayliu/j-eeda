@@ -301,7 +301,7 @@ public class CostCheckOrderController extends Controller {
 		String orderNo = getPara("order_no");
 		String sp = getPara("sp");
 		String shifadi = getPara("shifadi");
-		String customer = getPara("customer");
+		String status = getPara("status");
 		String mudidi = getPara("mudidi");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
@@ -325,7 +325,7 @@ public class CostCheckOrderController extends Controller {
 		String condition = "";
 		// TODO 始发地和目的地 客户没有做
 		if (orderNo != null || sp != null || shifadi != null
-				|| customer != null || mudidi != null || beginTime != null
+				|| status != null || mudidi != null || beginTime != null
 				|| endTime != null) {
 			if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1-1-1";
@@ -335,6 +335,11 @@ public class CostCheckOrderController extends Controller {
 			}
 			condition = " where aco.order_no like '%" + orderNo + "%' "
 					+ " and ifnull(c.abbr,'') like '%" + sp + "%' "
+					+ " and (select case "
+					+ " when aciao. status = '已付款确认' then aciao.status "
+					+ " when aciao.status != '已付款确认' and aciao.status !='' then '付款申请中' "
+					+ " else acor.status end as status "
+					+ " from arap_cost_order acor left join arap_cost_invoice_application_order aciao on acor.application_order_id = aciao.id where acor.id = aco.id) like '%" + status + "%' "
 					+ " and aco.create_stamp between '" + beginTime + "' and '"
 					+ endTime + "' ";
 
