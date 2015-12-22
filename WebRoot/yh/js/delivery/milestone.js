@@ -71,6 +71,7 @@ $(document).ready(function() {
                 	
                 }
             },
+            {"mDataProp":"OFFICE_NAME","sWidth":"70px"},
             {"mDataProp":"CUSTOMER","sWidth":"70px"},
             {"mDataProp":"SERIAL_NO","sWidth":"90px"},
             {"mDataProp":"ITEM_NO","sWidth":"100px"},
@@ -107,6 +108,7 @@ $(document).ready(function() {
         	$text.find('#arriveBtn').attr('disabled',false);
         }
     });
+    
     $('#milestone_table').dataTable({
     	  "bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
@@ -230,7 +232,18 @@ $(document).ready(function() {
 		//$('#transferOrderMilestone').modal('hide');
 	}); 
 
-
+	// 获取所有网点
+	$.post('/officeConfig/searchAllOffice',function(data){
+		if(data.length > 0){
+			 //console.log(data);
+			var deliveryOffice = $("#deliveryOffice");
+			deliveryOffice.empty();
+			deliveryOffice.append("<option ></option>");	
+			for(var i=0; i<data.length; i++){
+				deliveryOffice.append("<option office_id='"+data[i].ID+"' value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>"); 
+				};
+			};
+	},'json');
     $("#searchBtn").click(function(){
         refreshData();
     });
@@ -248,9 +261,9 @@ $(document).ready(function() {
       var endTime = $("#endTime_filter").val();
       var status  = $("#status").val();
       var serial_no  = $("#serial_no").val();
-
+      var deliveryOffice  = $("#deliveryOffice").val();
       detailTable.fnSettings().oFeatures.bServerSide = true;
-      detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status+"&serial_no="+serial_no;
+      detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status+"&serial_no="+serial_no+"&deliveryOffice="+deliveryOffice;
       detailTable.fnDraw();
     }
 	
