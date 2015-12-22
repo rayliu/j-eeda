@@ -236,18 +236,20 @@ public class OfficeConfigController extends Controller{
         setAttr("lu", office);
         render("/yh/profile/officeConfig/edit.html");
     }
-	public void searchAllOffice() {
-		String officeName = getPara("officeName")==null?"":getPara("officeName");
-		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
-		Long parentID = pom.getParentOfficeId();
-		
-		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id IN (SELECT office_id FROM user_office WHERE office_name like '%" + officeName  + "%' and user_name = '"+currentUser.getPrincipal()+"')");
+	public void searchAllOffice() {	
+		String a="select o.id,o.office_name,o.is_stop from office o where o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
+		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')");
 		renderJson(offices); 
 	}
 	public void searchAllWarehouse() {
-		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
-		Long parentID = pom.getParentOfficeId();		
-		List<Record> offices = Db.find("select w.* from warehouse w left join office o on o.id = w.office_id where o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')");
+		String officeName = getPara("office_name")==null?"":getPara("office_name");
+		List<Record> offices=null;
+		if("".equals(officeName)){
+			 offices = Db.find("select w.* from warehouse w left join office o on o.id = w.office_id where o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')");
+		}else{
+			offices=Db.find("select w.* from warehouse w left join office o on o.id = w.office_id where o.id='"+officeName+"' and o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')");
+		}
+		
 		renderJson(offices); 
 	}
 
