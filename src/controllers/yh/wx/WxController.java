@@ -73,8 +73,6 @@ public class WxController extends ApiController {
 	}
 	
 	private void setPageAttr(String contextPath) {
-	    
-	    
 		//这里动态处理URL
 		HttpServletRequest request = this.getRequest();
 		logger.debug("绝对路径 = " + request.getSession().getServletContext().getRealPath(""));
@@ -210,6 +208,12 @@ public class WxController extends ApiController {
 		render("/yh/wx/location.html");
 	}
 	
+	//微信登陆页面 - 未授权的用户不能查询
+    public void index() {
+        setPageAttr("/wx/fileUpload");
+        render("/yh/wx/login.html");
+    }
+    
 	//回单上传附件页面 - 统一单号
 	public void fileUpload() {
 		setAttr("orderNo", getPara());
