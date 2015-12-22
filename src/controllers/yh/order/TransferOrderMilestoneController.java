@@ -17,6 +17,7 @@ import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.Warehouse;
 import models.yh.delivery.DeliveryOrder;
 
 import org.apache.log4j.Logger;
@@ -427,6 +428,7 @@ public class TransferOrderMilestoneController extends Controller {
                     		Date createDate = Calendar.getInstance().getTime();
                     		String name = (String) currentUser.getPrincipal();
                     		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+                    		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id")); 
                     		deliveryOrder = new DeliveryOrder();
                     		deliveryOrder.set("order_no", orderNo)
             				.set("customer_id", transferOrder.get("customer_id"))
@@ -435,6 +437,7 @@ public class TransferOrderMilestoneController extends Controller {
             				.set("route_from",transferOrder.get("route_to"))
             				.set("route_to",transferOrder.get("route_to"))
             				.set("pricetype", getPara("chargeType"))
+            				.set("office_id", warehouse.get("office_id"))
             				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
             				.set("cargo_nature", transferOrder.get("cargo_nature"))
             				.set("priceType", departOrder1.get("charge_type"))
