@@ -394,6 +394,7 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
+					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
 					+ " left join transfer_order tr  on tr.id = dt.order_id"
 					+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
 					+ "ifnull(deo.status,'') like '%"
@@ -418,9 +419,11 @@ public class DepartOrderController extends Controller {
 					+ "' "
 					+ "and '"
 					+ endTime
-					+ "'  and o.id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
+					+ "'  AND ("
+                    + "o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
+                    + " or"
+                    + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
+                    + ")"
 					+ " and deo.arrival_time between '"
 					+ planBeginTime
 					+ "' "
@@ -454,6 +457,7 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
+					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
 					+ " left join transfer_order tr  on tr.id = dt.order_id"
 					+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' "
 					+ " and ifnull(deo.status,'') like '%"
@@ -476,9 +480,11 @@ public class DepartOrderController extends Controller {
 					+ beginTime
 					+ "' and '"
 					+ endTime
-					+ "'  and o.id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
+					+ "'  AND ("
+                    + "o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
+                    + " or"
+                    + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
+                    + ")"
 					+ " and deo.arrival_time between '"
 					+ planBeginTime
 					+ "' "
