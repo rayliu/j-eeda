@@ -123,7 +123,6 @@ public class CostReimbursementOrder extends Controller {
 	public void reimbursementList(){
 		String orderNo = getPara("orderNo");
 		String status = getPara("status");
-		String auditName = getPara("auditName");
 		String accountName = getPara("accountName");
 		String sortColIndex = getPara("iSortCol_0");
 	    String sortBy = getPara("sSortDir_0");
@@ -135,7 +134,7 @@ public class CostReimbursementOrder extends Controller {
         }
         String sqlTotal = "";
         String sql = "";
-        if(orderNo == null && status == null && auditName == null){
+        if(orderNo == null && status == null ){
 	        sqlTotal = "select count(1) total from reimbursement_order ro where ro.order_no like 'YFBX%'";
 	    	 
 	        sql = "select ro.*,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
@@ -151,7 +150,6 @@ public class CostReimbursementOrder extends Controller {
         			+ " left join user_login u on u.id  = ro.audit_id "
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
-	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'"
         			+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'";	
 	    	 
 	        sql = "select ro.*,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
@@ -163,7 +161,6 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
-	        		+ " and ifnull(u.user_name,'') like '%" + auditName + "%'"
 	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
 	        		+ " group by ro.id ";
         }

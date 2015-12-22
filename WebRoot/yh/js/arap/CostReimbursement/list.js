@@ -25,26 +25,29 @@ $(document).ready(function() {
             {"mDataProp":"ACCOUNT_BANK", "sWidth":"200px"},
             {"mDataProp":"F_NAME", "sWidth":"200px"},
             {"mDataProp":"PAYMENT_TYPE", "sWidth":"200px"},
-            {"mDataProp":"CREATENAME", "sWidth":"200px"},                 	
-            {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},                        
-            {"mDataProp":"AMOUNT", "sWidth":"150px"},                        
-            {"mDataProp":"AUDITNAME", "sWidth":"100px"},                        
-            {"mDataProp":"APPROVALNAME", "sWidth":"100px"},                        
-            {"mDataProp":"REMARK", "sWidth":"150px"}                         
-        ]      
+            {"mDataProp":"CREATENAME", "sWidth":"200px"},
+            {"mDataProp":"CREATE_STAMP", "sWidth":"200px"},
+            {"mDataProp":"AMOUNT", "sWidth":"150px"},
+            {"mDataProp":"REMARK", "sWidth":"150px"}
+        ]
     });	
-    
-    $("#orderNo ,#status ,#auditName,#account_name").on( 'keyup click', function () {    	 	
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+
+    $("#searchBtn").on('click', function () {
     	refreshData();
     });
-      var refreshData= function(){
-            var orderNo = $("#orderNo").val();
-            var status = $("#status").val();
-            var auditName = $("#auditName").val();
-            var accountName = $("#account_name").val();
-            costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&auditName="+auditName+"&accountName="+accountName;
-            costExpenseAccountTbody.fnDraw();
-       }
+
+    var refreshData= function(){
+        var orderNo = $("#orderNo").val();
+        var status = $("#status").val();
+        var auditName = $("#auditName").val();
+        var accountName = $("#account_name").val();
+        costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&accountName="+accountName;
+        costExpenseAccountTbody.fnDraw();
+    }
     //获取未审核供应商的list，选中信息在下方展示其他信息
     $('#account_name').on('click input', function(){
         var me = this;
@@ -77,7 +80,6 @@ $(document).ready(function() {
                 top:$(me).position().top+28+"px" 
             }); 
             spList2.show();
-            refreshData();
         },'json');
         
         
@@ -121,7 +123,6 @@ $(document).ready(function() {
             address = '';
         pageSpAddress.append(address);
         $('#account_list').hide();
-        refreshData();
     });
     
 });
