@@ -103,7 +103,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">中转仓</label>
-                                            <select id="deliveryOfficeSelect" name="deliveryOfficeSelect" class="form-control search-control status_filter"></select>
+                                            <select id="deliveryWarehouse" name=deliveryWarehouse class="form-control search-control warehouse_filter"></select>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -125,6 +125,10 @@
                                                 <option value="已签收">已签收</option>  
                                                 <option value="取消">取消</option>                                            
                                             </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="search-label">网点</label>
+                                            <select id="deliveryOffice" name="deliveryOffice" class="form-control search-control office_filter"></select>
                                         </div>
                                     </div>
                                     <!-- end of col-lg-6-->
@@ -149,6 +153,7 @@
                                         	<th>配送单号</th>
                                             <th>运输计划时间</th>
                                             <th>仓库</th>
+                                            <th>网点</th>
                                             <th>产品型号</th>
                                             <th>数量</th>
                                             <th>地址</th>
@@ -158,7 +163,6 @@
                                             <th>序列号</th>
                                             <th>件数</th>
                                             <th>配送时间</th>
-                                            <th>网点</th>
                                             <th>运输单号</th>
                                             <th>客户订单号</th>
                                             <th>状态</th>

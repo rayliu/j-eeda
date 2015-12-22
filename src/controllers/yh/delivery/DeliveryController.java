@@ -85,6 +85,7 @@ public class DeliveryController extends Controller {
 		String serial_no = getPara("serial_no");
 		String delivery_no = getPara("delivery_no");
 		String address_filter = getPara("address_filter");
+		String warehouse_filter = getPara("warehouse_filter");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		
@@ -124,8 +125,11 @@ public class DeliveryController extends Controller {
 			if(address_filter!=null&&!"".equals(address_filter)){
 				condition +=" and IFNULL(trid.notify_party_company,IFNULL(d.receivingunit,'')) like '%"+ address_filter.trim()+ "%'";
 			}
+			if(warehouse_filter!=null&&!"".equals(warehouse_filter)){
+				condition +=" AND ifnull(w.warehouse_name,'') like'%"+ warehouse_filter.trim()+ "%'";;
+			}
 			if(office_filter!=null&&!"".equals(office_filter)){
-				condition +=" AND ifnull(w.warehouse_name,'') like'%"+ office_filter.trim()+ "%'";;
+				condition +=" AND ifnull(o.office_name,'') like'%"+ office_filter.trim()+ "%'";;
 			}
 			if ((beginTime_filter != null && !"".equals(beginTime_filter))||(endTime_filter != null && !"".equals(endTime_filter))) {
         		if (beginTime_filter == null || "".equals(beginTime_filter)) {
@@ -150,7 +154,7 @@ public class DeliveryController extends Controller {
 			condition += " and d.create_stamp BETWEEN '1970-01-01' AND '2037-12-31'"
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 					+ " AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
-					+ " AND w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+					+ " AND d.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 					+ " GROUP BY d.id ) A ";
 			String sqlTotal = "SELECT count(1) total from (select count(1) total"
 					+ " FROM delivery_order d"
@@ -166,7 +170,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN warehouse w1 ON d.change_warehouse_id = w1.id "
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
-					+ " LEFT JOIN office o ON o.id = tor.office_id"
+					+ " LEFT JOIN office o ON o.id = d.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id";
 			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w1.warehouse_name,w.warehouse_name) warehouse_name, "
 					+ " (SELECT CASE"
@@ -207,7 +211,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN warehouse w1 ON d.change_warehouse_id = w1.id "
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
-					+ " LEFT JOIN office o ON o.id = tor.office_id"
+					+ " LEFT JOIN office o ON o.id = d.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id";
 
 			
@@ -230,7 +234,6 @@ public class DeliveryController extends Controller {
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
 	public void deliveryMilestone() {
-
 		String transferorderNo = getPara("transferorderNo");
 		String deliveryNo = getPara("deliveryNo");
 		String customer = getPara("customer");
@@ -238,6 +241,7 @@ public class DeliveryController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String status = getPara("status");
+		String deliveryOffice = getPara("deliveryOffice");
 		String serial_no = getPara("serial_no")==null?"":getPara("serial_no");
 		if(status != null && status != ""){
 			if(status.equals("ok")){
@@ -261,7 +265,7 @@ public class DeliveryController extends Controller {
 		String sqlTotal = "";
 		
 
-		String sql = " select DISTINCT d.*,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time," 
+		String sql = " select DISTINCT d.*,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time," 
 				+ " ("
 				+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 				+ " from delivery_order_item doi "
@@ -291,6 +295,7 @@ public class DeliveryController extends Controller {
 				+ " left join contact c2 on p2.contact_id = c2.id "
 				+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 				+ " left join warehouse w on d.from_warehouse_id = w.id "
+				+ " left join office o on o.id= d.office_id "
 				+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 				+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d. STATUS, '') IN "+status+""
@@ -299,8 +304,8 @@ public class DeliveryController extends Controller {
 
 		List<Record> depart = null;
 		if (transferorderNo == null && deliveryNo == null && customer == null
-				&& sp == null && beginTime == null && endTime == null) {
-			sqlTotal ="select count(*) total from (select distinct d.*,"
+				&& sp == null && beginTime == null && endTime == null && deliveryOffice==null) {
+			sqlTotal ="select count(*) total from (select distinct d.*,o.office_name,"
 					+ "c.abbr as customer,"
 					+ "c2.company_name as c2,"
 					+ ""
@@ -313,6 +318,7 @@ public class DeliveryController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " left join office o on o.id= d.office_id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.status,'') in "
@@ -327,7 +333,7 @@ public class DeliveryController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			sqlTotal ="select count(*) total from (select distinct d.*,"
+			sqlTotal ="select count(*) total from (select distinct d.*,o.office_name,"
 					+ "c.abbr as customer,"
 					+ "c2.company_name as c2,"
 					+ ""
@@ -340,6 +346,7 @@ public class DeliveryController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " left join office o on o.id= d.office_id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
@@ -354,12 +361,14 @@ public class DeliveryController extends Controller {
 					+ sp.trim()
 					+ "%' and ifnull(trid.serial_no,'') like'%"
 					+ serial_no.trim()
+					+ "%' and ifnull(o.office_name,'') like'%"
+					+ deliveryOffice.trim()
 					+ "%' and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
 					+ endTime + "' "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
-			String sql_seach = "select distinct d.*,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
+			String sql_seach = "select distinct d.*,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 					+ " from delivery_order_item doi "
@@ -389,6 +398,7 @@ public class DeliveryController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
+					+ " left join office o on o.id= d.office_id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 					+ " where  !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d.order_no,'') like '%"
@@ -403,7 +413,10 @@ public class DeliveryController extends Controller {
 					+ sp.trim()
 					+ "%' and ifnull(trid.serial_no,'') like'%"
 					+ serial_no.trim()
-					+ "%' and d.create_stamp between '"
+					+ "%' and ifnull(o.office_name,'') like'%"
+					+ deliveryOffice.trim()
+					+ "%'"
+					+ " and d.create_stamp between '"
 					+ beginTime
 					+ "' and '"
 					+ endTime + "'"

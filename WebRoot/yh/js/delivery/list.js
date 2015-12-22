@@ -28,6 +28,7 @@ $(document).ready(function() {
 			},
             {"mDataProp":"PLAN_TIME","sWidth":"100px"},//计划时间
             {"mDataProp":"WAREHOUSE_NAME","sWidth":"100px"},//仓库
+            {"mDataProp":"OFFICE_NAME","sWidth":"80px"},//网点
             {"mDataProp":"ITEM_NO","sWidth":"90px"},//型号
             {"mDataProp":"AMOUNT","sWidth":"50px"},//数量
             {"mDataProp":"COMPANY","sWidth":"150px"},//地址
@@ -37,7 +38,6 @@ $(document).ready(function() {
             {"mDataProp":"SERIAL_NO", "sWidth":"100px"},//序列号
             {"mDataProp":"PCS_AMOUNT", "sWidth":"50px"},//件数
             {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
-            {"mDataProp":"OFFICE_NAME","sWidth":"80px"},//网点
             {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO","sWidth":"100px"},//客户订单号
             {"mDataProp":"STATUS","sWidth":"70px"},//状态
@@ -112,15 +112,41 @@ $(document).ready(function() {
 			return false;   
 		}
 	});
-	// 获取所有网点
+	// 获取所有中转仓
 	 $.post('/officeConfig/searchAllWarehouse',function(data){
 		 if(data.length > 0){
 			 //console.log(data);
-			 var deliveryOfficeSelect = $("#deliveryOfficeSelect");
-			 deliveryOfficeSelect.empty();
-			 deliveryOfficeSelect.append("<option ></option>");	
+			 var deliveryWarehouse = $("#deliveryWarehouse");
+			 deliveryWarehouse.empty();
+			 deliveryWarehouse.append("<option ></option>");	
 			 for(var i=0; i<data.length; i++){
-						 deliveryOfficeSelect.append("<option value='"+data[i].WAREHOUSE_NAME+"'>"+data[i].WAREHOUSE_NAME+"</option>"); 
+				 deliveryWarehouse.append("<option value='"+data[i].WAREHOUSE_NAME+"'>"+data[i].WAREHOUSE_NAME+"</option>"); 
+				 };
+			 };
+	 },'json');
+	//获取网点下的RDC
+	 $('#deliveryOffice').on('change', function(){
+		 var office_name=$("#deliveryOffice").find("option:selected").attr("office_id");
+		 $.post('/officeConfig/searchAllWarehouse',{office_name:office_name},function(data){
+			 if(data.length > 0){
+				 var deliveryWarehouse = $("#deliveryWarehouse");
+				 deliveryWarehouse.empty();
+				 deliveryWarehouse.append("<option ></option>");	
+				 for(var i=0; i<data.length; i++){
+					 deliveryWarehouse.append("<option value='"+data[i].WAREHOUSE_NAME+"'>"+data[i].WAREHOUSE_NAME+"</option>"); 
+				 }
+			 }
+        },'json');
+    });
+	// 获取所有网点
+	 $.post('/officeConfig/searchAllOffice',function(data){
+		 if(data.length > 0){
+			 //console.log(data);
+			 var deliveryOffice = $("#deliveryOffice");
+			 deliveryOffice.empty();
+			 deliveryOffice.append("<option ></option>");	
+			 for(var i=0; i<data.length; i++){
+				 deliveryOffice.append("<option office_id='"+data[i].ID+"' value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>"); 
 				 };
 			 };
 	 },'json');
@@ -185,10 +211,10 @@ $(document).ready(function() {
       	var serial_no = $("#serial_no").val();
       	var delivery_no = $("#delivery_no").val();
       	var address_filter = $("#address_filter").val();
-      	var office_filter = $("#deliveryOfficeSelect").val();
-
+      	var office_filter = $("#deliveryOffice").val();
+      	var warehouse_filter = $("#deliveryWarehouse").val();
         dataTable.fnSettings().oFeatures.bServerSide = true;
-      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter+"&plan_endTime_filter="+plan_endTime_filter+"&office_filter="+office_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
+      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter+"&plan_endTime_filter="+plan_endTime_filter+"&office_filter="+office_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&warehouse_filter="+warehouse_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
       	dataTable.fnDraw();
     };
 
