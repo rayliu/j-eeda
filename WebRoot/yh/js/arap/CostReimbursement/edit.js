@@ -12,24 +12,11 @@ $(document).ready(function() {
 	
 	var reimbursementId = $("#reimbursementId").val();
 	if(reimbursementId == "" || reimbursementId == null){
-		$("#auditBtn").prop("disabled",true);
-		$("#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
+		
 	}else{
 		var status = $("#status").val();
-		if("新建" == status){
-			$("#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
-		}else if("已审核" == status){
-			$("#auditBtn,#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
-			$("#auditBtn,#cancelApprovalBtn,#cancelAuditBtn").hide();
-		}else if("已审批" == status){
-			$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
-			$("#auditBtn,#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
-		}else if("取消审核" == status){
-			$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",false);
-			$("#approvalBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
-		}else if("取消审批" == status){
-			$("#saveExpenseAccount,#addReimbursementOrderFinItem").prop("disabled",true);
-			$("#auditBtn,#cancelAuditBtn,#cancelApprovalBtn").hide();
+		if("新建" != status){
+			$("#saveExpenseAccount").prop("disabled",true);
 		}
 	}
 	
@@ -43,7 +30,7 @@ $(document).ready(function() {
         rules: {
         	account_name: {required:true},
         },
-        messages : {	             
+        messages : {
         	customerMessage : {required:"必填项"}
         }
     });
