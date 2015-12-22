@@ -918,6 +918,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " aao.payee_id,"
 				+ " aao.remark,"
 				+ " aao.create_stamp,"
+				+ " month(aao.begin_time) month_stamp,"
 				+ " round(aao.total_amount,2) total_amount,"
 				+ " round(aao.debit_amount,2) debit_amount,"
 				+ " round(aao.charge_amount,2) charge_amount,"

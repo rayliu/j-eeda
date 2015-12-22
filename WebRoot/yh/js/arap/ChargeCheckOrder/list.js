@@ -44,7 +44,7 @@ $(document).ready(function() {
                 }
             },*/
         	{"mDataProp":"ORDER_STATUS"},
-            {"mDataProp":null},
+            {"mDataProp":"MONTH_STAMP"},
             {"mDataProp":null},
             {"mDataProp":"CNAME"},
             {"mDataProp":"SP"},
