@@ -18,6 +18,7 @@ import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItemDetail;
+import models.UserLogin;
 import models.yh.structure.Contentlet;
 import models.yh.wx.WechatLocation;
 
@@ -31,11 +32,16 @@ import org.apache.http.util.EntityUtils;
 
 
 
+
+
+
 import com.google.gson.Gson;
+import com.jfinal.aop.Before;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 import com.jfinal.weixin.eeda.SignKit;
 import com.jfinal.weixin.sdk.api.AccessTokenApi;
@@ -197,6 +203,54 @@ public class WxController extends ApiController {
 		return userName;
 	}
 	
+	//取网页授权access_token
+	private String getOpenId(String code) throws Exception{
+        String openId = "";
+        String openIdUrl="https://api.weixin.qq.com/sns/oauth2/access_token?appid="+ApiConfigKit.getApiConfig().getAppId()
+                +"&secret="+PropKit.get("appSecret")+"&code="+code+"&grant_type=authorization_code";
+        logger.debug("get openIdUrl:"+openIdUrl);
+        String status="ok";
+        
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {                        
+            HttpGet httpGet = new HttpGet(openIdUrl);
+            CloseableHttpResponse response1 = httpclient.execute(httpGet);
+            try {
+                HttpEntity entity = response1.getEntity();
+                String jsonStr=EntityUtils.toString(entity);
+                Gson gson = new Gson();
+                Map<String, ?> json = gson.fromJson(jsonStr, HashMap.class);
+//                JSONObject json = new JsonObject(jsonStr);
+                logger.debug("json:"+jsonStr);
+                                
+                if(json.get("errcode")!=null){
+                    status="error";
+                    logger.debug("errcode:"+jsonStr);
+                    return "";
+                }
+                
+                String accessToken = (String) json.get("access_token");
+                openId = (String) json.get("openid");
+                //String unionid = json.getString("unionid");
+                logger.debug("accessToken:"+accessToken+", openid:"+openId);
+               
+            }catch(Exception e){
+                status="error";
+                logger.debug("1............"+e.getMessage());
+                e.printStackTrace();
+            } finally {
+                response1.close();
+            }
+        }catch(Exception e){
+            status="error";
+            logger.debug("2............"+e.getMessage());
+            e.printStackTrace();
+        } finally {
+            httpclient.close();
+        }
+        return openId;
+    }
+	
 	//微信JS demo页面，方便参考
 	public void demo() {
 		setPageAttr("/wx/demo");		
@@ -208,17 +262,58 @@ public class WxController extends ApiController {
 		render("/yh/wx/location.html");
 	}
 	
-	//微信登陆页面 - 未授权的用户不能查询
+	//微信登录页面 - 未授权的用户不能查询
     public void index() {
-        setPageAttr("/wx/fileUpload");
+        String openid = getPara("openid");
+        String redirect = getPara("redirect");
+        
+        setAttr("openid", openid);
+        setAttr("redirect", redirect);
         render("/yh/wx/login.html");
     }
     
+    //微信登录后- 记录该用户的openid到对应的user
+    @Before(Tx.class)
+    public void wxlogin() {
+        String user_name = getPara("user_name");
+        String pwd = getPara("pwd");
+        String openid = getPara("openid");
+        String redirect = getPara("redirect");
+        
+        UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name=? and password=?", user_name, pwd);
+        if(user != null){
+            user.set("wechat_openid", openid).update();
+            redirect(redirect+"?openid="+openid);
+        }else{
+            setAttr("err", true);
+            setAttr("openid", openid);
+            setAttr("redirect", redirect);
+            render("/yh/wx/login.html");
+        }
+    }
+    
 	//回单上传附件页面 - 统一单号
-	public void fileUpload() {
-		setAttr("orderNo", getPara());
-		setPageAttr("/wx/fileUpload");
-		render("/yh/returnOrder/returnOrderUploadFile.html");
+	public void fileUpload()  throws Exception {
+	    String openid = getPara("openid");
+	    if(openid == null){
+    	    logger.debug(getRequest().getQueryString());
+    	    //第一步：用户同意授权，获取code
+    	    String code = getPara("code");//该code用来向微信服务器请求获得openId
+    	    logger.debug("code: " + code);
+    	    //第二步：通过code换取网页授权access_token
+    	    openid = getOpenId(code);
+	    }   
+    	    Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+    	    if(userRec != null){
+    	        setAttr("openid", openid);
+    	        setPageAttr("/wx/fileUpload");
+    	        render("/yh/returnOrder/returnOrderUploadFile.html");
+    	    }else{
+    	        setAttr("openid", openid);
+    	        setAttr("redirect", "fileUpload");
+    	        render("/yh/wx/login.html");
+    	    }
+	    
 	}
 	
 	//单据状态查询
