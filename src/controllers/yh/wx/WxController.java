@@ -226,11 +226,38 @@ public class WxController extends ApiController {
     
     //单据状态查询
     public void queryStatusJson() {
+    	List<Record> rec= null;
         String orderNo = getPara("orderNo").toUpperCase();
-        String sql = "select * from transfer_order_item_detail toid where upper(toid.serial_no) = ?";
-        Record rec = Db.findFirst(sql, orderNo);
-        if(rec == null)
-            rec = new Record();
+        String sql = " SELECT toid.serial_no AS orderno,"
+        		+ " (CASE"
+        		+ " WHEN ifnull((SELECT roi.transaction_status FROM delivery_order doi LEFT JOIN return_order roi ON roi.delivery_order_id = doi.id WHERE doi.id=toid.delivery_id),'新建')!='新建' THEN '已签收'"
+        		+ " WHEN ifnull((SELECT doi.`STATUS` FROM delivery_order doi where doi.id = toid.delivery_id),'新建') != '新建' THEN '配送在途'"
+        		+ " WHEN ifnull((SELECT doi.`STATUS` FROM depart_order doi where doi.id = toid.depart_id),'') = '已入库' THEN '在仓'"
+        		+ " WHEN toid.pickup_id IS NOT NULL THEN'运输在途'"
+        		+ " WHEN toid.pickup_id IS NULL THEN '未调车'"
+        		+ " END) orderstatus from transfer_order_item_detail toid where upper(toid.serial_no) = ?";
+        String sql1 = " SELECT toi.customer_order_no as orderno, '' orderstatus FROM transfer_order toi WHERE upper(toi.customer_order_no) = ?"
+        		+ " UNION"
+        		+ " SELECT toid.serial_no AS orderno,"
+        		+ " (CASE"
+        		+ " WHEN ifnull((SELECT roi.transaction_status FROM delivery_order doi LEFT JOIN return_order roi ON roi.delivery_order_id = doi.id WHERE doi.id=toid.delivery_id),'新建')!='新建' THEN '已签收'"
+        		+ " WHEN ifnull((SELECT doi.`STATUS` FROM delivery_order doi where doi.id = toid.delivery_id),'新建') != '新建' THEN '配送在途'"
+        		+ " WHEN ifnull((SELECT doi.`STATUS` FROM depart_order doi where doi.id = toid.depart_id),'') = '已入库' THEN '在仓'"
+        		+ " WHEN toid.pickup_id IS NOT NULL THEN'运输在途'"
+        		+ " WHEN toid.pickup_id IS NULL THEN '未调车'"
+        		+ " END) orderstatus"
+        		+ " FROM transfer_order toi"
+        		+ " LEFT JOIN transfer_order_item_detail toid ON toid.order_id = toi.id"
+        		+ " WHERE upper(toi.customer_order_no) =?";
+        List<Record> rec1 = Db.find(sql, orderNo);
+        List<Record> rec2 = Db.find(sql1, orderNo,orderNo);
+        if(rec1.size()>0&&rec2.size()>0){
+        	rec= rec2;
+        }else if(rec1.size()>0){
+        	rec= rec1;
+        }else if(rec2.size()>0){
+        	rec= rec2;
+        }
         renderJson(rec);
     }
 	

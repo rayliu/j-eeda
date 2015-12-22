@@ -9,17 +9,20 @@ $(document).ready(function() {
     		return;
     	}
 		$.post('/wx/queryStatusJson',$("#returnFrom").serialize(), function(data){
-			var returnId = data.ID;
-			if(returnId > 0){
-				$('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
-				$("#uploadDesc").text("");
-				$('#returnId').val(returnId);
-				
-			}else{
-				$('#orderDesc').text('未找到有效的号码');
-				$('#returnId').val("");
+			var orderNo=$("#orderNoList")
+			orderNo.empty();
+			for(var i = 0; i < data.length; i++)
+			{
+				var orderNoList=data[i].ORDERNO;
+				var orderstatus=data[i].ORDERSTATUS;
+				if(orderstatus==''){
+					orderNo.append("<h2 class='title'>单据号码："+orderNoList+"</h2>");
+				}else if(orderNoList==''){
+					orderNo.append("<h2 class='title'>此单据下面的单品没有序列号</h2>");
+				}else{
+					orderNo.append("<h2 class='title'>--"+orderNoList+" <span style='color:#E64340'>&nbsp;&nbsp;&nbsp;&nbsp;"+orderstatus+"</span> </h2>");
+				}
 			}
-			$('#orderDesc').show();
 	    },'json');
 	});
 
