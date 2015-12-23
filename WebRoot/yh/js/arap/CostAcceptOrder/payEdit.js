@@ -22,7 +22,8 @@
         "sAjaxSource": "/costPreInvoiceOrder/costOrderList?ids="+ids+"&application_id="+$("#application_id").val(),
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID});
-			//$(nRow).attr({payee_id:aData.PAYEE_ID});
+			$(nRow).attr({item_ids:aData.ITEM_IDS});
+			$(nRow).attr({payee_unit:aData.PAYEE_UNIT});
 		},
         "aoColumns": [   
              {"mDataProp":"ORDER_TYPE","sWidth": "100px","sClass":'order_type'},
@@ -80,13 +81,14 @@
     		obj.id = $(this).parent().parent().attr('id');
     		obj.order_type = $(this).parent().parent().find('.order_type').text();
     		obj.value = $(this).val();
+    		obj.item_ids = $(this).parent().parent().attr('item_ids');
+    		obj.payee_unit = $(this).parent().parent().attr('payee_unit');
     		sum+=parseFloat(obj.value);
     		array.push(obj);
     	});
     	
     	$("#total_amount").val(sum);
     	var str_JSON = JSON.stringify(array);
-    	console.log(str_JSON);
     	$("#detailJson").val(str_JSON);
     };
     
