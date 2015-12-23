@@ -41,12 +41,12 @@
                 if(structure.STRUCTURE_TYPE == '字段'){
                     var field_section_html = template('field_section', 
                             {
-                                id: structure.TABLE_NAME
+                                id: 'T_'+structure.ID
                             }
                         );
 
                     $('#fields').append(field_section_html);
-                    var field_section = $('#'+structure.TABLE_NAME+'>.col-lg-12');
+                    var field_section = $('#'+'T_'+structure.ID+'>.col-lg-12');
 
                     for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
                         var field = structure.FIELDS_LIST[j];
@@ -104,7 +104,7 @@
                     var list_html = template('table_template', 
                             {
                                 id: structure.ID,
-                                name: structure.TABLE_NAME,
+                                name: 'T_'+structure.ID,
                                 label: structure.NAME,
                                 field_list: structure.FIELDS_LIST,
                                 is_edit_order: true
@@ -248,23 +248,23 @@
             console.log(order_dto);
 
             //异步向后台提交数据
-            // $.post('/module/saveStructure', {params:JSON.stringify(dto)}, function(data){
-            //     var order = data;
-            //     console.log(order);
-            //     if(order.ID>0){
-            //         $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+            $.post('/m_save', {params:JSON.stringify(order_dto)}, function(data){
+                var order = data;
+                console.log(order);
+                if(order.ID>0){
+                    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
-            //         $('#saveBtn').attr('disabled', false);
+                    $('#saveBtn').attr('disabled', false);
 
-            //         damageOrder.reDrawTable(order);
-            //     }else{
-            //         $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-            //         $('#saveBtn').attr('disabled', false);
-            //     }
-            // },'json').fail(function() {
-            //     $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-            //     $('#saveBtn').attr('disabled', false);
-            // });
+                    damageOrder.reDrawTable(order);
+                }else{
+                    $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+                    $('#saveBtn').attr('disabled', false);
+                }
+            },'json').fail(function() {
+                $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+                $('#saveBtn').attr('disabled', false);
+            });
         });
     };
     
