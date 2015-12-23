@@ -319,7 +319,14 @@
  		$('#payee_name').attr('disabled',false);
  		$('#account_name').attr('disabled',false);
 	 };
-	 
+	 $('#payment_method').on('change',function(){
+		 var value = $('#payment_method').val();
+		 if(value=="cash"){
+			 $('#payee_name').attr("readonly",false);
+		 }else{
+			 $('#payee_name').attr("readonly","readonly");
+		 }
+	 });
 	 $('#invoice_type').on('change',function(){
 		var value = $('#invoice_type').val();
     	if(value=='wbill'){
@@ -337,13 +344,23 @@
     		$('#payee_name').val("");
     		$('#account_name').attr("readonly","readonly");
     		$('#payee_unit').attr("readonly","readonly");
-    		$('#payee_name').attr("readonly","readonly");
+    		var method = $('#payment_method').val();
+    		if(method=="cash"){
+   			 $('#payee_name').attr("readonly",false);
+   		    }else{
+   			 $('#payee_name').attr("readonly","readonly");
+   		 }
     	}else if(value=='dbill'){
     		clean();
     		$('#payee_unit').val($('#account_name').val());
     		$('#account_name').attr("readonly","readonly");
 	    	$('#payee_unit').attr("readonly","readonly");
-	    	$('#payee_name').attr("readonly","readonly");
+	    	var method = $('#payment_method').val();
+	    	if(method=="cash"){
+				 $('#payee_name').attr("readonly",false);
+			 }else{
+				 $('#payee_name').attr("readonly","readonly");
+			 }
     		$('#billing_unit').on('input',function(){
     			 $('#payment_method').val('transfers');
     			 payment();
@@ -375,7 +392,19 @@
     else{
     	$('#invoice_type').val($('#invoice_type_show').val());
     }
-    
+    if($('#invoice_type').val()=='wbill'){
+ 		$('#account_name').attr("readonly",false);
+	    $('#payee_unit').attr("readonly",false);
+	    $('#payee_name').attr("readonly",false);
+ 	}else if($('#invoice_type').val()=='mbill'){
+ 		$('#account_name').attr("readonly","readonly");
+ 		$('#payee_unit').attr("readonly","readonly");
+ 		$('#payee_name').attr("readonly","readonly");
+ 	}else if($('#invoice_type').val()=='dbill'){
+ 		$('#account_name').attr("readonly","readonly");
+	    $('#payee_unit').attr("readonly","readonly");
+	    $('#payee_name').attr("readonly","readonly");
+ 	}
     ////付款方式（付款确认）回显控制
     if($('#pay_type_show').val()==''){
     	 $('#pay_type').val('cash');
