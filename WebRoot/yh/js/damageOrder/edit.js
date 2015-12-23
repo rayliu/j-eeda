@@ -29,6 +29,7 @@ $(document).ready(function() {
             order_no: $('#order_no').val(),  
             customer_id: $('#customer_id').val(),  
             sp_id: $('#sp_id').val(),
+            insurance_id: $('#insurance_id').val(),
 
             order_type: $('#order_type').val(),  
             biz_order_no: $('#biz_order_no').val(),  

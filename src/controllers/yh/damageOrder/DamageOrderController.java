@@ -85,12 +85,14 @@ public class DamageOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
 
-        String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name, "
+        String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name,c3.abbr insurance_name, "
     			+ " ifnull(u.c_name, u.user_name) creator_name from damage_order dao"
     			+"	left join party p1 on dao.customer_id = p1.id "
     			+"		left join contact c1 on p1.contact_id = c1.id"
     			+"	    left join party p2 on dao.sp_id = p2.id "
     			+"		left join contact c2 on p2.contact_id = c2.id "
+    			+"	    left join party p3 on dao.insurance_id = p3.id "
+    			+"		left join contact c3 on p3.contact_id = c3.id "
     			+"      left join user_login u on u.id = dao.creator where 1 =1 ";
         logger.debug("sql:" + sql);
         
@@ -164,12 +166,14 @@ public class DamageOrderController extends Controller {
 	
 
 	private Record getOrderDto(String orderId) {
-		String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name, "
+		String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name,c3.abbr insurance_name, "
 			+ " ifnull(u.c_name, u.user_name) creator_name from damage_order dao"
 			+"	left join party p1 on dao.customer_id = p1.id "
 			+"		left join contact c1 on p1.contact_id = c1.id"
 			+"	    left join party p2 on dao.sp_id = p2.id "
 			+"		left join contact c2 on p2.contact_id = c2.id "
+			+"	    left join party p3 on dao.insurance_id = p3.id "
+			+"		left join contact c3 on p3.contact_id = c3.id "
 			+"      left join user_login u on u.id = dao.creator"
 			+ " where dao.id=?";
 		Record orderRec = Db.findFirst(sql, orderId);
@@ -197,6 +201,15 @@ public class DamageOrderController extends Controller {
 		setAttr("order", m);
 		
 		render("/yh/DamageOrder/DamageOrderEdit.html");
+	}
+
+	
+	
+	public void confirmItem(){
+	    String id = getPara("itemId");
+	    DamageOrderFinItem damageOrderFinItem = DamageOrderFinItem.dao.findById(id);
+	    damageOrderFinItem.set("status", "已确认").update();
+	    renderJson(damageOrderFinItem);
 	}
 	
 }
