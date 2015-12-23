@@ -362,6 +362,29 @@ public class ContractController extends Controller {
         }
 
     }
+    
+    //
+    
+    @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_LIST})
+    public void searchInsurance() {
+        String insuranceName = getPara("insuranceName");
+        
+        List<Record> insuranceList = Collections.EMPTY_LIST;
+        
+        String sql="select c.id, c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'INSURANCE_PARTY' ";
+        		
+        if (insuranceName.trim().length() > 0) {
+        	sql +=" and (c.abbr like '%" + insuranceName + "%' or c.quick_search_code like '%" + insuranceName.toUpperCase() + "%') ";
+        } 
+        
+        insuranceList = Db.find(sql);  
+        renderJson(insuranceList);
+    }
+    
+    
+    
+    
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_CREATE,PermissionConstant.PERMSSION_CP_CREATE,PermissionConstant.PERMSSION_CD_CREATE},logical=Logical.OR)
     public void add() {
         HttpServletRequest re = getRequest();
