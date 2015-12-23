@@ -62,7 +62,7 @@ public class ModuleController extends Controller {
                 +"where o.parent_id = module.id and o.office_id=? and o.status = '启用' order by seq";
         List<Record> modules = Db.find(sql, pom.getParentOfficeId());
         for (Record module : modules) {
-            sql ="select * from modules where parent_id =? order by seq";
+            sql ="select * from modules where parent_id =? and status = '启用' order by seq";
             List<Record> orders = Db.find(sql, module.get("id"));
             module.set("orders", orders);
         }
@@ -280,7 +280,7 @@ public class ModuleController extends Controller {
                 +"where o.parent_id = module.id and o.office_id=? and o.status = '启用' order by seq";
         List<Record> modules = Db.find(sql, user.get("office_id"));
         for (Record module : modules) {
-            sql ="select * from modules where parent_id =? order by seq";
+            sql ="select * from modules where parent_id =? and status = '启用' order by seq";
             List<Record> orders = Db.find(sql, module.get("id"));
             module.set("orders", orders);
         }

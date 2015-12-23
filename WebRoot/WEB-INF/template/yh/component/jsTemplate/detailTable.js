@@ -7,7 +7,7 @@
                 <button id="add_row_btn_{{id}}" table_id="table_{{id}}" name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
             </div>
         {{/if}}
-        <table id="table_{{id}}" class="display" cellspacing="0" style="width: 100%;">
+        <table id="table_{{id}}" name="{{name}}" class="display" cellspacing="0" style="width: 100%;">
             <thead class="eeda">
                 <tr>
                     <th></th>
@@ -31,7 +31,12 @@
                 "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
             },
             "createdRow": function ( row, data, index ) {
-                $(row).attr('id', data.ID);
+                var id='';
+                if(data.ID){
+                    id=data.ID;
+                }
+                $(row).attr('id', id);
+                $(row).append('<input type="hidden" name="id" value="' + id + '"/>');
             },
             "columns": [
                 { "width": "30px", "orderable":false, 
@@ -44,7 +49,7 @@
                         "render": function ( data, type, full, meta ) {
                             if(!data)
                                 data = '';
-                          return '<input type="text" value="' + data + '" class="form-control"/>';
+                          return '<input type="text" name="F{{field.ID}}_{{field.FIELD_NAME}}" value="' + data + '" class="form-control"/>';
                         }
                     },
                 {{/each}}

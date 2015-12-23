@@ -3,7 +3,7 @@
         <div class="form-group">
             <div id="{{id}}_div" class="input-append date ">
                 <label class="search-label">{{label}}</label>
-                <input id="{{id}}" class="form-control search-control  beginTime_filter" type="text" value="">
+                <input id="{{id}}" name="{{id}}" class="form-control search-control  beginTime_filter" type="text" value="">
                 <span class="add-on"> 
                 	<i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                 </span>

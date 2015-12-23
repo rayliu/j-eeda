@@ -47,14 +47,14 @@
             var field = structure.FIELDS_LIST[j];
 
             var field_html = '';
-            if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '仅显示值'){
+            if(field.FIELD_TYPE == '仅显示值'){
                 field_html = template('input_field', 
                     {
                         id: field.FIELD_NAME,
                         label: field.FIELD_DISPLAY_NAME,
                     }
                 );
-            }else if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '文本编辑框'){
+            }else if(field.FIELD_TYPE == '文本编辑框'){
                 field_html = template('input_field', 
                     {
                         id: field.FIELD_NAME,

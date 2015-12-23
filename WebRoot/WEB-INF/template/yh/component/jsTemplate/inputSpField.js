@@ -1,7 +1,7 @@
 <script id="input_sp_template" type="text/html">
 	<div class="col-lg-4">
 		<div class="form-group">
-			<input id="{{id}}" style="display: none;" name="{{id}}" value="{{value}}"/>
+			<input id="{{id}}" type="hidden" name="{{id}}" value="{{value}}"/>
 			<label class="search-label">{{label}}</label>
 			<input type="text" class="form-control search-control" 
 			id="{{id}}_input" 

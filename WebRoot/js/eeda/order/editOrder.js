@@ -1,4 +1,4 @@
- 
+
 
     
 //$(document).ready(function(template) {
@@ -16,6 +16,7 @@
 
         buildStructureUI(json);
         buildButtonUI(json);
+        bindBtnClick();//绑定按钮事件
     }, 'json');
 
     var buildButtonUI = function(json){
@@ -38,11 +39,20 @@
                 if(!structure.FIELDS_LIST)
                     continue;
                 if(structure.STRUCTURE_TYPE == '字段'){
+                    var field_section_html = template('field_section', 
+                            {
+                                id: structure.TABLE_NAME
+                            }
+                        );
+
+                    $('#fields').append(field_section_html);
+                    var field_section = $('#'+structure.TABLE_NAME+'>.col-lg-12');
+
                     for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
                         var field = structure.FIELDS_LIST[j];
 
                         var field_html = '';
-                        if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '仅显示值'){
+                        if(field.FIELD_TYPE == '仅显示值'){
                             field_html = template('input_field', 
                                 {
                                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
@@ -50,7 +60,7 @@
                                     disabled: "disabled"
                                 }
                             );
-                        }else if(field.FIELD_DATA_TYPE == '文本' && field.FIELD_TYPE == '文本编辑框'){
+                        }else if(field.FIELD_TYPE == '文本编辑框'){
                             field_html = template('input_field', 
                                 {
                                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
@@ -87,13 +97,14 @@
                                 }
                             );
                         }
-                        
-                        $('#fields').append(field_html);
+
+                        field_section.append(field_html);
                     }
                 }else{
                     var list_html = template('table_template', 
                             {
                                 id: structure.ID,
+                                name: structure.TABLE_NAME,
                                 label: structure.NAME,
                                 field_list: structure.FIELDS_LIST,
                                 is_edit_order: true
@@ -143,70 +154,62 @@
         cargoTable.row(tr).remove().draw();
     });
 
-    var buildStructureFieldsrray=function(structure_table){
-        var table_rows = $(structure_table).find('tr');
-        var items_array=[];
-        for(var index=0; index<table_rows.length; index++){
-            if(index==0)
-                continue;
-
-            var row = table_rows[index];
-            var id = $(row).attr('id');
-            if(!id){
-                id='';
+    var buildOrderDto=function(){
+        //循环处理字段
+        var field_sections = $("#fields section");
+        var fields_list = [];
+        for(var index=0; index<field_sections.length; index++){
+            var field_section = field_sections[index];
+            var table_obj = {
+                id : $(field_section).attr('id')
             }
+            var fields_input = $(field_section).find('input');
+            for(var i=0; i<fields_input.length; i++){
+                var field = fields_input[i];
+                if($(field).attr('name') && $(field).val() !=''){
+                    table_obj[$(field).attr('name')] = $(field).val();
+                }
+            }
+            fields_list.push(table_obj);
+        }
 
-            var item={
-                id: id,
-                field_name: $(row.children[2]).find('input').val(), 
-                field_type: $(row.children[3]).find('select').val(),
-                field_data_type: $(row.children[4]).find('select').val(),
-                required: $(row.children[5]).find('select').val(),
-                listed: $(row.children[6]).find('select').val(),
-                field_template_path: $(row.children[7]).find('input').val(),
-                index_name:'',
-                action: $('#module_id').val().length>0?'UPDATE':'CREATE'
+        //循环处理从表
+        var table_list = [];
+        var tables = $("#list").find('table');
+        for(var i=0; i<tables.length; i++){//多个从表
+            var table = tables[i];
+            var table_rows = $(table).find('tr');
+            var row_list = [];
+            
+            for (var j = 0; j < table_rows.length; j++) {//遍历当前表的所有行
+                table_row = table_rows[j];
+                var row_obj = {};
+                var fields_input = $(table_row).find('input');
+                for(var k=0; k<fields_input.length; k++){//遍历当前行的所有input
+                    var field = fields_input[k];
+                    row_obj[$(field).attr('name')] = $(field).val();
+                }
+                row_list.push(row_obj);
             };
 
-            if(item.field_name.length>0){
-                items_array.push(item);
-            }
-        }
-
-        //add deleted items
-        for(var index=0; index<deletedTableIds.length; index++){
-            var id = deletedTableIds[index];
-            var item={
-                id: id,
-                action: 'DELETE'
+            var table_obj = {
+                id: $(table).attr("name"),
+                row_list: row_list
             };
-            items_array.push(item);
+            table_list.push(table_obj);
         }
-        return items_array;
-    };
 
-    var buildStructureTableArray=function(){
-        var structure_sections = $("section.structure");
-        console.log('structure_sections.length:'+structure_sections.length);
-
-        var structure_table_array=[];
-        for(var i=0; i<structure_sections.length; i++){
-            var structure_section = structure_sections[i];
-            var structure_table = $(structure_section).find('table')[0];
-            var fields = buildStructureFieldsrray(structure_table);
-            var structure={
-                id: $($(structure_section).find('.s_id')[0]).val(),
-                name: $($(structure_section).find('.s_name')[0]).val(),
-                structure_type: $($(structure_section).find('.s_type')[0]).val(),
-                parent_name: $($(structure_section).find('.s_type')[0]).val(),
-                parent_id: $($(structure_section).find('.s_parent_id')[0]).val(),
-                field_list: fields
-            }
-            structure_table_array.push(structure);
-        }
+        var order_dto={
+            module_id: $('#module_id').val(),
+            id: $('#order_id').val(),
+            fields_list: fields_list, 
+            table_list: table_list,
+            action: ''
+        };
         
-        return structure_table_array;
+        return order_dto;
     };
+
 
     var reDrawTable=function(order){
         deletedTableIds=[];
@@ -224,46 +227,47 @@
         }
     };
 
+    var bindBtnClick = function(){
+        $('button.order_level').on('click', function(e){
+            //阻止a 的默认响应行为，不需要跳转
+            e.preventDefault();
 
-    $('#saveBtn').on('click', function(e){
-        $(this).attr('disabled', true);
+            var btnClass = $(this).attr('class');
+            var btn = $(this);
+            btn.attr('disabled', true);
 
-        //阻止a 的默认响应行为，不需要跳转
-        e.preventDefault();
-        //提交前，校验数据
-        // if(!$("#orderForm").valid()){
-        //     return;
-        // }
+            //提交前，校验数据
+            // if(!$("#orderForm").valid()){
+            //     return;
+            // }
 
-        var structure_list=buildStructureTableArray();
+            btn.attr('disabled', false);
 
-        var dto = {
-            module_id: $('#module_id').text(),
-            structure_list: structure_list
-        };
+            var order_dto = buildOrderDto();
+            order_dto.action = btn.text();
+            console.log(order_dto);
 
-        console.log('saveBtn.click....');
-        console.log(dto);
+            //异步向后台提交数据
+            // $.post('/module/saveStructure', {params:JSON.stringify(dto)}, function(data){
+            //     var order = data;
+            //     console.log(order);
+            //     if(order.ID>0){
+            //         $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
-        //异步向后台提交数据
-        $.post('/module/saveStructure', {params:JSON.stringify(dto)}, function(data){
-            var order = data;
-            console.log(order);
-            if(order.ID>0){
-                $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+            //         $('#saveBtn').attr('disabled', false);
 
-                $('#saveBtn').attr('disabled', false);
-
-                damageOrder.reDrawTable(order);
-            }else{
-                $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-                $('#saveBtn').attr('disabled', false);
-            }
-        },'json').fail(function() {
-            $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-            $('#saveBtn').attr('disabled', false);
+            //         damageOrder.reDrawTable(order);
+            //     }else{
+            //         $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+            //         $('#saveBtn').attr('disabled', false);
+            //     }
+            // },'json').fail(function() {
+            //     $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+            //     $('#saveBtn').attr('disabled', false);
+            // });
         });
-    });
+    };
+    
 
     //单据预览
     $('#previewBtn').click(function(){

@@ -3,11 +3,13 @@
 		<div class="form-group">
 		    <label class="search-label">{{label}}</label>
 		    <input type="text" 
-		    	id="{{id}}" 
+		    	id="{{id}}"
+		    	name="{{id}}"
 				class="form-control search-control" 
+				{{disabled}} 
 				placeholder="{{placeholder}}" 
 				value="{{value}}"
-				{{disabled}}>
+				>
 		</div>
 	</div>
 </script>

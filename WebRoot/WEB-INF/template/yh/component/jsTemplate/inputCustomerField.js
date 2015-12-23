@@ -1,6 +1,6 @@
 <script id="input_customer_template" type="text/html">
 	<div class="col-lg-4">
-		<input id="{{id}}" style="display: none;" name="{{id}}" value="{{value}}"/>
+		<input id="{{id}}" type="hidden" name="{{id}}" value="{{value}}"/>
 		<div class="form-group">
 		    <label class="search-label">{{label}}</label>
 		    <input type="text" class="form-control search-control" 
