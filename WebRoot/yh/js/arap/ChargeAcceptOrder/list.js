@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-	document.title = '复核收款 | '+document.title;
+	document.title = '待申请列表 | '+document.title;
 	
 	if($("#page").val()=='return'){
     	$('a[href="#panel-2"]').tab('show');
@@ -93,12 +93,13 @@ $(document).ready(function() {
    $("#chargeNoAccept-table").on('click', '.checkedOrUnchecked', function(e){
    	var this_id = $(this).val();
 		var this_order_type = $(this).parent().parent().attr('order_type');
+		var this_cname = $(this).parent().siblings('.cname')[0].textContent;
 		if($(this).prop("checked") == true){
 			if($(this).parent().siblings('.total_amount')[0].textContent == 0){
 				$.scojs_message('金额不能为0!', $.scojs_message.TYPE_FALSE);
 				return false;
 			}
-			sids.push(this_id+':'+this_order_type);
+			sids.push(this_id+':'+this_order_type+':'+this_cname);
 			if(sids.length>0){
 				$("#createBtn").attr("disabled",false);
 				if(sids.length > 1){
@@ -106,7 +107,7 @@ $(document).ready(function() {
 						$.scojs_message('请选择相同的付款单位!', $.scojs_message.TYPE_FALSE);
 						var tmpArr1 = [];
 						for(id in sids){
-							if(sids[id] != this_id+':'+this_order_type){
+							if(sids[id] != this_id+':'+this_order_type+':'+this_cname){
 								tmpArr1.push(sids[id]);
 							}
 						}
@@ -116,7 +117,7 @@ $(document).ready(function() {
 						$.scojs_message('请选择相同的付款人!', $.scojs_message.TYPE_FALSE);
 						var tmpArr2 = [];
 						for(id in sids){
-							if(sids[id] != this_id+':'+this_order_type){
+							if(sids[id] != this_id+':'+this_order_type+':'+this_cname){
 								tmpArr2.push(sids[id]);
 							}
 						}
@@ -131,7 +132,7 @@ $(document).ready(function() {
 		}else if($(this).prop("checked") == false){
 			var tmpArr = [];
 			for(id in sids){
-				if(sids[id] != this_id+':'+this_order_type){
+				if(sids[id] != this_id+':'+this_order_type+':'+this_cname){
 					tmpArr.push(sids[id]);
 				}
 			}
@@ -195,14 +196,15 @@ $(document).ready(function() {
 	            	return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';     
 	            }
             }, 
-            {"mDataProp":"ORDER_NO","sWidth":"150px",
+            {"mDataProp":"APPLICATION_ORDER_NO","sWidth":"150px",
             	"fnRender": function(obj) {
-        			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+        			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"' target='_blank'>"+obj.aData.APPLICATION_ORDER_NO+"</a>";
             	}
     		},
             {"mDataProp":"ORDER_TYPE","sWidth":"120px",
         			"sClass":"order_type"
         	},   
+        	{"mDataProp":"ORDER_NO","sWidth":"120px"},
             {"mDataProp":"INVOICE_NO","sWidth":"120px"},
             {"mDataProp":"STATUS","sWidth":"120px",
                 "fnRender": function(obj) {
@@ -300,9 +302,11 @@ $(document).ready(function() {
 		var beginTime_filter =  $("#beginTime_filter2").val();
 		var endTime_filter =  $("#endTime_filter2").val();
 		var status_filter =  $("#status_filter8").val();
+		var applicationOrderNo =  $("#applicationOrderNo").val();
 
-		chargeAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/applicationList?orderNo="+orderNo_filter
+		chargeAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/applicationList?applicationOrderNo="+applicationOrderNo
         		                                       +"&cname="+customer_filter
+        		                                       +"&orderNo="+orderNo_filter
         		                                       +"&status="+status_filter
         		                                       +"&beginTime="+beginTime_filter
         		                                       +"&endTime="+endTime_filter;

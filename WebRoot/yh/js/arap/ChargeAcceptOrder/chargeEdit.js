@@ -20,7 +20,7 @@
         "sAjaxSource": "/chargePreInvoiceOrder/chargeOrderList?ids="+ids+"&application_id="+$("#application_id").val(),
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID});
-			//$(nRow).attr({payee_id:aData.PAYEE_ID});
+			$(nRow).attr({payee_unit:aData.PAYEE_UNIT});
 		},
         "aoColumns": [   
              {"mDataProp":"ORDER_TYPE","sWidth": "100px","sClass":'order_type'},
@@ -78,6 +78,7 @@
     		obj.id = $(this).parent().parent().attr('id');
     		obj.order_type = $(this).parent().parent().find('.order_type').text();
     		obj.value = $(this).val();
+    		obj.payee_unit = $(this).parent().parent().attr('payee_unit');
     		sum+=parseFloat(obj.value);
     		array.push(obj);
     	});

@@ -57,11 +57,12 @@ public class ChargeAcceptOrderController extends Controller {
         String status2 = "";
         String status3 = "";
         String status4 = "";       
+        
         if(status == null || status.equals("")){
         	status = "'已审批','收款申请中','部分已复核','部分已收款'";    //开票记录单
         	status2 = "'新建','收款申请中','部分已复核','部分已收款'";     //手工单
         	status3 = "'已确认','收款申请中','部分已复核','部分已收款'";    //对账单
-        	status4 = "'未收','收款申请中','部分已复核','部分已收款'";     //往来票据单
+        	status4 = "'未收款','收款申请中','部分已复核','部分已收款'";  //往来票据单                                            
         }else if(status.equals("部分申请中")){
         	status = status2 = status3 = status4 = "'收款申请中'";
         	
@@ -155,9 +156,54 @@ public class ChargeAcceptOrderController extends Controller {
  				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单'"
  				+ " )) noreceive_amount"
         		+ " FROM arap_in_out_misc_order aio WHERE aio.charge_status IN (" + status4 + ")"
+        		+ " UNION"
+        		+ " SELECT aio.id, '往来票据单' order_type, aio.order_no, aio.charge_status status , aio.charge_person AS payee,"
+        		+ " NULL AS invoice_no, aio.create_date create_stamp,"
+        		+ " aio.remark, aio.charge_amount charge_amount,null cname,"
+        		 + " ( SELECT ifnull(sum(caor.receive_amount),0) FROM charge_application_order_rel caor "
+ 				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单' "
+ 				+ " ) receive_amount,"
+ 				+ " (aio.charge_amount - (SELECT ifnull(sum(caor.receive_amount), 0) "
+ 				+ " FROM charge_application_order_rel caor "
+ 				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单'"
+ 				+ " )) noreceive_amount"
+        		+ " FROM arap_in_out_misc_order aio WHERE aio.charge_status IN (" + status4 + ")"
+        		+ " union"
+        		+ " SELECT dor.id,'货损单' AS order_type, dor.order_no, dofi.status STATUS, "
+        		+ " ''  AS payee_name,"
+        		+ " NULL AS invoice_no, dor.create_date create_stamp,  dofi.remark,"
+        		+ " ifnull(sum(dofi.amount),0) charge_amount,"
+        		+ " (case "
+        		+ " when dofi.party_type ='客户'"
+          	    + " then c.abbr "
+          	    + " when dofi.party_type ='供应商'"
+        	    + " then c2.abbr "
+        	    + " when dofi.party_type ='保险公司'"
+          	    + " then c3.abbr "
+          	    + " else "
+          	    + " dofi.party_name"
+          	    + " end) cname ,"
+        		+ " ( SELECT ifnull(sum(caor.receive_amount),0) FROM charge_application_order_rel caor "
+        		+ " WHERE caor.charge_order_id = dor.id AND caor.order_type = '货损单' and caor.payee_unit = dofi.party_name "
+        		+ " ) receive_amount,"
+        		+ " (ifnull(sum(dofi.amount),0) - (SELECT ifnull(sum(caor.receive_amount), 0) "
+        		+ " FROM charge_application_order_rel caor "
+        		+ " WHERE caor.charge_order_id = dor.id AND caor.order_type = '货损单' and caor.payee_unit = dofi.party_name"
+        		+ " )) noreceive_amount"
+        		+ " FROM damage_order dor"
+        	    + " LEFT JOIN damage_order_fin_item dofi on dofi.order_id = dor.id and dofi.type = 'charge' "
+        	    + " LEFT JOIN party p ON p.id = dor.customer_id"
+        	    + " LEFT JOIN contact c ON c.id = p.contact_id"
+        	    + " LEFT JOIN party p2 ON p2.id = dor.sp_id"
+        	    + " LEFT JOIN contact c2 ON c2.id = p2.contact_id"
+        	    + " LEFT JOIN party p3 ON p3.id = dor.insurance_id"
+        	    + " LEFT JOIN contact c3 ON c3.id = p3.contact_id"
+        	    + " WHERE"
+        	    + " dofi. STATUS = '已确认'"
+        	    + " GROUP BY dofi.party_name , dor.id"
         	    + " ) A";
-        
-        
+
+
         String conditions=" where 1=1 and noreceive_amount != 0 ";
         if (StringUtils.isNotEmpty(orderNo_filter)){
         	conditions+=" and UPPER(order_no) like '%"+orderNo_filter.toUpperCase()+"%'";
@@ -206,6 +252,7 @@ public class ChargeAcceptOrderController extends Controller {
         String beginTime = getPara("beginTime")!=null?getPara("beginTime"):"";
         String endTime = getPara("endTime")!=null?getPara("endTime"):"";
         String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
+        String applictionOrderNo = getPara("applictionOrderNo")!=null?getPara("applictionOrderNo"):"";
         String status = getPara("status")!=null?getPara("status"):"";
 		
 //		String sortColIndex = getPara("iSortCol_0");
@@ -239,18 +286,34 @@ public class ChargeAcceptOrderController extends Controller {
 		condition = " where "
 					+ " ifnull(cname,'') like '%" + cname + "%' "
 					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
-				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
+				    + " and ifnull(order_no,'') like '%" + orderNo + "%' "
+				    + " and ifnull(application_order_no,'') like '%" + applictionOrderNo + "%' ";
         }
         
-        String sql = "select * from(select aci.id, aci.order_no,'应收申请单' as order_type, aci.payment_method, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
+        String sql = "select * from(select aci.id, aci.order_no application_order_no,'应收申请单' as order_type, aci.payment_method, aci.account_id, aci.status, group_concat(invoice_item.invoice_no separator '\r\n') invoice_no, aci.create_stamp create_time, aci.remark,"
         		+ " aci.total_amount total_amount, "
+        		+ " GROUP_CONCAT( "
+                + " case "
+                + " when cao.order_type='对账单' "
+                + " then (select order_no from arap_charge_order where id = cao.charge_order_id)"
+                + " when cao.order_type='开票记录单'"
+                + " then (select order_no from arap_charge_invoice where id = cao.charge_order_id)"
+                + " when cao.order_type='收入单'"
+                + " then (select order_no from arap_misc_charge_order where id = cao.charge_order_id)"
+                + " when cao.order_type='往来票据单'"
+                + " then (select order_no from arap_in_out_misc_order where id = cao.charge_order_id)"
+                + " when cao.order_type='货损单'"
+                + " then (select order_no from damage_order where id = cao.charge_order_id)"
+                + " end SEPARATOR '</br>') order_no, "
         		+ " ( select sum(cao.receive_amount) from charge_application_order_rel cao where cao.application_order_id = aci.id ) application_amount, "
         		+ " c.abbr cname "
         		+ " from arap_charge_invoice_application_order aci "
+        		+ " LEFT JOIN charge_application_order_rel cao on cao.application_order_id = aci.id"
         		+ " left join party p on p.id = aci.payee_id "
         		+ " left join contact c on c.id = p.contact_id "
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
         		+ ") A";
+
         
         
         Record rec = Db.findFirst("select count(*) total from (" + sql + condition + " ) B");
