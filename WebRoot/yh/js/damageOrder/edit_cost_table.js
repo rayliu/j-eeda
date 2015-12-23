@@ -11,6 +11,25 @@ $(document).ready(function() {
         costTable.row(tr).remove().draw();
         damageOrder.calcTotalCost();
     }); 
+    
+    
+    $("#cost_table").on('click', '.confirm', function(e){
+        e.preventDefault();
+        var btn =  $(this);
+        var id = $(this).parent().parent().attr('id');
+        if(confirm('是否确认流转？')){
+        	$.post('/damageOrder/confirmItem',{itemId:id},function(data){
+        		if(data.ID>0){
+        			 $.scojs_message('确认成功', $.scojs_message.TYPE_OK);
+        			 btn.parent().parent().find('td').eq(1).text(data.STATUS);
+        			 btn.attr('disabled',true);
+        		}else{
+        			$.scojs_message('确认失败', $.scojs_message.TYPE_FALSE);
+        		}
+        	});
+        }
+    });
+    
 
     damageOrder.buildCostDetail=function(){
         var table_rows = $("#cost_table tr");
@@ -88,8 +107,12 @@ $(document).ready(function() {
             {  "width": "70px",
                 "render": function ( data, type, full, meta ) {
                     if(full.ID){
-                        return '<button type="button" class="delete btn btn-default btn-xs">删除</button> '+
-                            '<button type="button" class="btn btn-primary btn-xs">确认</button>';
+                    	var disable = '';
+                        if(full.STATUS != '未确认'){
+                        	disable = 'disabled';
+                        }
+                        return  '<button type="button" class="delete btn btn-default btn-xs">删除</button> '+
+                        '<button type="button" '+  disable +' class="confirm btn btn-primary btn-xs">确认</button>';
                     }else{
                         return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
                     }
@@ -119,21 +142,28 @@ $(document).ready(function() {
             },
             { "data": "PARTY_TYPE",
                 "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                    return '<select class="form-control search-control">'
-                        
+                    var show = '<select class="form-control search-control partyType">'
                         +'<option >客户</option>'
                         +'<option >收货人</option>'
                         +'<option >其他</option>'
-                    +'</select>';
+                        +'</select>';
+                    if(!data){
+                        data='';
+                        return show;
+                    }else{
+                    	return data;	
+                    }
                 }
             },
             { "data": "PARTY_NAME",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
-                    return '<input type="text" value="'+data+'" class="form-control"/>';
+                    var show = '';
+                    if(full.PARTY_TYPE =='客户'){
+                    	show = 'disabled';
+                    }
+                    return '<input type="text" '+show+' value="'+data+'" class="form-control"/>';
                 }
             },
             { "data": "FIN_METHOD",
@@ -143,8 +173,8 @@ $(document).ready(function() {
                     
                     return '<select class="form-control search-control">'
                         +'<option >正常付款</option>'
-                        +'<option >抵扣运费</option>'
-                        +'<option >责任方已付款</option>'
+                        //+'<option >抵扣运费</option>'
+                        //+'<option >责任方已付款</option>'
                     +'</select>';
                 }
             },{ "data": "REMARK",
@@ -156,6 +186,30 @@ $(document).ready(function() {
             }
         ]
     });
+    
+    
+    
+  //赔款方名称回填
+    $('#cost_table').on('click','.partyType',function(){
+    	var party_type = $(this).val();
+    	var party_name = $(this).parent().parent().find('td').eq(5).find('input');
+    	party_name.val('');
+    	if(party_type == '客户'){
+    		party_name.val($('#customer_id').parent().find('input').val());
+    		party_name.attr('disabled',true);
+    	}else if(party_type == '供应商'){
+    		party_name.val($('#sp_id').parent().find('input').val());
+    		party_name.attr('disabled',true);
+    	}else if(party_type == '保险公司'){
+    		party_name.val($('#insurance_id').parent().find('input').val());
+    		party_name.attr('disabled',true);
+    	}else{
+    		party_name.attr('disabled',false);
+    	}
+   	
+    });
+   
+    
 
     $('#add_cost').on('click', function(){
         var item={ID: ''};

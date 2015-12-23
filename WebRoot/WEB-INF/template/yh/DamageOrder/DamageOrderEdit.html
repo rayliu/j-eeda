@@ -14,7 +14,6 @@
 
             <input id="order_id" type="hidden" name="order_id" value="${order.id!''}"/>
 
-
             <div class="row">  <!--  form row  -->
                 <form id="orderForm">
                     <div class="row"><!--  第1行  -->
@@ -144,6 +143,17 @@
                                                     disabled: 'disabled'
                                                 }){}%>
                         </div><!-- /.col-lg-4 -->
+                    </div>
+                    <div class="row">
+                    	<div class="col-lg-4">
+                            <%include("/yh/component/form/inputInsuranceField.html", 
+                                {
+                                    id:'insurance_id', 
+                                    label:'保险公司', 
+                                    value:order.INSURANCE_ID!'',
+                                    display_value: order.insurance_name!''
+                                }){} %>
+                        </div>
                     </div> 
                 </form>
             </div><!-- /.row -->
