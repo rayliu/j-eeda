@@ -769,6 +769,7 @@
 		 	    		$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
 	        				$("#departOrderId").val(data.ID);
 	        				if(data.ID>0){
+	        					$("#depart_order_token").val(data.DEPART_ORDER_TOKEN);
 	        					$("#departOrderId").val(data.ID);
 	        					$("#depart_id").val(data.ID);
 	        					$("#saveDepartOrderBtn").prop('disabled',false);
