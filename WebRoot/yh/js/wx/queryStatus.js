@@ -11,17 +11,21 @@ $(document).ready(function() {
 		$.post('/wx/queryStatusJson',$("#returnFrom").serialize(), function(data){
 			var orderNo=$("#orderNoList")
 			orderNo.empty();
-			for(var i = 0; i < data.length; i++)
-			{
-				var orderNoList=data[i].ORDERNO;
-				var orderstatus=data[i].ORDERSTATUS;
-				if(orderstatus==''){
-					orderNo.append("<h2 class='title'>单据号码："+orderNoList+"</h2>");
-				}else if(orderNoList==''){
-					orderNo.append("<h2 class='title'>此单据下面的单品没有序列号</h2>");
-				}else{
-					orderNo.append("<h2 class='title'>--"+orderNoList+" <span style='color:#E64340'>&nbsp;&nbsp;&nbsp;&nbsp;"+orderstatus+"</span> </h2>");
+			if(data.length>0){	
+				for(var i = 0; i < data.length; i++){
+					var orderNoList=data[i].ORDERNO;
+					var orderstatus=data[i].ORDERSTATUS;
+					if(orderstatus==''){
+						orderNo.append("<h2 class='title'>单据号码："+orderNoList+"</h2>");
+					}else if(orderNoList==''||orderNoList==null){
+						orderNo.append("<h2 class='title'>此单据下面的单品没有序列号</h2>");
+					}else{
+						orderNo.append("<h2 class='title'>--"+orderNoList+" <span style='color:#E64340'>&nbsp;&nbsp;&nbsp;&nbsp;"+orderstatus+"</span> </h2>");
+					}
 				}
+			}
+			else{
+				orderNo.append("<h2 class='title'>没有找到此单据信息</h2>");
 			}
 	    },'json');
 	});

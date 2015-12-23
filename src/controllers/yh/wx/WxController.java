@@ -341,7 +341,7 @@ public class WxController extends ApiController {
     
     //单据状态查询
     public void queryStatusJson() {
-    	List<Record> rec= null;
+    	List<Record> rec= new ArrayList<Record>();;
         String orderNo = getPara("orderNo").toUpperCase();
         String sql = " SELECT toid.serial_no AS orderno,"
         		+ " (CASE"
