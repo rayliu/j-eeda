@@ -207,12 +207,16 @@ $(document).ready(function() {
     $("#costAccept-table").on('click', '.invoice', function(e){
     	var this_id = $(this).attr('id');
 		var this_order_type = $(this).parent().parent().attr('order_type');
+		var this_cname =  $(this).parent().siblings('.cname')[0].textContent;
 		if($(this).prop("checked") == true){
 			if($(this).parent().siblings('.pay_amount')[0].textContent == 0){
 				$.scojs_message('申请金额不能为0!', $.scojs_message.TYPE_FALSE);
 				return false;
 			}
-			sids.push(this_id+':'+this_order_type);
+			
+			sids.push(this_id+':'+this_order_type +':'+this_cname);
+			
+			
 			if(sids.length>0){
 				$("#createBtn").attr("disabled",false);
 				if(sids.length > 1){
@@ -220,7 +224,7 @@ $(document).ready(function() {
 						$.scojs_message('请选择相同的供应商!', $.scojs_message.TYPE_FALSE);
 						var tmpArr1 = [];
 						for(id in sids){
-							if(sids[id] != this_id+':'+this_order_type){
+							if(sids[id] != this_id+':'+this_order_type +':'+this_cname){
 								tmpArr1.push(sids[id]);
 							}
 						}
@@ -230,7 +234,7 @@ $(document).ready(function() {
 						$.scojs_message('请选择相同的收款人!', $.scojs_message.TYPE_FALSE);
 						var tmpArr2 = [];
 						for(id in sids){
-							if(sids[id] != this_id+':'+this_order_type){
+							if(sids[id] != this_id+':'+this_order_type +':'+this_cname){
 								tmpArr2.push(sids[id]);
 							}
 						}
@@ -246,7 +250,7 @@ $(document).ready(function() {
 		}else if($(this).prop("checked") == false){
 			var tmpArr = [];
 			for(id in sids){
-				if(sids[id] != this_id+':'+this_order_type){
+				if(sids[id] != this_id+':'+this_order_type +':'+this_cname){
 					tmpArr.push(sids[id]);
 				}
 			}

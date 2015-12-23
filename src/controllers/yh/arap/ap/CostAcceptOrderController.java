@@ -104,6 +104,7 @@ public class CostAcceptOrderController extends Controller {
         String status3 = "";
         String status4 = "";
         String status5 = "";
+        String status6 = "";
         
 		
 		String sortColIndex = getPara("iSortCol_0");
@@ -121,12 +122,16 @@ public class CostAcceptOrderController extends Controller {
         	status3 = "'已审核','付款申请中','部分已复核','部分已付款'";       //报销单/行车报销单
         	status4 = "'未付','付款申请中','部分已复核','部分已付款'";         //往来票据单
         	status5 = "'已确认','付款申请中','部分已复核','部分已付款'";         //应付对账单
+        	status6 = "'已确认','单据处理中'";         //货损单
         }else if(status.equals("部分申请中")){
         	status = status2 = status3 = status4 = status5 = "'付款申请中'";
+        	status6 = "'已确认'";
         }else if(status.equals("部分复核中")){
         	status = status2 = status3 = status4 = status5 = "'部分已复核'";
+        	status6 = "'已确认'";
         }else if(status.equals("部分付款中")){
         	status = status2 = status3 = status4 = status5 = "'部分已付款'";
+        	status6 = "'已确认'";
         }
         
         String condition = "";
@@ -237,6 +242,28 @@ public class CostAcceptOrderController extends Controller {
         		+ " c.abbr cname FROM arap_pre_pay_order app"
         		+ " LEFT JOIN party p ON p.id = app.sp_id"
         		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE app.status IN ("+ status2 +")"
+        	    + " UNION"
+        	    + " SELECT dor.id, dor.order_no, '货损单' AS order_type, 	dofi.fin_method AS payment_method, "
+        	    + " '' AS payee_name,"
+        	    + " NULL AS account_id, dofi.status STATUS, NULL AS invoice_no, dor.create_date create_time, dofi.remark,"
+        	    + " ifnull(sum(dofi.amount),0) total_amount,"
+        	    + " 0 AS application_amount,"
+        	    + " ( SELECT ifnull(sum(caor.pay_amount), 0)"
+        	    + " FROM cost_application_order_rel caor WHERE caor.cost_order_id = dor.id AND caor.order_type = '货损单' and caor.payee_unit = dofi.party_name ) pay_amount,"
+        	    + " (ifnull(sum(dofi.amount),0) - ( SELECT ifnull(sum(caor.pay_amount), 0) total_pay FROM cost_application_order_rel caor"
+        	    + " WHERE caor.cost_order_id = dor.id AND caor.order_type = '货损单' and caor.payee_unit = dofi.party_name )) yufu_amount,"
+        	    + " (case when dofi.party_type ='客户' "
+        	    + " then c.abbr "
+        	    + " else"
+        	    + " dofi.party_name"
+        	    + " end) cname"
+        	    + " FROM damage_order dor"
+        	    + " LEFT JOIN damage_order_fin_item dofi on dofi.order_id = dor.id and dofi.type = 'cost' "
+        	    + " LEFT JOIN party p ON p.id = dor.customer_id"
+        	    + " LEFT JOIN contact c ON c.id = p.contact_id"
+        	    + " WHERE"
+        	    + " dofi. STATUS IN ("+ status6 +")"
+        	    + " GROUP BY dofi.party_name  , dor.id"
         		+ ") A ";
         
         
@@ -346,17 +373,19 @@ public class CostAcceptOrderController extends Controller {
                 + " GROUP_CONCAT( "
                 + " case "
                 + " when cao.order_type='对账单' "
-                + " then (select order_no from arap_cost_order aco where id = cao.cost_order_id)"
+                + " then (select order_no from arap_cost_order where id = cao.cost_order_id)"
                 + " when cao.order_type='行车单'"
-                + " then (select order_no from car_summary_order aco where id = cao.cost_order_id)"
+                + " then (select order_no from car_summary_order where id = cao.cost_order_id)"
                 + " when cao.order_type='预付单'"
-                + " then (select order_no from arap_pre_pay_order aco where id = cao.cost_order_id)"
+                + " then (select order_no from arap_pre_pay_order where id = cao.cost_order_id)"
                 + " when cao.order_type='成本单'"
-                + " then (select order_no from arap_misc_cost_order aco where id = cao.cost_order_id)"
+                + " then (select order_no from arap_misc_cost_order where id = cao.cost_order_id)"
                 + " when cao.order_type='报销单'"
-                + " then (select order_no from reimbursement_order aco where id = cao.cost_order_id)"
+                + " then (select order_no from reimbursement_order where id = cao.cost_order_id)"
                 + " when cao.order_type='往来票据单'"
-                + " then (select order_no from arap_in_out_misc_order aco where id = cao.cost_order_id)"
+                + " then (select order_no from arap_in_out_misc_order where id = cao.cost_order_id)"
+                + " when cao.order_type='货损单'"
+                + " then (select order_no from damage_order where id = cao.cost_order_id)"
                 + " end SEPARATOR '</br>') order_no, "
         		+ " c.abbr cname "
         		+ " from arap_cost_invoice_application_order aci "
