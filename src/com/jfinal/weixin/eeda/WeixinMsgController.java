@@ -34,7 +34,7 @@ import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
  */
 public class WeixinMsgController extends MsgController {
 	//"\t发送 help 可获得帮助，发送 \"美女\" 可看美女，发送 news 可看新闻，发送 music 可听音乐，你还可以试试发送图片、语音、位置、收藏等信息，看会有什么 。公众号持续更新中，想要更多惊喜欢迎每天关注 ^_^";
-	private static final String helpStr = "\t发送 help 可获得帮助，发送 \"配送签收\"，\"直送签收\" 可发送图片、语音、位置等信息。";
+	private static final String helpStr = "\t本公众号由“创诚易达科技”提供技术支持";
 	//当前绑定的URL
 	private static final String url="http://tms.eeda123.com/wx";
 	/**
@@ -190,7 +190,7 @@ public class WeixinMsgController extends MsgController {
 	 */
 	protected void processInFollowEvent(InFollowEvent inFollowEvent) {
 		OutTextMsg outMsg = new OutTextMsg(inFollowEvent);
-		outMsg.setContent("感谢关注 创诚易达科技，希望为您节约更多时间，去陪恋人、家人和朋友 :) \n\n\n " + helpStr);
+		outMsg.setContent("感谢关注本公众号，希望为您提供专业的服务，让您节省更多时间去陪恋人、家人和朋友 :) \n\n\n ");
 		// 如果为取消关注事件，将无法接收到传回的信息
 		render(outMsg);
 	}
