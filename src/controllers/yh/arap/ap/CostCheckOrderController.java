@@ -297,15 +297,13 @@ public class CostCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-
 		String orderNo = getPara("order_no");
 		String sp = getPara("sp");
-		String shifadi = getPara("shifadi");
 		String status = getPara("status");
-		String mudidi = getPara("mudidi");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-
+		String serial_no = getPara("serial_no")== null ? "''" : getPara("serial_no");
+		if("".equals(serial_no)){
+			serial_no="''";
+		}
 		String sqlTotal = "";
 		String sql = "select aco.*,MONTH(aco.begin_time) as c_stamp,o.office_name oname, '' as company_name,"
 				+ " group_concat(acoo.invoice_no separator ',') invoice_no,"
@@ -315,41 +313,66 @@ public class CostCheckOrderController extends Controller {
 				+ " when aciao. status = '已付款确认' then aciao.status "
 				+ " when aciao.status != '已付款确认' and aciao.status !='' then '付款申请中' "
 				+ " else acor.status end as status "
-				+ " from arap_cost_order acor left join arap_cost_invoice_application_order aciao on acor.application_order_id = aciao.id where acor.id = aco.id) as order_status"
+				+ " from arap_cost_order acor left join arap_cost_invoice_application_order aciao on acor.application_order_id = aciao.id where acor.id = aco.id) as order_status,"
+				+ " (SELECT CASE " + " when "
+				+ serial_no
+				+ " != '' then "
+				+ " concat((SELECT ifnull(group_concat(order_no,'-',"
+				+ serial_no
+				+ " SEPARATOR '\r\n'),'') from delivery_order where id in (SELECT delivery_id from transfer_order_item_detail where serial_no="
+				+ serial_no
+				+ ") and aci.ref_order_no='配送'),"
+				+ " (SELECT ifnull(group_concat(depart_no,'-',"
+				+ serial_no
+				+ " SEPARATOR '\r\n'),'') from depart_order where id in (SELECT pickup_id from transfer_order_item_detail where serial_no="
+				+ serial_no
+				+ ") and aci.ref_order_no='提货'),"
+				+ " (SELECT ifnull(group_concat(depart_no,'-',"
+				+ serial_no
+				+ " SEPARATOR '\r\n'),'') from depart_order where id in (SELECT depart_id from transfer_order_item_detail where serial_no="
+				+ serial_no
+				+ ") and aci.ref_order_no='零担') )"
+				+ " ELSE '' end) serial_no "
 				+ " from arap_cost_order aco "
 				+ " left join party p on p.id = aco.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
+				+ " LEFT JOIN arap_cost_item aci ON aci.cost_order_id = aco.id"
 				+ " left join office o ON o.id=p.office_id"
 				+ " left join user_login ul on ul.id = aco.create_by"
 				+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id ";
-		String condition = "";
+		String condition = " where 1=1";
 		// TODO 始发地和目的地 客户没有做
-		if (orderNo != null || sp != null || shifadi != null
-				|| status != null || mudidi != null || beginTime != null
-				|| endTime != null) {
-			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
-			}
-			condition = " where aco.order_no like '%" + orderNo + "%' "
-					+ " and ifnull(c.abbr,'') like '%" + sp + "%' "
+		if (orderNo != null || sp != null || status != null|| (status != null && !"''".equals(serial_no))) {
+			condition = " where aco.order_no like '%"
+					+ orderNo
+					+ "%' "
+					+ " and ifnull(c.abbr,'') like '%"
+					+ sp
+					+ "%' "
 					+ " and (select case "
 					+ " when aciao. status = '已付款确认' then aciao.status "
 					+ " when aciao.status != '已付款确认' and aciao.status !='' then '付款申请中' "
 					+ " else acor.status end as status "
-					+ " from arap_cost_order acor left join arap_cost_invoice_application_order aciao on acor.application_order_id = aciao.id where acor.id = aco.id) like '%" + status + "%' "
-					+ " and aco.create_stamp between '" + beginTime + "' and '"
-					+ endTime + "' ";
-
+					+ " from arap_cost_order acor left join arap_cost_invoice_application_order aciao on acor.application_order_id = aciao.id where acor.id = aco.id) like '%"
+					+ status + "%' ";
+			if (serial_no != null && !"".equals(serial_no)) {
+				condition += " and ((aci.ref_order_id in (SELECT delivery_id from transfer_order_item_detail where serial_no="
+						+ serial_no
+						+ ") and aci.ref_order_no='配送' )"
+						+ " or (aci.ref_order_id in (SELECT pickup_id from transfer_order_item_detail where serial_no="
+						+ serial_no
+						+ ") and aci.ref_order_no='提货' )"
+						+ " or (aci.ref_order_id in (SELECT depart_id from transfer_order_item_detail where serial_no="
+						+ serial_no + ") and aci.ref_order_no='零担' ))";
+			}
 		}
 
 		sqlTotal = "select count(1) total from arap_cost_order aco "
 				+ " left join party p on p.id = aco.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
 				+ " left join user_login ul on ul.id = aco.create_by"
-				+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id ";
+				+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id "
+				+ " LEFT JOIN arap_cost_item aci ON aci.cost_order_id = aco.id";
 
 		Record rec = Db.findFirst(sqlTotal + condition);
 		logger.debug("total records:" + rec.getLong("total"));
@@ -660,30 +683,35 @@ public class CostCheckOrderController extends Controller {
 			arapAuditOrder.set("confirm_by", users.get(0).get("id"));
 			arapAuditOrder.set("confirm_stamp", new Date());
 			arapAuditOrder.update();
-			List<ArapCostItem> list = ArapCostItem.dao
-					.find("select * from arap_cost_item where cost_order_id = ?",
-							arapAuditOrder.get("id"));
+			List<ArapCostItem> list = ArapCostItem.dao.find(
+					"select * from arap_cost_item where cost_order_id = ?",
+					arapAuditOrder.get("id"));
 			if (list.size() > 0) {
 				for (ArapCostItem arapCostItem : list) {
-					if("零担".equals(arapCostItem.get("ref_order_no"))){
-						DepartOrder departOrder =DepartOrder.dao.findById(arapCostItem.get("ref_order_id"));
-						departOrder.set("audit_status", "对账已确认"); 
+					if ("零担".equals(arapCostItem.get("ref_order_no"))) {
+						DepartOrder departOrder = DepartOrder.dao
+								.findById(arapCostItem.get("ref_order_id"));
+						departOrder.set("audit_status", "对账已确认");
 						departOrder.update();
-					}else if("保险".equals(arapCostItem.get("ref_order_no"))){
-						InsuranceOrder insuranceOrder =InsuranceOrder.dao.findById(arapCostItem.get("ref_order_id"));
-						insuranceOrder.set("audit_status", "对账已确认"); 
+					} else if ("保险".equals(arapCostItem.get("ref_order_no"))) {
+						InsuranceOrder insuranceOrder = InsuranceOrder.dao
+								.findById(arapCostItem.get("ref_order_id"));
+						insuranceOrder.set("audit_status", "对账已确认");
 						insuranceOrder.update();
-					}else if("提货".equals(arapCostItem.get("ref_order_no"))){
-						DepartOrder pickupOrder =DepartOrder.dao.findById(arapCostItem.get("ref_order_id"));
-						pickupOrder.set("audit_status", "对账已确认"); 
+					} else if ("提货".equals(arapCostItem.get("ref_order_no"))) {
+						DepartOrder pickupOrder = DepartOrder.dao
+								.findById(arapCostItem.get("ref_order_id"));
+						pickupOrder.set("audit_status", "对账已确认");
 						pickupOrder.update();
-					}else if("配送".equals(arapCostItem.get("ref_order_no"))){
-						DeliveryOrder deliveryOrder=DeliveryOrder.dao.findById(arapCostItem.get("ref_order_id"));
-						deliveryOrder.set("audit_status", "对账已确认"); 
+					} else if ("配送".equals(arapCostItem.get("ref_order_no"))) {
+						DeliveryOrder deliveryOrder = DeliveryOrder.dao
+								.findById(arapCostItem.get("ref_order_id"));
+						deliveryOrder.set("audit_status", "对账已确认");
 						deliveryOrder.update();
-					}else{
-						ArapMiscCostOrder arapMiscCostOrder=ArapMiscCostOrder.dao.findById(arapCostItem.get("ref_order_id"));
-						arapMiscCostOrder.set("audit_status", "对账已确认"); 
+					} else {
+						ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao
+								.findById(arapCostItem.get("ref_order_id"));
+						arapMiscCostOrder.set("audit_status", "对账已确认");
 						arapMiscCostOrder.update();
 					}
 				}
@@ -1351,7 +1379,7 @@ public class CostCheckOrderController extends Controller {
 				pofi.set("cost_source", "对账调整金额");
 				pofi.save();
 			}
-		} else if ("零担".equals(type)||"整车".equals(type)) {
+		} else if ("零担".equals(type) || "整车".equals(type)) {
 			rec1 = Db
 					.findFirst(
 							"select ifnull(sum(amount),0) sum_amount from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = ? and fi.type = '应付'",

@@ -23,6 +23,7 @@ $(document).ready(function() {
             {"mDataProp":"C_STAMP"},
             {"mDataProp":"ONAME"},
             {"mDataProp":"CNAME"},
+            {"mDataProp":"SERIAL_NO"},
             {"mDataProp":null},
             {"mDataProp":"TOTAL_AMOUNT"},
             {"mDataProp":null},
@@ -204,24 +205,18 @@ $(document).ready(function() {
             $('#jieshu_filter').trigger('keyup');
         });
         var refreshList = function(){
-          var order_no = $("#order_no").val();
-          var status = $("#status_filter").val();
+        	var order_no = $("#order_no").val();
+          	var status = $("#status_filter").val();
         	var sp = $("#sp_filter").val();
-        	var shifadi = $("#shifadi_filter").val();
-        	var mudidi = $("#mudidi_filter").val();
-        	var beginTime = $("#kaishi_filter").val();
-        	var endTime = $("#jieshu_filter").val();
+        	var serial_no = $("#serial_no_filter").val();
         	datatable.fnSettings().sAjaxSource = "/costCheckOrder/list?order_no="+order_no
                                 +"&status="+status
                                 +"&sp="+sp
-																+"&shifadi="+shifadi
-																+"&mudidi="+mudidi
-																+"&beginTime="+beginTime
-																+"&endTime="+endTime;
+                                +"&serial_no="+serial_no;
         	datatable.fnDraw();
         };
 
-        $("#order_no, #sp_filter, #shifadi_filter, #customer_filter, #mudidi_filter, #kaishi_filter, #jieshu_filter").on('keyup',function(){
+        $("#order_no, #sp_filter,  #customer_filter, #serial_no_filter").on('keyup',function(){
         	refreshList();
         });
 
