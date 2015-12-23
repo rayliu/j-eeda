@@ -182,6 +182,7 @@ $(document).ready(function() {
             }},
             {"mDataProp":"ORDER_NO"},
             {"mDataProp":"BOOKING_NOTE_NUMBER"},
+            {"mDataProp":"SERIAL_NO"},
             {"mDataProp":"TRANSFER_ORDER_NO"},
             {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"AMOUNT"}, 
