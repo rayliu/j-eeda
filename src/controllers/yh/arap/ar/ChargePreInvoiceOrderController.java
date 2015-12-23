@@ -1,4 +1,4 @@
-﻿package controllers.yh.arap.ar;
+package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
