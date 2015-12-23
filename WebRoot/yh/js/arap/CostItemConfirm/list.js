@@ -103,6 +103,7 @@ $(document).ready(function() {
                 	}},
                 {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
                 {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
+                {"mDataProp":"RECEIVINGUNIT", "sWidth":"140px"},
             	{"mDataProp":"ORDER_NO", "sWidth":"140px", 
                     "fnRender": function(obj) {
                     	return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
