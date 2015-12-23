@@ -317,10 +317,26 @@ public class WxController extends ApiController {
 	}
 	
 	//单据状态查询
-    public void queryStatus() {
-        setAttr("orderNo", getPara());
-        setPageAttr("/wx/queryStatus");
-        render("/yh/wx/queryStatus.html");
+    public void queryStatus() throws Exception{
+        String openid = getPara("openid");
+        if(openid == null){
+            logger.debug(getRequest().getQueryString());
+            //第一步：用户同意授权，获取code
+            String code = getPara("code");//该code用来向微信服务器请求获得openId
+            logger.debug("code: " + code);
+            //第二步：通过code换取网页授权access_token
+            openid = getOpenId(code);
+        }
+        Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+        if(userRec != null){
+            setAttr("orderNo", getPara());
+            setPageAttr("/wx/queryStatus");
+            render("/yh/wx/queryStatus.html");
+        }else{
+            setAttr("openid", openid);
+            setAttr("redirect", "queryStatus");
+            render("/yh/wx/login.html");
+        }
     }
     
     //单据状态查询
