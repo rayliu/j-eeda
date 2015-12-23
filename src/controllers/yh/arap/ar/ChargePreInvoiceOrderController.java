@@ -1,4 +1,4 @@
-package controllers.yh.arap.ar;
+﻿package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
@@ -16,13 +16,13 @@ import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
-import models.ArapCostOrder;
 import models.ChargeApplicationOrderRel;
 import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapAccountAuditSummary;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 import models.yh.arap.inoutorder.ArapInOutMiscOrder;
+import models.yh.damageOrder.DamageOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -156,132 +156,7 @@ public class ChargePreInvoiceOrderController extends Controller {
         renderJson(BillingOrderListMap);
     }
     
-//	public void create() {
-//		String ids = getPara("ids");
-//
-//		setAttr("chargeCheckOrderIds", ids);
-//		if(ids != null && !"".equals(ids)){
-//			String[] idArray = ids.split(",");
-//			logger.debug(String.valueOf(idArray.length));
-//			Double totalAmount = 0.0;
-//			Double totalReceive = 0.0;
-//			for(int i=0;i<idArray.length;i++){
-//				ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
-//				Double chargeTotalAmount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
-//				totalAmount = totalAmount + chargeTotalAmount;
-//				ChargeApplicationOrderRel c = ChargeApplicationOrderRel.dao.findFirst("select sum(receive_amount) totalReceive from charge_application_order_rel where charge_order_id = ?",idArray[i]);
-//				Double chargeTotalReceive = c.getDouble("totalReceive")==null?0.0:c.getDouble("totalReceive");
-//				totalReceive = totalReceive + chargeTotalReceive;
-//			}
-//			setAttr("total_amount", totalAmount);
-//			setAttr("total_receive", totalReceive);
-//			setAttr("total_noreceive",totalAmount-totalReceive);
-//			
-//			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
-//			Long customerId = arapChargeOrder.get("payee_id");
-//			
-//			Long spId = arapChargeOrder.get("sp_id");
-//			setAttr("spId", spId);
-//			if (!"".equals(customerId) && customerId != null) {
-//				Party party = Party.dao.findById(customerId);
-//				setAttr("party", party);
-//				Contact contact = Contact.dao.findById(party.get("contact_id"));
-//				setAttr("customer", contact);
-//				setAttr("type", "CUSTOMER");
-//				setAttr("classify", "");
-//			}
-//		}
-//
-//		setAttr("saveOK", false);
-//		String name = (String) currentUser.getPrincipal();
-//		List<UserLogin> users = UserLogin.dao
-//				.find("select * from user_login where user_name='" + name + "'");
-//		setAttr("create_by", users.get(0).get("id"));
-//		
-//		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
-//		setAttr("userLogin", userLogin);
-//
-//		setAttr("status", "new");
-//			render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
-//	}
-    
-//    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE,PermissionConstant.PERMSSION_CPIO_UPDATE},logical=Logical.OR)
-//    @Before(Tx.class)
-//	public void save() {
-//		ArapChargeInvoiceApplication arapAuditInvoiceApplication = null;
-//		String chargePreInvoiceOrderId = getPara("chargePreInvoiceOrderId");
-//		String paymentMethod = getPara("paymentMethod");
-//		String haveInvoice = getPara("invoiceType");
-//		String spId = getPara("spId");
-//		if (!"".equals(chargePreInvoiceOrderId) && chargePreInvoiceOrderId != null) {
-//			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(chargePreInvoiceOrderId);
-//            //arapAuditInvoiceApplication.set("status", "new");
-//			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
-//			arapAuditInvoiceApplication.set("create_stamp", new Date());
-//			arapAuditInvoiceApplication.set("remark", getPara("remark"));
-//			arapAuditInvoiceApplication.set("last_modified_by", getPara("create_by"));
-//			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
-//			arapAuditInvoiceApplication.set("payment_method", paymentMethod);
-//			//arapAuditInvoiceApplication.set("have_invoice", haveInvoice);
-//			if("transfers".equals(paymentMethod)){
-//				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
-//					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
-//				}
-//			}else{
-//				arapAuditInvoiceApplication.set("account_id", null);				
-//			}
-//			arapAuditInvoiceApplication.update();
-//		} else {
-//			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
-//			arapAuditInvoiceApplication.set("order_no", OrderNoGenerator.getNextOrderNo("YSSQ"));
-//			arapAuditInvoiceApplication.set("status", "新建");
-//			//arapAuditInvoiceApplication.set("have_invoice", haveInvoice);
-//			if(!getPara("customer_id").equals("") && getPara("customer_id")!= null){
-//				arapAuditInvoiceApplication.set("payee_id", getPara("customer_id"));
-//			}
-//			if(!spId.equals("") && spId!= null){
-//				arapAuditInvoiceApplication.set("sp_id", spId);
-//			}
-//			arapAuditInvoiceApplication.set("create_by", getPara("create_by"));
-//			arapAuditInvoiceApplication.set("create_stamp", new Date());
-//			arapAuditInvoiceApplication.set("remark", getPara("remark"));
-//			arapAuditInvoiceApplication.set("payment_method", getPara("paymentMethod"));
-//			if("transfers".equals(paymentMethod)){
-//				if(getPara("accountTypeSelect") != null && !"".equals(getPara("accountTypeSelect"))){
-//					arapAuditInvoiceApplication.set("account_id", getPara("accountTypeSelect"));
-//				}
-//			}
-//			arapAuditInvoiceApplication.save();
-//
-////			String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
-////			String[] chargeCheckOrderIdsArr = chargeCheckOrderIds.split(",");
-////			for (int i = 0; i < chargeCheckOrderIdsArr.length; i++) {
-////				ArapChargeInvoiceApplicationItem arapAuditInvoiceApplicationItem = new ArapChargeInvoiceApplicationItem();
-////				arapAuditInvoiceApplicationItem.set("invoice_application_id", arapAuditInvoiceApplication.get("id"));
-////				arapAuditInvoiceApplicationItem.set("charge_order_id", chargeCheckOrderIdsArr[i]);
-////				arapAuditInvoiceApplicationItem.save();
-////				
-////				ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIdsArr[i]);
-////				arapAuditOrder.set("status", "开票申请中");
-////				arapAuditOrder.update();
-////			}
-//			String chargeCheckOrderIds = getPara("chargeCheckOrderIds");
-//			String[] chargeCheckOrderIdsArr = chargeCheckOrderIds.split(",");
-//			for (int i = 0; i < chargeCheckOrderIdsArr.length; i++) {
-//				//更新中间表
-//				ChargeApplicationOrderRel chargeApplicationOrderRel = new ChargeApplicationOrderRel();
-//				chargeApplicationOrderRel.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
-//				chargeApplicationOrderRel.set("charge_order_id", chargeCheckOrderIdsArr[i]);
-//				chargeApplicationOrderRel.save();
-//				//更新对账单表
-//				ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(chargeCheckOrderIdsArr[i]);
-//				arapAuditOrder.set("status", "收款申请中");
-//				arapAuditOrder.update();
-//			}
-//		}
-//
-//		renderJson(arapAuditInvoiceApplication);;
-//	}
+
 	
 	// 审核
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_APPROVAL})
@@ -322,62 +197,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 		}
 		renderJson(map);
 	}
-//    @RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_UPDATE})
-//	public void edit() throws ParseException {
-//		String id = getPara("id");
-//		ArapChargeInvoiceApplication arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(id);
-//		Long customerId = arapAuditInvoiceApplication.getLong("payee_id");
-//		if (!"".equals(customerId) && customerId != null) {
-//			Party party = Party.dao.findById(customerId);
-//			setAttr("party", party);
-//			Contact contact = Contact.dao.findById(party.get("contact_id")
-//					.toString());
-//			setAttr("customer", contact);
-//		}
-//		String chargeCheckOrderIds = "";
-//		List<ChargeApplicationOrderRel> list = ChargeApplicationOrderRel.dao.find("select * from charge_application_order_rel where application_order_id = ?", id);
-//		for(ChargeApplicationOrderRel chargeApplicationOrderRel : list){
-//			chargeCheckOrderIds += chargeApplicationOrderRel.get("charge_order_id") + ",";
-//		}
-//		chargeCheckOrderIds = chargeCheckOrderIds.substring(0, chargeCheckOrderIds.length() - 1);
-//		setAttr("chargeCheckOrderIds", chargeCheckOrderIds);
-//		
-//		//计算应收总金额
-//		String[] idArray = chargeCheckOrderIds.split(",");
-//		Double totalAmount = 0.0;
-//		Double totalReceive = 0.0;
-//		for(int i=0;i<idArray.length;i++){
-//			ArapChargeOrder rOrder = ArapChargeOrder.dao.findById(idArray[i]);
-//			Double chargeTotalAmount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
-//			totalAmount = totalAmount + chargeTotalAmount;
-//			ChargeApplicationOrderRel c = ChargeApplicationOrderRel.dao.findFirst("select sum(receive_amount) totalReceive from charge_application_order_rel where charge_order_id = ?",idArray[i]);
-//			Double chargeTotalReceive = c.getDouble("totalReceive")==null?0.0:c.getDouble("totalReceive");
-//			totalReceive = totalReceive + chargeTotalReceive;
-//		}
-//		ChargeApplicationOrderRel chargeApplicationOrderRel1 = ChargeApplicationOrderRel.dao.findFirst("SELECT sum(caor.receive_amount) this_receive FROM charge_application_order_rel caor  WHERE caor.application_order_id=?",id);
-//	    Double receive_amount = chargeApplicationOrderRel1.getDouble("this_receive");
-//		Double total_noreceive =  totalAmount - totalReceive;
-//		setAttr("total_amount", totalAmount);
-//	    setAttr("total_receive", totalReceive);
-//		setAttr("total_noreceive", total_noreceive);
-//		setAttr("receive_amount", receive_amount);
-//	    
-//		UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoiceApplication.get("create_by"));
-//		setAttr("userLogin", userLogin);
-//		if(!"".equals(arapAuditInvoiceApplication.get("audit_by")) && arapAuditInvoiceApplication.get("audit_by") != null){
-//			UserLogin auditName = UserLogin.dao.findById(arapAuditInvoiceApplication.get("audit_by"));
-//			setAttr("auditName", auditName);
-//			setAttr("auditData", arapAuditInvoiceApplication.get("audit_stamp"));
-//		}
-//		if(!"".equals(arapAuditInvoiceApplication.get("approver_by")) && arapAuditInvoiceApplication.get("approver_by") != null){
-//			UserLogin approvalName = UserLogin.dao.findById(arapAuditInvoiceApplication.get("approver_by"));
-//			setAttr("approvalName", approvalName);
-//			setAttr("approvalData", arapAuditInvoiceApplication.get("approval_stamp"));
-//		}
-//		
-//		setAttr("arapAuditInvoiceApplication", arapAuditInvoiceApplication);
-//		render("/yh/arap/ChargePreInvoiceOrder/ChargePreInvoiceOrderEdit.html");
-//	}
+ 
+ 
     
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CPIO_CREATE})
 	public void chargeCheckOrderList() {
@@ -621,9 +442,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 			String[] one=orderArrId[i].split(":");
 			String id = one[0];
 			String orderType = one[1];
+			String cname = one[2];
 			if("应收对账单".equals(orderType)){
-				ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
-				payee_id = arapCostOrder.getLong("payee_id").toString();
+				ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(id);
+				payee_id = arapChargeOrder.getLong("payee_id").toString();
 			}else if("开票记录单".equals(orderType)){
 				ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(id);
 				payee_id = arapChargeInvoice.getLong("payee_id").toString();
@@ -639,6 +461,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 			}else if("往来票据单".equals(orderType)){
 				ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 				payee_name = arapInOutMiscOrder.getStr("charge_person");
+			}else if("货损单".equals(orderType)){
+					Record record = Db.findFirst("select id from contact c where c.abbr = '"+cname+"' ");
+					if(record != null)
+						payee_id = record.getLong("id").toString();
 			}
 			break;
 		}
@@ -676,8 +502,10 @@ public class ChargePreInvoiceOrderController extends Controller {
         String kpjl_id = "";//开票记录单
         String sr_id = "";//收入单
         String wl_id = "";//往来票据单
+        String hs_id = "";//货损单
         String sql = "";
-        
+        String cname = "";
+        String payee_unit = "";
         
         if(application_id.equals("")){
         	if(!application_id.equals(ids)){
@@ -686,6 +514,9 @@ public class ChargePreInvoiceOrderController extends Controller {
  					String[] one=orderArrId[i].split(":");
  					String id = one[0];
  					String orderType = one[1];
+ 					payee_unit = one[2];
+ 					cname =" and dofi.party_name = '"+ one[2] +"'";
+ 					
  					if("应收对账单".equals(orderType)){
  						dz_id += id+",";
  					}else if("开票记录单".equals(orderType)){
@@ -694,6 +525,8 @@ public class ChargePreInvoiceOrderController extends Controller {
  						sr_id += id+",";
  					}else if("往来票据单".equals(orderType)){
  						wl_id += id+",";
+ 					}else if("货损单".equals(orderType)){
+ 						hs_id += id+",";
  					}
  				}
  				if(!dz_id.equals(""))
@@ -712,6 +545,10 @@ public class ChargePreInvoiceOrderController extends Controller {
  					wl_id = wl_id.substring(0, wl_id.length()-1);
  				else
  					wl_id = "''";
+ 				if(!hs_id.equals(""))
+ 					hs_id = hs_id.substring(0, hs_id.length()-1);
+ 				else
+ 					hs_id = "''";
         	}
 	       
 			
@@ -724,7 +561,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " (aco.charge_amount - (SELECT ifnull(sum(caor.receive_amount), 0) "
 					+ " FROM charge_application_order_rel caor "
 					+ " WHERE caor.charge_order_id = aco.id AND caor.order_type = '应收对账单'"
-					+ " )) noreceive_amount"
+					+ " )) noreceive_amount,null payee_unit"
 					+ " FROM arap_charge_order aco "
 					+ " LEFT JOIN party p ON p.id = aco.payee_id"
 					+ " LEFT JOIN contact c ON c.id = p.contact_id"
@@ -733,13 +570,13 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " aco.id in(" + dz_id +")"
 					+ " union "
 					+ " SELECT aci.id, aci.payee_id payee_id, NULL payee_name, aci.order_no, '开票记录单' order_type, aci. STATUS, aci.remark, "
-					+ " aci.create_stamp create_stamp, c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aci.total_amount cost_amount, "
+					+ " aci.create_stamp create_stamp, c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aci.total_amount charge_amount, "
 					+ " ( SELECT ifnull(sum(caor.receive_amount), 0)"
 					+ "  FROM charge_application_order_rel caor "
 					+ " WHERE caor.charge_order_id = aci.id AND caor.order_type = '开票记录单' ) receive_amount, "
 					+ " ( aci.total_amount - ( SELECT ifnull(sum(caor.receive_amount), 0) FROM "
 					+ " charge_application_order_rel caor"
-					+ " WHERE caor.charge_order_id = aci.id AND caor.order_type = '开票记录单' ) ) noreceive_amount "
+					+ " WHERE caor.charge_order_id = aci.id AND caor.order_type = '开票记录单' ) ) noreceive_amount,null payee_unit"
 					+ " FROM arap_charge_invoice aci "
 					+ " LEFT OUTER JOIN party p ON aci.payee_id = p.id "
 					+ " LEFT OUTER JOIN contact c ON c.id = p.contact_id "
@@ -759,7 +596,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " WHERE caor.charge_order_id = aco.id AND caor.order_type = '手工收入单' ) receive_amount, "
 					+ " ( aco.total_amount - ( SELECT ifnull(sum(caor.receive_amount), 0) FROM "
 					+ " charge_application_order_rel caor"
-					+ " WHERE caor.charge_order_id = aco.id AND caor.order_type = '手工收入单' ) ) noreceive_amount "
+					+ " WHERE caor.charge_order_id = aco.id AND caor.order_type = '手工收入单' ) ) noreceive_amount,null payee_unit"
 					+ " FROM arap_misc_charge_order aco "
 					+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
 					+ " WHERE "
@@ -774,10 +611,43 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单' ) receive_amount, "
 					+ " ( aio.charge_amount - ( SELECT ifnull(sum(caor.receive_amount), 0) FROM "
 					+ " charge_application_order_rel caor"
-					+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单' ) ) noreceive_amount "
+					+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单' ) ) noreceive_amount,null payee_unit"
 				    + " FROM arap_in_out_misc_order aio"
 				    + " LEFT JOIN user_login ul ON ul.id = aio.creator_id"
-				    + " WHERE aio.id in(" + wl_id +")";
+				    + " WHERE aio.id in(" + wl_id +")"
+				    + " union"
+				    
+				    + " SELECT dor.id, dor.sp_id payee_id,'' payee_name, dor.order_no, '货损单' order_type,"
+				    + " dofi.status STATUS, dofi.remark, dor.create_date create_stamp, "
+				    + " (case "
+				    + " when dofi.party_type ='客户' "
+				    + " then c2.abbr "
+				    + " when dofi.party_type ='供应商' "
+				    + " then c.abbr "
+				    + " when dofi.party_type ='保险公司' "
+				    + " then c3.abbr "
+		            + " else"
+		            + " dofi.party_name"
+		            + " end) cname," //收款单位"
+				    + " ifnull(ul.c_name, ul.user_name) creator_name,"
+				    + " sum(ifnull(dofi.amount,0)) charge_amount,"
+				    + " ( SELECT ifnull(sum(caor.receive_amount), 0)"
+					+ "  FROM charge_application_order_rel caor "
+					+ " WHERE caor.charge_order_id = dor.id AND caor.order_type = '货损单' and caor.payee_unit = dofi.party_name) receive_amount, "
+					+ " (sum(ifnull(dofi.amount,0)) - ( SELECT ifnull(sum(caor.receive_amount), 0) "
+					+ " FROM charge_application_order_rel caor"
+					+ " WHERE caor.charge_order_id = dor.id AND caor.order_type = '货损单' and caor.payee_unit = dofi.party_name  ) ) noreceive_amount,"
+					+ " '"+payee_unit+"' payee_unit "
+				    + " FROM damage_order dor"
+				    + " LEFT JOIN user_login ul ON ul.id = dor.creator"
+				    + " LEFT JOIN damage_order_fin_item dofi on dofi.order_id = dor.id and dofi.type = 'charge' and dofi.status='已确认'"
+				    + " left join contact c on c.id = dor.sp_id "
+				    + " left join contact c2 on c2.id = dor.customer_id "
+				    + " left join contact c3 on c3.id = dor.insurance_id "
+				    + " WHERE dor.id in(" + hs_id +")"
+				    +   cname
+				    + " group by dofi.party_name ";
+
 		}else{
 			sql = " select *  from (SELECT aco.id,aco.payee_id,payee payee_name,aco.order_no, '应收对账单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
 					+ " c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aco.charge_amount,"
@@ -795,7 +665,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " where caor.order_type = '应收对账单'"
 					+ " union "
 					+ " SELECT aci.id, aci.payee_id payee_id, NULL payee_name, aci.order_no, '开票记录单' order_type, aci. STATUS, aci.remark, "
-					+ " aci.create_stamp create_stamp, c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aci.total_amount cost_amount, "
+					+ " aci.create_stamp create_stamp, c.company_name cname, ifnull(ul.c_name, ul.user_name) creator_name, aci.total_amount charge_amount, "
 					+ " ( SELECT ifnull(sum(caor.receive_amount), 0)"
 					+ "  FROM charge_application_order_rel caor "
 					+ " WHERE caor.charge_order_id = aci.id and caor.application_order_id = aciao.id AND caor.order_type = '开票记录单' ) receive_amount, "
@@ -845,7 +715,40 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " LEFT JOIN arap_charge_invoice_application_order aciao on aciao.id = caor.application_order_id"
 				    + " LEFT JOIN user_login ul ON ul.id = aio.creator_id"
 				    + " where caor.order_type = '往来票据单'"
-				    + " ) A where app_id ="+application_id;
+				    + " union"
+				    + " SELECT dor.id, dor.customer_id payee_id,'' payee_name, dor.order_no, '货损单' order_type,"
+				    + " dofi.status STATUS, dofi.remark, dor.create_date create_stamp, "
+				    + " (case "
+				    + " when dofi.party_type ='客户' "
+				    + " then c2.abbr "
+				    + " when dofi.party_type ='供应商' "
+				    + " then c.abbr "
+				    + " when dofi.party_type ='保险公司' "
+				    + " then c3.abbr "
+		            + " else"
+		            + " dofi.party_name"
+		            + " end) cname," //收款单位"
+				    + " ifnull(ul.c_name, ul.user_name) creator_name,"
+				    + " sum(ifnull(dofi.amount,0)) charge_amount,"
+				    + " ( SELECT ifnull(sum(caor.receive_amount), 0)"
+					+ "  FROM charge_application_order_rel caor "
+					+ " WHERE caor.charge_order_id = dor.id and caor.application_order_id = aciao.id AND caor.order_type = '货损单' ) receive_amount, "
+					+ " (sum(ifnull(dofi.amount,0)) - ( SELECT ifnull(sum(caor.receive_amount), 0)"
+					+ " FROM charge_application_order_rel caor"
+					+ " WHERE caor.charge_order_id = dor.id AND caor.order_type = '货损单' AND dofi.party_name = caor.payee_unit)) noreceive_amount ,"
+					+ " aciao.id app_id  "
+				    + " FROM damage_order dor"
+				    + " LEFT JOIN charge_application_order_rel caor on caor.charge_order_id = dor.id"
+				    + " LEFT JOIN damage_order_fin_item dofi on dofi.order_id = dor.id "
+				    + " and dofi.party_name = caor.payee_unit and dofi.status = '已确认' and dofi.type = 'charge'"
+					+ " LEFT JOIN arap_charge_invoice_application_order aciao on aciao.id = caor.application_order_id"
+				    + " LEFT JOIN user_login ul ON ul.id = dor.creator"
+				    + " left join contact c on c.id = dor.sp_id "
+				    + " left join contact c2 on c2.id = dor.customer_id "
+				    + " left join contact c3 on c3.id = dor.insurance_id "
+				    + " where caor.order_type = '货损单'"
+				    + " GROUP BY caor.application_order_id"
+					+ " ) A where app_id ="+application_id ;	    
 		}
 		
 		Map BillingOrderListMap = new HashMap();
@@ -938,7 +841,6 @@ public class ChargePreInvoiceOrderController extends Controller {
 				chargeApplicationOrderRel.set("order_type", order_type);
 				chargeApplicationOrderRel.set("receive_amount", value);
 				chargeApplicationOrderRel.update();
-				
 			}
 		} else {
 			arapAuditInvoiceApplication = new ArapChargeInvoiceApplication();
@@ -970,12 +872,16 @@ public class ChargePreInvoiceOrderController extends Controller {
 				String id = (String)map.get("id");
 				String order_type = (String)map.get("order_type");
 				String value = (String)map.get("value");
+				String cname = (String)map.get("payee_unit");
 
 				ChargeApplicationOrderRel chargeApplicationOrderRel = new ChargeApplicationOrderRel();
 				chargeApplicationOrderRel.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
 				chargeApplicationOrderRel.set("charge_order_id", id);
 				chargeApplicationOrderRel.set("order_type", order_type);
 				chargeApplicationOrderRel.set("receive_amount", value);
+				if(cname!=null)
+					chargeApplicationOrderRel.set("payee_unit", cname);
+				
 				chargeApplicationOrderRel.save();
 				
                 if(order_type.equals("应收对账单")){
@@ -990,6 +896,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 				}else if(order_type.equals("往来票据单")){
 					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 					arapInOutMiscOrder.set("charge_status", "收款申请中").update();
+				}else if(order_type.equals("货损单")){
+					DamageOrder damageOrder = DamageOrder.dao.findById(id);
+					damageOrder.set("status", "单据处理中").update();
 				}
 			}
 		}
@@ -1182,6 +1091,22 @@ public class ChargePreInvoiceOrderController extends Controller {
 					arapInOutMiscOrder.set("charge_status", "部分已收款").update();
 				}else
 					arapInOutMiscOrder.set("charge_status", "已收款").update();
+			} else if(order_type.equals("货损单")){
+				DamageOrder damageOrder = DamageOrder.dao.findById(id);
+				Record rec = Db.findFirst("select sum(ifnull(amount,0)) total_amount from damage_order_fin_item dof where dof.order_id = ?",id);
+				Double total_amount = rec.getDouble("total_amount");
+				Record re = Db.findFirst("select ifnull(sum(pay_amount),0) total from cost_application_order_rel cao"
+						+ "  LEFT JOIN arap_cost_invoice_application_order acia on acia.id = cao.application_order_id"
+						+ "  where cost_order_id =? and order_type = '货损单' and acia.`STATUS`='已付款'",id);
+				Record re2 = Db.findFirst("select ifnull(sum(receive_amount),0) total2 from charge_application_order_rel cao"
+						+ " LEFT JOIN arap_charge_invoice_application_order acia on acia.id = cao.application_order_id "
+						+ " where charge_order_id =? and order_type = '货损单' and acia.`STATUS`='已收款'",id);
+				Double paid_amount = re.getDouble("total");
+				Double receive_amount = re2.getDouble("total2");
+				Double total = paid_amount + receive_amount;
+				if(total_amount.equals(total)){
+					damageOrder.set("status", "已完成").update();
+				}
 			}
 		}
         
@@ -1330,6 +1255,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 					arapInOutMiscOrder.set("charge_status", "部分已复核").update();
 				}else
 					arapInOutMiscOrder.set("charge_status", "已复核").update();
+			}else if(order_type.equals("货损单")){
+				DamageOrder damageOrder = DamageOrder.dao.findById(id);
+				damageOrder.set("status", "单据处理中").update();
 			}
 		}
 		
