@@ -232,7 +232,11 @@ $(document).ready(function() {
 		console.log(value);
 		if(value != null && value != "" ){
 			$.post('/product/updateProductById',{id:id,fieldName:fieldName,value:value},function(data){
-				$.scojs_message('数据保存成功', $.scojs_message.TYPE_OK);
+                if(data.ID){
+				    $.scojs_message('数据保存成功', $.scojs_message.TYPE_OK);
+                }else{
+                    $.scojs_message('该型号已存在', $.scojs_message.TYPE_ERROR);
+                }
 				
 			},'json');
 		}

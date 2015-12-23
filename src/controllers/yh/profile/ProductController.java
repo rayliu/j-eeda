@@ -385,9 +385,23 @@ public class ProductController extends Controller {
 
          if (id != null && !id.equals("")) {
              product = Product.dao.findById(id);
-    		 product.set(filedName, value).update();
+             
+             if("item_no".equals(filedName)){
+                 Record rec = Db.findFirst("select c.customer_id, p.* from product p, category c "
+                         + "where p.category_id=c.id and p.id=?", id);
+                 
+                 String findSame = "select c.customer_id, p.* from product p, category c "
+                         + "where p.category_id=c.id and item_no =? and c.customer_id=?";
+                 Record sameRec = Db.findFirst(findSame, value.trim(), rec.get("customer_id"));
+                 if(sameRec != null){
+                     renderJson(new Product());
+                     return;
+                 }
+             }
+             product.set(filedName, value).update();
+             renderJson(product);
     	 }
-         renderJson(product);
+         
     }
     
     public void saveProductByField() {
