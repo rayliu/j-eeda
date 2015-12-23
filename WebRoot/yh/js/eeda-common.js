@@ -57,6 +57,8 @@ var refreshUrl=function(url){
          str = "<a href='/inOutMiscOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }else if(orderNo.indexOf("YF") == 0){//预付
          str = "<a href='/costPrePayOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("HSD") == 0){//预付
+         str = "<a href='/damageOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }
 
      return str;
