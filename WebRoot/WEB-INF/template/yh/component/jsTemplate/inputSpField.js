@@ -4,7 +4,7 @@
 			<input id="{{id}}" type="hidden" name="{{id}}" value="{{value}}"/>
 			<label class="search-label">{{label}}</label>
 			<input type="text" class="form-control search-control" 
-			id="{{id}}_input" 
+			id="{{id}}_INPUT" 
 			placeholder="请选择供应商"  value="{{display_value}}">
 			<ul id='{{id}}_list' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 			</ul>
@@ -16,7 +16,7 @@
 	$(document).ready(function() {
 		//获取sp列表，自动填充
 		var spList =$("#{{id}}_list");
-		var inputField = $('#{{id}}_input');
+		var inputField = $('#{{id}}_INPUT');
 		var hiddenField = $('#{{id}}');
 		
 		//供应商查询

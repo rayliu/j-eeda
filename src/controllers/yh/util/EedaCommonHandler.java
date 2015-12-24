@@ -93,7 +93,24 @@ public class EedaCommonHandler {
        
         if(structure.get("PARENT_ID") == null){
             String tableName = "T_" + structureId;
+            
+            List<Map> fieldList = (ArrayList<Map>)structure.get("FIELDS_LIST");
             orderRec = Db.findById(tableName, order_id);
+            String[] colNames = orderRec.getColumnNames();
+            for (int i = 0; i < colNames.length; i++) {
+                String colName = colNames[i];
+                if(colName.endsWith("_KH")){
+                    Record rec = Db.findFirst("select * from contact where id=?", orderRec.get(colName));
+                    if(rec != null){
+                        orderRec.set(colName+"_input", rec.get("abbr"));
+                    }
+                }else if(colName.endsWith("_GYS")){
+                    Record rec = Db.findFirst("select * from contact where id=?", orderRec.get(colName));
+                    if(rec != null){
+                        orderRec.set(colName+"_input", rec.get("abbr"));
+                    }
+                }
+            }
             orderRec.set("structure_id", structureId);
             logger.debug(orderRec.toJson());
             

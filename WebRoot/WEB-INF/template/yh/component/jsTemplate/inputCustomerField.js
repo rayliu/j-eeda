@@ -4,7 +4,7 @@
 		<div class="form-group">
 		    <label class="search-label">{{label}}</label>
 		    <input type="text" class="form-control search-control" 
-		    id="{{id}}_input" placeholder="请选择客户" value="{{display_value}}">
+		    id="{{id}}_INPUT" placeholder="请选择客户" value="{{display_value}}">
 		    <ul id='{{id}}_list' tabindex="-1" 
 			    class="pull-right dropdown-menu default dropdown-scroll" 
 			    style="top: 22%; left: 33%;">
@@ -16,7 +16,7 @@
 	$(document).ready(function() {
 		//获取客户列表，自动填充
 		var companyList =$("#{{id}}_list");
-		var inputField = $('#{{id}}_input');
+		var inputField = $('#{{id}}_INPUT');
 		var hiddenField = $('#{{id}}');
 		
 		inputField.on('keyup click', function(event){

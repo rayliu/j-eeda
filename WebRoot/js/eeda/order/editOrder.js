@@ -31,10 +31,26 @@
                 console.log('getOrderData....');
                 console.log(json);
 
-                $('#module_name').text(json.MODULE_NAME);
-                document.title = json.MODULE_NAME + ' | ' + document.title;
+                for (var i = 0; i < json.FIELDS_LIST.length; i++) {
+                    var fieldsObj = json.FIELDS_LIST[i];
+                    $.each(fieldsObj, function(key, value){
+                        $("#"+key).val(value);
+                    });
+                }
 
-                $('#fields_body').empty();
+                for (var i = 0; i < json.TABLE_LIST.length; i++) {
+                    var tableObj = json.TABLE_LIST[i];
+                    var dataTable = $('#table_' + tableObj.STRUCTURE_ID).DataTable();
+                    var row_list = tableObj.ROW_LIST;
+                    var row ={};
+                    for (var j = 0; j < row_list.length; j++) {
+                        var row_rec = row_list[j];
+                        $.each(row_rec, function(key, value){
+                            row[key] = value;
+                        });
+                        dataTable.row.add(row).draw(false);
+                    }
+                }
             }, 'json');
     };
 
