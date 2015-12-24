@@ -33,7 +33,11 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/privilege/list",
         "aoColumns": [
-            { "mDataProp": "MODULE_NAME","sWidth":"15%"},
+            { "mDataProp": "MODULE_NAME","sWidth":"15%",
+                "fnRender":function(obj){
+                  return '<h4>' + obj.aData.MODULE_NAME + '</h4>';
+                }
+            },
             { "mDataProp": null,
             	"fnRender":function(obj){
             		var str = "";

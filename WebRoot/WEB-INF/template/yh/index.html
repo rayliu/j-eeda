@@ -238,72 +238,33 @@
 			                        </div>
 			                        <!-- /.panel-body -->
 			                    </div><!-- /.panel -->
-			                    <div class="panel panel-default">
-			                        <div class="panel-heading">
-			                            <i class="fa fa-bell fa-fw"></i> 即将过期客户合同（60天内）
-			                        </div>
-			                        <!-- /.panel-heading -->
-			                        <div class="panel-body">
-			                            <div class="list-group">
-			                                <%
-			                                    for(contract in contractList){
-			                                %>
-			                                    <a href="/customerContract/edit/${contract.id}" target="_blank" class="list-group-item">
-			                                        <i class="fa fa-warning fa-fw"></i>${contract.name}
-			                                        <span class="pull-right text-muted small"><em>过期日期：${contract.period_to, dateFormat="yyyy-MM-dd"}</em>
-			                                        </span>
-			                                    </a>
-			                                <%}%>
-			                                <!--
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-twitter fa-fw"></i> 3 个发车
-			                                    <span class="pull-right text-muted small"><em>12 minutes ago</em>
-			                                    </span>
-			                                </a>
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-envelope fa-fw"></i> 4个新建单据过期7天未处理
-			                                    <span class="pull-right text-muted small"><em>27 minutes ago</em>
-			                                    </span>
-			                                </a>
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-tasks fa-fw"></i> 2个单据在途7天
-			                                    <span class="pull-right text-muted small"><em>43 minutes ago</em>
-			                                    </span>
-			                                </a>
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-upload fa-fw"></i> 5个单据在途14天
-			                                    <span class="pull-right text-muted small"><em>11:32 AM</em>
-			                                    </span>
-			                                </a>
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-bolt fa-fw"></i> 1个单据在途出车祸
-			                                    <span class="pull-right text-muted small"><em>11:13 AM</em>
-			                                    </span>
-			                                </a>
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-warning fa-fw"></i> 3个单据货品损坏
-			                                    <span class="pull-right text-muted small"><em>10:57 AM</em>
-			                                    </span>
-			                                </a>
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-file-text-o fa-fw"></i> 3个回单寄送中
-			                                    <span class="pull-right text-muted small"><em>9:49 AM</em>
-			                                    </span>
-			                                </a>
-			                                <a href="#" class="list-group-item">
-			                                    <i class="fa fa-cny fa-fw"></i> 4个单据过期7天未结算
-			                                    <span class="pull-right text-muted small"><em>Yesterday</em>
-			                                    </span>
-			                                </a-->
-			                            </div>
-			                            <!-- /.list-group -->
-			                            
-			                        </div>
-			                        <!-- /.panel-body -->
-			                    </div>
-			                    <!-- /.panel -->
-			                    
-			                    
+
+			                    <% 
+			                        var isShowContract = permissionMap.Index_showContact;
+			                        if(nvl(isShowContract, '') != ""){
+			                    %>
+				                    <div class="panel panel-default">
+				                        <div class="panel-heading">
+				                            <i class="fa fa-bell fa-fw"></i> 即将过期客户合同（60天内）
+				                        </div>
+				                        <!-- /.panel-heading -->
+				                        <div class="panel-body">
+				                            <div class="list-group">
+				                                <%
+				                                    for(contract in contractList){
+				                                %>
+				                                    <a href="/customerContract/edit/${contract.id}" target="_blank" class="list-group-item">
+				                                        <i class="fa fa-warning fa-fw"></i>${contract.name}
+				                                        <span class="pull-right text-muted small"><em>过期日期：${contract.period_to, dateFormat="yyyy-MM-dd"}</em>
+				                                        </span>
+				                                    </a>
+				                                <%}%>
+				                            </div><!-- /.list-group -->
+				                        </div>
+				                        <!-- /.panel-body -->
+				                    </div><!-- /.panel -->
+			                    <% } %>
+
 			                    <div class="panel panel-default">
 			                        <div class="panel-heading">
 			                            <i class="fa fa-bell fa-fw"></i> 每日小提示
