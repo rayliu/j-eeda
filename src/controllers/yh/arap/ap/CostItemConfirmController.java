@@ -139,7 +139,7 @@ public class CostItemConfirmController extends Controller {
 				+ " left join user_login ul on dor.create_by = ul.id "
 				+ " left join warehouse w on dor.from_warehouse_id = w.id "
 				+ " left join office oe on w.office_id = oe.id "
-				+ " where unix_timestamp(dor.appointment_stamp) > unix_timestamp('2015-06-01 10:34:36') and  dor.audit_status='新建'and (dor.status !='新建' or dor.status != '初始化') and p.party_type='SERVICE_PROVIDER' group by dor.id "
+				+ " where unix_timestamp(dor.appointment_stamp) > unix_timestamp('2015-06-01 10:34:36') and  dor.audit_status='新建'and (dor.status !='新建' or dor.status !='计划中' or dor.status != '初始化') and p.party_type='SERVICE_PROVIDER' group by dor.id "
 				+ " union"
 				+ " select distinct dpr.id,"
 				+ " dpr.depart_no order_no,"
