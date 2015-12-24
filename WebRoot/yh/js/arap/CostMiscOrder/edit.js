@@ -27,6 +27,9 @@ $(document).ready(function() {
   	    	
 
   	    });
+  	if($("#audit_status").val()!="new"&&$("#audit_status").val()!="新建"){
+  		$("#saveCostMiscOrderBtn").attr("disabled",true);
+  	}
 	var saveCostMiscOrder = function(e, callback){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();

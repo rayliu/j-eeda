@@ -164,7 +164,7 @@ public class CostMiscOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "new");
-		
+		setAttr("audit_status", "new");
 		List<Record> itemList = Collections.emptyList();
 		setAttr("itemList", itemList);
 		
@@ -307,11 +307,6 @@ public class CostMiscOrderController extends Controller {
 		returnDto.setItemList(itemList);
 		renderJson(returnDto);
 	}
-    
-    
-    
-    
-	
 	// 审核
 	public void auditCostPreInvoiceOrder(){
 		String costPreInvoiceOrderId = getPara("costPreInvoiceOrderId");
