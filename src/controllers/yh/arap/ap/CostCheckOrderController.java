@@ -290,8 +290,7 @@ public class CostCheckOrderController extends Controller {
 	// billing order 列表
 	@RequiresPermissions(value = { PermissionConstant.PERMISSION_TO_CREATE })
 	public void list() {
-		String sLimit = "";
-		String pageIndex = getPara("sEcho");
+		String sLimit = "";		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
 				&& getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
@@ -300,9 +299,11 @@ public class CostCheckOrderController extends Controller {
 		String orderNo = getPara("order_no");
 		String sp = getPara("sp");
 		String status = getPara("status");
-		String serial_no = getPara("serial_no")== null ? "''" : getPara("serial_no");
+		String serial_no = getPara("serial_no")== null ? "" : getPara("serial_no");
 		if("".equals(serial_no)){
 			serial_no="''";
+		}else{
+			serial_no="'"+serial_no+"'";
 		}
 		String sqlTotal = "";
 		String sql = "select aco.*,MONTH(aco.begin_time) as c_stamp,o.office_name oname, '' as company_name,"
@@ -355,7 +356,7 @@ public class CostCheckOrderController extends Controller {
 					+ " else acor.status end as status "
 					+ " from arap_cost_order acor left join arap_cost_invoice_application_order aciao on acor.application_order_id = aciao.id where acor.id = aco.id) like '%"
 					+ status + "%' ";
-			if (serial_no != null && !"".equals(serial_no)) {
+			if (serial_no != null && !"''".equals(serial_no)) {
 				condition += " and ((aci.ref_order_id in (SELECT delivery_id from transfer_order_item_detail where serial_no="
 						+ serial_no
 						+ ") and aci.ref_order_no='配送' )"
@@ -374,7 +375,7 @@ public class CostCheckOrderController extends Controller {
 				+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id "
 				+ " LEFT JOIN arap_cost_item aci ON aci.cost_order_id = aco.id";
 
-		Record rec = Db.findFirst(sqlTotal + condition);
+		Record rec = Db.findFirst("select count(1) total from (" + sql + condition+"  group by aco.id order by aco.create_stamp desc ) a");
 		logger.debug("total records:" + rec.getLong("total"));
 
 		List<Record> BillingOrders = Db.find(sql + condition
