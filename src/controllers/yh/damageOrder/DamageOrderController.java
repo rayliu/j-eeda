@@ -204,7 +204,7 @@ public class DamageOrderController extends Controller {
 	}
 
 	
-	
+	@Before(Tx.class)
 	public void confirmItem(){
 	    String id = getPara("itemId");
 	    DamageOrderFinItem damageOrderFinItem = DamageOrderFinItem.dao.findById(id);
@@ -212,4 +212,22 @@ public class DamageOrderController extends Controller {
 	    renderJson(damageOrderFinItem);
 	}
 	
+	public void check(){
+	    String orderId = getPara("id");
+	    Record record = Db.findFirst("select count(*) total from damage_order_fin_item where order_id = ? and status = '未确认'",orderId);
+	    if(record.getLong("total")==0){
+	    	renderJson("{\"success\":true}");
+	    }else{
+	    	renderJson("{\"success\":false}");
+	    }
+	}
+	
+	@Before(Tx.class)
+	public void complete(){
+	    String orderId = getPara("id");
+	    DamageOrder damageOrder = DamageOrder.dao.findById(orderId);
+	    damageOrder.set("status", "已结案").update();
+	    
+	    renderJson(damageOrder);
+	}
 }

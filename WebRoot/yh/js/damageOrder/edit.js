@@ -77,8 +77,32 @@ $(document).ready(function() {
           });
     });
 
+    
     $('#completeBtn').click(function(){
-
+    	$('#completeBtn').attr('disabled',true);
+    	$.post('/damageOrder/check',{id:$("#order_id").val()},function(data){
+    		var finish = function(){
+    			$.post('/damageOrder/complete',{id:$("#order_id").val()},function(data){
+    				if(data.ID>0){
+    					$.scojs_message('结案完成', $.scojs_message.TYPE_OK);	
+    					$("#status").val(data.STATUS);
+    				}else{
+    					$.scojs_message('后台报错', $.scojs_message.TYPE_OK);	
+    				}
+    			});
+    		};
+    		if(data.success){
+    			finish();
+    		}else{
+    			if(confirm('存在明细未确认，是否继续结案？')){
+    				finish();
+    			}else{
+    				$('#completeBtn').attr('disabled',false);
+    			}
+    		}
+    	});
+    	
+    	
     });
 
     damageOrder.calcTotalCharge();

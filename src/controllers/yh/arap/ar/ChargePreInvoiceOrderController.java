@@ -898,7 +898,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 					arapInOutMiscOrder.set("charge_status", "收款申请中").update();
 				}else if(order_type.equals("货损单")){
 					DamageOrder damageOrder = DamageOrder.dao.findById(id);
-					damageOrder.set("status", "单据处理中").update();
+					if(!damageOrder.getStr("status").equals("已结案"))
+						damageOrder.set("status", "单据处理中").update();
 				}
 			}
 		}
@@ -1105,7 +1106,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 				Double receive_amount = re2.getDouble("total2");
 				Double total = paid_amount + receive_amount;
 				if(total_amount.equals(total)){
-					damageOrder.set("status", "已完成").update();
+					if(!damageOrder.getStr("status").equals("已结案"))
+						damageOrder.set("status", "已完成").update();
 				}
 			}
 		}
@@ -1257,7 +1259,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 					arapInOutMiscOrder.set("charge_status", "已复核").update();
 			}else if(order_type.equals("货损单")){
 				DamageOrder damageOrder = DamageOrder.dao.findById(id);
-				damageOrder.set("status", "单据处理中").update();
+				if(!damageOrder.getStr("status").equals("已结案"))
+					damageOrder.set("status", "单据处理中").update();
 			}
 		}
 		
