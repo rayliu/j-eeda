@@ -16,6 +16,7 @@ $(document).ready(function() {
     $("#charge_table").on('click', '.confirm', function(e){
         e.preventDefault();
         var btn =  $(this);
+        var deleteBtn = $(this).parent().find('.delete');
         var id = $(this).parent().parent().attr('id');
         if(confirm('是否确认流转？')){
         	$.post('/damageOrder/confirmItem',{itemId:id},function(data){
@@ -23,6 +24,7 @@ $(document).ready(function() {
         			 $.scojs_message('确认成功', $.scojs_message.TYPE_OK);
         			 btn.parent().parent().find('td').eq(1).text(data.STATUS);
         			 btn.attr('disabled',true);
+        			 deleteBtn.attr('disabled',true);
         		}else{
         			$.scojs_message('确认失败', $.scojs_message.TYPE_FALSE);
         		}
@@ -105,17 +107,21 @@ $(document).ready(function() {
         "columns": [
             {  "width": "70px",
                 "render": function ( data, type, full, meta ) {
-                    if(full.ID){
-                    	var disable = '';
-                        if(full.STATUS != '未确认'){
-                        	disable = 'disabled';
-                        }
-                        return  '<button type="button" class="delete btn btn-default btn-xs">删除</button> '+
-                        '<button type="button" '+  disable +' class="confirm btn btn-primary btn-xs">确认</button>';
-                        	
-                    }else{
-                        return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
-                    }
+                	if($('#status').val()!='已结案'){
+	                    if(full.ID){
+	                    	var disable = '';
+	                        if(full.STATUS != '未确认'){
+	                        	disable = 'disabled';
+	                        }
+	                        return  '<button type="button" '+  disable +' class="delete btn btn-default btn-xs">删除</button> '+
+	                        '<button type="button" '+  disable +' class="confirm btn btn-primary btn-xs">确认</button>';
+	                        	
+	                    }else{
+	                        return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
+	                    }
+                	}else{
+                		return '';
+                	}
                 }
             },
             { "data": "ID", "visible": false },

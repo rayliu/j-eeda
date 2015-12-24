@@ -63,7 +63,7 @@ $(document).ready(function() {
                 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
                 $('#saveBtn').attr('disabled', false);
-
+                $('#completeBtn').attr('disabled',false);
                 damageOrder.reDrawCargoTable(order);
                 damageOrder.reDrawChargeTable(order);
                 damageOrder.reDrawCostTable(order);         
@@ -86,6 +86,10 @@ $(document).ready(function() {
     				if(data.ID>0){
     					$.scojs_message('结案完成', $.scojs_message.TYPE_OK);	
     					$("#status").val(data.STATUS);
+    					$('#saveBtn').attr('disabled',true);
+    					$('#add_cargo').attr('disabled',true);
+    			    	$('#add_cost').attr('disabled',true);
+    			    	$('#add_charge').attr('disabled',true);
     				}else{
     					$.scojs_message('后台报错', $.scojs_message.TYPE_OK);	
     				}
@@ -104,6 +108,20 @@ $(document).ready(function() {
     	
     	
     });
+    
+    
+    //按钮控制
+    if($("#status").val()==''){
+    	$('#completeBtn').attr('disabled',true);
+    }else if($("#status").val()=='已结案'){
+    	$('#saveBtn').attr('disabled',true);
+    	$('#completeBtn').attr('disabled',true);
+    	$('#add_cargo').attr('disabled',true);
+    	$('#add_cost').attr('disabled',true);
+    	$('#add_charge').attr('disabled',true);
+    }
+    
+    
 
     damageOrder.calcTotalCharge();
     damageOrder.calcTotalCost();

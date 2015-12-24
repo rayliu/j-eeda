@@ -81,7 +81,10 @@ $(document).ready(function() {
         "columns": [
             { "width": "30px",
                 "render": function ( data, type, full, meta ) {
-                  return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
+                	if($('#status').val()!='已结案')
+                		return '<button type="button" class="delete btn btn-default btn-xs">删除</button> ';
+                	else
+                		return '';
                 }
             },
             { "data": "PRODUCT_NO", 
