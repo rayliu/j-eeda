@@ -248,7 +248,7 @@ public class ModuleController extends Controller {
         renderJson(rec);
     }
 
-    private Record getOrderStructureDto(String module_id) {
+    public Record getOrderStructureDto(String module_id) {
         Record module = Db.findFirst("select * from modules where id=?", module_id);
         
         List<Record> sRecs = Db.find("select * from structure where module_id=?", module_id);

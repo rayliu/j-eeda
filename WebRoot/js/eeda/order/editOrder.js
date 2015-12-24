@@ -8,6 +8,7 @@
     $.post('/module/getOrderStructure', {module_id: $("#module_id").val()}, function(json){
         console.log('getOrderStructure....');
         console.log(json);
+        $('#module_structure').val(JSON.stringify(json));
 
         $('#module_name').text(json.MODULE_NAME);
         document.title = json.MODULE_NAME + ' | ' + document.title;
@@ -24,7 +25,7 @@
     }, 'json');
 
     var fillOrderData = function(structure_json){
-        structure_json.order_id = $("#order_id").val();
+        structure_json.id = $("#order_id").val();
 
         $.post('/m_getOrderData', {params:JSON.stringify(structure_json)}, 
             function(json){
@@ -41,6 +42,7 @@
                 for (var i = 0; i < json.TABLE_LIST.length; i++) {
                     var tableObj = json.TABLE_LIST[i];
                     var dataTable = $('#table_' + tableObj.STRUCTURE_ID).DataTable();
+                    dataTable.clear();
                     var row_list = tableObj.ROW_LIST;
                     var row ={};
                     for (var j = 0; j < row_list.length; j++) {
@@ -294,9 +296,13 @@
                 if(order.ID>0){
                     $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
-                    $('#saveBtn').attr('disabled', false);
+                    //重新取一次数据渲染页面
+                    var structure_json_str = $('#module_structure').val();
+                    var structure_json = JSON.parse(structure_json_str);
+                    structure_json.id = order.ID;
+                    fillOrderData(structure_json);
 
-                    damageOrder.reDrawTable(order);
+                    $('#saveBtn').attr('disabled', false);
                 }else{
                     $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
                     $('#saveBtn').attr('disabled', false);
@@ -309,8 +315,4 @@
     };
     
 
-    //单据预览
-    $('#previewBtn').click(function(){
-        window.open('/module/preview/'+$("#module_id").text());
-    });
 //});

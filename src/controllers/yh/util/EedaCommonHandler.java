@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
+
 import com.google.gson.Gson;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
@@ -51,7 +54,7 @@ public class EedaCommonHandler {
         Record orderRec = new Record();
         Gson gson = new Gson();  
         Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);
-        String order_id = dto.get("order_id").toString();
+        String order_id = dto.get("id").toString();
         
         orderRec.set("id", order_id);
         orderRec.set("module_id", dto.get("MODULE_ID"));
@@ -129,43 +132,93 @@ public class EedaCommonHandler {
         String orderId = dto.get("id").toString();
         List<Map<String, String>> fields_list = (ArrayList<Map<String, String>>)dto.get("fields_list");
         for (Map<String, String> tableMap : fields_list) {//获取每一个主表+主表从属表
-            String tableName = tableMap.get("id");
+            String structure_id = tableMap.get("structure_id");
             String colSet = "";
             for (Entry<String, String> entry: tableMap.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                if("id".equals(key)){
+                if("id".equals(key) || "structure_id".equals(key)){
                     continue;
                 }
                 colSet += ","+key + "='"+value+"'";
             }
             
-            String sql = "update "+tableName+" set " + colSet.substring(1) + " where id=" + orderId;
+            String sql = "update T_"+structure_id+" set " + colSet.substring(1) + " where id=" + orderId;
             logger.debug(sql);
             Db.update(sql);
         }
         
         List<Map<String, ?>> table_list = (ArrayList<Map<String, ?>>)dto.get("table_list");
         for (Map<String, ?> tableMap : table_list) {//获取每一个从表
-            String tableName = tableMap.get("id").toString();
+            String structure_id = tableMap.get("structure_id").toString();
             
-            String colSet = "";
             List<Map> rowFieldsList = (ArrayList<Map>)tableMap.get("row_list");
-            for (Map<String, String> rowMap : rowFieldsList) {//表中每一行
+            
+            //先处理删除
+            tableRowDelete(orderId, structure_id, rowFieldsList);
+           
+            for (Map<String, String> rowMap : rowFieldsList) {//表中每一行, update or insert
                 String rowId = rowMap.get("id").toString();
-                for (Entry<String, String> entry: rowMap.entrySet()) {//行的每个字段
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    if("id".equals(key)){
-                        continue;
-                    }
-                    colSet += ","+key + "='"+value+"'";
+                if(StringUtils.isEmpty(rowId)){
+                    tableRowInsert(orderId, structure_id, rowMap);
+                }else{
+                    tableRowUpdate(structure_id, rowMap, rowId);
                 }
-                String sql = "update " + tableName + colSet + " where id=" +rowId;
-                logger.debug(sql);
-                Db.update(sql);
+            }
+            
+            
+        }
+    }
+
+    private static void tableRowDelete(String orderId, String structure_id,
+            List<Map> rowFieldsList) {
+        List<String> idList = new ArrayList<String>();
+        for (Map<String, String> rowMap : rowFieldsList) {
+            String rowId = rowMap.get("id").toString();
+            if(StringUtils.isNotEmpty(rowId)){
+                idList.add(rowId);
             }
         }
+        
+        String deleteSql = "delete from T_" + structure_id + " where parent_id=" + orderId + " and id not in (" + StringUtils.join(idList, ", ") + ")";
+        logger.debug(deleteSql);
+        Db.update(deleteSql);
+    }
+
+    private static void tableRowUpdate(String structure_id,
+            Map<String, String> rowMap, String rowId) {
+        String colSet = "";
+        for (Entry<String, String> entry: rowMap.entrySet()) {//行的每个字段
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if("id".equals(key)){
+                continue;
+            }
+            colSet += ","+key + "='"+value+"'";
+        }
+        String sql = "update T_" + structure_id + " set " + colSet.substring(1) + " where id=" +rowId;
+        logger.debug(sql);
+        Db.update(sql);
+    }
+
+    private static void tableRowInsert(String orderId, String structure_id,
+            Map<String, String> rowMap) {
+        String colName = "parent_id";
+        String colValue = orderId;
+        
+        for (Entry<String, String> entry: rowMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if("id".equals(key)){
+                continue;
+            }
+            colName += ","+key;
+            colValue+= ",'"+value+"'";
+        }
+        
+        String sql = "insert into T_"+structure_id+"("+colName+") values("+colValue+")";
+        logger.debug(sql);
+        Db.update(sql);
     }
     
     public static String commonInsert(Map<String, ?> dto) {
