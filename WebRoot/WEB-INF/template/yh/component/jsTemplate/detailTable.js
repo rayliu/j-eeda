@@ -7,7 +7,7 @@
                 <button id="add_row_btn_{{id}}" table_id="table_{{id}}" name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
             </div>
         {{/if}}
-        <table id="table_{{id}}" name="{{name}}" class="display" cellspacing="0" style="width: 100%;">
+        <table id="table_{{id}}" structure_id="{{structure_id}}" class="display" cellspacing="0" style="width: 100%;">
             <thead class="eeda">
                 <tr>
                     <th></th>

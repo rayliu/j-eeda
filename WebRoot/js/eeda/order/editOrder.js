@@ -14,10 +14,29 @@
 
         $('#fields_body').empty();
 
+        //UI 处理
         buildStructureUI(json);
         buildButtonUI(json);
         bindBtnClick();//绑定按钮事件
+
+        //数据处理
+        fillOrderData(json);
     }, 'json');
+
+    var fillOrderData = function(structure_json){
+        structure_json.order_id = $("#order_id").val();
+
+        $.post('/m_getOrderData', {params:JSON.stringify(structure_json)}, 
+            function(json){
+                console.log('getOrderData....');
+                console.log(json);
+
+                $('#module_name').text(json.MODULE_NAME);
+                document.title = json.MODULE_NAME + ' | ' + document.title;
+
+                $('#fields_body').empty();
+            }, 'json');
+    };
 
     var buildButtonUI = function(json){
         for (var i = 0; i < json.ACTION_LIST.length; i++) {
@@ -41,12 +60,12 @@
                 if(structure.STRUCTURE_TYPE == '字段'){
                     var field_section_html = template('field_section', 
                             {
-                                id: 'T_'+structure.ID
+                                id: structure.ID
                             }
                         );
 
                     $('#fields').append(field_section_html);
-                    var field_section = $('#'+'T_'+structure.ID+'>.col-lg-12');
+                    var field_section = $('#'+structure.ID+'>.col-lg-12');
 
                     for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
                         var field = structure.FIELDS_LIST[j];
@@ -104,7 +123,7 @@
                     var list_html = template('table_template', 
                             {
                                 id: structure.ID,
-                                name: 'T_'+structure.ID,
+                                structure_id: structure.ID,
                                 label: structure.NAME,
                                 field_list: structure.FIELDS_LIST,
                                 is_edit_order: true
@@ -160,17 +179,18 @@
         var fields_list = [];
         for(var index=0; index<field_sections.length; index++){
             var field_section = field_sections[index];
-            var table_obj = {
-                id : $(field_section).attr('id')
+            var fields_obj = {
+                id : $("#order_id").val(),
+                structure_id : $(field_section).attr('id')
             }
             var fields_input = $(field_section).find('input');
             for(var i=0; i<fields_input.length; i++){
                 var field = fields_input[i];
                 if($(field).attr('name') && $(field).val() !=''){
-                    table_obj[$(field).attr('name')] = $(field).val();
+                    fields_obj[$(field).attr('name')] = $(field).val();
                 }
             }
-            fields_list.push(table_obj);
+            fields_list.push(fields_obj);
         }
 
         //循环处理从表
@@ -180,20 +200,22 @@
             var table = tables[i];
             var table_rows = $(table).find('tr');
             var row_list = [];
-            
+
             for (var j = 0; j < table_rows.length; j++) {//遍历当前表的所有行
                 table_row = table_rows[j];
                 var row_obj = {};
                 var fields_input = $(table_row).find('input');
-                for(var k=0; k<fields_input.length; k++){//遍历当前行的所有input
-                    var field = fields_input[k];
-                    row_obj[$(field).attr('name')] = $(field).val();
+                if(fields_input.length >0){
+                    for(var k=0; k<fields_input.length; k++){//遍历当前行的所有input
+                        var field = fields_input[k];
+                        row_obj[$(field).attr('name')] = $(field).val();
+                    }
+                    row_list.push(row_obj);
                 }
-                row_list.push(row_obj);
             };
 
             var table_obj = {
-                id: $(table).attr("name"),
+                structure_id: $(table).attr("structure_id"),
                 row_list: row_list
             };
             table_list.push(table_obj);
@@ -245,6 +267,8 @@
 
             var order_dto = buildOrderDto();
             order_dto.action = btn.text();
+
+            console.log('save OrderData....');
             console.log(order_dto);
 
             //异步向后台提交数据
