@@ -914,7 +914,7 @@ public class DeliveryController extends Controller {
 					+ " order by t1.serial_no asc " + sLimit;
 			
 		} else {
-			 sql ="select  t1.serial_no,t1.item_no,t1.pieces,t2.arrival_time,c3.contact_person driver,c3.phone,o.office_name, t1.id as tid,t1.notify_party_company as company, t2.*,w.warehouse_name,c.abbr "
+			 sql ="select  t1.serial_no,t1.item_no,t1.pieces,t2.arrival_time,t1.notify_party_name driver,t1.notify_party_phone phone,o.office_name, t1.id as tid,t1.notify_party_company as company, t2.*,w.warehouse_name,c.abbr "
 			 		+ " from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
 					+ " LEFT JOIN depart_order doi on doi.id=t1.depart_id"
@@ -1216,7 +1216,7 @@ public class DeliveryController extends Controller {
 					.set("customer_id", customerId)
 					.set("sp_id", spId)
 					.set("notify_party_id", party.get("id"))
-					.set("create_stamp", createDate).set("status", "新建")
+					.set("create_stamp", createDate).set("status", "计划中")
 					.set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
 					.set("pricetype", getPara("chargeType"))
@@ -1333,6 +1333,7 @@ public class DeliveryController extends Controller {
 					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))
 					.set("receivingunit", receivingunit)
+					.set("status", "计划中")
 					.set("warehouse_nature", warehouseNature)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
