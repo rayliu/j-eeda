@@ -1017,7 +1017,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					String[] one=orderArrId[i].split(":");
 					String id = one[0];
 					String orderType = one[1];
-					String cname = one[2];
+					
 					if("应付对账单".equals(orderType)){
  						ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
  						payee_id = arapCostOrder.getLong("payee_id").toString();
@@ -1046,6 +1046,7 @@ public class CostPreInvoiceOrderController extends Controller {
  						ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
  						payee_name = arapInOutMiscOrder.getStr("charge_person");
  					}else if("货损单".equals(orderType)){
+ 						String cname = one[2];
  						Record record = Db.findFirst("select id from contact c where c.abbr = '"+cname+"' ");
  						if(record != null)
  							payee_id = record.getLong("id").toString();
@@ -1103,8 +1104,8 @@ public class CostPreInvoiceOrderController extends Controller {
 	 					String[] one=orderArrId[i].split(":");
 	 					String id = one[0];
 	 					String orderType = one[1];
-	 					payee_unit = one[2];
-	 					cname =" and dofi.party_name = '"+ one[2] +"'";
+	 					
+	 					
 	 					if("应付对账单".equals(orderType)){
 	 						dz_id += id+",";
 	 					}else if("预付单".equals(orderType)){
@@ -1118,6 +1119,8 @@ public class CostPreInvoiceOrderController extends Controller {
 	 					}else if("往来票据单".equals(orderType)){
 	 						wl_id += id+",";
 	 					}else if("货损单".equals(orderType)){
+	 						cname =" and dofi.party_name = '"+ one[2] +"'";
+	 						payee_unit = one[2];
 	 						hs_id += id+",";
 	 					}
 	 				}

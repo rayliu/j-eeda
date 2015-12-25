@@ -442,7 +442,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			String[] one=orderArrId[i].split(":");
 			String id = one[0];
 			String orderType = one[1];
-			String cname = one[2];
+			
 			if("应收对账单".equals(orderType)){
 				ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(id);
 				payee_id = arapChargeOrder.getLong("payee_id").toString();
@@ -462,9 +462,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 				ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 				payee_name = arapInOutMiscOrder.getStr("charge_person");
 			}else if("货损单".equals(orderType)){
-					Record record = Db.findFirst("select id from contact c where c.abbr = '"+cname+"' ");
-					if(record != null)
-						payee_id = record.getLong("id").toString();
+				String cname = one[2];
+				Record record = Db.findFirst("select id from contact c where c.abbr = '"+cname+"' ");
+				if(record != null)
+					payee_id = record.getLong("id").toString();
 			}
 			break;
 		}
@@ -514,8 +515,7 @@ public class ChargePreInvoiceOrderController extends Controller {
  					String[] one=orderArrId[i].split(":");
  					String id = one[0];
  					String orderType = one[1];
- 					payee_unit = one[2];
- 					cname =" and dofi.party_name = '"+ one[2] +"'";
+ 					
  					
  					if("应收对账单".equals(orderType)){
  						dz_id += id+",";
@@ -526,6 +526,8 @@ public class ChargePreInvoiceOrderController extends Controller {
  					}else if("往来票据单".equals(orderType)){
  						wl_id += id+",";
  					}else if("货损单".equals(orderType)){
+ 						payee_unit = one[2];
+ 	 					cname =" and dofi.party_name = '"+ one[2] +"'";
  						hs_id += id+",";
  					}
  				}
