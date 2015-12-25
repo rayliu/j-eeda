@@ -202,26 +202,31 @@
       $("#save").click(function(){
     	  $("#save").attr("disabled",true);
     	  
-    	  $.post("/serviceProvider/check",$("#customerForm").serialize(),function(data){
+    	  /*$.post("/serviceProvider/check",$("#customerForm").serialize(),function(data){
     		  
-    	  });
-    	  
-    	  
+    	  });*/
     	 if(!$("#customerForm").valid()){
     		  return false;
     	 }
     	 $.post("/serviceProvider/save",$("#customerForm").serialize(),function(data){
-    		
-     		if(data.ID != null && data.ID != ""){
+    		if(data=='abbrError'){
+    			$.scojs_message('供应商简称已存在', $.scojs_message.TYPE_ERROR);
+    			$("#save").attr("disabled",false);
+    		}else if (data=='companyError'){
+    			$.scojs_message('公司名称已存在', $.scojs_message.TYPE_ERROR);
+    			$("#save").attr("disabled",false);
+    		}else if(data.ID != null && data.ID != ""){
      			contactUrl("edit?id",data.ID);
      			$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
      			$("#partyId").val(data.ID);
      			$("#sp_id").val(data.ID);
      			$("#addChargeType").attr("disabled",false);
+     			$("#save").attr("disabled",false);
      		}else{
      			$.scojs_message('数据有误', $.scojs_message.TYPE_ERROR);
+     			$("#save").attr("disabled",false);
      		}
-         },'json');
+         });
     	  
       });
       //添加提示信息

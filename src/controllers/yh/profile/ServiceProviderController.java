@@ -12,6 +12,7 @@ import java.util.Map;
 import models.Location;
 import models.ParentOfficeModel;
 import models.Party;
+import models.Product;
 import models.yh.profile.Contact;
 import models.yh.profile.ProviderChargeType;
 
@@ -189,6 +190,8 @@ public class ServiceProviderController extends Controller {
         String id = getPara("party_id");
         Party party = null;
         Contact contact = null;
+        Contact contact1 = null;
+        Contact contact2 = null;
         Date createDate = Calendar.getInstance().getTime();
         if (id != null && !id.equals("")) {
             party = Party.dao.findById(id);
@@ -205,6 +208,18 @@ public class ServiceProviderController extends Controller {
             setContact(contact);
             contact.update();
         } else {
+            //判断供应商简称
+            contact1 = Contact.dao.findFirst("select * from contact where abbr=?",getPara("abbr"));
+            if(contact1!=null){
+            	renderText("abbrError");
+            	return ;
+            }
+          //判断供应商全称
+            contact2 = Contact.dao.findFirst("select * from contact where company_name=?",getPara("company_name")); 
+            if(contact2!=null){
+            	renderText("companyError");
+            	return ;
+            }
         	/*Long parentID = parentOffice.get("belong_office");
         	if(parentID == null || "".equals(parentID)){
         		parentID = parentOffice.getLong("id");
