@@ -1009,9 +1009,9 @@ public class DeliveryController extends Controller {
 		Long parentID = pom.getParentOfficeId();
 		String sql = "";
 		if(input!=null&&input!=""){
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where (sp_type = 'delivery' or sp_type is null ) and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'  and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where (sp_type = 'delivery' or sp_type is null ) and (p.is_stop is null or p.is_stop = 0) and c.abbr like '%"+input+"%'  and (o.id = "+parentID + " or o.belong_office = "+parentID + ") and p.party_type='"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
 		}else{
-			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where (sp_type = 'delivery' or sp_type is null ) and (p.is_stop is null or p.is_stop = 0) and (o.id = "+parentID + " or o.belong_office = "+parentID + ")";
+			sql= "select p.id pid,p.*, c.*,c.id cid from party p left join contact c on c.id = p.contact_id left join office o on o.id = p.office_id where (sp_type = 'delivery' or sp_type is null ) and (p.is_stop is null or p.is_stop = 0) and (o.id = "+parentID + " or o.belong_office = "+parentID + ") and p.party_type='"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'";
 		}
 		
 		locationList = Db.find(sql);
