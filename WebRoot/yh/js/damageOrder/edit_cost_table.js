@@ -111,9 +111,20 @@ $(document).ready(function() {
                 	if($('#status').val()!='已结案'){
                 		if(full.ID){
                         	var disable = '';
-                            if(full.STATUS != '未确认'){
-                            	disable = 'disabled';
-                            }
+                            if(full.STATUS != ''){
+                            	if(full.STATUS == '已确认'){
+                                	disable = 'disabled';
+                                }
+                            	
+                        		if(full.PARTY_TYPE=='客户'){
+	                        		$('#customer_id_input').attr('disabled',true);
+	                        	}else if(full.PARTY_TYPE=='供应商'){
+	                        		$('#sp_id_input').attr('disabled',true);
+	                        	}else if(full.PARTY_TYPE=='保险公司'){
+	                        		$('#insurance_id_input').attr('disabled',true);
+	                        	};
+                           };
+                            
                             return  '<button type="button" '+  disable +' class="delete btn btn-default btn-xs">删除</button> '+
                             '<button type="button" '+  disable +' class="confirm btn btn-primary btn-xs">确认</button>';
                         }else{

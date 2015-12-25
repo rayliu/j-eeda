@@ -82,9 +82,36 @@ public class DbUtils {
     		String rowId = rowMap.get("id");
     		String action = rowMap.get("action");
     		if(StringUtils.isEmpty(rowId)){//创建
-    			setModelValues(rowMap, model);
-    			model.set(master_col_name, master_order_id);
-    			model.save();
+    			if(rowMap.get("status")==null){                        //货损明细
+        			if(rowMap.get("product_no")!=null 
+        					|| rowMap.get("serial_no")!=null 
+        					|| rowMap.get("amount")!=null  
+        					|| rowMap.get("remark")!=null
+        			){
+        				if(!rowMap.get("product_no").equals("") 
+    	    					|| !rowMap.get("serial_no").equals("") 
+    	    					|| !rowMap.get("amount").equals("")  
+    	    					|| !rowMap.get("remark").equals("") 
+    	    			){
+        					setModelValues(rowMap, model);
+                			model.set(master_col_name, master_order_id);
+                			model.save();
+        				}
+        			}
+    			}else{                                                //赔偿赔款明细
+        			if(!rowMap.get("status").equals("")){
+        				if(!rowMap.get("fin_item").equals("") 
+    	    					|| !rowMap.get("amount").equals("") 
+    	    					|| !rowMap.get("party_name").equals("")  
+    	    					|| !rowMap.get("remark").equals("") 
+    	    			){
+        					setModelValues(rowMap, model);
+                			model.set(master_col_name, master_order_id);
+                			model.save();
+        				}
+        			}
+        		}
+    			
     		}else if("DELETE".equals(action)){//delete
     			Model<?> deleteModel = model.findById(rowId);
     			deleteModel.delete();
