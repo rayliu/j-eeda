@@ -180,7 +180,7 @@ public class AccountAuditLogController extends Controller {
     		year = Integer.parseInt(beginTime.substring(0, 4));
     		month = Integer.parseInt(beginTime.substring(5));
     	}
-    
+    	
     	
     	String sLimit = "";
     	String pageIndex = getPara("sEcho");
@@ -190,15 +190,36 @@ public class AccountAuditLogController extends Controller {
     	
     	String sqlTotal = "select count(1) total from fin_account";
     	Record rec = Db.findFirst(sqlTotal);
-    	logger.debug("total records:" + rec.getLong("total"));
     	 
+    	String sql = " SELECT fa.id,(select bank_name from fin_account where id = fa.id) bank_name,'"+ beginTime +"' date, "
+    			+ " ( ( SELECT ROUND(ifnull(sum(amount), 0), 2)"
+    			+ " FROM arap_account_audit_log aa"
+    			+ " WHERE aa.account_id = fa.id AND aa.create_date BETWEEN '2015-01-01' AND '"+year+"-"+(month-1)+"-31 23:59:59' AND aa.payment_type = 'CHARGE' ) "
+    			+ " - "
+    			+ " ( SELECT ROUND(ifnull(sum(amount), 0), 2)"
+    			+ " FROM arap_account_audit_log aa"
+    			+ " WHERE account_id = fa.id AND aa.create_date BETWEEN '2015-01-01' AND '"+year+"-"+(month-1)+"-31 23:59:59' AND aa.payment_type = 'COST'"
+    			+ " ) ) init_amount,"
+    			+ " ( ( SELECT ROUND(ifnull(sum(amount), 0), 2)"
+    			+ " FROM arap_account_audit_log aa "
+    			+ " WHERE aa.account_id = fa.id AND aa.create_date BETWEEN '"+year+"-"+month+"-01' AND '"+year+"-"+month+"-31 23:59:59' AND aa.payment_type = 'CHARGE'"
+    			+ " ) ) total_charge,"
+    			+ " ( SELECT ROUND(ifnull(sum(amount), 0), 2)"
+    			+ " FROM arap_account_audit_log aa"
+    			+ " WHERE aa.account_id = fa.id AND aa.create_date BETWEEN '"+year+"-"+month+"-01' AND '"+year+"-"+month+"-31 23:59:59' AND aa.payment_type = 'COST'"
+    			+ " ) total_cost,"
+    			+ " ( ( SELECT ROUND(ifnull(sum(amount), 0), 2)"
+    			+ " FROM arap_account_audit_log aa"
+    			+ " WHERE aa.account_id = fa.id AND aa.create_date BETWEEN '2015-01-01' AND '"+year+"-"+month+"-31 23:59:59' AND aa.payment_type = 'CHARGE'  )"
+    			+ "  - "
+    			+ " ( SELECT ROUND(ifnull(sum(amount), 0), 2) FROM arap_account_audit_log aa  "
+    			+ " WHERE aa.account_id = fa.id AND aa.create_date BETWEEN '2015-01-01' AND '"+year+"-"+month+"-31 23:59:59' AND aa.payment_type = 'COST'"
+    			+ " ) ) balance_amount"
+    			+ " FROM arap_account_audit_log aal"
+    			+ " right JOIN fin_account fa ON fa.id = aal.account_id"
+    			+ " GROUP BY fa.id ";
     	
-    	
-    	String sql = "select fa.*, aas.* from fin_account fa "
-    			+ "left join arap_account_audit_summary aas on fa.id = aas.account_id where year ="+year+" and month ="+month+" order by fa.id desc " + sLimit;
-    	
-    	logger.debug("sql:" + sql);
-    	List<Record> BillingOrders = Db.find(sql);
+    	List<Record> BillingOrders = Db.find(sql+sLimit);
     	
     	Map BillingOrderListMap = new HashMap();
     	BillingOrderListMap.put("sEcho", pageIndex);

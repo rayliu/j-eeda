@@ -88,7 +88,7 @@ $(document).ready(function() {
     	},
     	"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.ID);
-			$(nRow).attr('account_id', aData.ACCOUNT_ID);
+			$(nRow).attr('account_id', aData.ID);
 			return nRow;
 		},
     	"sAjaxSource": "/accountAuditLog/accountList?beginTime="+ $("#beginTime_filter").val(),
@@ -99,12 +99,11 @@ $(document).ready(function() {
               }
             },
 	        {"mDataProp":"BANK_NAME"},
-	        {"mDataProp":"MONTH"},
+	        {"mDataProp":"DATE"},
 	        {"mDataProp": "INIT_AMOUNT"}, //期初
             {"mDataProp": "TOTAL_CHARGE"}, //本期收入
 	        {"mDataProp":"TOTAL_COST"},  //本期支出
-            {"mDataProp":"BALANCE_AMOUNT"}, //期末结余
-	        {"mDataProp":"REMARK", "bVisible": false}           
+            {"mDataProp":"BALANCE_AMOUNT"} //期末结余        
 	     ]      
     });
     
