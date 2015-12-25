@@ -173,6 +173,8 @@
                         "FIELD_NAME": field.FIELD_NAME,
                         "FIELD_DISPLAY_NAME": field.FIELD_DISPLAY_NAME,
                         "FIELD_TYPE": field.FIELD_TYPE,
+                        "FIELD_TYPE_EXT_TYPE": field.FIELD_TYPE_EXT_TYPE,
+                        "FIELD_TYPE_EXT_TEXT": field.FIELD_TYPE_EXT_TEXT,
                         "REQUIRED": field.REQUIRED,
                         "LISTED": field.LISTED,
                         "FIELD_TEMPLATE_PATH": field.FIELD_TEMPLATE_PATH,
@@ -197,6 +199,8 @@
                 };
                 action_table.row.add(item).draw(false);
             }
+
+            bindFieldTableEvent();//click event
         }, 'json');
     };
     //---------------------------  tree handler end -------------

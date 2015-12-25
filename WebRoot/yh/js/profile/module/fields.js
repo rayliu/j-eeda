@@ -1,4 +1,4 @@
- 
+
 
     
 //$(document).ready(function(template) {
@@ -49,13 +49,15 @@
         },
         "createdRow": function ( row, data, index ) {
             $(row).attr('id', data.ID);
+            $(row).append('<input class="ext_type" type="hidden" value="'+data.FIELD_TYPE_EXT_TYPE+'" />');
+            $(row).append('<textarea class="ext_text" style="display:none;" >'+data.FIELD_TYPE_EXT_TEXT+'</textarea>');
         },
         //"ajax": "/damageOrder/list",
         "columns": [
-            { "width": "30px", "orderable":false, 
+            { "width": "30px", "orderable":false,
                 "render": function ( data, type, full, meta ) {
                   return '<a class="remove delete" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i> </a>&nbsp;&nbsp;'+
-                    '<a class="remove delete" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i> </a>';
+                    '<a class="edit" href="javascript:void(0)" title="编辑"><i class="glyphicon glyphicon-edit"></i> </a>';
                 }
             },
             { "data": "ID", visible: false},
@@ -76,8 +78,22 @@
                         +'    <option '+(data=='隐藏值'?'selected':'')+'>隐藏值</option>'
                         +'    <option '+(data=='日期编辑框'?'selected':'')+'>日期编辑框</option>'
                         +'    <option '+(data=='下拉列表'?'selected':'')+'>下拉列表</option>'
-                        +'    <option '+(data=='从其它单据中选取'?'selected':'')+'>从其它单据中选取</option>'
+                        +'    <option '+(data=='弹出列表, 从其它数据表选取'?'selected':'')+'>弹出列表, 从其它数据表选取</option>'
                         +'</select>';
+                }
+            },
+            { "data": "FIELD_TYPE_EXT_TYPE", visible: false,
+                "render": function ( data, type, full, meta ) {
+                    if(!data)
+                        data='';
+                  return '<input type="text" value="'+data+'" class="product_no form-control"/>';
+                }
+            },
+            { "data": "FIELD_TYPE_EXT_TEXT", visible: false,
+                "render": function ( data, type, full, meta ) {
+                    if(!data)
+                        data='';
+                  return '<input class="form-control" rows="1">'+data+'</input>';
                 }
             },
             { "data": "FIELD_DATA_TYPE", visible: false,
@@ -111,7 +127,7 @@
                         +'</select>';
                 }
             },
-            { "data": "FIELD_TEMPLATE_PATH",
+            { "data": "FIELD_TEMPLATE_PATH", visible: false,
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -130,20 +146,73 @@
 
     var dataTable = $('#fields-table').DataTable(tableSetting);
 
-    Module.dataTable = dataTable;
+    //等页面组件装载完成后，再绑定事件
+    var bindFieldTableEvent= function(){
+        var $fields_table = $("#fields_body table");
+
+        //编辑表中一行字段的属性
+        $fields_table.on('click', '.edit', function(e){
+            e.preventDefault();
+
+            $("#modalForm")[0].reset();
+            $("#modal_field_type_ext_div").hide();
+            $("#customize_list").hide();
+
+            var tr = $(this).parent().parent()[0];
+
+            $('#modal_row_id').val($(tr).attr('id'));
+
+            $("#modal_field_name").val($(tr.children[1]).find('input').val());
+            $("#modal_field_type").val($(tr.children[2]).find('select').val());
+            if('下拉列表' == $(tr.children[2]).find('select').val()){
+                $("#modal_field_type_ext_type").val($(tr).find('>input.ext_type').val());
+                $("#modal_field_type_ext_text").val($(tr).find('>textarea.ext_text').val());
+                $("#modal_field_type_ext_div").show();
+            }
+            if('自定义列表值' == $(tr).find('>input.ext_type').val()){
+                $("#customize_list").show();
+            }
+
+            $("#editField").modal('show');
+        });
+
+        //删除表中一行
+        $fields_table.on('click', '.delete', function(e){
+            e.preventDefault();
+            var tr = $(this).parent().parent();
+            deletedTableIds.push(tr.attr('id'))
+
+            cargoTable.row(tr).remove().draw();
+        });
+    }
+
+    $("#modal_field_type").on('change', function(){
+        if('下拉列表' == $(this).val()){
+            $("#modal_field_type_ext_div").show();
+        }else{
+            $("#modal_field_type_ext_div").hide();
+        }
+    });
+
+    $("#modal_field_type_ext_type").on('change', function(){
+        if('自定义列表值' == $(this).val()){
+            $("#customize_list").show();
+        }else{
+            $("#customize_list").hide();
+        }
+    });
+    
+    //对话框关闭，填值到列表中
+    $('#modalFormOkBtn').click(function(){
+        var row_id = $('#modal_row_id').val();
+        var tr = $('tr#'+row_id)[0];
+        $(tr.children[2]).find('select').val($("#modal_field_type").val());
+        $(tr).find('>input.ext_type').val($("#modal_field_type_ext_type").val());
+        $(tr).find('>textarea.ext_text').text($("#modal_field_type_ext_text").val());
+        $("#editField").modal('hide');
+    });
 
     var deletedTableIds=[];
-
-    var $fields_table = $("#fields-table");
-
-    //删除表中一行
-    $fields_table.on('click', '.delete', function(e){
-        e.preventDefault();
-        var tr = $(this).parent().parent();
-        deletedTableIds.push(tr.attr('id'))
-
-        cargoTable.row(tr).remove().draw();
-    });
 
     var buildStructureFieldsrray=function(structure_table){
         var table_rows = $(structure_table).find('tr');
@@ -164,6 +233,8 @@
                 //field_name: $(row.children[2]).find('input').val(), 
                 field_display_name: $(row.children[col_index]).find('input').val(), 
                 field_type: $(row.children[col_index+1]).find('select').val(),
+                field_type_ext_type:$(row).find('>input.ext_type').val(),//取自行隐藏字段
+                field_type_ext_text:$(row).find('>textarea.ext_text').val(),
                 field_data_type: $(row.children[col_index+2]).find('select').val(),
                 required: $(row.children[col_index+3]).find('select').val(),
                 listed: $(row.children[col_index+4]).find('select').val(),
