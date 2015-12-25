@@ -22,7 +22,7 @@ $(document).ready(function () {
             	}},
             {"mDataProp":null,
             	"fnRender": function(obj) {
-            		return " 该配送单业务要求配送时间为：" + obj.aData.BUSINESS_STAMP  + ", 请安排配送。";
+            		return " 该配送单业务要求配送时间为：" + obj.aData.BUSINESS_STAMP  + ", 请安排配送。序列号："+obj.aData.SERIAL_NO;
             	}
             }
         ]
