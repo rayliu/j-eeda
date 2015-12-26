@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.DepartTransferOrder;
@@ -519,7 +520,14 @@ public class DeliveryController extends Controller {
 		Party spContact = Party.dao
 				.findFirst("select *,p.id as spid from party p,contact c where p.id ='"
 						+ tOrder.get("sp_id") + "'and p.contact_id = c.id");
-
+		// 调拨供应商
+		if(tOrder.get("delivery_id")!=null){
+			DeliveryOrder deliveryOrder= DeliveryOrder.dao.findById(tOrder.get("delivery_id"));
+			Party spChange = Party.dao
+					.findFirst("select *,p.id as spid from party p,contact c where p.id ='"
+							+ deliveryOrder.get("sp_id") + "'and p.contact_id = c.id");
+			setAttr("spChange", spChange);
+		}
 		// 收货人信息
 		Contact notifyPartyContact = null;
 		if (tOrder.get("notify_party_id") != null) {
@@ -1158,10 +1166,11 @@ public class DeliveryController extends Controller {
         String ltlPriceType = getPara("ltlUnitType");//如果是零担，需要知道零担计费类型：按体积，按重量
 		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
 		String deliveryid = getPara("delivery_id");
-		DeliveryOrder deliveryOrder = null;
+		DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryid);
 		String notifyId = getPara("notify_id");
 		String warehouseNature = getPara("warehouseNature");
 		String gateInSelect = getPara("gateInSelect");
+		String changeSpId = getPara("spChange_id");
 		String sign_document_no = getPara("sign_document_no");//签收单据号
 		String spId = getPara("sp_id");
 		String cargoNature = getPara("cargoNature");
@@ -1189,7 +1198,6 @@ public class DeliveryController extends Controller {
 
 		Party party = new Party();
 		Contact contact = new Contact();
-		deliveryOrder = new DeliveryOrder();
 		if (notifyId == null || notifyId.equals("")) {
 			contact.set("company_name", getPara("notify_company_name"))
 					.set("contact_person", getPara("notify_contact_person"))
@@ -1210,13 +1218,14 @@ public class DeliveryController extends Controller {
 					.set("mobile", getPara("notify_mobile"))
 					.set("phone", getPara("notify_phone")).update();
 		}
-
-		if (deliveryid == null || "".equals(deliveryid)) {
+		if (deliveryOrder == null) {
+			deliveryOrder = new DeliveryOrder();
+			DeliveryOrder deliveryChangeOrder = new DeliveryOrder();
 			deliveryOrder.set("order_no", orderNo)
 					.set("customer_id", customerId)
 					.set("sp_id", spId)
 					.set("notify_party_id", party.get("id"))
-					.set("create_stamp", createDate).set("status", "计划中")
+					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
 					.set("pricetype", getPara("chargeType"))
@@ -1229,9 +1238,41 @@ public class DeliveryController extends Controller {
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
 			if("warehouseNatureYes".equals(warehouseNature)){
-				deliveryOrder.set("change_warehouse_id", gateInSelect);
-			} else{
-				deliveryOrder.set("change_warehouse_id", null);
+				deliveryChangeOrder.set("order_no", orderNo+"-DB")//生成调拨的配送单
+				.set("customer_id", customerId)
+				.set("sp_id", changeSpId)
+				.set("notify_party_id", party.get("id"))
+				.set("create_stamp", createDate)
+				.set("route_to", getPara("route_to"))
+				.set("route_from", getPara("route_from"))
+				.set("pricetype", getPara("chargeType"))
+				.set("from_warehouse_id", warehouseId)
+				.set("cargo_nature", cargoNature)
+				.set("warehouse_nature", warehouseNature)
+				.set("receivingunit", receivingunit)
+				.set("ref_no", sign_document_no)
+				.set("client_requirement", getPara("client_requirement"))
+				.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
+				.set("customer_delivery_no",getPara("customerDelveryNo"));
+				if (notifyId == null || notifyId.equals("")) {
+					deliveryChangeOrder.set("notify_party_id", party.get("id"));
+				} else {
+					deliveryChangeOrder.set("notify_party_id", notifyId);
+				}
+				if(!"".equals(businessStamp) && businessStamp != null)
+					deliveryChangeOrder.set("business_stamp", businessStamp);
+				if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
+					deliveryChangeOrder.set("client_order_stamp", clientOrderStamp);
+				if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
+					deliveryChangeOrder.set("order_delivery_stamp", orderDeliveryStamp);
+
+				deliveryChangeOrder.set("audit_status", "新建");
+				deliveryChangeOrder.set("sign_status", "未回单");
+				if("cargo".equals(cargoNature)){
+					deliveryChangeOrder.set("delivery_plan_type", "untreated");
+				}
+				deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
+				deliveryChangeOrder.save();
 			}
 			if (notifyId == null || notifyId.equals("")) {
 				deliveryOrder.set("notify_party_id", party.get("id"));
@@ -1239,18 +1280,22 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("notify_party_id", notifyId);
 			}
 			
-			if(!"".equals(businessStamp) && businessStamp != null)
+			if(!"".equals(businessStamp) && businessStamp != null){
 				deliveryOrder.set("business_stamp", businessStamp);
+				deliveryOrder.set("status", "计划中");
+			}else{
+				deliveryOrder.set("status", "新建");
+			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
 			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
 				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
-
 			deliveryOrder.set("audit_status", "新建");
 			deliveryOrder.set("sign_status", "未回单");
 			if("cargo".equals(cargoNature)){
 				deliveryOrder.set("delivery_plan_type", "untreated");
 			}
+			deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
 			deliveryOrder.save();
 			if("cargo".equals(cargoNature)){
 				TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
@@ -1276,9 +1321,7 @@ public class DeliveryController extends Controller {
 					.set("transfer_no", transferOrderNo)
 					.set("transfer_order_id",order.get("id"))
 					.set("amount", this_amount)
-					.save();
-					
-				
+					.save();	
 				} 
 			}else{
 				String string = getPara("tranferid");
@@ -1289,7 +1332,6 @@ public class DeliveryController extends Controller {
 					tOrder.set("status", "配送中");
 					tOrder.update();
 				}
-
 				if (!idlist3.equals("")) {
 					for (int i = 0; i < idlist.length; i++) {
 						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
@@ -1326,14 +1368,13 @@ public class DeliveryController extends Controller {
 			}
 			saveDeliveryOrderMilestone(deliveryOrder);
 		} else {
-
+			DeliveryOrder deliveryChangeOrder =null;
 			deliveryOrder.set("sp_id", spId)
 					.set("Customer_id", customerId)
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))
 					.set("receivingunit", receivingunit)
-					.set("status", "计划中")
 					.set("warehouse_nature", warehouseNature)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
@@ -1349,13 +1390,129 @@ public class DeliveryController extends Controller {
             else{
             	deliveryOrder.set("notify_party_id", getPara("notify_id"));
 			}
-			if(!"".equals(businessStamp) && businessStamp != null)
+			if(!"".equals(businessStamp) && businessStamp != null){
 				deliveryOrder.set("business_stamp", businessStamp);
+				deliveryOrder.set("status", "计划中");
+			}
+			else{
+				deliveryOrder.set("status", "新建");
+			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
-			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
-				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
-			
+			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null){
+				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);	
+			}
+			if("warehouseNatureYes".equals(warehouseNature)){
+				if(deliveryOrder.get("delivery_id")==null){
+					deliveryChangeOrder = new DeliveryOrder();
+					deliveryChangeOrder.set("order_no",deliveryOrder.get("order_no")+"-DB")//生成调拨的配送单
+					.set("customer_id", customerId)
+					.set("sp_id", changeSpId)
+					.set("notify_party_id", party.get("id"))
+					.set("create_stamp", createDate)
+					.set("route_to", getPara("route_to"))
+					.set("route_from", getPara("route_from"))
+					.set("pricetype", getPara("chargeType"))
+					.set("from_warehouse_id", warehouseId)
+					.set("cargo_nature", cargoNature)
+					.set("warehouse_nature", warehouseNature)
+					.set("receivingunit", receivingunit)
+					.set("ref_no", sign_document_no)
+					.set("client_requirement", getPara("client_requirement"))
+					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
+					.set("customer_delivery_no",getPara("customerDelveryNo"));
+					if (notifyId == null || notifyId.equals("")) {
+						deliveryChangeOrder.set("notify_party_id", party.get("id"));
+					} else {
+						deliveryChangeOrder.set("notify_party_id", notifyId);
+					}
+					if(!"".equals(businessStamp) && businessStamp != null){
+						deliveryChangeOrder.set("business_stamp", businessStamp);
+						
+					}
+					if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
+						deliveryChangeOrder.set("client_order_stamp", clientOrderStamp);
+					if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null){
+						deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
+						
+					}else{
+						deliveryOrder.set("status", "新建");
+					}
+					deliveryChangeOrder.set("audit_status", "新建");
+					deliveryChangeOrder.set("sign_status", "未回单");
+					if("cargo".equals(cargoNature)){
+						deliveryChangeOrder.set("delivery_plan_type", "untreated");
+					}
+					deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
+					deliveryChangeOrder.save();
+					List<DeliveryOrderItem> deliveryOrderItem=DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryOrder.get("id"));
+					for(DeliveryOrderItem deliveryOrder1:deliveryOrderItem){
+						DeliveryOrderItem deliveryItem =new DeliveryOrderItem();
+						deliveryItem.set("transfer_no",deliveryOrder1.get("transfer_no"))
+						.set("delivery_id", deliveryChangeOrder.get("id"))
+						.set("transfer_order_id", deliveryOrder1.get("transfer_order_id"))
+						.set("transfer_item_id",deliveryOrder1.get("transfer_item_id"))
+						.set("amount", deliveryOrder1.get("amount"))
+						.set("transfer_item_detail_id",deliveryOrder1.get("transfer_item_detail_id"))
+						.set("product_id",deliveryOrder1.get("product_id"))
+						.set("product_number",deliveryOrder1.get("product_number"));
+						deliveryItem.save();
+					}
+				}
+				else{
+					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
+					deliveryChangeOrder.set("customer_id", customerId)
+					.set("sp_id", changeSpId)
+					.set("notify_party_id", party.get("id"))
+					.set("create_stamp", createDate)
+					.set("route_to", getPara("route_to"))
+					.set("route_from", getPara("route_from"))
+					.set("pricetype", getPara("chargeType"))
+					.set("from_warehouse_id", warehouseId)
+					.set("cargo_nature", cargoNature)
+					.set("warehouse_nature", warehouseNature)
+					.set("receivingunit", receivingunit)
+					.set("ref_no", sign_document_no)
+					.set("client_requirement", getPara("client_requirement"))
+					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
+					.set("customer_delivery_no",getPara("customerDelveryNo"));
+					if (notifyId == null || notifyId.equals("")) {
+						deliveryChangeOrder.set("notify_party_id", party.get("id"));
+					} else {
+						deliveryChangeOrder.set("notify_party_id", notifyId);
+					}
+					if(!"".equals(businessStamp) && businessStamp != null){
+						deliveryChangeOrder.set("business_stamp", businessStamp);
+						deliveryChangeOrder.set("status", "计划中");
+					}else{
+						deliveryChangeOrder.set("status", "新建");
+					}
+					if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
+						deliveryChangeOrder.set("client_order_stamp", clientOrderStamp);
+					if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null){
+						deliveryChangeOrder.set("order_delivery_stamp", orderDeliveryStamp);	
+					}
+					deliveryChangeOrder.set("audit_status", "新建");
+					deliveryChangeOrder.set("sign_status", "未回单");
+					if("cargo".equals(cargoNature)){
+						deliveryChangeOrder.set("delivery_plan_type", "untreated");
+					}
+					deliveryChangeOrder.update();
+				}
+				deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
+			}
+			else{
+				if(deliveryOrder.get("delivery_id")!=null){
+					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
+					DeliveryOrderFinItem deliveryOrderFinItem= DeliveryOrderFinItem.dao.findFirst("SELECT * from delivery_order_fin_item where order_id=?",deliveryChangeOrder.get("id"));
+					if(deliveryOrderFinItem!=null){
+						deliveryOrderFinItem.delete();
+					}if(deliveryChangeOrder!=null){
+						deliveryChangeOrder.delete();
+					}
+				}
+				deliveryOrder.set("delivery_id", null);
+			}
 			deliveryOrder.update();
 		}
 		renderJson(deliveryOrder);
