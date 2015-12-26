@@ -104,9 +104,15 @@ $(document).ready(function() {
                 {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
                 {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
                 {"mDataProp":"RECEIVINGUNIT", "sWidth":"140px"},
-            	{"mDataProp":"ORDER_NO", "sWidth":"140px", 
+            	  {"mDataProp":"ORDER_NO", "sWidth":"210px", 
                     "fnRender": function(obj) {
-                    	return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
+                      var order_no = obj.aData.ORDER_NO;
+                      var suborder_no=order_no.substring(order_no.length-2,order_no.length);
+                      if(suborder_no=='DB'){
+                        return order_no;
+                      }else{
+                          return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
+                      }
                     }
                 },
             {"mDataProp":"STATUS", "sWidth": "100px",
