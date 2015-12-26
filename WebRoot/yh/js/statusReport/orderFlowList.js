@@ -25,14 +25,24 @@ $(document).ready(function() {
         "columns": [
             { "data": "TRANSFER_ORDER_NO", "width": "10%",
                 "render": function ( data, type, full, meta ) {
-                    //return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
-                	return data;
+                	var id = full.TRANSFER_ORDER_NO.substring(0, full.TRANSFER_ORDER_NO.indexOf(':'));
+                	var order_no = full.TRANSFER_ORDER_NO.substring((full.TRANSFER_ORDER_NO.indexOf(':')+1),full.TRANSFER_ORDER_NO.indexOf('-'));
+                	var status = full.TRANSFER_ORDER_NO.substring(full.TRANSFER_ORDER_NO.indexOf('-'),50);
+                	return eeda.getUrlByNo(id,order_no)+status;
                 }
             },
             { "data": "CUSTOMER_NAME","width": "5%"},
             { "data": "PICKUP_ORDER_NO", "width": "10%"},
             { "data": "DEPART_ORDER_NO", "width": "10%"}, 
-            { "data": "DELIVERY_ORDER_NO", "width": "10%"}, 
+            { "data": "DELIVERY_ORDER_NO", "width": "10%"},
+//            	,
+//                "render": function ( data, type, full, meta ) {
+//                	var id = full.DELIVERY_ORDER_NO.substring(0, full.DELIVERY_ORDER_NO.indexOf(':'));
+//                	var order_no = full.DELIVERY_ORDER_NO.substring((full.DELIVERY_ORDER_NO.indexOf(':')+1),full.DELIVERY_ORDER_NO.indexOf('+'));
+//                	var status = full.DELIVERY_ORDER_NO.substring(full.DELIVERY_ORDER_NO.indexOf('+'),50);
+//                	return eeda.getUrlByNo(id,order_no)+status;
+//                }
+//            },
             { "data": "RETURN_ORDER_NO", "width": "10%"}, 
             { "data": "CHARGE_ORDER_NO", "width": "10%"}, 
             { "data": "COST_ORDER_NO1", "width": "10%"},

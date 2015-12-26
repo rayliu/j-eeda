@@ -89,14 +89,15 @@ public class StatusReportController extends Controller{
 			conditions += " and UPPER(deo.ref_no) like '%"+sign_no.toUpperCase()+"%'";
 		}
 		if (StringUtils.isNotEmpty(serial_no)){                                            //-- 应收对账单
-			conditions += " and (select GROUP_CONCAT(serial_no) from transfer_order_item_detail"
-					    + " where order_id = tor.id) like '%"+serial_no.toUpperCase()+"%'";
+			conditions += " and ifnull((SELECT GROUP_CONCAT(toid.serial_no) from transfer_order_item_detail toid"
+					+ " where toid.delivery_id = deo.id), (SELECT GROUP_CONCAT(toid.serial_no) from transfer_order_item_detail toid"
+					+ " where toid.order_id = tor.id)) like '%"+serial_no.toUpperCase()+"%'";
 		}
 		conditions += " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 				    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 		            + " GROUP BY tor.id ";
 		
-		String sql = " SELECT CONCAT( tor.order_no, '-', tor. STATUS ) transfer_order_no, "
+		String sql = " SELECT CONCAT(cast(tor.id as char),':',tor.order_no, '-', tor. STATUS) transfer_order_no, "
 				+ " (select c.abbr  from contact c where id = tor.customer_id) customer_name,"
 				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( dor.depart_no ,'-',dor.`STATUS` )"
 				+ " FROM depart_order dor "
@@ -108,7 +109,7 @@ public class StatusReportController extends Controller{
 				+ " where dor.combine_type='DEPART' and dor.id = dt.depart_id)"
 				+ "  SEPARATOR '<br/>') depart_order_no"
 				+ " ,"
-				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( deo.order_no ,'-',deo.`STATUS` ) "
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(deo.order_no ,'+',deo.`STATUS` ) "
 				+ " FROM delivery_order deo "
 				+ " WHERE deo.id = doi.delivery_id ) SEPARATOR '<br/>') delivery_order_no"
 				+ " ,"
