@@ -18,11 +18,24 @@ $(document).ready(function () {
         "aoColumns": [
             { "mDataProp": "ORDER_NO", "sWidth":"100px",
             	"fnRender":function(obj){
-            		return  "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    if('PS' == obj.aData.TYPE){
+                		return  "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }else{
+                        return  "<a href='/transferOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                    }
             	}},
+            {"mDataProp":null, "sWidth":"100px",
+                "fnRender": function(obj) {
+                    return obj.aData.FROM_NAME  + " - "+obj.aData.TO_NAME;
+                }
+            },
             {"mDataProp":null,
             	"fnRender": function(obj) {
-            		return " 该配送单业务要求配送时间为：" + obj.aData.BUSINESS_STAMP  + ", 请安排配送。序列号："+obj.aData.SERIAL_NO;
+                    if('PS' == obj.aData.TYPE){
+                        return " 该配送单业务要求配送时间为：" + obj.aData.BUSINESS_STAMP  + ", 请安排配送。序列号："+obj.aData.SERIAL_NO;
+                    }else{
+                        return " 该运输单为运输在途，请安排收货。";
+                    }
             	}
             }
         ]
