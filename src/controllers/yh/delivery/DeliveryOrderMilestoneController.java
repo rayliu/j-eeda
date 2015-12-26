@@ -84,7 +84,9 @@ public class DeliveryOrderMilestoneController extends Controller {
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "已发车");
         deliveryOrder.update();
-        
+        DeliveryOrder deliveryOrder1 = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));//调拨仓库
+        deliveryOrder1.set("status", "已发车");
+        deliveryOrder1.update();
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已发车");
