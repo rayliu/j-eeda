@@ -32,6 +32,7 @@ $(document).ready(function() {
             {"mDataProp":"SERIAL_NO", "sWidth":"100px"},//序列号
             {"mDataProp":"ITEM_NO","sWidth":"90px"},//型号
             {"mDataProp":"AMOUNT","sWidth":"50px"},//数量
+            {"mDataProp":"STATUS","sWidth":"70px"},//状态
             {"mDataProp":"COMPANY","sWidth":"150px"},//地址
             {"mDataProp":"DRIVER","sWidth":"70px"},//联系人
             {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
@@ -40,7 +41,6 @@ $(document).ready(function() {
             {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
             {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO","sWidth":"100px"},//客户订单号
-            {"mDataProp":"STATUS","sWidth":"70px"},//状态
             {"mDataProp":"CARGO_NATURE",
             	"sWidth":"80px",
             	"fnRender": function(obj) {
