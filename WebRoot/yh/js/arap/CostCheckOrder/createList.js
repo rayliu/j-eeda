@@ -146,21 +146,17 @@ $(document).ready(function() {
             {"mDataProp":"SPNAME","sClass":"spname", "sWidth":"200px"},
             {"mDataProp":"CUSTOMER_NAME", "sWidth":"120px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"ORDER_NO", "sWidth":"200px", 
-                "fnRender": function(obj) {
-                	var str = "";
-                    if(obj.aData.ORDER_NO.indexOf("PS") > -1){
-                        str = "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else if(obj.aData.ORDER_NO.indexOf("PC") > -1||obj.aData.ORDER_NO.indexOf("DC") > -1){
-                        str = "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else if(obj.aData.ORDER_NO.indexOf("FC") > -1){
-                        str = "<a href='/departOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                    }else {
-                        str = "<a href='/insuranceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+            {"mDataProp":"ORDER_NO", "sWidth":"210px", 
+                    "fnRender": function(obj) {
+                      var order_no = obj.aData.ORDER_NO;
+                      var suborder_no=order_no.substring(order_no.length-2,order_no.length);
+                      if(suborder_no=='DB'){
+                        return order_no;
+                      }else{
+                          return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
+                      }
                     }
-                    return str;
-                }
-            },
+                },
             {"mDataProp":"RECEIVINGUNIT", "sWidth":"130px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
             {"mDataProp":"CREATE_STAMP", "sWidth":"180px"}, 
