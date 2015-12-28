@@ -143,9 +143,19 @@ $(document).ready(function() {
 			 }
 		 }
 	 },'json');
-
-	//获取供应商的list，选中信息在下方展示其他信息
-	$('#spMessage').on('keyup', function(){
+	
+	$("input[name='warehouseType']").click(function(){
+		if($(this).attr('id') == 'warehouseType1'){
+			$("#officeDiv").show();
+		}else{
+			$("#officeDiv").hide();
+		}
+	});
+	
+	if($("#warehouseType1").attr('checked') == 'checked'){
+		$("#officeDiv").show();
+	}
+	$('#spMessage').on('keyup click', function(){
 		var inputStr = $('#spMessage').val();
 		if(inputStr == ""){
 			var pageSpName = $("#pageSpName");
@@ -154,8 +164,7 @@ $(document).ready(function() {
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-			console.log(data);
+		$.get('/delivery/searchPartSp', {input:inputStr}, function(data){			
 			var spList =$("#spList");
 			spList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -176,56 +185,48 @@ $(document).ready(function() {
 				if(phone == null){
 					phone = '';
 				}
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
 			}
 		},'json');
-		
-        $('#spList').show();
-        $("#spList").css({ 
+
+		$("#spList").css({ 
         	left:$(this).position().left+"px", 
         	top:$(this).position().top+32+"px" 
         }); 
-        
+        $('#spList').show();
 	});
-	
+
+	// 没选中供应商，焦点离开，隐藏列表
+	$('#spMessage').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+	$('#spList').on('blur', function(){
+ 		$('#spList').hide();
+ 	});
+
+	$('#spList').on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
 	// 选中供应商
-	$('#spList').on('click', '.fromLocationItem', function(e){
-		var message = $(this).text();
-		$('#spMessage').val(message.substring(0, message.indexOf(" ")));
-		$('#sp_id').val($(this).attr('partyId'));
-		var pageSpName = $("#pageSpName");
-		pageSpName.empty();
-		pageSpName.append($(this).attr('contact_person')+'&nbsp;');
-		pageSpName.append($(this).attr('phone')); 
-		var pageSpAddress = $("#pageSpAddress");
-		pageSpAddress.empty();
-		pageSpAddress.append($(this).attr('address'));
+	$('#spList').on('mousedown', '.fromLocationItem', function(e){
+		$('#spMessage').val($(this).text());
+		$('#sp_id').val($(this).attr('spid'));
+		$('#cid').val($(this).attr('code'));
+		$('#a1').html($(this).attr('contact_person'));
+		$('#a2').html($(this).attr('company_name'));
+		$('#a3').html($(this).attr('address'));
+		$('#a4').html($(this).attr('mobile'));
         $('#spList').hide();
-    }); 
-	
-	$("input[name='warehouseType']").click(function(){
-		if($(this).attr('id') == 'warehouseType1'){
-			$("#officeDiv").show();
-			$("#spDiv").hide();
-		}else{
-			$("#spDiv").show();
-			$("#officeDiv").hide();
-		}
-	});
-	
-	if($("#warehouseType1").attr('checked') == 'checked'){
-		$("#officeDiv").show();
-	}
-	
+    });
 	// 回显仓库类型
 	$("input[name='warehouseType']").each(function(){
 		if($("#warehouseTypeHide").val() == $(this).val()){
 			$(this).attr('checked', true);
 			if($(this).attr('id') == 'warehouseType1'){
 				$("#officeDiv").show();
-				$("#spDiv").hide();
 			}else{
-				$("#spDiv").show();
 				$("#officeDiv").hide();
 			}
 		}

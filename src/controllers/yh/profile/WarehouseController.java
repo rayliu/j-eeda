@@ -193,12 +193,6 @@ public class WarehouseController extends Controller{
 			if(uploadFile != null){
 				warehouse.set("path", uploadFile.getFileName());
 			}
-			//warehouse.set("notify_party_id", party.get("id"));
-			if (getPara("warehouseType") != null && getPara("warehouseType").equals("ownWarehouse")) {
-            	spId = null;
-            }else{
-            	officeId = null;
-            }
             if(spId != null && !"".equals(spId)){
             	warehouse.set("sp_id", spId);
             }
