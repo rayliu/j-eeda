@@ -1613,6 +1613,7 @@ public class ReturnOrderController extends Controller {
 		.set("from_warehouse_id", delivery.get("from_warehouse_id"))
 		.set("cargo_nature", delivery.get("cargo_nature"))
 		.set("priceType", delivery.get("priceType"))
+		.set("office_id", delivery.get("office_id"))
 		.set("ltl_price_type", delivery.get("ltl_price_type")).set("car_type", delivery.get("car_type"))
 		.set("audit_status", "新建").set("sign_status", "未回单");
 		deliveryOrder.save();
