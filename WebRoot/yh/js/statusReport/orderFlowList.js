@@ -31,23 +31,136 @@ $(document).ready(function() {
                 	return eeda.getUrlByNo(id,order_no)+status;
                 }
             },
-            { "data": "CUSTOMER_NAME","width": "5%"},
-            { "data": "PICKUP_ORDER_NO", "width": "10%"},
-            { "data": "DEPART_ORDER_NO", "width": "10%"}, 
-            { "data": "DELIVERY_ORDER_NO", "width": "10%"},
-//            	,
-//                "render": function ( data, type, full, meta ) {
-//                	var id = full.DELIVERY_ORDER_NO.substring(0, full.DELIVERY_ORDER_NO.indexOf(':'));
-//                	var order_no = full.DELIVERY_ORDER_NO.substring((full.DELIVERY_ORDER_NO.indexOf(':')+1),full.DELIVERY_ORDER_NO.indexOf('+'));
-//                	var status = full.DELIVERY_ORDER_NO.substring(full.DELIVERY_ORDER_NO.indexOf('+'),50);
-//                	return eeda.getUrlByNo(id,order_no)+status;
-//                }
-//            },
-            { "data": "RETURN_ORDER_NO", "width": "10%"}, 
-            { "data": "CHARGE_ORDER_NO", "width": "10%"}, 
-            { "data": "COST_ORDER_NO1", "width": "10%"},
-            { "data": "COST_ORDER_NO2", "width": "10%"},
-            { "data": "COST_ORDER_NO3", "width": "10%"}
+            { "data": "CUSTOMER_NAME","width": "10%"},
+            { "data": "PICKUP_ORDER_NO", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.PICKUP_ORDER_NO != null){
+                		array = full.PICKUP_ORDER_NO.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('-'));
+                        	var status = array[i].substring(array[i].indexOf('-'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+
+                }
+            },
+            { "data": "DEPART_ORDER_NO", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.DEPART_ORDER_NO != null){
+                		array = full.DEPART_ORDER_NO.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('-'));
+                        	var status = array[i].substring(array[i].indexOf('-'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+                }
+            },
+            { "data": "DELIVERY_ORDER_NO", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.DELIVERY_ORDER_NO != null){
+                		array = full.DELIVERY_ORDER_NO.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('+'));
+                        	var status = array[i].substring(array[i].indexOf('+'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+                }
+            },
+            { "data": "RETURN_ORDER_NO", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.RETURN_ORDER_NO != null){
+                		array = full.RETURN_ORDER_NO.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('-'));
+                        	var status = array[i].substring(array[i].indexOf('-'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+                }
+            },
+            { "data": "CHARGE_ORDER_NO", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.CHARGE_ORDER_NO != null){
+                		array = full.CHARGE_ORDER_NO.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('-'));
+                        	var status = array[i].substring(array[i].indexOf('-'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+                }
+            }, 
+            { "data": "COST_ORDER_NO1", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.COST_ORDER_NO1 != null){
+                		array = full.COST_ORDER_NO1.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('-'));
+                        	var status = array[i].substring(array[i].indexOf('-'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+                }
+            }, 
+            { "data": "COST_ORDER_NO2", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.COST_ORDER_NO2 != null){
+                		array = full.COST_ORDER_NO2.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('-'));
+                        	var status = array[i].substring(array[i].indexOf('-'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+                }
+            }, 
+            { "data": "COST_ORDER_NO3", "width": "10%",
+                "render": function ( data, type, full, meta ) {
+                	var array = [];
+                	var re = "";
+                	if(full.COST_ORDER_NO3 != null){
+                		array = full.COST_ORDER_NO3.split('<br/>');
+                    	for (var i = 0; i < array.length; i++) {
+                    		var id = array[i].substring(0, array[i].indexOf(':'));
+                        	var order_no = array[i].substring((array[i].indexOf(':')+1),array[i].indexOf('-'));
+                        	var status = array[i].substring(array[i].indexOf('-'),50);
+                        	re += eeda.getUrlByNo(id,order_no)+status+'<br/>';
+    					}
+                	}
+                	return re;
+                }
+            }
         ]
     });
 
