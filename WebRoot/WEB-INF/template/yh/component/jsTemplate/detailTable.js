@@ -49,8 +49,21 @@
                         "render": function ( data, type, full, meta ) {
                             if(!data)
                                 data = '';
-                          return '<input type="text" name="F{{field.ID}}_{{field.FIELD_NAME}}" value="' + data + '" class="form-control"/>';
-                        }
+                            {{if field.FIELD_TYPE == '下拉列表'}}
+                                var items = '{{replaceReturn field.FIELD_TYPE_EXT_TEXT}}'.split('$');
+                                var selectHtml = '<select name="F{{field.ID}}_{{field.FIELD_NAME}}" class="form-control">';
+                                for (var i = 0; i < items.length; i++) {
+                                    if(data == items[i]){
+                                        selectHtml += '<option selected>' + items[i] + '</option>';
+                                    }else{
+                                        selectHtml += '<option>' + items[i] + '</option>';
+                                    }
+                                };
+                                return selectHtml+'</select>';
+                            {{else}}
+                                return '<input type="text" name="F{{field.ID}}_{{field.FIELD_NAME}}" value="' + data + '" class="form-control"/>';
+                            {{/if}}
+                       } 
                     },
                 {{/each}}
             ]

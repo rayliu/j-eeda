@@ -53,11 +53,18 @@
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.excheck-3.5.js"></script>
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.exedit-3.5.js"></script>
 
+<script type="text/javascript">
+	template.helper('replaceReturn', function (content) {
+	    return content.replace(/\n/g, "$");
+	});
+</script>
+
 <%include("/yh/component/jsTemplate/inputField.js", {id:'input_field'}){} %>
 <%include("/yh/component/jsTemplate/inputDateField.js",{}){} %>
 <%include("/yh/component/jsTemplate/inputCustomerField.js",{}){} %>
 <%include("/yh/component/jsTemplate/fieldSection.js", {}){} %>
 <%include("/yh/component/jsTemplate/inputSpField.js",{}){} %>
+<%include("/yh/component/jsTemplate/inputCustomizeSelectField.js",{}){} %>
 <%include("/yh/component/jsTemplate/detailTable.js", { id:'table_template'}){} %>
 <%include("/yh/component/jsTemplate/button.js", { id:'button_template'}){} %>
 

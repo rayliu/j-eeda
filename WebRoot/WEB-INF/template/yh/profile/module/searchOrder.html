@@ -39,6 +39,12 @@
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 
+<script type="text/javascript">
+	template.helper('replaceReturn', function (content) {
+	    return content.replace(/\n/g, "$");
+	});
+</script>
+
 <script>
        
        var Module={};

@@ -4,6 +4,7 @@ import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +69,26 @@ public class ModuleController extends Controller {
         }
         setAttr("modules", modules);
         render("/yh/profile/module/moduleList.html");
+    }
+    
+    public void getActiveModules(){
+        String sql = "select id, module_name, parent_id, office_id, seq from modules where status = '启用' and office_id="
+                +LoginUserController.getLoginUser(this).get("office_id");
+        
+        List<Record> modules = Db.find(sql);
+        if(modules == null){
+            modules = Collections.EMPTY_LIST;
+        }else{
+            for (Record module : modules) {
+                String fieldSql = "select f.* from structure s, field f where  f.structure_id = s.id and s.parent_id is null and s.module_id=?";
+                List<Record> fields = Db.find(fieldSql, module.get("id"));
+                if(fields != null){
+                    module.set("field_list", fields);
+                    module.set("structure_id", fields.get(0).get("structure_id"));
+                }
+            }
+        }
+        renderJson(modules);
     }
     
     public void searchModule(){

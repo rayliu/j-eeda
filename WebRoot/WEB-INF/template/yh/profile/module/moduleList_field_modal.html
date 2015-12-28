@@ -1,0 +1,73 @@
+<div class="modal fade" id="editField" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">字段编辑</h4>
+            </div>
+            <div class="modal-body">
+                <form id="modalForm" action="">
+                    <div class="form-group ">
+                        <input id="modal_row_id" class="form-control" type="hidden">
+                        <label class="control-label" for="inputSuccess">字段名</label>
+                        <input id="modal_field_name" class="form-control" type="text" name="name" disabled="">
+                    </div>
+                    <div class="form-group ">
+                        <label class="control-label" for="inputSuccess">字段显示属性</label>
+                        <select id="modal_field_type" class="form-control">
+                            <option>文本编辑框</option>
+                            <option>仅显示值</option>
+                            <option>隐藏值</option>
+                            <option>日期编辑框</option>
+                            <option>下拉列表</option>
+                            <option>弹出列表, 从其它数据表选取</option>
+                        </select>
+                    </div>
+                    <div id="modal_field_type_ext_div" class="form-group" style="display: none;">
+                        <label class="control-label" for="inputSuccess">字段显示属性值高级设定</label>
+                        <section class='well'>
+                            <select class="form-control" id="modal_field_type_ext_type">
+                                <option selected="">自定义列表值</option>
+                                <option>客户列表</option>
+                                <option>供应商列表</option>
+                                <option>网点列表</option>
+                                <option>仓库列表</option>
+                                <option>产品列表</option>
+                            </select>
+                            <div id="customize_list">
+                                <label class="control-label" for="inputSuccess">请输入自定义列表值（每行为一个选项）：</label>
+                                <textarea id="modal_field_type_ext_text" class="form-control" rows="3"></textarea>
+                            </div>
+                        </section>
+                    </div>
+                    <div id="modal_field_type_pop_div" class="form-group" style="display: none;">
+                        <label class="control-label" for="inputSuccess">弹出列表高级设定</label>
+                        <section class='well'>
+                            <label class="control-label" for="inputSuccess">选择表单</label>
+                            <select class="form-control" id="modal_field_type_ext_type">
+                                <option selected="">运输单</option>
+                                <option>提货单</option>
+                                <option>供应商单</option>
+                                <option>网点单</option>
+                                <option>仓库单</option>
+                                <option>产品单</option>
+                            </select>
+                            <div id="customize_list">
+                                <label class="control-label" for="inputSuccess">请输入自定义列表值（每行为一个选项）：</label>
+                                <textarea id="modal_field_type_ext_text" class="form-control" rows="3"></textarea>
+                            </div>
+                        </section>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="modalFormOkBtn" type="button" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

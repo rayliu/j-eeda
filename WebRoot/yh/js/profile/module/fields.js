@@ -150,6 +150,10 @@
     var bindFieldTableEvent= function(){
         var $fields_table = $("#fields_body table");
 
+        $('.addBtnSetting').click(function(){
+            addBtnSettingClick(this);
+        });
+
         //编辑表中一行字段的属性
         $fields_table.on('click', '.edit', function(e){
             e.preventDefault();
@@ -191,6 +195,11 @@
             $("#modal_field_type_ext_div").show();
         }else{
             $("#modal_field_type_ext_div").hide();
+        }
+        if('弹出列表, 从其它数据表选取' == $(this).val()){
+            $("#modal_field_type_pop_div").show();
+        }else{
+            $("#modal_field_type_pop_div").hide();
         }
     });
 
@@ -273,13 +282,13 @@
                 id: $($(structure_section).find('.s_id')[0]).val(),
                 name: $($(structure_section).find('.s_name')[0]).val(),
                 structure_type: $($(structure_section).find('.s_type')[0]).val(),
-                parent_name: $($(structure_section).find('.s_type')[0]).val(),
+                add_btn_type: $($(structure_section).find('.s_add_btn_type')[0]).val(),
+                add_btn_setting: $($(structure_section).find('input[name=s_add_btn_setting]')).val(),
                 parent_id: $($(structure_section).find('.s_parent_id')[0]).val(),
                 field_list: fields
             }
             structure_table_array.push(structure);
         }
-        
         return structure_table_array;
     };
 

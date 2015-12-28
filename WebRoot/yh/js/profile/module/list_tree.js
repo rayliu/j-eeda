@@ -151,8 +151,9 @@
                         s_id: structure.ID,
                         s_name: structure.NAME,
                         s_type: structure.STRUCTURE_TYPE,
-                        s_parent_name: 'TODO...',
-                        s_parent_id: structure.PARENT_ID
+                        s_parent_id: structure.PARENT_ID,
+                        s_add_btn_type: structure.ADD_BTN_TYPE,
+                        s_add_btn_setting: structure.ADD_BTN_SETTING
                     }
                 );
 

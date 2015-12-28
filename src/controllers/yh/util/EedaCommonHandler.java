@@ -251,7 +251,7 @@ public class EedaCommonHandler {
             String tableName = tableMap.get("id").toString();
             
             String colName = "parent_id";
-            String colValue = order_id.toString();
+            String colValue = order_id.toString();//TODO:  get structure_parent_id from ??
             List<Map> rowFieldsList = (ArrayList<Map>)tableMap.get("row_list");
             for (Map<String, String> rowMap : rowFieldsList) {
                 for (Entry<String, String> entry: rowMap.entrySet()) {
