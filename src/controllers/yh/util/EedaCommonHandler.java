@@ -267,7 +267,7 @@ public class EedaCommonHandler {
             for (Entry<String, String> entry: tableMap.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                if("id".equals(key) || "structure_id".equals(key)){
+                if("id".equals(key) || "structure_id".equals(key) || key.endsWith("_INPUT")){
                     continue;
                 }
                 colSet += ","+key + "='"+value+"'";
@@ -310,9 +310,15 @@ public class EedaCommonHandler {
             }
         }
         
-        String deleteSql = "delete from T_" + structure_id + " where parent_id=" + orderId + " and id not in (" + StringUtils.join(idList, ", ") + ")";
-        logger.debug(deleteSql);
-        Db.update(deleteSql);
+        if(idList.size()>0){
+            String deleteSql = "delete from T_" + structure_id + " where parent_id=" + orderId + " and id not in (" + StringUtils.join(idList, ", ") + ")";
+            logger.debug(deleteSql);
+            Db.update(deleteSql);
+        }else{
+            String deleteSql = "delete from T_" + structure_id + " where parent_id=" + orderId;
+            logger.debug(deleteSql);
+            Db.update(deleteSql);
+        }
     }
 
     private static void tableRowUpdate(String structure_id,
@@ -321,7 +327,7 @@ public class EedaCommonHandler {
         for (Entry<String, String> entry: rowMap.entrySet()) {//行的每个字段
             String key = entry.getKey();
             String value = entry.getValue();
-            if("id".equals(key)){
+            if("id".equals(key) || key.endsWith("_INPUT")){
                 continue;
             }
             colSet += ","+key + "='"+value+"'";
@@ -339,7 +345,7 @@ public class EedaCommonHandler {
         for (Entry<String, String> entry: rowMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if("id".equals(key)){
+            if("id".equals(key) || key.endsWith("_INPUT")){
                 continue;
             }
             colName += ","+key;

@@ -12,6 +12,12 @@ var refreshUrl=function(url){
  var contactUrl=function(str,id){
 	 refreshUrl(window.location.protocol + "//" + window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')+1)+str+"="+id);
  };
+
+ eeda.urlAfterSave=function(str,id){
+    var http = window.location.protocol;
+    var path = window.location.host+window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')+1);
+    refreshUrl( http+ "//" + path +str+"-"+id);
+ };
  
  eeda.getUrlByNo= function(id, orderNo) {
  	var str = "";

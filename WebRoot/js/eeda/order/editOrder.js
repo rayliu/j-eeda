@@ -223,6 +223,8 @@ var buildOrderDto = function() {
         var row_list = [];
 
         for (var j = 0; j < table_rows.length; j++) { //遍历当前表的所有行
+            if(j == 0)
+                continue;
             var table_row = table_rows[j];
             var row_obj = {};
             var fields_input = $(table_row).find('input');
@@ -231,7 +233,6 @@ var buildOrderDto = function() {
                     var field = fields_input[k];
                     row_obj[$(field).attr('name')] = $(field).val();
                 }
-                row_list.push(row_obj);
             }
             var fields_select = $(table_row).find('select');
             if (fields_select.length > 0) {
@@ -239,6 +240,8 @@ var buildOrderDto = function() {
                     var field = fields_select[l];
                     row_obj[$(field).attr('name')] = $(field).val();
                 }
+            }
+            if(fields_input.length > 0 || fields_select.length > 0){
                 row_list.push(row_obj);
             }
         };
@@ -307,8 +310,10 @@ var bindBtnClick = function() {
             var order = data;
             console.log(order);
             if (order.ID > 0) {
+                $('#order_id').val(order.ID);
                 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 
+                eeda.urlAfterSave($("#module_id").val(), order.ID);
                 //重新取一次数据渲染页面
                 var structure_json_str = $('#module_structure').val();
                 var structure_json = JSON.parse(structure_json_str);
