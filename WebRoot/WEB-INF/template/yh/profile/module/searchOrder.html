@@ -7,9 +7,11 @@
 	<div class="row">
 		<input type="hidden" id='module_id' value="${module_id}">
 		<h2><span id='module_name'></span>查询</h2>
-	    <section id='fields'  class="row">
+		<form id='searchForm'>
+		    <section id='fields'  class="row">
 
-	    </section>
+		    </section>
+		</form>
 	    <section id='actions'  class="row">
 	    	<div class="col-lg-12">
 				<div id ='button-bar' class="form-group button-bar" >
@@ -52,10 +54,12 @@
 
 
 <%include("/yh/component/jsTemplate/inputField.js", {id:'input_field'}){} %>
+<%include("/yh/component/jsTemplate/inputHiddenField.js", {}){} %>
 <%include("/yh/component/jsTemplate/inputDateQueryField.js",{}){} %>
 <%include("/yh/component/jsTemplate/inputCustomerField.js",{}){} %>
 <%include("/yh/component/jsTemplate/inputSpField.js",{}){} %>
-<%include("/yh/component/jsTemplate/detailTable.js", { id:'table_template'}){} %>
+<%include("/yh/component/jsTemplate/inputCustomizeSelectField.js",{}){} %>
+<%include("/yh/component/jsTemplate/searchTable.js", {}){} %>
 <%include("/yh/component/jsTemplate/button.js", { id:'button_template'}){} %>
 
 <script src="/js/eeda/order/searchOrder.js"></script>

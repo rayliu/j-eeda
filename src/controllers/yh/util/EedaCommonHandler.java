@@ -2,10 +2,15 @@ package controllers.yh.util;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
@@ -14,6 +19,8 @@ import com.google.gson.Gson;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+
+import controllers.eeda.ModuleController;
 
 public class EedaCommonHandler {
     private static Logger logger = Logger.getLogger(EedaCommonHandler.class);
@@ -89,7 +96,130 @@ public class EedaCommonHandler {
         logger.debug(orderRec.toJson());
         return orderRec;
     }
+    
+    public static Map searchOrder(Enumeration<String>  paraNames, HttpServletRequest request){
+        Map orderListMap = new HashMap();
+        String structur_id = "";
+        
+        String draw = "";
+        String start = "";
+        String length = "";
+        
+        String colCondition = "";
+        String subCol = "";
+        
+        //获取field定义
+        List<String> fieldIdList = new ArrayList<String>();
+        List<String> fieldNameList = new ArrayList<String>();
+        for (Enumeration<String> e = paraNames; paraNames.hasMoreElements();){
+            String paraName = e.nextElement();
+            String paraValue = request.getParameter(paraName);
+            System.out.println(paraName + "=" + paraValue);
+            
+            if("structure_id".equals(paraName)){
+                structur_id = paraValue;
+            }
+            if("draw".equals(paraName)){
+                draw = paraValue;
+            }
+            if("start".equals(paraName)){
+                start = paraValue;
+            }
+            if("length".equals(paraName)){
+                length = paraValue;
+            }
+            if(paraName.startsWith("F") && !paraName.endsWith("_INPUT")){//获取field定义
+                String id = paraName.split("_")[0].replace("F", "");
+                fieldIdList.add(id);
+                fieldNameList.add(paraName);
+            }
+            
+        }
 
+        List<Record> resultList = null;
+        //获取field定义, 判断是否需要针对特殊列表转换ID -> 名字
+        String fieldSql = "select * from field where id in(" + StringUtils.join(fieldIdList, ", ")+")";
+        List<Record> fieldDefineList = Db.find(fieldSql);
+        
+        Map<String, Map> dateMap = new HashMap<String, Map>();
+        for (String fieldName : fieldNameList) {
+                String key = fieldName;
+                String value = request.getParameter(key);
+                
+                logger.debug("key="+key);
+                if(key.endsWith("_begin_time")){
+                    String dateFieldKey = key.substring(0, key.indexOf("_begin_time"));
+                    Map dateValueMap = new HashMap();
+                    dateValueMap = dateMap.get(dateFieldKey);
+                    if(dateValueMap==null){
+                        dateValueMap = new HashMap();
+                    }
+                    dateValueMap.put("begin_time", value);
+                }else if(key.endsWith("_end_time")){
+                    String dateFieldKey = key.substring(0, key.indexOf("_end_time"));
+                    Map dateValueMap = new HashMap();
+                    dateValueMap = dateMap.get(dateFieldKey);
+                    if(dateValueMap==null){
+                        dateValueMap = new HashMap();
+                    }
+                    dateValueMap.put("end_time", value);
+                }else{
+                    Record fieldDefine = getFieldDefine(key, fieldDefineList);
+                    if("下拉列表".equals(fieldDefine.get("field_type")) 
+                           && ("客户列表".equals(fieldDefine.get("field_type_ext_type"))
+                               || "供应商列表".equals(fieldDefine.get("field_type_ext_type"))
+                              )
+                      ){
+                        subCol += ", (select abbr from contact where id="+key+") "+ key +"_INPUT";
+                        if(StringUtils.isNotEmpty(value)){
+                            colCondition += " and " + key + " = '" + value + "'";
+                        }
+                    }else{
+                        if(StringUtils.isNotEmpty(value))
+                            colCondition += " and " + key + " like '%" + value + "%'";
+                    }
+                }
+        }
+        
+        //处理日期
+        for (Entry<String, Map> entry: dateMap.entrySet()) {
+            String key = entry.getKey();
+            Map valueMap = entry.getValue();
+            colCondition += "and " + key + " between '" + valueMap.get("begin_time") + " 00:00:00' and " + valueMap.get("end_time") +" 23:59:59";
+        }
+        
+        String sql = "select t.* "+ subCol +" from T_" + structur_id +" t where 1=1 " + colCondition;
+        
+        String totalSql = "select count(1) total from (" + sql + ") A";
+        
+        Record rec = Db.findFirst(totalSql);
+        String sLimit = " limit " + start + ", " +length; 
+        resultList = Db.find(sql +" order by id desc " + sLimit);
+        if(resultList == null)
+            resultList = Collections.EMPTY_LIST;
+        
+        
+        orderListMap.put("draw", draw);
+        orderListMap.put("recordsTotal", rec.getLong("total"));
+        orderListMap.put("recordsFiltered", rec.getLong("total"));
+
+        orderListMap.put("data", resultList);
+
+        return orderListMap;
+    }
+
+    private static Record getFieldDefine(String fieldName, List<Record> fieldDefineList){
+        Record rec = null;
+        for (Record record : fieldDefineList) {
+            String recFieldName = "F" + record.get("id") + "_" + record.get("field_name");
+            if(fieldName.equals(recFieldName)){
+                rec = record;
+                break;
+            }
+        }
+        return rec;
+    }
+    
     private static Record buildFieldRec(String order_id, Map<String, ?> structure) {
         int structureId = ((Double)structure.get("ID")).intValue();
         Record orderRec;
@@ -225,21 +355,21 @@ public class EedaCommonHandler {
         BigInteger order_id = new BigInteger("0");
         List<Map<String, String>> fields_list = (ArrayList<Map<String, String>>)dto.get("fields_list");
         for (Map<String, String> tableMap : fields_list) {//获取每一行
-            String tableName = tableMap.get("id");
+            String tableName = tableMap.get("structure_id");
             
             String colName = "parent_id";
             String colValue = "null";
             for (Entry<String, String> entry: tableMap.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                if("id".equals(key)){
+                if("id".equals(key) || key.endsWith("_INPUT") || "structure_id".equals(key)){
                     continue;
                 }
                 colName += ","+key;
                 colValue+= ",'"+value+"'";
             }
             
-            String sql = "insert into "+tableName+"("+colName+") values("+colValue+")";
+            String sql = "insert into T_"+tableName+"("+colName+") values("+colValue+")";
             logger.debug(sql);
             Db.update(sql);
             Record idRec = Db.findFirst("select LAST_INSERT_ID() id");
@@ -248,25 +378,26 @@ public class EedaCommonHandler {
         }
         List<Map<String, ?>> table_list = (ArrayList<Map<String, ?>>)dto.get("table_list");
         for (Map<String, ?> tableMap : table_list) {//获取每一行
-            String tableName = tableMap.get("id").toString();
+            String tableName = tableMap.get("structure_id").toString();
             
-            String colName = "parent_id";
-            String colValue = order_id.toString();//TODO:  get structure_parent_id from ??
             List<Map> rowFieldsList = (ArrayList<Map>)tableMap.get("row_list");
             for (Map<String, String> rowMap : rowFieldsList) {
+                String colName = "parent_id";
+                String colValue = order_id.toString();//TODO:  get structure_parent_id from ??
                 for (Entry<String, String> entry: rowMap.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
-                    if("id".equals(key)){
+                    if("id".equals(key) || key.endsWith("_INPUT") || "structure_id".equals(key)){
                         continue;
                     }
                     colName += ","+key;
                     colValue+= ",'"+value+"'";
                 }
+                String sql = "insert into T_"+tableName+"("+colName+") values("+colValue+")";
+                logger.debug(sql);
+                Db.update(sql);
             }
-            String sql = "insert into "+tableName+"("+colName+") values("+colValue+")";
-            logger.debug(sql);
-            Db.update(sql);
+            
         }
         return order_id.toString();
     }

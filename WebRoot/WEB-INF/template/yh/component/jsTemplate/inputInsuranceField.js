@@ -1,7 +1,7 @@
 <script id="input_insurance_template" type="text/html">
 	<div class="col-lg-4">
 		<div class="form-group">
-			<input id="{{id}}" style="display: none;" name="{{id}}" value="{{value}}"/>
+			<input id="{{id}}" style="display: none;" name="{{id}}" value="{{value}}" field_type='list'/>
 			<label class="search-label">{{label}}</label>
 			<input type="text" class="form-control search-control" 
 			id="{{id}}_input" 

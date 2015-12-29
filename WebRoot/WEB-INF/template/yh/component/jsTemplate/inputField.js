@@ -5,6 +5,7 @@
 		    <input type="text" 
 		    	id="{{id}}"
 		    	name="{{id}}"
+		    	field_type="{{field_type}}"
 				class="form-control search-control" 
 				{{disabled}} 
 				placeholder="{{placeholder}}" 

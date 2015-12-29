@@ -2,7 +2,9 @@
 	<div class="col-lg-4">
 		<div class="form-group">
 		    <label class="search-label">{{label}}</label>
-		    <select id="{{id}}" name="{{id}}" class="form-control search-control" {{disabled}}>
+		    <select id="{{id}}" name="{{id}}" 
+		    	field_type='list'
+		    	class="form-control search-control" {{disabled}}>
 		    	{{each items as item}}
                     <option>{{item}}</option>
                 {{/each}}

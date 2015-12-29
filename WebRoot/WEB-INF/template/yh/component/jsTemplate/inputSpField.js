@@ -1,10 +1,10 @@
 <script id="input_sp_template" type="text/html">
 	<div class="col-lg-4">
 		<div class="form-group">
-			<input id="{{id}}" type="hidden" name="{{id}}" value="{{value}}"/>
+			<input id="{{id}}" type="text" name="{{id}}" field_type='list' value="{{value}}" style="display:none;"/>
 			<label class="search-label">{{label}}</label>
 			<input type="text" class="form-control search-control" 
-			id="{{id}}_INPUT" 
+			id="{{id}}_INPUT" name="{{id}}_INPUT" 
 			placeholder="请选择供应商"  value="{{display_value}}">
 			<ul id='{{id}}_list' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 			</ul>

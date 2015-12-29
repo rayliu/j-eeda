@@ -21,7 +21,9 @@ $.post('/module/getOrderStructure', {
     bindBtnClick(); //绑定按钮事件
 
     //数据处理
-    fillOrderData(json);
+    if($('#order_id').val()!=''){
+        fillOrderData(json);
+    }
 }, 'json');
 
 var fillOrderData = function(structure_json) {
@@ -221,7 +223,7 @@ var buildOrderDto = function() {
         var row_list = [];
 
         for (var j = 0; j < table_rows.length; j++) { //遍历当前表的所有行
-            table_row = table_rows[j];
+            var table_row = table_rows[j];
             var row_obj = {};
             var fields_input = $(table_row).find('input');
             if (fields_input.length > 0) {
