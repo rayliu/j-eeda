@@ -112,16 +112,17 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            { "mDataProp": "TOTAL_AMOUNT", "sClass": "total_amount",
-    			"sClass": "total_amount",
-            	"fnRender": function(obj) {
-            		if(obj.aData.CARGO_NATURE == "ATM"){
-            			return obj.aData.TOTAL_AMOUNT;
-            		}else 
-            			return obj.aData.CARGO_AMOUNT;
-            		}
-            },
-            { "mDataProp": "TOTAL_AMOUNT2", "sClass": "total_amount2"},		
+            { "mDataProp": "TOTAL_AMOUNT", "sClass": "total_amount"},
+//            	,
+//    			"sClass": "total_amount",
+//            	"fnRender": function(obj) {
+//            		if(obj.aData.CARGO_NATURE == "ATM"){
+//            			return obj.aData.TOTAL_AMOUNT;
+//            		}else 
+//            			return obj.aData.CARGO_AMOUNT;
+//            		}
+//            },
+ //           { "mDataProp": "TOTAL_AMOUNT2", "sClass": "total_amount2"},		//件数
             { "mDataProp": "DOADDRESS","sClass": "doaddress"},
             { "mDataProp": "ARRIVAL_MODE",
             	"sClass": "arrival_model",
@@ -145,33 +146,23 @@ $(document).ready(function() {
             		}else{
             			return "";
             		}}},
-            { 
-            	"mDataProp": "SPNAME",
-            	"sWidth": "100px",
-            	"sClass": "spname"
-            },
-            { 
-            	"mDataProp": "ROUTE_FROM",
-                "sClass": "route_from"
-            },
-            {"mDataProp":"CHARGE_TYPE2",
+            {"mDataProp": "SPNAME","sWidth": "100px","sClass": "spname"},
+            {"mDataProp": "ROUTE_FROM","sClass": "route_from" },
+            {"mDataProp":"CHARGE_TYPE",
             	"sClass": "chargeType2",
             	"fnRender":function(obj){
-            		if(obj.aData.CHARGE_TYPE2 == "perUnit"){
+            		if(obj.aData.CHARGE_TYPE == "perUnit"){
     					return "计件";
-    				}else if(obj.aData.CHARGE_TYPE2 == "perCar"){
+    				}else if(obj.aData.CHARGE_TYPE == "perCar"){
     					return "整车";
-    				}else if(obj.aData.CHARGE_TYPE2 == "perCargo"){
+    				}else if(obj.aData.CHARGE_TYPE == "perCargo"){
     					return "零担";
     				}else{
     					return "";
     				}
             	}
             },
-            { 
-            	"mDataProp": "OFFICE_NAME",
-                "sClass": "office_name"
-            }
+            {"mDataProp": "OFFICE_NAME","sClass": "office_name"}
         ]      
     });	
    
@@ -364,85 +355,7 @@ $(document).ready(function() {
     	//console.log("单号："+transferOrderIds);
     });
     
-    
-    /*$("#eeda-table").on('click', '.checkedOrUnchecked', function(e){
-    	if(spName.length == 0){
-    		$("#saveBtn").attr('disabled', true);
-    	}
-		if($(this).prop("checked") == true){
-			$("#saveBtn").attr('disabled', false);
-			if(spName.length != 0){
-				if(spName[0] != $(this).parent().siblings('.spname')[0].innerHTML && $(this).parent().siblings('.spname')[0].innerHTML != ''){
-					alert("请选择同一供应商!");
-					return false;
-				}else if(chargeType2[0] != $(this).parent().siblings('.chargeType2')[0].innerHTML){
-					alert("请选择同一计费方式!");
-					return false;
-				}else{
-					if(routeArr.length != 0){
-						if(routeArr[0] != $(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML && $(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML != ''){
-							alert("请选择同一线路的运输单!");
-							return false;
-						}else{
-							if(officeName.length != 0){
-								if(officeName[0] != $(this).parent().siblings('.office_name')[0].innerHTML){
-									alert("请选择同一网点的运输单！");
-									return false;
-								}else{
-									if(model[0] !=$(this).parent().siblings('.arrival_model')[0].innerHTML){
-										alert("请选择同一到达方式的运输单");
-										return false;
-									}
-									spName.push($(this).parent().siblings('.spname')[0].innerHTML);
-									routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
-									officeName.push($(this).parent().siblings('.office_name')[0].innerHTML);
-									model.push($(this).parent().siblings('.arrival_model')[0].innerHTML);
-								}
-								
-							}else{
-								if($(this).parent().siblings('.office_name')[0].innerHTML != ''){
-									officeName.push($(this).parent().siblings('.office_name')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
-								}
-							}
-							
-						}
-					}else{
-						if($(this).parent().siblings('.operation_type')[0].innerHTML != ''){
-							routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
-						}
-					}
-				}
-			}else{
-				if($(this).parent().siblings('.spname')[0].innerHTML != ''){
-					spName.push($(this).parent().siblings('.spname')[0].innerHTML);
-					routeArr.push($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML);
-					chargeType2.push($(this).parent().siblings('.chargeType2')[0].innerHTML);
-					officeName.push($(this).parent().siblings('.office_name')[0].innerHTML);
-					model.push($(this).parent().siblings('.arrival_model')[0].innerHTML);
-				}
-			}
-		}else{
-			if(spName.length != 0){
-				spName.splice($(this).parent().siblings('.spname')[0].innerHTML, 1);
-			}
-			if(routeArr.length != 0){
-				routeArr.splice($(this).parent().siblings('.route_from')[0].innerHTML + $(this).parent().siblings('.route_to')[0].innerHTML, 1);
-			}
-			if(spName.length == 0){
-				$("#saveBtn").attr('disabled', true);
-			}
-			if(chargeType2.length == 0){
-				chargeType2.splice($(this).parent().siblings('.chargeType2')[0].innerHTML, 1);
-			}
-			if(officeName.length == 0){
-				officeName.splice($(this).parent().siblings('.office_name')[0].innerHTML,1);
-			}
-			if(model.length== 0){
-				model.splice($(this).parent().siblings('.arrival_model')[0].innerHTML,1);
-			}
-			
-		}
-	});*/
+
     
     //获取所有客户
     $('#customer_filter').on('keyup click', function(){

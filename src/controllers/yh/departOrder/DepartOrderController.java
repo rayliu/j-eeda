@@ -2,6 +2,7 @@ package controllers.yh.departOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -339,8 +340,9 @@ public class DepartOrderController extends Controller {
 					+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
 					+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
 					+ " (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS planning_time,"
-					+ " ((SELECT ifnull(sum(toi.amount), 0)	FROM transfer_order_item toi, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toi.order_id = tor.id and tor.cargo_nature = 'cargo') "
-					+ "+ (SELECT count(0) FROM transfer_order_item_detail toid, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toid.order_id = tor.id and tor.cargo_nature = 'ATM')) amount, "
+					+ " ((SELECT ifnull(sum(dt.amount),0) FROM depart_transfer dt LEFT JOIN transfer_order tor on tor.id = dt.order_id LEFT JOIN depart_pickup dp on dp.pickup_id = dt.pickup_id "
+					+ " WHERE dp.depart_id = deo.id and tor.cargo_nature = 'cargo' and tor.id = t.id) "
+					+ "+ (SELECT count(0) FROM transfer_order_item_detail toid, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toid.order_id = tor.id and toid.depart_id = deo.id and tor.cargo_nature = 'ATM')) amount, "
 					+ " (SELECT	tr.arrival_mode	FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id  LIMIT 0,1) arrival_mode, "
 					+ " (SELECT	group_concat(tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS transfer_order_no, "
 					+ " (SELECT	group_concat(	tr.customer_order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS customer_order_no,"
@@ -437,8 +439,9 @@ public class DepartOrderController extends Controller {
 					+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
 					+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
 					+ " (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS planning_time,"
-					+ " ((SELECT ifnull(sum(toi.amount), 0)	FROM transfer_order_item toi, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toi.order_id = tor.id and tor.cargo_nature = 'cargo') "
-					+ "+ (SELECT count(0) FROM transfer_order_item_detail toid, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toid.order_id = tor.id and tor.cargo_nature = 'ATM')) amount, "
+					+ " ((SELECT ifnull(sum(dt.amount),0) FROM depart_transfer dt LEFT JOIN transfer_order tor on tor.id = dt.order_id LEFT JOIN depart_pickup dp on dp.pickup_id = dt.pickup_id "
+					+ " WHERE dp.depart_id = deo.id and tor.cargo_nature = 'cargo' and tor.id = t.id) "
+					+ "+ (SELECT count(0) FROM transfer_order_item_detail toid, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toid.order_id = tor.id and toid.depart_id = deo.id and tor.cargo_nature = 'ATM')) amount, "
 					+ " (SELECT	tr.arrival_mode	FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id  LIMIT 0,1) arrival_mode, "
 					+ " (SELECT	group_concat(tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS transfer_order_no, "
 					+ " (SELECT	group_concat(	tr.customer_order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS customer_order_no,"
@@ -660,57 +663,139 @@ public class DepartOrderController extends Controller {
 					+ getPara("iDisplayLength");
 		}
 		
-		String fromSql=" from v_create_depart vcd where "
-					+ " vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()	+ "') "
-					+ " and vcd.status not in('手动删除', '已入库') "
-					+ " and (vcd.is_direct_deliver != 1 or vcd.is_direct_deliver is null)"
-					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='"	+ currentUser.getPrincipal() + "')"
-					+ " and (pickup_id is not null or operation_type='out_source')"
-					+ " and (cargo_nature='cargo' or total_amount !=0)";
+//		String fromSql=" from v_create_depart vcd where "
+//					+ " vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()	+ "') "
+//					+ " and vcd.status not in('手动删除', '已入库') "
+//					+ " and (vcd.is_direct_deliver != 1 or vcd.is_direct_deliver is null)"
+//					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='"	+ currentUser.getPrincipal() + "')"
+//					+ " and (pickup_id is not null or operation_type='out_source')"
+//					+ " and (cargo_nature='cargo' or total_amount !=0)";
+		 sql= " SELECT tor.id AS id,tor.`STATUS`, tor.order_no AS order_no, '' AS pickup_id, '' AS pickup_no,"
+				+ " tor.customer_order_no AS customer_order_no, tor.planning_time AS planning_time, l1. NAME AS route_from,"
+				+ " l2. NAME AS route_to, c.abbr AS cname, tor.operation_type AS operation_type, tor.cargo_nature AS cargo_nature,"
+				+ " ( CASE WHEN ( tor.cargo_nature = 'ATM' AND tor.operation_type = 'out_source' ) "
+				+ " THEN ( SELECT count(*) FROM transfer_order_item_detail WHERE order_id = tor.id )"
+				+ " WHEN ( tor.cargo_nature = 'cargo' AND tor.operation_type = 'out_source' ) "
+				+ " THEN ( SELECT sum(amount) FROM transfer_order_item WHERE order_id = tor.id )"
+				+ " END ) total_amount,"
+				+ " '' AS doaddress, tor.arrival_mode AS arrival_mode, ifnull(tor.pickup_mode, '') AS pickup_mode, c2.abbr AS spname,"
+				+ " tor.charge_type AS charge_type, o.office_name AS office_name, tor.create_stamp AS create_stamp ,tor.office_id,tor.customer_id "
+				+ " FROM transfer_order tor "
+				+ " LEFT JOIN location l1 ON l1. CODE = tor.route_from"
+				+ " LEFT JOIN location l2 ON l2. CODE = tor.route_to"
+				+ " LEFT JOIN contact c ON c.id = tor.customer_id"
+				+ " LEFT JOIN contact c2 ON c2.id = tor.sp_id"
+				+ " LEFT JOIN office o ON o.id = tor.office_id"
+				+ " WHERE"
+				+ " tor.operation_type = 'out_source'"
+				+ " AND ( ifnull( tor.depart_assign_status, '' ) <> 'ALL' )"
+				+ " AND tor. STATUS not in ('手动删除','取消') "
+				+ " and tor.`STATUS` = '新建' "
+				+ " AND tor.`order_type` <> 'replenishmentOrder'"
+				+ " UNION"
+				+ " SELECT DISTINCT"
+				+ " tor.id AS id,tor.`STATUS`,  tor.order_no AS order_no,  cast(dor.id as char) AS pickup_id,  dor.depart_no AS pickup_no,"
+				+ " tor.customer_order_no AS customer_order_no,  tor.planning_time AS planning_time,"
+				+ " l1. NAME AS route_from,  l2. NAME AS route_to,  c.abbr AS cname, tor.operation_type AS operation_type,  tor.cargo_nature AS cargo_nature,"
+				+ " ( CASE WHEN ( tor.cargo_nature = 'ATM' ) "
+				+ " THEN ( SELECT count(*) FROM transfer_order_item_detail WHERE order_id = tor.id and pickup_id = dor.id )"
+				+ " WHEN ( tor.cargo_nature = 'cargo' ) "
+				+ " THEN ( select sum(amount) from depart_transfer where order_id = tor.id and pickup_id = dor.id )"
+				+ " END ) total_amount,"
+				+ " '' AS doaddress, tor.arrival_mode AS arrival_mode, ifnull(tor.pickup_mode, '') AS pickup_mode,"
+				+ " c2.abbr AS spname, tor.charge_type AS charge_type, o.office_name AS office_name, tor.create_stamp AS create_stamp,tor.office_id,tor.customer_id "
+				+ " FROM depart_order dor"
+				+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dor.id"
+				+ " LEFT JOIN transfer_order tor ON dt.order_id = tor.id "
+				+ " LEFT JOIN location l1 ON l1. CODE = tor.route_from"
+				+ " LEFT JOIN location l2 ON l2. CODE = tor.route_to"
+				+ " LEFT JOIN contact c ON c.id = tor.customer_id"
+				+ " LEFT JOIN contact c2 ON c2.id = tor.sp_id"
+				+ " LEFT JOIN office o ON o.id = tor.office_id"
+				+ " WHERE "
+				+ " dor.`STATUS` = '已入货场' "
+				+ " AND ( dor.is_direct_deliver != 1 OR dor.is_direct_deliver IS NULL )"
+				+ " AND tor. STATUS not in ('手动删除','取消') "
+				+ " and (select GROUP_CONCAT(id) from depart_pickup where pickup_id = dor.id) is null";
 		
-		if (orderNo == null && status == null && address == null
-				&& customer == null && routeFrom == null && routeTo == null
-				&& beginTime == null && endTime == null) {			
-			sqlTotal = "select count(1) total "+ fromSql;
-			sql = "select * " + fromSql+"";
-		} else {
-			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
-			}
-			sqlTotal = "select count(1) total " + fromSql
-					+ " and vcd.order_no like '%"+ orderNo+ "%' "
-					+ " and vcd.status like '%"+ status+ "%' "
-					+ " and vcd.doaddress like '%"+ address+ "%' "
-					+ " and vcd.cname like '%"+ customer+ "%' "
-					+ " and vcd.route_from like '%"+ routeFrom+ "%' "
-					+ " and vcd.route_to like '%"+ routeTo+ "%' "
-					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
-					+ " and vcd.status!='手动删除' "
-					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
-					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
+		String conditions=" where 1=1 ";
+		if (StringUtils.isNotEmpty(orderNo)){
+        	conditions+=" and UPPER(order_no) like '%"+orderNo+"%'";
+        }
+        if (StringUtils.isNotEmpty(status)){
+        	conditions+=" and UPPER(status) like '%"+status+"%'";
+        }   
+        if (StringUtils.isNotEmpty(routeFrom)){
+        	conditions+=" and UPPER(route_from) like '%"+routeFrom+"%'";
+        }
+        if (StringUtils.isNotEmpty(routeTo)){
+        	conditions+=" and UPPER(route_to) like '%"+routeTo+"%'";
+        }
+        if (StringUtils.isNotEmpty(customer)){
+        	conditions+=" and UPPER(cname) like '%"+customer+"%'";
+        }
+        if (StringUtils.isNotEmpty(address)){
+        	conditions+=" and UPPER(doaddress) like '%"+address+"%'";
+        }
+        if (StringUtils.isNotEmpty(beginTime)){
+        	beginTime = " and create_stamp between'"+beginTime+"'";
+        }else{
+        	beginTime =" and create_stamp between '1970-1-1'";
+        }
+        if (StringUtils.isNotEmpty(endTime)){
+        	endTime =" and '"+endTime+"'";
+        }else{
+        	endTime =" and '3000-1-1'";
+        }
+        conditions+=beginTime+endTime;
+        
+        conditions+= " and office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
+        		+ " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
 
-			sql = "select * "  + fromSql
-					+ " and vcd.order_no like '%"+ orderNo+ "%' "
-					+ " and vcd.status like '%"+ status+ "%' "
-					+ " and vcd.doaddress like '%"+ address+ "%' "
-					+ " and vcd.cname like '%"+ customer+ "%' "
-					+ " and vcd.route_from like '%"+ routeFrom+ "%' "
-					+ " and vcd.route_to like '%"+ routeTo+ "%' "
-					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
-					+ " and vcd.status!='手动删除' "
-					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
-					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
-		}
+		
+//		if (orderNo == null && status == null && address == null
+//				&& customer == null && routeFrom == null && routeTo == null
+//				&& beginTime == null && endTime == null) {			
+//			sqlTotal = "select count(1) total "+ fromSql;
+//			sql = "select * " + fromSql+"";
+//		} else {
+//			if (beginTime == null || "".equals(beginTime)) {
+//				beginTime = "1-1-1";
+//			}
+//			if (endTime == null || "".equals(endTime)) {
+//				endTime = "9999-12-31";
+//			}
+//			sqlTotal = "select count(1) total " + fromSql
+//					+ " and vcd.order_no like '%"+ orderNo+ "%' "
+//					+ " and vcd.status like '%"+ status+ "%' "
+//					+ " and vcd.doaddress like '%"+ address+ "%' "
+//					+ " and vcd.cname like '%"+ customer+ "%' "
+//					+ " and vcd.route_from like '%"+ routeFrom+ "%' "
+//					+ " and vcd.route_to like '%"+ routeTo+ "%' "
+//					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
+//					+ " and vcd.status!='手动删除' "
+//					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
+//					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
+//
+//			sql = "select * "  + fromSql
+//					+ " and vcd.order_no like '%"+ orderNo+ "%' "
+//					+ " and vcd.status like '%"+ status+ "%' "
+//					+ " and vcd.doaddress like '%"+ address+ "%' "
+//					+ " and vcd.cname like '%"+ customer+ "%' "
+//					+ " and vcd.route_from like '%"+ routeFrom+ "%' "
+//					+ " and vcd.route_to like '%"+ routeTo+ "%' "
+//					+ " and vcd.planning_time between '"+ beginTime+ "' and '"+ endTime+ "'"
+//					+ " and vcd.status!='手动删除' "
+//					+ " and vcd.office_id in (select office_id from user_office where user_name='"+ currentUser.getPrincipal()+ "') "
+//					+ " and vcd.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
+//		}
 		String orderByStr = " order by planning_time desc ";
         if(colName.length()>0){
         	orderByStr = " order by "+colName+" "+sortBy;
         }
-		rec = Db.findFirst(sqlTotal);
+		rec = Db.findFirst("select count(*) total from (select * from ("+sql+") A "+conditions+ ") B" );
 		logger.debug("total records:" + rec.getLong("total"));
-		List<Record> transferOrders = Db.find(sql + orderByStr + sLimit);
+		List<Record> transferOrders = Db.find("select * from ("+sql+") A "+conditions+  orderByStr + sLimit);
 
 		Map transferOrderListMap = new HashMap();
 		transferOrderListMap.put("sEcho", pageIndex);
