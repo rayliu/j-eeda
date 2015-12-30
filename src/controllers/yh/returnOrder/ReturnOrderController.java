@@ -229,7 +229,7 @@ public class ReturnOrderController extends Controller {
         }	
 			
 		// 获取总条数
-		sqlTotal = "select count(1) total from ( SELECT distinct *  from ("+ conFromSql+") A " + conditions+ ") B";
+		sqlTotal = "select count(1) total from ( SELECT  *  from ("+ conFromSql+") A " + conditions+ ") B";
 		sql = "select * from ("+conFromSql+") A";
 		
 		
@@ -241,7 +241,7 @@ public class ReturnOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 		
 		startTime = Calendar.getInstance().getTimeInMillis();
-		List<Record> orders = Db.find(" SELECT distinct *  from(" + sql + ") A" + conditions + orderByStr + sLimit);
+		List<Record> orders = Db.find(" SELECT  *  from(" + sql + ") A" + conditions + orderByStr + sLimit);
 		endTime = Calendar.getInstance().getTimeInMillis();
 		logger.debug("ReturnOrder.list() sql time cost:" + (endTime - startTime));
 		
