@@ -716,7 +716,7 @@ public class DepartOrderController extends Controller {
 				+ " dor.`STATUS` = '已入货场' "
 				+ " AND ( dor.is_direct_deliver != 1 OR dor.is_direct_deliver IS NULL )"
 				+ " AND tor. STATUS not in ('手动删除','取消') "
-				+ " and (select GROUP_CONCAT(id) from depart_pickup where pickup_id = dor.id) is null";
+				+ " and (select GROUP_CONCAT(id) from depart_pickup where pickup_id = dor.id and order_id = tor.id) is null";
 		
 		String conditions=" where 1=1 ";
 		if (StringUtils.isNotEmpty(orderNo)){
