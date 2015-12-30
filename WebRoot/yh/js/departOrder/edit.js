@@ -776,6 +776,7 @@
 	        					$("#showDepartNo").text(data.DEPART_NO);
 	        					$("#milestoneDepartId").val(data.ID);
 	        		    	    $("#departureConfirmationBtn").attr("disabled", false);
+                                contactUrl("edit?id",data.ID);
 	        		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        				}else{
 	        					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
