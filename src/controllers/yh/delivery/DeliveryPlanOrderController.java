@@ -72,7 +72,7 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join contact c2 on p2.contact_id = c2.id"
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " where d.status = '新建' and d.sp_id is not null and ifnull(d.delivery_plan_type,'') != 'processed' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 			
 			sql = "select d.*,c.abbr as customer,c2.company_name as c2,(select group_concat( distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no,"
@@ -83,7 +83,7 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join party p2 on d.sp_id = p2.id "
 					+ " left join contact c2 on p2.contact_id = c2.id"
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+					+ " where d.status = '新建' and d.sp_id is not null and ifnull(d.delivery_plan_type,'') != 'processed' and  w.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by d.create_stamp desc "
 					+ sLimit;
 
@@ -97,7 +97,7 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed'"
+					+ " where d.status = '新建' and d.sp_id is not null and ifnull(d.delivery_plan_type,'') != 'processed'"
 					+ " and ifnull(d.order_no,'') like '%" + orderNoFilter + "%' "
 					+ " and ifnull(d.status,'') like '%" + statusFilter + "%' "
 					+ " and ifnull(c.abbr,'') like '%" + customerFilter + "%' "
@@ -116,7 +116,7 @@ public class DeliveryPlanOrderController extends Controller {
 					+ " left join delivery_order_item dt2 on dt2.delivery_id = d.id "
 					+ " left join transfer_order_item_detail trid on trid.id = dt2.transfer_item_detail_id "
 					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " where d.status = '新建' and ifnull(d.delivery_plan_type,'') != 'processed'"
+					+ " where d.status = '新建' and d.sp_id is not null and ifnull(d.delivery_plan_type,'') != 'processed'"
 					+ " and ifnull(d.order_no,'') like '%" + orderNoFilter + "%' "
 					+ " and ifnull(d.status,'') like '%" + statusFilter + "%' "
 					+ " and ifnull(c.abbr,'') like '%" + customerFilter + "%' "
