@@ -301,6 +301,7 @@ public class DeliveryController extends Controller {
 				+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d. STATUS, '') IN "+status+""
 				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+				+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 				+ " order by d.create_stamp desc" + sLimit;
 
 		List<Record> depart = null;
@@ -325,6 +326,7 @@ public class DeliveryController extends Controller {
 					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.status,'') in "
 					+ status
 					+" AND ifnull(d.create_stamp,'') BETWEEN '1-1-1'AND '9999-12-31'"
+					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
 			depart = Db.find(sql);
 		} else {
@@ -368,6 +370,7 @@ public class DeliveryController extends Controller {
 					+ beginTime
 					+ "' and '"
 					+ endTime + "' "
+					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
 			String sql_seach = "select distinct d.*,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ("
@@ -421,6 +424,7 @@ public class DeliveryController extends Controller {
 					+ beginTime
 					+ "' and '"
 					+ endTime + "'"
+					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')order by d.create_stamp desc" + sLimit;
 			depart = Db.find(sql_seach);
 		}
