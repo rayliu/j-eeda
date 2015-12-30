@@ -76,7 +76,7 @@
                             +'           <option ' + (command.action == '新增'?'selected':'') +'>新增</option>'
                             +'           <option ' + (command.action == '更新'?'selected':'') +'>更新</option>'
                             +'       </select> 动作, 并执行以下脚本'
-                            +'       <textarea class="form-control" rows="3">' + command.condition + '</textarea>'
+                            +'       <textarea class="form-control" rows="3">' + command.script + '</textarea>'
                             +'    </li>';
                         };
                     }

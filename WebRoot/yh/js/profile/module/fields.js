@@ -36,6 +36,27 @@
         };
         sectionDataTable.row.add(item).draw(false);
     });
+
+    //定义子表“显示类型”：字段，列表
+    $('#fields_body').on('change', 'select.s_type', function(event) {
+        var select = $(this);
+        var add_btn_type_field = select.parent().parent().parent().find('div[name=add_btn_type_field]')
+        if('字段' == select.val()){
+            add_btn_type_field.hide();
+        }else{
+            add_btn_type_field.show();
+        }
+    });
+    //定义“新增”按钮类型
+    $('#fields_body').on('change', 'select.s_add_btn_type', function(event) {
+        var select = $(this);
+        var editIcon = select.parent().find('a[name=addBtnSetting]');
+        if('添加空行' == select.val()){
+            editIcon.hide();
+        }else{
+            editIcon.show();
+        }
+    });
     //-------------   子表的动态处理
 
     var tableSetting = {
