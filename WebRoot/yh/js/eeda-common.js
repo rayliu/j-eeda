@@ -80,11 +80,17 @@ var refreshUrl=function(url){
   * @param d [0-9]位 逗号隔开
   */
 
-  eeda.numFormat = function(number,d) {
+  eeda.numFormat = function(number,d) {  
 	  var numArrs = ['0','1','2','3','4','5','6','7','8','9'],
           REG_NUMBER = /^\d+(.\d+)?$/;
 
-      d = d || 3; // 不传 是3位 千分位
+      d = d || 3, // 不传 是3位 千分位
+      isMinus = false;
+      
+      if(number<0){
+    	  number *= -1;
+    	  isMinus = true;
+      }; 
 
       if(isNumber(number) || isString(number) || REG_NUMBER.test(number)) {
     	  // 先转换成字符串
@@ -114,6 +120,10 @@ var refreshUrl=function(url){
 	                 t += prefixArr[i] + ((i + 1) % isArrayIndex == 0 && (i + 1) != prefixArr.length ? "," : "");
 	             }
 	             t = t.split("").reverse().join("");
+	             
+	             if(isMinus)        //判断是否为负数
+  	            	 t = '-' + t;
+	             
 	             if(suffix != '') {
 	                 return t + "." + suffix;
 	             }else {
@@ -122,12 +132,9 @@ var refreshUrl=function(url){
 	         }else {
 	             return '传入的多少位不正确';
 	         }
-	      }else if(prefix != '' && suffix == ''){
-	
-	       return prefix;
 	      }else if(prefix == '' && suffix != ''){
-	             prefix = 0;
-	             return prefix + suffix;
+              prefix = 0;
+              return prefix + suffix;
 	      }else {
 	          return "有错误";
 	      }
