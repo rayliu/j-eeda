@@ -71,6 +71,87 @@ var refreshUrl=function(url){
 
      return str;
  };
+ 
+ 
+ 
+  /**
+  * JS格式化
+  * @param number 要格式化的数字
+  * @param d [0-9]位 逗号隔开
+  */
+
+  eeda.numFormat = function(number,d) {
+	  var numArrs = ['0','1','2','3','4','5','6','7','8','9'],
+          REG_NUMBER = /^\d+(.\d+)?$/;
+
+      d = d || 3; // 不传 是3位 千分位
+
+      if(isNumber(number) || isString(number) || REG_NUMBER.test(number)) {
+    	  // 先转换成字符串
+	      var toString = number + '',
+	          isPoint = toString.indexOf('.'),
+	          prefix,   // 前缀
+	          suffix,   // 后缀
+	          t = '';
+	
+	      if(isPoint > 0) {
+	         prefix = toString.substring(0,isPoint);
+	         suffix = toString.substring(isPoint + 1);
+	
+	      }else if(isPoint == 0) {
+	             prefix = '';
+	             suffix = toString.substring(1);
+	      }else {
+	             prefix = toString;
+	             suffix = '';
+	      }
+	
+	      if(prefix != '') {
+	         prefixArr = prefix.split('').reverse();
+	         var isArrayIndex = isArray(d,numArrs);
+	         if(isArrayIndex > -1) {
+	        	 for(var i = 0, ilen = prefixArr.length; i < ilen; i+=1) {
+	                 t += prefixArr[i] + ((i + 1) % isArrayIndex == 0 && (i + 1) != prefixArr.length ? "," : "");
+	             }
+	             t = t.split("").reverse().join("");
+	             if(suffix != '') {
+	                 return t + "." + suffix;
+	             }else {
+	                 return t;
+	             }
+	         }else {
+	             return '传入的多少位不正确';
+	         }
+	      }else if(prefix != '' && suffix == ''){
+	
+	       return prefix;
+	      }else if(prefix == '' && suffix != ''){
+	             prefix = 0;
+	             return prefix + suffix;
+	      }else {
+	          return "有错误";
+	      }
+     }else {
+         return '传入的要格式化的数字不符合';
+     }
+  };
+  function isArray(item,arrs) {
+      for(var i = 0, ilen = arrs.length; i < ilen; i++) {
+          if(item == arrs[i]) {
+              return i;
+          }
+      }
+      return -1;
+   }
+   function isNumber(number) {
+      return Object.prototype.toString.apply(number) === '[object Number]';
+   }
+
+   function isString(number) {
+      return Object.prototype.toString.apply(number) === ['object String'];
+   }
+ 
+
 
  window.onunload=function(){
     //页面刷新时调用，这里需要判断是否当前单据是否有更新，提示用户先保存
