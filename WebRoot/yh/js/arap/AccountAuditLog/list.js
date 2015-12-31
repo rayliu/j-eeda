@@ -52,7 +52,7 @@ $(document).ready(function() {
             {"mDataProp":"CHARGE_AMOUNT",
             	"fnRender": function(obj) {
             		if(obj.aData.CHARGE_AMOUNT!=null)
-            			return "<p align='right'>"+parseFloat(obj.aData.CHARGE_AMOUNT).toFixed(2)+"</p>";
+            			return "<p align='right'>"+eeda.numFormat(parseFloat(obj.aData.CHARGE_AMOUNT).toFixed(2),3)+"</p>";
             		else
             			return obj.aData.CHARGE_AMOUNT;
             	}  
@@ -61,7 +61,7 @@ $(document).ready(function() {
             {"mDataProp":"COST_AMOUNT",
             	"fnRender": function(obj) {
             		if(obj.aData.COST_AMOUNT!=null)
-            			return "<p align='right'>"+parseFloat(obj.aData.COST_AMOUNT).toFixed(2)+"</p>";
+            			return "<p align='right'>"+eeda.numFormat(parseFloat(obj.aData.COST_AMOUNT).toFixed(2),3)+"</p>";
             		else
             			return obj.aData.COST_AMOUNT;
             	}  
@@ -74,7 +74,6 @@ $(document).ready(function() {
     });
 
     //accountAuditLogTable.fnSetColumnVis(4, false );
-
     
     var accountTable = $('#account-table').dataTable({
     	"bFilter": false, //不需要默认的搜索框
@@ -100,10 +99,26 @@ $(document).ready(function() {
             },
 	        {"mDataProp":"BANK_NAME"},
 	        {"mDataProp":"DATE"},
-	        {"mDataProp": "INIT_AMOUNT"}, //期初
-            {"mDataProp": "TOTAL_CHARGE"}, //本期收入
-	        {"mDataProp":"TOTAL_COST"},  //本期支出
-            {"mDataProp":"BALANCE_AMOUNT"} //期末结余        
+	        {"mDataProp": "INIT_AMOUNT",  //期初
+	        	"fnRender": function(obj) {
+	        		return eeda.numFormat(obj.aData.INIT_AMOUNT,3);
+	        	}
+    		},
+            {"mDataProp": "TOTAL_CHARGE",  //本期收入
+	        	"fnRender": function(obj) {
+	        		return eeda.numFormat(obj.aData.TOTAL_CHARGE,3);
+	        	}
+    		}, 
+	        {"mDataProp":"TOTAL_COST",  //本期支出
+	        	"fnRender": function(obj) {
+	        		return eeda.numFormat(obj.aData.TOTAL_COST,3);
+	        	}
+    		},  
+            {"mDataProp":"BALANCE_AMOUNT",   //期末结余    
+	        	"fnRender": function(obj) {
+	        		return eeda.numFormat(obj.aData.BALANCE_AMOUNT,3);
+	        	}
+    		}    
 	     ]      
     });
     
