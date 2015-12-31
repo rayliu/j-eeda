@@ -68,7 +68,7 @@ public class AccountAuditLogController extends Controller {
     	if(endTime == null || "".equals(endTime)){
     		endTime = "2037-12-31";
     	}else{
-    		endTime = getPara("beginTime")+"-31";
+    		endTime = getPara("beginTime")+"-31 23:59:59";
     	}
     	
     	
