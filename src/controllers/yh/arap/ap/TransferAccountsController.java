@@ -211,111 +211,10 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.save();
 			}
 			
-			//日记账金额更新
-			updateAccountSummary(amount, Long.parseLong(out_filter),Long.parseLong(in_filter) ,transfer_time);
-			
 			renderJson(transferaccounts);
 		}
 		
-		
-		//更新日记账的账户期初结余
-		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
-		@Before(Tx.class)
-		private void updateAccountSummary(String amount, Long out_filter, Long in_filter,  String pay_time) {
-			Calendar cal = Calendar.getInstance();  
-			int this_year = cal.get(Calendar.YEAR);  
-			int this_month = cal.get(Calendar.MONTH)+1;  
-			String year = pay_time.substring(0, 4);
-			String month = pay_time.substring(5, 7);
-			DecimalFormat df = new DecimalFormat("#.00");
-			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
-				
-				//支出
-				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, out_filter, year, month);
-				if(aaas!=null){
-					Double total_cost = aaas.getDouble("total_cost") + Double.parseDouble(amount);
-					Double balance_amount = aaas.getDouble("balance_amount") - Double.parseDouble(amount);
-					aaas.set("total_cost",df.format(total_cost));
-					aaas.set("balance_amount",df.format(balance_amount));
-					aaas.update();
-				}else{
-					ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
-				}
-				
-				//收入
-				ArapAccountAuditSummary aaas2 = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, in_filter, year, month);
-				if(aaas2!=null){
-					Double total_charge = aaas2.getDouble("total_charge") + Double.parseDouble(amount);
-					Double balance_amount = aaas2.getDouble("balance_amount") + Double.parseDouble(amount);
-					aaas2.set("total_charge",df.format(total_charge) );
-					aaas2.set("balance_amount",df.format(balance_amount));
-					aaas2.update();
-				}else{
-					ArapAccountAuditSummary newSummary = new ArapAccountAuditSummary();
-				}
-			}else{
-				
-				//支出
-				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, out_filter, year, month);
-				
-				if(aaas!=null){
-					Double total_cost = aaas.getDouble("total_cost") + Double.parseDouble(amount);
-					Double balance_amount = aaas.getDouble("balance_amount") - Double.parseDouble(amount);
-					aaas.set("total_cost",df.format(total_cost));
-					aaas.set("balance_amount",df.format(balance_amount));
-					aaas.update();
-					
-					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
-						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
-								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-								, out_filter, this_year, Integer.parseInt(month)+i);
-						Double init_amount = this_aaas.getDouble("init_amount") - Double.parseDouble(amount);
-						Double balance_amount2 =  this_aaas.getDouble("balance_amount") - Double.parseDouble(amount);
-						this_aaas.set("init_amount", df.format(init_amount));
-						this_aaas.set("balance_amount",df.format(balance_amount2));
-						this_aaas.update();
-					}
-				}
-				
-				//收入
-				ArapAccountAuditSummary aaas1 = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, in_filter, year, month);
-				
-				if(aaas1!=null){
-					Double total_charge = aaas1.getDouble("total_charge") + Double.parseDouble(amount);
-					Double balance_amount = aaas1.getDouble("balance_amount") + Double.parseDouble(amount);;
-					aaas1.set("total_charge",df.format(total_charge) );
-					aaas1.set("balance_amount",df.format(balance_amount));
-					aaas1.update();
-				
-					
-					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
-						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
-								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-								, in_filter, this_year, Integer.parseInt(month)+i);
-						
-						Double init_amount = this_aaas.getDouble("init_amount") + Double.parseDouble(amount);
-						Double balance_amount2 = this_aaas.getDouble("balance_amount") + Double.parseDouble(amount);
-						this_aaas.set("init_amount",df.format(init_amount));
-						this_aaas.set("balance_amount", df.format(balance_amount2));
-						this_aaas.update();	
-					}
-					
-				}
-				
-				
-			}
-		}
-		
-		
-		
+
 		//付款确认退回
 		//同时更新日记账里面的数据（退回金额）
 		@Before(Tx.class)
@@ -329,127 +228,14 @@ public class TransferAccountsController extends Controller {
 	       
 			
 			//撤销对应日记账信息
-			Double amount = transferAccountsOrder.getDouble("amount");
-			String transfer_time = transferAccountsOrder.getDate("transfer_stamp").toString();
-			Long bank_out = transferAccountsOrder.getLong("bank_out");
-			Long bank_in = transferAccountsOrder.getLong("bank_in");
-			
 			ArapAccountAuditLog arapAccountAuditLog = ArapAccountAuditLog.dao.findFirst("select * from arap_account_audit_log where source_order = '转账单' and payment_type = 'COST' and invoice_order_id = ? ",orderId);
-			Double out = arapAccountAuditLog.getDouble("amount");
 			arapAccountAuditLog.delete();
 			ArapAccountAuditLog arapAccountAuditLog2 = ArapAccountAuditLog.dao.findFirst("select * from arap_account_audit_log where source_order = '转账单' and payment_type = 'CHARGE' and invoice_order_id = ? ",orderId);
-			Double in = arapAccountAuditLog2.getDouble("amount");
 			arapAccountAuditLog2.delete();
 			
-			////撤销功能是更新对应金额
-			deleteAccountSummaryIn(amount.toString(), bank_in ,transfer_time);    //转入撤销
-			deleteAccountSummaryOut(amount.toString(), bank_out ,transfer_time);   //转出撤销
 			renderJson("{\"success\":true}");
 	        
 	    }
-		
-		//撤销功能是更新对应金额
-		//更新对应金额
-		//更新日记账的账户期初结余
-		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
-		@Before(Tx.class)
-		private void deleteAccountSummaryOut(String pay_amount, Long acountId, String pay_time) {
-			Calendar cal = Calendar.getInstance();  
-			int this_year = cal.get(Calendar.YEAR);  
-			int this_month = cal.get(Calendar.MONTH)+1;  
-			String year = pay_time.substring(0, 4);
-			String month = pay_time.substring(5, 7);
-			DecimalFormat df = new DecimalFormat("#.00");
-			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
-				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, acountId, year, month);
-				if(aaas!=null){
-					Double total_cost = aaas.getDouble("total_cost") - Double.parseDouble(pay_amount);
-					aaas.set("total_cost",df.format(total_cost));
-					
-					Double balance_amount = aaas.getDouble("balance_amount") + Double.parseDouble(pay_amount);
-					aaas.set("balance_amount", df.format(balance_amount));
-					aaas.update();
-				}
-			}else{
-				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, acountId, year, month);
-				
-				if(aaas!=null){
-					Double total_cost = aaas.getDouble("total_cost") - Double.parseDouble(pay_amount);
-					aaas.set("total_cost", df.format(total_cost));
-					
-					Double balance_amount = aaas.getDouble("balance_amount") + Double.parseDouble(pay_amount);
-					aaas.set("balance_amount", df.format(balance_amount));
-					aaas.update();
-					
-					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
-						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
-								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-								, acountId, this_year, Integer.parseInt(month)+i);
-						Double init_amount = this_aaas.getDouble("init_amount") + Double.parseDouble(pay_amount);
-						Double balance_amount2 = this_aaas.getDouble("balance_amount") + Double.parseDouble(pay_amount);
-						this_aaas.set("init_amount", df.format(init_amount));
-						this_aaas.set("balance_amount",df.format(balance_amount2));
-						this_aaas.update();
-					}
-				}
-			}
-		}
-		
-		
-		//撤销功能是更新对应金额
-		//更新对应金额
-		//更新日记账的账户期初结余
-		//本期结余 = 期初结余 + 本期总收入 - 本期总支出
-		@Before(Tx.class)
-		private void deleteAccountSummaryIn(String receive_amount, Long acountId, String receive_time) {
-			Calendar cal = Calendar.getInstance();  
-			int this_year = cal.get(Calendar.YEAR);  
-			int this_month = cal.get(Calendar.MONTH)+1;  
-			String year = receive_time.substring(0, 4);
-			String month = receive_time.substring(5, 7);
-			DecimalFormat df = new DecimalFormat("#.00");
-			if(String.valueOf(this_year).equals(year) && String.valueOf(this_month).equals(month)){
-				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, acountId, year, month);
-				if(aaas!=null){
-					Double total_charge = aaas.getDouble("total_charge") - Double.parseDouble(receive_amount);
-					aaas.set("total_charge",df.format(total_charge));
-					
-					Double balance_amount = aaas.getDouble("balance_amount") - Double.parseDouble(receive_amount);
-					aaas.set("balance_amount", df.format(balance_amount));
-					aaas.update();
-				}
-			}else{
-				ArapAccountAuditSummary aaas = ArapAccountAuditSummary.dao.findFirst(
-						"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-						, acountId, year, month);
-				
-				if(aaas!=null){
-					Double total_charge = aaas.getDouble("total_charge") - Double.parseDouble(receive_amount);
-					aaas.set("total_charge", df.format(total_charge));
-					
-					Double balance_amount = aaas.getDouble("balance_amount") - Double.parseDouble(receive_amount);
-					aaas.set("balance_amount", df.format(balance_amount));
-					aaas.update();
-					
-					for(int i = 1 ;i<=(this_month - Integer.parseInt(month)); i++){
-						ArapAccountAuditSummary this_aaas = ArapAccountAuditSummary.dao.findFirst(
-								"select * from arap_account_audit_summary where account_id =? and year=? and month=?"
-								, acountId, this_year, Integer.parseInt(month)+i);
-						Double init_amount = this_aaas.getDouble("init_amount") - Double.parseDouble(receive_amount);
-						Double balance_amount2 = this_aaas.getDouble("balance_amount") - Double.parseDouble(receive_amount);
-						this_aaas.set("init_amount", df.format(init_amount));
-						this_aaas.set("balance_amount",df.format(balance_amount2));
-						this_aaas.update();
-					}
-				}
-			}
-		}
 		
 
 		@RequiresPermissions(value = {PermissionConstant.PERMSSION_TA_CREATE, PermissionConstant.PERMSSION_TA_UPDATE}, logical=Logical.OR)
