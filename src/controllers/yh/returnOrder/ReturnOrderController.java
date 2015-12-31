@@ -95,64 +95,7 @@ public class ReturnOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
 		
-
-		String conditions=" where 1=1 ";
-		if (StringUtils.isNotEmpty(order_no)){
-        	conditions+=" and UPPER(order_no) like '%"+order_no+"%'";
-        }
-		if (StringUtils.isNotEmpty(tr_order_no)){
-        	conditions+=" and UPPER(transfer_order_no) like '%"+tr_order_no+"%'";
-        }
-		if (StringUtils.isNotEmpty(de_order_no)){
-        	conditions+=" and UPPER(delivery_order_no) like '%"+de_order_no+"%'";
-        }
-        if (StringUtils.isNotEmpty(status)){
-        	conditions+=" and UPPER(transaction_status) in(" + status+")";
-        }   
-        if (StringUtils.isNotEmpty(sign_no)){
-        	conditions+=" and UPPER(sign_no) like '%"+sign_no+"%'";
-        }
-        if (StringUtils.isNotEmpty(serial_no)){
-        	conditions+=" and UPPER(serial_no) like '%"+serial_no+"%'";
-        }
-        if (StringUtils.isNotEmpty(customer)){
-        	conditions+=" and UPPER(cname) like '%"+customer+"%'";
-        }
-        if (StringUtils.isNotEmpty(return_type)){
-        	conditions+=" and UPPER(return_type) like '%"+return_type+"%'";
-        }
-        if (StringUtils.isNotEmpty(warehouse)){
-        	conditions+=" and UPPER(warehouse_name) like '%"+warehouse+"%'";
-        }
-        if (StringUtils.isNotEmpty(province)){
-        	conditions+=" and UPPER(province) like '%"+province+"%'";
-        }
-        if (StringUtils.isNotEmpty(to_name)){
-        	conditions+=" and UPPER(to_name) like '%"+to_name+"%'";
-        }
-        if (StringUtils.isNotEmpty(return_type)){
-        	conditions+=" and UPPER(return_type) like '%"+return_type+"%'";
-        }
-        if (StringUtils.isNotEmpty(transfer_type)){
-        	conditions+=" and UPPER(transfer_type) like '%"+transfer_type+"%'";
-        }
-        if (StringUtils.isNotEmpty(time_one)){
-        	time_one = " and planning_time between'"+time_one+"'";
-        }else{
-        	time_one =" and planning_time between '1970-1-1'";
-        }
-        if (StringUtils.isNotEmpty(time_two)){
-        	time_two =" and '"+time_two+"'";
-        }else{
-        	time_two =" and '3000-1-1'";
-        }
-        conditions += time_one + time_two;
-        
-        conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
-
-        
-        
-        String fromSql = " from return_order r_o "
+		String fromSql = " from return_order r_o "
 				+ " LEFT JOIN transfer_order tor ON tor.id = r_o.transfer_order_id"
 				+ " LEFT JOIN party p ON p.id = tor.customer_id"
                 + " LEFT JOIN contact c ON c.id = p.contact_id"
@@ -172,9 +115,76 @@ public class ReturnOrderController extends Controller {
                 + " LEFT JOIN location lo3 on lo3.`code` = lo2.pcode"
                 + " LEFT JOIN party p4 ON p4.id = d_o.notify_party_id"
                 + " LEFT JOIN contact c4 ON c4.id = p4.contact_id";
+		
+		if ((sign_no == null || sign_no == "") && (order_no == null || order_no == "")&& (transfer_type == null || transfer_type == "") 
+				&& (tr_order_no == null || tr_order_no == "") && (de_order_no == null || de_order_no == "")
+				&& (return_type == null|| return_type == "")&& (time_one == null|| time_one == "") && (serial_no == null|| serial_no == "")&& (warehouse == null|| warehouse == "") && (time_two == null || time_two == "") && (customer == null || customer == "")&& (to_name == null || to_name == "")) {
+			// 获取总条数
+			sqlTotal = "select count(DISTINCT r_o.id) total "+fromSql
+					+ " where r_o.transaction_status in ("+status
+					+ ") and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " or ifnull(r_o.import_ref_num,0) > 0 order by r_o.create_date desc ";
+			// 获取当前页的数据
+			sql = "select * from (select distinct ifnull(tor.route_from,tor2.route_from) route_from ,lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to,lo3.name province, lo2.name to_name, ifnull(tor.address, tor2.address) address,"
+					+ " ifnull(c4.contact_person, tor.receiving_name) receipt_person, "
+					+ " ifnull(c4.phone, tor.receiving_phone) receipt_phone,"
+					+ " ifnull((select company_name from contact where id = d_o.notify_party_id), tor.receiving_unit) receiving_unit,"
+					+ " ifnull(c4.address,tor.receiving_address) receipt_address,"
+					+ " ifnull(w1.warehouse_name,ifnull(w.warehouse_name,'')) warehouse_name,"
+					+ " d_o.ref_no sign_no,"
+					+ " ifnull((SELECT group_concat(DISTINCT toid.item_no SEPARATOR '\r\n') FROM transfer_order_item_detail toid "
+					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
+					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
+					+ " WHERE d_o.id = r_o.delivery_order_id), ifnull((select item_no from transfer_order_item toi where toi.id = doi.transfer_item_id),(SELECT group_concat(DISTINCT IFNULL(toi.item_no,p.item_no) SEPARATOR '')FROM transfer_order_item toi LEFT JOIN product p ON p.id = toi.product_id WHERE toi.order_id = r_o.transfer_order_id))) item_no,"
+					+ " (SELECT CASE"
+					+ " WHEN tor.cargo_nature ='ATM' THEN ("
+					+ " select count(1) from transfer_order_item toi,  transfer_order_item_detail toid"
+					+ " 	where (toid.delivery_id= r_o.delivery_order_id or toi.order_id = r_o.transfer_order_id) and toid.item_id = toi.id and toi.order_id = tor.id"
+		            + " )"
+		            + " WHEN tor.cargo_nature ='cargo' THEN ("
+					+ " 	select sum(toi.amount) from transfer_order_item toi"
+					+ " 		where (toi.order_id = r_o.transfer_order_id)"
+		            + " )"
+		            + " END ) a_amount,"
+					+ " (SELECT group_concat(DISTINCT toid.serial_no SEPARATOR '\r\n') from transfer_order_item_detail toid"
+					+ " LEFT JOIN delivery_order_item doi ON  toid.id = doi.transfer_item_detail_id"
+					+ " LEFT JOIN delivery_order d_o ON d_o.id  = doi.delivery_id"
+					+ " where d_o.id = r_o.delivery_order_id) serial_no, "
+					+ " ifnull(tor.planning_time,tor2.planning_time) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
+					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
+					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' "
+					+ "  WHEN 'delivery' THEN '运输' "
+					+ "  WHEN 'deliveryToFactory' THEN '退货直送'"
+					+ "  WHEN 'deliveryToWarehouse' or 'deliveryToFachtoryFromWarehouse' THEN '退货配送'"
+					+ "  ELSE '配送' end) return_type,"
+					+ " (CASE tor.order_type WHEN 'salesOrder' THEN '销售订单'"
+					+ " WHEN 'replenishmentOrder' THEN '补货订单'"
+					+ " WHEN 'arrangementOrder' THEN '调拨订单'"
+					+ " WHEN 'cargoReturnOrder'THEN '退货订单'"
+					+ " WHEN 'gateOutTransferOrder' THEN '出库运输单'"
+					+ " WHEN 'movesOrder' THEN '移机单'"
+					+ " ELSE '销售订单' END) transfer_type,"
+					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
+					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+					+ fromSql
+					+ " where r_o.transaction_status in ("+status
+					+ ") and !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光') and ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " or ifnull(r_o.import_ref_num,0) > 0 ) A ";
+		} else {
+			if (time_one == null || "".equals(time_one)) {
+				time_one = "1970-01-01";
+			}
+			if (time_two == null || "".equals(time_two)) {
+				time_two = "2037-12-31";
+			}
+
+			
 
 			// 获取当前页的数据
-			String conFromSql = "select ifnull(tor.route_from,tor2.route_from) route_from ,"
+			String conFromSql = " from(select ifnull(tor.route_from,tor2.route_from) route_from ,"
 					+ " lo.name from_name,ifnull(tor.route_to,tor2.route_to) route_to,lo3.name province, lo2.name to_name, "
 					+ " ifnull(tor.address, tor2.address) address,"
 					+ " ifnull(c4.contact_person, tor.receiving_name) receipt_person, "
@@ -204,7 +214,7 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull(CAST(tor.planning_time AS char),(SELECT group_concat(DISTINCT CAST(tor3.planning_time AS char) SEPARATOR '\r\n')"
 					+ " FROM delivery_order dor LEFT JOIN delivery_order_item doi2 ON doi2.delivery_id = dor.id"
 					+ " LEFT JOIN transfer_order tor3 ON tor3.id = doi2.transfer_order_id"
-					+ " WHERE r_o.delivery_order_id = dor.id)) planning_time,r_o.id,r_o.customer_id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
+					+ " WHERE r_o.delivery_order_id = dor.id)) planning_time,r_o.id,r_o.order_no,r_o.create_date,r_o.transaction_status,r_o.receipt_date,r_o.remark, ifnull(nullif(usl.c_name,''),usl.user_name) as creator_name, "
 					+ " (select case when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id) = 0 then '无图片' "
 					+ " when (select count(0) from order_attachment_file where order_type = 'RETURN' and order_id = r_o.id and (audit = 0 or audit is null)) > 0 then '待审核' else '已审核' end) imgaudit,"
 					+ " (CASE tor.arrival_mode WHEN  'gateIn' THEN '配送' "
@@ -221,19 +231,33 @@ public class ReturnOrderController extends Controller {
 					+ " ELSE '销售订单' END) transfer_type,"
 					+ " ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor left join delivery_order_item doi2 on doi2.delivery_id = dor.id "
 					+ " left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
-					+ fromSql ;
+					+ fromSql
+					//+ "  ifnull(w.office_id,tor.office_id) in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')"
+					+ " where !(unix_timestamp(ifnull(tor.planning_time,tor2.planning_time)) < unix_timestamp('2015-07-01')and ifnull(c.abbr, c2.abbr)='江苏国光')"
+					//+ " and ifnull(d_o.customer_id,tor.customer_id) in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
+					+ " or ifnull(r_o.import_ref_num,0) > 0 ) a "
+					+ " where ifnull(order_no,'')  like'%" + order_no + "%' "
+					+ " and ifnull(transfer_order_no,'')  like'%" + tr_order_no + "%'"
+					+ " and ifnull(delivery_order_no,'')  like'%" + de_order_no + "%'"
+					+ " and ifnull(transaction_status ,'') in ("+status+")"
+					+ " and ifnull(sign_no ,'')  like'%" + sign_no + "%'"
+					+ " and ifnull(cname,'') like '%" + customer + "%'"
+					+ " and ifnull(serial_no,'') like '%" + serial_no + "%'"
+					+ " and ifnull(return_type,'') like '%" + return_type + "%'"
+					+ " and ifnull(warehouse_name,'') like '%" + warehouse + "%'"
+					+ " and ifnull(to_name,'') like '%" + to_name + "%'"
+					+ " and ifnull(province,'') like '%" + province + "%'"
+					+ " and ifnull(transfer_type,'') like '%" + transfer_type + "%'"
+					+ " and planning_time between '" + time_one + "' and '" + time_two + " 23:59:59' ";
+					// 获取总条数
+					sqlTotal = "select count(1) total from (SELECT distinct * "+ conFromSql+") A";
+					sql = "select * from (SELECT distinct * "+	conFromSql+") A";
+		}
 		
-		String orderByStr = " order by planning_time asc ";
+		String orderByStr = " order by A.planning_time asc ";
         if(colName!=null && colName.length()>0){
         	orderByStr = " order by A."+colName+" "+sortBy;
-        }	
-			
-		// 获取总条数
-		sqlTotal = "select count(1) total from ( SELECT  *  from ("+ conFromSql+") A " + conditions+ ") B";
-		sql = "select * from ("+conFromSql+") A";
-		
-		
-		
+        }
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		Record rec = Db.findFirst(sqlTotal);
 		long endTime = Calendar.getInstance().getTimeInMillis();
@@ -241,7 +265,7 @@ public class ReturnOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 		
 		startTime = Calendar.getInstance().getTimeInMillis();
-		List<Record> orders = Db.find(" SELECT  *  from(" + sql + ") A" + conditions + orderByStr + sLimit);
+		List<Record> orders = Db.find(sql + orderByStr + sLimit);
 		endTime = Calendar.getInstance().getTimeInMillis();
 		logger.debug("ReturnOrder.list() sql time cost:" + (endTime - startTime));
 		
