@@ -3,26 +3,16 @@ package controllers.eeda;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import models.Category;
 import models.ParentOfficeModel;
-import models.Party;
-import models.Product;
 import models.UserLogin;
 import models.yh.profile.Action;
-import models.yh.profile.Contact;
 import models.yh.profile.Module;
-import models.yh.structure.Field;
 import models.yh.structure.Structure;
-import net.sf.cglib.core.CollectionUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,14 +28,10 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
-import controllers.bz.gateOutOrder.models.BzGateOutOrder;
-import controllers.bz.gateOutOrder.models.BzGateOutOrderItem;
 import controllers.yh.LoginUserController;
 import controllers.yh.util.DbUtils;
-import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
-import controllers.yh.util.PingYinUtil;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -211,13 +197,14 @@ public class ModuleController extends Controller {
         if((Boolean)is_start){
             activateModule(module_id);
         }else{
-            Db.update(" update modules set status = '停用' where id=?", module_id);
+            //Db.update(" update modules set status = '停用' where id=?", module_id);
         }
 
         Record orderDto = getOrderStructureDto(module_id);
         renderJson(orderDto);
     }
 
+    @Before(Tx.class)
     private void activateModule(String module_id) {
         logger.debug("start to generate tables....");
         Db.update(" update modules set status = '启用' where id=?", module_id);
@@ -235,6 +222,7 @@ public class ModuleController extends Controller {
             String createTableSql = "CREATE TABLE if not exists `"+tableName+"` ("
               +" `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '',"
               +" `parent_id` BIGINT(20) NULL COMMENT '',"
+              +" `ref_t_id` BIGINT(20) NULL COMMENT '',"
               + "PRIMARY KEY (`id`)  COMMENT '')";
             Db.update(createTableSql);
             

@@ -58,8 +58,8 @@
 					                    <th>id</th>
 					                    <th>按钮名称</th>
 					                    <th>类型</th>
-					                    <th>触发点</th>
-					                    <th>根据条件执行以下命令</th>
+					                    <th>按钮显示控制</th>
+					                    <th>点击后执行以下命令</th>
 					                </tr>
 					            </thead>
 					            <tbody>
@@ -111,7 +111,9 @@
 </div>
     <!-- 模态框 -->
     <%include("/yh/profile/module/moduleList_field_modal.html", {}){} %>
+    <%include("/yh/profile/module/module_btn_action_modal.html", {}){} %>
 	<%include("/yh/profile/module/moduleList_add_btn_type_modal.html", {}){} %>
+	<%include("/yh/profile/module/module_action_btn_visible_condition_modal.html", {}){} %>
 <%}%>
 
 
@@ -139,9 +141,9 @@
 <%include("/yh/component/jsTemplate/moduleTableAddBtnField.js", {}){} %>
 <%include("/yh/component/jsTemplate/moduleTableAddBtnConditionField.js", {}){} %>
 <%include("/yh/component/jsTemplate/moduleTableAddBtnFillbackField.js", {}){} %>
-<%include("/yh/component/jsTemplate/moduleActionCommand.js", { id:'module_action_command_template'}){} %>
 
 <script src="/yh/js/profile/module/fields_add_btn_type.js"></script>
 <script src="/yh/js/profile/module/fields.js"></script>
 <script src="/yh/js/profile/module/list_tree.js"></script>
 <script src="/yh/js/profile/module/action.js"></script>
+<script src="/yh/js/profile/module/action_btn_visible.js"></script>

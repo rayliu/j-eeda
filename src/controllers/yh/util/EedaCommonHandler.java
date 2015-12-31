@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -295,9 +297,11 @@ public class EedaCommonHandler {
                     tableRowUpdate(structure_id, rowMap, rowId);
                 }
             }
-            
-            
         }
+        
+        //action 保存，审核，撤销 等按钮动作
+        EedaBtnActionHandler.handleBtnAction(dto.get("module_id").toString(), 
+                dto.get("action").toString(), orderId);
     }
 
     private static void tableRowDelete(String orderId, String structure_id,
@@ -403,8 +407,11 @@ public class EedaCommonHandler {
                 logger.debug(sql);
                 Db.update(sql);
             }
-            
         }
+        
+        //action 保存，审核，撤销 等按钮动作
+        EedaBtnActionHandler.handleBtnAction(dto.get("module_id").toString(), 
+                dto.get("action").toString(), order_id.toString());
         return order_id.toString();
     }
 }

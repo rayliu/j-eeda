@@ -1,5 +1,7 @@
 //$(document).ready(function() {
 	
+    var module_obj;
+
     $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
 
     //---------------tree handle
@@ -141,6 +143,7 @@
         $.post('/module/getOrderStructure', {module_id: treeNode.id}, function(json){
             console.log('getOrderStructure....');
             console.log(json);
+            module_obj = json;
             $('#fields_body').empty();
 
             for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
@@ -195,7 +198,7 @@
                     "ID": action.ID,
                     "ACTION_NAME": action.ACTION_NAME,
                     "ACTION_TYPE": action.ACTION_TYPE,
-                    "ACTION_TRIGGER": action.ACTION_TRIGGER,
+                    "BTN_VISIBLE_CONDITION": action.BTN_VISIBLE_CONDITION,
                     "ACTION_SCRIPT": action.ACTION_SCRIPT
                 };
                 action_table.row.add(item).draw(false);

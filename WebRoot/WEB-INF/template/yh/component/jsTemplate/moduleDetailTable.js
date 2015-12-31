@@ -81,7 +81,7 @@
         </div>
         <div class="col-lg-12 form-group button-bar" >
             <button section_index="{{id}}" name="addFieldBtn" type="button" class="btn btn-success btn-xs">添加新字段</button>
-            <label style="margin-top: 5px;">注意: 表中默认有<span style="color:red;" >ID, PARENT_ID, REF_T_ID</span>字段，请勿添加同名字段。</label>
+            <label style="margin-top: 5px;">注意: 表中默认有<span style="color:red;" >ID, PARENT_ID, REF__ID</span>字段，请勿添加同名字段。</label>
         </div>
         <table id="{{id}}_table" class="display" cellspacing="0" style="width: 100%;">
             <thead class="eeda">

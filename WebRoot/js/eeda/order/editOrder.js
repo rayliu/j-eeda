@@ -17,12 +17,14 @@ $.post('/module/getOrderStructure', {
 
     //UI 处理
     buildStructureUI(json);
-    buildButtonUI(json);
-    bindBtnClick(); //绑定按钮事件
+    
 
     //数据处理
     if($('#order_id').val()!=''){
         fillOrderData(json);
+    }else{
+        buildButtonUI(json);
+        bindBtnClick(); //绑定按钮事件
     }
 }, 'json');
 
@@ -57,19 +59,13 @@ var fillOrderData = function(structure_json) {
                     dataTable.row.add(row).draw(false);
                 }
             }
+
+            buildButtonUI(structure_json, json);
+            bindBtnClick();
         }, 'json');
 };
 
-var buildButtonUI = function(json) {
-    for (var i = 0; i < json.ACTION_LIST.length; i++) {
-        var buttonObj = json.ACTION_LIST[i];
-        var button_html = template('button_template', {
-            id: buttonObj.ID,
-            label: buttonObj.ACTION_NAME
-        });
-        $('#button-bar').append(button_html);
-    }
-};
+
 
 var buildStructureUI = function(json) {
     for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
@@ -265,72 +261,6 @@ var buildOrderDto = function() {
 };
 
 
-var reDrawTable = function(order) {
-    deletedTableIds = [];
-    cargoTable.clear();
-    for (var i = 0; i < order.ITEM_LIST.length; i++) {
-        var item = order.ITEM_LIST[i];
-        var item = {
-            "ID": item.ID,
-            "PRODUCT_NO": item.PRODUCT_NO,
-            "SERIAL_NO": item.SERIAL_NO,
-            "REMARK": item.REMARK
-        };
-
-        cargoTable.row.add(item).draw(false);
-    }
-};
-
-var bindBtnClick = function() {
-    $('button.order_level').on('click', function(e) {
-        //阻止a 的默认响应行为，不需要跳转
-        e.preventDefault();
-
-        var btnClass = $(this).attr('class');
-        var btn = $(this);
-        btn.attr('disabled', true);
-
-        //提交前，校验数据
-        // if(!$("#orderForm").valid()){
-        //     return;
-        // }
-
-        btn.attr('disabled', false);
-
-        var order_dto = buildOrderDto();
-        order_dto.action = btn.text();
-
-        console.log('save OrderData....');
-        console.log(order_dto);
-
-        //异步向后台提交数据
-        $.post('/m_save', {
-            params: JSON.stringify(order_dto)
-        }, function(data) {
-            var order = data;
-            console.log(order);
-            if (order.ID > 0) {
-                $('#order_id').val(order.ID);
-                $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-
-                eeda.urlAfterSave($("#module_id").val(), order.ID);
-                //重新取一次数据渲染页面
-                var structure_json_str = $('#module_structure').val();
-                var structure_json = JSON.parse(structure_json_str);
-                structure_json.id = order.ID;
-                fillOrderData(structure_json);
-
-                $('#saveBtn').attr('disabled', false);
-            } else {
-                $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-                $('#saveBtn').attr('disabled', false);
-            }
-        }, 'json').fail(function() {
-            $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-            $('#saveBtn').attr('disabled', false);
-        });
-    });
-};
 
 
 //});

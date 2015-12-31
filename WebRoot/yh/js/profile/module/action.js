@@ -14,7 +14,8 @@
     //-------------   子表的动态处理
 
     var action_tableSetting = {
-        paging: false,
+        "paging": false,
+        "ordering": false,
         "info": false,
         "processing": true,
         "searching": false,
@@ -40,7 +41,7 @@
                   return '<input type="text" value="'+data+'" class="product_no form-control"/>';
                 }
             },
-            { "data": "ACTION_TYPE", width: '150px',
+            { "data": "ACTION_TYPE", width: '90px',
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -50,13 +51,32 @@
                         +'</select>';
                 }
             },
-            { "data": "ACTION_TRIGGER", width: '150px',
+            { "data": "BTN_VISIBLE_CONDITION", width: '200px',
                 "render": function ( data, type, full, meta ) {
-                    if(!data)
-                        data='';
-                  return '<select class="form-control">'
-                        +'    <option '+(data=='点击'?'selected':'')+'>点击</option>'
-                        +'</select>';
+                  var html_detail = '';
+                    if(!data){
+                        html_detail = '';
+                    }else{
+                        var command_list = JSON.parse(data);
+                        for (var i = 0; i < command_list.length; i++) {
+                            var command = command_list[i];
+                            if(!command)
+                                continue;
+
+                            var command_setting_str = command;
+                            //var obj = JSON.parse(command.command);
+                            
+                            html_detail = html_detail + '<li style="margin-top: 5px;">'
+                            +'    <a class="delete" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;'
+                            +'    当<a href="">条件</a>成立时显示'
+                            +'    <a name="edit_btn_visible_condition" style="cursor: pointer;"><i class="fa fa-edit"></i></a>'
+                            +"    <input name='edit_btn_visible_condition_json' type='hidden' value='"+command_setting_str+"'>"
+                            +'    </li>';
+                        };
+                    }
+                    var html = '<input class="add_btn_visible_condition btn btn-success btn-xs defineAction" type="button" value="增加条件">'
+                            +'<ol>'+ html_detail +'</ol>';
+                    return html;
                 }
             },
             { "data": "ACTION_SCRIPT",
@@ -68,20 +88,22 @@
                         var command_list = JSON.parse(data);
                         for (var i = 0; i < command_list.length; i++) {
                             var command = command_list[i];
+                            if(!command)
+                                continue;
+
+                            var command_setting_str = command.command;
+                            var obj = JSON.parse(command.command);
+                            
                             html_detail = html_detail + '<li style="margin-top: 5px;">'
-                            +'    <a class="remove delete_command" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i> </a>&nbsp;'
-                            +'        判断条件 '
-                            +'       <input type="text" name="condition" value="' + command.condition + '" class=""/> 成立时执行'
-                            +'       <select class="">'
-                            +'           <option ' + (command.action == '新增'?'selected':'') +'>新增</option>'
-                            +'           <option ' + (command.action == '更新'?'selected':'') +'>更新</option>'
-                            +'       </select> 动作, 并执行以下脚本'
-                            +'       <textarea class="form-control" rows="3">' + command.script + '</textarea>'
+                            +'    <a class="remove delete_command" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;'
+                            +'    当条件 (<strong style="color: green;">' + obj.condition + '</strong>) 成立时执行...'
+                            +'    <a name="btnCommandSetting" style="cursor: pointer;"><i class="fa fa-edit"></i></a>'
+                            +"    <input name='actionCommandJson' type='text' value='"+command_setting_str+"'>"
                             +'    </li>';
                         };
                     }
                     var html = '<input class="add_command btn btn-success btn-xs defineAction" type="button" value="增加命令">'
-                            +'<ul>'+ html_detail +'</ul>';
+                            +'<ol>'+ html_detail +'</ol>';
                     return html;
                 }
             }
@@ -101,7 +123,49 @@
                             id: 'sub'
                         }
                     );
-        $(this).parent().find('ul').append(html);
+        $(this).parent().find('ol').append(html);
+    });
+
+    //按钮行中一个动作命令的编辑
+    $action_table.on('click', 'a[name=btnCommandSetting]', function(e){
+        e.preventDefault();
+        $('#editBtnActionModal').modal('show');
+
+        var li = $(this).parent();
+        var tr = $(this).parent().parent().parent().parent();
+        $('#editBtnActionModal input[name=modal_row_id]').val(tr.attr('id'));
+        $('#editBtnActionModal input[name=modal_command_li_index]').val(li.index());
+
+        var fieldSetRow = $('#editBtnActionModal #modal_add_field_div .row');
+        fieldSetRow.empty();
+
+        var modal_form = $('#editBtnActionModal #modalForm');
+        var command_json = li.find('input[name=actionCommandJson]').val();
+
+        if(command_json){//回显
+            commandObj = JSON.parse(command_json);
+            modal_form.find('select[name=condition]').val(commandObj.condition);
+
+            var orderFieldList = getModuleFields();
+
+            
+            var field_list = commandObj.setValueList;
+            for(var i=0; i<field_list.length; i++){
+                var field = field_list[i];
+                for(var key in field){
+                    var display_name = key.split(',')[2].split(':')[1];
+                    var value = field[key];
+                    var html = template('editBtnActionModal_add_field_template', 
+                        {
+                            field_list: orderFieldList,
+                            display_name: display_name,
+                            field_value: value
+                        }
+                    );
+                    fieldSetRow.append(html);
+                }
+            }
+        }
     });
 
     //按钮行中删除一个动作命令
@@ -119,6 +183,69 @@
         deletedActionIds.push(tr.attr('id'))
 
         action_table.row(tr).remove().draw();
+    });
+
+    var getModuleFields = function(){
+        var orderFieldList;
+        for (var i = 0; i < module_obj.STRUCTURE_LIST.length; i++) {
+                var structure = module_obj.STRUCTURE_LIST[i];
+                if('字段' == structure.STRUCTURE_TYPE && null == structure.PARENT_ID){
+                    orderFieldList = structure.FIELDS_LIST;
+                    break;
+                }
+        }
+        return orderFieldList;
+    };
+
+    //editBtnActionModal 添加字段
+    $('#editBtnActionModal').on('click', 'button[name=addField]', function(){
+        var orderFieldList = getModuleFields();
+
+        var html = template('editBtnActionModal_add_field_template', 
+                        {
+                            field_list: orderFieldList
+                        }
+                    );
+        $(this).parent().parent().find('.row').append(html);
+    });
+
+    //editBtnActionModal 添加字段
+    $('#editBtnActionModal #modalForm').on('click', 'a.delete', function(){
+        $(this).parent().remove();
+    });
+
+    //editBtnActionModal 点击确定时，回填JSON到 Btn 行
+    $('#editBtnActionModal').on('click', 'button[name=ok_btn]', function(){
+        var row_id = $('#editBtnActionModal input[name=modal_row_id]').val();
+        var row_command_li_index = $('#editBtnActionModal input[name=modal_command_li_index]').val();
+
+        var tr = $('#action table tr#'+row_id)[0];
+        var command_li_condition = $(tr).find('td:eq(4) ol li:eq('
+            +row_command_li_index+') strong[name=condition]');
+        var command_json_input = $(tr).find('td:eq(4) ol li:eq('
+            +row_command_li_index+') input[name=actionCommandJson]');
+
+        var form = $('#editBtnActionModal #modalForm');
+
+        var setValueList = [];
+        var fieldSetRow = $('#editBtnActionModal #modal_add_field_div .col-lg-12');
+        for(var i=0; i< fieldSetRow.length; i++){
+            var row = $(fieldSetRow[i]);
+            var key = row.find('select[name=modal_field_name]').val();
+            var value = row.find('input[name=field_value]').val();
+            var obj ={};
+            obj[key] = value;
+            setValueList.push(obj);
+        }
+        var condtion = form.find('select[name=condition]').val();
+        var json_obj = {
+            condition: condtion,
+            setValueList: setValueList
+        }
+
+        command_li_condition.text(condtion);
+        command_json_input.val(JSON.stringify(json_obj));
+        $('#editBtnActionModal').modal('hide');
     });
 
     var buildActionArray=function(){
@@ -145,7 +272,7 @@
                 //field_name: $(row.children[2]).find('input').val(), 
                 action_name: $(row.children[col_index]).find('input').val(), 
                 action_type: $(row.children[col_index+1]).find('select').val(),
-                action_trigger: $(row.children[col_index+2]).find('select').val(),
+                btn_visible_condition: buildBtnVisibleConditionArray($(row.children[col_index+2])),
                 action_script: buildActionCommandArray($(row.children[col_index+3])),
                 action: $('#module_id').val().length>0?'UPDATE':'CREATE'
             };
@@ -167,16 +294,24 @@
         return items_array;
     };
 
-    
+    var buildBtnVisibleConditionArray=function(commandSection){
+        var scriptArray = [];
+        var command_list = commandSection.find('li');
+        for(var index=0; index<command_list.length; index++){
+            var $li = $(command_list[index]);
+            var visible_condtion = $li.find('input[name=edit_btn_visible_condition_json]').val();
+            scriptArray.push(visible_condtion);
+        }
+        return JSON.stringify(scriptArray);
+    }
+
     var buildActionCommandArray=function(commandSection){
         var scriptArray = [];
         var command_list = commandSection.find('li');
         for(var index=0; index<command_list.length; index++){
             var $li = $(command_list[index]);
             var command_obj = {
-                condition: $li.find('input[type=text]').val(),
-                action: $li.find('select').val(),
-                script: $li.find('textarea').val(),
+                command: $li.find('input[name=actionCommandJson]').val(),
             };
             scriptArray.push(command_obj);
         }
