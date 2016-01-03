@@ -49,8 +49,12 @@ public class EedaBtnActionHandler {
                             String structureId = keys[0].split(":")[1];
                             String fieldName = keys[1].split(":")[1];
                             if(("自动生成单号").equals(value)){
-                                Db.update("update t_"+structureId+" set "+fieldName+" = " + 
-                                        OrderNoGenerator.getNextOrderNo("")+ " where id="+orderId);
+                                //判断单号是否已经生成
+                                Record rec = Db.findFirst("select " + fieldName + " from t_" + structureId + " where id="+orderId);
+                                if(rec != null && rec.getStr(fieldName) == null){
+                                    Db.update("update t_" + structureId + " set " + fieldName + " = " + 
+                                            OrderNoGenerator.getNextOrderNo("") + " where id=" + orderId);
+                                }
                             }else{
                                 Db.update("update t_"+structureId+" set "+fieldName+"='" + value + "' where id="+orderId);
                             }

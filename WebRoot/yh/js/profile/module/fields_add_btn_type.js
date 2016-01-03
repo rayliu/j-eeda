@@ -10,12 +10,14 @@ var addBtnSettingClick = function(btn){
     var s_name = current_section.find('.s_name').val();
     var s_add_btn_setting = current_section.find('input[name=s_add_btn_setting]').val();
 
+    $('#modal_module_source').empty();
+    
     getModuleList(function(){
         if('弹出列表, 从其它数据表选取' == $select.val()){
             if(s_add_btn_setting == ''){
                 $('#modal_s_id').val(s_id);
                 $('#modal_structure_name').val(s_name);
-                $('#modal_module_source').empty();
+                
                 
                 $('#editAddBtnType').modal('show');
                 
