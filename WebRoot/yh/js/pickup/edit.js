@@ -734,6 +734,7 @@
 	
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
+		$("#finishBtn").attr('disabled', true);	
 		 /*if($("input:checkbox:checked").val()=='receiverCheckbox'){
 	        if($("#route-table input:radio:checked").val()!='receiver'){
 	            alert("路线列表中的发往类型有误，请确认发往类型正确后再按确认");
@@ -753,12 +754,12 @@
                     	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;
                     	paymenttable.fnDraw(); 
                 		routeTable.fnDraw(); 
-                		$("#finishBtn").attr('disabled', true);	
                     	$("#saveTransferOrderBtn").attr('disabled', true);	
                     	$("#finishBtnVal").val("已入货场");
                 	},'json');
             	}
             }else{
+            	$("#finishBtn").attr('disabled', false);	
                 alert('操作失败');
             }
 		},'json');
