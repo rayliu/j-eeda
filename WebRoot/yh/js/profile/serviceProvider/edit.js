@@ -43,17 +43,25 @@
                 }                         
             ]    
         });
-        
-        
-        
+
     	if(district.indexOf("省")>0){
     		province = district;
       	}
-    	
-    	
-    	$("#sp_type").val(spType);
-    	
-    	
+
+        var spArr= spType.split(';');
+        for (var i = 0; i < spArr.length; i++) {
+            var checkSpType = spArr[i];
+            if(checkSpType == 'line'){
+                $('#sp_type_line').attr('checked', 'checked');
+            }else if(checkSpType == 'delivery'){
+                $('#sp_type_delivery').attr('checked', 'checked');
+            }else if(checkSpType == 'pickup'){
+                $('#sp_type_pickup').attr('checked', 'checked');
+            }else if(checkSpType == 'personal'){
+                $('#sp_type_personal').attr('checked', 'checked');
+            }
+        };
+
     	if(payment == "monthlyStatement"){
     		$("#payment").find("option[value='monthlyStatement']").attr("selected",true);
 		}else if(payment == "freightCollect"){
@@ -61,9 +69,9 @@
 		}else{
 			$("#payment").find("option[value='cashPayment']").attr("selected",true);
 		}
-    	
+
     	$("#hideProvince").val(province);
-    	
+
         $('#menu_profile').addClass('active').find('ul').addClass('in');
         $('#customerForm').validate({
             rules: {
@@ -208,7 +216,7 @@
     	 if(!$("#customerForm").valid()){
     		  return false;
     	 }
-    	 $.post("/serviceProvider/save",$("#customerForm").serialize(),function(data){
+    	 $.post("/serviceProvider/save", $("#customerForm").serialize(),function(data){
     		if(data=='abbrError'){
     			$.scojs_message('供应商简称已存在', $.scojs_message.TYPE_ERROR);
     			$("#save").attr("disabled",false);

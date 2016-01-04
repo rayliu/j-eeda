@@ -252,7 +252,11 @@ public class ServiceProviderController extends Controller {
         contact.set("location", getPara("location"));
         contact.set("email", getPara("email"));
         contact.set("abbr", getPara("abbr"));
-        contact.set("sp_type", getPara("sp_type"));
+        String sp_type = (getPara("sp_type_line")==null?"":getPara("sp_type_line") +";")
+                + (getPara("sp_type_delivery")==null?"":getPara("sp_type_delivery") +";")
+                + (getPara("sp_type_pickup")==null?"":getPara("sp_type_pickup") +";")
+                + (getPara("sp_type_personal")==null?"":getPara("sp_type_personal"));
+        contact.set("sp_type", sp_type);
         contact.set("mobile", getPara("mobile"));
         contact.set("phone", getPara("phone"));
         contact.set("address", getPara("address"));
@@ -316,12 +320,21 @@ public class ServiceProviderController extends Controller {
     public void searchSp() {
     	
 		String input = getPara("input");
-		
+		String sp_type = getPara("sp_type")==null?"":getPara("sp_type");
+		String[] spArr = sp_type.split(";");
+		String spCon = "";
+		if(spArr.length>0){
+		    for (String spType : spArr) {
+		        spCon += " or c.sp_type like '%"+spType+"%'";
+            }
+		    spCon = spCon.substring(4);
+		}
 		Long parentID = pom.getParentOfficeId();
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and p.party_type = '"
+					.find(" select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and"
+					        + " ("+spCon+") and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and (c.company_name like '%"
 							+ input
@@ -342,7 +355,8 @@ public class ServiceProviderController extends Controller {
 							+ "%')  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office=?) limit 0,10",parentID,parentID);
 		} else {
 			locationList = Db
-					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and p.party_type = '"
+					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and"
+					        + " ("+spCon+") and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office =?)",parentID,parentID);
 		}
 		renderJson(locationList);

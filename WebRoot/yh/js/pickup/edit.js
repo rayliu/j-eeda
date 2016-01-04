@@ -665,7 +665,7 @@
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
+		$.get('/serviceProvider/searchSp', {input:inputStr, sp_type:'line;pickup'}, function(data){
 			var spList =$("#spList");
 			spList.empty();
 			for(var i = 0; i < data.length; i++)

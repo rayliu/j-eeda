@@ -868,7 +868,7 @@
     				pageSpAddress.empty();
     				$('#sp_id').val("");
     			}
-    			$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
+    			$.get('/serviceProvider/searchSp', {input:inputStr, sp_type:'line'}, function(data){
     				console.log(data);
     				var spList =$("#spList");
     				spList.empty();

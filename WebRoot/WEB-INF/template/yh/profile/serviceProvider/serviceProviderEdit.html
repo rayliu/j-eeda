@@ -42,12 +42,32 @@
 
                                             <div class="form-group">
                                                 <label>供应商类型</label>
-                                            	<select class="form-control" id="sp_type" name="sp_type">
+                                            	<select class="form-control" id="sp_type" name="sp_type" style="display: none;">
 	                                            	<option value="line">干线运输供应商</option>
 	                                            	<option value="delivery">配送供应商</option>
 	                                            	<option value="pickup">提货供应商</option>
 	                                            	<option value="personal">个体供应商</option>
                                             	</select>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input id="sp_type_line" name="sp_type_line" type="checkbox" value="line" style="margin-top: 0px;">干线运输供应商
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input id="sp_type_delivery" name="sp_type_delivery" type="checkbox" value="delivery" style="margin-top: 0px;">配送供应商
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input id="sp_type_pickup" name="sp_type_pickup" type="checkbox" value="pickup" style="margin-top: 0px;">提货供应商
+                                                    </label>
+                                                </div>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input id="sp_type_personal" name="sp_type_personal" type="checkbox" value="personal" style="margin-top: 0px;">个体供应商
+                                                    </label>
+                                                </div>
                                             </div>
 
                                             <div class="form-group">
