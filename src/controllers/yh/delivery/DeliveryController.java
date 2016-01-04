@@ -1225,6 +1225,7 @@ public class DeliveryController extends Controller {
 		if (deliveryOrder == null) {
 			deliveryOrder = new DeliveryOrder();
 			DeliveryOrder deliveryChangeOrder = new DeliveryOrder();
+			Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
 			deliveryOrder.set("order_no", orderNo)
 					.set("customer_id", customerId)
 					.set("sp_id", spId)
@@ -1234,6 +1235,7 @@ public class DeliveryController extends Controller {
 					.set("route_from", getPara("route_from"))
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", warehouseId)
+					.set("office_id", warehouse.get("office_id"))
 					.set("cargo_nature", cargoNature)
 					.set("warehouse_nature", warehouseNature)
 					.set("receivingunit", receivingunit)
