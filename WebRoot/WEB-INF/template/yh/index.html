@@ -190,34 +190,39 @@
 			                        <!-- /.panel-body -->
 			                    </div>
 			                    <!-- /.panel -->
-			                    <div class="panel panel-default" style="display: none;">
-			                        <div class="panel-heading">
-			                            <i class="fa fa-bar-chart-o fa-fw"></i> 营收状态
-			                        </div>
-			                        <!-- /.panel-heading -->
-			                        <div class="panel-body">
-				                        <div class="col-lg-4" style="margin:0px 0px 0px 80px;">
-		                                     <%include("/yh/component/form/inputCustomerField.html", 
-		                                                {
-		                                                    id:'customer_id', 
-		                                                    label:'客户名称', 
-		                                                    value: ''
-		                                                }){} %>
-		                                </div>
-		                                <div class="col-lg-4">        
-	                                            <%include("/yh/component/form/yearsInputField.html",
-	                                            		{
-	                                            			id:'years_date', 
-	                                            			label:'时间', 
-	                                            			value:''
-	                                            		}){} %>
-	                                    </div>
-	                                    <button id="searchBtn" class="btn btn-primary btn-sm" type="button">查询</button>
-					                    <div id="profit_chart" style="height:400px"></div>
-					                    <span>(注：此图表目前只记录了业务单据的应收应付,时间为单据的计划时间)</span>
-			                        <!-- /.panel-body -->
-			                    	</div>
-			                    </div>
+			                    <% 
+			                        var isShowProfitChart = permissionMap.Index_showProfitChart;
+			                        if(nvl(isShowProfitChart, '') != ""){
+			                    %>
+				                    <div class="panel panel-default">
+				                        <div class="panel-heading">
+				                            <i class="fa fa-bar-chart-o fa-fw"></i> 营收状态
+				                        </div>
+				                        <!-- /.panel-heading -->
+				                        <div class="panel-body">
+					                        <div class="col-lg-4" style="margin:0px 0px 0px 80px;">
+			                                     <%include("/yh/component/form/inputCustomerField.html", 
+			                                                {
+			                                                    id:'customer_id', 
+			                                                    label:'客户名称', 
+			                                                    value: ''
+			                                                }){} %>
+			                                </div>
+			                                <div class="col-lg-4">        
+		                                            <%include("/yh/component/form/yearsInputField.html",
+		                                            		{
+		                                            			id:'years_date', 
+		                                            			label:'时间', 
+		                                            			value:''
+		                                            		}){} %>
+		                                    </div>
+		                                    <button id="searchBtn" class="btn btn-primary btn-sm" type="button">查询</button>
+						                    <div id="profit_chart" style="height:400px"></div>
+						                    <span>(注：此图表目前只记录了业务单据的应收应付,时间为单据的计划时间)</span>
+				                        <!-- /.panel-body -->
+				                    	</div>
+				                    </div>
+			                    <%}%>
 			                    <!-- /.panel -->
 			                    <div class="panel panel-default">
 			                        <div class="panel-heading">
