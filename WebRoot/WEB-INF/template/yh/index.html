@@ -1,5 +1,6 @@
 <%layout("/yh/layout.html"){%>
-
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
         <div id="page-wrapper">
             <div class="row">
             	<div class="col-lg-12">
@@ -10,7 +11,7 @@
                     		<big style="font-size:32px;">管理看板</big>&nbsp;&nbsp;默认设置： 
 	                       	<label class="radio-inline">
 		                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline1" value="pastOneDay" <% if(lastIndex=='pastOneDay'){%>checked=""<%}%>>过去1天
-		                   	</label>                               
+		                   	</label>
 		                   	<label class="radio-inline">
 		                       	<input type="radio" name="optionsRadiosInline" id="optionsRadiosInline2" value="pastSevenDay" <% if(lastIndex=='pastSevenDay'){%>checked=""<%}%>>过去7天
 		                   	</label>
@@ -173,8 +174,8 @@
 						                </div>
 			                        <!-- </div>
 			                    </div>
-			                </div>  
-			            </div>      -->    
+			                </div>
+			            </div>      -->
 			            <!-- /.row -->
 			            <div class="row">
 			                <div class="col-lg-8">
@@ -189,15 +190,33 @@
 			                        <!-- /.panel-body -->
 			                    </div>
 			                    <!-- /.panel -->
-			                    <div class="panel panel-default" style="display: none;">
+			                    <div class="panel panel-default">
 			                        <div class="panel-heading">
 			                            <i class="fa fa-bar-chart-o fa-fw"></i> 营收状态
 			                        </div>
 			                        <!-- /.panel-heading -->
 			                        <div class="panel-body">
-			                            <div id="profit_chart" style="height:400px"></div>
-			                        </div>
+				                        <div class="col-lg-4" style="margin:0px 0px 0px 80px;">
+		                                     <%include("/yh/component/form/inputCustomerField.html", 
+		                                                {
+		                                                    id:'customer_id', 
+		                                                    label:'客户名称', 
+		                                                    value: ''
+		                                                }){} %>
+		                                </div>
+		                                <div class="col-lg-4">        
+	                                            <%include("/yh/component/form/yearsInputField.html",
+	                                            		{
+	                                            			id:'years_date', 
+	                                            			label:'时间', 
+	                                            			value:''
+	                                            		}){} %>
+	                                    </div>
+	                                    <button id="searchBtn" class="btn btn-primary btn-sm" type="button">查询</button>
+					                    <div id="profit_chart" style="height:400px"></div>
+					                    <span>(注：此图表目前只记录了业务单据的应收应付,时间为单据的计划时间)</span>
 			                        <!-- /.panel-body -->
+			                    	</div>
 			                    </div>
 			                    <!-- /.panel -->
 			                    <div class="panel panel-default">
@@ -501,19 +520,14 @@
 			                                </li>
 			                            </ul>
 			                        </div>
-			                        
 			                    </div>
 			                </div>
 			            </div>
 			            <!-- /.row -->
-			                        
-			                        
 			                    </div>
 			                    <!-- /.panel-body -->
 			                </div>
 			            	</div>
-			            
-
 			            </div>
 
         </div>
@@ -529,7 +543,8 @@
     <!-- Page-Level Plugin Scripts - Dashboard -->
     <script src="/yh/js/plugins/morris/raphael-2.1.0.min.js"></script>
     <script src="/yh/js/plugins/morris/morris.js"></script>
-	
+    <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 	<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
     <!-- Page-Level Demo Scripts - Dashboard - Use for reference -->
     <!-- <script src="/yh/js/demo/dashboard-demo.js"></script> -->

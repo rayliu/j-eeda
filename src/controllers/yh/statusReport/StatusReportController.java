@@ -3,6 +3,7 @@ package controllers.yh.statusReport;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -185,7 +186,76 @@ public class StatusReportController extends Controller{
 	public void orderIndex() {		
 		render("/yh/statusReport/orderStatusReport.html");
 	}
-	
+	//营收状态
+	public void revenueIndex() {		
+		String customer_id = getPara("customer_id");
+		String years_date = getPara("years_date");
+		List revenue = new ArrayList();//收入
+		List cost = new ArrayList();//成本
+		List profit = new ArrayList();//毛利
+		List profit_rate = new ArrayList();//毛利率
+		double sum_cost = 0.0;
+		double sum_profit=0.0;
+		Record rec =null;
+		for(int i=1; i<=12;i++){
+			String sql=" SELECT round(ifnull((sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2) cost_sum, round( ifnull((sum((ys_insurance + return_amount))),0),2) revenue_sum,"
+					+ " round(ifnull((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2) profit,"
+					+ " round(ifnull(((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))) / sum((ys_insurance + return_amount))),0),2) profit_rate FROM"
+					+ " (SELECT ifnull((SELECT IFNULL(sum(pofi.amount), 0) FROM pickup_order_fin_item pofi LEFT JOIN depart_order d_o ON d_o.id = pofi.pickup_order_id LEFT JOIN depart_transfer dt ON dt.pickup_id = d_o.id LEFT JOIN fin_item fi ON fi.id = pofi.fin_item_id WHERE"
+					+ " dt.order_id = tor.id AND fi.type = '应付' AND pofi.fin_item_id != 7 AND d_o.audit_status = '对账已确认' AND d_o.combine_type = 'PICKUP') / ( SELECT count(0) FROM transfer_order_item_detail WHERE pickup_id = toid.pickup_id),0) yf_pickup,"
+					+ " ifnull((SELECT IFNULL(sum(dofi.amount), 0) FROM depart_order_fin_item dofi LEFT JOIN depart_order d_o ON d_o.id = dofi.depart_order_id LEFT JOIN depart_transfer dt ON dt.depart_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id"
+					+ " WHERE dt.order_id = tor.id AND fi.type = '应付' AND d_o.audit_status = '对账已确认' AND d_o.combine_type = 'DEPART' ) / ( SELECT count(0) FROM transfer_order_item_detail WHERE depart_id = toid.depart_id ), 0) yf_depart,"
+					+ " ifnull((SELECT (sum(IFNULL(ifi.insurance_amount, 0)) / sum(toi.amount)) FROM insurance_fin_item ifi LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
+					+ " WHERE i_o.id = tor.insurance_id AND i_o.audit_status = '对账已确认' AND fi.type = '应付'),0) yf_insurance,"
+					+ " ifnull((SELECT(sum(	IFNULL(ifi.insurance_amount, 0)) / sum(toi.amount)) FROM insurance_fin_item ifi LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id AND fi.type = '应收'),0) ys_insurance,"
+					+ " ifnull(((SELECT IFNULL(sum(dofi1.amount), 0) FROM delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE d_o.id = toid.delivery_id AND d_o.audit_status = '对账已确认' AND fi.type = '应付') / ("
+					+ " SELECT count(0) FROM transfer_order_item_detail WHERE delivery_id = toid.delivery_id)) + (( SELECT IFNULL(sum(dofi1.amount), 0) FROM delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id"
+					+ " WHERE d_o.id = toid.delivery_refused_id AND d_o.audit_status = '对账已确认' AND fi.type = '应付' ) / ( SELECT count(0) FROM transfer_order_item_detail WHERE delivery_refused_id = toid.delivery_refused_id)),0) delivery,"
+					+ " ifnull((SELECT sum(rof.amount)FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id WHERE dor.id = toid.delivery_id AND ( ror.transaction_status != '新建' AND ror.transaction_status != '对账中' AND ror.transaction_status != '已确认' AND ror.transaction_status != '已签收' AND ror.transaction_status != '手动删除')),"
+					+ " (SELECT ifnull(sum(rof1.amount), 0) FROM return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = toid.order_id AND ( ror.transaction_status != '新建' AND ror.transaction_status != '对账中' AND ror.transaction_status != '已确认' AND ror.transaction_status != '已签收' AND ror.transaction_status != '手动删除'))) return_amount"
+					+ " FROM transfer_order_item_detail toid"
+					+ " LEFT JOIN transfer_order tor ON tor.id = toid.order_id"
+					+ " LEFT JOIN party p ON p.id = tor.customer_id"
+					+ " LEFT JOIN contact c ON c.id = p.contact_id"
+					+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+					+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+					+ " WHERE tor.cargo_nature = 'ATM'"
+					+ " and MONTH (tor.planning_time) = "+i+" and year(tor.planning_time) ="+years_date+" and tor.customer_id="+customer_id+""
+					+ " UNION ALL"
+					+ " SELECT  IFNULL(sum((SELECT IFNULL(sum(amount), 0) / (SELECT count(*) FROM depart_transfer dof WHERE dof.pickup_id = dor1.id) FROM pickup_order_fin_item pof LEFT JOIN depart_order dor1 ON dor1.id = pof.pickup_order_id WHERE dor1.id = dtr.pickup_id AND dor1.audit_status = '对账已确认' AND pof.fin_item_id != 7)),0) yf_pickup,"
+					+ " ifnull(sum((SELECT IFNULL(sum(amount), 0) / (SELECT count(*) FROM depart_transfer dof WHERE dof.depart_id = dor1.id) FROM depart_order_fin_item dof LEFT JOIN depart_order dor1 ON dor1.id = dof.depart_order_id WHERE dor1.id = dtr.depart_id AND dor1.audit_status = '对账已确认'AND dof.fin_item_id != 7)),0) yf_depart,"
+					+ " ifnull((SELECT IFNULL(sum(ifi.insurance_amount),0) FROM insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id AND i_o.audit_status = '对账已确认' AND fi.type = '应付') "
+					+ " / (SELECT COUNT(*) FROM insurance_order i LEFT JOIN transfer_order t ON t.insurance_id = i.id WHERE i.id = (SELECT id FROM insurance_order WHERE id = tor.insurance_id)),0) yf_insurance,"
+					+ " ifnull((SELECT IFNULL( sum(ifi.insurance_amount),0) FROM insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id AND fi.type = '应收') / (SELECT COUNT(*)"
+					+ " FROM insurance_order i LEFT JOIN transfer_order t ON t.insurance_id = i.id WHERE i.id = (SELECT id FROM insurance_order WHERE id = tor.insurance_id)),0) ys_insurance,"
+					+ " (SELECT IFNULL(sum(dofi1.amount), 0) FROM delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id AND d_o.audit_status = '对账已确认' AND fi.type = '应付') delivery,"
+					+ " ifnull((SELECT sum(rof.amount) FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id WHERE"
+					+ " doi.transfer_order_id = tor.id AND (ror.transaction_status != '新建' AND ror.transaction_status != '对账中' AND ror.transaction_status != '已确认' AND ror.transaction_status != '已签收' AND ror.transaction_status != '手动删除')),"
+					+ " (SELECT	ifnull(sum(rof1.amount), 0) FROM return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id AND (ror.transaction_status != '新建' AND ror.transaction_status != '对账中' AND ror.transaction_status != '已确认' AND ror.transaction_status != '已签收' AND ror.transaction_status != '手动删除' ))) return_amount "
+					+ " FROM transfer_order tor"
+					+ " LEFT JOIN depart_transfer dtr ON dtr.order_id = tor.id"
+					+ " LEFT JOIN party p ON p.id = tor.customer_id"
+					+ " LEFT JOIN contact c ON c.id = p.contact_id"
+					+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+					+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+					+ " WHERE tor.cargo_nature = 'cargo' and MONTH (tor.planning_time) = "+i+" and year(tor.planning_time) ="+years_date+" and tor.customer_id="+customer_id+" GROUP BY tor.id ) a";
+			 rec = Db.findFirst(sql);
+			 sum_cost+= rec.getDouble("cost_sum");//累加成本
+			 sum_profit+=rec.getDouble("profit");//累加毛利
+			 revenue.add(rec.get("revenue_sum")); //收入
+			 cost.add(rec.get("cost_sum")); //成本
+			 profit.add(rec.get("profit")); //毛利
+			 profit_rate.add(rec.getDouble("profit_rate")*100);//毛利率
+		}
+			Map BillingOrderListMap = new HashMap();
+			BillingOrderListMap.put("revenue", revenue);
+			BillingOrderListMap.put("cost", cost);
+			BillingOrderListMap.put("profit", profit);
+			BillingOrderListMap.put("profit_rate", profit_rate);
+			BillingOrderListMap.put("sum_cost", sum_cost);
+			BillingOrderListMap.put("sum_profit", sum_profit);
+			renderJson(BillingOrderListMap);
+	}
 	//运营日报表
 	public void dailyReport() {		
 		render("/yh/statusReport/dailyReport.html");
