@@ -124,7 +124,11 @@
 
 <script>
        
-       var Module={};
+	template.helper('JsonStringify', function (content) {
+	    return JSON.stringify(content);
+	});
+      
+    var Module={};
 </script>
 
 <link href="/yh/css/productTree.css" rel="stylesheet" />

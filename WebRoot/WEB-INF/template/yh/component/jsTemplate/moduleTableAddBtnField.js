@@ -4,7 +4,7 @@
             <a class="delete" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i> </a>
             <select name="modal_col_field_name" class="form-control" style="display: initial;width: initial;">
            		{{each field_list as field}}
-                	<option value='structure_id:{{field.STRUCTURE_ID}}, field_name:F{{field.ID}}_{{field.FIELD_NAME}}, display_name:{{field.FIELD_DISPLAY_NAME}}'
+                	<option value='{{JsonStringify field}}'
                 		{{if field.FIELD_DISPLAY_NAME == display_name}}selected{{/if}}
                 	 >{{field.FIELD_DISPLAY_NAME}}</option>
                 {{/each}}

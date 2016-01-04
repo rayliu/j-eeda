@@ -11,7 +11,7 @@ var addBtnSettingClick = function(btn){
     var s_add_btn_setting = current_section.find('input[name=s_add_btn_setting]').val();
 
     $('#modal_module_source').empty();
-    
+
     getModuleList(function(){
         if('弹出列表, 从其它数据表选取' == $select.val()){
             if(s_add_btn_setting == ''){
@@ -29,12 +29,15 @@ var addBtnSettingClick = function(btn){
                 var fillback_list_div =$('#modal_add_fillback_div section .row').empty();
                 $('#modal_s_id').val(settingJson.structure_id);
                 $('#modal_structure_name').val(s_name);
+
+                //显示字段的回显
                 var col_row_list = settingJson.col_list;
                 for (var i = 0; i < col_row_list.length; i++) {
-                    var col_row = col_row_list[i];
-                    var structure_id = col_row.field_name.split(',')[0].split(':')[1];
-                    var display_name = col_row.field_name.split(',')[2].split(':')[1];
-                    var module = getModuleStructure(structure_id);
+                    var col_row = col_row_list[i];//显示字段
+                    var col_field = JSON.parse(col_row.field_name);
+                    
+                    var display_name = col_field.FIELD_DISPLAY_NAME;
+                    var module = getModuleStructure(col_field.STRUCTURE_ID);
                     var html = template('table_add_btn_field_template', 
                         {field_list: module.FIELD_LIST, 
                          display_name: display_name,
@@ -46,9 +49,10 @@ var addBtnSettingClick = function(btn){
                 var condition_row_list = settingJson.condition_list;
                 for (var i = 0; i < condition_row_list.length; i++) {
                     var col_row = condition_row_list[i];
-                    var structure_id = col_row.field_name.split(',')[0].split(':')[1];
-                    var display_name = col_row.field_name.split(',')[2].split(':')[1];
-                    var module = getModuleStructure(structure_id);
+                    var col_field = JSON.parse(col_row.field_name);
+                    
+                    var display_name = col_field.FIELD_DISPLAY_NAME;
+                    var module = getModuleStructure(col_field.STRUCTURE_ID);
                     var html = template('table_add_btn_condtion_template', 
                         {field_list: module.FIELD_LIST, 
                          display_name: display_name,
@@ -84,7 +88,7 @@ var getModuleList=function(callback){
             modal_module_list = json;
             for (var i = 0; i < json.length; i++) {
                 var module = json[i];
-                $('#modal_module_source').append('<option>'+module.MODULE_NAME+'</option>');
+                $('#modal_module_source').append('<option value="'+module.STRUCTURE_ID+'">'+module.MODULE_NAME+'</option>');
             };
             $('#modal_module_source').append('<option>自定义SQL</option>')
             callback();
@@ -165,7 +169,7 @@ $('#modal_add_fillback_div').on('click', '.delete', function(e){
 
 $('#modal_table_add_btn_type_ok_btn').click(function(event) {
     var settingObj={
-        structure_id: $('#modal_s_id').val(),
+        structure_id: $('#modal_module_source').val(),
         col_list: [],
         condition_list: [],
         fillback_list: []

@@ -53,14 +53,17 @@
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.excheck-3.5.js"></script>
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.exedit-3.5.js"></script>
 
-<script type="text/javascript">
+<script>
 	template.helper('replaceReturn', function (content) {
 	    return content.replace(/\n/g, "$");
 	});
+
 </script>
 
 <%include("/yh/component/jsTemplate/inputField.js", {id:'input_field'}){} %>
+<%include("/yh/component/jsTemplate/inputHiddenField.js", {}){} %>
 <%include("/yh/component/jsTemplate/inputDateField.js",{}){} %>
+<%include("/yh/component/jsTemplate/inputDateQueryField.js",{}){} %>
 <%include("/yh/component/jsTemplate/inputCustomerField.js",{}){} %>
 <%include("/yh/component/jsTemplate/fieldSection.js", {}){} %>
 <%include("/yh/component/jsTemplate/inputSpField.js",{}){} %>
@@ -68,8 +71,12 @@
 <%include("/yh/component/jsTemplate/detailTable.js", { id:'table_template'}){} %>
 <%include("/yh/component/jsTemplate/button.js", { id:'button_template'}){} %>
 
+<!-- 模态框 -->
+<%include("/yh/profile/module/editOrder_search_list_modal.html", {}){} %>
+
 <script src="/yh/js/eeda-common.js"></script>
 <script src="/js/eeda/order/editOrder_btn.js"></script>
+<script src="/js/eeda/order/editOrder_table_add_btn.js"></script>
 <script src="/js/eeda/order/editOrder.js"></script>
 
 

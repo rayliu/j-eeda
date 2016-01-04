@@ -4,7 +4,7 @@
         {{if is_edit_order}}
             <h4>{{label}}</h4>
             <div class="form-group button-bar" >
-                <button id="add_row_btn_{{id}}" table_id="table_{{id}}" name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
+                <button id="add_row_btn_{{id}}" table_id="table_{{id}}" structure_id="{{structure_id}}" name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
             </div>
         {{/if}}
         <table id="table_{{id}}" structure_id="{{structure_id}}" class="display" cellspacing="0" style="width: 100%;">

@@ -3,11 +3,15 @@
 //$('#menu_sys_profile').addClass('active').find('ul').addClass('in');
 'use strict';
 
+var global_order_structure;
+
 $.post('/module/getOrderStructure', {
     module_id: $("#module_id").val()
 }, function(json) {
     console.log('getOrderStructure....');
     console.log(json);
+    global_order_structure = json;
+
     $('#module_structure').val(JSON.stringify(json));
 
     $('#module_name').text(json.MODULE_NAME);
@@ -17,7 +21,6 @@ $.post('/module/getOrderStructure', {
 
     //UI 处理
     buildStructureUI(json);
-    
 
     //数据处理
     if($('#order_id').val()!=''){
@@ -148,40 +151,6 @@ var buildStructureUI = function(json) {
     } //end of for
 };
 
-//-------------table add button click
-$('#list').on('click', 'button', function(event) {
-    if ($(this).attr('name') == 'addRowBtn') {
-        var table_id = $(this).attr('table_id');
-        var dataTable = $('#' + table_id).DataTable();
-        var row = window[table_id + '_row'];
-        dataTable.row.add(row).draw(false);
-    }
-});
-//-------------table delete button click
-$('#list').on('click', 'a', function(event) {
-    if ($(this).attr('class') == 'delete') {
-        var table_id = $(this).attr('table_id');
-        var dataTable = $('#' + table_id).DataTable();
-        var tr = $(this).parent().parent();
-        //deletedTableIds.push(tr.attr('id'))
-
-        dataTable.row(tr).remove().draw();
-    }
-});
-
-
-var deletedTableIds = [];
-
-var $fields_table = $("#fields-table");
-
-//删除表中一行
-$fields_table.on('click', '.delete', function(e) {
-    e.preventDefault();
-    var tr = $(this).parent().parent();
-    deletedTableIds.push(tr.attr('id'))
-
-    cargoTable.row(tr).remove().draw();
-});
 
 var buildOrderDto = function() {
     //循环处理字段
