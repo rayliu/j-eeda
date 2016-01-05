@@ -311,15 +311,21 @@ public class CostAcceptOrderController extends Controller {
         }
       
         //String statusStr = " ('已复核')";
-        if(status == null || status.equals("")){
-        	status  = "'新建','已审批','已复核','已付款'";        //申请单
-        }else if(status.equals("未复核")){
+        if(status.equals("未复核")){
         	status = "'新建','已审批'";
         }else if(status.equals("已复核")){
         	status  = "'已复核'";
         }else if(status.equals("已付款")){
         	status  = "'已付款'";
+        }else if(status.equals("旧数据")){
+        	status  = "'已付款'";
         }
+        
+        String condition = "";
+        if(!status.equals("")){
+        	condition = " where aci.status in ("+status+")";
+        }
+        
         
         String conditions = " where 1=1 ";
         if (StringUtils.isNotEmpty(spName)){
@@ -391,7 +397,8 @@ public class CostAcceptOrderController extends Controller {
         		+ " from arap_cost_invoice_application_order aci "
         		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
-        		+ " where aci.status in ("+status+") group by aci.id "
+        		+ condition
+        		+ " group by aci.id "
         		+ ") A";
         
         
