@@ -245,7 +245,8 @@ public class StatusReportController extends Controller{
 			 revenue.add(rec.get("revenue_sum")); //收入
 			 cost.add(rec.get("cost_sum")); //成本
 			 profit.add(rec.get("profit")); //毛利
-			 profit_rate.add(rec.getDouble("profit_rate")*100);//毛利率
+			 Double profitRate=Double.valueOf(String.format("%.2f", rec.getDouble("profit_rate")*100));
+			 profit_rate.add(profitRate);//毛利率
 		}
 			Map BillingOrderListMap = new HashMap();
 			BillingOrderListMap.put("revenue", revenue);

@@ -44,7 +44,7 @@ $(document).ready(function() {
             },
             calculable: true,
             legend: {
-                data: ['收入', '成本', '毛利', '毛利率']
+                data: ['收入', '成本', '毛利', '毛利率(%)']
             },
             xAxis: [{
                 type: 'category',
@@ -78,7 +78,7 @@ $(document).ready(function() {
                     type: 'bar',
                     data: profit
                 }, {
-                    name: '毛利率',
+                    name: '毛利率(%)',
                     type: 'line',
                     yAxisIndex: 1,
                     data: profit_rate
@@ -93,7 +93,7 @@ $(document).ready(function() {
                     },
                     center: [160, 130],
                     radius: [0, 50],
-                    itemStyle: 　{
+                    itemStyle: {
                         normal: {
                             labelLine: {
                                 length: 20
