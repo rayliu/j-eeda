@@ -262,7 +262,7 @@ public class ModuleController extends Controller {
         
         List<Record> sRecs = Db.find("select * from structure where module_id=?", module_id);
         for (Record structure : sRecs) {
-            String fieldSql = "select * from field where structure_id=?";
+            String fieldSql = "select * from field where structure_id=? order by seq";
             List<Record> fieldList = Db.find(fieldSql, structure.get("id"));
 
             structure.set("fields_list", fieldList);

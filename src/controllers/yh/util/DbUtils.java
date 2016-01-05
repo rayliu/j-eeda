@@ -159,7 +159,7 @@ public class DbUtils {
 		for (Entry<String, ?> entry : dto.entrySet()) { 
 			String key = entry.getKey();
 			if(!key.endsWith("_list")){
-            	String value = (String) entry.getValue();
+            	String value = String.valueOf(entry.getValue()) ;
             	//忽略  action 字段
             	if(StringUtils.isNotEmpty(value) && !"action".equals(key)){
             		logger.debug(key+":"+value);

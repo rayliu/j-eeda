@@ -253,7 +253,7 @@
 
     var deletedTableIds=[];
 
-    var buildStructureFieldsrray=function(structure_table){
+    var buildStructureFieldsArray=function(structure_table){
         var table_rows = $(structure_table).find('tr');
         var items_array=[];
         for(var index=0; index<table_rows.length; index++){
@@ -279,7 +279,8 @@
                 listed: $(row.children[col_index+4]).find('select').val(),
                 field_template_path: $(row.children[col_index+5]).find('input').val(),
                 index_name:'',
-                action: $('#module_id').val().length>0?'UPDATE':'CREATE'
+                action: $('#module_id').val().length>0?'UPDATE':'CREATE',
+                seq: index
             };
 
             if(item.field_display_name.length>0){
@@ -307,7 +308,7 @@
         for(var i=0; i<structure_sections.length; i++){
             var structure_section = structure_sections[i];
             var structure_table = $(structure_section).find('table')[0];
-            var fields = buildStructureFieldsrray(structure_table);
+            var fields = buildStructureFieldsArray(structure_table);
             var structure={
                 id: $($(structure_section).find('.s_id')[0]).val(),
                 name: $($(structure_section).find('.s_name')[0]).val(),
