@@ -32,7 +32,15 @@ $(document).ready(function () {
             {"mDataProp":null,
             	"fnRender": function(obj) {
                     if('PS' == obj.aData.TYPE){
-                        return " 该配送单业务要求配送时间为：" + obj.aData.BUSINESS_STAMP  + ", 请安排配送。序列号："+obj.aData.SERIAL_NO;
+                    	var date = '';
+                    	if(obj.aData.BUSINESS_STAMP!=null){
+                    		var days = (new Date()- new Date(obj.aData.BUSINESS_STAMP.replace(/-/g, "\/")))/(1000 * 60 * 60 * 24);
+                    		if(days < 2){
+                    			date = "<span style = 'color:red'>"+obj.aData.BUSINESS_STAMP+"</span>";
+                    		}else
+                    			date = obj.aData.BUSINESS_STAMP;
+                    	}
+                        return " 该配送单业务要求配送时间为：" + date  + ", 请安排配送。序列号："+obj.aData.SERIAL_NO;
                     }else{
                         return " 该运输单为运输在途，请安排收货。";
                     }
