@@ -1,6 +1,6 @@
 //$(document).ready(function(template) {
 
-//$('#menu_sys_profile').addClass('active').find('ul').addClass('in');
+
 'use strict';
 
 var global_order_structure;
@@ -141,7 +141,7 @@ var generateField=function(structure){
     });
 
     $('#fields').append(field_section_html);
-    var field_section = $('#' + structure.ID + '>.col-lg-12');
+    var field_section = $('#fields #' + structure.ID + '>.col-lg-12');
 
     for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
         var field = structure.FIELDS_LIST[j];

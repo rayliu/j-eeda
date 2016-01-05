@@ -1,5 +1,7 @@
 package controllers.yh;
 
+import interceptor.SetAttrLoginUserInterceptor;
+
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -343,6 +345,7 @@ public class MainController extends Controller {
         renderJson(orderMap);
     }
     
+    @Before(SetAttrLoginUserInterceptor.class)
     public void m() {
         String module_id = getPara(0);
         String param1 = getPara(1);

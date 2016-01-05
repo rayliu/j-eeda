@@ -90,14 +90,14 @@
                         <%
                         for(module in modules){
                         %>
-                            <li id="">
+                            <li id="${module.id!}">
                                 <a href="#">${module.module_name!}<span class="fa arrow"></span></a>
                                 <% if(module.orders != null ){%>
                                     <ul class="nav nav-second-level">
                                         <%
                                         for(order in module.orders){
                                         %>
-                                            <li>
+                                            <li id="${order.id}">
                                                 <a href="/m/${order.id}">${order.module_name!}</a>
                                             </li>
                                         <%}%>

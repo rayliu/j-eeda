@@ -58,6 +58,7 @@
 	    return content.replace(/\n/g, "$");
 	});
 
+	$('#side-menu li#${module_id!}').parent().parent().addClass('active').find('ul').addClass('in');
 </script>
 
 <%include("/yh/component/jsTemplate/inputField.js", {id:'input_field'}){} %>
