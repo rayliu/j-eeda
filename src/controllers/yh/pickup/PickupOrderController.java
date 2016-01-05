@@ -338,7 +338,7 @@ public class PickupOrderController extends Controller {
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code"
                     + " left join office o on o.id = tor.office_id "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where  tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL 
                     + "' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
@@ -356,7 +356,7 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code " 
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on o.id = tor.office_id "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL + "'" 
                     + " and tor.status!='手动删除'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
@@ -375,7 +375,7 @@ public class PickupOrderController extends Controller {
             		+ " left join location l1 on tor.route_from = l1.code "
                     + " left join location l2 on tor.route_to = l2.code "
                     + " left join office o on tor.office_id = o.id "
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL+ "'"
                     + " and ifnull(l1.name, '') like '%"
                     + routeFrom
@@ -410,7 +410,7 @@ public class PickupOrderController extends Controller {
                     + " left join location l1 on tor.route_from = l1.code " 
                     + " left join location l2 on tor.route_to = l2.code  "
                     + " left join office o on o.id= tor.office_id"
-                    + " where tor.operation_type =  'own' and tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
+                    + " where tor.status not in ('已入库','已签收', '已收货','已发车') and ifnull(tor.pickup_assign_status, '') !='"
                     + TransferOrder.ASSIGN_STATUS_ALL
                     + "'"
                     + " and ifnull(l1.name, '') like '%"
