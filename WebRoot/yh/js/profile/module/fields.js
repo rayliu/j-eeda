@@ -19,6 +19,11 @@
         var html = template('table_template', {s_name: 'sub'+subIndex, structure_names: structure_names});
         $('#fields_body').append(html);
         $('#fields_body table:last').DataTable(tableSetting);
+
+        $fields_table.find('tbody').sortable({
+          revert: true
+        });
+
         subIndex++;
     });
 
@@ -205,10 +210,14 @@
         $fields_table.on('click', '.delete', function(e){
             e.preventDefault();
             var tr = $(this).parent().parent();
-            deletedTableIds.push(tr.attr('id'))
-
-            cargoTable.row(tr).remove().draw();
+            var dataTable = $fields_table.DataTable();
+            dataTable.row(tr).remove().draw();
         });
+
+        $fields_table.find('tbody').sortable({
+          revert: true
+        });
+
     }
 
     $("#modal_field_type").on('change', function(){

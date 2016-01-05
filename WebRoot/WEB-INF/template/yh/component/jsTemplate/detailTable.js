@@ -38,8 +38,8 @@
                 $(row).attr('id', id);
                 $(row).append('<input type="hidden" name="id" value="' + id + '"/>');
                 
-                var ref_t_id = (data.REF_T_ID==null?'':data.REF_T_ID);
-                $(row).append('<input type="hidden" name="ref_t_id" value="' + ref_t_id + '"/>');
+                if(data.REF_T_ID != null)
+                    $(row).append('<input type="hidden" name="ref_t_id" value="' + data.REF_T_ID + '"/>');
             },
             "columns": [
                 { "width": "30px", "orderable":false, 
