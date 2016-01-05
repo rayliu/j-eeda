@@ -5,6 +5,17 @@ $(document).ready(function() {
 	$('#menu_cost').addClass('active').find('ul').addClass('in');
 	
 	
+	//from表单验证
+/*	var validate = $('#costMiscOrderForm').validate({
+        rules: {
+       	customer_filter: {required: true}
+        },
+        messages : {	             
+        	customer_filter : {required:  "请选择一个客户"}
+        }
+    });*/
+	
+	
 	
 	 //打印
   	 $("#printBtn").on('click',function(){
@@ -37,6 +48,32 @@ $(document).ready(function() {
         if(!$("#costMiscOrderForm").valid()){
 	       	return;
         }
+        
+        
+        var type = $('input[name="cost_to_type"]:checked').val();
+        if(type=='customer'){
+        	if($('#customer_filter').val()==''){
+        		$.scojs_message('客户不能为空', $.scojs_message.TYPE_WARN);
+        		$("#saveCostMiscOrderBtn").attr("disabled",false);
+            	return;
+        	}
+        	
+        }else if(type=='sp'){
+        	if($('#sp_filter').val()==''){
+        		$.scojs_message('供应商不能为空', $.scojs_message.TYPE_WARN);
+        		$("#saveCostMiscOrderBtn").attr("disabled",false);
+            	return;
+        	}
+        	
+        }else{
+        	if($('#others_name').val()==''){
+        		$.scojs_message('收款人不能为空', $.scojs_message.TYPE_WARN);
+        		$("#saveCostMiscOrderBtn").attr("disabled",false);
+            	return;
+        	}
+        	
+        }
+        
         
         var tableRows = $("#feeItemList-table tr");
         var itemsArray=[];
@@ -93,8 +130,9 @@ $(document).ready(function() {
         	amount: amount,
         	items: itemsArray
         };
-        //console.log(order);
-        
+  
+
+       
         
 		//异步向后台提交数据
 		$.post('/costMiscOrder/save',{params:JSON.stringify(order)}, function(data){
