@@ -37,16 +37,13 @@ public class ReportController extends Controller {
 		String order_no = getPara("order_no");
 		ArapCostOrder arapcostorder = ArapCostOrder.dao.findFirst("select * from arap_cost_order where order_no = ?",order_no);
 		CostApplicationOrderRel costapplicationorderrel =CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where cost_order_id=?",arapcostorder.get("id"));
-		String fileName = "report/checkOrder.jasper";
-		String outFileName = "download/供应商对账单";
+		String fileName = getContextPath() +"report/checkOrder.jasper";
+		String outFileName = getContextPath() +"download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		if(costapplicationorderrel!=null){
 			hm.put("application_id", costapplicationorderrel.get("application_order_id"));
 		}
 		hm.put("order_no", order_no);
-		
-		fileName = getContextPath() + fileName;
-		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
 		renderText(file.substring(file.indexOf("download")-1));
@@ -54,38 +51,30 @@ public class ReportController extends Controller {
 	
 	public void printManualOrder() {
 		String order_no = getPara("order_no").trim();
-		String fileName = "report/arap_manual.jasper";
-		String outFileName = "download/手工收入单";
+		String fileName = getContextPath() +"report/arap_manual.jasper";
+		String outFileName = getContextPath() +"download/手工收入单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
-		fileName = getContextPath() + fileName;
-		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
 		renderText(file.substring(file.indexOf("download")-1));
 	}
 	public void printArapMiscCost() {
 		String order_no = getPara("order_no").trim();
-		String fileName = "report/arap_misc_cost.jasper";
-		String outFileName = "download/手工成本单";
+		String fileName = getContextPath() +"report/arap_misc_cost.jasper";
+		String outFileName = getContextPath() +"download/手工成本单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
-		fileName = getContextPath() + fileName;
-		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
 		renderText(file.substring(file.indexOf("download")-1));
 	}
 	public void printCustomerOrder() {
 		String order_no = getPara("order_no").trim();
-		String fileName = "report/customer_checkOrder.jasper";
-		String outFileName = "download/客户对账单";
+		String fileName = getContextPath() +"report/customer_checkOrder.jasper";
+		String outFileName = getContextPath() +"download/客户对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
-		fileName = getContextPath() + fileName;
 		outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
@@ -93,14 +82,11 @@ public class ReportController extends Controller {
 	}
 	
 	public String pritCheckOrderByPay(String order_no,long application_id) {
-		String fileName = "report/checkOrder.jasper";
-		String outFileName = "download/供应商对账单";
+		String fileName = getContextPath() +"report/checkOrder.jasper";
+		String outFileName = getContextPath() +"download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
 		hm.put("application_id", application_id);
-		
-		fileName = getContextPath() + fileName;
-		outFileName = getContextPath() + outFileName + order_no;
 		
 		String file = PrintPatterns.getInstance().print(fileName,
 				outFileName, hm);
@@ -109,13 +95,10 @@ public class ReportController extends Controller {
 	
 	public void printReimburse() {
 		String order_no = getPara("order_no");
-		String fileName = "report/reimburse.jasper";
-		String outFileName = "download/报销单";
+		String fileName = getContextPath() +"report/reimburse.jasper";
+		String outFileName = getContextPath() +"download/报销单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
-		fileName = getContextPath() + fileName;
-		outFileName = getContextPath() + outFileName + order_no;
 
 		String file = PrintPatterns.getInstance().print(fileName,
 				outFileName, hm);
@@ -148,13 +131,10 @@ public class ReportController extends Controller {
 		}
 		
 		
-		String fileName = "report/payment.jasper";
-		String outFileName = "download/付款申请单";
+		String fileName = getContextPath() +"report/payment.jasper";
+		String outFileName =getContextPath() +"download/付款申请单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
-		fileName = getContextPath() + fileName;
-		outFileName = getContextPath() + outFileName + order_no;
 		
 		String file = PrintPatterns.getInstance().print(fileName,
 				outFileName, hm);
@@ -166,9 +146,8 @@ public class ReportController extends Controller {
 		String type = getPara("sign");
 		String order_no = getPara("order_no");
 		String muban = type + ".jasper";
-		String fileName = "report/" + muban;
-		String outFileName = "download/";
-
+		String fileName = getContextPath()+"report/" + muban;
+		String outFileName = getContextPath()+"download/";
 		if (type.contains("guoguang")) {
 			outFileName += "国光标准单";
 		} else if (type.contains("nonghang")) {
@@ -215,9 +194,6 @@ public class ReportController extends Controller {
 					if (list.get(i).get("serial_no") != null) {
 						outFileName += "-" + list.get(i).get("serial_no");
 					}
-
-					fileName = getContextPath() + fileName;
-					outFileName = getContextPath() + outFileName;
 					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
@@ -241,9 +217,6 @@ public class ReportController extends Controller {
 								+ to.get("id"));
 				// hm.put("amount", toi.get("amount"));
 			}
-
-			fileName = getContextPath() + fileName;
-			outFileName = getContextPath() + outFileName;
 			
 			String file = PrintPatterns.getInstance().print(fileName,
 					outFileName, hm);
@@ -255,11 +228,10 @@ public class ReportController extends Controller {
 		String type = getPara("sign");
 		String order_no = getPara("order_no");
 		String muban = type + ".jasper";
-		String fileName = "report/" + muban;
-		String outFileName = "download/签收单";
+		String fileName = getContextPath()+"report/" + muban;
+		String outFileName = getContextPath()+"download/签收单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
 		
 		boolean is_one = muban.contains("_one");
 		TransferOrder to = TransferOrder.dao
@@ -279,9 +251,6 @@ public class ReportController extends Controller {
 						outFileName += "-" + list.get(i).get("serial_no");
 					}
 					
-					fileName = getContextPath() + fileName;
-					outFileName = getContextPath() + outFileName;
-					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 					buffer.append(file.substring(file.indexOf("download")-1));
@@ -291,11 +260,7 @@ public class ReportController extends Controller {
 					hm.put("id", list.get(i).get("id"));
 					if (list.get(i).get("serial_no") != null) {
 						outFileName += "-" + list.get(i).get("serial_no");
-					}
-
-					fileName = getContextPath() + fileName;
-					outFileName = getContextPath() + outFileName;
-					
+					}				
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 					try {
@@ -317,9 +282,6 @@ public class ReportController extends Controller {
 								+ to.get("id"));
 				// hm.put("amount", toi.get("amount"));
 			}
-
-			fileName = getContextPath() + fileName;
-			outFileName = getContextPath() + outFileName;
 			
 			String file = PrintPatterns.getInstance().print(fileName,
 					outFileName, hm);
