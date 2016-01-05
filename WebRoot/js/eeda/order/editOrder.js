@@ -77,64 +77,9 @@ var buildStructureUI = function(json) {
         if (!structure.FIELDS_LIST)
             continue;
         if (structure.STRUCTURE_TYPE == '字段') {
-            var field_section_html = template('field_section', {
-                id: structure.ID
-            });
-
-            $('#fields').append(field_section_html);
-            var field_section = $('#' + structure.ID + '>.col-lg-12');
-
-            for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
-                var field = structure.FIELDS_LIST[j];
-
-                var field_html = '';
-                if (field.FIELD_TYPE == '仅显示值') {
-                    field_html = template('input_field', {
-                        id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                        label: field.FIELD_DISPLAY_NAME,
-                        disabled: "disabled"
-                    });
-                } else if (field.FIELD_TYPE == '文本编辑框') {
-                    field_html = template('input_field', {
-                        id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                        label: field.FIELD_DISPLAY_NAME
-                    });
-                } else if (field.FIELD_TYPE == '日期编辑框') {
-                    field_html = template('input_date_field_template', {
-                        id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                        label: field.FIELD_DISPLAY_NAME
-                    });
-                } else if (field.FIELD_TYPE == '下拉列表') {
-                    if (field.FIELD_TYPE_EXT_TYPE == '自定义列表值') {
-                        var valueStr = field.FIELD_TYPE_EXT_TEXT;
-                        var items = valueStr.split('\n');
-                        field_html = template('select_field_template', {
-                            id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                            label: field.FIELD_DISPLAY_NAME,
-                            items: items
-                        });
-                    } else if (field.FIELD_TYPE_EXT_TYPE == '客户列表') {
-                        field_html = template('input_customer_template', {
-                            id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                            label: field.FIELD_DISPLAY_NAME
-                        });
-                    } else if (field.FIELD_TYPE_EXT_TYPE == '供应商列表') {
-                        field_html = template('input_sp_template', {
-                            id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                            label: field.FIELD_DISPLAY_NAME,
-                            value: ''
-                        });
-                    }
-                } else {
-                    field_html = template('input_field', {
-                        id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                        label: field.FIELD_DISPLAY_NAME
-                    });
-                }
-
-                field_section.append(field_html);
-            }
+            generateField(structure);
         } else {
+
             var list_html = template('table_template', {
                 id: structure.ID,
                 structure_id: structure.ID,
@@ -146,11 +91,109 @@ var buildStructureUI = function(json) {
 
             //setting 是动态跟随table生成的
             var table_setting = window['table_' + structure.ID + '_setting'];
-            $('#list table:last').DataTable(table_setting);
+
+            //从表列头重新处理
+            if(structure.ADD_BTN_TYPE == '弹出列表, 从其它数据表选取'){
+                var btn_setting_obj = JSON.parse(structure.ADD_BTN_SETTING);
+                var headerTr = $('#table_' + structure.ID +' thead tr');
+
+                var col_list = btn_setting_obj.col_list;
+                for (var j = 0; j < col_list.length; j++) {
+                    var field = JSON.parse(col_list[j].field_name);
+                    headerTr.append('<th>'+field.FIELD_DISPLAY_NAME+'</th>');
+
+                    //col setting
+                    var col_item = {
+                        data: 'F' + field.ID + '_' +field.FIELD_NAME
+                    };
+                    if (field.FIELD_TYPE == '下拉列表' 
+                        && (field.FIELD_TYPE_EXT_TYPE =='客户列表' || field.FIELD_TYPE_EXT_TYPE =='供应商列表')
+                    ){
+                        col_item = {
+                            data: 'F' + field.ID + '_' +field.FIELD_NAME + '_INPUT'
+                        };
+                    }
+                    table_setting.columns.push(col_item);
+                };
+                //统一加上REF_T_ID
+                headerTr.append('<th>REF_T_ID</th>');
+                table_setting.columns.push({
+                    data: 'REF_T_ID',
+                    visible: false,
+                    render: function ( data, type, full, meta ) {
+                        if(!data)
+                            data = '';
+                        return '<input type="hidden" name="REF_T_ID" value="' + data + '">';
+                    }
+                });
+
+                window['table_' + structure.ID + '_setting'] = table_setting;
+            }
+
+            $('#table_' + structure.ID).DataTable(table_setting);
         }
     } //end of for
 };
 
+var generateField=function(structure){
+    var field_section_html = template('field_section', {
+        id: structure.ID
+    });
+
+    $('#fields').append(field_section_html);
+    var field_section = $('#' + structure.ID + '>.col-lg-12');
+
+    for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
+        var field = structure.FIELDS_LIST[j];
+
+        var field_html = '';
+        if (field.FIELD_TYPE == '仅显示值') {
+            field_html = template('input_field', {
+                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                label: field.FIELD_DISPLAY_NAME,
+                disabled: "disabled"
+            });
+        } else if (field.FIELD_TYPE == '文本编辑框') {
+            field_html = template('input_field', {
+                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                label: field.FIELD_DISPLAY_NAME
+            });
+        } else if (field.FIELD_TYPE == '日期编辑框') {
+            field_html = template('input_date_field_template', {
+                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                label: field.FIELD_DISPLAY_NAME
+            });
+        } else if (field.FIELD_TYPE == '下拉列表') {
+            if (field.FIELD_TYPE_EXT_TYPE == '自定义列表值') {
+                var valueStr = field.FIELD_TYPE_EXT_TEXT;
+                var items = valueStr.split('\n');
+                field_html = template('select_field_template', {
+                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                    label: field.FIELD_DISPLAY_NAME,
+                    items: items
+                });
+            } else if (field.FIELD_TYPE_EXT_TYPE == '客户列表') {
+                field_html = template('input_customer_template', {
+                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                    label: field.FIELD_DISPLAY_NAME
+                });
+            } else if (field.FIELD_TYPE_EXT_TYPE == '供应商列表') {
+                field_html = template('input_sp_template', {
+                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                    label: field.FIELD_DISPLAY_NAME,
+                    value: ''
+                });
+            }
+        } else {
+            field_html = template('input_field', {
+                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                label: field.FIELD_DISPLAY_NAME
+            });
+        }
+
+        field_section.append(field_html);
+    }
+};
 
 var buildOrderDto = function() {
     //循环处理字段

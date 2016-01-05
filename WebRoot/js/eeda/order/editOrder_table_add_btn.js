@@ -3,6 +3,7 @@ $('#list').on('click', 'button', function(event) {
     if ($(this).attr('name') == 'addRowBtn') {
         var table_id = $(this).attr('table_id');
         var structure_id = $(this).attr('structure_id');
+        $('#addRowBtn_search_list_modal #target_structure_id').val(structure_id);
 
         var btn_type = getTableAddBtnType(structure_id);
 
@@ -180,8 +181,8 @@ var buildModalResultList = function(col_list){
                 data: 'F' + field.ID + '_' +field.FIELD_NAME + '_INPUT'
             };
         }
-        
-        headerTr.append('<th>'+field.FIELD_DISPLAY_NAME+'</th>')
+
+        headerTr.append('<th>'+field.FIELD_DISPLAY_NAME+'</th>');
         columns.push(col_item);
     };
 
@@ -242,3 +243,37 @@ $('#addRowBtn_search_list_modal #searchBtn').on('click', function(e){
 $("#addRowBtn_search_list_modal #resetBtn").click(function(){
     $('#searchForm')[0].reset();
 });
+
+$("#addRowBtn_search_list_modal button[name=ok_btn]").click(function(){
+    var dataTable = $('#modal_search_result_table').DataTable();
+    var data = dataTable.rows().data();
+
+    //回填 table_id
+    var target_structure_id = $('#addRowBtn_search_list_modal #target_structure_id').val();
+    var target_table = $('#table_' + target_structure_id).DataTable();
+    var target_table_setting = window['table_' + target_structure_id + '_setting'];
+
+    // console.log(data);
+    var checked_ids = $('#modal_search_result_table input[type=checkbox]:checked');
+    for (var i = 0; i < checked_ids.length; i++) {
+        var input = $(checked_ids[i]);
+        var id = input.val();
+        for (var j = 0; j < data.length; j++) {
+            var row_obj = dataTable.row(j).data();
+            if(id == row_obj.ID){
+                var new_row = {};
+                for (var k = 0; k < target_table_setting.columns.length; k++) {
+                    var column = target_table_setting.columns[k];
+                    var field_name = column.data;
+                    new_row[field_name] = row_obj[field_name];
+                };
+
+                //统一加上REF_T_ID
+                new_row['REF_T_ID'] = id;
+                target_table.row.add(new_row).draw(false);
+            }
+        };
+    };
+    $('#addRowBtn_search_list_modal').modal('hide');
+});
+

@@ -37,6 +37,9 @@
                 }
                 $(row).attr('id', id);
                 $(row).append('<input type="hidden" name="id" value="' + id + '"/>');
+                debugger;
+                var ref_t_id = (data.REF_T_ID==null?'':data.REF_T_ID);
+                $(row).append('<input type="hidden" name="ref_t_id" value="' + ref_t_id + '"/>');
             },
             "columns": [
                 { "width": "30px", "orderable":false, 

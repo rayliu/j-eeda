@@ -171,7 +171,7 @@
  					if(data[i].NAME == hideCity){
  						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
  					}else{
- 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+ 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
  					}
  				}
  			}
@@ -190,7 +190,7 @@
  					if(data[i].NAME == hideDistrict){
  						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
  					}else{
- 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+ 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
  					}
  				}
  			}

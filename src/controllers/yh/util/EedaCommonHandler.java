@@ -48,6 +48,7 @@ public class EedaCommonHandler {
      *              {
      *                  id: 1,          //对应表名T_5.id
      *                  parent_id:1,    //对应表名T_3.id=1
+     *                  ref_t_id: 3,    //对应其它关联表 id =3
      *                  F13_XH: "ewqe", //对应表中字段T_5.F13_XH
      *                  F14_SL: ""
      *                  F15_TJ: ""
@@ -87,8 +88,22 @@ public class EedaCommonHandler {
                 tableRec.set("structure_parent_id", parentStructureId);
                 
                 if(structure.get("PARENT_ID") != null){
-                    String tableName = "T_" + structureId;
-                    List<Record> rowList = Db.find("select * from "+tableName+" where parent_id="+order_id);
+                    String originStructureId = String.valueOf(structureId);
+                    String tableName = "t_" + originStructureId;
+                    String refCon = "";
+                    String subCol = "";
+                    //获取field定义, 判断是否需要针对特殊列表转换ID -> 名字
+                    subCol = getSubCol(originStructureId);
+                    
+                    if("弹出列表, 从其它数据表选取".equals(structure.get("ADD_BTN_TYPE"))){
+                        String settingJson = structure.get("ADD_BTN_SETTING").toString();
+                        Map<String, ?> settingDto= gson.fromJson(settingJson, HashMap.class);
+                        String targetStructureId = settingDto.get("structure_id").toString();
+                        tableName += ", t_"+targetStructureId;
+                        refCon = " and t_"+originStructureId+".ref_t_id = t_"+targetStructureId+".id";
+                        subCol += getSubCol(targetStructureId);
+                    }
+                    List<Record> rowList = Db.find("select * "+subCol+" from "+tableName+" where t_"+originStructureId+".parent_id="+order_id+refCon);
                     tableRec.set("row_list", rowList);
                     tableList.add(tableRec);
                 }
@@ -97,6 +112,23 @@ public class EedaCommonHandler {
         }
         logger.debug(orderRec.toJson());
         return orderRec;
+    }
+
+    private static String getSubCol(String structureId) {
+        String subCol = "";
+        String fieldSql = "select * from field where structure_id = ?";
+        List<Record> fieldDefineList = Db.find(fieldSql, structureId);
+        for (Record fieldDefine : fieldDefineList) {
+            if("下拉列表".equals(fieldDefine.get("field_type")) 
+                    && ("客户列表".equals(fieldDefine.get("field_type_ext_type"))
+                        || "供应商列表".equals(fieldDefine.get("field_type_ext_type"))
+                       )
+               ){
+                String key = "F"+fieldDefine.getLong("id")+"_"+fieldDefine.getStr("field_name");
+                subCol += ", (select abbr from contact where id=t_"+structureId+"."+key+") "+ key +"_INPUT";
+             }
+        }
+        return subCol;
     }
     
     public static Map searchOrder(Enumeration<String>  paraNames, HttpServletRequest request){
@@ -225,34 +257,19 @@ public class EedaCommonHandler {
     private static Record buildFieldRec(String order_id, Map<String, ?> structure) {
         int structureId = ((Double)structure.get("ID")).intValue();
         Record orderRec;
-       
+        String subCol = getSubCol(String.valueOf(structureId));
         if(structure.get("PARENT_ID") == null){
             String tableName = "T_" + structureId;
-            
             List<Map> fieldList = (ArrayList<Map>)structure.get("FIELDS_LIST");
-            orderRec = Db.findById(tableName, order_id);
-            String[] colNames = orderRec.getColumnNames();
-            for (int i = 0; i < colNames.length; i++) {
-                String colName = colNames[i];
-                if(colName.endsWith("_KH")){
-                    Record rec = Db.findFirst("select * from contact where id=?", orderRec.get(colName));
-                    if(rec != null){
-                        orderRec.set(colName+"_input", rec.get("abbr"));
-                    }
-                }else if(colName.endsWith("_GYS")){
-                    Record rec = Db.findFirst("select * from contact where id=?", orderRec.get(colName));
-                    if(rec != null){
-                        orderRec.set(colName+"_input", rec.get("abbr"));
-                    }
-                }
-            }
+            orderRec = Db.findFirst("select * "+subCol+" from "+tableName+ " where id=?", order_id);
+            
             orderRec.set("structure_id", structureId);
             logger.debug(orderRec.toJson());
             
         }else{
             int parentId = ((Double)structure.get("PARENT_ID")).intValue();
             String tableName = "T_" + structureId;
-            orderRec = Db.findById(tableName, "parent_id", order_id);
+            orderRec = Db.findFirst("select * "+subCol+" from "+tableName+ " where parent_id=?", order_id);
             if(orderRec != null)
                 orderRec.set("structure_id", structureId);
             logger.debug(orderRec.toJson());
