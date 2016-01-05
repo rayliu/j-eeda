@@ -664,6 +664,14 @@
     	    		$("#driver_phone").val("");
     	    		$("#carinfoId").val("");
     	    	}
+    	    	
+    	    	if($('#booking_note_number').val() == ''){
+    	    		$.scojs_message('托运单号不能为空', $.scojs_message.TYPE_WARN);
+    	    		$("#saveDepartOrderBtn").attr("disabled", false); 
+    	    		return;
+    	    	}
+    	    	
+    	    	
     	    	// 保存单品
     	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
     				if(data.ID>0){
