@@ -8,7 +8,7 @@
         console.log(json);
 
         $('#module_name').text(json.MODULE_NAME);
-        document.title = json.MODULE_NAME + '查询  ' + document.title;
+        document.title = json.MODULE_NAME + '查询 | ' + document.title;
 
         $('#fields_body').empty();
 
