@@ -96,6 +96,11 @@ $(document).ready(function() {
         			
             	}
   	        },
+  	        {"mDataProp":null,"sWidth":"80px",
+        		"fnRender": function(obj) {
+        			return (obj.aData.CREATE_STAMP).substr(5,2);
+        		}
+        	},
             {"mDataProp":"STATUS", "sWidth":"60px"},
             {"mDataProp":"CNAME", "sWidth":"80px"},
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"80px"},
