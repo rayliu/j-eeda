@@ -266,6 +266,18 @@ public class ModuleController extends Controller {
             List<Record> fieldList = Db.find(fieldSql, structure.get("id"));
 
             structure.set("fields_list", fieldList);
+            
+            //加上上级表单的structure
+            if("弹出列表, 从其它数据表选取".equals(structure.get("ADD_BTN_TYPE"))){
+                String jsonStr = structure.get("ADD_BTN_SETTING");
+                Gson gson = new Gson();  
+                Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);
+                String structure_id = dto.get("structure_id").toString();
+                Record structureRec = Db.findFirst("select * from structure where id=?", structure_id);
+                List<Record> fieldsRecs = Db.find("select * from field where structure_id=?", structure_id);
+                structureRec.set("FIELDS_LIST", fieldsRecs);
+                structure.set("ADD_BTN_SETTING_STRUCTURE", structureRec);
+            }
         }
         
         List<Record> aRecs = Db.find("select * from structure_action where module_id=?", module_id);

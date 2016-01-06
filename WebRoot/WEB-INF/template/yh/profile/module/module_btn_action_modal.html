@@ -15,12 +15,19 @@
                         <select class="form-control" name="condition" style="display: initial;width: initial;">
                             <option >ID为空</option>
                             <option >ID不为空</option>
+                            <option >列表中存在上级单据</option>
                             <option >存在下级单据</option>
                             <option >不存在下级单据</option>
                             <option >自定义条件</option>
                         </select> 成立时执行
                     </div>
                     <div id="modal_add_field_div" class="form-group">
+                        <div name='table_list' style="display: none;width: initial;">
+                            对<select class="form-control" name="table_list" style="display: initial;width: initial;">
+                                
+                            </select>
+                        </div>
+                        
                         <label class="control-label" for="inputSuccess">字段赋值&nbsp;&nbsp;<button name="addField" type="button" class="addColField btn btn-success btn-xs">添加</button></label>
                         <section class='well'>
                             <div class="form-group">

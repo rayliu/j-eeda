@@ -103,7 +103,8 @@ public class EedaCommonHandler {
                         refCon = " and t_"+originStructureId+".ref_t_id = t_"+targetStructureId+".id";
                         subCol += getSubCol(targetStructureId);
                     }
-                    List<Record> rowList = Db.find("select * "+subCol+" from "+tableName+" where t_"+originStructureId+".parent_id="+order_id+refCon);
+                    List<Record> rowList = Db.find("select *, t_"+originStructureId+".id "//这里多写一个ID，因为DB中取最后一个列的ID
+                            +subCol+" from "+tableName+" where t_"+originStructureId+".parent_id="+order_id+refCon);
                     tableRec.set("row_list", rowList);
                     tableList.add(tableRec);
                 }

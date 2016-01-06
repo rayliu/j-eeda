@@ -138,7 +138,7 @@
 
         var fieldSetRow = $('#editBtnActionModal #modal_add_field_div .row');
         fieldSetRow.empty();
-
+        $('#editBtnActionModal select[name=table_list]').empty();
         var modal_form = $('#editBtnActionModal #modalForm');
         var command_json = li.find('input[name=actionCommandJson]').val();
 
@@ -146,25 +146,67 @@
             commandObj = JSON.parse(command_json);
             modal_form.find('select[name=condition]').val(commandObj.condition);
 
-            var orderFieldList = getModuleFields();
+            if(commandObj.condition == '列表中存在上级单据'){
+                for (var i = 0; i < module_obj.STRUCTURE_LIST.length; i++) {
+                    var structure = module_obj.STRUCTURE_LIST[i];
+                    if(structure.STRUCTURE_TYPE=='列表' && structure.ADD_BTN_TYPE=="弹出列表, 从其它数据表选取"){
+                        var ref_structure = structure.ADD_BTN_SETTING_STRUCTURE;
+                        $('#editBtnActionModal select[name=table_list]')
+                            .append('<option value="'+ref_structure.ID +'">'+ref_structure.NAME+'</option>')
+                    }
+                };
 
-            
-            var field_list = commandObj.setValueList;
-            for(var i=0; i<field_list.length; i++){
-                var field = field_list[i];
-                for(var key in field){
-                    var display_name = key.split(',')[2].split(':')[1];
-                    var value = field[key];
-                    var html = template('editBtnActionModal_add_field_template', 
-                        {
-                            field_list: orderFieldList,
-                            display_name: display_name,
-                            field_value: value
+                $('#editBtnActionModal select[name=table_list]').val(commandObj.structure_id);
+
+                var orderFieldList;
+                var table_selected_value = commandObj.structure_id;
+                for (var i = 0; i < module_obj.STRUCTURE_LIST.length; i++) {
+                    var structure = module_obj.STRUCTURE_LIST[i];
+                    if(structure.STRUCTURE_TYPE=='列表' && structure.ADD_BTN_TYPE=="弹出列表, 从其它数据表选取"){
+                        var ref_structure = structure.ADD_BTN_SETTING_STRUCTURE;
+                        if(table_selected_value == ref_structure.ID){
+                            orderFieldList = ref_structure.FIELDS_LIST;
                         }
-                    );
-                    fieldSetRow.append(html);
+                    }
+                };
+                var field_list = commandObj.setValueList;
+                for(var i=0; i<field_list.length; i++){
+                    var field = field_list[i];
+                    for(var key in field){
+                        var display_name = key.split(',')[2].split(':')[1];
+                        var value = field[key];
+                        var html = template('editBtnActionModal_add_field_template', 
+                            {
+                                field_list: orderFieldList,
+                                display_name: display_name,
+                                field_value: value
+                            }
+                        );
+                        fieldSetRow.append(html);
+                    }
+                }
+                $('#editBtnActionModal div[name=table_list]').css('display', 'initial');
+            }else{
+                var orderFieldList = getModuleFields();
+                var field_list = commandObj.setValueList;
+                for(var i=0; i<field_list.length; i++){
+                    var field = field_list[i];
+                    for(var key in field){
+                        var display_name = key.split(',')[2].split(':')[1];
+                        var value = field[key];
+                        var html = template('editBtnActionModal_add_field_template', 
+                            {
+                                field_list: orderFieldList,
+                                display_name: display_name,
+                                field_value: value
+                            }
+                        );
+                        fieldSetRow.append(html);
+                    }
                 }
             }
+
+            
         }
     });
 
@@ -197,15 +239,58 @@
         return orderFieldList;
     };
 
+    //editBtnActionModal 条件变化时
+    $('#editBtnActionModal').on('change', 'select[name=condition]', function(){
+        var selected_value = $(this).val();
+        $('#editBtnActionModal select[name=table_list]').empty();
+        if(selected_value == '列表中存在上级单据'){
+            for (var i = 0; i < module_obj.STRUCTURE_LIST.length; i++) {
+                var structure = module_obj.STRUCTURE_LIST[i];
+                if(structure.STRUCTURE_TYPE=='列表' && structure.ADD_BTN_TYPE=="弹出列表, 从其它数据表选取"){
+                    var ref_structure = structure.ADD_BTN_SETTING_STRUCTURE;
+                    $('#editBtnActionModal select[name=table_list]')
+                        .append('<option value="'+ref_structure.ID +'">'+ref_structure.NAME+'</option>')
+                }
+            };
+            $('#editBtnActionModal div[name=table_list]').css('display', 'initial');
+        }else{
+            $('#editBtnActionModal div[name=table_list]').css('display', 'none');
+        }
+    });
+
     //editBtnActionModal 添加字段
     $('#editBtnActionModal').on('click', 'button[name=addField]', function(){
-        var orderFieldList = getModuleFields();
+        var selected_value = $('#editBtnActionModal select[name=condition]').val();
 
-        var html = template('editBtnActionModal_add_field_template', 
-                        {
-                            field_list: orderFieldList
-                        }
-                    );
+        var html;
+        if(selected_value == '列表中存在上级单据'){
+            var orderFieldList;
+            var table_selected_value = $('#editBtnActionModal select[name=table_list]').val();
+            for (var i = 0; i < module_obj.STRUCTURE_LIST.length; i++) {
+                var structure = module_obj.STRUCTURE_LIST[i];
+                if(structure.STRUCTURE_TYPE=='列表' && structure.ADD_BTN_TYPE=="弹出列表, 从其它数据表选取"){
+                    var ref_structure = structure.ADD_BTN_SETTING_STRUCTURE;
+                    if(table_selected_value == ref_structure.ID){
+                        orderFieldList = ref_structure.FIELDS_LIST;
+                    }
+                }
+            };
+
+            html = template('editBtnActionModal_add_field_template', 
+                    {
+                        field_list: orderFieldList
+                    }
+                );
+        }else{
+            var orderFieldList = getModuleFields();
+
+            html = template('editBtnActionModal_add_field_template', 
+                    {
+                        field_list: orderFieldList
+                    }
+                );
+        }
+        
         $(this).parent().parent().find('.row').append(html);
     });
 
@@ -238,8 +323,10 @@
             setValueList.push(obj);
         }
         var condtion = form.find('select[name=condition]').val();
+        var target_structure_id = form.find('select[name=table_list]').val();
         var json_obj = {
             condition: condtion,
+            structure_id: target_structure_id,
             setValueList: setValueList
         }
 
