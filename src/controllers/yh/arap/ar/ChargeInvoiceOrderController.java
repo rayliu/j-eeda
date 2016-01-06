@@ -148,29 +148,9 @@ public class ChargeInvoiceOrderController extends Controller {
 		String orderNo = getPara("orderNo");
 		//String status = getPara("status");
 		String office = getPara("office");
-		
-		
-		String sqlTotal = "select count(1) total from arap_charge_invoice_application_order aaia "
-        		+ " left join party p on p.id = aaia.payee_id"
-				+ " left join contact c on c.id = p.contact_id"
-        		+ " left join user_login ul on ul.id = aaia.create_by"
-				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
-				+ " left join user_login ul3 on ul3.id = aaia.approver_by "
-				+ " where aaia.status = '已审批' and aaia.have_invoice = 'Y'";
-		String sql = "SELECT '申请单' order_type, aaia.id,aaia.order_no,aaia.STATUS ,aaia.total_amount,aaia.remark,aaia.create_stamp,"
-				+ "  c.abbr cname, ul.c_name create_by, c1.abbr sp "
-				+ " FROM arap_charge_invoice_application_order aaia "
-				+ " LEFT JOIN party p ON p.id = aaia.payee_id"
-				+ " LEFT JOIN contact c ON c.id = p.contact_id"
-				+ " LEFT JOIN contact c1 ON c1.id = aaia.sp_id"
-				+ " LEFT JOIN user_login ul ON ul.id = aaia.create_by"
-				+ " LEFT JOIN user_login ul2 ON ul2.id = aaia.audit_by"
-				+ " LEFT JOIN user_login ul3 ON ul3.id = aaia.approver_by"
-				+ " WHERE"
-				+ " aaia. STATUS = '已审批'"
-				+ " union"
-				+ " select '对账单' order_type,aco.id,aco.order_no,aco.`STATUS`,aco.charge_amount total_amount,aco.remark,aco.create_stamp,c.abbr cname,"
-				+ " ul.c_name create_by,c1.abbr sp"
+
+		String sql = " select '对账单' order_type,aco.id,aco.order_no,aco.`STATUS`,aco.charge_amount total_amount,aco.remark,aco.create_stamp,c.abbr cname,"
+				+ " ul.c_name create_by,c1.abbr sp,aco.begin_time check_stamp"
 				+ " from arap_charge_order aco"
 				+ " LEFT JOIN party p ON p.id = aco.payee_id"
 				+ " LEFT JOIN contact c ON c.id = p.contact_id"
@@ -192,9 +172,7 @@ public class ChargeInvoiceOrderController extends Controller {
 			condition = " where ifnull(cname,'') like '%" + companyName + "%' "
 					  + " and ifnull(order_no,'') like '%" + orderNo + "%' "
 					  + " and create_stamp between '" + beginTime + "' and '" + endTime + "' ";
-//			if(status != null && !"".equals(status)){
-//				condition = condition + " and status = '" + status + "' ";
-//			}
+
 		}
         
         Record rec = Db.findFirst("select count(*) total from(select *  from ("+sql+") A "+condition+") B");
@@ -249,8 +227,11 @@ public class ChargeInvoiceOrderController extends Controller {
         String sql = "select aci.*,"
         		+ " (select group_concat(distinct aco.invoice_no separator '</br>') "
         		+ " from arap_charge_order aco where aco.invoice_order_id = aci.id) invoice_item_no ,"
-        		+ " (select group_concat(distinct aco.order_no separator '</br>') "
-        		+ " from arap_charge_order aco where aco.invoice_order_id = aci.id) charge_order_no ,"
+        		+ " ifnull((select  group_concat( DISTINCT order_no SEPARATOR '</br>' ) "
+        		+ " from arap_charge_invoice_application_order   "
+        		+ " where invoice_order_id = aci.id), "
+        		+ " (select  group_concat( DISTINCT order_no SEPARATOR '</br>' ) "
+        		+ " from arap_charge_order where invoice_order_id = aci.id)) charge_order_no,"
         		+ " ul.c_name creator_name,c.abbr cname,c1.abbr sp "
         		+ " from arap_charge_invoice aci"
 				+ " left join arap_charge_invoice_item_invoice_no acio on acio.invoice_id = aci.id "
@@ -581,7 +562,7 @@ public class ChargeInvoiceOrderController extends Controller {
         if(order_type!=null){
         	if(order_type.equals("申请单")){
             	sql = "select aaia.*,c.abbr cname,ul.c_name create_by,ul2.user_name audit_by,ul3.user_name approval_by,"
-        				+ " ( SELECT group_concat(aciii.invoice_no) FROM arap_charge_invoice_item_invoice_no aciii WHERE aciii.invoice_id = aaia.invoice_order_id ) invoice_no"
+        				+ " ( SELECT group_concat(aciii.invoice_no) FROM arap_charge_invoice_item_invoice_no aciii WHERE aciii.invoice_id = aaia.invoice_order_id ) invoice_no,'' check_stamp "
                 		+ " from arap_charge_invoice_application_order aaia "
                 		+ " left join party p on p.id = aaia.payee_id"
         				+ " left join contact c on c.id = p.contact_id"
@@ -591,7 +572,7 @@ public class ChargeInvoiceOrderController extends Controller {
         				+ " where aaia.id in("+chargePreInvoiceOrderIds+") order by aaia.create_stamp desc " + sLimit;
             }else if(order_type.equals("对账单")){
             	sql = "select aaia.id ,aaia.order_no,aaia.remark,aaia.create_stamp,aaia.status,aaia.charge_amount total_amount,c.abbr cname,ul.c_name create_by,"
-        				+ " aaia.invoice_no"
+        				+ " aaia.invoice_no,aaia.begin_time check_stamp "
                 		+ " from arap_charge_order aaia "
                 		+ " left join party p on p.id = aaia.payee_id"
         				+ " left join contact c on c.id = p.contact_id"
@@ -600,7 +581,7 @@ public class ChargeInvoiceOrderController extends Controller {
             }
         }else{
         	sql = "select aaia.*,c.abbr cname,ul.user_name create_by,"
-    				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no"
+    				+ " (select group_concat(acai.invoice_no) from arap_charge_application_invoice_no acai where acai.application_order_id = aaia.id) invoice_no,aaia.begin_time check_stamp "
             		+ " from arap_charge_order aaia "
             		+ " left join party p on p.id = aaia.payee_id"
     				+ " left join contact c on c.id = p.contact_id"

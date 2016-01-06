@@ -38,7 +38,7 @@ $(document).ready(function() {
         	{"mDataProp":"ORDER_TYPE","sWidth":"80px","sClass":"order_type"},
         	{"mDataProp":null,"sWidth":"80px",
         		"fnRender": function(obj) {
-        			return (obj.aData.CREATE_STAMP).substr(5,2);
+        			return (obj.aData.CHECK_STAMP).substr(5,2);
         		}
         	},
             {"mDataProp":"STATUS","sWidth":"80px",
