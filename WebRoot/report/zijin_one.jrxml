@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ralls" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0ad70e3f-e9f0-4944-b70f-531a1df6ff02">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="65"/>
+	<property name="ireport.y" value="62"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -55,20 +55,17 @@
 	ifnull(toid.notify_party_name,'') as phone_name,
 	ifnull(toid.notify_party_phone,'') as phone,
 	ifnull(tor.order_no,'') as order_no,
-	ifnull(toid.item_no,'') as item_no,
+	substring_index(ifnull(toid.item_no,''),'@',1) as item_no,
+	substring_index(ifnull(toid.item_no,''),'@',-1) as item_type,
             ifnull(toid.order_id,'') as order_id,
             ifnull(toid.serial_no,'') as serial_no,
             ifnull(toid.receive_address,'') as rec_address,
-	ifnull(cg.name,'') as category_name,
              toid.id as id,
 	c.company_name as company_name,
 	if (toid.pieces > 1,pieces,pieces) as pieces
 from
 	transfer_order tor
 	left join transfer_order_item_detail toid on toid.order_id = tor.id
-	left join transfer_order_item toi on toi.order_id = tor.id
-            left join product p on p.id=toi.product_id
-  	left join category cg on cg.id=p.category_id
             left join contact c on  c.id =tor.customer_id
 where tor.order_no = $P{order_no}]]>
 	</queryString>
@@ -88,6 +85,7 @@ where tor.order_no = $P{order_no}]]>
 	<field name="item_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="item_type" class="java.lang.String"/>
 	<field name="order_id" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -95,7 +93,6 @@ where tor.order_no = $P{order_no}]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="rec_address" class="java.lang.String"/>
-	<field name="category_name" class="java.lang.String"/>
 	<field name="id" class="java.lang.Long">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -206,11 +203,11 @@ where tor.order_no = $P{order_no}]]>
 			<frame>
 				<reportElement style="table_TD" x="135" y="403" width="47" height="47" uuid="3ca40206-2114-4643-861a-f04b1e819fd2"/>
 				<textField>
-					<reportElement x="0" y="12" width="47" height="20" uuid="fb228248-f1d1-46fb-a86f-cea0f70e9804"/>
-					<textElement>
-						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					<reportElement x="0" y="0" width="47" height="47" uuid="eb8e4bb2-162c-426b-b70a-0f18b3a771b0"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{category_name}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{item_type}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<textField isBlankWhenNull="true">
@@ -607,7 +604,8 @@ where tor.order_no = $P{order_no}]]>
 				<text><![CDATA[NO:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="182" y="415" width="59" height="20" uuid="a369cbb1-bfee-4123-9c38-c237e1697fb7"/>
+				<reportElement x="182" y="403" width="70" height="47" uuid="a369cbb1-bfee-4123-9c38-c237e1697fb7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{serial_no}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
