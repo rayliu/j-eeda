@@ -49,7 +49,7 @@ public class EedaCommonHandler {
      *                  id: 1,          //对应表名T_5.id
      *                  parent_id:1,    //对应表名T_3.id=1
      *                  ref_t_id: 3,    //对应其它关联表 id =3
-     *                  F13_XH: "ewqe", //对应表中字段T_5.F13_XH
+     *                  F13_XH: "533",  //对应表中字段T_5.F13_XH
      *                  F14_SL: ""
      *                  F15_TJ: ""
      *                  F16_ZL: ""
@@ -120,14 +120,16 @@ public class EedaCommonHandler {
         String fieldSql = "select * from field where structure_id = ?";
         List<Record> fieldDefineList = Db.find(fieldSql, structureId);
         for (Record fieldDefine : fieldDefineList) {
-            if("下拉列表".equals(fieldDefine.get("field_type")) 
-                    && ("客户列表".equals(fieldDefine.get("field_type_ext_type"))
-                        || "供应商列表".equals(fieldDefine.get("field_type_ext_type"))
-                       )
-               ){
+            if("下拉列表".equals(fieldDefine.get("field_type"))) {
                 String key = "F"+fieldDefine.getLong("id")+"_"+fieldDefine.getStr("field_name");
-                subCol += ", (select abbr from contact where id=t_"+structureId+"."+key+") "+ key +"_INPUT";
-             }
+            
+                if ("客户列表".equals(fieldDefine.get("field_type_ext_type")) 
+                        || "供应商列表".equals(fieldDefine.get("field_type_ext_type"))){
+                    subCol += ", (select abbr from contact where id=t_"+structureId+"."+key+") "+ key +"_INPUT";
+                }else if("产品列表".equals(fieldDefine.get("field_type_ext_type"))){
+                   subCol += ", (select item_no from product where id=t_"+structureId+"."+key+") "+ key +"_INPUT";
+                }
+            }
         }
         return subCol;
     }

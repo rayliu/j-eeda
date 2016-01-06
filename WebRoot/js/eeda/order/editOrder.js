@@ -4,6 +4,7 @@
 'use strict';
 
 var global_order_structure;
+var global_customer_id;
 
 $.post('/module/getOrderStructure', {
     module_id: $("#module_id").val()
@@ -81,6 +82,7 @@ var buildStructureUI = function(json) {
         } else {
 
             var list_html = template('table_template', {
+                customer_id: global_customer_id,
                 id: structure.ID,
                 structure_id: structure.ID,
                 label: structure.NAME,
@@ -173,12 +175,19 @@ var generateField=function(structure){
                     items: items
                 });
             } else if (field.FIELD_TYPE_EXT_TYPE == '客户列表') {
+                global_customer_id = 'F' + field.ID + '_' + field.FIELD_NAME;
                 field_html = template('input_customer_template', {
                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
                     label: field.FIELD_DISPLAY_NAME
                 });
             } else if (field.FIELD_TYPE_EXT_TYPE == '供应商列表') {
                 field_html = template('input_sp_template', {
+                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                    label: field.FIELD_DISPLAY_NAME,
+                    value: ''
+                });
+            }else if (field.FIELD_TYPE_EXT_TYPE == '产品列表') {
+                field_html = template('input_product_template', {
                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
                     label: field.FIELD_DISPLAY_NAME,
                     value: ''
@@ -272,7 +281,56 @@ var buildOrderDto = function() {
     return order_dto;
 };
 
+//--------------------product search-----------------
+var bindProductSearch=function(){
+    $('table input[field_type=product_search]').keyup(function(){
+
+            var me = this;
+            var inputStr = $(me).val();
+            if(inputStr.length<2)
+                return;
 
 
+            $.get('/transferOrder/searchItemNo', {input:inputStr, customerId:$('#'+global_customer_id).val()}, function(data){
+                $(me).parent().append('');
+                var productList = $(me).parent().find('ul');
+                for(var i = 0; i < data.length; i++){
+                    productList.append("<li><a tabindex='-1' class='fromLocationItem' item_id="+data[i].ID+" >"+data[i].ITEM_NO+"</a></li>");
+                }
+                productList.css({ 
+                    left:$(me).position().left+"px", 
+                    top:$(me).position().top+31+"px" 
+                }); 
+                
+                productList.show();
+            });
+        });
 
+        // 没选中，焦点离开，隐藏列表
+        $('table input[field_type=product_search]').on('blur', function(){
+            if ($(this).val().trim().length ==0) {
+                $(this).parent().find('input[field_type=product_id]').val('');
+            };
+            $('table ul[name=product_list]').hide();
+        });
+
+        //当用户只点击了滚动条，没选中记录，再点击页面别的地方时，隐藏列表
+        $('table ul[name=product_list]').on('blur', function(){
+            $('table ul[name=product_list]').hide();
+        });
+
+        $('table ul[name=product_list]').on('mousedown', function(){
+            return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+        });
+
+        // 选中
+        $('table ul[name=product_list]').on('mousedown', '.fromLocationItem', function(e){
+            $(this).parent().parent().parent().find('input[field_type=product_search]').val($(this).text());
+            $(this).parent().parent().parent().find('input[field_type=product_id]').val($(this).attr('item_id'));
+            $('table ul[name=product_list]').hide();
+        });
+};
+
+
+//--------------------product search-----------------
 //});

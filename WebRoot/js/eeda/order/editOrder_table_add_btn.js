@@ -11,6 +11,8 @@ $('#list').on('click', 'button', function(event) {
             var dataTable = $('#' + table_id).DataTable();
             var row = window[table_id + '_row'];
             dataTable.row.add(row).draw(false);
+
+            bindProductSearch();
         }else{
             $('#addRowBtn_search_list_modal #fields').empty();
             var searchListSetting = getTableAddBtnSetting(structure_id);

@@ -40,6 +40,7 @@
                 
                 if(data.REF_T_ID != null)
                     $(row).append('<input type="hidden" name="ref_t_id" value="' + data.REF_T_ID + '"/>');
+                
             },
             "columns": [
                 { "width": "30px", "orderable":false, 
@@ -53,16 +54,28 @@
                             if(!data)
                                 data = '';
                             {{if field.FIELD_TYPE == '下拉列表'}}
-                                var items = '{{replaceReturn field.FIELD_TYPE_EXT_TEXT}}'.split('$');
-                                var selectHtml = '<select name="F{{field.ID}}_{{field.FIELD_NAME}}" class="form-control">';
-                                for (var i = 0; i < items.length; i++) {
-                                    if(data == items[i]){
-                                        selectHtml += '<option selected>' + items[i] + '</option>';
-                                    }else{
-                                        selectHtml += '<option>' + items[i] + '</option>';
+                                {{if field.FIELD_TYPE_EXT_TYPE =='自定义列表值'}}
+                                    var items = '{{replaceReturn field.FIELD_TYPE_EXT_TEXT}}'.split('$');
+                                    var selectHtml = '<select name="F{{field.ID}}_{{field.FIELD_NAME}}" class="form-control">';
+                                    for (var i = 0; i < items.length; i++) {
+                                        if(data == items[i]){
+                                            selectHtml += '<option selected>' + items[i] + '</option>';
+                                        }else{
+                                            selectHtml += '<option>' + items[i] + '</option>';
+                                        }
+                                    };
+                                    return selectHtml+'</select>';
+                                {{else if field.FIELD_TYPE_EXT_TYPE =='产品列表'}}
+                                    //先动态构造数据，再动态生成component
+                                    var field = {
+                                        ID: {{field.ID}},
+                                        FIELD_NAME: '{{field.FIELD_NAME}}',
+                                        DISPLAY_VALUE:  full['F{{field.ID}}_{{field.FIELD_NAME}}_INPUT'],
+                                        CUSTOMER_ID: '{{customer_id}}',
+                                        VALUE: data
                                     }
-                                };
-                                return selectHtml+'</select>';
+                                    return buildProductInput(field);
+                                {{/if}}
                             {{else}}
                                 return '<input type="text" name="F{{field.ID}}_{{field.FIELD_NAME}}" value="' + data + '" class="form-control"/>';
                             {{/if}}
@@ -76,6 +89,16 @@
             {{each field_list as field}}
                 F{{field.ID}}_{{field.FIELD_NAME}}: '',
             {{/each}}
+        };
+
+        var buildProductInput=function(field){
+            var field_html = template('input_product_template', {
+                customer_id: '{{customer_id}}',
+                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                display_value: field.DISPLAY_VALUE,
+                value: field.VALUE
+            });
+            return field_html;
         };
     </script>
 </script>
