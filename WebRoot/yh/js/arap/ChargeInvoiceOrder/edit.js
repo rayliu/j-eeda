@@ -86,14 +86,7 @@ $(document).ready(function() {
   	        },    
             {"mDataProp":"ORDER_NO", "sWidth":"120px",
             	"fnRender": function(obj) {
-            		if($("#order_type").val()=='申请单'){
-            			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		}else if($("#order_type").val()=='对账单'){
-            			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-            		}else{
-            			return obj.aData.ORDER_NO;
-            		}
-        			
+            		return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
             	}
   	        },
   	        {"mDataProp":null,"sWidth":"80px",

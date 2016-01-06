@@ -22,17 +22,8 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_NO","sWidth":"80px",
             	"fnRender": function(obj) {
             		if(obj.aData.ORDER_TYPE =='对账单'){
-            			if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
-                			return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                		}else{
-                			return obj.aData.ORDER_NO;
-                		}
-            		}else{
-            			if(ChargePreInvoice.isUpdate || ChargePreInvoice.isApproval || ChargePreInvoice.isConfirm){
-                			return "<a href='/chargePreInvoiceOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
-                		}else{
-                			return obj.aData.ORDER_NO;
-                		}
+                		return "<a href='/chargeCheckOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
+                
             		}
         		}},
         	{"mDataProp":"ORDER_TYPE","sWidth":"80px","sClass":"order_type"},
