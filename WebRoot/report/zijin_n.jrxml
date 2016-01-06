@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="zijin_n" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0ad70e3f-e9f0-4944-b70f-531a1df6ff02">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="22"/>
+	<property name="ireport.y" value="21"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -72,6 +72,7 @@
 	</style>
 	<parameter name="order_no" class="java.lang.String"/>
 	<parameter name="id" class="java.lang.String"/>
+	<parameter name="item_type" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select
 	ifnull(tor.receiving_unit,'') as receiving_unit,
@@ -79,8 +80,7 @@
 	ifnull(toid.notify_party_name,'') as phone_name,
 	ifnull(toid.notify_party_phone,'') as phone,
 	ifnull(tor.order_no,'') as order_no,
-	substring_index(ifnull(toid.item_no,''),'@',1) as item_no,
-	substring_index(ifnull(toid.item_no,''),'@',-1) as item_type,
+	ifnull(toid.item_no,'') as item_no,
             ifnull(toid.order_id,'') as order_id,
             ifnull(toid.serial_no,'') as serial_no,
             ifnull(toid.receive_address,'') as rec_address,
@@ -110,7 +110,6 @@ and toid.id = $P{id}]]>
 	<field name="item_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="item_type" class="java.lang.String"/>
 	<field name="order_id" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -215,7 +214,7 @@ and toid.id = $P{id}]]>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["收货地址"+$F{rec_address}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["收货地址"+$F{address}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="table_TD" x="255" y="75" width="255" height="25" uuid="7b2de14c-85d7-40fb-968e-f0360d35fc7a"/>
@@ -268,7 +267,7 @@ and toid.id = $P{id}]]>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["收发单位："+$F{address}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["收货单位："+$F{rec_address}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="0" y="75" width="255" height="25" uuid="6e416283-6360-490f-9541-5a9d66535f39"/>
@@ -461,11 +460,11 @@ and toid.id = $P{id}]]>
 			<frame>
 				<reportElement style="table_TD" x="110" y="41" width="47" height="47" uuid="1f18beb3-aa28-4e22-9c4e-cae284be8f17"/>
 				<textField>
-					<reportElement x="0" y="0" width="47" height="47" uuid="e6dd0ac6-ad31-49cd-b536-3b4e3ca695d0"/>
+					<reportElement x="0" y="0" width="47" height="47" uuid="0b2122f8-59fb-425e-90eb-7775ff38dc81"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{item_type}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{item_type}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<staticText>
@@ -637,7 +636,7 @@ and toid.id = $P{id}]]>
 				<reportElement style="table_TD" x="110" y="88" width="47" height="47" uuid="39724dcf-5d42-48e8-98cb-63702e650d65"/>
 			</frame>
 			<textField>
-				<reportElement x="157" y="41" width="70" height="47" uuid="7ad9b921-c0ac-4c79-b7d1-92708d598cba"/>
+				<reportElement x="158" y="41" width="70" height="47" uuid="7ad9b921-c0ac-4c79-b7d1-92708d598cba"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{serial_no}]]></textFieldExpression>
 			</textField>

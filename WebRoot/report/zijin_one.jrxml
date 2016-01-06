@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ralls" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0ad70e3f-e9f0-4944-b70f-531a1df6ff02">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="62"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -48,6 +48,7 @@
 		</box>
 	</style>
 	<parameter name="order_no" class="java.lang.String"/>
+	<parameter name="item_type" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select
 	ifnull(tor.receiving_unit,'') as receiving_unit,
@@ -55,8 +56,7 @@
 	ifnull(toid.notify_party_name,'') as phone_name,
 	ifnull(toid.notify_party_phone,'') as phone,
 	ifnull(tor.order_no,'') as order_no,
-	substring_index(ifnull(toid.item_no,''),'@',1) as item_no,
-	substring_index(ifnull(toid.item_no,''),'@',-1) as item_type,
+	ifnull(toid.item_no,'') as item_no,
             ifnull(toid.order_id,'') as order_id,
             ifnull(toid.serial_no,'') as serial_no,
             ifnull(toid.receive_address,'') as rec_address,
@@ -85,7 +85,6 @@ where tor.order_no = $P{order_no}]]>
 	<field name="item_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="item_type" class="java.lang.String"/>
 	<field name="order_id" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -203,11 +202,11 @@ where tor.order_no = $P{order_no}]]>
 			<frame>
 				<reportElement style="table_TD" x="135" y="403" width="47" height="47" uuid="3ca40206-2114-4643-861a-f04b1e819fd2"/>
 				<textField>
-					<reportElement x="0" y="0" width="47" height="47" uuid="eb8e4bb2-162c-426b-b70a-0f18b3a771b0"/>
+					<reportElement x="0" y="0" width="47" height="47" uuid="1001d631-1bda-411e-a25f-4e73371a5af8"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{item_type}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{item_type}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<textField isBlankWhenNull="true">
@@ -404,7 +403,7 @@ where tor.order_no = $P{order_no}]]>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA["收货地址："+$F{rec_address}]]></textFieldExpression>
+					<textFieldExpression><![CDATA["收货地址："+$F{address}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="table_TD" x="255" y="75" width="255" height="25" uuid="c407dd84-c60b-4e3f-bc53-1cd1b3120ac3"/>
@@ -620,7 +619,7 @@ where tor.order_no = $P{order_no}]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["收发单位："+$F{address}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["收货单位："+$F{rec_address}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement style="table_TD" mode="Transparent" x="46" y="85" width="510" height="25" uuid="309bf667-b543-43e1-bdb9-da2168865bd8"/>

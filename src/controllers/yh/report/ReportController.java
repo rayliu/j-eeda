@@ -226,13 +226,20 @@ public class ReportController extends Controller {
 	}
 	public void printZJSign() {
 		String type = getPara("sign");
+		String item_type= "";
+		String signType = getPara("zjSignType");
+		if("DTJ".equals(signType)){
+			item_type="大堂机";
+		}else{
+			item_type="穿墙机";
+		}
 		String order_no = getPara("order_no");
 		String muban = type + ".jasper";
 		String fileName = getContextPath()+"report/" + muban;
 		String outFileName = getContextPath()+"download/签收单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
+		hm.put("item_type", item_type);
 		boolean is_one = muban.contains("_one");
 		TransferOrder to = TransferOrder.dao
 				.findFirst(

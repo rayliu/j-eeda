@@ -2702,7 +2702,7 @@ $(document).ready(function() {
 
     $("#btnOK").on('click',function(){
     	var signNO = $("input[name='sign']:checked").val();
-    	var zjSignNO = $("input[name='zjsign']:checked").val();
+    	var zjSignType = $("input[name='zjsign']:checked").val();
     	/*var shzm = $("input[name='shmb']:checked").val();*/
     	//打印签收单
     	var customer = $("#customerMessage").val();
@@ -2711,7 +2711,7 @@ $(document).ready(function() {
     	if(pdf_sign == null)
     		pdf_sign = 'n';//多张pdf
     	var pdf_muban = signNO + "_" + pdf_sign;
-    	var zj_pdf_muban = zjSignNO + "_" + pdf_sign;
+    	var zj_pdf_muban = "zijin_" + pdf_sign;
     	var cargoNature = $("input[name='cargoNature']:checked").val();
     	if(cargoNature == 'cargo'){
     		if(customer=="江苏国光信息产业股份有限公司"){
@@ -2720,7 +2720,7 @@ $(document).ready(function() {
         			openData(data);
             	});
     		}else if(customer=="深圳市紫金支点技术股份有限公司"){
-				$.post('/report/printZJSign', {order_no:order_no,sign:zj_pdf_muban}, function(data){
+				$.post('/report/printZJSign', {order_no:order_no,sign:zj_pdf_muban,zjSignType:zjSignType}, function(data){
         			openData(data);
             	});
     		}else{
@@ -2736,7 +2736,7 @@ $(document).ready(function() {
             	});   		
             	$("#close").click();
         	}else if(customer=="深圳市紫金支点技术股份有限公司"){
-        		$.post('/report/printZJSign', {order_no:order_no,sign:zj_pdf_muban}, function(data){
+        		$.post('/report/printZJSign', {order_no:order_no,sign:zj_pdf_muban,zjSignType:zjSignType}, function(data){
         			openData(data);
             	});
     		}else{
