@@ -205,6 +205,7 @@ public class ChargeItemConfirmController extends Controller {
 				+"    LEFT JOIN user_login usl ON usl.id = ror.creator"
 				+"    WHERE"
 				+"        ror.transaction_status = '已签收'"
+				+"    AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' )"
 				+"    GROUP BY ror.id"
 				+"    UNION (SELECT "
 				+"			amco.id id,"
