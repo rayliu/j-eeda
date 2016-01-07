@@ -177,9 +177,6 @@ public class ReportController extends Controller {
 				if (is_one) {
 					hm.put("id", list.get(i).get("id"));
 					
-					fileName = getContextPath() + fileName;
-					outFileName = getContextPath() + outFileName;
-					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 
