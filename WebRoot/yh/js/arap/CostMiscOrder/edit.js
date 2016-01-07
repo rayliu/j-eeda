@@ -75,6 +75,19 @@ $(document).ready(function() {
         }
         
         
+        
+        var biz_type = $('input[name="biz_type"]:checked').val();
+        if(biz_type=='biz'){
+        	if($('#sp_filter').val()==''){
+        		$.scojs_message('供应商不能为空', $.scojs_message.TYPE_WARN);
+        		$("#saveCostMiscOrderBtn").attr("disabled",false);
+            	return;
+        	}
+        }
+        
+        
+        
+        
         var tableRows = $("#feeItemList-table tr");
         var itemsArray=[];
         for(var index=0; index<tableRows.length; index++){
