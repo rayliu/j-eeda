@@ -139,21 +139,73 @@ public class ReturnOrderController extends Controller {
         if (StringUtils.isNotEmpty(time_one)){
         	time_one = " and planning_time between'"+time_one+"'";
         }else{
-        	time_one =" and planning_time between '1970-1-1'";
+        	time_one =" and planning_time between '2000-1-1'";
         }
         if (StringUtils.isNotEmpty(time_two)){
         	time_two =" and '"+time_two+"'";
         }else{
-        	time_two =" and '3000-1-1'";
+        	time_two =" and '2050-1-1'";
         }
         conditions += time_one + time_two;
         
         conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
         		//+ " and (!(unix_timestamp(planning_time) < unix_timestamp('2015-07-01')) AND cname = '江苏国光') " ;
-
+        String totalSql = " SELECT ror.order_no,ror.customer_id,ror.transaction_status, "
+    		    + " ( CASE tor.arrival_mode  "
+				+ " WHEN 'gateIn' THEN '配送' "
+				+ " WHEN 'delivery' THEN '运输'"
+				+ " WHEN 'deliveryToFactory' THEN '退货直送' "
+				+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' "
+				+ " THEN '退货配送' ELSE '配送' END ) return_type,"
+				+ " ( CASE tor.order_type "
+				+ "  WHEN 'salesOrder' THEN '销售订单'"
+				+ " WHEN 'replenishmentOrder' THEN '补货订单' "
+				+ " WHEN 'arrangementOrder' THEN '调拨订单' "
+				+ " WHEN 'cargoReturnOrder' THEN '退货订单'"
+				+ " WHEN 'gateOutTransferOrder' THEN '出库运输单'"
+				+ " WHEN 'movesOrder' THEN '移机单' ELSE '销售订单' END"
+				+ " ) transfer_type,"
+				+ " ifnull( cast(tor.planning_time as char),"
+				+ " ( SELECT group_concat( DISTINCT CAST(tor.planning_time AS CHAR) SEPARATOR '<br/>' )"
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id"
+				+ " WHERE doi.delivery_id = dor.id )"
+				+ " ) planning_time,"
+				+ " ( CASE"
+				+ " WHEN ror.delivery_order_id IS NOT NULL "
+				+ " THEN ( SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '<br/>' )"
+				+ " FROM transfer_order_item_detail toid"
+				+ " WHERE toid.delivery_id = dor.id )"
+				+ " ELSE ( SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '<br/>' )"
+				+ " FROM transfer_order_item_detail toid"
+				+ " WHERE toid.order_id = tor.id ) END "
+				+ " ) serial_no,"
+				+ " ifnull( w.warehouse_name, w1.warehouse_name ) warehouse_name, c2.abbr cname,"
+				+ " ifnull( tor.order_no, "
+				+ " ( SELECT group_concat( DISTINCT CAST(tor.order_no AS CHAR) SEPARATOR '<br/>' )"
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id"
+				+ " WHERE doi.delivery_id = dor.id )"
+				+ " ) transfer_order_no,"
+				+ " lo2. NAME to_name,"
+				+ " ifnull( ( SELECT NAME FROM location WHERE CODE = lo2.pcode AND pcode = 1 ),"
+				+ " ( SELECT l. NAME FROM location l"
+				+ " LEFT JOIN location lo3 ON lo3.pcode = l. CODE"
+				+ "  WHERE lo3. CODE = lo2.pcode AND l.pcode = 1 )"
+				+ " ) province,dor.ref_no sign_no"
+				+ " FROM return_order ror"
+				+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
+				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
+				+ " LEFT JOIN contact c ON c.id = dor.notify_party_id"
+				+ " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"
+				+ " LEFT JOIN warehouse w1 ON ifnull( dor.change_warehouse_id, dor.from_warehouse_id ) = w1.id"
+				+ " LEFT JOIN contact c2 ON c2.id = ror.customer_id"
+				+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to) "
+				;
 
 			// 获取当前页的数据
-	    sql = " SELECT ror.id, ror.order_no,ror.customer_id,ror.create_date,ror.remark ,( CASE tor.arrival_mode  "
+	    sql = " SELECT ror.id, ror.order_no,ror.customer_id,ror.create_date,ror.remark ,"
+	    		    + " ( CASE tor.arrival_mode  "
 					+ " WHEN 'gateIn' THEN '配送' "
 					+ " WHEN 'delivery' THEN '运输'"
 					+ " WHEN 'deliveryToFactory' THEN '退货直送' "
@@ -242,20 +294,11 @@ public class ReturnOrderController extends Controller {
         }	
 			
 		// 获取总条数
-		sqlTotal = "select count(1) total from ( SELECT  *  from ("+ sql+") A " + conditions+ ") B";
-		//long startTime = Calendar.getInstance().getTimeInMillis();
+		sqlTotal = "select count(1) total from ( SELECT  *  from ("+ totalSql+") A " + conditions+ ") B";
 		Record rec = Db.findFirst(sqlTotal);
 		
 		
-		//long endTime = Calendar.getInstance().getTimeInMillis();
-		//logger.debug("ReturnOrder.list() sqlTotal time cost:" + (endTime - startTime));
-		//logger.debug("total records:" + rec.getLong("total"));
-		
-		//startTime = Calendar.getInstance().getTimeInMillis();
-		List<Record> orders = Db.find(" SELECT  *  from(" + sql + ") A" + conditions + orderByStr + sLimit);
-		//endTime = Calendar.getInstance().getTimeInMillis();
-		//logger.debug("ReturnOrder.list() sql time cost:" + (endTime - startTime));
-		
+		List<Record> orders = Db.find(" SELECT  *  from(" + sql + ") A" + conditions + orderByStr + sLimit);	
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
 		orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
