@@ -1904,9 +1904,6 @@ $(document).ready(function() {
 					 }
 				 }
 				 
-				 if($("#gateInSelect").val() != "" && $("#gateInSelect").val() != null)
-					 $("#gateInSelect").change();
-				 
 			 }else{
 				 $("#gateInSelect").empty();
 			 }
