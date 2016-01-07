@@ -204,7 +204,7 @@ public class ReturnOrderController extends Controller {
 				;
 
 			// 获取当前页的数据
-	    sql = " SELECT ror.id, ror.order_no,ror.customer_id,ror.create_date,ror.remark ,"
+	    sql = " SELECT ror.id, ror.order_no,ror.customer_id,'' create_date,'' remark ,"
 	    		    + " ( CASE tor.arrival_mode  "
 					+ " WHEN 'gateIn' THEN '配送' "
 					+ " WHEN 'delivery' THEN '运输'"
