@@ -176,9 +176,6 @@ public class ReportController extends Controller {
 			for (int i = 0; i < list.size(); i++) {
 				if (is_one) {
 					hm.put("id", list.get(i).get("id"));
-					if (list.get(i).get("serial_no") != null) {
-						outFileName += "-" + list.get(i).get("serial_no");
-					}
 					
 					fileName = getContextPath() + fileName;
 					outFileName = getContextPath() + outFileName;
@@ -191,9 +188,6 @@ public class ReportController extends Controller {
 					break;
 				} else {
 					hm.put("id", list.get(i).get("id"));
-					if (list.get(i).get("serial_no") != null) {
-						outFileName += "-" + list.get(i).get("serial_no");
-					}
 					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
