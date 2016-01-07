@@ -254,20 +254,13 @@ public class ReportController extends Controller {
 			for (int i = 0; i < list.size(); i++) {
 				if (is_one) {
 					hm.put("id", list.get(i).get("id"));
-					if (list.get(i).get("serial_no") != null) {
-						outFileName += "-" + list.get(i).get("serial_no");
-					}
-					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 					buffer.append(file.substring(file.indexOf("download")-1));
 					buffer.append(",");
 					break;
 				} else {
-					hm.put("id", list.get(i).get("id"));
-					if (list.get(i).get("serial_no") != null) {
-						outFileName += "-" + list.get(i).get("serial_no");
-					}				
+					hm.put("id", list.get(i).get("id"));			
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 					try {
