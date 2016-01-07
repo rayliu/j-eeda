@@ -71,7 +71,7 @@
         { "mDataProp": "RECEIVING_UNIT","sWidth":"120px"},
         { "mDataProp": "RECEIPT_ADDRESS","sWidth":"100px"},
         { "mDataProp": "WAREHOUSE_NAME","sWidth":"80px"},
- 		    { "mDataProp": "A_AMOUNT","sWidth":"30px"},
+ 		{ "mDataProp": "A_AMOUNT","sWidth":"30px"},
         { "mDataProp": "CNAME","sWidth":"80px"},
         { "mDataProp": "TRANSFER_ORDER_NO","sWidth":"120px"},
         { "mDataProp": "FROM_NAME","sWidth":"80px"},
