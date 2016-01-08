@@ -39,7 +39,7 @@ $(document).ready(function() {
 			pageSpAddress.empty();
 			$('#sp_id').val($(this).attr(''));
 		}
-		$.get('/delivery/searchPartSp', {input:inputStr}, function(data){			
+		$.get('/delivery/searchPartSp', {input:inputStr}, function(data){
 			var spList =$("#spList");
 			spList.empty();
 			for(var i = 0; i < data.length; i++)
@@ -320,7 +320,7 @@ $(document).ready(function() {
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
 		var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
-		
+		var business_stamp =$('#business_stamp').val();
 		var sp_id = $("#sp_id").val();
 		if(sp_id == ""){
 			alert("请选择有效的供应商");
@@ -332,6 +332,10 @@ $(document).ready(function() {
 		}
 		if(cmbCityTo == "--请选择城市--" || cmbCityTo == ""){
 			alert("请输入目的地城市");
+			return false;
+		}
+		if(business_stamp == ""){
+			alert("请输入业务要求配送时间");
 			return false;
 		}
 		$("#receivingunit").val($("#notify_address").val());
@@ -383,6 +387,7 @@ $(document).ready(function() {
 		var shippingNumbers = $("#shippingNumbers").val();
 		var cargoNature =$("#cargoNature").val();
 		var spMessage = $("#spMessage").val();
+		var business_stamp =$('#business_stamp').val();
 		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
@@ -398,7 +403,10 @@ $(document).ready(function() {
 			alert("请输入目的地城市");
 			return false;
 		}
-		
+		if(business_stamp == ""){
+			alert("请输入业务要求配送时间");
+			return false;
+		}
 		$.post('/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType,
 			warehouseId:warehouseId,customerId:customerId,transferItemIds:transferItemIds,
 			productIds:productIds,shippingNumbers:shippingNumbers,cargoNature:cargoNature},function(data){
