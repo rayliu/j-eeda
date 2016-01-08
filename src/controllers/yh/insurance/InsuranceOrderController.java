@@ -437,7 +437,7 @@ public class InsuranceOrderController extends Controller {
             				insuranceFinItem.set("amount", prodoctInsuranceAmount);
     						if(party.get("insurance_rates") != null && !"".equals(party.get("insurance_rates"))){
     					    	insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
-    					    	if(insurance.get("insurance_rate") != null && !"".equals(insurance.get("insurance_rate"))){
+    					    	if(insurance != null){
     					    		double insuranceRates = insurance.getDouble("insurance_rate");
         							double productAmount = transferOrderItem.getDouble("amount");
         							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
