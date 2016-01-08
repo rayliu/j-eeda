@@ -482,7 +482,6 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			sumWeight = weightBig.setScale(2, BigDecimal.ROUND_HALF_UP)
 					.doubleValue();
 		}
-
 		if (!"".equals(transferOrderItem.get("id"))
 				&& transferOrderItem.get("id") != null) {
 			// 有单品，货品数量叠加计数，重新计算总体积、总重量
@@ -530,7 +529,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						.set("product_id", product.get("id"));
 			}
 			transferOrderItem.set("order_id", tansferOrder.get("id"))
-					.set("volume", sumVolume).set("sum_weight", sumWeight)
+					.set("volume", sumVolume).set("sum_weight", sumWeight)			
+					.set("remark", item.get("备注"))
 					.save();
 		}
 		return transferOrderItem;
@@ -912,6 +912,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		serialMap.put("单品收货人联系电话", content.get(j).get("单品收货人联系电话"));
 		serialMap.put("单品序列号", content.get(j).get("单品序列号"));
 		serialMap.put("发货数量", content.get(j).get("发货数量"));
+		serialMap.put("备注", content.get(j).get("备注"));
 		return serialMap;
 	}
 
