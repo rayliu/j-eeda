@@ -193,7 +193,7 @@ public class DeliveryController extends Controller {
 					+ " 	select sum(doi.amount) from delivery_order_item doi where doi.delivery_id = d.id"
 					+ "  )"
 					+ " 	 END ) pcs_amount,"
-					+ " tor.planning_time plan_time, d.*, c.abbr AS customer, c2.company_name AS c2,"
+					+ " tor.planning_time plan_time, d.*, c.abbr AS customer,c3.abbr abbr, c2.company_name AS c2,"
 					+ "( SELECT group_concat( DISTINCT doi.transfer_no SEPARATOR ' ' ) FROM delivery_order_item doi WHERE delivery_id = d.id ) AS transfer_order_no,"
 					+ " ( SELECT group_concat( trid.serial_no SEPARATOR ' ' )"
 					+ " FROM "

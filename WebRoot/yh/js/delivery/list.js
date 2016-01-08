@@ -37,6 +37,7 @@ $(document).ready(function() {
             {"mDataProp":"DRIVER","sWidth":"70px"},//联系人
             {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
             {"mDataProp":"CUSTOMER" , "sWidth":"70px"},//客户
+            {"mDataProp":"ABBR" , "sWidth":"70px"},//供应商
             {"mDataProp":"PCS_AMOUNT", "sWidth":"50px"},//件数
             {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
             {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"100px"},
