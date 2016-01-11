@@ -501,7 +501,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			if ("cargoNatureDetailYes".equals(tansferOrder
 					.get("cargo_nature_detail"))) {
 				// 有单品时叠加计算货品数量,默认数量为1
-				transferOrderItem.set("amount", 1);
+					transferOrderItem.set("amount", 1);
 			} else {
 				// 没单品直接读取“发货数量”为货品总数，不用修改
 				if("普通货品".equals(content.get("货品属性"))){
@@ -672,7 +672,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 					Map order = orders.get(customerNo);
 					// 客户名称
 					Party customer = Party.dao
-							.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
+							.findFirst("select p.id as pid,p.is_inventory_control is_inventory_control from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 									+ Party.PARTY_TYPE_CUSTOMER
 									+ "' and c.abbr ='"
 									+ order.get("客户名称(简称)")
@@ -744,8 +744,17 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 											+ "' and item_no = '"
 											+ product.get("item_no") + "';");
 						}else{
-							causeRow=Row;
-							throw new Exception("客户在系统里不存在货品型号"+orderItem);
+							//判断客户是否需要库存管理
+							if(customer.getInt("is_inventory_control")>0){
+								causeRow=Row;
+								throw new Exception("客户在系统里不存在货品型号"+orderItem);
+							}else{
+								tansferOrderItem = TransferOrderItem.dao
+										.findFirst("select * from transfer_order_item where order_id = '"
+												+ t_order.get("id")
+												+ "' and item_no = '"
+												+ orderItem + "';");
+							}	
 						}
 						if (tansferOrderItem == null) {
 							item = updateTransferOrderItem(
@@ -755,7 +764,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						} else {
 							item = updateTransferOrderItem(
 									order,rec,itemNumber,
-									transferOrder, tansferOrderItem, product);
+									transferOrder,tansferOrderItem, product);
 						}
 						if ("cargoNatureDetailYes".equals(transferOrder
 								.get("cargo_nature_detail"))) {

@@ -158,7 +158,11 @@ public class CustomerController extends Controller {
         setAttr("location", location);
 
         setAttr("party", party);
-
+        if(party.getInt("is_inventory_control")>0){
+        	setAttr("is_inventory_control", "Y");
+        }else{
+        	setAttr("is_inventory_control", "N");
+        }
         Contact contact = Contact.dao.findFirst("select c.* from contact c,party p where c.id=p.contact_id and p.id="
                 + id);
         setAttr("contact", contact);
@@ -195,6 +199,11 @@ public class CustomerController extends Controller {
             party.set("receipt", getPara("receipt"));
             party.set("charge_type", getPara("chargeType"));
             party.set("is_auto_ps", getPara("isAutoPS"));
+            if("Y".equals(getPara("isInventoryControl"))){
+            	party.set("is_inventory_control", true);
+            }else{
+            	party.set("is_inventory_control", false);
+            }
             if(getPara("insurance_rates") != ""){
             	party.set("insurance_rates", getPara("insurance_rates"));
             }
@@ -219,6 +228,11 @@ public class CustomerController extends Controller {
             party.set("charge_type", getPara("chargeType"));
             party.set("office_id", pom.getCurrentOfficeId());
             party.set("is_auto_ps", getPara("isAutoPS"));
+            if("Y".equals(getPara("isInventoryControl"))){
+            	party.set("is_inventory_control", true);
+            }else{
+            	party.set("is_inventory_control", false);
+            }
             if(getPara("insurance_rates") != ""){
             	party.set("insurance_rates", getPara("insurance_rates"));
             }

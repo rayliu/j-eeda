@@ -180,6 +180,12 @@
                                                 <input type="radio" name="isAutoPS" id="YAutoPS" value="Y" checked="checked">是
                                                 <input type="radio" name="isAutoPS" id="NAutoPS" value="N">否
                                             </div>
+                                            <div class="form-group">
+                                                <input type="hidden" name="inventoryControl" id="inventoryControl" value="${is_inventory_control!''}">
+                                                <label>是否需要库存管理</label>
+                                                <input type="radio" name="isInventoryControl" id="isInventoryControlY" value="Y" checked="checked">是
+                                                <input type="radio" name="isInventoryControl" id="isInventoryControlN" value="N">否
+                                            </div>
                                     </div>
 									
                                     <!-- /.col-lg-6 (odd) 奇数列 -->
@@ -427,6 +433,12 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     			$(this).attr('checked', true);		
     		}
     	});
+        // 回显入库是否库存管理
+        $("input[name='isInventoryControl']").each(function(){
+            if($("#inventoryControl").val() == $(this).val()){
+                $(this).attr('checked', true);      
+            }
+        });
     // 回显车长
     var chargeTypeOption=$("#chargeType>option");
     var chargeTypeVal=$("#chargeTypeSelect").val();
