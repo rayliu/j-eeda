@@ -509,26 +509,34 @@ public class WxController extends ApiController {
 	//查找回单
 	public void findReturnOrder() {
 		String orderNo = getPara("orderNo").toUpperCase();
+		String customer = getPara("customer").toUpperCase();
 		//单号不为空时
 		if(orderNo != null && !"".equals(orderNo)){
 			//单号可能为序列号/签收单号/运输单号
-		    String sql ="select * from(select ro.id, toid.serial_no, dor.ref_no, tor.order_no to_order_no, ro.order_no, toid.order_id, toid.delivery_id from transfer_order_item_detail toid"
+		    String sql ="select * from(select ro.id, toid.serial_no, dor.ref_no, tor.order_no to_order_no, ro.order_no, toid.order_id, toid.delivery_id,c.abbr,c.id cid from transfer_order_item_detail toid"
 		            + " left join return_order ro on toid.order_id=ro.transfer_order_id "
 		            + " left join delivery_order dor on dor.id = toid.delivery_id"
 		            + " left join transfer_order tor on tor.id = toid.order_id"
+		            + " left join party p on p.id=ro.customer_id"
+		            + " left join contact c on c.id=p.contact_id"
 		            + " union "
-		           + "select ro.id, toid.serial_no, dor.ref_no, tor.order_no to_order_no, ro.order_no, toid.order_id, toid.delivery_id from transfer_order_item_detail toid"
+		           + "select ro.id, toid.serial_no, dor.ref_no, tor.order_no to_order_no, ro.order_no, toid.order_id, toid.delivery_id,c.abbr,c.id cid from transfer_order_item_detail toid"
 		            + " left join return_order ro on toid.delivery_id=ro.delivery_order_id "
 		            + " left join delivery_order dor on dor.id = toid.delivery_id"
 		            + " left join transfer_order tor on tor.id = toid.order_id"
+		            + " left join party p on p.id=ro.customer_id"
+		            + " left join contact c on c.id=p.contact_id"
 		            + ") A"
 		           + " where A.order_no is not null and ("
 		               + "A.serial_no = '"+orderNo+"'"
 		               + " or A.ref_no = '"+orderNo+"'"
 		               + " or A.to_order_no = '"+orderNo+"')";
+		    if(!"-1".equals(customer)){
+		    	sql += " and A.cid='"+customer+"'";
+		    }
 			List<Record> list = Db.find(sql);
-			if(list.size() == 1){
-			    renderJson(list.get(0));
+			if(list.size() > 0){
+			    renderJson(list);
 			}else{
 			    renderJson(new Record());
 			}

@@ -2,22 +2,44 @@ $(document).ready(function() {
 	
 	$('#orderNo').focus();
 	
-	$("#searchNo").click(function(){  
-		$.post('/wx/findReturnOrder',$("#returnFrom").serialize(), function(data){
-			var returnId = data.ID;
-			if(returnId > 0){
+	$("#searchNo").click(function(){
+        refreshData(-1);
+    });
+	var refreshData=function(customer){  
+		var orderNo=$("#orderNo").val();
+		$.post('/wx/findReturnOrder',{orderNo:orderNo,customer:customer}, function(data){
+			if(data.length ==1){
+				var returnId = data[0].ID;
 				$('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
 				$("#uploadDesc").text("");
-				$('#returnId').val(returnId);
-				
+				$('#returnId').val(returnId);	
+			}else if(data.length >1) {
+				$("#customer").show()
+				var selectCustomer =$("#selectCustomer");
+				selectCustomer.empty();
+				selectCustomer.append("<option value='-1'></option>");
+				$.each(data,function(n,value) {
+					selectCustomer.append("<option value='"+value.CID+"'>"+value.ABBR+"</option>");
+			    });  
 			}else{
 				$('#orderDesc').text('未找到对应有效的回单号码');
 				$('#returnId').val("");
 			}
 			$('#orderDesc').show();
 	    },'json');
-	});
-
+	};
+	$('#selectCustomer').change(function(){ 
+		var customer=$("#selectCustomer").val();
+		if(customer=="-1"){
+			$('#orderDesc').hide();
+			$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
+			$("#uploadBtn").attr("disabled", true);
+		}else{
+			$("#uploadBtn").attr("class", "weui_btn weui_btn_primary");
+			$("#uploadBtn").attr("disabled", false);
+			refreshData(customer);
+		}
+	}); 
 	//保存图片
     $("#uploadBtn").click(function(e){
     	if($('#returnId').val() == ''){
@@ -52,7 +74,6 @@ $(document).ready(function() {
 		    }
 		});
     });
-
 	//获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
 		var inputStr = $('#customerMessage').val();
