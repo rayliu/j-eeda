@@ -51,6 +51,8 @@ $(document).ready(function() {
             }}, 
             {"mDataProp":"REF_NO", "sWidth":"80px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},
+            {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
             {"mDataProp":"CHANGE_AMOUNT","sWidth":"100px",
               "fnRender": function(obj) {
             	  if(obj.aData.BUSINESS_TYPE=="成本单"){
@@ -101,8 +103,6 @@ $(document).ready(function() {
                 			return subtimeStamp;
                 		}
                 	}},
-                {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
-                {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
                 {"mDataProp":"RECEIVINGUNIT", "sWidth":"140px"},
             	  {"mDataProp":"ORDER_NO", "sWidth":"210px", 
                     "fnRender": function(obj) {
