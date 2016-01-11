@@ -644,7 +644,7 @@ public class CostCheckOrderController extends Controller {
 			} else {
 				rec1 = Db
 						.findFirst(
-								"select ifnull(sum(insurance_amount),0) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付' and IFNULL(dofi.cost_source,'') != '对账调整金额' ",
+								"select ifnull(sum(insurance_amount),0) sum_amount from insurance_fin_item ifi left join fin_item fi on fi.id = ifi.fin_item_id  where ifi.insurance_order_id = ? and fi.type ='应付' and IFNULL(ifi.cost_source,'') != '对账调整金额' ",
 								orderIdsArr[i]);
 				totalamount = totalamount + rec1.getDouble("sum_amount");
 				rec = Db.findFirst(
