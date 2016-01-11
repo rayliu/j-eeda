@@ -147,7 +147,7 @@ $(document).ready(function() {
     });
 	//
     $("input[name='allCheck']").click(function(){
-    	$("input[name='order_check_box']").each(function () {
+    	$("#uncheckedChargeCheckList input[name='order_check_box']").each(function () {
     		var cname = $(this).parent().siblings('.cname')[0].textContent;
     			if(cName.length != 0){
 						if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
@@ -155,7 +155,11 @@ $(document).ready(function() {
 							return false;
 						}
 					}
-            this.checked = !this.checked;
+		    if($("#allCheck").prop("checked")){
+		    	this.checked = true;
+		    }else{
+				this.checked = false;
+		    }
 			if($(this).prop("checked") == true){
 				$(this).parent().parent().clone().appendTo($("#checkedChargeCheckList"));
 				cName.push($(this).parent().siblings('.cname')[0].innerHTML);
@@ -292,6 +296,7 @@ $(document).ready(function() {
 		var customerNo = $("#customerNo_filter").val();
 		var address = $("#address_filter").val();
 		var status = $("#shouru_filter").val();
+		$("#allCheck").attr("checked",false);
 		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?customer="+customer
 															+"&beginTime="+beginTime
 															+"&endTime="+endTime
