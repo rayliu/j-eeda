@@ -172,10 +172,9 @@ public class EedaCommonHandler {
                     subCol += ", (select abbr from contact where id=t_"+structureId+"."+key+") "+ key +"_INPUT";
                 }else if("产品列表".equals(fieldDefine.get("field_type_ext_type"))){
                    subCol += ", (select item_no from product where id=t_"+structureId+"."+key+") "+ key +"_INPUT";
-                }
-                else if("城市列表".equals(fieldDefine.get("field_type_ext_type"))){
+                }else if("城市列表".equals(fieldDefine.get("field_type_ext_type"))){
                     subCol += ", (get_loc_full_name(t_"+structureId+"."+key+")) "+ key +"_INPUT";
-                 }
+                }
             }
         }
         return subCol;
@@ -249,15 +248,15 @@ public class EedaCommonHandler {
                     dateValueMap.put("end_time", value);
                 }else{
                     Record fieldDefine = getFieldDefine(key, fieldDefineList);
-                    if("下拉列表".equals(fieldDefine.get("field_type")) 
-                           && ("客户列表".equals(fieldDefine.get("field_type_ext_type"))
-                               || "供应商列表".equals(fieldDefine.get("field_type_ext_type"))
-                              )
-                      ){
-                        subCol += ", (select abbr from contact where id="+key+") "+ key +"_INPUT";
-                        if(StringUtils.isNotEmpty(value)){
-                            colCondition += " and " + key + " = '" + value + "'";
-                        }
+                    if("下拉列表".equals(fieldDefine.get("field_type"))) {
+                           if( "客户列表".equals(fieldDefine.get("field_type_ext_type")) || "供应商列表".equals(fieldDefine.get("field_type_ext_type"))){
+                               subCol += ", (select abbr from contact where id="+key+") "+ key +"_INPUT";
+                               if(StringUtils.isNotEmpty(value)){
+                                    colCondition += " and " + key + " = '" + value + "'";
+                               }
+                           }else if("城市列表".equals(fieldDefine.get("field_type_ext_type"))){
+                               subCol += ", (get_loc_full_name("+key+")) "+ key +"_INPUT";
+                           }
                     }else{
                         if(StringUtils.isNotEmpty(value))
                             colCondition += " and " + key + " like '%" + value + "%'";

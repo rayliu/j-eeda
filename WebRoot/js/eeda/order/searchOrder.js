@@ -87,6 +87,7 @@
                     field_html = template('select_field_template', {
                         id: 'F' + field.ID + '_' + field.FIELD_NAME,
                         label: field.FIELD_DISPLAY_NAME,
+                        isSearch: true,
                         items: items
                     });
                 } else if (field.FIELD_TYPE_EXT_TYPE == '客户列表') {
@@ -96,6 +97,12 @@
                     });
                 } else if (field.FIELD_TYPE_EXT_TYPE == '供应商列表') {
                     field_html = template('input_sp_template', {
+                        id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME,
+                        value: ''
+                    });
+                } else if (field.FIELD_TYPE_EXT_TYPE == '城市列表') {
+                    field_html = template('input_location_template', {
                         id: 'F' + field.ID + '_' + field.FIELD_NAME,
                         label: field.FIELD_DISPLAY_NAME,
                         value: ''

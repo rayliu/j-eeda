@@ -48,7 +48,7 @@
                 {{each field_list as field}}
                     {{if (field.FIELD_TYPE == '下拉列表' 
                         && (
-                            (field.FIELD_TYPE_EXT_TYPE =='客户列表' )|| (field.FIELD_TYPE_EXT_TYPE =='供应商列表')
+                            field.FIELD_TYPE_EXT_TYPE =='客户列表' || field.FIELD_TYPE_EXT_TYPE =='供应商列表' || field.FIELD_TYPE_EXT_TYPE =='城市列表'
                            )
                         ) }}
                         { "data": "F{{field.ID}}_{{field.FIELD_NAME}}_INPUT",
