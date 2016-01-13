@@ -133,8 +133,8 @@ public class EedaCommonHandler {
             //获取field定义, 判断是否需要针对特殊列表转换ID -> 名字
             subCol = getSubCol(originStructureId);
             
-            if("弹出列表, 从其它数据表选取".equals(structureRec.get("ADD_BTN_TYPE"))){
-                String settingJson = structureRec.get("ADD_BTN_SETTING").toString();
+            if("弹出列表, 从其它数据表选取".equals(childStructure.get("ADD_BTN_TYPE"))){
+                String settingJson = childStructure.get("ADD_BTN_SETTING").toString();
                 Gson gson = new Gson();  
                 Map<String, ?> settingDto= gson.fromJson(settingJson, HashMap.class);
                 String targetStructureId = settingDto.get("structure_id").toString();
