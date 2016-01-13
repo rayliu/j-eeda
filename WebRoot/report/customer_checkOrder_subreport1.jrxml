@@ -393,42 +393,7 @@ and aci.ref_order_type='收入单']]>
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="68" splitType="Stretch">
-			<staticText>
-				<reportElement x="4" y="41" width="35" height="25" uuid="a034ad3a-348a-46b0-8209-a8aa6899ba59"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[制单:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="303" y="41" width="54" height="25" uuid="6a7ceb91-f8c8-461f-a54a-724d1cd7c40a"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[部门经理:]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="642" y="41" width="157" height="25" uuid="16e6789c-f6f7-49d2-add8-f62ad09a56b3"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="588" y="41" width="55" height="25" uuid="baeec8af-2d3c-4c7c-b691-98460b391fb4"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[主管领导:]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="356" y="41" width="167" height="25" uuid="50f9a8bf-0c1d-4882-b5a9-e75e7c342b94"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[]]></textFieldExpression>
-			</textField>
+		<band height="20" splitType="Stretch">
 			<textField pattern="###0.00">
 				<reportElement style="table_TD" x="479" y="0" width="36" height="20" uuid="3b442937-98fe-4da2-a229-f1fe6513e800"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -478,13 +443,6 @@ and aci.ref_order_type='收入单']]>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="36" y="41" width="186" height="25" uuid="de3f04a1-30da-44a4-9a4b-9c4e54411735"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{create_name}]]></textFieldExpression>
-			</textField>
 		</band>
 	</summary>
 </jasperReport>
