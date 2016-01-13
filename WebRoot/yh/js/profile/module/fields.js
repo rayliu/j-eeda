@@ -20,11 +20,9 @@
         $('#fields_body').append(html);
         $('#fields_body table:last').DataTable(tableSetting);
 
-        $fields_table.find('tbody').sortable({
-          revert: true
-        });
-
         subIndex++;
+        
+        bindFieldTableEvent();
     });
 
     $('#fields_body').on('click', 'button[name=addFieldBtn]', function(event) {

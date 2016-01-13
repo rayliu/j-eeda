@@ -28,7 +28,7 @@ public class EedaCommonHandler {
     private static Logger logger = Logger.getLogger(EedaCommonHandler.class);
     
     /**
-     * editOrder页面: save传回来的结构, 查询order传出去的结构按以下格式构造
+     * editOrder页面: save传回来的data结构, 查询order传出去的结构按以下格式构造
      * orderDto{
      *    id:1，                  //单据的id，
      *    module_id: 13，         //对应的模块id，
@@ -54,6 +54,21 @@ public class EedaCommonHandler {
      *                  F15_TJ: ""
      *                  F16_ZL: ""
      *                  F17_DZ: ""
+     *                  table_list:[           //类型为“单品列表”的数据，相当于从表的从表
+     *                      {
+     *                          structure_id: 6,         //对应表名T_6
+     *                          structure_parent_id: 5,  //此从表对应主表为structure_id:5,
+     *                          row_list:[
+     *                              {
+     *                                  id: 1,          //对应表名T_6.id
+     *                                  parent_id:1,    //对应表名T_5.id=1
+     *                                  ref_t_id: 0,    //无对应其它关联表
+     *                                  F18_XLH: "A33", //对应表中字段T_6.F18_XLH
+     *                                  F19_BZ: ""      //对应表中字段T_6.F18_BZ
+     *                              }
+     *                          ]
+     *                      }
+     *                  ]
      *              }
      *         ] 
      *      },{}
@@ -75,44 +90,73 @@ public class EedaCommonHandler {
         orderRec.set("table_list", tableList);
         
         List<Map<String, ?>> strctureList = (ArrayList<Map<String, ?>>)dto.get("STRUCTURE_LIST");
+        Map<String, ?> rootStructure = null;
         for (Map<String, ?> structure : strctureList) {
-            
             if("字段".equals(structure.get("STRUCTURE_TYPE"))){
                 Record fieldRec = buildFieldRec(order_id, structure);
                 fieldsList.add(fieldRec);
-            }else{
-                Record tableRec = new Record();
-                int structureId = ((Double)structure.get("ID")).intValue();
-                int parentStructureId = ((Double)structure.get("PARENT_ID")).intValue();
-                tableRec.set("structure_id", structureId);
-                tableRec.set("structure_parent_id", parentStructureId);
-                
-                if(structure.get("PARENT_ID") != null){
-                    String originStructureId = String.valueOf(structureId);
-                    String tableName = "t_" + originStructureId;
-                    String refCon = "";
-                    String subCol = "";
-                    //获取field定义, 判断是否需要针对特殊列表转换ID -> 名字
-                    subCol = getSubCol(originStructureId);
-                    
-                    if("弹出列表, 从其它数据表选取".equals(structure.get("ADD_BTN_TYPE"))){
-                        String settingJson = structure.get("ADD_BTN_SETTING").toString();
-                        Map<String, ?> settingDto= gson.fromJson(settingJson, HashMap.class);
-                        String targetStructureId = settingDto.get("structure_id").toString();
-                        tableName += ", t_"+targetStructureId;
-                        refCon = " and t_"+originStructureId+".ref_t_id = t_"+targetStructureId+".id";
-                        subCol += getSubCol(targetStructureId);
-                    }
-                    List<Record> rowList = Db.find("select *, t_"+originStructureId+".id "//这里多写一个ID，因为DB中取最后一个列的ID
-                            +subCol+" from "+tableName+" where t_"+originStructureId+".parent_id="+order_id+refCon);
-                    tableRec.set("row_list", rowList);
-                    tableList.add(tableRec);
-                }
-                
+                rootStructure = structure;
             }
         }
+        
+        Record rootRec = new Record();
+        long structureId = ((Double)rootStructure.get("ID")).longValue();
+        rootRec.set("ID", structureId);
+        rootRec.set("PARENT_ID", 0l);
+        buildTableDto(order_id, tableList, rootRec);
         logger.debug(orderRec.toJson());
         return orderRec;
+    }
+
+    /*
+     * 递归构造table数据
+     */
+    @SuppressWarnings({ "unused", "rawtypes", "unchecked" })
+    private static void buildTableDto(String parent_id,
+            List parentTableList, Record structureRec) {
+        
+        long structureId = structureRec.getLong("ID");
+        long parentStructureId = structureRec.getLong("PARENT_ID");
+        
+        //查找下级从表
+        List<Record> childStructureList = Db.find("select * from structure where parent_id="+ structureId);
+        
+        for (Record childStructure : childStructureList) {
+            Record tableRec = new Record();
+            tableRec.set("structure_id", childStructure.getLong("ID"));
+            tableRec.set("structure_parent_id", childStructure.getLong("PARENT_ID"));
+            
+            String originStructureId = childStructure.get("id").toString();
+            String tableName = "t_" + originStructureId;
+            String refCon = "";
+            String subCol = "";
+            //获取field定义, 判断是否需要针对特殊列表转换ID -> 名字
+            subCol = getSubCol(originStructureId);
+            
+            if("弹出列表, 从其它数据表选取".equals(structureRec.get("ADD_BTN_TYPE"))){
+                String settingJson = structureRec.get("ADD_BTN_SETTING").toString();
+                Gson gson = new Gson();  
+                Map<String, ?> settingDto= gson.fromJson(settingJson, HashMap.class);
+                String targetStructureId = settingDto.get("structure_id").toString();
+                tableName += ", t_"+targetStructureId;
+                refCon = " and t_"+originStructureId+".ref_t_id = t_"+targetStructureId+".id";
+                subCol += getSubCol(targetStructureId);
+            }
+            List<Record> rowList = Db.find("select *, t_"+originStructureId+".id "//这里多写一个ID，因为DB中取最后一个列的ID
+                    +subCol+" from "+tableName+" where t_"+originStructureId+".parent_id="+parent_id+refCon);
+            
+            //构造下级从表的结构
+            if(rowList.size()>0){
+                tableRec.set("row_list", rowList);
+                for (Record record : rowList) {
+                    List childTableList = new ArrayList();
+                    record.set("table_list", childTableList);
+                    buildTableDto(record.get("id").toString(), childTableList, childStructure);
+                }
+            }
+            
+            parentTableList.add(tableRec);
+        }
     }
 
     private static String getSubCol(String structureId) {
@@ -258,7 +302,7 @@ public class EedaCommonHandler {
     }
     
     private static Record buildFieldRec(String order_id, Map<String, ?> structure) {
-        int structureId = ((Double)structure.get("ID")).intValue();
+        long structureId = ((Double)structure.get("ID")).longValue();
         Record orderRec;
         String subCol = getSubCol(String.valueOf(structureId));
         if(structure.get("PARENT_ID") == null){
@@ -280,6 +324,7 @@ public class EedaCommonHandler {
         return orderRec;
     }
     
+    @SuppressWarnings("unchecked")
     public static void commonUpdate(Map<String, ?> dto) {
         String orderId = dto.get("id").toString();
         List<Map<String, String>> fields_list = (ArrayList<Map<String, String>>)dto.get("fields_list");
@@ -301,27 +346,37 @@ public class EedaCommonHandler {
         }
         
         List<Map<String, ?>> table_list = (ArrayList<Map<String, ?>>)dto.get("table_list");
+        tablesUpdate(orderId, table_list);
+        
+        //action 保存，审核，撤销 等按钮动作
+        EedaBtnActionHandler.handleBtnAction(dto.get("module_id").toString(), 
+                dto.get("action").toString(), orderId);
+    }
+
+    private static void tablesUpdate(String parentId,
+            List<Map<String, ?>> table_list) {
         for (Map<String, ?> tableMap : table_list) {//获取每一个从表
             String structure_id = tableMap.get("structure_id").toString();
             
             List<Map> rowFieldsList = (ArrayList<Map>)tableMap.get("row_list");
             
             //先处理删除
-            tableRowDelete(orderId, structure_id, rowFieldsList);
-           
-            for (Map<String, String> rowMap : rowFieldsList) {//表中每一行, update or insert
+            tableRowDelete(parentId, structure_id, rowFieldsList);
+            
+            for (Map<String, ?> rowMap : rowFieldsList) {//表中每一行, update or insert
                 String rowId = rowMap.get("id").toString();
                 if(StringUtils.isEmpty(rowId)){
-                    tableRowInsert(orderId, structure_id, rowMap);
+                    rowId = tableRowInsert(parentId, structure_id, rowMap).toString();
                 }else{
                     tableRowUpdate(structure_id, rowMap, rowId);
                 }
+                //从表的行中是否还有从表
+                if(rowMap.get("table_list") != null){
+                    List<Map<String, ?>> tableList = (ArrayList<Map<String, ?>>)rowMap.get("table_list");
+                    tablesUpdate(rowId, tableList);
+                }
             }
         }
-        
-        //action 保存，审核，撤销 等按钮动作
-        EedaBtnActionHandler.handleBtnAction(dto.get("module_id").toString(), 
-                dto.get("action").toString(), orderId);
     }
 
     private static void tableRowDelete(String orderId, String structure_id,
@@ -346,12 +401,12 @@ public class EedaCommonHandler {
     }
 
     private static void tableRowUpdate(String structure_id,
-            Map<String, String> rowMap, String rowId) {
+            Map<String, ?> rowMap, String rowId) {
         String colSet = "";
-        for (Entry<String, String> entry: rowMap.entrySet()) {//行的每个字段
+        for (Entry<String, ?> entry: rowMap.entrySet()) {//行的每个字段
             String key = entry.getKey();
-            String value = entry.getValue();
-            if("id".equals(key) || key.endsWith("_INPUT")){
+            String value = entry.getValue().toString();
+            if("id".equals(key) || key.endsWith("_INPUT") || "table_list".equals(key)){
                 continue;
             }
             colSet += ","+key + "='"+value+"'";
@@ -361,24 +416,31 @@ public class EedaCommonHandler {
         Db.update(sql);
     }
 
-    private static void tableRowInsert(String orderId, String structure_id,
-            Map<String, String> rowMap) {
-        String colName = "parent_id";
-        String colValue = orderId;
+    private static String tableRowInsert(String parentId, String structure_id,
+            Map<String, ?> rowMap) {
+        String rowId = "";
+        String colName = "";
+        String colValue = "";
         
-        for (Entry<String, String> entry: rowMap.entrySet()) {
+        for (Entry<String, ?> entry: rowMap.entrySet()) {
             String key = entry.getKey();
-            String value = entry.getValue();
-            if("id".equals(key) || key.endsWith("_INPUT")){
+            String value = entry.getValue().toString();
+            if("id".equals(key) || key.endsWith("_INPUT") || "table_list".equals(key)){
                 continue;
+            }
+            //嵌套的从表有可能上级ID是新增的，所以此时row本身parent_id 为空
+            if("parent_id".equals(key) && StringUtils.isEmpty(value)){
+                value = parentId;
             }
             colName += ","+key;
             colValue+= ",'"+value+"'";
         }
         
-        String sql = "insert into T_"+structure_id+"("+colName+") values("+colValue+")";
+        String sql = "insert into T_"+structure_id+"("+colName.substring(1)+") values("+colValue.substring(1)+")";
         logger.debug(sql);
         Db.update(sql);
+        rowId = getLastInsertID("T_"+structure_id).toString();
+        return rowId;
     }
     
     public static String commonInsert(Map<String, ?> dto) {
@@ -402,9 +464,7 @@ public class EedaCommonHandler {
             String sql = "insert into T_"+tableName+"("+colName+") values("+colValue+")";
             logger.debug(sql);
             Db.update(sql);
-            Record idRec = Db.findFirst("select LAST_INSERT_ID() id");
-            order_id = idRec.getBigInteger("id");
-            logger.debug(tableName+" last insert order_id = "+order_id);
+            order_id = getLastInsertID(tableName);
         }
         List<Map<String, ?>> table_list = (ArrayList<Map<String, ?>>)dto.get("table_list");
         for (Map<String, ?> tableMap : table_list) {//获取每一行
@@ -433,5 +493,13 @@ public class EedaCommonHandler {
         EedaBtnActionHandler.handleBtnAction(dto.get("module_id").toString(), 
                 dto.get("action").toString(), order_id.toString());
         return order_id.toString();
+    }
+
+    private static BigInteger getLastInsertID(String tableName) {
+        BigInteger order_id;
+        Record idRec = Db.findFirst("select LAST_INSERT_ID() id");
+        order_id = idRec.getBigInteger("id");
+        logger.debug(tableName+" last insert order_id = "+order_id);
+        return order_id;
     }
 }

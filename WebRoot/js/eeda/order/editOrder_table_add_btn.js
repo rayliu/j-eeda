@@ -1,6 +1,70 @@
+
+
+//-------------table tr click
+var highLightTr =  function(tr) {
+    var trs = tr.parent().parent().parent().find('tr');
+    for (var i = 0; i < trs.length; i++) {
+        $(trs[i]).css('background-color', '#f9f9f9');
+    };
+    tr.css('background-color', '#DDD');
+};
+
+//-------------table tr click show detail table and filter
+$('#list').on('click', 'a[name=show_detail]', function(event) {
+    var current_tr = $(this).parent().parent();
+    highLightTr(current_tr);
+
+    var table_row_index = current_tr.attr('index');
+    var table_row_id = current_tr.attr('id');
+    var detail_structure_id = $(this).attr('detail_table_id');
+
+    //处理新增按钮
+    var addBtn = $('#table_'+detail_structure_id+'_div button[name=addRowBtn]');
+    $('div [name=table_'+$(this).attr('detail_table_id')+'_div]').hide();
+    if(table_row_id){
+        console.log('filter by id');
+        addBtn.attr('parent_row_id', table_row_id);
+        addBtn.removeAttr('parent_row_index');
+        //显示该ID下的下层 table 
+        var table_3rd = $('div [name=table_'+$(this).attr('detail_table_id')+'_div][parent_table_row_id='+table_row_id+']');
+        
+        table_3rd.show();
+    }else{
+        console.log('filter by index');
+        addBtn.attr('parent_row_index', table_row_index);
+        addBtn.removeAttr('parent_row_id');
+        //如果是新增未保存的行，新增一个下层 table 或 显示该行index下的下层 table
+        var table_3rd = $('div [parent_table_row_index='+table_row_index+']');
+        if(table_3rd.length>0){//判断该下层table是否存在
+            table_3rd.show();
+        }else{
+            var structure = getStructure(global_order_structure, detail_structure_id);
+            var list_html = template('table_template', {
+                customer_id: global_customer_id,
+                id: structure.ID,
+                structure_id: structure.ID,
+                label: structure.NAME,
+                field_list: structure.FIELDS_LIST,
+                is_edit_order: true,
+                parent_table_id: structure.PARENT_ID,  
+                parent_table_row_id: table_row_id,//如果table是第三层，它需要知道上层table row的ID
+                parent_table_row_index: table_row_index,
+                is_3rd_table: 'true'
+            });
+            $('#list').append(list_html);
+
+            var table_setting = window['table_' + structure.ID + '_setting'];
+            var dataTable = $('div [parent_table_row_index='+table_row_index+'] table').DataTable(table_setting);
+            $('div [parent_table_row_index='+table_row_index+']').show();
+        }
+    }
+
+});
+
 //-------------table add button click
 $('#list').on('click', 'button', function(event) {
-    if ($(this).attr('name') == 'addRowBtn') {
+    var addBtn = $(this);
+    if (addBtn.attr('name') == 'addRowBtn') {
         var table_id = $(this).attr('table_id');
         var structure_id = $(this).attr('structure_id');
         $('#addRowBtn_search_list_modal #target_structure_id').val(structure_id);
@@ -8,10 +72,26 @@ $('#list').on('click', 'button', function(event) {
         var btn_type = getTableAddBtnType(structure_id);
 
         if(btn_type == '添加空行'){
-            var dataTable = $('#' + table_id).DataTable();
+            var $table = $('#' + table_id);
             var row = window[table_id + '_row'];
-            dataTable.row.add(row).draw(false);
+            var dataTable = global_data_table['table_' + structure_id+'_dataTable'];
+            if ($(this).attr('is_3rd_table') == 'true') {
+                var parent_row_id = addBtn.attr('parent_table_row_id');
+                var parent_row_index = addBtn.attr('parent_table_row_index');
+                row.PARENT_ROW_ID = parent_row_id;
+                row.PARENT_ROW_INDEX = parent_row_index;
+                if(parent_row_id){
+                    dataTable = global_data_table['table_' + structure_id+'_dataTable_'+parent_row_id];
+                }else{
+                    $table = $('div [name=table_' + structure_id +'_div][parent_table_row_index='+parent_row_index+'] table');
+                    dataTable = $table.DataTable();
+                }
+            }
 
+            dataTable.row.add(row).draw(false);
+            var current_tr = $table.find('tr:last');
+            highLightTr(current_tr);
+            current_tr.find('a[name=show_detail]').click();
             bindProductSearch();
         }else{
             $('#addRowBtn_search_list_modal #fields').empty();

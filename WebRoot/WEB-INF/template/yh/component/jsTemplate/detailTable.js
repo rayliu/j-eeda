@@ -1,13 +1,29 @@
 <script id="${id}" type="text/html">
-    <div class="col-lg-12">
+    <div id="table_{{id}}_div" name="table_{{id}}_div" class="col-lg-12" 
+        parent_table_row_id="{{parent_table_row_id}}"
+        parent_table_row_index="{{parent_table_row_index}}"
+        {{if is_3rd_table}} style="display:none;"{{/if}}>
         
         {{if is_edit_order}}
             <h4>{{label}}</h4>
             <div class="form-group button-bar" >
-                <button id="add_row_btn_{{id}}" table_id="table_{{id}}" structure_id="{{structure_id}}" name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
+                <button id="add_row_btn_{{id}}" table_id="table_{{id}}" structure_id="{{structure_id}}" 
+                    {{if is_3rd_table}} is_3rd_table="true" {{/if}}
+                    parent_table_id="{{parent_table_id}}" 
+                    parent_table_row_id="{{parent_table_row_id}}"
+                    parent_table_row_index="{{parent_table_row_index}}"
+                    name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
             </div>
         {{/if}}
-        <table id="table_{{id}}" structure_id="{{structure_id}}" class="display" cellspacing="0" style="width: 100%;">
+        <table id="table_{{id}}" name="table_{{id}}" structure_id="{{structure_id}}"
+            parent_structure_id="{{parent_table_id}}" 
+            parent_table_row_id="{{parent_table_row_id}}"
+            parent_table_row_index="{{parent_table_row_index}}"
+            {{if is_3rd_table}} 
+                is_3rd_table="true"
+
+            {{/if}}
+         class="display" cellspacing="0" style="width: 100%;">
             <thead class="eeda">
                 <tr>
                     <th></th>
@@ -36,6 +52,10 @@
                     id=data.ID;
                 }
                 $(row).attr('id', id);
+                $(row).attr('index', index);
+                $(row).attr('parent_row_id', data.PARENT_ROW_ID);
+                $(row).attr('parent_row_index', data.PARENT_ROW_INDEX);
+
                 $(row).append('<input type="hidden" name="id" value="' + id + '"/>');
                 
                 if(data.REF_T_ID != null)
@@ -45,7 +65,10 @@
             "columns": [
                 { "width": "30px", "orderable":false, 
                     "render": function ( data, type, full, meta ) {
-                      return '<a class="delete"  table_id="table_{{id}}" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i> </a>&nbsp;';
+                      return '<a class="delete"  table_id="table_{{id}}" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;&nbsp;&nbsp;'
+                            {{if detail_table_id}}
+                            +'<a name="show_detail" detail_table_id="{{detail_table_id}}" href="javascript:void(0)" title="显示明细"><i class="fa fa-th-list"></i></a>&nbsp;'
+                            {{/if}};
                     }
                 },
                 {{each field_list as field}}
