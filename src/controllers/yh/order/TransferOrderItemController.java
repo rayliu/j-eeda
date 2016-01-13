@@ -45,8 +45,7 @@ public class TransferOrderItemController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
         String sqlTotal = "select distinct count(1) total from transfer_order_item toi " + " left join product p on p.id = toi.product_id "
-                + " where toi.order_id =" + trandferOrderId
-                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId + ")";
+                + " where toi.order_id =" + trandferOrderId+"";
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         String sql = "";
@@ -54,9 +53,7 @@ public class TransferOrderItemController extends Controller {
                 + " ifnull(p.size,toi.size) size, ifnull(p.width, toi.width) width, ifnull(p.height, toi.height) height,"
                 + " ifnull(p.weight,toi.weight) weight, toi.volume volume,toi.amount amount,"
                 + " ifnull(p.unit,toi.unit) unit,toi.sum_weight sum_weight, toi.remark from transfer_order_item toi "
-                + " left join product p on p.id = toi.product_id " + " where toi.order_id =" + trandferOrderId
-                + " or toi.product_id in(select product_id from transfer_order_item where toi.order_id =" + trandferOrderId
-                + ") order by toi.id" + sLimit;
+                + " left join product p on p.id = toi.product_id " + " where toi.order_id =" + trandferOrderId+" order by toi.id" + sLimit;
         List<Record> transferOrders = Db.find(sql);
         transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
