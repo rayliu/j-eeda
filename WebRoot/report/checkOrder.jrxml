@@ -36,7 +36,8 @@
 	ifnull(aciao.billing_unit,c.company_name) as company_name,
 	ifnull(ul.c_name, ul.user_name) AS create_name,
 	ifnull(u.c_name, u.user_name) AS confirm_name,
-	o.office_name
+	o.office_name,
+	ifnull(aco.remark,'') as remark
 FROM
 	arap_cost_order aco
 LEFT JOIN party p ON p.id = aco.payee_id
@@ -64,6 +65,9 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 	</field>
 	<field name="confirm_name" class="java.lang.String"/>
 	<field name="office_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="remark" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<variable name="chineseTotal" class="java.lang.String"/>
@@ -182,9 +186,9 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="218" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<subreport>
-				<reportElement x="0" y="2" width="802" height="216" uuid="2be426ab-76d2-4b1b-a09b-58aa38445a71"/>
+				<reportElement x="0" y="0" width="802" height="60" uuid="2be426ab-76d2-4b1b-a09b-58aa38445a71"/>
 				<subreportParameter name="order_id">
 					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -194,12 +198,69 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="18" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="13" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="27" splitType="Stretch"/>
+		<band height="87" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="35" y="59" width="189" height="25" uuid="2ac500aa-2e1e-4f99-baf0-3016c19541c3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{create_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="646" y="59" width="157" height="25" uuid="ae2d3021-5a28-419e-acc0-7341a721843f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="306" y="59" width="54" height="25" uuid="c428401b-38e7-4993-a98e-7aba6df0d3f1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[部门经理:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="591" y="59" width="55" height="25" uuid="33916a72-bd75-4e4b-8ade-bc65ff9b0fca"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[主管领导:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="360" y="59" width="167" height="25" uuid="5a04a858-153f-40e7-a0a8-7ac727ebe4d0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TD" x="162" y="-1" width="640" height="40" uuid="cdbc8e49-c800-4e67-914a-b751bed5b1d1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="table_TD" x="0" y="-1" width="162" height="40" uuid="db75ecca-055b-4984-a458-a283d2b2647b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[备注：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="59" width="35" height="25" uuid="630caf60-e430-4e0a-8b7b-a5063b71db7e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[制单:]]></text>
+			</staticText>
+		</band>
 	</summary>
 </jasperReport>
