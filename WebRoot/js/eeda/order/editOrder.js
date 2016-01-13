@@ -174,6 +174,12 @@ var generateField=function(structure){
                     label: field.FIELD_DISPLAY_NAME,
                     value: ''
                 });
+            }else if (field.FIELD_TYPE_EXT_TYPE == '城市列表') {
+                field_html = template('input_location_template', {
+                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
+                    label: field.FIELD_DISPLAY_NAME,
+                    value: ''
+                });
             }
         } else {
             field_html = template('input_field', {

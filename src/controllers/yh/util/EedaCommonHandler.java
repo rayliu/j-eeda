@@ -173,6 +173,9 @@ public class EedaCommonHandler {
                 }else if("产品列表".equals(fieldDefine.get("field_type_ext_type"))){
                    subCol += ", (select item_no from product where id=t_"+structureId+"."+key+") "+ key +"_INPUT";
                 }
+                else if("城市列表".equals(fieldDefine.get("field_type_ext_type"))){
+                    subCol += ", (get_loc_full_name(t_"+structureId+"."+key+")) "+ key +"_INPUT";
+                 }
             }
         }
         return subCol;

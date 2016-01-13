@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 
 import com.jfinal.log.Logger;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Model;
 
 import controllers.yh.damageOrder.DamageOrderController;
@@ -123,11 +124,32 @@ public class DbUtils {
 		}
 	}
 	
-	
+	public static void deleteHandle(List<Map<String, String>> itemList,
+            Class<?> clazz, Map<String, String> master_ref_col){
+	    List<String> idList = new ArrayList<String>();
+	    for (Map<String, String> rowMap : itemList) {//获取每一行
+	        String rowId = rowMap.get("id");
+	        idList.add(rowId);
+	    }
+	    
+	    if(idList.size()>0){
+	        String structureId = master_ref_col.get("structure_id");
+            String deleteSql = "delete from field where structure_id=" + structureId + " and id not in (" + StringUtils.join(idList, ", ") + ")";
+            logger.debug(deleteSql);
+            Db.update(deleteSql);
+	        
+        }
+	}
 	public static void handleList(List<Map<String, String>> itemList,
             Class<?> clazz,
             Map<String, String> master_ref_col) 
             throws InstantiationException, IllegalAccessException {
+	    Model<?> inModel = (Model<?>) clazz.newInstance();
+	    String modelName = inModel.getClass().getSimpleName();
+	    if("Field".equals(modelName)){//针对common Field的处理
+	        deleteHandle(itemList, clazz, master_ref_col);
+	    }
+	    
         for (Map<String, String> rowMap : itemList) {//获取每一行
             Model<?> model = (Model<?>) clazz.newInstance();
             
