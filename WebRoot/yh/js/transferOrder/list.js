@@ -264,15 +264,27 @@ $(document).ready(function() {
     $("#fileUploadBtn").click(function(){
     	$("#toFileUpload").click();
     });
-    
+    var str=null;
+    var errCustomerNo=null;
+    var errCustomerNoArr=[];
 	$('#toFileUpload').fileupload({
         dataType: 'json',
         done: function (e, data) {
         	$("#footer").show();
         	$("#centerBody").empty().append("<h4>"+data.result.cause+"</h4>");
+        	if(data.result.equal=="客户订单号已存在"){
+        		$("#confirm").show();
+        		errCustomerNoArr.push(data.result.errCustomerNo)
+        		$("#customer").val(errCustomerNoArr);
+        		errCustomerNo=$("#customer").val();
+        		str=data.result.strFile;
+        	}
         	transferOrder.fnDraw();
         },  
         progressall: function (e, data) {//设置上传进度事件的回调函数  
+        	str=null;
+            errCustomerNo=null;
+            errCustomerNoArr=[];
         	$('#centerBody').empty().append('<img src="/yh/image/loading5.gif" width="20%"><h4>导入过程可能需要一点时间，请勿退出页面！</h4>');
         	$('#myModal').modal('show');
         	$("#footer").hide();
@@ -284,7 +296,24 @@ $(document).ready(function() {
         //     alert('File Upload has been canceled');
         // }
     });;
-
+    $('#confirm').click(function(){
+    	$("#confirm").hide();
+    	$('#centerBody').empty().append('<img src="/yh/image/loading5.gif" width="20%"><h4>导入过程可能需要一点时间，请勿退出页面！</h4>');
+    	$.post('/transferOrder/importTransferOrder', {str:str,errCustomerNo:errCustomerNo}, function(data){
+    		if(data.equal=="客户订单号已存在"){
+    			$("#confirm").show();
+    			str=data.strFileConfirm
+    			errCustomerNoArr.push(data.errCustomerNo)
+        		$("#customer").val(errCustomerNoArr);
+    			errCustomerNo=$("#customer").val();
+    		}else{
+    			str=null;
+        		errCustomerNo=null;
+    		}
+    		$('#centerBody').empty().append("<h4>"+data.cause+"</h4>");
+    		
+    	})
+    });
     $('#datetimepicker').datetimepicker({  
         format: 'yyyy-MM-dd',  
         language: 'zh-CN'

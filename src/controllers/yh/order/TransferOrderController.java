@@ -1,8 +1,8 @@
 package controllers.yh.order;
 
-
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,28 +51,30 @@ import controllers.yh.util.ReaderXLS;
 import controllers.yh.util.ReaderXlSX;
 import controllers.yh.util.getCustomFile;
 
-
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
 public class TransferOrderController extends Controller {
-	
+
 	private Logger logger = Logger.getLogger(TransferOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
-	
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST })
+
+	@RequiresPermissions(value = { PermissionConstant.PERMISSION_TO_LIST })
 	public void index() {
-		
-		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
+
+		Map<String, String> customizeField = getCustomFile.getInstance()
+				.getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
-		
-		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
+
+		List<Record> offices = Db
+				.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"
+						+ currentUser.getPrincipal() + "')");
 		setAttr("userOffices", offices);
-		
+
 		render("/yh/transferOrder/transferOrderList.html");
 	}
 
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST})
-	public void list() {		
+	@RequiresPermissions(value = { PermissionConstant.PERMISSION_TO_LIST })
+	public void list() {
 		Map transferOrderListMap = null;
 		String orderNo = getPara("orderNo");
 		String status = getPara("status");
@@ -82,19 +84,19 @@ public class TransferOrderController extends Controller {
 		String officeName = getPara("officeName");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
-		
+
 		String order_type = getPara("order_type");
 		String operation_type = getPara("operation_type");
-		String plantime=getPara("plantime");
-		String arrivarltime=getPara("arrivarltime");
-		String customer_order_no=getPara("customer_order_no");
-		String to_route=getPara("to_route");
-		
+		String plantime = getPara("plantime");
+		String arrivarltime = getPara("arrivarltime");
+		String customer_order_no = getPara("customer_order_no");
+		String to_route = getPara("to_route");
+
 		if (orderNo == null && status == null && address == null
 				&& customer == null && sp == null && beginTime == null
-				&& endTime == null&& order_type == null&& plantime == null
-				&& arrivarltime == null&& customer_order_no == null 
-				&& operation_type == null&& to_route == null) {
+				&& endTime == null && order_type == null && plantime == null
+				&& arrivarltime == null && customer_order_no == null
+				&& operation_type == null && to_route == null) {
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
 			if (getPara("iDisplayStart") != null
@@ -104,17 +106,20 @@ public class TransferOrderController extends Controller {
 			}
 
 			String sqlTotal = "select count(1) total from transfer_order t "
-					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' and t.office_id in(select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' and t.office_id in(select office_id from user_office where user_name='"
+					+ currentUser.getPrincipal()
+					+ "') "
+					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
+					+ currentUser.getPrincipal() + "')";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
 			String sql = "select t.id,t.order_no,t.customer_order_no,t.status,t.cargo_nature,t.operation_type,t.arrival_mode,t.pickup_mode,t.create_stamp,"
 					+ " t.planning_time,t.arrival_time, t.address,t.order_type, c1.abbr cname,c2.abbr spname,o.office_name oname,t.remark,"
-                    + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
-                    + " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = t.id),2) volume, "
-                    + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = t.id),2) weight, "
-                    + " (select sum(toid.pieces) from transfer_order_item_detail toid where toid.order_id=t.id) pieces, "
+					+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
+					+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = t.id),2) volume, "
+					+ " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = t.id),2) weight, "
+					+ " (select sum(toid.pieces) from transfer_order_item_detail toid where toid.order_id=t.id) pieces, "
 					+ " ifnull((select name from location where code = t.route_from),'') route_from,"
 					+ " ifnull((select name from location where code = t.route_to),'') route_to,"
 					+ " ul.user_name user_name "
@@ -125,8 +130,12 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"
+					+ currentUser.getPrincipal()
+					+ "')) "
+					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
+					+ currentUser.getPrincipal()
+					+ "')"
 					+ " order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc,t.planning_time desc"
 					+ sLimit;
 
@@ -146,14 +155,14 @@ public class TransferOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			
+
 			if (plantime == null || "".equals(plantime)) {
 				plantime = "1-1-1";
 			}
 			if (arrivarltime == null || "".equals(arrivarltime)) {
 				arrivarltime = "9999-12-31";
 			}
-			
+
 			String sLimit = "";
 			String pageIndex = getPara("sEcho");
 			if (getPara("iDisplayStart") != null
@@ -172,32 +181,54 @@ public class TransferOrderController extends Controller {
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " left join location l on l.CODE = t.route_to"
 					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' "
-					+ " and t.order_no like '%"+ orderNo 
-					+ "%' and t.status like '%" + status
-					+ "%' and l.name like '%" + to_route
-					+ "%' and t.address like '%" + address
-					+ "%' and c1.abbr like '%" + customer
-					+ "%' and ifnull(c2.abbr,'') like '%" + sp
-					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
-					+ "%' and ifnull(t.order_type,'') like '%" + order_type
-					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
-					+ "%' and ifnull(t.planning_time,'') between '" + plantime
-					+ "' and '" + arrivarltime + "' "
-//					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
-//					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ " and t.create_stamp between '" + beginTime + "' and '" + endTime + "' "
-					+ " and t.operation_type like '%" + operation_type + "%'" 
-					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+					+ " and t.order_no like '%"
+					+ orderNo
+					+ "%' and t.status like '%"
+					+ status
+					+ "%' and l.name like '%"
+					+ to_route
+					+ "%' and t.address like '%"
+					+ address
+					+ "%' and c1.abbr like '%"
+					+ customer
+					+ "%' and ifnull(c2.abbr,'') like '%"
+					+ sp
+					+ "%' and ifnull(o.office_name,'')  like '%"
+					+ officeName
+					+ "%' and ifnull(t.order_type,'') like '%"
+					+ order_type
+					+ "%' and ifnull(t.customer_order_no,'') like '%"
+					+ customer_order_no
+					+ "%' and ifnull(t.planning_time,'') between '"
+					+ plantime
+					+ "' and '"
+					+ arrivarltime
+					+ "' "
+					// + "%' and ifnull(t.planning_time,'') like '%" + plantime
+					// + "%' and ifnull(t.arrival_time,'') like '%" +
+					// arrivarltime
+					+ " and t.create_stamp between '"
+					+ beginTime
+					+ "' and '"
+					+ endTime
+					+ "' "
+					+ " and t.operation_type like '%"
+					+ operation_type
+					+ "%'"
+					+ " and t.office_id in (select office_id from user_office where user_name='"
+					+ currentUser.getPrincipal()
+					+ "') "
+					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
+					+ currentUser.getPrincipal() + "')";
 			Record rec = Db.findFirst(sqlTotal);
 			logger.debug("total records:" + rec.getLong("total"));
 
 			String sql = "select t.id,t.order_no,t.customer_order_no,t.status,t.cargo_nature,t.operation_type,t.arrival_mode,t.pickup_mode,t.create_stamp,"
 					+ " t.planning_time,t.arrival_time, t.address,t.order_type, c1.abbr cname,c2.abbr spname,o.office_name oname,t.remark,"
-                    + " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
-                    + " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = t.id),2) volume, "
-                    + " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = t.id),2) weight, "
-                    + " (select sum(toid.pieces) from transfer_order_item_detail toid where toid.order_id=t.id) pieces, "
+					+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id=t.id) amount,"
+					+ " round((select sum(ifnull(toi.volume,0)) from transfer_order_item toi where toi.order_id = t.id),2) volume, "
+					+ " round((select sum(ifnull(toi.sum_weight,0)) from transfer_order_item toi where toi.order_id = t.id),2) weight, "
+					+ " (select sum(toid.pieces) from transfer_order_item_detail toid where toid.order_id=t.id) pieces, "
 					+ " ifnull(l_f.name,'') route_from,"
 					+ " ifnull(l_t.name,'') route_to, "
 					+ " ul.user_name user_name"
@@ -211,24 +242,47 @@ public class TransferOrderController extends Controller {
 					+ " left join location l_f on l_f.CODE = t.route_from "
 					+ " left join location l_t on l_t.CODE = t.route_to "
 					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' "
-					+ " and t.order_no like '%" + orderNo
-					+ "%' and t.status like '%" + status
-					+ "%' and ifnull(l_t.name,'') like '%" + to_route
-					+ "%' and t.address like '%" + address
-					+ "%' and c1.abbr like '%" + customer
-					+ "%' and ifnull(c2.abbr,'') like '%" + sp
-					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
-					+ "%' and ifnull(t.order_type,'') like '%" + order_type
-					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
-					+ "%' and ifnull(t.planning_time,'') between '" + plantime
-					+ "' and '" + arrivarltime + "' "
-//					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
-//					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
-					+ " and t.create_stamp between '" + beginTime
-					+ "' and '" + endTime + "' "
-					+ " and t.operation_type like '%" + operation_type + "%'" 
-					+ " and t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-					+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc, t.planning_time desc" + sLimit;
+					+ " and t.order_no like '%"
+					+ orderNo
+					+ "%' and t.status like '%"
+					+ status
+					+ "%' and ifnull(l_t.name,'') like '%"
+					+ to_route
+					+ "%' and t.address like '%"
+					+ address
+					+ "%' and c1.abbr like '%"
+					+ customer
+					+ "%' and ifnull(c2.abbr,'') like '%"
+					+ sp
+					+ "%' and ifnull(o.office_name,'')  like '%"
+					+ officeName
+					+ "%' and ifnull(t.order_type,'') like '%"
+					+ order_type
+					+ "%' and ifnull(t.customer_order_no,'') like '%"
+					+ customer_order_no
+					+ "%' and ifnull(t.planning_time,'') between '"
+					+ plantime
+					+ "' and '"
+					+ arrivarltime
+					+ "' "
+					// + "%' and ifnull(t.planning_time,'') like '%" + plantime
+					// + "%' and ifnull(t.arrival_time,'') like '%" +
+					// arrivarltime
+					+ " and t.create_stamp between '"
+					+ beginTime
+					+ "' and '"
+					+ endTime
+					+ "' "
+					+ " and t.operation_type like '%"
+					+ operation_type
+					+ "%'"
+					+ " and t.office_id in (select office_id from user_office where user_name='"
+					+ currentUser.getPrincipal()
+					+ "') "
+					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
+					+ currentUser.getPrincipal()
+					+ "') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc, t.planning_time desc"
+					+ sLimit;
 
 			List<Record> transferOrders = Db.find(sql);
 
@@ -240,7 +294,7 @@ public class TransferOrderController extends Controller {
 
 			transferOrderListMap.put("aaData", transferOrders);
 		}
-		
+
 		renderJson(transferOrderListMap);
 	}
 
@@ -262,26 +316,26 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
-		//根据用户的默认网点确定默认的运作网点
-		UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = 1",userLogin.get("user_name"));
-		if(uo != null){
+		// 根据用户的默认网点确定默认的运作网点
+		UserOffice uo = UserOffice.dao
+				.findFirst(
+						"select * from user_office where user_name = ? and is_main = 1",
+						userLogin.get("user_name"));
+		if (uo != null) {
 			transferOrder.set("office_id", uo.get("office_id"));
-		}/*else{
-		    transferOrder.set("office_id", null);
-		}*/
+		}/*
+		 * else{ transferOrder.set("office_id", null); }
+		 */
 
-		
-		
-		setAttr("transferOrder",transferOrder);
-		
-		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
-		
+		setAttr("transferOrder", transferOrder);
+
+		Map<String, String> customizeField = getCustomFile.getInstance()
+				.getCustomizeFile(this);
+
 		setAttr("customizeField", customizeField);
-		
+
 		render("/yh/transferOrder/updateTransferOrder.html");
 	}
-
-	
 
 	public void edit() {
 		long id = getParaToLong("id");
@@ -291,7 +345,7 @@ public class TransferOrderController extends Controller {
 		Long customer_id = transferOrder.get("customer_id");
 		Long sp_id = transferOrder.get("sp_id");
 		Long driver_id = transferOrder.get("driver_id");
-		
+
 		if (customer_id != null) {
 			Party customer = Party.dao.findById(customer_id);
 			Contact customerContact = Contact.dao.findById(customer
@@ -309,12 +363,13 @@ public class TransferOrderController extends Controller {
 					.get("contact_id"));
 			setAttr("driverContact", driverContact);
 		}
-		/*Long notify_party_id = transferOrder.get("notify_party_id");
-		if (notify_party_id != null) {
-			Party notify = Party.dao.findById(notify_party_id);
-			Contact contact = Contact.dao.findById(notify.get("contact_id"));
-			setAttr("contact", contact);
-		}*/
+		/*
+		 * Long notify_party_id = transferOrder.get("notify_party_id"); if
+		 * (notify_party_id != null) { Party notify =
+		 * Party.dao.findById(notify_party_id); Contact contact =
+		 * Contact.dao.findById(notify.get("contact_id")); setAttr("contact",
+		 * contact); }
+		 */
 
 		String routeFrom = transferOrder.get("route_from");
 		Location locationFrom = null;
@@ -355,13 +410,18 @@ public class TransferOrderController extends Controller {
 			}
 			setAttr("locationTo", locationTo);
 		}
-		Office office = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.get("warehouse_id"));
-		setAttr("office", office);	
-		
-		Office outOffice = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.get("from_warehouse_id"));
+		Office office = Office.dao
+				.findFirst(
+						"select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?",
+						transferOrder.get("warehouse_id"));
+		setAttr("office", office);
+
+		Office outOffice = Office.dao
+				.findFirst(
+						"select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?",
+						transferOrder.get("from_warehouse_id"));
 		setAttr("outOffice", outOffice);
-		
-		
+
 		UserLogin userLogin = UserLogin.dao.findById(transferOrder
 				.get("create_by"));
 		setAttr("userLogin2", userLogin);
@@ -371,12 +431,12 @@ public class TransferOrderController extends Controller {
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
-		
-		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
-		
-		
+
+		Map<String, String> customizeField = getCustomFile.getInstance()
+				.getCustomizeFile(this);
+
 		setAttr("customizeField", customizeField);
-		
+
 		render("/yh/transferOrder/updateTransferOrder.html");
 	}
 
@@ -403,7 +463,7 @@ public class TransferOrderController extends Controller {
 			party.save();
 		}
 		setAttr("saveOK", true);
-			render("/yh/transferOrder/transferOrderList.html");
+		render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	// 保存客户
@@ -451,11 +511,12 @@ public class TransferOrderController extends Controller {
 	}
 
 	public void saveItem() {
-			render("/yh/transferOrder/transferOrderList.html");
+		render("/yh/transferOrder/transferOrderList.html");
 	}
 
 	// 保存订单项
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE, PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
+	@RequiresPermissions(value = { PermissionConstant.PERMISSION_TO_CREATE,
+			PermissionConstant.PERMISSION_TO_UPDATE }, logical = Logical.OR)
 	public void saveOrderItem() {
 		TransferOrderItem orderItem = new TransferOrderItem();
 		orderItem.set("item_name", getPara("item_name"));
@@ -472,7 +533,8 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存运输单
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE, PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
+	@RequiresPermissions(value = { PermissionConstant.PERMISSION_TO_CREATE,
+			PermissionConstant.PERMISSION_TO_UPDATE }, logical = Logical.OR)
 	public void saveTransferOrder() {
 		String order_id = getPara("id");
 		String warehouseId = getPara("gateInSelect");
@@ -480,9 +542,9 @@ public class TransferOrderController extends Controller {
 		String customerId = getPara("customer_id");
 		String spId = getPara("sp_id");
 		String from_warehouse_id = getPara("gateOutSelect");
-		boolean costCheckBox ="on".equals(getPara("costCheckBox"));
-		boolean revenueCheckBox ="on".equals(getPara("revenueCheckBox"));
-		
+		boolean costCheckBox = "on".equals(getPara("costCheckBox"));
+		boolean revenueCheckBox = "on".equals(getPara("revenueCheckBox"));
+
 		TransferOrder transferOrder = null;
 		String cargoNature = getPara("cargoNature");
 		if (order_id == null || "".equals(order_id)) {
@@ -492,10 +554,12 @@ public class TransferOrderController extends Controller {
 			}
 			transferOrder.set("customer_id", customerId);
 			transferOrder.set("status", getPara("status"));
-			if("cargoReturnOrder".equals(getPara("orderType"))){
-				transferOrder.set("order_no", OrderNoGenerator.getNextOrderNo("TH"));
-			}else{
-				transferOrder.set("order_no", OrderNoGenerator.getNextOrderNo("YS"));
+			if ("cargoReturnOrder".equals(getPara("orderType"))) {
+				transferOrder.set("order_no",
+						OrderNoGenerator.getNextOrderNo("TH"));
+			} else {
+				transferOrder.set("order_no",
+						OrderNoGenerator.getNextOrderNo("YS"));
 			}
 			transferOrder.set("create_by", getPara("create_by"));
 			if ("cargo".equals(cargoNature)) {
@@ -522,33 +586,36 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("car_type", getPara("car_type"));
 			transferOrder.set("ltl_unit_type", getPara("ltlUnitType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
-			transferOrder.set("customer_order_no", getPara("customerOrderNo")); 
-			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
-			transferOrder.set("receiving_name", getPara("notify_contact_person")); 
-			transferOrder.set("receiving_address", getPara("notify_address")); 
-			transferOrder.set("receiving_phone", getPara("notify_phone")); 
-			transferOrder.set("no_contract_revenue", revenueCheckBox); 
-			transferOrder.set("no_contract_cost", costCheckBox); 
-			
-			if(getParaToDate("planning_time") != null){
-				transferOrder.set("planning_time", getPara("planning_time")); 
+			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
+			transferOrder.set("receiving_unit", getPara("receiving_unit"));
+			transferOrder.set("receiving_name",
+					getPara("notify_contact_person"));
+			transferOrder.set("receiving_address", getPara("notify_address"));
+			transferOrder.set("receiving_phone", getPara("notify_phone"));
+			transferOrder.set("no_contract_revenue", revenueCheckBox);
+			transferOrder.set("no_contract_cost", costCheckBox);
+
+			if (getParaToDate("planning_time") != null) {
+				transferOrder.set("planning_time", getPara("planning_time"));
 			}
-			if(getParaToDate("arrival_time") != null){
-				transferOrder.set("arrival_time", getPara("arrival_time")); 
+			if (getParaToDate("arrival_time") != null) {
+				transferOrder.set("arrival_time", getPara("arrival_time"));
 			}
-			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery") || getPara("arrivalMode").equals("deliveryToFactory")) {
-				
+			if (getPara("arrivalMode") != null
+					&& getPara("arrivalMode").equals("delivery")
+					|| getPara("arrivalMode").equals("deliveryToFactory")) {
+
 			} else {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
 				}
-				
+
 			}
 			if (officeId != null && !"".equals(officeId)) {
 				transferOrder.set("office_id", officeId);
 			}
 			transferOrder.save();
-			
+
 			saveTransferOrderMilestone(transferOrder);
 		} else {
 			transferOrder = TransferOrder.dao.findById(order_id);
@@ -556,7 +623,7 @@ public class TransferOrderController extends Controller {
 				transferOrder.set("sp_id", spId);
 			}
 			transferOrder.set("from_warehouse_id", from_warehouse_id);
-			
+
 			transferOrder.set("customer_id", customerId);
 			if ("cargo".equals(cargoNature)) {
 				transferOrder.set("cargo_nature_detail",
@@ -581,34 +648,37 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("ltl_unit_type", getPara("ltlUnitType"));
 			transferOrder.set("charge_type2", getPara("chargeType2"));
 			transferOrder.set("customer_order_no", getPara("customerOrderNo"));
-			transferOrder.set("receiving_unit", getPara("receiving_unit")); 
-			transferOrder.set("receiving_name", getPara("notify_contact_person")); 
-			transferOrder.set("receiving_address", getPara("notify_address")); 
-			transferOrder.set("receiving_phone", getPara("notify_phone")); 
-			transferOrder.set("no_contract_revenue", revenueCheckBox); 
-			transferOrder.set("no_contract_cost", costCheckBox); 			
-			
-			if(getParaToDate("planning_time") != null){
-				transferOrder.set("planning_time", getPara("planning_time")); 
+			transferOrder.set("receiving_unit", getPara("receiving_unit"));
+			transferOrder.set("receiving_name",
+					getPara("notify_contact_person"));
+			transferOrder.set("receiving_address", getPara("notify_address"));
+			transferOrder.set("receiving_phone", getPara("notify_phone"));
+			transferOrder.set("no_contract_revenue", revenueCheckBox);
+			transferOrder.set("no_contract_cost", costCheckBox);
+
+			if (getParaToDate("planning_time") != null) {
+				transferOrder.set("planning_time", getPara("planning_time"));
 			}
-			if(getParaToDate("arrival_time") != null){
-				transferOrder.set("arrival_time", getPara("arrival_time")); 
+			if (getParaToDate("arrival_time") != null) {
+				transferOrder.set("arrival_time", getPara("arrival_time"));
 			}
-			
-			if (getPara("arrivalMode") != null && getPara("arrivalMode").equals("delivery") || getPara("arrivalMode").equals("deliveryToFactory")) {
-				
+
+			if (getPara("arrivalMode") != null
+					&& getPara("arrivalMode").equals("delivery")
+					|| getPara("arrivalMode").equals("deliveryToFactory")) {
+
 				transferOrder.set("warehouse_id", null);
 			} else {
 				if (warehouseId != null && !"".equals(warehouseId)) {
 					transferOrder.set("warehouse_id", warehouseId);
 				}
-				
+
 			}
 			if (officeId != null && !"".equals(officeId)) {
 				transferOrder.set("office_id", officeId);
 			}
 			transferOrder.update();
-			
+
 		}
 		renderJson(transferOrder);
 	}
@@ -628,7 +698,8 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存运输里程碑
-	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_CREATE,PermissionConstant.PERMISSION_TO_UPDATE}, logical=Logical.OR)
+	@RequiresPermissions(value = { PermissionConstant.PERMISSION_TO_CREATE,
+			PermissionConstant.PERMISSION_TO_UPDATE }, logical = Logical.OR)
 	private void saveTransferOrderMilestone(TransferOrder transferOrder) {
 		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 		transferOrderMilestone.set("status", "新建");
@@ -647,27 +718,22 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 保存收货人
-	/*public Party saveContact() {
-		Party party = new Party();
-		Contact contact = setContact();
-		party.set("contact_id", contact.getLong("id"));
-		party.set("create_date", new Date());
-		party.set("creator", currentUser.getPrincipal());
-		party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-		party.save();
-		return party;
-	}*/
+	/*
+	 * public Party saveContact() { Party party = new Party(); Contact contact =
+	 * setContact(); party.set("contact_id", contact.getLong("id"));
+	 * party.set("create_date", new Date()); party.set("creator",
+	 * currentUser.getPrincipal()); party.set("party_type",
+	 * Party.PARTY_TYPE_NOTIFY_PARTY); party.save(); return party; }
+	 */
 
 	// 更新收货人party
-	/*public Party updateContact(String notifyPartyId) {
-		Party party = Party.dao.findById(notifyPartyId);
-		Contact contact = editContact(party);
-		party.set("create_date", new Date());
-		party.set("creator", currentUser.getPrincipal());
-		party.set("party_type", Party.PARTY_TYPE_NOTIFY_PARTY);
-		party.update();
-		return party;
-	}*/
+	/*
+	 * public Party updateContact(String notifyPartyId) { Party party =
+	 * Party.dao.findById(notifyPartyId); Contact contact = editContact(party);
+	 * party.set("create_date", new Date()); party.set("creator",
+	 * currentUser.getPrincipal()); party.set("party_type",
+	 * Party.PARTY_TYPE_NOTIFY_PARTY); party.update(); return party; }
+	 */
 
 	// 保存联系人
 	public Contact setContact() {
@@ -720,14 +786,18 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or c.postal_code like '%"
 							+ input
-							+ "%') and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') limit 0,10");
+							+ "%') and p.id in (select customer_id from user_customer where user_name='"
+							+ currentUser.getPrincipal() + "') limit 0,10");
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER + "' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+							+ Party.PARTY_TYPE_CUSTOMER
+							+ "' and p.id in (select customer_id from user_customer where user_name='"
+							+ currentUser.getPrincipal() + "')");
 		}
 		renderJson(locationList);
 	}
+
 	public void searchPartCustomer() {
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
@@ -749,11 +819,14 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or c.postal_code like '%"
 							+ input
-							+ "%') and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') limit 0,10");
+							+ "%') and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"
+							+ currentUser.getPrincipal() + "') limit 0,10");
 		} else {
 			locationList = Db
 					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER + "' and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+							+ Party.PARTY_TYPE_CUSTOMER
+							+ "' and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"
+							+ currentUser.getPrincipal() + "')");
 		}
 		renderJson(locationList);
 	}
@@ -763,7 +836,7 @@ public class TransferOrderController extends Controller {
 		String input = getPara("input");
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
-		//Long officeID = pom.getCurrentOfficeId();
+		// Long officeID = pom.getCurrentOfficeId();
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
@@ -785,11 +858,14 @@ public class TransferOrderController extends Controller {
 							+ input
 							+ "%' or c.postal_code like '%"
 							+ input
-							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",parentID,parentID);
+							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
+							parentID, parentID);
 		} else {
 			locationList = Db
 					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",parentID,parentID);
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER
+							+ "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
+							parentID, parentID);
 		}
 		renderJson(locationList);
 	}
@@ -803,15 +879,19 @@ public class TransferOrderController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			input = input.toUpperCase();
-			if("arrangementOrder".equalsIgnoreCase(orderType)){
-				locationList = Db.find("select ii.total_quantity,p.* from inventory_item ii "
-						+ "left join product p on p.id = ii.product_id where warehouse_id = " + warehouseId + " and party_id = " + customerId 
+			if ("arrangementOrder".equalsIgnoreCase(orderType)) {
+				locationList = Db
+						.find("select ii.total_quantity,p.* from inventory_item ii "
+								+ "left join product p on p.id = ii.product_id where warehouse_id = "
+								+ warehouseId
+								+ " and party_id = "
+								+ customerId
 								+ "  and ( upper(p.item_no) like '%"
 								+ input
 								+ "%' or upper(p.item_name) like '%"
 								+ input
 								+ "%') limit 0,10");
-			}else{
+			} else {
 				locationList = Db
 						.find("select * from product where category_id in (select id from category where customer_id = "
 								+ customerId
@@ -821,16 +901,19 @@ public class TransferOrderController extends Controller {
 								+ input
 								+ "%') and (is_stop is null or is_stop =0) limit 0,10");
 			}
-			
+
 		} else {
-			if("arrangementOrder".equalsIgnoreCase(orderType)){
-				locationList = Db.find("select ii.total_quantity,p.* from inventory_item ii left join product p on p.id = ii.product_id where warehouse_id = ? and party_id = ?",warehouseId,customerId);
-			}else{
+			if ("arrangementOrder".equalsIgnoreCase(orderType)) {
+				locationList = Db
+						.find("select ii.total_quantity,p.* from inventory_item ii left join product p on p.id = ii.product_id where warehouse_id = ? and party_id = ?",
+								warehouseId, customerId);
+			} else {
 				locationList = Db
 						.find("select * from product where category_id in (select id from category where customer_id = "
-								+ customerId + ") and (is_stop is null or is_stop =0)");
+								+ customerId
+								+ ") and (is_stop is null or is_stop =0)");
 			}
-			
+
 		}
 		renderJson(locationList);
 	}
@@ -856,7 +939,7 @@ public class TransferOrderController extends Controller {
 	}
 
 	// 删除订单
-	//@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_DELETE})
+	// @RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_DELETE})
 	public void delete() {
 		long id = getParaToLong();
 
@@ -867,64 +950,91 @@ public class TransferOrderController extends Controller {
 		transferOrder.set("sp_id", null);
 
 		transferOrder.delete();
-			redirect("/transferOrder");
+		redirect("/transferOrder");
 	}
 
 	// 取消
-	public void  cancel() {
+	public void cancel() {
 		String id = getPara("orderId");
-		String sql="select dt.transfer_order_no, dor.depart_no, dor.STATUS as pickup_status from depart_transfer dt "
-				+"left outer join depart_order dor on dt.pickup_id = dor.id "
-				+"where dor.STATUS not in('新建','取消') and dt.order_id="+id;
+		String sql = "select dt.transfer_order_no, dor.depart_no, dor.STATUS as pickup_status from depart_transfer dt "
+				+ "left outer join depart_order dor on dt.pickup_id = dor.id "
+				+ "where dor.STATUS not in('新建','取消') and dt.order_id=" + id;
 		List<Record> nextOrders = Db.find(sql);
-		if(nextOrders.size()==0){
+		if (nextOrders.size() == 0) {
 			TransferOrder order = TransferOrder.dao.findById(id);
-			order.set("Status", "取消").set("last_modified_by", LoginUserController.getLoginUserId(this))
-			.set("last_modified_stamp", new Date()).update();
+			order.set("Status", "取消")
+					.set("last_modified_by",
+							LoginUserController.getLoginUserId(this))
+					.set("last_modified_stamp", new Date()).update();
 			renderJson("{\"success\":true}");
-		}else{
+		} else {
 			renderJson("{\"success\":false}");
 		}
-		
+
 	}
 
 	// 导入运输单
 	public void importTransferOrder() {
-		UploadFile uploadFile = getFile();
-		File file = uploadFile.getFile();
-		String fileName = file.getName();
-		logger.debug("文件名:" + file.getName() +",路径："+file.getPath());
-		Map<String,String> resultMap = new HashMap<String,String>();
- 		try {
- 			String[] title = null;
- 			List<Map<String,String>> content = new ArrayList<Map<String,String>>();
- 			if(fileName.endsWith(".xls")){
- 				title = ReaderXLS.getXlsTitle(file);
- 				content = ReaderXLS.getXlsContent(file);
- 			}else if(fileName.endsWith(".xlsx")){
- 				title = ReaderXlSX.getXlsTitle(file);
- 				content = ReaderXlSX.getXlsContent(file);
- 			}else{
- 				resultMap.put("result", "false");
-				resultMap.put("cause", "导入失败，请选择正确的excel文件");
- 			}
- 			if(title != null && content.size() > 0){
+		String strFileConfirm = getPara("str");
+		String errCustomerNo = getPara("errCustomerNo");
+		UploadFile uploadFile = null;
+		File file = null;
+		String fileName = null;
+		String strFile = null;
+		if (strFileConfirm == null) {
+			uploadFile = getFile();
+			file = uploadFile.getFile();
+			fileName = file.getName();
+			strFile = file.getPath();
+		}
+		Map<String, String> resultMap = new HashMap<String, String>();
+		try {
+			String[] title = null;
+			List<Map<String, String>> content = new ArrayList<Map<String, String>>();
+			if (strFileConfirm == null) {
+				if (fileName.endsWith(".xls")) {
+					title = ReaderXLS.getXlsTitle(file);
+					content = ReaderXLS.getXlsContent(file);
+				} else if (fileName.endsWith(".xlsx")) {
+					title = ReaderXlSX.getXlsTitle(file);
+					content = ReaderXlSX.getXlsContent(file);
+				} else {
+					resultMap.put("result", "false");
+					resultMap.put("cause", "导入失败，请选择正确的excel文件");
+				}
+			} else {
+				if (strFileConfirm.endsWith(".xls")) {
+					title = ReaderXLS.getXlsTitle(new File(strFileConfirm));
+					content = ReaderXLS.getXlsContent(new File(strFileConfirm));
+				} else if (strFileConfirm.endsWith(".xlsx")) {
+					title = ReaderXlSX.getXlsTitle(new File(strFileConfirm));
+					content = ReaderXlSX.getXlsContent(new File(strFileConfirm));
+				} else {
+					resultMap.put("result", "false");
+					resultMap.put("cause", "导入失败，请选择正确的excel文件");
+				}
+			}
+			if (title != null && content.size() > 0) {
 				TransferOrderExeclHandeln handeln = new TransferOrderExeclHandeln();
-				if(handeln.checkoutExeclTitle(title,"transferOrder")){
-					resultMap = handeln.importTransferOrder(content);
-				}else{
+				if (handeln.checkoutExeclTitle(title, "transferOrder")) {
+					resultMap = handeln.importTransferOrder(content,strFileConfirm,errCustomerNo);
+					resultMap.put("strFile", strFile);
+				} else {
 					resultMap.put("result", "false");
 					resultMap.put("cause", "导入失败，excel标题列与系统默认excel标题列不一致");
 				}
- 			}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultMap.put("result", "false");
-			resultMap.put("cause", "导入失败，请选择正确的excel文件<br/>（建议使用Microsoft Office Excel软件操作数据）");
-			//renderJson(resultMap);
+			resultMap
+					.put("cause",
+							"导入失败，请选择正确的excel文件<br/>（建议使用Microsoft Office Excel软件操作数据）");
+			// renderJson(resultMap);
 		}
- 		logger.debug("result:" + resultMap.get("result") +",cause:"+resultMap.get("cause"));
- 		
+		logger.debug("result:" + resultMap.get("result") + ",cause:"
+				+ resultMap.get("cause"));
+
 		renderJson(resultMap);
 	}
 
@@ -933,16 +1043,21 @@ public class TransferOrderController extends Controller {
 		String code = getPara("locationFrom");
 		List<Location> provinces = Location.dao
 				.find("select * from location where pcode ='1'");
-		Location l = Location.dao.findFirst("select * from location where CODE = '" + code + "'");
-		Location l2 = Location.dao.findFirst("select * from location where code = (select pcode from location where CODE = '" + code + "')");
+		Location l = Location.dao
+				.findFirst("select * from location where CODE = '" + code + "'");
+		Location l2 = Location.dao
+				.findFirst("select * from location where code = (select pcode from location where CODE = '"
+						+ code + "')");
 		Location location = null;
 		if (provinces.contains(l)) {
-			location = Location.dao.findFirst("select l.name as province,l.code from location l left join location where l.code = '" + code + "'");
+			location = Location.dao
+					.findFirst("select l.name as province,l.code from location l left join location where l.code = '"
+							+ code + "'");
 		} else if (provinces.contains(l2)) {
 			location = Location.dao
 					.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
 							+ code + "'");
-		}else {
+		} else {
 			location = Location.dao
 					.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
 							+ code + "'");
@@ -953,18 +1068,22 @@ public class TransferOrderController extends Controller {
 	// 查出所有的warehouse
 	public void searchAllWarehouse() {
 		String officeId = getPara("officeId");
-		
-		
+
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
-		
-		
-		
+
 		List<Warehouse> warehouses = null;
-		if(officeId != null && !"".equals(officeId)){
-			warehouses = Warehouse.dao.find("select * from warehouse where office_id in ("+getPara("officeId")+")");
-		}else{
-			warehouses = Warehouse.dao.find("select * from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID + ")");			
+		if (officeId != null && !"".equals(officeId)) {
+			warehouses = Warehouse.dao
+					.find("select * from warehouse where office_id in ("
+							+ getPara("officeId") + ")");
+		} else {
+			warehouses = Warehouse.dao
+					.find("select * from warehouse w left join office o on o.id = w.office_id where (o.id = "
+							+ parentID
+							+ " or o.belong_office = "
+							+ parentID
+							+ ")");
 		}
 		renderJson(warehouses);
 	}
@@ -973,93 +1092,111 @@ public class TransferOrderController extends Controller {
 	public void searchAllOffice() {
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
-		
-		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id = " + parentID +" or o.belong_office = " + parentID);
-		renderJson(offices); 
-	}
-	
-	//根据用户是否拥有这个网点查询
-	public void searchPartOffice() {
-		List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
+
+		List<Record> offices = Db
+				.find("select o.id,o.office_name,o.is_stop from office o where o.id = "
+						+ parentID + " or o.belong_office = " + parentID);
 		renderJson(offices);
 	}
-	
+
+	// 根据用户是否拥有这个网点查询
+	public void searchPartOffice() {
+		List<Record> offices = Db
+				.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"
+						+ currentUser.getPrincipal() + "')");
+		renderJson(offices);
+	}
+
 	// 查出所有的driver
 	public void searchAllDriver() {
 		String input = getPara("input");
-		String party_type =getPara("partyType");
-		
-		//获取当前用户的总公司
+		String party_type = getPara("partyType");
+
+		// 获取当前用户的总公司
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
-		
-		
+
 		List<Record> locationList = Collections.EMPTY_LIST;
-		String sql= "";
+		String sql = "";
 		if (input.trim().length() > 0) {
-			if(party_type!=null){
+			if (party_type != null) {
 				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where (c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
 						+ "%') and p.party_type = '"
 						+ party_type
-						+ "' and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
-				
-			}else{
+						+ "' and (p.is_stop is null or p.is_stop = 0) and (o.id = "
+						+ parentID + " or o.belong_office = " + parentID + ")";
+
+			} else {
 				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where (c.contact_person like '%"
 						+ input
 						+ "%' or c.phone like '%"
 						+ input
-						+ "%') and p.party_type = 'SP_DRIVER' and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
+						+ "%') and p.party_type = 'SP_DRIVER' and (p.is_stop is null or p.is_stop = 0) and (o.id = "
+						+ parentID + " or o.belong_office = " + parentID + ")";
 			}
-			
+
 		} else {
-			
-			if(party_type!=null){
-				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where p.party_type = '"
-						+ party_type + "'  and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
-			}else{
-				sql= "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where p.party_type = 'SP_DRIVER'  and (p.is_stop is null or p.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
+
+			if (party_type != null) {
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where p.party_type = '"
+						+ party_type
+						+ "'  and (p.is_stop is null or p.is_stop = 0) and (o.id = "
+						+ parentID + " or o.belong_office = " + parentID + ")";
+			} else {
+				sql = "select p.id pid,c.*,p.is_stop from party p left join contact c on c.id = p.contact_id left join office o on p.office_id = o.id where p.party_type = 'SP_DRIVER'  and (p.is_stop is null or p.is_stop = 0) and (o.id = "
+						+ parentID + " or o.belong_office = " + parentID + ")";
 			}
-			
+
 		}
 		locationList = Db.find(sql);
 		renderJson(locationList);
 	}
 
-	//TODO: 查出所有的carinfo
+	// TODO: 查出所有的carinfo
 	public void searchAllCarInfo() {
 		String type = getPara("type");
 		String input = getPara("input");
 		List<Record> locationList = Collections.EMPTY_LIST;
-		
-		
-		//获取当前用户的总公司
+
+		// 获取当前用户的总公司
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
-		
-		
-		String sql="";
-		
+
+		String sql = "";
+
 		if (input.trim().length() > 0) {
-			if(type!=null){
+			if (type != null) {
 				sql = "select * from ("
-						+ "select c.* from carinfo c left join office o on o.id = c.office_id  where c.type ='"+type+"' and (o.id = " + parentID + " or o.belong_office = " + parentID + ")) "
-						+ "where c.car_no like '%"+input+"%' or c.phone like '%"+input+"%'  and (c.is_stop is null or c.is_stop = 0)";
-						
-			}else{
-				sql="select c.* from carinfo c left join office o on c.office_id = o.id where c.car_no like '%" + input + "%' or c.phone like '%"
-							+ input + "%' and c.type = 'SP'  and (c.is_stop is null or c.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
+						+ "select c.* from carinfo c left join office o on o.id = c.office_id  where c.type ='"
+						+ type + "' and (o.id = " + parentID
+						+ " or o.belong_office = " + parentID + ")) "
+						+ "where c.car_no like '%" + input
+						+ "%' or c.phone like '%" + input
+						+ "%'  and (c.is_stop is null or c.is_stop = 0)";
+
+			} else {
+				sql = "select c.* from carinfo c left join office o on c.office_id = o.id where c.car_no like '%"
+						+ input
+						+ "%' or c.phone like '%"
+						+ input
+						+ "%' and c.type = 'SP'  and (c.is_stop is null or c.is_stop = 0) and (o.id = "
+						+ parentID + " or o.belong_office = " + parentID + ")";
 			}
-				
+
 		} else {
-			if(type!=null){
-				sql = "select c.* from carinfo  c left join office o on o.id = c.office_id where c.type = '" + type + "'  and (c.is_stop is null or c.is_stop = 0) and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
-			}else{
-				sql ="select c.* from carinfo c left join office o on c.office_id = o.id  where c.type = 'SP'  and (c.is_stop is null or c.is_stop = 0)  and (o.id = " + parentID + " or o.belong_office = " + parentID + ")";
+			if (type != null) {
+				sql = "select c.* from carinfo  c left join office o on o.id = c.office_id where c.type = '"
+						+ type
+						+ "'  and (c.is_stop is null or c.is_stop = 0) and (o.id = "
+						+ parentID + " or o.belong_office = " + parentID + ")";
+			} else {
+				sql = "select c.* from carinfo c left join office o on c.office_id = o.id  where c.type = 'SP'  and (c.is_stop is null or c.is_stop = 0)  and (o.id = "
+						+ parentID + " or o.belong_office = " + parentID + ")";
 			}
-			
+
 		}
 		locationList = Db.find(sql);
 		renderJson(locationList);
@@ -1090,18 +1227,19 @@ public class TransferOrderController extends Controller {
 		// 获取总条数
 		String totalWhere = "";
 		String sql = "select count(0) total from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id ='"
-				+ id + "' and f.type='应收'"; //and f.type='应收' TODO： 有问题
+				+ id + "' and f.type='应收'"; // and f.type='应收' TODO： 有问题
 		Record rec = Db.findFirst(sql + totalWhere);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		List<Record> orders =Db.find("select d.*,f.name,dor.order_no as deliveryOrderNO,t.order_no as transferOrderNo "
-				+ " from transfer_order_fin_item d "
-				+ " left join fin_item f on d.fin_item_id = f.id "
-				+ " left join transfer_order t on t.id = d.order_id "
-				+ " left join delivery_order_item doi on doi.transfer_order_id = d.order_id"
-				+ " left join delivery_order dor on dor.id = doi.delivery_id"
-				+ " where d.order_id = " + id + " and f.type = '应收'");
+		List<Record> orders = Db
+				.find("select d.*,f.name,dor.order_no as deliveryOrderNO,t.order_no as transferOrderNo "
+						+ " from transfer_order_fin_item d "
+						+ " left join fin_item f on d.fin_item_id = f.id "
+						+ " left join transfer_order t on t.id = d.order_id "
+						+ " left join delivery_order_item doi on doi.transfer_order_id = d.order_id"
+						+ " left join delivery_order dor on dor.id = doi.delivery_id"
+						+ " where d.order_id = " + id + " and f.type = '应收'");
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -1111,7 +1249,7 @@ public class TransferOrderController extends Controller {
 		renderJson(orderMap);
 	}
 
-	//TODO  应付list
+	// TODO 应付list
 	public void accountPayable() {
 		String id = getPara();
 		if (id == null || id.equals("")) {
@@ -1152,35 +1290,38 @@ public class TransferOrderController extends Controller {
 
 		renderJson(orderMap);
 	}
-	
-    // 应收
-    public void addNewRow2() {
-        List<FinItem> items = new ArrayList<FinItem>();
-        String orderId = getPara();
-        FinItem item = FinItem.dao
-                .findFirst("select * from fin_item where type = '应收' order by id asc");
-        if (item != null) {
-            TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-            dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
-                    .set("order_id", orderId).set("create_name", dFinItem.CREATE_NAME_USER)
-                    .save();
-        }
-        items.add(item);
-        renderJson(items);
-    }
-    public void addNewRow() {
-        List<FinItem> items = new ArrayList<FinItem>();
-        String orderId = getPara();
-        FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
-        if (item != null) {
-            TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-            dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
-                    .set("order_id", orderId).set("create_name", dFinItem.CREATE_NAME_USER)
-                    .save();
-        }
-        items.add(item);
-        renderJson(items);
-    }
+
+	// 应收
+	public void addNewRow2() {
+		List<FinItem> items = new ArrayList<FinItem>();
+		String orderId = getPara();
+		FinItem item = FinItem.dao
+				.findFirst("select * from fin_item where type = '应收' order by id asc");
+		if (item != null) {
+			TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+					.set("order_id", orderId)
+					.set("create_name", dFinItem.CREATE_NAME_USER).save();
+		}
+		items.add(item);
+		renderJson(items);
+	}
+
+	public void addNewRow() {
+		List<FinItem> items = new ArrayList<FinItem>();
+		String orderId = getPara();
+		FinItem item = FinItem.dao
+				.findFirst("select * from fin_item where type = '应付' order by id asc");
+		if (item != null) {
+			TransferOrderFinItem dFinItem = new TransferOrderFinItem();
+			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+					.set("order_id", orderId)
+					.set("create_name", dFinItem.CREATE_NAME_USER).save();
+		}
+		items.add(item);
+		renderJson(items);
+	}
+
 	// 保存应收应付
 	public void paymentSave() {
 		String returnValue = "";
@@ -1290,101 +1431,116 @@ public class TransferOrderController extends Controller {
 		map.put("warehouse", warehouse);
 		renderJson(map);
 	}
-	
-    // 修改应收
-    public void updateTransferOrderFinItem() {
-        String paymentId = getPara("paymentId");
-        String name = getPara("name");
-        String value = getPara("value");
-    	String orderId = getPara("orderId");
-        if ("amount".equals(name) && "".equals(value)) {
-            value = "0";
-        }
-        TransferOrderFinItem transferOrderFinItem = null;
-        if (paymentId != null && !"".equals(paymentId)) {
-            transferOrderFinItem = TransferOrderFinItem.dao.findById(paymentId);
-            transferOrderFinItem.set(name, value);
-            transferOrderFinItem.update();
-        }else{
-        	// 假定金额都是第一个填,如果不进行判断会创建多条记录
-        	if ("amount".equals(name) && !"".equals(value)) {
-	        	transferOrderFinItem = new TransferOrderFinItem();
-	            transferOrderFinItem.set(name, value);
-	            transferOrderFinItem.set("order_id", orderId);
-	            transferOrderFinItem.set("status", "未结算");
-	            //transferOrderFinItem.set("create", TransferOrderFinItem.CREATE_NAME_PICKUP);
-	            transferOrderFinItem.save();
-        	}
-        }
-        renderJson(transferOrderFinItem);
-    }
-    
-    //运输单状态
-    public void findTransferOrderType(){
-    	String sLimit = "";
-        String pageIndex = getPara("sEcho");
-    	String orderNo = getPara("pointInTime");
-    	SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");  
-	    Calendar pastDay = Calendar.getInstance(); 
-	    if("pastOneDay".equals(orderNo))
-	    	pastDay.add(Calendar.DAY_OF_WEEK, -1);
-	    else if("pastSevenDay".equals(orderNo))
-	    	pastDay.add(Calendar.DAY_OF_WEEK, -7);
-	    else
-	    	pastDay.add(Calendar.DAY_OF_WEEK, -30);
-	    String beginTime = df.format(pastDay.getTime());
-	    String endTime = simpleDate.format(Calendar.getInstance().getTime());
-    	
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
-        String sqlTotal = "select count(0) total from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
-				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-				+ " and create_stamp between '" + beginTime + "' and '" + endTime + "'";
-        logger.debug("sql :" + sqlTotal);
-        Record rec = Db.findFirst(sqlTotal);
-        logger.debug("total records:" + rec.getLong("total"));
 
-        String sql = "select t.id, t.order_no,"
-        		+ " ifnull((select name from location where code = t.route_from ), '' ) route_from,"
-        		+ " ifnull((select name from location where code = t.route_to ), '' ) route_to,"
-        		+ " (select status from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) status,"
-        		+ " (select create_stamp from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) create_stamp"
-        		+ " from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')) "
-				+ " and t.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-				+ " and create_stamp between '" + beginTime + "' and '" + endTime + "' group by t.id order by t.create_stamp desc " + sLimit;
-        List<Record> transferOrderItems = Db.find(sql);
-        Map Map = new HashMap();
-        Map.put("sEcho", pageIndex);
-        Map.put("iTotalRecords", rec.getLong("total"));
-        Map.put("iTotalDisplayRecords", rec.getLong("total"));
-        Map.put("aaData", transferOrderItems);
-        renderJson(Map); 
-    }
-    
-    //运输单状态
-    public void updateTransferOrderRevenue(){
-    	String orderId = getPara("order_id");
-    	String name = getPara("name");
-    	boolean revenue = getParaToBoolean("revenue");
-    	TransferOrder trans = TransferOrder.dao.findById(orderId);
-    	trans.set(name, revenue).update();
+	// 修改应收
+	public void updateTransferOrderFinItem() {
+		String paymentId = getPara("paymentId");
+		String name = getPara("name");
+		String value = getPara("value");
+		String orderId = getPara("orderId");
+		if ("amount".equals(name) && "".equals(value)) {
+			value = "0";
+		}
+		TransferOrderFinItem transferOrderFinItem = null;
+		if (paymentId != null && !"".equals(paymentId)) {
+			transferOrderFinItem = TransferOrderFinItem.dao.findById(paymentId);
+			transferOrderFinItem.set(name, value);
+			transferOrderFinItem.update();
+		} else {
+			// 假定金额都是第一个填,如果不进行判断会创建多条记录
+			if ("amount".equals(name) && !"".equals(value)) {
+				transferOrderFinItem = new TransferOrderFinItem();
+				transferOrderFinItem.set(name, value);
+				transferOrderFinItem.set("order_id", orderId);
+				transferOrderFinItem.set("status", "未结算");
+				// transferOrderFinItem.set("create",
+				// TransferOrderFinItem.CREATE_NAME_PICKUP);
+				transferOrderFinItem.save();
+			}
+		}
+		renderJson(transferOrderFinItem);
+	}
+
+	// 运输单状态
+	public void findTransferOrderType() {
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		String orderNo = getPara("pointInTime");
+		SimpleDateFormat simpleDate = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar pastDay = Calendar.getInstance();
+		if ("pastOneDay".equals(orderNo))
+			pastDay.add(Calendar.DAY_OF_WEEK, -1);
+		else if ("pastSevenDay".equals(orderNo))
+			pastDay.add(Calendar.DAY_OF_WEEK, -7);
+		else
+			pastDay.add(Calendar.DAY_OF_WEEK, -30);
+		String beginTime = df.format(pastDay.getTime());
+		String endTime = simpleDate.format(Calendar.getInstance().getTime());
+
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		String sqlTotal = "select count(0) total from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal()
+				+ "')) "
+				+ " and t.customer_id in (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal()
+				+ "')"
+				+ " and create_stamp between '"
+				+ beginTime
+				+ "' and '"
+				+ endTime + "'";
+		logger.debug("sql :" + sqlTotal);
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		String sql = "select t.id, t.order_no,"
+				+ " ifnull((select name from location where code = t.route_from ), '' ) route_from,"
+				+ " ifnull((select name from location where code = t.route_to ), '' ) route_to,"
+				+ " (select status from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) status,"
+				+ " (select create_stamp from transfer_order_milestone where order_id = t.id order by id desc limit 0,1) create_stamp"
+				+ " from transfer_order t where t.status != '取消' and (t.office_id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal()
+				+ "')) "
+				+ " and t.customer_id in (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal() + "') "
+				+ " and create_stamp between '" + beginTime + "' and '"
+				+ endTime + "' group by t.id order by t.create_stamp desc "
+				+ sLimit;
+		List<Record> transferOrderItems = Db.find(sql);
+		Map Map = new HashMap();
+		Map.put("sEcho", pageIndex);
+		Map.put("iTotalRecords", rec.getLong("total"));
+		Map.put("iTotalDisplayRecords", rec.getLong("total"));
+		Map.put("aaData", transferOrderItems);
+		renderJson(Map);
+	}
+
+	// 运输单状态
+	public void updateTransferOrderRevenue() {
+		String orderId = getPara("order_id");
+		String name = getPara("name");
+		boolean revenue = getParaToBoolean("revenue");
+		TransferOrder trans = TransferOrder.dao.findById(orderId);
+		trans.set(name, revenue).update();
 		renderJson("{\"success\":true}");
-    }
-	
-    /**
-     * 文件下载
-     */
-    public void downloadTransferOrderTemplate(){
-    	File file = new File(PathKit.getWebRootPath()+"/download/运输单导入模板.xls");
-    	renderFile(file);
-    }
-    
-    public void searchAllUnit(){
+	}
+
+	/**
+	 * 文件下载
+	 */
+	public void downloadTransferOrderTemplate() {
+		File file = new File(PathKit.getWebRootPath() + "/download/运输单导入模板.xls");
+		renderFile(file);
+	}
+
+	public void searchAllUnit() {
 		List<Record> offices = Db.find("select * from unit");
-		renderJson(offices); 
-    }
-    
-  
+		renderJson(offices);
+	}
+
 }

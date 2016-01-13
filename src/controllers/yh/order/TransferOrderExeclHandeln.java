@@ -608,7 +608,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 	 */
 	@Before(Tx.class)
 	public Map<String, String> importTransferOrder(
-			List<Map<String, String>> lines) {
+			List<Map<String, String>> lines,String strFileConfirm,String valiErrCustomerNo) {
 		Connection conn = null;
 
 		Map<String, String> importResult = new HashMap<String, String>();
@@ -616,6 +616,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		if ("true".equals(importResult.get("result"))) {
 			;
 			int causeRow = 1;
+			String errCustomerNo="";
 			List addCustomerOrderNo = new ArrayList();
 			Map<String, Map> orders = new HashMap();
 			try {
@@ -623,6 +624,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 					String serialNo = lines.get(j).get("单品序列号");
 					String customerOrderNo = lines.get(j).get("客户订单号");
 					String customer = lines.get(j).get("客户名称(简称)");
+					errCustomerNo=customerOrderNo;
 					Map order = orders.get(customerOrderNo);
 					if (order == null) {
 						causeRow++;
@@ -632,7 +634,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						// 检验单据 主表 信息
 						orders.put(customerOrderNo, order);
 						// check 系统中是否已存在
-						validateData(orders, customerOrderNo);
+						validateData(orders, customerOrderNo,importResult,strFileConfirm,valiErrCustomerNo);
 					} else {
 						causeRow++;
 						addItem(lines, j, serialNo, order);
@@ -648,7 +650,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							TransferOrderItemDetail detail = TransferOrderItemDetail.dao
 									.findFirst(
 											"SELECT * from transfer_order_item_detail toid LEFT JOIN transfer_order tor on tor.id=toid.order_id where toid.serial_no=? and tor.customer_id=?",
-											serialNo,customerID);
+											serialNo,customerID.get("pid"));
 								if(detail!=null){
 									throw new Exception("序列号已存在");
 								}
@@ -720,12 +722,12 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 					List itemDetailList = (List) order.get("itemDetailList");
 					// check 当前文件 单品重复
 					TransferOrderItem tansferOrderItem = null;
-					String sql = "select * from transfer_order where customer_id = '"
-							+ customer.get("pid")
-							+ "' and customer_order_no = '"
-							+ customerOrderNo
-							+ "'";
-					TransferOrder t_order = TransferOrder.dao.findFirst(sql);
+//					String sql = "select * from transfer_order where customer_id = '"
+//							+ customer.get("pid")
+//							+ "' and customer_order_no = '"
+//							+ customerOrderNo
+//							+ "'";
+//					TransferOrder t_order = TransferOrder.dao.findFirst(sql);
 					for (int i = 0; i < itemDetailList.size(); i++) {
 						Row++;
 						Map rec = (Map) itemDetailList.get(i);
@@ -740,7 +742,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						if(product!=null){
 							tansferOrderItem = TransferOrderItem.dao
 									.findFirst("select * from transfer_order_item where order_id = '"
-											+ t_order.get("id")
+											+ transferOrder.get("id")
 											+ "' and item_no = '"
 											+ product.get("item_no") + "';");
 						}else{
@@ -751,7 +753,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							}else{
 								tansferOrderItem = TransferOrderItem.dao
 										.findFirst("select * from transfer_order_item where order_id = '"
-												+ t_order.get("id")
+												+ transferOrder.get("id")
 												+ "' and item_no = '"
 												+ orderItem + "';");
 							}	
@@ -780,6 +782,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				conn.commit();
 			} catch (Exception e) {
 				System.out.println("导入操作异常！");
+				System.out.println(e.getMessage());
 				e.printStackTrace();
 				try {
 					if (null != conn)
@@ -789,9 +792,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				}
 
 				importResult.put("result", "false");
-				importResult.put("cause", "导入失败，数据导入至第" + (causeRow)
-						+ "行时出现异常:" + e.getMessage() + "，<br/>导入数据已取消！");
-
+				if(!"客户订单号已存在".equals(e.getMessage())){
+					importResult.put("cause", "导入失败，数据导入至第" + (causeRow)
+							+ "行时出现异常:" + e.getMessage() + "，<br/>导入数据已取消！");
+				}else{
+					importResult.put("cause", "导入提示，数据导入至第" + (causeRow)
+							+ "行时出现异常:" +errCustomerNo+ e.getMessage() + "，<br/>确认继续导入？");
+					importResult.put("errCustomerNo", errCustomerNo);
+					importResult.put("strFileConfirm", strFileConfirm);
+				}
+				importResult.put("equal", e.getMessage());
 				return importResult;
 			} finally {
 				try {
@@ -811,14 +821,26 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		return importResult;
 	}
 
-	private void validateData(Map<String, Map> orders, String customerOrderNo)
+	private void validateData(Map<String, Map> orders, String customerOrderNo,Map<String, String> result,String strFileConfirm,String valiErrCustomerNo)
 			throws Exception {
-		TransferOrder Transferorder = TransferOrder.dao
-				.findFirst(
-						"SELECT * from transfer_order where customer_order_no=?",
-						customerOrderNo);
-		if (Transferorder != null) {
-			throw new Exception("客户订单号已存在");
+		Boolean isCustomerOrderNo=false;
+		if(valiErrCustomerNo!=null){
+			String[] valiErrCustomerNoArr = valiErrCustomerNo.split(",");
+			for (int i = 0; i < valiErrCustomerNoArr.length; i++) {
+				if (customerOrderNo.equals(valiErrCustomerNoArr[i])) {
+					isCustomerOrderNo=true;
+					break;
+				}
+			}
+		  }
+		if(!isCustomerOrderNo){
+			TransferOrder Transferorder = TransferOrder.dao
+					.findFirst(
+							"SELECT * from transfer_order where customer_order_no=?",
+							customerOrderNo);
+			if (Transferorder != null) {
+				throw new Exception("客户订单号已存在");
+			}
 		}
 		Map order =orders.get(customerOrderNo);
 		//到达方式
