@@ -129,7 +129,8 @@ public class DbUtils {
 	    List<String> idList = new ArrayList<String>();
 	    for (Map<String, String> rowMap : itemList) {//获取每一行
 	        String rowId = rowMap.get("id");
-	        idList.add(rowId);
+	        if(StringUtils.isNotEmpty(rowId))
+	            idList.add(rowId);
 	    }
 	    
 	    if(idList.size()>0){
