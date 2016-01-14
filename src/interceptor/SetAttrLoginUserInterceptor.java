@@ -2,6 +2,7 @@ package interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 
+import models.Office;
 import models.UserLogin;
 import models.yh.profile.OfficeCofig;
 
@@ -25,6 +26,9 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
 			}else{
 				ai.getController().setAttr("userId", currentUser.getPrincipal());
 			}
+			
+			Office office = Office.dao.findById(user.get("office_id"));
+			ai.getController().setAttr("office_name", office.get("office_name"));
 			ai.getController().setAttr("user_login_id", currentUser.getPrincipal());
 			ai.getController().setAttr("permissionMap", ai.getController().getSessionAttr("permissionMap"));
 		}
