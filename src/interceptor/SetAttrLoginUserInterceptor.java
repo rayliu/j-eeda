@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import models.Office;
 import models.UserLogin;
+import models.UserOffice;
 import models.yh.profile.OfficeCofig;
 
 import org.apache.shiro.SecurityUtils;
@@ -27,8 +28,12 @@ public class SetAttrLoginUserInterceptor implements Interceptor{
 				ai.getController().setAttr("userId", currentUser.getPrincipal());
 			}
 			
-			Office office = Office.dao.findById(user.get("office_id"));
-			ai.getController().setAttr("office_name", office.get("office_name"));
+			UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name ='"+currentUser.getPrincipal()+"' and is_main=1");
+	        if(uo != null){
+	            Office office = Office.dao.findById(uo.get("office_id"));
+	            ai.getController().setAttr("office_name", office.get("office_name"));
+	        }
+	        
 			ai.getController().setAttr("user_login_id", currentUser.getPrincipal());
 			ai.getController().setAttr("permissionMap", ai.getController().getSessionAttr("permissionMap"));
 		}

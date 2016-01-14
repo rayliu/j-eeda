@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import models.Office;
 import models.ParentOfficeModel;
 import models.UserLogin;
+import models.UserOffice;
 import models.yh.profile.OfficeCofig;
 
 import org.apache.commons.lang.StringUtils;
@@ -227,9 +228,11 @@ public class MainController extends Controller {
         	of.set("system_title", "易达物流");
         	of.set("logo", "/yh/img/eeda_logo.ico");
         }
-        UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name='" + currentUser.getPrincipal() + "' and (is_stop = 0 or is_stop is null)");
-        Office office = Office.dao.findById(user.get("office_id"));
-        setAttr("office_name", office.get("office_name"));
+        UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name ='"+currentUser.getPrincipal()+"' and is_main=1");
+        if(uo != null){
+            Office office = Office.dao.findById(uo.get("office_id"));
+            setAttr("office_name", office.get("office_name"));
+        }
         setAttr("SYS_CONFIG", of);
 	}
 
