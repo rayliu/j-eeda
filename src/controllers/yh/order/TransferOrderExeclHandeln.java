@@ -149,8 +149,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			} else if ("".equals(content.get(j).get("货品属性"))) {
 				title = "货品属性";
 				break;
-			} else if ("".equals(content.get(j).get("客户名称(简称)"))) {
-				title = "客户名称(简称)";
+			} else if ("".equals(content.get(j).get("客户名称"))) {
+				title = "客户名称";
 				break;
 			} else if ("".equals(content.get(j).get("始发城市"))) {
 				title = "始发城市";
@@ -208,9 +208,9 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 					.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 							+ Party.PARTY_TYPE_CUSTOMER
 							+ "' and c.abbr ='"
-							+ content.get(j).get("客户名称(简称)") + "';");
+							+ content.get(j).get("客户名称") + "';");
 			if (customer == null) {
-				title = "客户名称(简称)";
+				title = "客户名称";
 				break;
 			}
 			// 始发城市
@@ -241,14 +241,14 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 
 			// 供应商名称
 			Party provider = null;
-			if (!"".equals(content.get(j).get("供应商名称(简称)"))) {
+			if (!"".equals(content.get(j).get("供应商名称"))) {
 				provider = Party.dao
 						.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 								+ Party.PARTY_TYPE_SERVICE_PROVIDER
 								+ "' and c.abbr ='"
-								+ content.get(j).get("供应商名称(简称)") + "';");
+								+ content.get(j).get("供应商名称") + "';");
 				if (provider == null) {
-					title = "供应商名称(简称)";
+					title = "供应商名称";
 					break;
 				}
 			}
@@ -270,7 +270,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 					+ Party.PARTY_TYPE_CUSTOMER
 					+ "' "
 					+ " and c.abbr ='"
-					+ content.get(j).get("客户名称(简称)")
+					+ content.get(j).get("客户名称")
 					+ "'"
 					+ " and tor.customer_order_no = '"
 					+ content.get(j).get("客户订单号").trim()
@@ -623,7 +623,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				for (int j = 0; j < lines.size(); j++) {
 					String serialNo = lines.get(j).get("单品序列号");
 					String customerOrderNo = lines.get(j).get("客户订单号");
-					String customer = lines.get(j).get("客户名称(简称)");
+					String customer = lines.get(j).get("客户名称");
 					errCustomerNo=customerOrderNo;
 					Map order = orders.get(customerOrderNo);
 					if (order == null) {
@@ -677,7 +677,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							.findFirst("select p.id as pid,p.is_inventory_control is_inventory_control from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 									+ Party.PARTY_TYPE_CUSTOMER
 									+ "' and c.abbr ='"
-									+ order.get("客户名称(简称)")
+									+ order.get("客户名称")
 									+ "';");
 					// 仓库
 					Warehouse warehouse = Warehouse.dao
@@ -696,7 +696,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 									+ Party.PARTY_TYPE_SERVICE_PROVIDER
 									+ "' and c.abbr ='"
-									+ order.get("供应商名称(简称)")
+									+ order.get("供应商名称")
 									+ "';");
 					// 网点
 					Office office = Office.dao
@@ -866,9 +866,9 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 						+ Party.PARTY_TYPE_CUSTOMER
 						+ "' and c.abbr ='"
-						+ order.get("客户名称(简称)") + "';");
+						+ order.get("客户名称") + "';");
 		if(customer==null){
-			throw new Exception("客户名称(简称)有误");
+			throw new Exception("客户名称有误");
 		}
 		// 始发城市
 		Location location1 = Location.dao
@@ -901,14 +901,14 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			}
 		}
 		// 供应商名称
-		if (!"".equals(order.get("供应商名称(简称)"))) {
+		if (!"".equals(order.get("供应商名称"))) {
 			Party	provider = Party.dao
 								.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 										+ Party.PARTY_TYPE_SERVICE_PROVIDER
 										+ "' and c.abbr ='"
-										+ order.get("供应商名称(简称)") + "';");
+										+ order.get("供应商名称") + "';");
 			if(provider==null){
-				throw new Exception("供应商名称(简称)有误");
+				throw new Exception("供应商名称有误");
 			}
 		}
 	}
@@ -950,10 +950,10 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 	private Map initOrder(List<Map<String, String>> content, int j) {
 		Map order = new HashMap();
 		order.put("客户订单号", content.get(j).get("客户订单号"));
-		order.put("客户名称(简称)", content.get(j).get("客户名称(简称)"));
+		order.put("客户名称", content.get(j).get("客户名称"));
 		order.put("运营方式", content.get(j).get("运营方式"));
 		order.put("到达方式", content.get(j).get("到达方式"));
-		order.put("供应商名称(简称)", content.get(j).get("供应商名称(简称)"));
+		order.put("供应商名称", content.get(j).get("供应商名称"));
 		order.put("计划日期", content.get(j).get("计划日期"));
 		order.put("单位", content.get(j).get("单位"));
 		order.put("发货数量", content.get(j).get("发货数量"));
