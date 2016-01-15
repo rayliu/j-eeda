@@ -129,7 +129,7 @@ var generateField=function(structure){
 
     for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
         var field = structure.FIELDS_LIST[j];
-
+        console.log(field.FIELD_DISPLAY_NAME +'is_require:'+field.REQUIRED);
         var field_html = '';
         if (field.FIELD_TYPE == '仅显示值') {
             field_html = template('input_field', {
@@ -138,7 +138,7 @@ var generateField=function(structure){
                 disabled: "disabled"
             });
         } else if (field.FIELD_TYPE == '文本编辑框') {
-            console.log(field.FIELD_DISPLAY_NAME +'is_require:'+field.REQUIRED);
+            
             field_html = template('input_field', {
                 id: 'F' + field.ID + '_' + field.FIELD_NAME,
                 label: field.FIELD_DISPLAY_NAME,
