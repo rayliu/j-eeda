@@ -109,7 +109,42 @@ $(document).ready(function() {
     	
     });
     
-    
+    $("#printBtn").on('click',function(){
+    	$("#muban").show();
+    	$("#pdf_type").show();
+    });
+    $("#btnOK").on('click',function(){
+    	var damageType = $("input[name='damageType']:checked").val();
+    	var unit=$("#customer_id_input").val();;
+    	if(damageType=="supplier"){
+    		unit=$("#sp_id_input").val();
+    	}else if(damageType=="insurance"){
+    		unit=$("#insurance_id_input").val();
+    	}
+    	var order_no=$("#order_no").val();
+    	if(order_no==""){
+    		$.scojs_message('没检测到单号，请确认是否保存', $.scojs_message.TYPE_ERROR);
+    		return;
+    	}
+    	if(damageType=="insurance"){
+    		$.post('/report/printdamageCutomer', {order_no:order_no,damageType:damageType,unit:unit}, function(data){
+    			window.open(data);
+        	});
+    	}else if (damageType=="supplier"){
+    		$.post('/report/printdamageCutomer', {order_no:order_no,damageType:damageType,unit:unit}, function(data){
+    			window.open(data);
+        	});
+    	}else if (damageType=="customer"){
+    		$.post('/report/printdamageCutomer', {order_no:order_no,damageType:damageType,unit:unit}, function(data){
+    			$.post('/report/ZipOutput',{strFile:data},function(data){
+    				
+    			});
+        	});
+    	}else{
+    		$.scojs_message('选择有误', $.scojs_message.TYPE_ERROR);
+    		return;
+    	}
+    });
     //按钮控制
     if($("#status").val()==''){
     	$('#completeBtn').attr('disabled',true);
