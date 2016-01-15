@@ -138,14 +138,17 @@ var generateField=function(structure){
                 disabled: "disabled"
             });
         } else if (field.FIELD_TYPE == '文本编辑框') {
+            console.log(field.FIELD_DISPLAY_NAME +'is_require:'+field.REQUIRED);
             field_html = template('input_field', {
                 id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                label: field.FIELD_DISPLAY_NAME
+                label: field.FIELD_DISPLAY_NAME,
+                is_require: field.REQUIRED
             });
         } else if (field.FIELD_TYPE == '日期编辑框') {
             field_html = template('input_date_field_template', {
                 id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                label: field.FIELD_DISPLAY_NAME
+                label: field.FIELD_DISPLAY_NAME,
+                is_require: field.REQUIRED
             });
         } else if (field.FIELD_TYPE == '下拉列表') {
             if (field.FIELD_TYPE_EXT_TYPE == '自定义列表值') {
@@ -154,37 +157,43 @@ var generateField=function(structure){
                 field_html = template('select_field_template', {
                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
                     label: field.FIELD_DISPLAY_NAME,
-                    items: items
+                    items: items,
+                    is_require: field.REQUIRED
                 });
             } else if (field.FIELD_TYPE_EXT_TYPE == '客户列表') {
                 global_customer_id = 'F' + field.ID + '_' + field.FIELD_NAME;
                 field_html = template('input_customer_template', {
                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                    label: field.FIELD_DISPLAY_NAME
+                    label: field.FIELD_DISPLAY_NAME,
+                    is_require: field.REQUIRED
                 });
             } else if (field.FIELD_TYPE_EXT_TYPE == '供应商列表') {
                 field_html = template('input_sp_template', {
                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
                     label: field.FIELD_DISPLAY_NAME,
-                    value: ''
+                    value: '',
+                    is_require: field.REQUIRED
                 });
             }else if (field.FIELD_TYPE_EXT_TYPE == '产品列表') {
                 field_html = template('input_product_template', {
                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
                     label: field.FIELD_DISPLAY_NAME,
-                    value: ''
+                    value: '',
+                    is_require: field.REQUIRED
                 });
             }else if (field.FIELD_TYPE_EXT_TYPE == '城市列表') {
                 field_html = template('input_location_template', {
                     id: 'F' + field.ID + '_' + field.FIELD_NAME,
                     label: field.FIELD_DISPLAY_NAME,
-                    value: ''
+                    value: '',
+                    is_require: field.REQUIRED
                 });
             }
         } else {
             field_html = template('input_field', {
                 id: 'F' + field.ID + '_' + field.FIELD_NAME,
-                label: field.FIELD_DISPLAY_NAME
+                label: field.FIELD_DISPLAY_NAME,
+                is_require: field.REQUIRED
             });
         }
 

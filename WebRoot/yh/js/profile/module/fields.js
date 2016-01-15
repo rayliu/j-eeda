@@ -272,10 +272,10 @@
                 field_type: $(row.children[col_index+1]).find('select').val(),
                 field_type_ext_type:$(row).find('>input.ext_type').val(),//取自行隐藏字段
                 field_type_ext_text:$(row).find('>textarea.ext_text').val(),
-                field_data_type: $(row.children[col_index+2]).find('select').val(),
-                required: $(row.children[col_index+3]).find('select').val(),
-                listed: $(row.children[col_index+4]).find('select').val(),
-                field_template_path: $(row.children[col_index+5]).find('input').val(),
+                //field_data_type: $(row.children[col_index+2]).find('select').val(),
+                required: $(row.children[col_index+2]).find('select').val(),
+                listed: $(row.children[col_index+3]).find('select').val(),
+                //field_template_path: $(row.children[col_index+5]).find('input').val(),
                 index_name:'',
                 action: $('#module_id').val().length>0?'UPDATE':'CREATE',
                 seq: index

@@ -2,7 +2,9 @@
 	<div class="col-lg-4">
 		<div class="form-group">
 			<input id="{{id}}" type="text" name="{{id}}" field_type='list' value="{{value}}" style="display:none;"/>
-			<label class="search-label">{{label}}</label>
+			<label class="search-label">{{label}}
+			{{if is_require}} <span style='color:red;display: inherit;'>*</span> {{/if}}
+			</label>
 			<input type="text" class="form-control search-control" 
 			id="{{id}}_INPUT" name="{{id}}_INPUT" 
 			placeholder="请选择供应商"  value="{{display_value}}">
