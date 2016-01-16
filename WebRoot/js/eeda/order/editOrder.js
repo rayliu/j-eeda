@@ -138,7 +138,6 @@ var generateField=function(structure){
                 disabled: "disabled"
             });
         } else if (field.FIELD_TYPE == '文本编辑框') {
-            
             field_html = template('input_field', {
                 id: 'F' + field.ID + '_' + field.FIELD_NAME,
                 label: field.FIELD_DISPLAY_NAME,

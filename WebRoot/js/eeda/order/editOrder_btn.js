@@ -177,6 +177,9 @@ var bindBtnClick = function() {
         //     return;
         // }
 
+        // 关闭所有打开的下级从表
+        $('i.fa-chevron-down').closest('a').click();
+
         btn.attr('disabled', false);
 
         var order_dto = buildOrderDto();

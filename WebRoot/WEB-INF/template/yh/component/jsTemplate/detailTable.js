@@ -5,15 +5,14 @@
         {{if is_3rd_table}} style="display:none;"{{/if}}>
         
         {{if is_edit_order}}
-            <h4>{{label}}</h4>
-            <div class="form-group button-bar" >
+            <h4>{{label}}
                 <button id="add_row_btn_{{id}}" table_id="table_{{id}}" structure_id="{{structure_id}}" 
                     {{if is_3rd_table}} is_3rd_table="true" {{/if}}
                     parent_table_id="{{parent_table_id}}" 
                     parent_table_row_id="{{parent_table_row_id}}"
                     parent_table_row_index="{{parent_table_row_index}}"
                     name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
-            </div>
+            </h4>
         {{/if}}
         <table id="table_{{id}}" name="table_{{id}}" structure_id="{{structure_id}}"
             parent_structure_id="{{parent_table_id}}" 
@@ -67,7 +66,7 @@
                     "render": function ( data, type, full, meta ) {
                       return '<a class="delete"  table_id="table_{{id}}" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;&nbsp;&nbsp;'
                             {{if detail_table_id}}
-                            +'<a name="show_detail" detail_table_id="{{detail_table_id}}" href="javascript:void(0)" title="显示明细"><i class="fa fa-th-list"></i></a>&nbsp;'
+                            +'<a name="show_detail" detail_table_id="{{detail_table_id}}" href="javascript:void(0)" title="显示明细"><i class="fa fa-chevron-right"></i></a>&nbsp;'
                             {{/if}};
                     }
                 },

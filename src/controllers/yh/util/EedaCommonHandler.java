@@ -469,32 +469,49 @@ public class EedaCommonHandler {
             order_id = getLastInsertID(tableName);
         }
         List<Map<String, ?>> table_list = (ArrayList<Map<String, ?>>)dto.get("table_list");
-        for (Map<String, ?> tableMap : table_list) {//获取每一行
-            String tableName = tableMap.get("structure_id").toString();
-            
-            List<Map> rowFieldsList = (ArrayList<Map>)tableMap.get("row_list");
-            for (Map<String, String> rowMap : rowFieldsList) {
-                String colName = "parent_id";
-                String colValue = order_id.toString();//TODO:  get structure_parent_id from ??
-                for (Entry<String, String> entry: rowMap.entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    if("id".equals(key) || key.endsWith("_INPUT") || "structure_id".equals(key)){
-                        continue;
-                    }
-                    colName += ","+key;
-                    colValue+= ",'"+value+"'";
-                }
-                String sql = "insert into T_"+tableName+"("+colName+") values("+colValue+")";
-                logger.debug(sql);
-                Db.update(sql);
-            }
-        }
+        tablesInsert(order_id, table_list);
         
         //action 保存，审核，撤销 等按钮动作
         EedaBtnActionHandler.handleBtnAction(dto.get("module_id").toString(), 
                 dto.get("action").toString(), order_id.toString());
         return order_id.toString();
+    }
+
+    /*
+     * 递归对从表进行新增插入
+     */
+    private static void tablesInsert(BigInteger parent_id,
+            List<Map<String, ?>> table_list) {
+        for (Map<String, ?> tableMap : table_list) {//获取每一行
+            String tableName = tableMap.get("structure_id").toString();
+            
+            List<Map> rowFieldsList = (ArrayList<Map>)tableMap.get("row_list");
+            for (Map<String, ?> rowMap : rowFieldsList) {
+                String colName = "";
+                String colValue = "";
+                for (Entry<String, ?> entry: rowMap.entrySet()) {
+                    String key = entry.getKey();
+                    if("id".equals(key) || key.endsWith("_INPUT") || "structure_id".equals(key) || "table_list".equals(key)){
+                        continue;
+                    }
+                    
+                    String value = entry.getValue().toString();
+                    if("parent_id".equals(key) && StringUtils.isEmpty(value)){
+                        value = parent_id.toString();
+                    }
+                    colName += ","+key;
+                    colValue+= ",'"+value+"'";
+                }
+                String sql = "insert into T_"+tableName+"("+colName.substring(1)+") values("+colValue.substring(1)+")";
+                logger.debug(sql);
+                Db.update(sql);
+                List next_table_list = (List) rowMap.get("table_list");
+                if(next_table_list!=null){
+                    parent_id = getLastInsertID("T_"+tableName);
+                    tablesInsert(parent_id, next_table_list);
+                }
+            }
+        }
     }
 
     private static BigInteger getLastInsertID(String tableName) {

@@ -18,25 +18,32 @@ $('#list').on('click', 'a[name=show_detail]', function(event) {
     var table_row_id = current_tr.attr('id');
     var detail_structure_id = $(this).attr('detail_table_id');
 
-    //处理新增按钮
-    var addBtn = $('#table_'+detail_structure_id+'_div button[name=addRowBtn]');
-    $('div [name=table_'+$(this).attr('detail_table_id')+'_div]').hide();
-    if(table_row_id){
-        console.log('filter by id');
-        addBtn.attr('parent_row_id', table_row_id);
-        addBtn.removeAttr('parent_row_index');
-        //显示该ID下的下层 table 
-        var table_3rd = $('div [name=table_'+$(this).attr('detail_table_id')+'_div][parent_table_row_id='+table_row_id+']');
+    var dataTable = $(this).closest('table').DataTable();
+    var row = dataTable.row(current_tr);
+    var icon = $(this).find('i');
+    icon.removeClass();
+
+    var table_3rd;
+    if (row.child.isShown()) {
+        // This row is already open - close it
+        if(table_row_id){
+            table_3rd = $('div [name=table_'+$(this).attr('detail_table_id')+'_div][parent_table_row_id='+table_row_id+']');
+        }else{
+            table_3rd = $('div [parent_table_row_index='+table_row_index+']');
+        }
+        $('#list').append(table_3rd);
+        table_3rd.hide();
+        row.child.hide();
+
+        current_tr.removeClass('shown');
+        icon.addClass('fa fa-chevron-right');
         
-        table_3rd.show();
-    }else{
-        console.log('filter by index');
-        addBtn.attr('parent_row_index', table_row_index);
-        addBtn.removeAttr('parent_row_id');
-        //如果是新增未保存的行，新增一个下层 table 或 显示该行index下的下层 table
-        var table_3rd = $('div [parent_table_row_index='+table_row_index+']');
-        if(table_3rd.length>0){//判断该下层table是否存在
+    }else {
+        // Open this row
+        if(table_row_id){
+            table_3rd = $('div [name=table_'+$(this).attr('detail_table_id')+'_div][parent_table_row_id='+table_row_id+']');
             table_3rd.show();
+            row.child(table_3rd).show();
         }else{
             var structure = getStructure(global_order_structure, detail_structure_id);
             var list_html = template('table_template', {
@@ -51,12 +58,29 @@ $('#list').on('click', 'a[name=show_detail]', function(event) {
                 parent_table_row_index: table_row_index,
                 is_3rd_table: 'true'
             });
-            $('#list').append(list_html);
+            row.child(list_html).show();
 
+            table_3rd = $('div [name=table_'+$(this).attr('detail_table_id')+'_div][parent_table_row_id='+table_row_id+']');
+            table_3rd.show();
             var table_setting = window['table_' + structure.ID + '_setting'];
             var dataTable = $('div [parent_table_row_index='+table_row_index+'] table').DataTable(table_setting);
-            $('div [parent_table_row_index='+table_row_index+']').show();
         }
+        
+        table_3rd.closest('td').css('border', 'solid 1px #fafafa');
+        current_tr.addClass('shown');
+        icon.addClass('fa fa-chevron-down');
+    }
+
+    //处理新增按钮
+    var addBtn = $('#table_'+detail_structure_id+'_div button[name=addRowBtn]');
+    if(table_row_id){
+        console.log('filter by id');
+        addBtn.attr('parent_row_id', table_row_id);
+        addBtn.removeAttr('parent_row_index');
+    }else{
+        console.log('filter by index');
+        addBtn.attr('parent_row_index', table_row_index);
+        addBtn.removeAttr('parent_row_id');
     }
 
 });
@@ -91,7 +115,7 @@ $('#list').on('click', 'button', function(event) {
             dataTable.row.add(row).draw(false);
             var current_tr = $table.find('tr:last');
             highLightTr(current_tr);
-            current_tr.find('a[name=show_detail]').click();
+            //current_tr.find('a[name=show_detail]').click();
             bindProductSearch();
         }else{
             $('#addRowBtn_search_list_modal #fields').empty();
@@ -251,7 +275,8 @@ var buildModalResultList = function(col_list){
         width: "20px", 
         orderable: false, 
         render: function ( data, type, full, meta ) {
-          return '<input type="checkbox" value="'+full.ID+'">';
+          return '<input type="checkbox" value="'+full.ID+'">'
+           +'&nbsp;&nbsp;&nbsp;<a name="show_detail" row_id="'+full.ID+'" href="javascript:void(0)" title="显示明细"><i class="fa fa-chevron-right"></i></a>';
         }
     }];
 
@@ -315,6 +340,64 @@ var buildStructureSearchUrl=function(){
     
     return url;
 };
+
+var format= function(d){
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="margin-left:10px;">'+
+        '<thead>'+
+            '<tr   style="background-color: lightblue;" >'+
+                '<th></th>'+
+                '<th>型号</th>'+
+                '<th>数量</th>'+
+                '<th>范德萨</th>'+
+                '<th>范德萨</th>'+
+                '<th>范德萨</th>'+
+            '</tr>'+
+        '</thead>'+
+            '<tbody>'+
+            '<tr style="background-color: lightyellow;">'+
+                '<td><input type="checkbox" value=""></td></td>'+
+                '<td>68NL</td>'+
+                '<td>10</td>'+
+                '<td>范德萨</td>'+
+                '<td>范德萨</td>'+
+                '<td>范德萨</td>'+
+            '</tr>'+
+            '<tr style="background-color: lightyellow;">'+
+                '<td><input type="checkbox" value=""></td></td>'+
+                '<td>222nl</td>'+
+                '<td>5</td>'+
+                '<td>范德萨</td>'+
+                '<td>范德萨</td>'+
+                '<td>范德萨</td>'+
+            '</tr>'+
+        '</tbody>'+
+    '</table>';
+};
+
+$('#addRowBtn_search_list_modal table').on('click', 'a[name=show_detail]', function(e){
+    //阻止a 的默认响应行为，不需要跳转
+    e.preventDefault();
+    var tr = $(this).closest('tr');
+    var icon = $(this).find('i');
+    var dataTable = $('#modal_search_result_table').DataTable();
+    var row = dataTable.row(tr);
+
+    icon.removeClass();
+    if ( row.child.isShown() ) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+        icon.addClass('fa fa-chevron-right');
+    }
+    else {
+        // Open this row
+        row.child( format(row.data()) ).show();
+        tr.addClass('shown');
+        icon.addClass('fa fa-chevron-down');
+    }
+});
+
 
 $('#addRowBtn_search_list_modal #searchBtn').on('click', function(e){
     //阻止a 的默认响应行为，不需要跳转
