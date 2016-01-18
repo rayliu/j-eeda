@@ -1,10 +1,17 @@
 package controllers.yh.report;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
+
+
+
 import models.ArapCostInvoiceApplication;
-import models.ArapCostItem;
 import models.ArapCostOrder;
 import models.CostApplicationOrderRel;
 import models.TransferOrder;
@@ -12,6 +19,8 @@ import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipOutputStream;
 
 import com.jfinal.core.Controller;
 
@@ -57,6 +66,22 @@ public class ReportController extends Controller {
 		String outFileName = "download/手工收入单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
+        fileName = getContextPath() + fileName;
+        outFileName = getContextPath() + outFileName + order_no;
+		String file = PrintPatterns.getInstance().print(fileName, outFileName,
+				hm);
+		renderText(file.substring(file.indexOf("download")-1));
+	}
+	public void printdamageCutomer() {
+		String order_no = getPara("order_no").trim();
+		String damageType = getPara("damageType").trim();
+		String unit = getPara("unit").trim();
+		String fileName = "report/damage_customer.jasper";
+		String outFileName = "download/货损记录单"+damageType;
+		HashMap<String, Object> hm = new HashMap<String, Object>();
+		hm.put("order_no", order_no);
+		hm.put("damageType", damageType);
+		hm.put("unit", unit);
         fileName = getContextPath() + fileName;
         outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
@@ -158,20 +183,10 @@ public class ReportController extends Controller {
 		String muban = type + ".jasper";
 		String fileName = getContextPath()+"report/" + muban;
 		String outFileName = getContextPath()+"download/";
-		if (type.contains("guoguang")) {
-			outFileName += "国光标准单";
-		} else if (type.contains("nonghang")) {
-			outFileName += "农行";
-		} else if (type.contains("china_post")) {
-			outFileName += "中国邮政";
-		} else {
-			outFileName += "中国邮储";
-		}
-
+		String path=getContextPath();
+		int n=1;
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
-		
-		
 		boolean is_one = muban.contains("_one");
 		TransferOrder to = TransferOrder.dao
 				.findFirst(
@@ -180,7 +195,27 @@ public class ReportController extends Controller {
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
 						to.get("id"));
-
+		if(list.size() < 30){
+			if (type.contains("guoguang")) {
+				outFileName += "国光标准单";
+			} else if (type.contains("nonghang")) {
+				outFileName += "农行";
+			} else if (type.contains("china_post")) {
+				outFileName += "中国邮政";
+			} else {
+				 outFileName += "中国邮储";
+			}	
+		}else{
+			if (type.contains("guoguang")) {
+				outFileName += order_no+"\\国光标准单";
+			} else if (type.contains("nonghang")) {
+				outFileName +=order_no+"\\农行";
+			} else if (type.contains("china_post")) {
+				outFileName +=order_no+"\\中国邮政";
+			} else {
+				 outFileName +=order_no+"\\中国邮储";
+			}
+		}
 		if (list.size() > 0) {
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < list.size(); i++) {
@@ -195,17 +230,25 @@ public class ReportController extends Controller {
 					break;
 				} else {
 					hm.put("id", list.get(i).get("id"));
-					
-					String file = PrintPatterns.getInstance().print(fileName,
-							outFileName, hm);
+					String file=null;
+					if(list.size() < 30){
+						file = PrintPatterns.getInstance().print(fileName,
+								outFileName, hm);
+						buffer.append(file.substring(file.indexOf("download")-1));
+						buffer.append(",");
+					}else{
+						file = PrintPatterns.getInstance().prints(fileName,n, path,order_no,
+								outFileName, hm);
+						if(n==1){
+							buffer.append("compress");
+						}
+						n++;//累加判断是不是第一个进去
+					}
 					try {
 						Thread.sleep(200);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-
-					buffer.append(file.substring(file.indexOf("download")-1));
-					buffer.append(",");
 				}
 
 			}
@@ -229,6 +272,8 @@ public class ReportController extends Controller {
 		String type = getPara("sign");
 		String item_type= "";
 		String signType = getPara("zjSignType");
+		String path=getContextPath();
+		int n=1;
 		if("DTJ".equals(signType)){
 			item_type="大堂机";
 		}else{
@@ -237,7 +282,7 @@ public class ReportController extends Controller {
 		String order_no = getPara("order_no");
 		String muban = type + ".jasper";
 		String fileName = getContextPath()+"report/" + muban;
-		String outFileName = getContextPath()+"download/签收单";
+		String outFileName = getContextPath()+"download/";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
 		hm.put("item_type", item_type);
@@ -249,7 +294,11 @@ public class ReportController extends Controller {
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
 						to.get("id"));
-
+		if(list.size() < 30){
+			outFileName += "签收单";	
+		}else{
+			outFileName +=order_no+"\\签收单";
+		}
 		if (list.size() > 0) {
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < list.size(); i++) {
@@ -261,18 +310,27 @@ public class ReportController extends Controller {
 					buffer.append(",");
 					break;
 				} else {
-					hm.put("id", list.get(i).get("id"));			
-					String file = PrintPatterns.getInstance().print(fileName,
-							outFileName, hm);
+					hm.put("id", list.get(i).get("id"));
+					String file=null;
+					if(list.size() < 30){
+						file = PrintPatterns.getInstance().print(fileName,
+								outFileName, hm);
+						buffer.append(file.substring(file.indexOf("download")-1));
+						buffer.append(",");
+					}else{
+						file = PrintPatterns.getInstance().prints(fileName,n, path,order_no,
+								outFileName, hm);
+						if(n==1){
+							buffer.append("compress");
+						}
+						n++;//累加判断是不是第一个进去
+					}
 					try {
 						Thread.sleep(200);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					buffer.append(file.substring(file.indexOf("download")-1));
-					buffer.append(",");
 				}
-
 			}
 
 			renderText(buffer.toString());
@@ -310,5 +368,36 @@ public class ReportController extends Controller {
 		buffer.append(",");
 		renderText(buffer.toString());
 	}
-
+	public void ZipOutput() throws IOException {
+		String path=getContextPath()+"download/";;
+		String order_no=getPara("order_no");
+		 // 要被压缩的文件夹  
+        File file = new File(path+order_no);  
+        File zipFile = new File(path+order_no + ".zip");   
+        ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(  
+        		zipFile));  
+        zipOut.setEncoding("GBK"); 
+        if(file.isDirectory()){  
+           InputStream input = null; 
+           File[] files = file.listFiles();  
+            for(int i = 0; i < files.length; ++i){  
+                input = new FileInputStream(files[i]);  
+                zipOut.putNextEntry(new ZipEntry(file.getName()  
+                        + File.separator + files[i].getName()));  
+                int temp = 0;  
+                while((temp = input.read()) != -1){  
+                    zipOut.write(temp);  
+                }  
+                input.close();  
+            }  
+        	System.out.println("file");
+        }  
+        StringBuffer buffer = new StringBuffer();
+        String strFile=zipFile.getPath();
+        buffer.append(strFile.substring(strFile.indexOf("download")-1));
+		buffer.append(",");
+        zipOut.close(); 
+        renderText(buffer.toString());
+	    }
+		
 }

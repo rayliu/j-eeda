@@ -2729,12 +2729,26 @@ $(document).ready(function() {
     	}else{
     		if(customer=="江苏国光信息产业股份有限公司"){
         		$.post('/report/printSign', {order_no:order_no,sign:pdf_muban}, function(data){
-        			openData(data);
+        			if(data=="compress"){
+        				$.post('/report/ZipOutput',{order_no:order_no},function(data){
+            				openData(data);
+            				$.scojs_message('由于文件过多已帮您下载解压包', $.scojs_message.TYPE_OK);
+            			});
+        			}else{
+            			openData(data);	
+        			}
             	});   		
             	$("#close").click();
         	}else if(customer=="深圳市紫金支点技术股份有限公司"){
         		$.post('/report/printZJSign', {order_no:order_no,sign:zj_pdf_muban,zjSignType:zjSignType}, function(data){
-        			openData(data);
+        			if(data=="compress"){
+        				$.post('/report/ZipOutput',{order_no:order_no},function(data){
+            				openData(data);
+            				$.scojs_message('由于文件过多已帮您下载解压包', $.scojs_message.TYPE_OK);
+            			});
+        			}else{
+            			openData(data);	
+        			}
             	});
     		}else{
         		$.scojs_message('对不起，当前客户没有定义单据打印格式', $.scojs_message.TYPE_ERROR);

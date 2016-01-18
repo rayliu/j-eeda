@@ -136,9 +136,7 @@ $(document).ready(function() {
         	});
     	}else if (damageType=="customer"){
     		$.post('/report/printdamageCutomer', {order_no:order_no,damageType:damageType,unit:unit}, function(data){
-    			$.post('/report/ZipOutput',{strFile:data},function(data){
-    				
-    			});
+    			window.open(data);
         	});
     	}else{
     		$.scojs_message('选择有误', $.scojs_message.TYPE_ERROR);
