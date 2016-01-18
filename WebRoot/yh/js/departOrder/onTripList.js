@@ -144,7 +144,8 @@ $(document).ready(function() {
     				
                 }else{
                 	detailTable.fnDraw();
-                    alert('入库失败');
+                	$.scojs_message('入库失败,请联系后台管理员查询原因', $.scojs_message.TYPE_OK);
+                	$(this).attr("disabled",false);
                 }
     		},'json');
         } else {
@@ -165,7 +166,8 @@ $(document).ready(function() {
     				$.scojs_message('已收货', $.scojs_message.TYPE_OK);	
                 }else{
                 	$(this).attr("disabled",false);
-                    alert('收货出错');
+                	$.scojs_message('收货失败,请联系后台管理员查询原因', $.scojs_message.TYPE_FALSE);
+                	$(this).attr("disabled",false);
                 }
         	});
         } else {

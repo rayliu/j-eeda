@@ -13,7 +13,6 @@ import models.DepartTransferOrder;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
-import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -32,6 +31,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.departOrder.DepartOrderController;
 import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoGenerator;
@@ -251,11 +251,9 @@ public class TransferOrderMilestoneController extends Controller {
     /**
      * 直送时要判断是什么单据，如果是退货单，要明确是入仓还是直送到客户工厂，其中入仓的需要增加库存
      */
-    
+    @Before(Tx.class)
     public void receipt() {
-        //Long order_id = Long.parseLong(getPara("orderId"));
         Long departOrderId = Long.parseLong(getPara("departOrderId"));
-        //TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
         //通过发车单获取运输单ID
         List<Record> transferOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
         
@@ -273,25 +271,56 @@ public class TransferOrderMilestoneController extends Controller {
         	//获取运输单ID
         	long transerOrderId = record.getLong("order_id");
         	 //直接生成回单，在把合同等费用带到回单中
-            String orderNo = OrderNoGenerator.getNextOrderNo("HD");
-            ReturnOrder returnOrder = new ReturnOrder();
-            returnOrder.set("order_no", orderNo)
-            .set("transaction_status", "新建")
-            .set("creator", users.get(0).get("id"))
-            .set("create_date", sqlDate)
-            //回单中"transfer_order_id"字段修改为“depart_id”
-            //.set("depart_id", departOrderId)
-            .set("transfer_order_id", transerOrderId).save();
-        	
-            //修改运输单信息
-        	TransferOrder transferOrder = TransferOrder.dao.findById(transerOrderId);
-			transferOrder.set("status", "已收货").update();
-			//设置回单客户信息，必须是同一个客户
-            returnOrder.set("customer_id", transferOrder.get("customer_id")).update();
-            
+
+            TransferOrder transferOrder = TransferOrder.dao.findById(transerOrderId);
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-            transferOrderMilestone.set("status", "已收货")
-            .set("create_by", users.get(0).get("id"))
+            String cargo_nature = transferOrder.getStr("cargo_nature");
+            if(cargo_nature.equals("ATM")){
+            	String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + transerOrderId;
+        		Record rec = Db.findFirst(sqlTotal); 
+        		Long totalAmount = rec.getLong("total");  //运输单总单品数量
+        		
+        		sqlTotal = "select count(1) departAmount from transfer_order_item_detail toid "
+        				+ " left join depart_order dor on dor.id = toid.depart_id "
+        				+ " where dor.status = '已收货'"
+        				+ " and toid.order_id = " + transerOrderId ;
+        		rec = Db.findFirst(sqlTotal);
+        		Long departAmount = rec.getLong("departAmount");   ///运输单中已收货单品数量(包括这次数量)
+        		
+        		if(departAmount == totalAmount){
+        			transferOrderMilestone.set("status", "已收货");
+        			transferOrder.set("status", "已完成").update();
+        			//生成回单
+        			createReturnOrder(transferOrder);
+        		}else{
+        			transferOrderMilestone.set("status", "部分已收货");
+        		}
+            }else{
+    			Record re = Db.findFirst("select sum(toi.amount) total from transfer_order_item toi where toi.order_id = ?",transerOrderId);
+    			double totalAmount = re.getDouble("total");     //总货品数量
+    			double pickupAmount = 0.0;  //已入库的数量（包括这次）
+    			if(!transferOrder.getStr("operation_type").equals("out_source")){
+    				re = Db.findFirst("select sum(amount) yishou from (select dt.* from depart_pickup dp"
+    						+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id"
+    						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
+    						+ " where dor.STATUS = '已收货' and dt.order_id = ? group by dt.id ) A",transerOrderId);
+    				pickupAmount = re.getDouble("yishou");   //运输单已收货的总数量	
+    			}else{
+    				pickupAmount = totalAmount; //外包（因无法多次发车，所以数量和总数量相同）
+    			}
+    			
+    			if(totalAmount == pickupAmount){
+    				transferOrder.set("status", "已完成").update();
+    				transferOrderMilestone.set("status", "已收货");
+    				//生成回单
+    				createReturnOrder(transferOrder);
+    			}else{
+    				transferOrderMilestone.set("status", "部分已收货");
+    			}
+            }
+        	
+			//设置回单客户信息，必须是同一个客户
+            transferOrderMilestone.set("create_by", users.get(0).get("id"))
             .set("location", "")
             .set("create_stamp", sqlDate)
             .set("order_id", transerOrderId)
@@ -307,170 +336,68 @@ public class TransferOrderMilestoneController extends Controller {
             .set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE)
             .save();
           
-            
+           
+		}
+        renderJson("{\"success\":true}");
+    }
+    
+    
+    //自动生成回单
+    public void createReturnOrder(TransferOrder transfer){
+    	Record re  = Db.findFirst("select count(*) total from return_order ror where transfer_order_id = ?",transfer.getLong("id"));
+    	if(re.getLong("total")==0){
+    		String orderNo = OrderNoGenerator.getNextOrderNo("HD");
+            ReturnOrder returnOrder = new ReturnOrder();
+            returnOrder.set("order_no", orderNo)
+            .set("transaction_status", "新建")
+            .set("customer_id", transfer.getLong("customer_id"))
+            .set("creator", LoginUserController.getLoginUserId(this))
+            .set("create_date", new Date())
+            .set("transfer_order_id", transfer.getLong("id")).save();
             
             ReturnOrderController roController= new ReturnOrderController(); 
             //把运输单的应收带到回单中
-            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, Long.parseLong("0"), transerOrderId);
+            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, Long.parseLong("0"),  transfer.getLong("id"));
             //直送时把保险单费用带到回单
-            roController.addInsuranceFin(transferOrder, departOrder, returnOrder);
+            roController.addInsuranceFin(transfer, returnOrder);
             //TODO:根据合同生成费用
-            roController.calculateChargeByCustomer(transferOrder, returnOrder.getLong("id"), users);
-		}
-        
-        
-        renderJson("{\"success\":true}");
+            List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + LoginUserController.getLoginUserName(this) + "'");
+            roController.calculateChargeByCustomer(transfer, returnOrder.getLong("id"), users);
+    	}
     }
 
-    // 发车确认
-    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_COMPLETED})
-    public void departureConfirmation() {
-        String departOrderId = getPara("departOrderId");
-        int num = 1;
-        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);
-        for(DepartTransferOrder departTransferOrder : departTransferOrders){
-        	String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id");
-        	Record rec = Db.findFirst(sqlTotal);
-        	Long total = rec.getLong("total");
-        	
-        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId;
-        	rec = Db.findFirst(sqlTotal);
-        	Long departTotal1 = rec.getLong("total");
-        	sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and (status = '已发车' or status = '已入库')";
-        	rec = Db.findFirst(sqlTotal);
-        	Long departTotal2 = rec.getLong("total");
-        	Long departTotal = departTotal1 + departTotal2;
-        	if(total == departTotal){
-		        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + departTransferOrder.get("order_id") + ")");
-		        for(TransferOrder transferOrder : transferOrders){
-		        	transferOrder.set("status", "已发车");
-		        	transferOrder.update();
-		        	
-		        	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-			        transferOrderMilestone = milestoneMessages(transferOrderMilestone);
-			        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-			        transferOrderMilestone.set("order_id", transferOrder.get("id"));
-			        transferOrderMilestone.set("status", "已发车");
-			        transferOrderMilestone.save();
-		        }   
-        	}else{
-		        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in (" + departTransferOrder.get("order_id") + ")");
-		        for(TransferOrder transferOrder : transferOrders){
-		        	transferOrder.set("status", "部分已发车");
-		        	transferOrder.update();
-		        	
-		        	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-			        transferOrderMilestone = milestoneMessages(transferOrderMilestone);
-			        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-			        transferOrderMilestone.set("order_id", transferOrder.get("id"));
-			        transferOrderMilestone.set("status", "部分已发车");
-			        transferOrderMilestone.save();
-		        }
-        	}
-	        DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
-	        departOrder.set("status", "已发车");
-	        departOrder.update();
-	        if(num == 1){
-	        	TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
-		        departOrderMilestone = milestoneMessages(departOrderMilestone);
-		        departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-		        departOrderMilestone.set("status", "已发车");
-		        departOrderMilestone.set("depart_id", departOrder.get("id"));
-		        departOrderMilestone.save();
-		        num = 2;
-	        }
-	        
-	        
-	        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId);
-	        for(TransferOrderItemDetail detail : transferOrderItemDetails){
-	        	detail.set("status", "已发车");
-	        	detail.update();
-	        }	
-	       
-	        /*if("arrangementOrder".equals(transferOrder.get("order_type"))){*/
-	        
-	        DepartOrderController dor = new DepartOrderController();
-	        dor.SubtractInventory(departTransferOrder,departOrderId);
-	    	/*}*/
-	       
-        }
-        
-        renderJson("{\"success\":true}");        
-    }
+   
     
     //TODO:  入库确认
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_UPDATE})
     @Before(Tx.class)
     public void warehousingConfirm() {
     	String departOrderId = getPara("departOrderId");
-    	DepartOrder departOrder1= DepartOrder.dao.findById(departOrderId);
+    	
     	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);
     	for(DepartTransferOrder departTransferOrder : departTransferOrders){
     		TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
-    		
+    		Long transferId = departTransferOrder.getLong("order_id");
     		if("ATM".equals(transferOrder.get("cargo_nature"))){
     			//这里只能算单品的总数,缺失判断不同货品的情况
         		//运输单中所有单品
-        		String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id");
+        		String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + transferId;
         		Record rec = Db.findFirst(sqlTotal);
-        		Long detailTotal = rec.getLong("total");
+        		Long detailTotal = rec.getLong("total");  //总数量
         		//运输单中此次发车单品数量
-        		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId;
+        		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + transferId + " and depart_id = " + departOrderId;
         		rec = Db.findFirst(sqlTotal);
-        		Long departTotal1 = rec.getLong("total");
-        		Party party=Party.dao.findById(transferOrder.get("customer_id"));
-        		if("Y".equals(party.get("is_auto_ps"))){
-        			List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select id,notify_party_id,delivery_id from transfer_order_item_detail where order_id = "+departTransferOrder.get("order_id")+" and depart_id ="+ departOrderId);
-            		for (int i = 0; i < departTotal1; i++) {
-            			if(transferorderitemdetail.get(i).get("delivery_id")==null){
-            				DeliveryOrder deliveryOrder = null;
-                    		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
-                    		Date createDate = Calendar.getInstance().getTime();
-                    		String name = (String) currentUser.getPrincipal();
-                    		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-                    		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id")); 
-                    		deliveryOrder = new DeliveryOrder();
-                    		deliveryOrder.set("order_no", orderNo)
-            				.set("customer_id", transferOrder.get("customer_id"))
-            				.set("notify_party_id", transferorderitemdetail.get(i).get("notify_party_id"))
-            				.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
-            				.set("route_from",transferOrder.get("route_to"))
-            				.set("route_to",transferOrder.get("route_to"))
-            				.set("pricetype", getPara("chargeType"))
-            				.set("office_id", warehouse.get("office_id"))
-            				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
-            				.set("cargo_nature", transferOrder.get("cargo_nature"))
-            				.set("priceType", departOrder1.get("charge_type"))
-            				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
-            				.set("audit_status", "新建").set("sign_status", "未回单");
-                    		if(warehouse!=null){
-                    			deliveryOrder.set("sp_id", warehouse.get("sp_id"));
-                    		}
-                    		deliveryOrder.save();
-    						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-    						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
-    						.set("transfer_order_id",transferOrder.get("id"))
-    						.set("transfer_no",transferOrder.get("order_no"))
-    						.set("transfer_item_detail_id",transferorderitemdetail.get(i).get("id"))
-    						.set("amount", 1);
-    						deliveryOrderItem.save();
-    						//在单品中设置delivery_id
-    						TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
-    								.findById(transferorderitemdetail.get(i).get("id"));
-    						transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
-    						transferOrderItemDetail.set("is_delivered", true);
-    						transferOrderItemDetail.update();
-            			}
-            		}
-        		}
-		
-        		//运输单中已入库的数量
-        		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and status = '已入库'";
-        		rec = Db.findFirst(sqlTotal);
+        		Long this_amount = rec.getLong("total");
+        		
+        		//自动生成配送单（每一单品----一张配送）
+        		createDeliveryOrder(transferOrder,departOrderId);
+        		
+        		sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + transferId + " and status = '已入库'";
+        		rec = Db.findFirst(sqlTotal);    //运输单中已入库的数量(不包括这次)
         		Long departTotal2 = rec.getLong("total");
-        		Long departTotal = departTotal1 + departTotal2;
+        		Long departTotal = this_amount + departTotal2;
         		if(detailTotal == departTotal){
-    				transferOrder.set("status", "已入库");
+    				transferOrder.set("status", "已完成");
     				transferOrder.update();
     				
     				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
@@ -480,9 +407,6 @@ public class TransferOrderMilestoneController extends Controller {
     				transferOrderMilestone.set("status", "已入库");
     				transferOrderMilestone.save();
         		}else{
-    				transferOrder.set("status", "部分已入库");
-    				transferOrder.update();
-    				
     				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
     				transferOrderMilestone = milestoneMessages(transferOrderMilestone);
     				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
@@ -491,27 +415,54 @@ public class TransferOrderMilestoneController extends Controller {
     				transferOrderMilestone.save();
         		}
         		
-        		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId);
+        		List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = " + transferId + " and depart_id = " + departOrderId);
         		for(TransferOrderItemDetail detail : transferOrderItemDetails){
         			detail.set("status", "已入库");
         			detail.update();
-        		}	
-	        		
+        		}		
     		}else{
-    			transferOrder.set("status", "已入库");
-				transferOrder.update();
-				
-				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-				transferOrderMilestone = milestoneMessages(transferOrderMilestone);
+    			//普货货品总数量
+    			Record re = Db.findFirst("select sum(toi.amount) total from transfer_order_item toi where toi.order_id = ?",transferId);
+    			double totalAmount = re.getDouble("total");     //总货品数量
+    			TransferOrder transfer = TransferOrder.dao.findById(transferId);
+    			double pickupAmount = 0.0;  //已入库的数量（包括这次）
+    			double this_amount = 0.0;
+    			double havingTotal = 0.0;
+    			if(!transfer.getStr("operation_type").equals("out_source")){
+    				re = Db.findFirst("select sum(amount) yishou from (select dt.* from depart_pickup dp"
+    						+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id"
+    						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
+    						+ " where dor.STATUS = '已入库' and dt.order_id = ? group by dt.id )A",transferId);
+    				havingTotal = re.getDouble("yishou")==null?0:re.getDouble("yishou");   //已入库（不包括这次）
+    				re = Db.findFirst("select sum(ifnull(dt.amount,0)) amount from depart_pickup dp"
+    						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
+    						+ " where dp.depart_id is not null and dp.depart_id =?",departOrderId);
+    				this_amount = re.getDouble("amount")==null?0:re.getDouble("amount");
+    				pickupAmount = havingTotal + this_amount;	
+    			}else{
+    				pickupAmount = totalAmount; //外包（因无法多次发车，所以数量和总数量相同）
+    			}
+    			
+    			TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+    			if(totalAmount == pickupAmount){
+    				transferOrder.set("status", "已完成").update();
+    				transferOrderMilestone.set("status", "已入库");
+    			}else{
+    				transferOrderMilestone.set("status", "部分已入库");
+    			}
+    			transferOrderMilestone = milestoneMessages(transferOrderMilestone);
 				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
 				transferOrderMilestone.set("order_id", transferOrder.get("id"));
-				transferOrderMilestone.set("status", "已入库");
 				transferOrderMilestone.save();
+				
+				//自动生成配送单（每一单品----一张配送）
+        		//createDeliveryOrder(transferOrder,departOrderId);
     		}
     	}
     	DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
 		departOrder.set("status", "已入库");
 		departOrder.update();
+		
 		TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
 		departOrderMilestone = milestoneMessages(departOrderMilestone);
 		departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
@@ -521,6 +472,59 @@ public class TransferOrderMilestoneController extends Controller {
     	DepartOrderController.productInWarehouse(departOrderId);
     	renderJson("{\"success\":true}");        
     }
+    
+    @Before(Tx.class)
+    public void createDeliveryOrder(TransferOrder transferOrder,String departOrderId){
+    	Party party=Party.dao.findById(transferOrder.get("customer_id"));
+    	DepartOrder departOrder1= DepartOrder.dao.findById(departOrderId);
+    	if("Y".equals(party.get("is_auto_ps"))){
+    		List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = "+transferOrder.get("id")+" and depart_id ="+ departOrderId);
+    		for (TransferOrderItemDetail transferdetail:transferorderitemdetail) {
+    			if(transferdetail.getLong("delivery_id")==null){
+    				DeliveryOrder deliveryOrder = null;
+            		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
+            		Date createDate = Calendar.getInstance().getTime();
+            		String name = (String) currentUser.getPrincipal();
+            		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+            		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id")); 
+            		deliveryOrder = new DeliveryOrder();
+            		deliveryOrder.set("order_no", orderNo)
+    				.set("customer_id", transferOrder.get("customer_id"))
+    				.set("notify_party_id", transferdetail.getLong("notify_party_id"))
+    				.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
+    				.set("route_from",transferOrder.get("route_to"))
+    				.set("route_to",transferOrder.get("route_to"))
+    				.set("pricetype", getPara("chargeType"))
+    				.set("office_id", warehouse.get("office_id"))
+    				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
+    				.set("cargo_nature", transferOrder.get("cargo_nature"))
+    				.set("priceType", departOrder1.get("charge_type"))
+    				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
+    				.set("audit_status", "新建").set("sign_status", "未回单");
+            		if(warehouse!=null){
+            			deliveryOrder.set("sp_id", warehouse.get("sp_id"));
+            		}
+            		deliveryOrder.save();
+    				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+    				deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+    				.set("transfer_order_id",transferOrder.get("id"))
+    				.set("transfer_no",transferOrder.get("order_no"))
+    				.set("transfer_item_detail_id",transferdetail.getLong("id"))
+    				.set("amount", 1);
+    				deliveryOrderItem.save();
+    				//在单品中设置delivery_id
+    				TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+    						.findById(transferdetail.getLong("id"));
+    				transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
+    				transferOrderItemDetail.set("is_delivered", true);
+    				transferOrderItemDetail.update();
+    			}
+    		}
+    	}
+    }
+    
+    
+    
     
     // 里程碑信息
     private TransferOrderMilestone milestoneMessages(TransferOrderMilestone transferOrderMilestone){

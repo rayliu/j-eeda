@@ -14,14 +14,16 @@
                             <input id="cargoNumbers" name="cargoNumbers" type="hidden">
                             <input id="cargo_nature" name="cargo_nature" type="hidden">
                             <input id="cargoItemIds" name="cargoItemIds" type="hidden">
+                            <input id="detailJson" name="detailJson" type="hidden">
+                            <input id="ids" name="ids" type="hidden">
                             <input id="flag" name="flag" type="hidden" value="${customizeField.flag!''}">
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <div class="controls">
                                       <% if (customizeField.flag!''=="derect"){%>
-                                      <button disabled="true" id="saveBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建直送调车单</button>
+                                      <button disabled id="saveBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建直送调车单</button>
                                       <%}else{%>
-                                      <button disabled="true" id="saveBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建调车单</button>
+                                      <button disabled id="saveBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建调车单</button>
                                       <%}%>
                                       <a class="btn  btn-primary" href="/pickupOrder">返回</a>
                                     </div>
@@ -77,7 +79,6 @@
            <h3></h3>
             <div class="row">
                 <div class="col-lg-12">
-
                     <div class="panel panel-default">                              
                         <div class="panel-heading">
                             <i class="fa fa-list fa-fw"></i>可调车运输单列表&nbsp<span>(温馨提示：直送调车单只能选中一张运输单)</span>
@@ -111,7 +112,7 @@
                                     <div class="form-group">
                                         <label class="search-label">客户</label>
                                         <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择或者输入客户">
-                                    	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 28%; left: 33%;"></ul>
+                                    	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 28%; left: 33%;"></ul>
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">目的城市</label>
@@ -143,7 +144,7 @@
                                 </div>
                                 <!-- end of col-lg-6-->
                             </div><!-- end of row-->
-                          
+                            <button  id="searchBtn" type="button" class="btn  btn-primary">查询</button>
                             </form>
                             <div class="table-responsive">
                             	<br/>
@@ -258,7 +259,7 @@
 	pickupOrderSearcheTransfer.ex_type = "${customizeField.EX_TYPE!'公司自提'}";
 	pickupOrderSearcheTransfer.ex_cargo = "${customizeField.EX_CARGO!'贵重物品'}";
 </script>
-<script src="/yh/js/pickup/pickup.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
-
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+<!-- <script src="/yh/js/pickup/pickup.js"></script> -->
+<script src="/yh/js/pickup/newpickup.js"></script>

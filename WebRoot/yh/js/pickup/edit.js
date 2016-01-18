@@ -5,6 +5,21 @@
 		document.title = pickupOrder.depart_no +' | '+document.title;
 	}
 	
+	
+	
+	//按钮控制
+	var showFinishBut = function(){
+		if($("#pickupOrderId").val() ==""){						
+			$("#saveTransferOrderBtn").attr('disabled', false);					
+		}else{
+			if($("#orderStatus").html()=='新建'){
+				$("#saveTransferOrderBtn").attr('disabled', false);	
+				$("#finishBtn").attr('disabled', false);	
+			}
+		}
+	};
+	showFinishBut();
+	
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 var pickupOrderId = $("#pickupOrderId").val();
 	 var parentId = "chargeCheckOrderbasic";
@@ -278,7 +293,7 @@
     	}
     }
    
-    // 保存单品
+    // 保存
     var handlePickkupOrderDetail = function(){
     	if(!$("#saveTransferOrderBtn").prop('disabled')){
     		$("#saveTransferOrderBtn").prop('disabled',true);
@@ -290,10 +305,18 @@
 					$("#pickupId").val(data.ID);
 					$("#showOrderNo").text(data.DEPART_NO);
 					$("#saveTransferOrderBtn").prop('disabled',false);
-			        showFinishBut();
-				  	//$("#style").show();	
+			        showFinishBut();	
 			        contactUrl("edit?id",data.ID);
 			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        
+			        //
+			        var message=$("#message").val();
+		    		var tr_item=$("#tr_itemid_list").val();
+		    		var item_detail=$("#item_detail").val();
+		     	    var pickupId = $("#pickupOrderId").val();
+		     		datatable.fnSettings().oFeatures.bServerSide = true; 
+		     		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+pickupId;
+		     		datatable.fnDraw();
 				}else{
 					alert('数据保存失败。');
 				}
@@ -334,7 +357,7 @@
 	    	}
 	 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        $("#finishBtn").attr('disabled', false);
-	        $("#cancelBtn").attr('disabled', false);
+	        //$("#cancelBtn").attr('disabled', false);
     	}
     };
     
@@ -485,9 +508,10 @@
 	       	return false;
         }
 		//异步向后台提交数据
-		if("chargeCheckOrderbasic" == parentId){
-			clickSavePickupOrder(e);
-		}
+        if($("#pickupOrderId").val()==""){
+        	clickSavePickupOrder(e);
+        }
+		
 		//handlePickkupOrderDetail();
         parentId = e.target.getAttribute("id");
 	});
@@ -617,21 +641,7 @@
     if($("#flag").val()=='derect' || $("#is_direct_deliver").val()=='true'){
 		  $("#pickupOrderPayment").show();
     }
-	
-	// 显示已完成按钮
-	var showFinishBut = function(){
-		if($("#pickupOrderId").val() != ""){
-			if($("#finishBtnVal").val() == "已入货场" || $("#finishBtnVal").val() == "已入库" || $("#tstatus").val() == "已收货" || $("#tstatus").val() == "已签收"){
-				$("#finishBtn").attr('disabled', true);					
-				$("#saveTransferOrderBtn").attr('disabled', true);					
-			}else{
-				$("#finishBtn").attr('disabled', false);
-			}
-		}else{
-			$("#finishBtn").attr('disabled', true);	
-		}
-	};
-	showFinishBut();
+
 	// 货品信息
 	$("#pickupOrderItemList").click(function(e){
 		//阻止a 的默认响应行为，不需要跳转
@@ -640,19 +650,19 @@
         if(!$("#pickupOrderForm").valid()){
 	       	return false;
         }
-        if("chargeCheckOrderbasic" == parentId){
+
+        if($("#pickupOrderId").val()!=""){
+        	var message=$("#message").val();
+    		var tr_item=$("#tr_itemid_list").val();
+    		var item_detail=$("#item_detail").val();
+     	    var pickupId = $("#pickupOrderId").val();
+     		datatable.fnSettings().oFeatures.bServerSide = true; 
+     		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+pickupId;
+     		datatable.fnDraw();
+     		parentId = e.target.getAttribute("id");
+        }else{
         	clickSavePickupOrder(e);
         }
-        var message=$("#message").val();
-		var type=$("#type").val();
-		var depart_id=$("#depart_id").val();
-		var tr_item=$("#tr_itemid_list").val();
-		var item_detail=$("#item_detail").val();
- 	    var pickupId = $("#pickupOrderId").val();
- 		datatable.fnSettings().oFeatures.bServerSide = true; 
- 		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+pickupId;
- 		datatable.fnDraw();
- 		parentId = e.target.getAttribute("id");
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -735,27 +745,27 @@
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
 		$("#finishBtn").attr('disabled', true);	
-		 /*if($("input:checkbox:checked").val()=='receiverCheckbox'){
-	        if($("#route-table input:radio:checked").val()!='receiver'){
-	            alert("路线列表中的发往类型有误，请确认发往类型正确后再按确认");
-	            return;
-	        }
-		 }*/
 		// 处理入库运输单
-		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val(), receiverId:$("#receiverId").val()}, function(data){
+		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val()}, function(data){
 			//保存成功后，刷新列表
             if(data.success){
             	var pickupOrderId = $("#pickupOrderId").val();
             	var priceType = $("input[name='priceType']:checked").val();
             	if(pickupOrderId != null && pickupOrderId != ""){
-            		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType}, function(){
+            		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType, receiverId:$("#receiverId").val()}, function(){
                 		pickupOrderMilestone();	
                     	var pickupOrderId = $("#pickupOrderId").val();
                     	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;
                     	paymenttable.fnDraw(); 
                 		routeTable.fnDraw(); 
                     	$("#saveTransferOrderBtn").attr('disabled', true);	
-                    	$("#finishBtnVal").val("已入货场");
+                    	if($("#flag").val()=='derect'){
+                    		$("#orderStatus").html("已收货");
+                    		$.scojs_message('收货成功', $.scojs_message.TYPE_OK);
+                    	}else{
+                    		$("#orderStatus").html("已入货场");
+                    		$.scojs_message('已入货场', $.scojs_message.TYPE_OK);
+                    	}
                 	},'json');
             	}
             }else{
@@ -765,17 +775,11 @@
 		},'json');
 	});
 	
-	/*// 单击应收应付
-    $("#pickuparap").click(function(e){
-    	var pickupOrderId = $("#pickupOrderId").val();
-    	alert(pickupOrderId);
-		paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable/"+pickupOrderId;
-		paymenttable.fnDraw(); 
-    });	*/
+
 	
 	//撤销按钮显示
 	if($("#pickupId").val() != null && !$("#pickupId").val()==''){
-		  $("#cancelBtn").attr('disabled', false);
+		  //$("#cancelBtn").attr('disabled', false);
 	}
 	
     
@@ -830,12 +834,7 @@
 		$("#addressDiv").show();
 		$("#checkbox1").prop('checked', true);
 	}else{
-		/*if($("#is_direct_deliver").val()=='false' || $("#is_direct_deliver").val()==''){
-			$("#checkbox1").prop('checked', true);
-	    	$("#addressDiv").show();
-	    }else{*/
-	    	$("#checkbox1").prop('checked', false);		
-	    /*}*/
+	    $("#checkbox1").prop('checked', false);	
 	}
 	
 	// 回显仓库
@@ -852,19 +851,11 @@
     	$("#receiverId").val($("#t_id").val());
 		$("#div1").hide();
 		$("#checkbox3").prop('checked',true);
-        /*$("#checkbox1").prop('checked',false);
-        $("#checkbox1").attr('disabled',true);
-        $("#checkbox2").prop('checked',false);
-        $("#checkbox2").attr('disabled',true);*/
         $("#receiverDiv").show();
 	}else if($("#is_direct_deliver").val()=='true'){
 		$("#receiverId").val($("#t_id").val());
 		$("#div1").hide();
 		$("#checkbox3").prop('checked',true);
-        /*$("#checkbox1").prop('checked',false);
-        $("#checkbox1").attr('disabled',true);
-        $("#checkbox2").prop('checked',false);
-        $("#checkbox2").attr('disabled',true);*/
         $("#receiverDiv").show();
 	}else{
 		$("#div2").hide();
@@ -986,18 +977,7 @@
         		});
         	$("#gateInSelect").attr("disabled","disabled");
     	}
-    }/*if($("#transferOrderType").val() == 'salesOrder'){
-    	$("#checkbox1").prop('checked', true);
-    	$("#addressDiv").show();
-    }*/
-   
-//    $.post('/pickupOrder/searchAllPayItem', function(data){
-//		var paymentItemList=$("#paymentItemList");
-//		paymentItemList.append("<option></option>");
-//		for(var i = 0; i < data.length && data.length > 0 ; i++){
-//			paymentItemList.append("<option value='"+data[i].ID+"'>"+data[i].NAME+"</option>");
-//		}
-//	},'json');
+    }
     
     
     //应付datatable
@@ -1446,11 +1426,4 @@
     	});
     	
     });
-    
-    //初次进来页面初始化按钮状态
-    if($("#tstatus").val() == "已入库" ||$("#tstatus").val() == "已收货" || $("#tstatus").val() == "已签收"){
-    	$("#finishBtn").attr('disabled', true);
-    	$("#saveTransferOrderBtn").attr('disabled', true);
-    	$("#cancelBtn").attr('disabled', true);
-    }
 });

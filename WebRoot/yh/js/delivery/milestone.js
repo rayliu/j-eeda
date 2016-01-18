@@ -23,12 +23,14 @@ $(document).ready(function() {
                 "mDataProp": null, 
                 "bVisible":DeliveryOnTrip.isComplete,
                 "fnRender": function(obj) {   
-                  if(obj.aData.STATUS=="已送达"||obj.aData.STATUS=="已签收"){
+                  if(obj.aData.STATUS=="已送达" || obj.aData.STATUS=="已签收"|| obj.aData.STATUS=="已完成"){
                     return "已送达";
-                  }else{
+                  }else if(obj.aData.STATUS=="已发车" || obj.aData.STATUS=="配送在途"){
                     return "<a class='btn  btn-primary confirmDelivery' id='arriveBtn' code='"+obj.aData.ID+"'>"+
                     "到达确认"+
                     "</a>";
+                  }else{
+                	  return obj.aData.STATUS;
                   }
                 }
             },  

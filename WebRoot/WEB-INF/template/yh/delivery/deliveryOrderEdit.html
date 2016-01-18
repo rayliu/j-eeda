@@ -396,30 +396,7 @@
                                 <!-- /.col-lg-6 (nested) -->
                           </div>
                   </div>
-                  <!-- <div class="tab-pane fade" >
-               		<div class="panel-body" id="cargotable">                                                                            
-	                  <div class="table-responsive">
-                           <table class="table table-striped table-bordered table-hover" id="eeda-table">
-                               <thead>
-                                   <tr>
-                                   	<th>运输单</th>
-                                   	<th>客户</th>
-                                       <th>型号</th>
-                                       <th>序列号</th>
-                                       <th>名称</th>
-                                       <th>数量</th>
-                                       <th>体积</th>
-                                       <th>重量(KG)</th>
-                                   </tr>
-                               </thead>
-                               <tbody>
-                               </tbody>
-                           </table>
-                       </div>
-	                   /.table-responsive
-	               </div>
-               	   /.panel-body
-           		</div> -->
+          
            
            
            							<!-- 模态框 -->
@@ -605,10 +582,10 @@
                     <hr/>
                     <a style="display:none" id ="style"><i class='fa fa-check'></i></a>
                     <% if(shiro.hasPermission("DeliveryOder.create") || shiro.hasPermission("DeliveryOder.update")){%>
-                    	<button id="saveBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
+                    	<button id="saveBtn" type="button" disabled="disabled" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                    
                     <%}%>
                     <% if(shiro.hasPermission("DeliveryOder.completed")){%>
-                    <button id="ConfirmationBtn" type="button" disabled="true" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">配送发车</button>
+                    <button id="ConfirmationBtn" type="button" disabled="disabled" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">配送发车</button>
                     <%}%>
                     <!-- <button id="receiptBtn" type="button" disabled="true"  class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">签收完成</button> -->
                     <a class="btn  btn-primary" href="/delivery/add">返回</a>

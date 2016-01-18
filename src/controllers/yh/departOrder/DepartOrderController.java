@@ -2,7 +2,6 @@ package controllers.yh.departOrder;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import org.apache.commons.lang.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +30,7 @@ import models.yh.contract.Contract;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -41,7 +41,9 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.LocationUtil;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
@@ -160,7 +162,6 @@ public class DepartOrderController extends Controller {
 			sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
 					+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
 					+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
-					//+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where exists (select order_id from depart_transfer dt where dt.order_id= tr.id and dt.depart_id = deo.id )) as transfer_order_no, "
 					+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
 					+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
 					+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
@@ -186,7 +187,7 @@ public class DepartOrderController extends Controller {
 					+ currentUser.getPrincipal()
 					+ "') group by deo.id,o.office_name "
 					+ limi
-					+ " order by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc "
+					+ " order by deo.create_stamp desc "
 					+ limi + sLimit;
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
@@ -256,7 +257,6 @@ public class DepartOrderController extends Controller {
 					+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
 					+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
 					+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
-					//+ " (select group_concat(tr.order_no separator '\r\n') from transfer_order tr where tr.id in (dtf.order_id)) as transfer_order_no , "
 					+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
 					+ " deo.transfer_type as trip_type"
 					+ " from depart_order deo"
@@ -272,7 +272,7 @@ public class DepartOrderController extends Controller {
 					+ " left join party cp on tor.customer_id = cp.id "
 					+ " left join contact cc on cp.contact_id = cc.id"
 					+ whereSql
-					+ " group by deo.status = '已收货',deo.status = '已入库',deo.status != '已收货',deo.status != '已入库',deo.status != '新建',deo.status != '已发车',deo.status != '在途',deo.status = '在途',deo.status = '已发车',deo.status='新建', deo.create_stamp desc "
+					+ " order by deo.create_stamp desc "
 					+ limi + sLimit;
 		}
 		long startMi = Calendar.getInstance().getTimeInMillis();
@@ -328,7 +328,7 @@ public class DepartOrderController extends Controller {
 					+ " left join depart_transfer dt on dt.depart_id = deo.id "
 					+ " left join transfer_order t on t.id = dt.order_id "
 					+ " left join office o on o.id = t.office_id "
-					+ " where (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车') and combine_type = '"
+					+ " where (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车' or ifnull(deo.status,'') = '运输在途') and combine_type = '"
 					+ DepartOrder.COMBINE_TYPE_DEPART
 					+ "' and o.id in (select office_id from user_office where user_name='"
 					+ currentUser.getPrincipal()
@@ -342,7 +342,8 @@ public class DepartOrderController extends Controller {
 					+ " (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS planning_time,"
 					+ " ((SELECT ifnull(sum(dt.amount),0) FROM depart_transfer dt LEFT JOIN transfer_order tor on tor.id = dt.order_id LEFT JOIN depart_pickup dp on dp.pickup_id = dt.pickup_id "
 					+ " WHERE dp.depart_id = deo.id and tor.cargo_nature = 'cargo' and tor.id = t.id) "
-					+ "+ (SELECT count(0) FROM transfer_order_item_detail toid, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toid.order_id = tor.id and toid.depart_id = deo.id and tor.cargo_nature = 'ATM')) amount, "
+					+ "+ (SELECT count(0) FROM transfer_order_item_detail toid "
+					+ " left join transfer_order tor on toid.order_id = tor.id WHERE toid.depart_id = deo.id and tor.cargo_nature = 'ATM')) amount, "
 					+ " (SELECT	tr.arrival_mode	FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id  LIMIT 0,1) arrival_mode, "
 					+ " (SELECT	group_concat(tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS transfer_order_no, "
 					+ " (SELECT	group_concat(	tr.customer_order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS customer_order_no,"
@@ -361,7 +362,7 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
-					+ " where  (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车')  and combine_type = '"
+					+ " where  (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车' or ifnull(deo.status,'') = '运输在途')  and combine_type = '"
 					+ DepartOrder.COMBINE_TYPE_DEPART
 					+ "'  and o.id in (select office_id from user_office where user_name='"
 					+ currentUser.getPrincipal()
@@ -1002,8 +1003,10 @@ public class DepartOrderController extends Controller {
 		String[] orderIds = list.split(",");
 		int numone = 0;
 		for (int i = 0; i < orderIds.length; i++) {
+			String[] array = orderIds[i].split(":");
+			String orderId = array[0];
 			TransferOrder transferOrder = TransferOrder.dao
-					.findById(orderIds[i]);
+					.findById(orderId);
 			if (numone == 0) {
 				setAttr("transferOrder", transferOrder);
 				setAttr("chargeType", transferOrder.get("charge_type"));
@@ -1088,6 +1091,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 保存发车单
+	@Before(Tx.class)
 	public void saveDepartOrder() {
 	    if(!validateToken(DEPART_ORDER_TOKEN)){
 	        renderJson(new DepartOrder());
@@ -1111,8 +1115,7 @@ public class DepartOrderController extends Controller {
 		String uncheckedDetailIds = getPara("uncheckedDetail");
 		String bookingNoteNumber = getPara("booking_note_number");
 		String transfer_type = getPara("transfer_type");// 运输方式
-		String[] orderids = getPara("orderid").split(",");
-		String[] pickupIds = getPara("pickupIds").split("&");// 调车单id
+		String[] list = getPara("orderid").split(",");
 		String partySpId = getPara("partySpId");
 
 		DepartOrder dp = null;
@@ -1167,8 +1170,7 @@ public class DepartOrderController extends Controller {
 			dp.set("audit_status", "新建");
 			dp.set("sign_status", "未回单");
 			dp.save();
-			// saveDepartTransfer(dp, getPara("orderid"), checkedDetail,
-			// uncheckedDetailIds ,pickupIds);
+			
 			saveDepartOrderMilestone(dp);
 			if (!"".equals(partySpId)) {
 				updateTransferOrderSp(dp);
@@ -1179,22 +1181,27 @@ public class DepartOrderController extends Controller {
 			if (routeSp != null && !"".equals(routeSp)) {
 				transferOrderForRouteSp(dp);
 			}
-
+	
 			// 更新运输单发车状态，新建发车单从表
-			for (int i = 0; i < orderids.length; i++) {
-				TransferOrder transferOrder = TransferOrder.dao.findById(orderids[i]);
+			for (int i = 0; i < list.length; i++) {
+				String[] array = list[i].split(":");
+				String orderId = array[0];
+				String pickupId = array[1];
+				if(pickupId.equals("wu")){
+					pickupId = null;
+				}
+
+				TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
 				DepartTransferOrder departTransferOrder = new DepartTransferOrder();
 				departTransferOrder.set("depart_id", dp.get("id"));
-				departTransferOrder.set("order_id", orderids[i]);
+				departTransferOrder.set("order_id",orderId);
 				departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
 				departTransferOrder.save();
 				// 记录调车单中单品的发车单ID，//发车单从表记录所选的调车单
-				if ("整车".equals(transfer_type) || pickupIds.length==0 || pickupIds[0].trim() == ""
-						|| pickupIds[0].trim() == null
-						|| "null".equals(pickupIds[0].trim())) {
+				if ("整车".equals(transfer_type) || pickupId == "" || pickupId == null ) {
 					List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
 							.find("select * from transfer_order_item_detail where order_id = '"
-									+ orderids[i] + "';");
+									+ orderId + "';");
 					for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
 						transferOrderItemDetail.set("depart_id", dp.get("id"));
 						transferOrderItemDetail.update();
@@ -1202,34 +1209,33 @@ public class DepartOrderController extends Controller {
 
 					DepartPickupOrder departPickup = new DepartPickupOrder();
 					departPickup.set("depart_id", dp.get("id"))
-							.set("order_id", orderids[i]).save();
+							.set("order_id", orderId).save();
 
+					//更新对应的运输单
 					transferOrder.set("depart_assign_status",
 							TransferOrder.ASSIGN_STATUS_ALL);
+					transferOrder.set("status", "处理中");
 					transferOrder.update();
 				} else {
-					for (int K = 0; K < pickupIds.length; K++) {
-						String[] pickupId = pickupIds[K].split(",");
-						for (int j = 0; j < pickupId.length; j++) {
-							if (!"".equals(pickupId[j])) {
-								List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
-										.find("select * from transfer_order_item_detail where order_id = '"
-												+ orderids[i]
-												+ "' and pickup_id = ?",
-												pickupId[j]);
-								for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-									transferOrderItemDetail.set("depart_id",
-											dp.get("id"));
-									transferOrderItemDetail.update();
-								}
-
-								DepartPickupOrder departPickup = new DepartPickupOrder();
-								departPickup.set("depart_id", dp.get("id"))
-										.set("pickup_id", pickupId[j].trim())
-										.set("order_id", orderids[i]).save();
-							}
-						}
+					//更新depart_pickup表数据
+					if (!"".equals(pickupId)){
+					List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao
+							.find("select * from transfer_order_item_detail where order_id = '"
+									+ orderId
+									+ "' and pickup_id = ?",
+									pickupId);
+					for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
+						transferOrderItemDetail.set("depart_id",
+								dp.get("id"));
+						transferOrderItemDetail.update();
 					}
+
+					DepartPickupOrder departPickup = new DepartPickupOrder();
+					departPickup.set("depart_id", dp.get("id"))
+							.set("pickup_id", pickupId)
+							.set("order_id", orderId).save();
+					}
+
 					// 验证是否已全部发车完成，调车单全部提货完成的情况下进行判断
 					if (TransferOrder.ASSIGN_STATUS_ALL.equals(transferOrder
 							.get("pickup_assign_status"))) {
@@ -1237,11 +1243,11 @@ public class DepartOrderController extends Controller {
 							// 运输单单品总数
 							Record totalTransferOrderAmount = Db
 									.findFirst("select count(0) total from transfer_order_item_detail where order_id = "
-											+ orderids[i]);
+											+ orderId);
 							// 总提货数量（之前+现在）
 							Record totalPickAmount = Db
 									.findFirst("select count(0) total from transfer_order_item_detail where depart_id is not null and order_id = "
-											+ orderids[i]);
+											+ orderId);
 							// 运输单
 							if (totalPickAmount.getLong("total") == totalTransferOrderAmount
 									.getLong("total")) {
@@ -1252,8 +1258,26 @@ public class DepartOrderController extends Controller {
 										TransferOrder.ASSIGN_STATUS_PARTIAL);
 							}
 						} else {
-							transferOrder.set("depart_assign_status",
-									TransferOrder.ASSIGN_STATUS_ALL);
+							//普货已发车总数量
+							Record re = Db.findFirst("select sum(amount) total from transfer_order_item where order_id = ?", orderId);
+						    double total = re.getDouble("total");
+							
+						    
+							if(!transferOrder.getStr("operation_type").equals("out_source")){
+								 re = Db.findFirst("select sum(amount) yifa from (select dt.* from depart_transfer dt"
+												+ " LEFT JOIN depart_pickup dp on dt.pickup_id = dp.pickup_id"
+												+ " where dp.depart_id is not null "
+												+ " and dt.order_id = ? group by dt.id ) a", orderId);
+								double amount = re.getDouble("yifa");//已做发车单的数量（之前+现在）
+								
+								if(total == amount){
+									transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+								}else{
+									transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
+								}
+							}else{
+								transferOrder.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+							}
 						}
 					} else {
 						transferOrder.set("depart_assign_status",
@@ -1262,16 +1286,6 @@ public class DepartOrderController extends Controller {
 					transferOrder.update();
 				}
 			}
-
-			// 发车单记录所选的调车单
-			/*
-			 * if(pickupIds[0].trim() != ""){ for (int i = 0; i <
-			 * pickupIds.length; i++) { String[] pickupId =
-			 * pickupIds[i].split(","); for (int j = 0; j < pickupId.length;
-			 * j++) { DepartPickupOrder departPickup = new DepartPickupOrder();
-			 * departPickup.set("depart_id", dp.get("id")) .set("pickup_id",
-			 * pickupId[j]) .set("order_id", orderids[i]) .save(); } } }
-			 */
 		} else {// TODO update不需要更改create_by, create_date
 			dp = DepartOrder.dao.findById(Integer.parseInt(depart_id));
 			dp.set("charge_type", charge_type)
@@ -1314,16 +1328,18 @@ public class DepartOrderController extends Controller {
 				dp.set("departure_time", getPara("departure_time"));
 			}
 			dp.update();
-			updateDepartTransfer(dp, getPara("orderid"), checkedDetail,
-					uncheckedDetailIds);
+//			updateDepartTransfer(dp, getPara("orderid"), checkedDetail,
+//					uncheckedDetailIds);
 			if (!"".equals(sp_id)) {
 				updateTransferOrderSp(dp);
 			}
 		}
 		
 		//更新运输单供应商（同步发车单）
-		for (int i = 0; i < orderids.length; i++) {
-			TransferOrder transferOrder = TransferOrder.dao.findById(orderids[i]);
+		for (int i = 0; i < list.length; i++) {
+			String[] array = list[i].split(":");
+			String orderId = array[0];
+			TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
 			if ("".equals(sp_id)) {
 				if (!"".equals(partySpId)) {
 					transferOrder.set("sp_id", partySpId).update();
@@ -1331,7 +1347,6 @@ public class DepartOrderController extends Controller {
 			} else {
 				transferOrder.set("sp_id", sp_id).update();
 			}
-			
 		}
 		createToken(DEPART_ORDER_TOKEN);
 		String serverTokenId = getSessionAttr(DEPART_ORDER_TOKEN);
@@ -1439,77 +1454,7 @@ public class DepartOrderController extends Controller {
 		}
 	}
 
-	
 
-	// 修改发车单状态
-	public void updatestate() {
-		String depart_id = getPara("depart_id");// 发车单id
-		String order_state = getPara("order_state");// 状态
-		int nummber = 0;// 没入库的货品数量
-
-		java.util.Date utilDate = new java.util.Date();
-		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-		String name = (String) currentUser.getPrincipal();
-		UserLogin users = UserLogin.dao
-				.findFirst("select * from user_login where user_name='" + name
-						+ "'");
-
-		DepartOrder departOrder = DepartOrder.dao.findById(Integer
-				.parseInt(depart_id));
-		departOrder.set("status", order_state).update();
-		// if ("已入库".equals(order_state)) {
-		// productInWarehouse(depart_id);// 产品入库
-		// }
-		// if ("已发车".equals(order_state)) {
-
-		// 生成应付, （如果已经有了应付，就要清除掉旧数据重新算）
-		// 计件/整车/零担 生成发车单中供应商的应付，要算 item 的数量 * 合同中定义的价格
-		// Depart_Order_fin_item 提货单/发车单应付明细表
-		// 第一步：看发车单调度选择的计费方式是哪种：计件，整车，零担
-		// 第二步：循环所选运输单中的 item, 到合同中（循环）比对去算钱。
-
-		/*
-		 * List<DepartTransferOrder> dItem = DepartTransferOrder.dao
-		 * .find("select order_id from depart_transfer where depart_id =" +
-		 * depart_id + "");
-		 * 
-		 * String transferIds = ""; for (DepartTransferOrder dItem2 : dItem) {
-		 * transferIds += dItem2.get("order_id") + ","; }
-		 * if(transferIds.length()>0) transferIds = transferIds.substring(0,
-		 * transferIds.length() - 1);
-		 * 
-		 * List<Record> transferOrderItemList = Db .find(
-		 * "select toi.*, t_o.route_from, t_o.route_to,t_o.cargo_nature from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
-		 * + transferIds + ") order by pickup_seq desc");
-		 */
-		// TODO:生成应付
-
-		// calcCost(departOrder, transferOrderItemList);
-
-		if ("已签收".equals(order_state)) {
-			// 生成回单
-			Date createDate = Calendar.getInstance().getTime();
-			String orderNo = OrderNoGenerator.getNextOrderNo("HD");
-
-			ReturnOrder returnOrder = new ReturnOrder();
-			returnOrder.set("order_no", orderNo);
-			returnOrder.set("depart_order_id", depart_id);
-			// returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-			// returnOrder.set("notity_party_id",
-			// deliveryOrder.get("notity_party_id"));
-			returnOrder.set("order_type", "应收");
-			returnOrder.set("transaction_status", "新建");
-			returnOrder.set("creator", users.get("id"));
-			returnOrder.set("create_date", createDate);
-			returnOrder.save();
-
-		}
-
-		Map Map = new HashMap();
-		Map.put("amount", nummber);
-		Map.put("depart", departOrder);
-		renderJson(Map);
-	}
 	public void saveupdatestate() {
 		String depart_id = getPara("depart_id");// 发车单id
 		String order_state = getPara("order_state");// 状态
@@ -1565,9 +1510,6 @@ public class DepartOrderController extends Controller {
 			ReturnOrder returnOrder = new ReturnOrder();
 			returnOrder.set("order_no", orderNo);
 			returnOrder.set("depart_order_id", depart_id);
-			// returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-			// returnOrder.set("notity_party_id",
-			// deliveryOrder.get("notity_party_id"));
 			returnOrder.set("order_type", "应收");
 			returnOrder.set("transaction_status", "新建");
 			returnOrder.set("creator", users.get("id"));
@@ -2878,5 +2820,135 @@ public class DepartOrderController extends Controller {
 			}
 		}
 	}
+	
+	
+	 // 发车确认
+    @RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_COMPLETED})
+    @Before(Tx.class)
+    public void departureConfirmation() {
+        String departOrderId = getPara("departOrderId"); 
+        int num = 1;
+        List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);
+        //更新发车单状态
+        DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
+        departOrder.set("status", "运输在途");
+        departOrder.update();
+        
+        TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
+    	departOrderMilestone.set("create_by", LoginUserController.getLoginUserId(this));
+    	departOrderMilestone.set("create_stamp", new Date());
+        departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
+        departOrderMilestone.set("status", "已发车");
+        departOrderMilestone.set("location", "");
+        departOrderMilestone.set("depart_id", departOrderId);
+        departOrderMilestone.save();
+        
+        for(DepartTransferOrder departTransferOrder : departTransferOrders){
+        	Long transferId = departTransferOrder.get("order_id");
+        	TransferOrder transfer = TransferOrder.dao.findById(transferId);
+        	String cargo_nature = transfer.getStr("cargo_nature");
+
+        	TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+        	if(cargo_nature.equals("ATM")){
+        		String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + transferId;
+            	Record rec = Db.findFirst(sqlTotal);
+            	Long total = rec.getLong("total");  //总数量
+
+            	sqlTotal = "select count(1) total from transfer_order_item_detail toid"
+            			+ " left join depart_order dor on dor.id = toid.depart_id "
+            			+ " where dor.status is not null and dor.status !='新建'"
+            			+ " and toid.order_id = " + transferId ;
+            	rec = Db.findFirst(sqlTotal);
+            	Long departTotal = rec.getLong("total");   //已发车数量（包括这次）
+            	if(total==departTotal){
+            		transferOrderMilestone.set("status", "已发车");
+            	}else{
+            		transferOrderMilestone.set("status", "部分已发车");
+            	}
+        	}else{
+        		//普货货品总数量
+    			Record re = Db.findFirst("select sum(toi.amount) total from transfer_order_item toi where toi.order_id = ?",transferId);
+    			double totalAmount = re.getDouble("total") ;    //总货品数量
+    			double departAmount = 0.0;  //已入库的数量（包括这次）
+    			if(!transfer.getStr("operation_type").equals("out_source")){
+    				re = Db.findFirst("select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp"
+    						+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id"
+    						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
+    						+ " where dor.status is not null and dor.status !='新建' and dt.order_id = ?",transferId);
+    				departAmount = re.getDouble("yishou");
+    			}else{
+    				departAmount = totalAmount; //外包（因无法多次发车，所以数量和总数量相同）
+    			}
+    			if(totalAmount == departAmount){
+            		transferOrderMilestone.set("status", "已发车");
+            	}else{
+            		transferOrderMilestone.set("status", "部分已发车");
+            	}
+        	}
+	        transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
+	        transferOrderMilestone.set("order_id", transferId);
+	        transferOrderMilestone.set("create_by", LoginUserController.getLoginUserId(this));
+	        transferOrderMilestone.set("create_stamp", new Date());
+	        transferOrderMilestone.set("location", "");
+	        transferOrderMilestone.save();
+	        
+
+	        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId);
+	        for(TransferOrderItemDetail detail : transferOrderItemDetails){
+	        	detail.set("status", "已发车");
+	        	detail.update();
+	        }	
+        }
+        
+        renderJson("{\"success\":true}");        
+    }
+    
+    
+    // 初始化货品数据
+    public void getDepartOrderItem() {
+        String orderId = getPara("localArr");// 运输单id
+        String departOrderId = getPara("departOrderId");
+        String[] list = orderId.split(",");
+        
+        String id = "";
+        for (int i = 0; i < list.length; i++) {
+			String[] array = list[i].split(":");
+			if(i == list.length-1)
+				id += array[0];
+			else{
+				id += array[0]+",";
+			}
+		}
+        
+        String sLimit = "";
+        String pageIndex = getPara("sEcho");
+        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
+            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        String sqlTotal = "SELECT COUNT(0) total FROM(SELECT(SELECT count(0) total FROM	transfer_order_item_detail WHERE order_id = tor.id	AND item_id = toi.id AND depart_id = 1632) atmamount, ifnull(toi.amount, 0) cargoamount FROM transfer_order_item toi LEFT JOIN transfer_order tor ON tor.id = toi.order_id WHERE toi.order_id IN (" + id + ")) a where (atmamount > 0 or cargoamount>0)";
+        logger.debug("sql :" + sqlTotal);
+        Record rec = Db.findFirst(sqlTotal);
+        logger.debug("total records:" + rec.getLong("total"));
+        
+        String sql = "SELECT * FROM(select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
+             		+ " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,"
+                    + " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and depart_id = "+departOrderId+") atmamount,"
+                     + " ifnull((SELECT ifnull(sum(dt.amount), 0) FROM depart_transfer dt LEFT JOIN transfer_order tor1 ON tor1.id = dt.order_id"
+                     + " LEFT JOIN depart_pickup dp ON dp.pickup_id = dt.pickup_id WHERE dp.depart_id =  "+departOrderId
+                     + " AND tor1.cargo_nature = 'cargo' AND tor1.id = tor.id), 0) cargoamount,ifnull(toi.volume, 0) cargovolume,ifnull(toi.sum_weight, 0) cargoweight,c.abbr customer,tor.order_no,toi.remark  from transfer_order_item toi "
+                     + " left join transfer_order tor on tor.id = toi.order_id"
+                     + " left join party p on p.id = tor.customer_id"
+                     + " left join contact c on c.id = p.contact_id"
+                     + " left join product pd on pd.id = toi.product_id"
+                     + " where toi.order_id in(" + id + ")  order by c.id ) a where (atmamount > 0 or cargoamount>0)" + sLimit;
+
+        List<Record> departOrderitem = Db.find(sql);
+        Map Map = new HashMap();
+        Map.put("sEcho", pageIndex);
+        Map.put("iTotalRecords", rec.getLong("total"));
+        Map.put("iTotalDisplayRecords", rec.getLong("total"));
+        Map.put("aaData", departOrderitem);
+        renderJson(Map);
+    }
 
 }

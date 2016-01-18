@@ -247,14 +247,10 @@ public class ReturnOrderController extends Controller {
 					+ " ifnull( (c.company_name), tor.receiving_unit ) receiving_unit,"
 					+ " ifnull( c.address, tor.receiving_address ) receipt_address,"
 					+ " ifnull( w.warehouse_name, w1.warehouse_name ) warehouse_name,"
-					+ " ( ifnull( ( SELECT sum(amount) FROM delivery_order_item doi "
-					+ " WHERE doi.delivery_id = dor.id ), 0 ) +  "
-					+ " ( CASE "
-					+ "  WHEN tor.cargo_nature = 'cargo'"
-					+ " THEN ( SELECT sum(amount) FROM transfer_order_item "
-					+ " WHERE order_id = tor.id ) "
-					+ " ELSE ( SELECT count(*) FROM transfer_order_item_detail toid"
-					+ "  WHERE toid.order_id = tor.id ) END ) ) a_amount,  c2.abbr cname,"
+					+ " ifnull( ifnull( ( SELECT sum(amount) FROM delivery_order_item doi "
+					+ " WHERE doi.delivery_id = dor.id ), 0 ), "
+					+ " (SELECT sum(amount) FROM transfer_order_item "
+					+ " WHERE order_id = tor.id) ) a_amount,  c2.abbr cname,"
 					+ " ifnull( tor.order_no, "
 					+ " ( SELECT group_concat( DISTINCT CAST(tor.order_no AS CHAR) SEPARATOR '<br/>' )"
 					+ " FROM transfer_order tor"
@@ -459,10 +455,7 @@ public class ReturnOrderController extends Controller {
             transferOrder.set("receiving_address", getPara("address")); 
             transferOrder.set("receiving_phone", getPara("phone")); 
 			transferOrder.update();
-			/*notifyPartyId = transferOrder.get("notify_party_id");
-			if (notifyPartyId != null) {
-				updateContact(notifyPartyId);
-			}*/
+
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
 				deleteContractFinItemByTransfer(transferOrder, returnOrder.getLong("id"));
@@ -485,10 +478,7 @@ public class ReturnOrderController extends Controller {
 					deliveryOrder.set("ref_no", getPara("sign_document_no"));
 			}
 			deliveryOrder.update();
-			/*notifyPartyId = deliveryOrder.get("notify_party_id");
-			if (notifyPartyId != null) {
-				updateContact(notifyPartyId);
-			}*/
+		
 			// 如果目的地发生变化，保存时先删除以前计算的应收，再重新计算合同应收
 			if (isLocationChanged) {
 				deleteContractFinItem(deliveryOrder, returnOrder.getLong("id"));
@@ -546,43 +536,12 @@ public class ReturnOrderController extends Controller {
 		String id = getPara();
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-		String sql= "select distinct ror.*, usl.user_name as creator_name, ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, dvr.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,"
-					+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
-					+ " ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from)) route_from,"
-					+ " ifnull((select name from location where code = tor.route_to),(select name from location where code = dvr.route_to)) route_to,"
-					+ " (select sum(rofi.amount) from return_order_fin_item rofi where rofi.return_order_id = ror.id) contract_amount"
-					+ " ,ifnull(dofi.amount,(select sum(dofi.amount) from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id left join depart_transfer dt on dt.order_id = tor.id left join depart_order dor on dor.id = dt.pickup_id and dor.combine_type = 'PICKUP' left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费' where dvr.id = ror.delivery_order_id)) pickup_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '台阶费') step_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '仓租费') warehouse_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '送货费') send_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费') installation_amount"
-					+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount"
-					+ " ,ifnull((select sum(ifit.amount*ifit.income_rate) from transfer_order tord left join transfer_order_item toit on toit.order_id = tord.id left join insurance_fin_item ifit on ifit.transfer_order_item_id = toit.id where tord.id in(tor.id)) , (select sum(ifit.amount*ifit.income_rate) from transfer_order tord left join transfer_order_item toit on toit.order_id = tord.id left join insurance_fin_item ifit on ifit.transfer_order_item_id = toit.id where tord.id in(tor2.id))) insurance_amount,"
-					+ " ifnull((select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor.id order by dtr.turnout_time asc limit 0,1), (select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor2.id order by dtr.turnout_time asc limit 0,1)) departure_time"
-					+ " ,ifnull((select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '台阶费'),0) +"
-					+ " ifnull((select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '仓租费'),0) +"
-					+ " ifnull((select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '送货费'),0) +"
-					+ " ifnull((select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '安装费'),0) +"
-					+ " ifnull((select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费'),0) +"
-					+ " ifnull(ifnull((select sum(ifit.amount*ifit.income_rate) from transfer_order tord left join transfer_order_item toit on toit.order_id = tord.id left join insurance_fin_item ifit on ifit.transfer_order_item_id = toit.id where tord.id in(tor.id)) , (select sum(ifit.amount*ifit.income_rate) from transfer_order tord left join transfer_order_item toit on toit.order_id = tord.id left join insurance_fin_item ifit on ifit.transfer_order_item_id = toit.id where tord.id in(tor2.id))),0) +"
-					+ " ifnull((select sum(rofi.amount) from return_order_fin_item rofi where rofi.return_order_id = ror.id),0) total_amount"			
-					+ " from return_order ror"
-					+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
-					+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
-					+ " left join delivery_order dvr on ror.delivery_order_id = dvr.id left join delivery_order_item doi on doi.delivery_id = dvr.id "
-					+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
-					+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-					+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.id = "+id;
-		ReturnOrder returnOrder = ReturnOrder.dao.findFirst(sql);		
 		
+		ReturnOrder returnOrder = ReturnOrder.dao.findById(id);		
 		returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).update();
 		
 		Long deliveryId = returnOrder.get("delivery_order_id");
 		if (deliveryId != null && !"".equals(deliveryId)) {
-			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(returnOrder.get("delivery_order_id"));
-			deliveryOrder.set("sign_status", "已回单");
-			deliveryOrder.update();
-
 			DeliveryOrderMilestone doMilestone = new DeliveryOrderMilestone();
 			doMilestone.set("status", "已签收");
 			String name = (String) currentUser.getPrincipal();
@@ -594,45 +553,9 @@ public class ReturnOrderController extends Controller {
 			utilDate = new java.util.Date();
 			sqlDate = new java.sql.Timestamp(utilDate.getTime());
 			doMilestone.set("create_stamp", sqlDate);
-			doMilestone.set("delivery_id", deliveryOrder.get("id"));
-
+			doMilestone.set("delivery_id", deliveryId);
 			doMilestone.save();
-			
-			//更新运输单状态
-			String toSql= "select transfer_order_id from delivery_order_item where delivery_id='"+deliveryId+"'";//找到运输单
-			List<Record> toList = Db.find(toSql);
-			for (Record to : toList) {
-				Long orderId = to.getLong("transfer_order_id");
-				TransferOrder tOrder = TransferOrder.dao.findById(orderId);
-	    		String leftAmountSql= "select sum(amount)-ifnull(sum(complete_amount),0) left_amount from transfer_order_item toi where order_id='"+orderId+"'";
-	    		Record rec = Db.findFirst(leftAmountSql);
-	    		if(rec!=null && rec.getDouble("left_amount")>0){
-	    			tOrder.set("status", "部分已签收");
-				}else{
-					tOrder.set("status", "已签收");
-				}
-	    		tOrder.update();
-			}
-			
-
 		} else {
-			TransferOrder transferOrder = TransferOrder.dao.findById(returnOrder.get("transfer_order_id"));
-			transferOrder.set("status", "已签收");
-			transferOrder.update();
-
-			TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
-			transferOrderMilestone.set("status", "已签收");
-			String name = (String) currentUser.getPrincipal();
-			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-			transferOrderMilestone.set("create_by", users.get(0).get("id"));
-			transferOrderMilestone.set("location", "");
-			utilDate = new java.util.Date();
-			sqlDate = new java.sql.Timestamp(utilDate.getTime());
-			transferOrderMilestone.set("create_stamp", sqlDate);
-			transferOrderMilestone.set("order_id", transferOrder.get("id"));
-			transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-			transferOrderMilestone.save();
-			
 			DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer dor where dor.order_id = ? order by id desc limit 0,1", returnOrder.get("transfer_order_id"));
 			DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.get("depart_id"));
 			departOrder.set("sign_status", "已回单");
@@ -1202,7 +1125,10 @@ public class ReturnOrderController extends Controller {
 						+ "toi.volume volume,"
 						+ " ifnull(p.unit, toi.unit) unit, "
 						+ " toi.sum_weight, "
-						+ " toi.amount amount, "
+						+ " ifnull( ifnull( ( SELECT sum(amount) FROM delivery_order_item doi "
+						+ " WHERE doi.delivery_id = r.delivery_order_id ), 0 ), "
+						+ " ( SELECT sum(amount) FROM transfer_order_item"
+						+ "  WHERE order_id = r.transfer_order_id ) ) amount, "
 						+ " toi.remark "
 						+ " from transfer_order_item toi " //TODO: 这里性能有问题，用了大表关联小表
 						+ " left join return_order r on r.transfer_order_id = toi.order_id "
@@ -1483,7 +1409,7 @@ public class ReturnOrderController extends Controller {
      * TODO:ATM直送时将保险费用带到回单
      * 用循环出现的问题是：运输单货品信息多少个条目，回单里面就有多少个保险费用
      */
-    public void addInsuranceFin(TransferOrder transferOrder,DepartOrder derpartOrder,ReturnOrder returnOrder){
+    public void addInsuranceFin(TransferOrder transferOrder,ReturnOrder returnOrder){
     	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id,amount from transfer_order_item where order_id = " + transferOrder.get("id"));
     	//查询应收条目中的保险费
     	FinItem finItem = FinItem.dao.findFirst("select id from fin_item where type = '应收' and `name` = '保险费';");

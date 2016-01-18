@@ -82,7 +82,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     	
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
-        deliveryOrder.set("status", "已发车");
+        deliveryOrder.set("status", "配送在途");
         deliveryOrder.update();
         DeliveryOrder deliveryOrder1 = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));//调拨仓库
         if(deliveryOrder1!=null){
@@ -108,23 +108,23 @@ public class DeliveryOrderMilestoneController extends Controller {
 				double c_amount = record.getDouble("complete_amount");
 				toi.set("complete_amount", c_amount+1).update();
 			}
-        	String toSql ="select distinct toid.order_id "
-					+ " from delivery_order_item doi, transfer_order_item_detail toid, transfer_order_item toi"
-					+ " where doi.transfer_item_detail_id = toid.id and toid.item_id = toi.id"
-					+ " and doi.delivery_id = '"+delivery_id+"'";
-        	List<Record> toList = Db.find(sql);
-        	for (Record record : toList) {//循环 更新运输单中的已配送数量
-        		Long orderId = record.getLong("order_id");
-        		TransferOrder tOrder = TransferOrder.dao.findById(orderId);
-        		String leftAmountSql= "select sum(amount)-ifnull(sum(complete_amount),0) left_amount from transfer_order_item toi where order_id='"+orderId+"'";
-        		Record rec = Db.findFirst(leftAmountSql);
-        		if(rec!=null && rec.getDouble("left_amount")>0){
-        			tOrder.set("status", "部分配送中");
-				}else{
-					tOrder.set("status", "配送中");
-				}
-        		tOrder.update();
-        	}
+//        	String toSql ="select distinct toid.order_id "
+//					+ " from delivery_order_item doi, transfer_order_item_detail toid, transfer_order_item toi"
+//					+ " where doi.transfer_item_detail_id = toid.id and toid.item_id = toi.id"
+//					+ " and doi.delivery_id = '"+delivery_id+"'";
+//        	List<Record> toList = Db.find(sql);
+//        	for (Record record : toList) {//循环 更新运输单中的已配送数量
+//        		Long orderId = record.getLong("order_id");
+//        		TransferOrder tOrder = TransferOrder.dao.findById(orderId);
+//        		String leftAmountSql= "select sum(amount)-ifnull(sum(complete_amount),0) left_amount from transfer_order_item toi where order_id='"+orderId+"'";
+//        		Record rec = Db.findFirst(leftAmountSql);
+//        		if(rec!=null && rec.getDouble("left_amount")>0){
+//        			tOrder.set("status", "部分配送中");
+//				}else{
+//					tOrder.set("status", "配送中");
+//				}
+//        		tOrder.update();
+//        	}
         }else if("cargo".equals(cargoNature)){//货品属性：一站式普通货品，还有普通货品配送没做
   			for (int i = 0; i < productId.length; i++) {
   				//修改实际库存
@@ -136,17 +136,17 @@ public class DeliveryOrderMilestoneController extends Controller {
   				double newCompleteAmount = outCompleteAmount + Double.parseDouble(shippingNumber[i]);
   				transferOrderItem.set("complete_amount", newCompleteAmount).update();
   				
-  				//货品明细表
-				long transfer_id = transferOrderItem.getLong("order_id");
-				// 改变运输单状态
-				TransferOrder tOrder = TransferOrder.dao.findById(transfer_id);
-				Double total_amount = transferOrderItem.getDouble("amount");
-				if(total_amount == newCompleteAmount){
-					tOrder.set("status", "配送中");
-				}else{
-					tOrder.set("status", "部分配送中");
-				}
-				tOrder.update();
+//  				//货品明细表
+//				long transfer_id = transferOrderItem.getLong("order_id");
+//				// 改变运输单状态
+//				TransferOrder tOrder = TransferOrder.dao.findById(transfer_id);
+//				Double total_amount = transferOrderItem.getDouble("amount");
+//				if(total_amount == newCompleteAmount){
+//					tOrder.set("status", "配送中");
+//				}else{
+//					tOrder.set("status", "部分配送中");
+//				}
+//				tOrder.update();
   			}
   		}
         
@@ -162,7 +162,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         
         renderJson(map);
         // 扣库存
-        gateOutProduct(deliveryOrder);
+        //gateOutProduct(deliveryOrder);
         
         List<Record> transferOrderItemDetailList = Db.
         										find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
@@ -393,13 +393,13 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     // 配送单  到达确认
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
+    @Before(Tx.class)
     public void receipt() {
         long delivery_id = getParaToLong("delivery_id");
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
-        deliveryOrder.set("status", "已送达");
+        deliveryOrder.set("status", "已完成");
         deliveryOrder.update();
 
-        //String transferId = deliveryOrder.get("transfer_order_id");
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已送达");
@@ -425,57 +425,51 @@ public class DeliveryOrderMilestoneController extends Controller {
 				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",delivery_id);
         //查询配送单中的运输单,如果是普货配送就验证是否以配送完成
         if(!"ATM".equals(deliveryOrder.get("cargo_nature"))){
-        	Record deliveryTotal = Db.findFirst("SELECT * FROM delivery_order_item doi LEFT JOIN delivery_order dor on dor.id = doi.delivery_id LEFT JOIN transfer_order_item toi on toi.id = doi.transfer_item_id where dor.id = '" + delivery_id + "';");
-    		double SumDelivery = deliveryTotal.getDouble("complete_amount");//已配送的数量
-    		double totalamount = deliveryTotal.getDouble("amount"); //货品总数
-        	
-        	
-        	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
+//        	Record deliveryTotal = Db.findFirst("SELECT * FROM delivery_order_item doi "
+//        			+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
+//        			+ " LEFT JOIN transfer_order_item toi on toi.id = doi.transfer_item_id "
+//        			+ " where dor.id = '" + delivery_id + "';");
+//    		double SumDelivery = deliveryTotal.getDouble("complete_amount");//已配送的数量
+//    		double totalamount = deliveryTotal.getDouble("amount"); //货品总数
+//    		
+//        	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
         	DeliveryOrderItem item = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where delivery_id = '" + delivery_id + "';");
         	long transferOrderId = item.getLong("transfer_order_id");
-        	//运输单货品总数
-			//Record tranferTotal = Db.findFirst("select sum(ifnull(toi.amount,0)) amount from transfer_order_item toi where toi.order_id = '" + transferOrderId + "';");
-			//double SumTranferItem = tranferTotal.getDouble("amount");
-			//已配送总数
-			//Record deliveryTotal = Db.findFirst("select sum(ifnull(doi.product_number,0)) product_number from delivery_order_item doi where doi.transfer_order_id = '" + transferOrderId + "';");
-			
-			if(totalamount == SumDelivery){
-				//Record rec = Db.findFirst("select count(0) total from delivery_order dor left join delivery_order_item doi on doi.delivery_id = dor.id where dor.status = '已发车' and doi.transfer_order_id = '" + transferOrderId + "';");
-				//double deliveryNumber = rec.getLong("total");
-				//已送达的货品数量
-				Record finishTotal = Db.findFirst("SELECT sum(doi.amount) total FROM `delivery_order_item` doi where doi.transfer_order_id = '" + transferOrderId + "';");
-				if(finishTotal.getDouble("total") == totalamount){
-					//当运输单配送完成时生成回单
-					if(transferDetail!=null){
-						Record  returnRefusedOrder= Db
-								.findFirst("select * from return_order where delivery_order_id =?",transferDetail.get("delivery_id"));
-						returnOrder.set("order_no", returnRefusedOrder.get("order_no")+"-1");
-					}else{
-						returnOrder.set("order_no", orderNo);
-					}
-					
-		            returnOrder.set("delivery_order_id", delivery_id);
-		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-		            returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
-		            returnOrder.set("transfer_order_id", transferOrderId);
-		            returnOrder.set("order_type", "应收");
-		            returnOrder.set("transaction_status", "新建");
-		            returnOrder.set("creator", LoginUserController.getLoginUserId(this));
-		            returnOrder.set("create_date", createDate);
-		            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-		            returnOrder.save();
-		            
-		            ReturnOrderController roController = new ReturnOrderController(); 
-		            //把运输单的应收带到回单中
-		            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, delivery_id, transferOrderId);
-		            //计算普货合同应收，算没单品的，有单品暂时没做
-		            TransferOrder order = TransferOrder.dao.findById(transferOrderId);
-		            if(!order.getBoolean("no_contract_revenue")){
-		            	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
-		            	roController.calculateChargeGeneral(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
-		            }
+//        	
+//			//已送达的货品数量
+//			Record finishTotal = Db.findFirst("SELECT sum(doi.amount) total FROM `delivery_order_item` doi where doi.transfer_order_id = '" + transferOrderId + "';");
+//			double totalArrive = finishTotal.getDouble("total");
+//			if(totalArrive == totalamount){
+				//当运输单配送完成时生成回单
+				if(transferDetail!=null){
+					Record  returnRefusedOrder= Db
+							.findFirst("select * from return_order where delivery_order_id =?",transferDetail.get("delivery_id"));
+					returnOrder.set("order_no", returnRefusedOrder.get("order_no")+"-1");
+				}else{
+					returnOrder.set("order_no", orderNo);
 				}
-			}
+				
+	            returnOrder.set("delivery_order_id", delivery_id);
+	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+	            returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+	            returnOrder.set("transfer_order_id", transferOrderId);
+	            returnOrder.set("order_type", "应收");
+	            returnOrder.set("transaction_status", "新建");
+	            returnOrder.set("creator", LoginUserController.getLoginUserId(this));
+	            returnOrder.set("create_date", createDate);
+	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+	            returnOrder.save();
+	            
+	            ReturnOrderController roController = new ReturnOrderController(); 
+	            //把运输单的应收带到回单中
+	            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, delivery_id, transferOrderId);
+	            //计算普货合同应收，算没单品的，有单品暂时没做
+	            TransferOrder order = TransferOrder.dao.findById(transferOrderId);
+	            if(!order.getBoolean("no_contract_revenue")){
+	            	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
+	            	roController.calculateChargeGeneral(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
+	            }
+			//}
         }else{
         	if(transferDetail!=null){
 				Record  returnRefusedOrder= Db
@@ -504,65 +498,12 @@ public class DeliveryOrderMilestoneController extends Controller {
     	        
             //}
         }
-        /*// TODO 减库存,以下是针对单品处理,普通货品的配送暂未处理
-        productOutWarehouse(delivery_id.toString());*/
     }
 
-	/*// 产品出库
-	public void productOutWarehouse(String deliveryId) {
-	    if (!"".equals(deliveryId) && deliveryId != null) {
-	        String orderIds = "";
-	        List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find(
-	                "select * from delivery_order_item where delivery_id = ?", deliveryId);
-	        for (DeliveryOrderItem deliveryOrderItem : deliveryOrderItems) {
-	            orderIds += deliveryOrderItem.get("order_id") + ",";
-	        }
-	        orderIds = orderIds.substring(0, orderIds.length() - 1);
-	        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where id in("
-	                + orderIds + ")");
-	        for (TransferOrder transferOrder : transferOrders) {
-	            InventoryItem inventoryItem = null;
-	            List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find(
-	                    "select * from transfer_order_item where order_id = ?", transferOrder.get("id"));
-	            for (TransferOrderItem transferOrderItem : transferOrderItems) {
-	                if (transferOrderItem != null) {
-	                    if (transferOrderItem.get("product_id") != null) {
-	                        String inventoryItemSql = "select * from inventory_item where product_id = "
-	                                + transferOrderItem.get("product_id") + " and warehouse_id = "
-	                                + transferOrder.get("warehouse_id");
-	                        inventoryItem = InventoryItem.dao.findFirst(inventoryItemSql);
-	                        String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "
-	                                + deliveryId + " and order_id = " + transferOrder.get("id");
-	                        Record rec = Db.findFirst(sqlTotal);
-	                        Long amount = rec.getLong("total");
-	                        if(amount == 0){
-	                        	amount = Math.round(transferOrderItem.getDouble("amount"));
-	                        }
-	                        if (inventoryItem != null) {
-	                            inventoryItem = new InventoryItem();
-	                            inventoryItem.set("party_id", transferOrder.get("customer_id"));
-	                            inventoryItem.set("warehouse_id", transferOrder.get("warehouse_id"));
-	                            inventoryItem.set("product_id", transferOrderItem.get("product_id"));
-	                            inventoryItem.set("total_quantity", amount);
-	                            inventoryItem.save();
-	                        } else {
-	                            inventoryItem.set("total_quantity",
-	                                    Double.parseDouble(inventoryItem.get("total_quantity").toString()) - amount);
-	                            inventoryItem.update();
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	    }
-	}*/
+	
 	
     // 入库确认
     public void warehousingConfirm() {
-        Long order_id = Long.parseLong(getPara("order_id"));
-        TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
-        transferOrder.set("status", "已入库");
-        transferOrder.update();
         Map<String, Object> map = new HashMap<String, Object>();
         TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
         transferOrderMilestone.set("status", "已入库");
@@ -582,46 +523,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(map);
     }
 
-    /*// 应收list
-    public void accountReceivable() {
-        String id = getPara();
-        String transferId = "";
-        List<DeliveryOrderItem> dItem = DeliveryOrderItem.dao
-                .find("select * from delivery_order_item where delivery_id = '" + id + "'");
-        if (dItem.size() > 0) {
-            for (DeliveryOrderItem dItem2 : dItem) {
-                transferId += dItem2.get("transfer_order_id") + ",";
-            }
-            transferId = transferId.substring(0, transferId.length() - 1);
-        }
-
-        String sLimit = "";
-        String pageIndex = getPara("sEcho");
-        if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
-            sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
-        }
-
-        // 获取总条数
-        String totalWhere = "";
-        String sql = "select count(1) total from transfer_order_fin_item where order_id in(" + transferId + ")";
-        Record rec = Db.findFirst(sql + totalWhere);
-        logger.debug("total records:" + rec.getLong("total"));
-
-        // 获取当前页的数据
-        List<Record> orders = Db
-                .find("select d.*,f.name,f.remark,t.order_no as transferOrderNo from transfer_order_fin_item d left join fin_item f on d.fin_item_id = f.id left join transfer_order t on t.id = d.order_id where d.order_id in("
-                        + transferId + ") and f.type='应收'");
-
-        Map orderMap = new HashMap();
-        orderMap.put("sEcho", pageIndex);
-        orderMap.put("iTotalRecords", rec.getLong("total"));
-        orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-        orderMap.put("aaData", orders);
-
-        renderJson(orderMap);
-    }*/
-
+   
     // 应付list
     public void accountPayable() {
         //String id = getPara()==null?"-1":getPara();

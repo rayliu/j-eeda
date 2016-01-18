@@ -51,26 +51,24 @@
                                        	<input type="hidden" name="order_no" value="${order_no!''}${pickupOrder.depart_no!''}"/>
                                        	<input type="hidden" name="status" value="${status!''}${pickupOrder.status!''}"/>
                                        	<input type="hidden" name="create_by" value="${create_by!''}${pickupOrder.create_by!''}"/>
-		                                <div class="col-lg-6">
-		                                <input class="" id="depart_id" value="${pickupOrder.depart_id!''}" type="hidden" name="depart_id" >
-		                                <input class="" id="type" value="${type!''}" type="hidden" >
-		            				    <input class="" id="message" value="${localArr!''}" type="hidden" name="orderid" >
-		            				    <input class="" id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
-		            				    <input class="" id="item_detail" value="" type="hidden" name="item_detail" >                                  	
+                                       	<input id="depart_id" value="${pickupOrder.depart_id!''}" type="hidden" name="depart_id" >
+		                                <input id="type" value="${type!''}" type="hidden" >
+		            				    <input id="message" value="${transferIds!''}" type="hidden" name="orderid" >
+		            				    <input id="tr_itemid_list" value="" type="hidden" name="tr_itemid_list">
+		            				    <input id="item_detail" value="" type="hidden" name="item_detail" >                                  	
 		                                <input id="carinfoId" type="hidden" name="carinfoId" value="${pickupOrder.carinfo_id!''}"/>                                    	
 		                                <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
 		                                <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>   
-		                                <input id="detailIds" name="detailIds" type="hidden" value="${detailIds!''}">
-					                    <input id="cargoIds" name="cargoIds" type="hidden" value="${cargoIds!''}">
-					                    <input id="cargo_nature" name="cargo_nature" type="hidden" value="${cargo_nature!''}">
-					                    <input id="cargoNumbers" name="cargoNumbers" type="hidden" value="${cargoNumbers!''}">                                 	
-                                        <input id="cargoItemIds" name="cargoItemIds" type="hidden" value="${cargoItemIds!''}">
 					                    <input id="driverAssistantIds" name="driverAssistantIds" type="hidden" value="">
 					                    <input id="driverAssistantNames" name="driverAssistantNames" type="hidden" value="">
 					                    <input id="driverAssistantPhones" name="driverAssistantPhones" type="hidden" value="">
+					                    <input id="strJson" name="strJson" type="hidden" value="${strJson!''}" >
 					                    <input id="flag" name="flag" type="hidden" value="${flag!''}">
 					                    <input id="receiverId" name="receiverId" type="hidden"/>
-                                        <input id="t_id" name="t_id" type="hidden" value="${t_id!''}"/>
+                                        <input id="t_id" name="t_id" type="hidden" value="${transferIds!''}"/>
+                                       	
+                                       	
+		                                <div class="col-lg-6">
 	                                       	<div id="pickupModes" class="form-group">
 	                                            <label><div>提货方式</div></label>
 	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
@@ -85,18 +83,6 @@
 	                                            </label>
 	                                        </div> 
 	                                        
-	                                         <!-- <div class="form-group">
-                                                 <label><div>计费方式</div></label>
-                                                  <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType1" value="perUnit" checked="">计件
-                                                </label>
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType2" value="perCar">整车
-                                                </label>  
-                                                <label class="radio-inline">
-                                                    <input type="radio" name="chargeType" id="chargeType3" value="perCargo">零担
-                                                </label> 
-                                             </div> -->
                                         <div id="spDiv" style="display: none;">    
                                         <div>供应商信息</div>
                                            <div class="form-group">
@@ -135,23 +121,7 @@
                                         <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div>
                                     </div>
-                                    <!-- <div id = 'show_follow_name'>
-	                                     <div class="form-group">
-	                                     <label>跟车人</label>
-	                                     <input class="form-control" id="car_follow_name" name="car_follow_name" value="${pickupOrder.car_follow_name!''}">
-	                                     </div>
-	                                                                        
-	                                     <div class="form-group">
-	                                     <label>跟车人电话</label>
-	                                     <input class="form-control" id="car_follow_phone" name="car_follow_phone" value="${pickupOrder.car_follow_phone!''}">
-	                                     </div>
-                                     </div> -->                              
-                                            <!-- <div class="form-group" id="paymentDiv" style="display: none;">
-                                            <label>应付费用</label>
-                                            <input class="form-control" id="payment" name="payment" value="${pickupOrder.payment!''}">
-                                            </div> -->
-                                            
-                                            <div class="form-group">
+                                  			 <div class="form-group">
 												<label>发往</label>
 												<div id="div1">
 													<div class="checkbox">
@@ -216,7 +186,7 @@
 	                                                <label>调车单号</label> <strong 	id="showOrderNo">${order_no!''} ${pickupOrder.depart_no!''}</strong>
                                             </div>
                                             <div class="form-group">
-	                                                <label>单据状态</label>   ${status!''} ${pickupOrder.status!''}
+	                                                <label>单据状态</label> <span id="orderStatus">${status!''}${pickupOrder.status!''}</span>
                                             </div>
                                             <div class="form-group">
 	                                            <label>创建人</label>  <%if(userLogin.c_name!''==''){ %>${userLogin.user_name!''}<%}else{%>${userLogin.c_name!''}<%}%>
@@ -591,7 +561,7 @@
                         	<%
                         		if(shiro.hasPermission("PickupOrder.create") || shiro.hasPermission("PickupOrder.update")){
                         	%>                         
-		               			<button id="saveTransferOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
+		               			<button id="saveTransferOrderBtn" disabled="disabled" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		               		<%}%>
 		               		<% 
 		               			if(shiro.hasPermission("PickupOrder.completed")){
@@ -599,7 +569,7 @@
 		               			<button id="finishBtn" disabled="disabled" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">已完成</button>
 		               		<%}%>
 		               		<a class="btn  btn-primary" href="/pickupOrder">返回</a>
-		               		<button id="cancelBtn" disabled="disabled" type="button" class="btn  btn-primary">撤销订单</button>
+		               		<button id="cancelBtn" disabled type="button" class="btn  btn-primary">撤销订单</button>
                         </div>                       
                     </div>
                     <!-- /.panel -->
