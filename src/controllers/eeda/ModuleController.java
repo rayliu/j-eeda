@@ -220,10 +220,10 @@ public class ModuleController extends Controller {
             
             //每个子表中默认有ID, PARENT_ID两个字段，请勿添加同名字段。
             String createTableSql = "CREATE TABLE if not exists `"+tableName+"` ("
-              +" `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '',"
-              +" `parent_id` BIGINT(20) NULL COMMENT '',"
-              +" `ref_t_id` BIGINT(20) NULL COMMENT '',"
-              + "PRIMARY KEY (`id`)  COMMENT '')";
+              +" `id` BIGINT(20) NOT NULL AUTO_INCREMENT,"
+              +" `parent_id` BIGINT(20) NULL,"
+              +" `ref_t_id` BIGINT(20) NULL ,"
+              + "PRIMARY KEY (`id`))";
             Db.update(createTableSql);
             
             String fieldSql = "select * from field where structure_id=?";
