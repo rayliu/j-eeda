@@ -195,7 +195,29 @@ public class ReportController extends Controller {
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
 						to.get("id"));
-		if(list.size() < 10){
+		if(!is_one){
+			if(list.size() < 10){
+				if (type.contains("guoguang")) {
+					outFileName += "国光标准单";
+				} else if (type.contains("nonghang")) {
+					outFileName += "农行";
+				} else if (type.contains("china_post")) {
+					outFileName += "中国邮政";
+				} else {
+					 outFileName += "中国邮储";
+				}	
+			}else{
+				if (type.contains("guoguang")) {
+					outFileName += order_no+"/国光标准单";
+				} else if (type.contains("nonghang")) {
+					outFileName +=order_no+"/农行";
+				} else if (type.contains("china_post")) {
+					outFileName +=order_no+"/中国邮政";
+				} else {
+					 outFileName +=order_no+"/中国邮储";
+				}
+			}
+		}else{
 			if (type.contains("guoguang")) {
 				outFileName += "国光标准单";
 			} else if (type.contains("nonghang")) {
@@ -204,16 +226,6 @@ public class ReportController extends Controller {
 				outFileName += "中国邮政";
 			} else {
 				 outFileName += "中国邮储";
-			}	
-		}else{
-			if (type.contains("guoguang")) {
-				outFileName += order_no+"\\国光标准单";
-			} else if (type.contains("nonghang")) {
-				outFileName +=order_no+"\\农行";
-			} else if (type.contains("china_post")) {
-				outFileName +=order_no+"\\中国邮政";
-			} else {
-				 outFileName +=order_no+"\\中国邮储";
 			}
 		}
 		if (list.size() > 0) {
@@ -294,10 +306,14 @@ public class ReportController extends Controller {
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
 						to.get("id"));
-		if(list.size() < 10){
-			outFileName += "签收单";	
+		if(!is_one){
+			if(list.size() < 10){
+				outFileName += "签收单";	
+			}else{
+				outFileName +=order_no+"/签收单";
+			}
 		}else{
-			outFileName +=order_no+"\\签收单";
+			outFileName += "签收单";
 		}
 		if (list.size() > 0) {
 			StringBuffer buffer = new StringBuffer();
