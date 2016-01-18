@@ -1,4 +1,4 @@
-﻿package controllers.yh.pickup;
+package controllers.yh.pickup;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
