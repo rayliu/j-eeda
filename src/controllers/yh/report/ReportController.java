@@ -195,7 +195,7 @@ public class ReportController extends Controller {
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
 						to.get("id"));
-		if(list.size() < 30){
+		if(list.size() < 10){
 			if (type.contains("guoguang")) {
 				outFileName += "国光标准单";
 			} else if (type.contains("nonghang")) {
@@ -231,7 +231,7 @@ public class ReportController extends Controller {
 				} else {
 					hm.put("id", list.get(i).get("id"));
 					String file=null;
-					if(list.size() < 30){
+					if(list.size() < 10){
 						file = PrintPatterns.getInstance().print(fileName,
 								outFileName, hm);
 						buffer.append(file.substring(file.indexOf("download")-1));
@@ -294,7 +294,7 @@ public class ReportController extends Controller {
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
 						to.get("id"));
-		if(list.size() < 30){
+		if(list.size() < 10){
 			outFileName += "签收单";	
 		}else{
 			outFileName +=order_no+"\\签收单";
@@ -312,7 +312,7 @@ public class ReportController extends Controller {
 				} else {
 					hm.put("id", list.get(i).get("id"));
 					String file=null;
-					if(list.size() < 30){
+					if(list.size() < 10){
 						file = PrintPatterns.getInstance().print(fileName,
 								outFileName, hm);
 						buffer.append(file.substring(file.indexOf("download")-1));
