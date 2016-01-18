@@ -241,19 +241,16 @@ public class DeliveryController extends Controller {
 		String sp = getPara("sp");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
-		String status = getPara("status");
+		String status = getPara("status")==null?"": getPara("status");
 		String deliveryOffice = getPara("deliveryOffice");
 		String serial_no = getPara("serial_no")==null?"":getPara("serial_no");
-		if(status != null && status != ""){
-			if(status.equals("ok")){
-				status = "('已送达', '已签收')";
-			}else{
-				status = "('已发车')";
-			}
+		if(status.equals("onTrip")){
+			status = " and ifnull(d.status,'') in ('配送在途','已发车')";
+		}else if(status.equals("finish")){
+			status = " and ifnull(d.status,'') in ('已完成','已送达','已签收')";
 		}else{
-			status = "('已发车','已送达', '已签收')";
+			status = " and ifnull(d.status,'') != '新建'";
 		}
-		
 
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -288,7 +285,6 @@ public class DeliveryController extends Controller {
 				+ " WHERE doi.delivery_id = d.id"
 				+ " ) serial_no,"
 				+ " (select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
-				//+ " ,(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 				+ " from delivery_order d "
 				+ " left join party p on d.customer_id = p.id "
 				+ " left join contact c on p.contact_id = c.id "
@@ -299,7 +295,8 @@ public class DeliveryController extends Controller {
 				+ " left join office o on o.id= d.office_id "
 				+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 				+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d. STATUS, '') IN "+status+""
+				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' "
+				+ status
 				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 				+ " order by d.create_stamp desc" + sLimit;
@@ -312,7 +309,6 @@ public class DeliveryController extends Controller {
 					+ "c2.company_name as c2,"
 					+ ""
 					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
-					//+ ",(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 					+ "from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
@@ -323,8 +319,7 @@ public class DeliveryController extends Controller {
 					+ " left join office o on o.id= d.office_id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.status,'') in "
-					+ status
+					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') "
 					+" AND ifnull(d.create_stamp,'') BETWEEN '1-1-1'AND '9999-12-31'"
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
@@ -356,7 +351,7 @@ public class DeliveryController extends Controller {
 					+ deliveryNo.trim()
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer.trim()
-					+ "%' and ifnull(d.status,'') in "
+					+ "%' "
 					+ status
 					+ " and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo.trim()
@@ -409,7 +404,7 @@ public class DeliveryController extends Controller {
 					+ deliveryNo.trim()
 					+ "%' and ifnull(c.abbr,'') like '%"
 					+ customer.trim()
-					+ "%' and ifnull(d.status,'') in "
+					+ "%' "
 					+ status
 					+ " and ifnull(dt2.transfer_no,'') like '%"
 					+ transferorderNo.trim()
@@ -907,7 +902,6 @@ public class DeliveryController extends Controller {
 					+ " from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
 					+ " LEFT JOIN depart_order doi on doi.id=t1.depart_id"
-					+ " LEFT JOIN transfer_order_milestone tom on tom.depart_id=doi.id"
 					+ " left join warehouse w on t2.warehouse_id = w.id "
 					+ " left join party p on t2.customer_id = p.id "
 					+ " left join party p2 on t1.notify_party_id = p2.id "
@@ -917,9 +911,9 @@ public class DeliveryController extends Controller {
 					+ " left join party p3 on t2.sp_id = p3.id "
 					+ " left join contact c3 on p3.contact_id = c3.id "
 					/*+ " where (t2.status='已入库' or t2.status ='部分已入库') "*/
-					+ " where delivery_id is null "
+					+ " where t1.delivery_id is null "
 					+ " and t2.cargo_nature = 'ATM' "
-					+ " and tom.`STATUS`='已入库' "
+					+ " and t1.`STATUS`='已入库' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
 					+ " and t1.depart_id is not null"
 					+ " and t2.`STATUS` != '手动删除' "
@@ -930,7 +924,6 @@ public class DeliveryController extends Controller {
 			 		+ " from transfer_order_item_detail t1 "
 					+ " left join transfer_order t2 on t1.order_id=t2.id "
 					+ " LEFT JOIN depart_order doi on doi.id=t1.depart_id"
-					+ " LEFT JOIN transfer_order_milestone tom on tom.depart_id=doi.id"
 					+ " left join warehouse w on t2.warehouse_id = w.id "
 					+ " left join party p on t2.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
@@ -940,9 +933,9 @@ public class DeliveryController extends Controller {
 					+ " left join party p3 on t2.sp_id = p3.id "
 					+ " left join contact c3 on p3.contact_id = c3.id "
 					/*+ " where (t2.status='已入库' or t2.status ='部分已入库') "*/
-					+ " where delivery_id is null "
+					+ " where t1.delivery_id is null "
 					+ " and t2.cargo_nature = 'ATM' "
-					+ " and tom.`STATUS`='已入库' "
+					+ " and t1.`STATUS`='已入库' "
 					+ " and (t1.is_delivered is null or t1.is_delivered = false)  "
 					+ " and t1.depart_id is not null"
 					+ " and t2.`STATUS` != '手动删除' ";
@@ -1141,15 +1134,7 @@ public class DeliveryController extends Controller {
 				+ "left join transfer_order t3 on t3.id =t.order_id "
 				+ "left join contact c on c.id in (select contact_id from party p where t3.customer_id=p.id) "
 				+ "where t.id in(" + idlist2 + ") order by t.id desc " + sLimit;
-		/*
-		 * sql =
-		 * "select tof.* ,t_o.order_no as order_no,c.abbr as customer,toid.serial_no as serial_no from transfer_order_item tof "
-		 * + " left join transfer_order  t_o  on tof.order_id =t_o.id " +
-		 * "left join contact c on c.id in (select contact_id from party p where t_o.customer_id=p.id) "
-		 * +
-		 * "left join transfer_order_item_detail toid on toid.item_id =tof.id "
-		 * + " where toid.id in(" + idlist2 + ")" + sLimit;
-		 */
+
 		departOrderitem = Db.find(sql);
 
 		Map Map = new HashMap();
@@ -1400,9 +1385,6 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("business_stamp", businessStamp);
 				deliveryOrder.set("status", "计划中");
 			}
-			else{
-				deliveryOrder.set("status", "新建");
-			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
 			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null){
@@ -1464,8 +1446,7 @@ public class DeliveryController extends Controller {
 						.set("product_number",deliveryOrder1.get("product_number"));
 						deliveryItem.save();
 					}
-				}
-				else{
+				} else{
 					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
 					deliveryChangeOrder.set("customer_id", customerId)
 					.set("sp_id", changeSpId)
@@ -1506,8 +1487,7 @@ public class DeliveryController extends Controller {
 					deliveryChangeOrder.update();
 				}
 				deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
-			}
-			else{
+			} else{
 				if(deliveryOrder.get("delivery_id")!=null){
 					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
 					DeliveryOrderFinItem deliveryOrderFinItem= DeliveryOrderFinItem.dao.findFirst("SELECT * from delivery_order_fin_item where order_id=?",deliveryChangeOrder.get("id"));
@@ -1550,15 +1530,9 @@ public class DeliveryController extends Controller {
 	 */
 
 	// 发车确认
+	@Before(Tx.class)
 	public void departureConfirmation() {
-		/*
-		String warehouseId = getPara("warehouseId");
-		String customerId = getPara("customerId");
-		String cargoNature = getPara("cargoNature");
-		String[] transferItemId =  getPara("transferItemIds").split(",");
-		String[] productId =  getPara("productIds").split(",");
-		String[] shippingNumber =  getPara("shippingNumbers").split(",");
-		*/
+
 		Long delivery_id = Long.parseLong(getPara("deliveryid"));
 		System.out.println(delivery_id);
 		DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
@@ -1581,7 +1555,7 @@ public class DeliveryController extends Controller {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		DeliveryOrderMilestone deliveryOrderMilestone = new DeliveryOrderMilestone();
-		deliveryOrderMilestone.set("status", "已发车");
+		deliveryOrderMilestone.set("status", "配送在途");
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
@@ -1912,22 +1886,11 @@ public class DeliveryController extends Controller {
         renderJson(warehouses);
     }
     
-    public void orderListCargo(){
-    	
-    	//String warehouseId = getPara("warehouseId");
+    public void orderListCargo(){	
     	String transferItemIds = getPara("transferItemIds");
-    	//String productIds = getPara("productIds");
-    	//String customerId = getPara("customerId");
     	String pageIndex = getPara("sEcho");
     	
-    	//String[] productId =  productIds.split(",");
     	String sqlTotal = "select count(0) total from transfer_order_item where id in (" + transferItemIds + ");";
-        /*String sql = "select pro.id pid, pro.item_name, pro.item_no, pro.volume, pro.weight, c.abbr from inventory_item ii"
-        		+ " left join product pro on ii.product_id = pro.id"
-        		+ " left join warehouse w on ii.warehouse_id = w.id"
-        		+ " left join party p on ii.party_id = p.id"
-        		+ " left join contact c on p.contact_id = c.id"
-        		+ " where w.id = '" + warehouseId + "' and p.id = '" + customerId + "' and pro.id in (" + productIds + ");";*/
         String sql = "select toi.*,c.abbr,tor.order_no from transfer_order_item toi "
         		+ " left join transfer_order tor on tor.id = toi.order_id"
         		+ " left join product pro on pro.id = toi.product_id"
@@ -1942,7 +1905,6 @@ public class DeliveryController extends Controller {
         Map.put("iTotalDisplayRecords", rec.getLong("total"));
         Map.put("aaData", products);
         renderJson(Map);
-    	
     }
     
     //获取一站式货品
@@ -1962,14 +1924,19 @@ public class DeliveryController extends Controller {
         		+ " left join warehouse w on t2.warehouse_id = w.id"
         		+ " left join party p on t2.customer_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
-        		+ " where t2.status in ('已入库','部分配送中') and t2.cargo_nature = 'cargo'"
+        		+ " where t2.cargo_nature = 'cargo'"
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
         		+ " and t2.order_no like '%" + transferOrderNo + "%'"
         		+ " and (t1.amount != t1.complete_amount or t1.complete_amount is null) "
         		+ " order by t1.id desc";
     	
-        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,t1.amount,t1.complete_amount,t2.order_no,t2.customer_order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
+        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,"
+        		+ " (select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp "
+        		+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id "
+        		+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
+        		+ " where dor.status is not null and dor.status ='已入库' and dt.order_id = t1.order_id) amount,"
+        		+ " t1.complete_amount,t2.order_no,t2.customer_order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
         		+ " (select sum(product_number) from delivery_order_item  toi left join delivery_order dor on dor.id = toi.delivery_id "
         		+ " where toi.transfer_no like '%" + transferOrderNo + "%' and toi.product_id = t1.product_id and dor.status = '新建') quantity "
         		+ " from transfer_order_item t1"
@@ -1978,7 +1945,7 @@ public class DeliveryController extends Controller {
         		+ " left join warehouse w on t2.warehouse_id = w.id"
         		+ " left join party p on t2.customer_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
-        		+ " where t2.status in ('已入库','部分配送中') and t2.cargo_nature = 'cargo'"
+        		+ " where t2.cargo_nature = 'cargo'"
         		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
         		+ " and c.abbr LIKE '%" + customerName1 + "%'"
         		+ " and t2.order_no like '%" + transferOrderNo + "%'"

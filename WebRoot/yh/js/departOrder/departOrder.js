@@ -169,21 +169,16 @@ $(document).ready(function() {
     $('#saveBtn').click(function(e){
         e.preventDefault();
         var tableArr=[];
-        var pickupIds=[];
-        /*$("input[name='order_check_box']").each(function(){
-        	if($(this).prop('checked') == true){
-        		console.log($(this).val());
-        		trArr.push($(this).val());
-        		pickupIds.push($(this).attr("pickupid")+"&");
-        	}
-        });*/
+
 		$("#ckeckedTransferOrderList tr").each(function (){
-			tableArr.push($(this).attr("value"));
-			if($(this).attr("pickupid")!=''){
-			pickupIds.push($(this).attr("pickupid")+"&");
+			var pickup = $(this).attr("pickupid");
+			if (pickup==''|| pickup==null){
+				pickup = 'wu';
 			}
+			
+			tableArr.push($(this).attr("value")+':'+ pickup);
 		});
-        console.log("单号："+tableArr+",拼车单号："+pickupIds);
+
         $('#pickupOrder_message').val(tableArr);
         $('#pickupIds').val(pickupIds);
         $('#createForm').submit();

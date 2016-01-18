@@ -3,6 +3,16 @@ $(document).ready(function() {
 	if(deliverOrder.orderNo){
 		document.title = deliverOrder.orderNo +' | '+document.title;
 	}
+	
+	//按钮控制
+	var deliveryStatus=$("#deliveryOrder_status").text();
+	if(deliveryStatus == ''){
+		$("#saveBtn").attr("disabled",false);
+	}else if(deliveryStatus == '新建'|| deliveryStatus=='计划中'){
+		$("#saveBtn").attr("disabled",false);
+	}
+
+
 	$('#checkQrC').hover(
 			function(){//in
 			$('#qrcodeCanv').show();
@@ -23,13 +33,7 @@ $(document).ready(function() {
 	
 	var parentId="chargeCheckOrderbasic";
 	
-	var deliveryStatus=$("#deliveryOrder_status").text();
-	if(deliveryStatus=="已送达"||deliveryStatus=="已签收"||deliveryStatus=="已发车"){//“已签收” 这个状态是“已送达”的旧数据
-		$("#saveBtn").attr("disabled",true);
-	}else{
-		$("#saveBtn").attr("disabled",false);
-	}
-
+	
 	$('#spMessage').on('keyup click', function(){
 		var inputStr = $('#spMessage').val();
 		if(inputStr == ""){
@@ -164,33 +168,34 @@ $(document).ready(function() {
 		console.log("仓库：" +warehouseId+",客户："+customerId+",产品："+productIds+",数量："+shippingNumbers);
 		var numbers = shippingNumbers.split(",");
 		var num = 0;
-		// 普货, 动态处理
-		$('#cargo-table').dataTable({
-			"bFilter": false, 
-	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-	        "iDisplayLength": 10,
-	        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-	        "bServerSide": true,
-	    	"oLanguage": {
-	            "sUrl": "/eeda/dataTables.ch.txt"
-	        },
-	        "sAjaxSource": "/delivery/orderListCargo?transferItemIds="+transferItemIds,
-	        "aoColumns": [
-	            {"mDataProp":"ITEM_NO"},  
-	            {"mDataProp":"ITEM_NAME"},
-	            {"mDataProp":"VOLUME"},
-	            {"mDataProp":"WEIGHT"},
-	            {"mDataProp":null,
-	            	"fnRender": function(obj) {
-	            		return numbers[num++];
-	            	}
-	            },   
-	            {"mDataProp":"ABBR"},
-	            {"mDataProp":"ORDER_NO"}
-	        ]      
-	    });	
-	}else{
-		//ATM,eedaTable
+		
+		
+			// 普货, 动态处理
+			$('#cargo-table').dataTable({
+				"bFilter": false, 
+		        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+		        "iDisplayLength": 10,
+		        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+		        "bServerSide": true,
+		    	"oLanguage": {
+		            "sUrl": "/eeda/dataTables.ch.txt"
+		        },
+		        "sAjaxSource": "/delivery/orderListCargo?transferItemIds="+transferItemIds,
+		        "aoColumns": [
+		            {"mDataProp":"ITEM_NO"},  
+		            {"mDataProp":"ITEM_NAME"},
+		            {"mDataProp":"VOLUME"},
+		            {"mDataProp":"WEIGHT"},
+		            {"mDataProp":null,
+		            	"fnRender": function(obj) {
+		            		return numbers[num++];
+		            	}
+		            },   
+		            {"mDataProp":"ABBR"},
+		            {"mDataProp":"ORDER_NO"}
+		        ]      
+		    });	
+		} else{
 		$('#eeda-table').dataTable({
 			"bFilter": false, //不需要默认的搜索框
 			"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
@@ -415,6 +420,8 @@ $(document).ready(function() {
 
 			paymenttable.fnSettings().sAjaxSource="/deliveryOrderMilestone/accountPayable/"+delivery_id;
 			paymenttable.fnDraw();
+			$.scojs_message('发车成功', $.scojs_message.TYPE_OK);
+			$('#deliveryOrder_status').html('配送在途');
 		},'json');
 		$("#ConfirmationBtn").attr("disabled", true);
 		//$("#receiptBtn").attr("disabled", false);
@@ -806,14 +813,7 @@ $(document).ready(function() {
                paymenttable3.fnDraw();
            },'json');
 	 });
-	/*
-	 * //应收 $("#addrow2").click(function(){ var deliveryid
-	 * =$("#delivery_id").val();
-	 * $.post('/deliveryOrderMilestone/addNewRow2/'+deliveryid,function(data){
-	 * console.log(data); if(data.success){ paymenttable.fnDraw();
-	 * //$('#fin_item2').modal('hide'); //$('#resetbutton2').click(); }else{ }
-	 * }); });
-	 */
+
 		
     // 获取全国省份
     $(function(){
@@ -1192,88 +1192,7 @@ $(document).ready(function() {
 				}
 			}
 		}
-	},'json');
-    
-    /*// 配送排车单应付datatable
-	var paymenttable=$('#table_fin3').dataTable({
-		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "bFilter": false, // 不需要默认的搜索框
-        // "sPaginationType": "bootstrap",
-        "iDisplayLength": 10,
-        "bServerSide": false,
-        "bLengthChange":false,
-        //"sAjaxSource": "/deliveryOrderMilestone/accountPayablePlan/"+deliveryid,
-    	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('id', aData.ID);
-			return nRow;
-		},
-        "aoColumns": [
-			{"mDataProp":"FIN_ITEM_NAME",
-			    "fnRender": function(obj) {
-			        if(obj.aData.FIN_ITEM_NAME!='' && obj.aData.FIN_ITEM_NAME != null){
-			        	var str="";
-			        	$("#paymentItemList").children().each(function(){
-			        		if(obj.aData.FIN_ITEM_NAME == $(this).text()){
-			        			str+="<option value='"+$(this).val()+"' selected = 'selected'>"+$(this).text()+"</option>";                    			
-			        		}else{
-			        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-			        		}
-			        	});
-			        	if(obj.aData.CREATE_NAME == 'system'){
-			        		return obj.aData.FIN_ITEM_NAME;
-			        	}else{
-			        		return "<select name='fin_item_id'>"+str+"</select>";
-			        	}
-			        }else{
-			        	var str="";
-			        	$("#paymentItemList").children().each(function(){
-			        		str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-			        	});
-			        	return "<select name='fin_item_id'>"+str+"</select>";
-			        }
-			 }},
-			{"mDataProp":"AMOUNT",
-			     "fnRender": function(obj) {
-			    	 if(obj.aData.CREATE_NAME == 'system'){
-			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return obj.aData.AMOUNT;
-				         }else{
-				         	 return "";
-				         }
-			    	 }else{
-				         if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-				         }else{
-				         	 return "<input type='text' name='amount'>";
-				         }
-			    	 }
-			 }},  
-			{"mDataProp":"STATUS","sClass": "status"},
-			{"mDataProp":"REMARK",
-                "fnRender": function(obj) {
-                    if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"'>";
-                    }else{
-                    	 return "<input type='text' name='remark'>";
-                    }
-            }},  
-			{  
-                "mDataProp": null, 
-                "sWidth": "60px",  
-            	"sClass": "remark",              
-                "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
-              		"<i class='fa fa-trash-o fa-fw'> </i> "+
-              		"删除"+
-              		"</a>";
-                }
-            }     
-        ]      
-    });*/
-    
+	},'json'); 
 });
 function getChargetype(){
 	//判断修改后相应的计费方式修改

@@ -240,7 +240,7 @@ $(document).ready(function() {
 				$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
 		           //保存成功后，刷新列表
 		           if(data.success){
-		        	   $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+		        	   $.scojs_message('签收成功', $.scojs_message.TYPE_OK);
 		        	   $("#status span").html("已签收");
 		           }else{
 		               alert('签收失败！');

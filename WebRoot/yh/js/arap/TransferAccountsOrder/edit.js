@@ -90,6 +90,7 @@ $(document).ready(function() {
 	
 	$("#confirmBtn").click(function(e){
 		$("#confirmBtn").attr("disabled",true);
+		saveTransferOrder();
 		confiremBtnTransferOrder();
 	});
 	
@@ -145,6 +146,7 @@ $(document).ready(function() {
 		$("#saveBtn").attr("disabled",false);
 	 }else if(order_status=='新建'){
 		 $("#saveBtn").attr("disabled",false);
+		 $("#confirmBtn").attr("disabled",false);
 	 }else if(order_status=='已确认'){
 		$("#saveBtn").attr("disabled",true);
 		$("#confirmBtn").attr("disabled",true);
