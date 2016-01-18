@@ -47,7 +47,7 @@ public class PrintPatterns {
    }
 	//多张新建一个文件保存
 	public String prints(String fileName,int n,String Path,String order_no,String outFileName,HashMap<String, Object> hm){		
-        File file = new File(Path+"\\download\\"+order_no);
+        File file = new File(Path+"download/"+order_no);
         if(!file.exists()){
        	 file.mkdir();
         }else{
