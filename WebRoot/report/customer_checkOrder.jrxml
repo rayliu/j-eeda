@@ -106,7 +106,7 @@ where aao.order_no=$P{order_no}]]>
 				<text><![CDATA[对账网点:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="230" y="96" width="55" height="26" uuid="9a29e6d2-0c09-4ee6-a532-b50ea397b204"/>
+				<reportElement x="199" y="96" width="55" height="26" uuid="9a29e6d2-0c09-4ee6-a532-b50ea397b204"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -155,7 +155,7 @@ where aao.order_no=$P{order_no}]]>
 				<text><![CDATA[广州源鸿物流有限公司]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="77" y="96" width="153" height="26" isPrintInFirstWholeBand="true" uuid="f3d15085-b3fd-4640-9121-1bb18fbadfb6"/>
+				<reportElement x="77" y="96" width="122" height="26" isPrintInFirstWholeBand="true" uuid="f3d15085-b3fd-4640-9121-1bb18fbadfb6"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -168,9 +168,9 @@ where aao.order_no=$P{order_no}]]>
 				</textElement>
 				<text><![CDATA[对账月份:]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="285" y="96" width="154" height="26" uuid="8e890cbe-1fd8-46ef-8f3a-869d72a7be22"/>
-				<textElement verticalAlignment="Middle">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="254" y="102" width="185" height="41" uuid="8e890cbe-1fd8-46ef-8f3a-869d72a7be22"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cname}]]></textFieldExpression>
