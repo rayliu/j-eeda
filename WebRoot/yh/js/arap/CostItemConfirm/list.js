@@ -51,29 +51,29 @@ $(document).ready(function() {
             }}, 
             {"mDataProp":"REF_NO", "sWidth":"80px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"100px"},
+            {"mDataProp":"CHANGE_AMOUNT","sWidth":"100px",
+                "fnRender": function(obj) {
+              	  if(obj.aData.BUSINESS_TYPE=="成本单"){
+              		  return obj.aData.CHANGE_AMOUNT;
+              	  }
+              	  else{
+                      if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
+                          return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                          
+                      }
+                      else {
+                        if(obj.aData.PAY_AMOUNT!=null){
+                          return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+                        }
+                        else{
+                          return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
+                        }
+                      }
+              	  }
+                  }
+              },
             {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
-            {"mDataProp":"CHANGE_AMOUNT","sWidth":"100px",
-              "fnRender": function(obj) {
-            	  if(obj.aData.BUSINESS_TYPE=="成本单"){
-            		  return obj.aData.CHANGE_AMOUNT;
-            	  }
-            	  else{
-                    if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
-                        return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
-                        
-                    }
-                    else {
-                      if(obj.aData.PAY_AMOUNT!=null){
-                        return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
-                      }
-                      else{
-                        return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
-                      }
-                    }
-            	  }
-                }
-            },
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
             {"mDataProp":"AMOUNT", "sWidth":"55px"},
             {"mDataProp":"CNAME", "sWidth":"100px"},
