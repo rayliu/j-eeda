@@ -16,7 +16,6 @@ $(document).ready(function() {
 		$.post('/wx/findReturnOrder',{orderNo:orderNo,customer:customer}, function(data){
 			if(data.length ==1){
 				var returnId = data[0].ID;
-				$('#orderDesc').text('回单确认存在，请从相册中选择照片上传');
 				$("#uploadBtn").attr("class", "weui_btn weui_btn_primary");
 				$("#uploadBtn").attr("disabled", false);
 				$("#uploadDesc").text("");
