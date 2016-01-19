@@ -3,6 +3,12 @@ $(document).ready(function() {
 	$('#orderNo').focus();
 	
 	$("#searchNo").click(function(){
+		$("#customer").hide();
+		$("#customerNo").text("");
+		$("#transferOrderNo").text("");
+		$("#refNo").text("");
+		$("#serialNo").text("");
+		$("#returnOrderNo").text("");
         refreshData(-1);
     });
 	var refreshData=function(customer){  
@@ -14,7 +20,12 @@ $(document).ready(function() {
 				$("#uploadBtn").attr("class", "weui_btn weui_btn_primary");
 				$("#uploadBtn").attr("disabled", false);
 				$("#uploadDesc").text("");
-				$('#returnId').val(returnId);	
+				$('#returnId').val(returnId);
+				$("#customerNo").text(data[0].CUSTOMER_ORDER_NO);
+				$("#transferOrderNo").text(data[0].TO_ORDER_NO);
+				$("#refNo").text(data[0].REF_NO);
+				$("#serialNo").text(data[0].SERIAL_NO);
+				$("#returnOrderNo").text(data[0].ORDER_NO);
 			}else if(data.length >1) {
 				$("#customer").show()
 				var selectCustomer =$("#selectCustomer");
@@ -23,9 +34,14 @@ $(document).ready(function() {
 				$.each(data,function(n,value) {
 					selectCustomer.append("<option value='"+value.CID+"'>"+value.ABBR+"</option>");
 			    });  
+				$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
+				$("#uploadBtn").attr("disabled", true);
 			}else{
 				$('#orderDesc').text('未找到对应有效的回单号码');
 				$('#returnId').val("");
+				$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
+				$("#uploadBtn").attr("disabled", true);
+				$("#customer").hide();
 			}
 			$('#orderDesc').show();
 	    },'json');
