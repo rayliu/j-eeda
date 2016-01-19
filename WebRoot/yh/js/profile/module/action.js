@@ -92,7 +92,12 @@
                                 continue;
 
                             var command_setting_str = command.command;
-                            var obj = JSON.parse(command.command);
+                            
+                            if(!command_setting_str)
+                            	continue;
+                            	
+                            var obj = JSON.parse(command_setting_str);
+                            
                             
                             html_detail = html_detail + '<li style="margin-top: 5px;">'
                             +'    <a class="remove delete_command" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;'

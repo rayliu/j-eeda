@@ -517,7 +517,8 @@ public class EedaCommonHandler {
     private static BigInteger getLastInsertID(String tableName) {
         BigInteger order_id;
         Record idRec = Db.findFirst("select LAST_INSERT_ID() id");
-        order_id = idRec.getBigInteger("id");
+        BigInteger big = new BigInteger(idRec.getLong("id").toString());
+        order_id = big;
         logger.debug(tableName+" last insert order_id = "+order_id);
         return order_id;
     }

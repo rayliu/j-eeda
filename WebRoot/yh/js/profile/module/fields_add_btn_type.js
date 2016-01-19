@@ -105,10 +105,10 @@ var getModuleStructure=function(structure_id){
 };
 
 $('.addColField').click(function(event) {
-    var module_name = $('#modal_module_source').val();
+    var structrue_id = $('#modal_module_source').val();
     for (var i = 0; i < modal_module_list.length; i++) {
         var module = modal_module_list[i];
-        if(module_name == module.MODULE_NAME){
+        if(structrue_id == module.STRUCTURE_ID){
             var html = template('table_add_btn_field_template', {field_list: module.FIELD_LIST});
             var div = $('.addColField').parent();
             div.find('.row').append(html);
@@ -134,10 +134,10 @@ $('#modal_add_col_div').on('click', '.delete', function(e){
 });
 
 $('.addConditionField').click(function(event) {
-    var module_name = $('#modal_module_source').val();
+    var structrue_id = $('#modal_module_source').val();
     for (var i = 0; i < modal_module_list.length; i++) {
         var module = modal_module_list[i];
-        if(module_name == module.MODULE_NAME){
+        if(structrue_id == module.STRUCTURE_ID){
             var html = template('table_add_btn_condtion_template', {field_list: module.FIELD_LIST});
             var div = $('.addConditionField').parent();
             div.find('.row').append(html);
