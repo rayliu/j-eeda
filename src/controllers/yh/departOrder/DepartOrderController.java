@@ -123,169 +123,100 @@ public class DepartOrderController extends Controller {
 		String booking_note_number = getPara("booking_note_number");
 		String costchebox = getPara("costchebox");
 
-		String limi = "";
-		if (costchebox == null || costchebox.equals("")) {
-			limi = "";
-		} else {
-			if (costchebox.equals("0"))
-				limi = "HAVING (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id  and fi.type= '应付' )= 0";
-		}
-
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		String sql = "";
-		String sqlTotal = "";
 		if (getPara("iDisplayStart") != null
 				&& getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		if (orderNo == null && departNo == null && status == null && sp == null
-				&& planEndTime == null && planBeginTime == null
-				&& beginTime == null && endTime == null&& office == null
-				&& start == null && destination == null && customer == null
-				&& booking_note_number == null) {
-			sqlTotal = "select count(1) total from depart_order deo "
-					+ "left join carinfo  car on deo.driver_id=car.id"
-					+ " left join depart_transfer dtf on dtf.depart_id = deo.id"
-					+ " left join transfer_order tor on tor .id = dtf.order_id"
-					+ " left join user_login u on u.id = tor .create_by"
-					+ " left join office o on o.id = tor.office_id"
-					+ " where combine_type = '"
-					+ DepartOrder.COMBINE_TYPE_DEPART
-					+ "'and o.id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and deo.status!='手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal() + "')";
 
-			sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo.status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,"
-					+ " ifnull(nullif(u.c_name,''),u.user_name) user_name,o.office_name office_name,deo.departure_time departure_time,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
-					+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
-					+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
-					+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
-					+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
-					+ " deo.transfer_type as trip_type"
-					+ " from depart_order deo"
-					+ " left join carinfo c on deo.carinfo_id = c.id"
-					+ " left join party p on deo.sp_id = p.id"
-					+ " left join contact ct on p.contact_id = ct.id"
-					+ " left join depart_transfer dtf on dtf.depart_id = deo.id"
-					+ " left join transfer_order tor on tor .id = dtf.order_id"
-					+ " left join user_login u on u.id = tor .create_by"
-					+ " left join office o on o.id = tor.office_id"
-					+ " left join party cp on tor.customer_id = cp.id "
-					+ " left join contact cc on cp.contact_id = cc.id"
-					+ " where ifnull(deo.status, '') != ''"
-					+ " and deo.status!='手动删除' and combine_type = '"
-					+ DepartOrder.COMBINE_TYPE_DEPART
-					+ "'"
-					+ " and o.id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') group by deo.id,o.office_name "
-					+ limi
-					+ " order by deo.create_stamp desc "
-					+ limi + sLimit;
-		} else {
-			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
-			}
-			if (planBeginTime == null || "".equals(planBeginTime)) {
-				planBeginTime = "1-1-1";
-			}
-			if (planEndTime == null || "".equals(planEndTime)) {
-				planEndTime = "9999-12-31";
-			}
-			String whereSql = "  where deo.combine_type = '"
-					+ DepartOrder.COMBINE_TYPE_DEPART
-					+ "'"
-					+ " and ifnull(deo.status,'') like '%"
-					+ status
-					+ "%' and ifnull(deo.depart_no,'') like '%"
-					+ departNo
-					+ "%' and ifnull(deo.booking_note_number,'') like '%"
-					+ booking_note_number
-					+ "%' and ifnull(tor.order_no,'') like '%"
-					+ orderNo
-					+ "%' and ifnull(ct.abbr,'')  like '%"
-					+ sp
-					+ "%' and ifnull(o.office_name,'') like '%"
-					+ office
-					+ "%' and ifnull(l1.name,'') like '%"
-					+ start
-					+ "%' and ifnull(l2.name,'') like '%"
-					+ destination
-					+ "%' and ifnull(cc.abbr,cc.company_name)  like '%"
-					+ customer
-					+ "%' and deo.create_stamp between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime
-					+ "'"
-					+ " and tor.planning_time between '"
-					+ planBeginTime
-					+ "' and '"
-					+ planEndTime
-					+ "'"
-					+ " and deo.status!='手动删除' and o.id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and tor.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal() + "')";
-			sqlTotal = "select count(1) total from depart_order deo"
-					+ " left join carinfo c on deo.carinfo_id = c.id"
-					+ " left join party p on deo.sp_id = p.id"
-					+ " left join contact ct on p.contact_id = ct.id"
-					+ " left join depart_transfer dtf on dtf.depart_id = deo.id"
-					+ " left join transfer_order tor on tor .id = dtf.order_id"
-					+ " left join user_login u on u.id = tor .create_by"
-					+ " left join office o on o.id = tor .office_id"
-					+ " left join location l1 on l1.code = deo.route_from"
-					+ " left join location l2 on l2.code = deo.route_to "
-					+ " left join party cp on tor.customer_id = cp.id "
-					+ " left join contact cc on cp.contact_id = cc.id"
-					+ whereSql;
+		String conditions=" where 1=1 ";
+		if (StringUtils.isNotEmpty(orderNo)){
+        	conditions+=" and transfer_order_no like '%"+orderNo+"%'";
+        }
+        if (StringUtils.isNotEmpty(status)){
+        	conditions+=" and depart_status like '%"+status+"%'";
+        }
+        if (StringUtils.isNotEmpty(departNo)){
+        	conditions+=" and depart_no like '%"+departNo+"%'";
+        }
+        if (StringUtils.isNotEmpty(booking_note_number)){
+        	conditions+=" and booking_note_number like '%"+booking_note_number+"%'";
+        }
+        if (StringUtils.isNotEmpty(sp)){
+        	conditions+=" and abbr like '%"+sp+"%'";
+        }
+        if (StringUtils.isNotEmpty(office)){
+        	conditions+=" and office_name like '%"+office+"%'";
+        }
+        if (StringUtils.isNotEmpty(customer)){
+        	conditions+=" and customer like '%"+customer+"%'";
+        }
+        if (StringUtils.isNotEmpty(start)){
+        	conditions+=" and route_from like '%"+start+"%'";
+        }
+        if (StringUtils.isNotEmpty(destination)){
+        	conditions+=" and route_to like '%"+destination+"%'";
+        }
+        if (StringUtils.isNotEmpty(costchebox)){
+        	if(costchebox.equals("0"))
+        		conditions+=" and total_cost = "+costchebox;
+        }
+        if (StringUtils.isNotEmpty(beginTime)){
+			beginTime = " and create_stamp between'"+beginTime+"'";
+        }else{
+        	beginTime =" and planning_time between '2000-1-1'";
+        }
+        if (StringUtils.isNotEmpty(endTime)){
+        	endTime =" and '"+endTime+"'";
+        }else{
+        	endTime =" and '3000-1-1'";
+        }
+        conditions += beginTime + endTime;
+        if (StringUtils.isNotEmpty(planBeginTime)){
+        	planBeginTime = " and planning_time between '"+planBeginTime+"'";
+        }else{
+        	planBeginTime =" and planning_time between '2000-1-1'";
+        }
+        if (StringUtils.isNotEmpty(planEndTime)){
+        	planEndTime =" and '"+planEndTime+"'";
+        }else{
+        	planEndTime =" and '3000-1-1'";
+        }
+        conditions += planBeginTime + planEndTime;
+//		String whereSql = "  where deo.combine_type = '"
+//				+ DepartOrder.COMBINE_TYPE_DEPART
+//				+ "'";
+		sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(nullif(u.c_name,''),u.user_name) user_name,"
+				+ " o.office_name office_name,deo.departure_time departure_time ,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
+				+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
+				+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
+				+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
+				+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
+				+ " deo.transfer_type as trip_type"
+				+ " from depart_order deo"
+				+ " left join carinfo c on deo.carinfo_id = c.id"
+				+ " left join party p on deo.sp_id = p.id"
+				+ " left join contact ct on p.contact_id = ct.id"
+				+ " left join depart_transfer dtf on dtf.depart_id = deo.id"
+				+ " left join transfer_order tor on tor.id = dtf.order_id"
+				+ " left join user_login u on u.id = tor.create_by"
+				+ " left join office o on o.id = tor.office_id"
+				+ " left join location l1 on l1.code = deo.route_from"
+				+ " left join location l2 on l2.code = deo.route_to "
+				+ " left join party cp on tor.customer_id = cp.id "
+				+ " left join contact cc on cp.contact_id = cc.id "
+				+ " where "
+				+ " deo.status!='手动删除' and deo.combine_type='DEPART' and o.id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal()
+				+ "') and tor.customer_id in (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal() + "')  ";
+				
 
-			sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(nullif(u.c_name,''),u.user_name) user_name,"
-					+ " o.office_name office_name,deo.departure_time departure_time ,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
-					+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
-					+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
-					+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
-					+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
-					+ " deo.transfer_type as trip_type"
-					+ " from depart_order deo"
-					+ " left join carinfo c on deo.carinfo_id = c.id"
-					+ " left join party p on deo.sp_id = p.id"
-					+ " left join contact ct on p.contact_id = ct.id"
-					+ " left join depart_transfer dtf on dtf.depart_id = deo.id"
-					+ " left join transfer_order tor on tor.id = dtf.order_id"
-					+ " left join user_login u on u.id = tor.create_by"
-					+ " left join office o on o.id = tor.office_id"
-					+ " left join location l1 on l1.code = deo.route_from"
-					+ " left join location l2 on l2.code = deo.route_to "
-					+ " left join party cp on tor.customer_id = cp.id "
-					+ " left join contact cc on cp.contact_id = cc.id"
-					+ whereSql
-					+ " order by deo.create_stamp desc "
-					+ limi + sLimit;
-		}
-		long startMi = Calendar.getInstance().getTimeInMillis();
-		Record rec = Db.findFirst(sqlTotal);
-		long endMi = Calendar.getInstance().getTimeInMillis();
-		logger.debug("total records:" + rec.getLong("total"));
-		logger.debug("getTotal time cost:" + (endMi - startMi));
-		
-		startMi = Calendar.getInstance().getTimeInMillis();
-		List<Record> departOrders = Db.find(sql);
-		endMi = Calendar.getInstance().getTimeInMillis();
-		logger.debug("getResult time cost:" + (endMi - startMi));
-		
+		Record rec = Db.findFirst("select count(1) total from (select * from (" + sql+ ") A " + conditions +" ) B");
+		List<Record> departOrders = Db.find("select * from (" + sql+ ") A " + conditions + " order by create_stamp desc " + sLimit);
 		Map map = new HashMap();
 		map.put("sEcho", pageIndex);
 		map.put("iTotalRecords", rec.getLong("total"));
