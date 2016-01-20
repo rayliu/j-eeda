@@ -94,13 +94,11 @@ function refreshData(){
 										+"&costchebox="+costchebox;
 	dataTable.fnDraw();
 }
-$('#departNo_filter,#endTime_filter ,#beginTime_filter ,#endTime_filter1 ,#beginTime_filter1 ,#orderNo_filter,#start_filter,#destination_filter,#booking_note_number,#costcheckbox').on( 'keyup click', function () {
+
+$('#query').on('click', function () {
 	refreshData();
-} );
-//供应商，状态，选择框
-$('#status_filter ,#officeSelect').on( 'change', function () {
-	refreshData();
-} );
+});
+
 
 $.post('/transferOrder/searchPartOffice',function(data){
 	 if(data.length > 0){
@@ -235,8 +233,6 @@ $.post('/transferOrder/searchPartOffice',function(data){
 		}
 		pageSpAddress.append(address);
         $('#spList').hide();
-        
-        refreshData();
     });
 	 $('#customer_filter').on('keyup click', function(){
 	        var inputStr = $('#customer_filter').val();
@@ -257,7 +253,6 @@ $.post('/transferOrder/searchPartOffice',function(data){
 	        $("#companyList").hide();
 	        var companyId = $(this).attr('partyId');
 	        $('#customerId').val(companyId);
-	        refreshData();
 	    });
 	    // 没选中客户，焦点离开，隐藏列表
 	    $('#customer_filter').on('blur', function(){
