@@ -1418,7 +1418,10 @@ public class ReturnOrderController extends Controller {
     		for (int j = 0; j < InsuranceFinItemList.size(); j++) {
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).get("insurance_order_id"));
     			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
-    			double amount = InsuranceFinItemList.get(j).getDouble("amount") * InsuranceFinItemList.get(j).getDouble("income_rate") *  transferOrderItemList.get(i).getDouble("amount");
+    			double amount1 =  InsuranceFinItemList.get(j).getDouble("amount")==null?0.0:InsuranceFinItemList.get(j).getDouble("amount");
+    			double amount2 =  InsuranceFinItemList.get(j).getDouble("income_rate")==null?0.0:InsuranceFinItemList.get(j).getDouble("income_rate");
+    			double amount3 =  transferOrderItemList.get(i).getDouble("amount")==null?0.0:transferOrderItemList.get(i).getDouble("amount");
+    			double amount =  amount1 * amount2 * amount3 ;
     			BigDecimal bg = new BigDecimal(amount);
     	        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     			if(f1 != 0){
