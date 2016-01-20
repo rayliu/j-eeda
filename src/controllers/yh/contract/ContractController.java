@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import models.FinItem;
 import models.Location;
 import models.ParentOfficeModel;
+import models.Party;
 import models.yh.contract.Contract;
 import models.yh.contract.ContractItem;
 import models.yh.profile.Contact;
@@ -548,19 +549,41 @@ public class ContractController extends Controller {
 
     // 列出供应商公司名称, 包括：干线，配送
     public void searchSp() {
-        String spName = getPara("spName");
-        String spType = getPara("spType");//TODO: 未实现
-        
-        List<Record> spList = Collections.EMPTY_LIST;
-        
-        String sql="select c.id, c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'SERVICE_PROVIDER' ";
-        		
-        if (spName.trim().length() > 0) {
-        	sql +=" and (c.abbr like '%" + spName + "%' or c.quick_search_code like '%" + spName.toUpperCase() + "%') ";
-        } 
-        
-        spList = Db.find(sql);  
-        renderJson(spList);
+    	String input = getPara("spName");
+		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+		Long parentID = pom.getParentOfficeId();
+		// Long officeID = pom.getCurrentOfficeId();
+		List<Record> locationList = Collections.EMPTY_LIST;
+		if (input.trim().length() > 0) {
+			locationList = Db
+					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER
+							+ "' and (c.company_name like '%"
+							+ input
+							+ "%' or c.abbr like '%"
+							+ input
+							+ "%' or c.contact_person like '%"
+							+ input
+							+ "%' or c.email like '%"
+							+ input
+							+ "%' or c.mobile like '%"
+							+ input
+							+ "%' or c.phone like '%"
+							+ input
+							+ "%' or c.address like '%"
+							+ input
+							+ "%' or c.postal_code like '%"
+							+ input
+							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
+							parentID, parentID);
+		} else {
+			locationList = Db
+					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
+							+ Party.PARTY_TYPE_SERVICE_PROVIDER
+							+ "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
+							parentID, parentID);
+		}
+		renderJson(locationList);
     }
     
     public void searchPart() {
