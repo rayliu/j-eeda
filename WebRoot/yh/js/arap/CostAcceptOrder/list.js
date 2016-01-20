@@ -655,7 +655,8 @@ $(document).ready(function() {
             check_begin_date : $("#check_begin_date").val(),
             check_end_date : $("#check_end_date").val(),
             confirmBeginTime : $("#confirmBegin_date").val(),
-            confirmEndTime : $("#confirmEnd_date").val()
+            confirmEndTime : $("#confirmEnd_date").val(),
+            insurance : $("#insurance").val()
         };
         if(!!window.localStorage){//查询条件处理
             localStorage.setItem("query_costAcceptOrder2", JSON.stringify(conditions));
@@ -675,12 +676,15 @@ $(document).ready(function() {
         var check_end_date = $("#check_end_date").val();
         var confirmBeginTime = $("#confirmBegin_date").val();
         var confirmEndTime = $("#confirmEnd_date").val();
+        var insurance = $("#insurance").val();
 
         applicationTab.fnSettings().oFeatures.bServerSide = true;
         applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status
             +"&beginTime="+beginTime+"&endTime="+endTime
             +"&check_begin_date="+check_begin_date+"&check_end_date="+check_end_date
-            +"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime+"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo+"&sp="+sp;
+            +"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime
+            +"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo
+            +"&sp="+sp+"&insurance="+insurance;;
 
         applicationTab.fnDraw(); 
     };
