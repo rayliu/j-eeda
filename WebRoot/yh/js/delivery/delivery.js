@@ -33,7 +33,42 @@ $(document).ready(function() {
 	
 	var parentId="chargeCheckOrderbasic";
 	
-	
+	$('#driver_name').on('keyup click', function(){
+ 		var inputStr = $('#driver_name').val();
+		//定义一个TYPE变量，用来作为车辆的条件
+		var typeStr = "OWN";
+ 		$.get('/transferOrder/searchAllCarInfo', {input:inputStr,type:typeStr}, function(data){
+ 			var driverList = $("#driverList");
+ 			driverList.empty();
+ 			for(var i = 0; i < data.length; i++)
+ 			{
+ 				driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].ID+"' car_no='"+data[i].CAR_NO+"' phone='"+data[i].PHONE+"' driver='"+data[i].DRIVER+"' > "+data[i].DRIVER+" "+data[i].PHONE+"</a></li>");
+ 			}
+ 		},'json');
+ 		
+ 		$("#driverList").css({ 
+         	left:$(this).position().left+"px", 
+         	top:$(this).position().top+32+"px" 
+        }); 
+        $('#driverList').show();
+	 });
+	  	
+ 	 // 选中司机
+ 	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
+	  	 $('#driver_name').val($(this).attr('driver'));
+	  	 $('#a5').html($(this).attr('car_no'));  
+	  	 $('#a6').html($(this).attr('phone'));
+	  	 $('#car_id').val($(this).attr('pid'));
+	     $('#driverList').hide();   
+     });
+ 	// 没选中司机，焦点离开，隐藏列表
+  	$('#driver_name').on('blur', function(){
+   		$('#driverList').hide();
+   	});
+ 	// 没选中司机，焦点离开，隐藏列表
+ 	$('#driverList').on('blur', function(){
+  		$('#driverList').hide();
+  	});
 	$('#spMessage').on('keyup click', function(){
 		var inputStr = $('#spMessage').val();
 		if(inputStr == ""){
@@ -74,7 +109,6 @@ $(document).ready(function() {
         }); 
         $('#spList').show();
 	});
-
 	// 没选中供应商，焦点离开，隐藏列表
 	$('#spMessage').on('blur', function(){
  		$('#spList').hide();
@@ -327,8 +361,14 @@ $(document).ready(function() {
 		var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
 		var business_stamp =$('#business_stamp').val();
 		var sp_id = $("#sp_id").val();
-		if(sp_id == ""){
+		var car_id = $("#car_id").val();
+		var modeDelvery=$("input[name='modeDelvery']:checked").val();
+		if(sp_id == ""&&modeDelvery=="out_source"){
 			alert("请选择有效的供应商");
+			return false;
+		}
+		if(car_id == ""&&modeDelvery=="own"){
+			alert("请选择有效的司机");
 			return false;
 		}
 		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
@@ -375,7 +415,51 @@ $(document).ready(function() {
 		e.preventDefault();
 		saveDelivery();
     });
-			
+	// 回显配送方式
+	$("input[name='modeDelvery']").each(function(){
+		if($("#delveryModeRadio").val() == $(this).val()){
+			$(this).attr('checked', true);			
+			if($(this).val() == 'own'){
+				$("#textDiv1").show();
+				$("#textDiv").hide();
+				$('#spMessage').val("");
+				$('#sp_id').val("");
+				$('#cid').val("");
+				$('#a1').html("");
+				$('#a2').html("");
+				$('#a3').html("");
+				$('#a4').html("");
+			}else{
+				$("#textDiv").show();
+				$("#textDiv1").hide();			
+				$('#car_id').val("");
+				$('#driver_name').val("");
+				$('#a5').html("");
+				$('#a6').html("");
+			}
+		}
+	});
+	//改变配送方式
+	$("input[name='modeDelvery']").on('click',function(){			
+		if($(this).val() == 'own'){
+			$("#textDiv1").show();
+			$("#textDiv").hide();
+			$('#spMessage').val("");
+			$('#sp_id').val("");
+			$('#cid').val("");
+			$('#a1').html("");
+			$('#a2').html("");
+			$('#a3').html("");
+			$('#a4').html("");
+		}else{
+			$("#textDiv").show();
+			$("#textDiv1").hide();			
+			$('#car_id').val("");
+			$('#driver_name').val("");
+			$('#a5').html("");
+			$('#a6').html("");
+		}
+	});
 	// 发车确认
 	$("#ConfirmationBtn").click(function(){
 		// 浏览器启动时,停到当前位置
@@ -391,13 +475,19 @@ $(document).ready(function() {
 		var productIds = $("#productIds").val();
 		var shippingNumbers = $("#shippingNumbers").val();
 		var cargoNature =$("#cargoNature").val();
-		var spMessage = $("#spMessage").val();
 		var business_stamp =$('#business_stamp').val();
 		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
-		if(spMessage == ""){
-			alert("请输入供应商名称");
+		var modeDelvery=$("input[name='modeDelvery']:checked").val();
+		var sp_id = $("#sp_id").val();
+		var car_id = $("#car_id").val();
+		if(sp_id == ""&&modeDelvery=="out_source"){
+			alert("请选择有效的供应商");
+			return false;
+		}
+		if(car_id == ""&&modeDelvery=="own"){
+			alert("请选择有效的司机");
 			return false;
 		}
 		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){

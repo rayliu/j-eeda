@@ -27,6 +27,7 @@ import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.Warehouse;
 import models.yh.delivery.DeliveryOrder;
+import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -519,6 +520,10 @@ public class DeliveryController extends Controller {
 		Party spContact = Party.dao
 				.findFirst("select *,p.id as spid from party p,contact c where p.id ='"
 						+ tOrder.get("sp_id") + "'and p.contact_id = c.id");
+		// 司机信息
+		Carinfo carContact = Carinfo.dao
+						.findFirst("SELECT * FROM carinfo c WHERE c.id='"
+						+ tOrder.get("car_id") + "'");
 		// 调拨供应商
 		if(tOrder.get("delivery_id")!=null){
 			DeliveryOrder deliveryOrder= DeliveryOrder.dao.findById(tOrder.get("delivery_id"));
@@ -559,7 +564,7 @@ public class DeliveryController extends Controller {
 		setAttr("deliveryId", tOrder);
 		setAttr("customer", customerContact);
 		setAttr("spContact", spContact);
-		
+		setAttr("carContact", carContact);
 		String routeFrom = tOrder.get("route_from");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
@@ -1158,10 +1163,12 @@ public class DeliveryController extends Controller {
 		DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryid);
 		String notifyId = getPara("notify_id");
 		String warehouseNature = getPara("warehouseNature");
+		String delveryMode = getPara("modeDelvery");
 		String gateInSelect = getPara("gateInSelect");
 		String changeSpId = getPara("spChange_id");
 		String sign_document_no = getPara("sign_document_no");//签收单据号
-		String spId = getPara("sp_id");
+		String spId = getPara("sp_id")==""?null:getPara("sp_id");
+		String carId = getPara("car_id")==""?null:getPara("car_id");
 		String cargoNature = getPara("cargoNature");
 		String idlist3 = getPara("localArr");
 		String idlist5 = getPara("localArr3");
@@ -1214,6 +1221,8 @@ public class DeliveryController extends Controller {
 			deliveryOrder.set("order_no", orderNo)
 					.set("customer_id", customerId)
 					.set("sp_id", spId)
+					.set("car_id", carId)
+					.set("delveryMode", delveryMode)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
@@ -1361,6 +1370,8 @@ public class DeliveryController extends Controller {
 		} else {
 			DeliveryOrder deliveryChangeOrder =null;
 			deliveryOrder.set("sp_id", spId)
+					.set("car_id", carId)
+					.set("delveryMode", delveryMode)
 					.set("Customer_id", customerId)
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
