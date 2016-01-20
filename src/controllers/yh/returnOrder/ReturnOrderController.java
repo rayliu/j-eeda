@@ -150,7 +150,7 @@ public class ReturnOrderController extends Controller {
         
         conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
         		//+ " and (!(unix_timestamp(planning_time) < unix_timestamp('2015-07-01')) AND cname = '江苏国光') " ;
-        String totalSql = " SELECT ror.order_no,ror.customer_id,ror.transaction_status, "
+        String totalSql = " SELECT ror.order_no,ror.customer_id,ror.transaction_status,dor.order_no delivery_order_no, "
     		    + " ( CASE tor.arrival_mode  "
 				+ " WHEN 'gateIn' THEN '配送' "
 				+ " WHEN 'delivery' THEN '运输'"
