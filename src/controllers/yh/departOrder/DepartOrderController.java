@@ -126,6 +126,7 @@ public class DepartOrderController extends Controller {
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		String sql = "";
+		String totalSql = "";
 		if (getPara("iDisplayStart") != null
 				&& getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
@@ -167,7 +168,7 @@ public class DepartOrderController extends Controller {
         if (StringUtils.isNotEmpty(beginTime)){
 			beginTime = " and create_stamp between'"+beginTime+"'";
         }else{
-        	beginTime =" and planning_time between '2000-1-1'";
+        	beginTime =" and create_stamp between '2000-1-1'";
         }
         if (StringUtils.isNotEmpty(endTime)){
         	endTime =" and '"+endTime+"'";
@@ -186,36 +187,96 @@ public class DepartOrderController extends Controller {
         	planEndTime =" and '3000-1-1'";
         }
         conditions += planBeginTime + planEndTime;
-//		String whereSql = "  where deo.combine_type = '"
-//				+ DepartOrder.COMBINE_TYPE_DEPART
-//				+ "'";
-		sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(nullif(u.c_name,''),u.user_name) user_name,"
-				+ " o.office_name office_name,deo.departure_time departure_time ,ifnull(cc.abbr,cc.company_name) as customer,ct.abbr abbr,"
-				+ " (select name from location where code = deo.route_from) route_from,(select name from location where code = deo.route_to) route_to,"
-				+ " (SELECT GROUP_CONCAT(DISTINCT tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt WHERE  dt.depart_id = deo.id AND dt.order_id = tr.id) as transfer_order_no, "
-				+ " (SELECT GROUP_CONCAT(DISTINCT CAST(tr.planning_time AS char) SEPARATOR '\r\n')FROM transfer_order tr, depart_transfer dt WHERE dt.depart_id = deo.id AND dt.order_id = tr.id) AS planning_time,"
+        conditions += "and office_id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal()
+				+ "') and customer_id in (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal() + "')  ";
+
+        totalSql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.office_id SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) AS office_id,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT o.office_name SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " left join office o on o.id = tor.office_id "
+				+ " WHERE dt.depart_id = deo.id ) office_name,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.customer_id SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor "
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) customer_id ,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT c.abbr SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor "
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " LEFT JOIN contact c on c.id = tor.customer_id "
+				+ " WHERE dt.depart_id = deo.id ) customer,"
+				+ " ct.abbr abbr,"
+				+ " l1.NAME route_from,"
+				+ " l2.NAME route_to,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.order_no SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) AS transfer_order_no,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) AS planning_time,"
+				+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
+				+ " deo.transfer_type as trip_type"
+				+ " from depart_order deo"
+				+ " left join party p on deo.sp_id = p.id"
+				+ " left join contact ct on p.contact_id = ct.id"
+				+ " left join location l1 on l1.code = deo.route_from"
+				+ " left join location l2 on l2.code = deo.route_to "
+				+ " where "
+				+ " deo.status!='手动删除' and deo.combine_type='DEPART' ";
+        
+		sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(u.c_name,u.user_name) user_name,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.office_id SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) AS office_id,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT o.office_name SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " left join office o on o.id = tor.office_id "
+				+ " WHERE dt.depart_id = deo.id )  office_name,"
+				+ " deo.departure_time departure_time ,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.customer_id SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor "
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) customer_id ,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT c.abbr SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor "
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " LEFT JOIN contact c on c.id = tor.customer_id "
+				+ " WHERE dt.depart_id = deo.id ) customer,"
+				+ " ct.abbr abbr,"
+				+ " l1.NAME route_from,"
+				+ " l2.NAME route_to,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.order_no SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) AS transfer_order_no,"
+				+ " ( SELECT GROUP_CONCAT( DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n' ) "
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " WHERE dt.depart_id = deo.id ) AS planning_time,"
 				+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
 				+ " deo.transfer_type as trip_type"
 				+ " from depart_order deo"
 				+ " left join carinfo c on deo.carinfo_id = c.id"
 				+ " left join party p on deo.sp_id = p.id"
 				+ " left join contact ct on p.contact_id = ct.id"
-				+ " left join depart_transfer dtf on dtf.depart_id = deo.id"
-				+ " left join transfer_order tor on tor.id = dtf.order_id"
-				+ " left join user_login u on u.id = tor.create_by"
-				+ " left join office o on o.id = tor.office_id"
+				+ " left join user_login u on u.id = deo.create_by"
 				+ " left join location l1 on l1.code = deo.route_from"
 				+ " left join location l2 on l2.code = deo.route_to "
-				+ " left join party cp on tor.customer_id = cp.id "
-				+ " left join contact cc on cp.contact_id = cc.id "
 				+ " where "
-				+ " deo.status!='手动删除' and deo.combine_type='DEPART' and o.id in (select office_id from user_office where user_name='"
-				+ currentUser.getPrincipal()
-				+ "') and tor.customer_id in (select customer_id from user_customer where user_name='"
-				+ currentUser.getPrincipal() + "')  ";
+				+ " deo.status!='手动删除' and deo.combine_type='DEPART' ";
 				
 
-		Record rec = Db.findFirst("select count(1) total from (select * from (" + sql+ ") A " + conditions +" ) B");
+		Record rec = Db.findFirst("select count(1) total from (select * from (" + totalSql+ ") A " + conditions +" ) B");
 		List<Record> departOrders = Db.find("select * from (" + sql+ ") A " + conditions + " order by create_stamp desc " + sLimit);
 		Map map = new HashMap();
 		map.put("sEcho", pageIndex);
