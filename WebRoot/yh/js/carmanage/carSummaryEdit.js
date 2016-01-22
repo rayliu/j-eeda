@@ -97,13 +97,14 @@ $(document).ready(function() {
  	var findTableDataService = function(tableName){
  		var car_summary_id = $("#car_summary_id").val();
  		var pickupIds = $("#pickupIds").val();
+ 		var orderTypes = $("#orderTypes").val();
  		tableName.fnSettings().oFeatures.bServerSide = true;
  		if(clickTabId == "carmanageLine")//线路
- 			tableName.fnSettings().sAjaxSource = "/carsummary/findAllAddress?pickupIds="+pickupIds;   
+ 			tableName.fnSettings().sAjaxSource = "/carsummary/findAllAddress?pickupIds="+pickupIds+"&orderTypes="+orderTypes;   
 		else if(clickTabId == "transferOrderList")//运输单
-			tableName.fnSettings().sAjaxSource = "/carsummary/findTransferOrder?pickupIds="+pickupIds;   
+			tableName.fnSettings().sAjaxSource = "/carsummary/findTransferOrder?pickupIds="+pickupIds+"&orderTypes="+orderTypes;   
 		else if(clickTabId == "carmanageItemList")//货品信息
-			tableName.fnSettings().sAjaxSource = "/carsummary/findPickupOrderItems?pickupIds="+pickupIds; 
+			tableName.fnSettings().sAjaxSource = "/carsummary/findPickupOrderItems?pickupIds="+pickupIds+"&orderTypes="+orderTypes; 
 		else if(clickTabId == "carmanageMilestoneList")//里程碑
  			tableName.fnSettings().sAjaxSource = "/carsummary/transferOrderMilestoneList?car_summary_id="+car_summary_id;
 		else if(clickTabId == "carmanageRoadBridge")//路桥费明细
@@ -129,6 +130,7 @@ $(document).ready(function() {
  	 			if(data != null){
  	 				$("#car_summary_id").val(data.ID);
  	 				$("#car_summary_no").val(data.ORDER_NO);
+ 	 				contactUrl("edit?carSummaryId",data.ID);
  	 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  	 				findTableDataService(tableName);
  	 			}else{
@@ -162,6 +164,7 @@ $(document).ready(function() {
  			if(data != null){
  				$("#car_summary_id").val(data.ID);
  				$("#car_summary_no").val(data.ORDER_NO);
+ 				contactUrl("edit?carSummaryId",data.ID);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  			}else{
  				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
@@ -1187,6 +1190,7 @@ $(document).ready(function() {
 					$("#isAudit").val("yes");
 					//$("#auditBtn").hide();
 					$("#auditBtn").prop("disabled",true);
+					$("#saveCarSummaryBtn").prop("disabled",true);
 					$("#delAuditBtn").show();
 					$("#saveCarSummaryBtn").prop("disabled",true);
 					$("#addCarSummaryRouteFee").prop("disabled",true);

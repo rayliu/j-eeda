@@ -3,6 +3,7 @@ $(document).ready(function() {
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	
 	var pickupIds = [];
+	var orderTypes = [];
 	var checkedTest = [];
 	var carNo = [];
     var createStamp = [];
@@ -30,7 +31,7 @@ $(document).ready(function() {
 			{ "mDataProp": null,"sWidth":"10px",
 				"fnRender": function(obj) {
 					unDisposePickuoIds.push("S"+obj.aData.ID);
-					return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+					return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'" order_type="'+obj.aData.ORDER_TYPE+'">';
 				}
 			},  
 			{ "mDataProp": null,"sWidth":"40px",
@@ -208,6 +209,7 @@ $(document).ready(function() {
         e.preventDefault();
         if(pickupIds.length > 0){
         	$("#pickupIds").val(pickupIds);
+        	$("#orderTypes").val(orderTypes);
             $('#createForm').submit();
             
         }else{
@@ -229,6 +231,7 @@ $(document).ready(function() {
 						if(select == unDisposePickuoIds[num-1] || select == unDisposePickuoIds[num+1]){*/
 							checkedTest.push("S"+$(this).val());
 							pickupIds.push($(this).val());
+							orderTypes.push($(this).attr("order_type"));
 						/*}else{
 							//alert("请选择连续性出车日期的调车单!");
 							$.scojs_message('请选择连续性出车日期的调车单!', $.scojs_message.TYPE_ERROR);
@@ -246,6 +249,7 @@ $(document).ready(function() {
 				}
 			}else{
 				pickupIds.push($(this).val());
+				orderTypes.push($(this).attr("order_type"));
 				checkedTest.push("S"+$(this).val());
 				carNo.push($(this).parent().siblings('.CAR_NO')[0].innerHTML);
 				createStamp.push($(this).parent().siblings('.CREATE_STAMP')[0].innerHTML);
@@ -256,6 +260,7 @@ $(document).ready(function() {
 				if(checkedTest.indexOf("S"+$(this).val()) == 0 || checkedTest.indexOf("S"+$(this).val()) ==checkedTest.length-1){
 					checkedTest.splice(checkedTest.indexOf("S"+$(this).val()), 1); 
 					pickupIds.splice(pickupIds.indexOf($(this).val()), 1); 
+					orderTypes.splice(orderTypes.indexOf($(this).attr("order_type")), 1); 
 					carNo.splice($(this).parent().siblings('.CAR_NO')[0].innerHTML, 1);
 					createStamp.splice($(this).parent().siblings('.CREATE_STAMP')[0].innerHTML, 1);
 					if(checkedTest.length == 0)

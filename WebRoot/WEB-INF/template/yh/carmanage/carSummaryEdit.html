@@ -51,6 +51,7 @@
 			                                   <form id="carSummaryForm" method="post" action="">
 			                                   		<input type="hidden" id="car_summary_id" name="car_summary_id" value="${carSummaryOrder.id!''}">
 			                                   		<input type="hidden" id="pickupIds" name="pickupIds" value="${pickupIds!''}">
+			                                   		<input type="hidden" id="orderTypes" name="orderTypes" value="${orderTypes!''}">
 			                                   		<input type="hidden" id="isAudit" name="isAudit" value="${isAudit!''}">
 					                                <div class="col-lg-6">
 					                                	
@@ -131,7 +132,7 @@
 	                                        <table id="pickupAddressTbody" class="table table-striped table-bordered table-hover">
 	                                            <thead>
 	                                                <tr>
-	                                                    <th>调车单</th>
+	                                                    <th>调车单/配送单</th>
 	                                                    <th>运输单</th>
 	                                                    <th>客户</th>
 	                                                    <th>提货地点</th>
@@ -195,7 +196,7 @@
 	                                        <table id="pickupItemTbody" class="table table-striped table-bordered table-hover">
 	                                            <thead>
 	                                                <tr>
-	                                                    <th>调车单</th>
+	                                                    <th>调车单/配送单</th>
 	                                                    <th>运输单</th>
 	                                                    <th>客户</th>
 	                                                    <th>型号</th>

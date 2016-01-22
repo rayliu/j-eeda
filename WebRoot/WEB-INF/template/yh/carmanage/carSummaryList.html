@@ -9,6 +9,7 @@
                 	<div class="btn-header">
                 		<form id="createForm" action="/carsummary/createCarSummary" method="post">
                             <input id='pickupIds' name='pickupIds' type="hidden">
+                            <input id='orderTypes' name='orderTypes' type="hidden">
 	                		<% if(shiro.hasPermission("CarSummary.create")){%>
 	                      	<button id="saveBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建行车单</button>
 	                    	<%}%>
