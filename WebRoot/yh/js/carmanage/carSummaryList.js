@@ -190,9 +190,7 @@ $(document).ready(function() {
 		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList";
 		unDispose_table.fnDraw();
 	});
-    
-    //未处理行车单各种搜索
-    $('#status ,#driver ,#car_no ,#transferOrderNo ,#create_stamp').on( 'keyup click', function () {
+    var refreshData=function(){
 		var status = $("#status").val();
 		var driver = $("#driver").val();
 		var car_no = $("#car_no").val();
@@ -202,7 +200,8 @@ $(document).ready(function() {
 		unDispose_table.fnSettings().oFeatures.bServerSide = true; 
 		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp;
 		unDispose_table.fnDraw();
-	} );
+		saveConditions();
+	};
     
 	//创建行车单
     $('#saveBtn').click(function(e){
@@ -216,7 +215,40 @@ $(document).ready(function() {
         	alert("请选择要创建的调车单");
         }
     });
-    
+    $("#searchBtn").click(function(){
+        refreshData();
+    });
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+        saveConditions();
+    });
+    var saveConditions=function(){
+        var conditions={
+        	status:$("#status").val(),
+            driver :$("#driver").val(),
+            car_no:$("#car_no").val(),
+            transferOrderNo:$("#transferOrderNo").val(),
+            create_stamp : $("#create_stamp").val(),
+        };
+        if(!!window.localStorage){//查询条件处理
+            localStorage.setItem("query_to", JSON.stringify(conditions));
+        }
+    };
+    var loadConditions=function(){
+        if(!!window.localStorage){//查询条件处理
+            var query_to = localStorage.getItem('query_to');
+            if(!query_to)
+                return;
+
+            var conditions = JSON.parse(localStorage.getItem('query_to'));
+            $("#status").val(conditions.status);
+            $("#driver").val(conditions.driver);
+            $("#car_no").val(conditions.car_no);
+            $("#transferOrderNo").val(conditions.transferOrderNo);
+            $("#create_stamp").val(conditions.create_stamp);
+        }
+    };
+    loadConditions();
 	// 选中或取消事件
 	$("#unDispose_table").on('click', '.checkedOrUnchecked', function(){
 		if($(this).prop("checked") == true){
@@ -286,7 +318,7 @@ $(document).ready(function() {
 		travellingCraneReceipts_table.fnDraw();
 	});
 	//行车单查询各种搜索
-    $('#carSummary_status ,#carSummary_car_no ,#carSummary_driver ,#carSummary_transfer_order ,#carSummary_pickup_order,#carSummary_start_data').on( 'keyup click', function () {
+	refreshData1=function () {
 		var status = $("#carSummary_status").val();
 		var car_no = $("#carSummary_car_no").val();
 		var driver = $("#carSummary_driver").val();
@@ -296,7 +328,43 @@ $(document).ready(function() {
 		num2 = 1;
 		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&order_no="+order_no+"&start_data="+start_data;
 		travellingCraneReceipts_table.fnDraw();
-	} );
+		saveConditions1();
+	};
+	$("#searchBtn1").click(function(){
+        refreshData1();
+    });
+    $("#resetBtn1").click(function(){
+        $('#searchForm1')[0].reset();
+        saveConditions1();
+    });
+    var saveConditions1=function(){
+        var conditions={
+        	status:$("#carSummary_status").val(),
+        	car_no :$("#carSummary_car_no").val(),
+            driver:$("#carSummary_driver").val(),
+            transfer_order:$("#carSummary_transfer_order").val(),
+            pickup_order : $("#carSummary_pickup_order").val(),
+            start_data : $("#carSummary_start_data").val(),
+        };
+        if(!!window.localStorage){//查询条件处理
+            localStorage.setItem("query_to_one", JSON.stringify(conditions));
+        }
+    };
+    var loadConditions1=function(){
+        if(!!window.localStorage){//查询条件处理
+            var query_to = localStorage.getItem('query_to_one');
+            if(!query_to)
+                return;
+            var conditions = JSON.parse(localStorage.getItem('query_to_one'));
+            $("#carSummary_status").val(conditions.status);
+            $("#carSummary_driver").val(conditions.driver);
+            $("#carSummary_car_no").val(conditions.car_no);
+            $("#carSummary_transfer_order").val(conditions.transfer_order);
+            $("#carSummary_pickup_order").val(conditions.pickup_order);
+            $("#carSummary_start_data").val(conditions.start_data);
+        }
+    };
+    loadConditions1();
     
 });
 /*function DateDiff(d1,d2){ 
