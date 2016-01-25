@@ -3,7 +3,100 @@ $(document).ready(function() {
 	if(deliverOrder.orderNo){
 		document.title = deliverOrder.orderNo +' | '+document.title;
 	}
-	
+	//新增空白配送的货品明细
+	var feeTable = $('#itemList-table').dataTable({    	
+    	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+    	"bPaginate": false, //翻页功能
+        "bInfo": false,//页脚信息
+        "bFilter": false, //不需要默认的搜索框
+    	"bSort": false, // 不要排序
+    	//"bServerSide": true,
+    	"oLanguage": {
+    		"sUrl": "/eeda/dataTables.ch.txt"
+    	},
+    	//"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
+//        "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+//			$(nRow).attr('id', aData.ID);
+//			return nRow;
+//		},		
+    	 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+ 			$(nRow).attr({id: aData.ID}); 
+ 			$(nRow).attr({order_type: aData.ORDER_TYPE}); 
+ 			return nRow;
+ 		},
+
+        "aoColumns": [ 
+			{"mDataProp":"ID","fnRender": function(obj) {
+				console.log(obj.aData.ID);
+				return obj.aData.ID;
+		     }
+			},
+          	{"mDataProp":"ITEM_NO", "sWidth": "20%",
+          	 "sClass":'item_no',
+          	 "fnRender": function(obj) {
+		        if(obj.aData.ITEM_NO!='' && obj.aData.ITEM_NO != null){
+//		            return "<input type='text'  name='item_no' value='"+obj.aData.ITEM_NO+"' class='form-control search-control'>";
+		        }else{
+		        	 return "<input type='text'  name='item_no' class='form-control search-control'>";
+		        }//field_type='product_search'
+		     }
+            },
+            {"mDataProp":"ITEM_NAME","sWidth": "20%",
+            	 "fnRender": function(obj) {
+     		        if(obj.aData.ITEM_NAME!='' && obj.aData.ITEM_NAME != null){
+		            return "<input type='text' name='item_name' value='"+obj.aData.ITEM_NAME+"' class='form-control search-control'>";
+		        }else{
+		        	 return "<input type='text' name='item_name' class='form-control search-control'>";
+		        }
+		     }
+            },
+			 {"mDataProp":"AMOUNT","sWidth": "10%",
+				    "fnRender": function(obj) {
+				        if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+				            return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"' class='form-control search-control'>";
+				        }else{
+				        	return "<input type='text' name='amount' class='form-control search-control'>";
+				        }
+				}
+			 },
+			 {"mDataProp":"UNIT","sWidth": "10%",
+				    "sClass":'unit',
+				    "fnRender": function(obj) {
+				        if(obj.aData.UNIT!='' && obj.aData.UNIT != null){
+				        	var str="";
+				        	$("#unitList").children().each(function(){
+				        		if(obj.aData.UNIT == $(this).text()){
+				        			str+="<option value='"+$(this).text()+"' selected = 'selected'>"+$(this).text()+"</option>";
+				        		}else{
+				        			str+="<option value='"+$(this).text()+"'>"+$(this).text()+"</option>";
+				        		};
+				        	});
+				            return "<select name='unit_id' class='form-control search-control'>"+str+"</select>";
+				        }else{
+				        	var str="";
+				        	$("#unitList").children().each(function(){
+				        		str+="<option value='"+$(this).text()+"'>"+$(this).text()+"</option>";
+				        	});
+				        	return "<select name='fin_item_id' class='form-control search-control'>"+str+"</select>";
+				        }
+				 }
+			 },
+            {"mDataProp":"ITEM_DESC","sWidth": "20%",
+        	    "fnRender": function(obj) {
+			        if(obj.aData.ITEM_DESC!='' && obj.aData.ITEM_DESC != null){
+			            return "<input type='text' name='item_desc' value='"+obj.aData.ITEM_DESC+"'  class='form-control search-control'>";
+			        }else{
+			        	 return "<input type='text'  name='item_desc' class='form-control search-control'>";
+			        }
+			    }
+        	},
+			{"mDataProp": null,"sWidth": "10%",
+                "fnRender": function(obj) {
+               		 return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+                }
+            }   
+        ]      
+    });
 	//按钮控制
 	var deliveryStatus=$("#deliveryOrder_status").text();
 	if(deliveryStatus == ''){
@@ -33,42 +126,7 @@ $(document).ready(function() {
 	
 	var parentId="chargeCheckOrderbasic";
 	
-	$('#driver_name').on('keyup click', function(){
- 		var inputStr = $('#driver_name').val();
-		//定义一个TYPE变量，用来作为车辆的条件
-		var typeStr = "OWN";
- 		$.get('/transferOrder/searchAllCarInfo', {input:inputStr,type:typeStr}, function(data){
- 			var driverList = $("#driverList");
- 			driverList.empty();
- 			for(var i = 0; i < data.length; i++)
- 			{
- 				driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].ID+"' car_no='"+data[i].CAR_NO+"' phone='"+data[i].PHONE+"' driver='"+data[i].DRIVER+"' > "+data[i].DRIVER+" "+data[i].PHONE+"</a></li>");
- 			}
- 		},'json');
- 		
- 		$("#driverList").css({ 
-         	left:$(this).position().left+"px", 
-         	top:$(this).position().top+32+"px" 
-        }); 
-        $('#driverList').show();
-	 });
-	  	
- 	 // 选中司机
- 	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
-	  	 $('#driver_name').val($(this).attr('driver'));
-	  	 $('#a5').html($(this).attr('car_no'));  
-	  	 $('#a6').html($(this).attr('phone'));
-	  	 $('#car_id').val($(this).attr('pid'));
-	     $('#driverList').hide();   
-     });
- 	// 没选中司机，焦点离开，隐藏列表
-  	$('#driver_name').on('blur', function(){
-   		$('#driverList').hide();
-   	});
- 	// 没选中司机，焦点离开，隐藏列表
- 	$('#driverList').on('blur', function(){
-  		$('#driverList').hide();
-  	});
+	
 	$('#spMessage').on('keyup click', function(){
 		var inputStr = $('#spMessage').val();
 		if(inputStr == ""){
@@ -109,6 +167,7 @@ $(document).ready(function() {
         }); 
         $('#spList').show();
 	});
+
 	// 没选中供应商，焦点离开，隐藏列表
 	$('#spMessage').on('blur', function(){
  		$('#spList').hide();
@@ -245,7 +304,7 @@ $(document).ready(function() {
 	            {"mDataProp":"SERIAL_NO",
 	            	 "fnRender": function(obj) {
 	 			        if(obj.aData.SERIAL_NO!='' && obj.aData.SERIAL_NO != null){
-	 			            return "<input type='text' name='serial_no' value='"+obj.aData.SERIAL_NO+"' class='form-control search-control'>";
+	 			            return "<input type='text' name='serial_no' value='"+obj.aData.SERIAL_NO+"' class='form-control search-control'>" ;
 	 			        }else{
 	 			        	 return "<input type='text'  name='serial_no' class='form-control search-control'>";
 	 			        }
@@ -259,6 +318,105 @@ $(document).ready(function() {
 	        ]      
 	    });	
 	}
+	
+	
+   
+    
+    
+  //删除一行
+    var deletedIds=[];
+	$("#itemList-table").on('click', '.finItemdel', function(e){
+		e.preventDefault();
+		var tr = $(this).parent().parent();
+		deletedIds.push(tr.attr('id'));
+		tr.remove();
+	});	
+	$('#deletedIds').val(deletedIds);
+	
+	//添加一行
+	$("#addItem").click(function(){
+		 feeTable.fnAddData({
+			ID:'',
+		 	ITEM_NO:'',
+		 	ITEM_NAME:'',
+		 	UNIT:'',
+		 	AMOUNT: '0',
+		 	ITEM_DESC:'',
+		 });
+		 //bindProductSearch();
+	});	
+	
+	
+	
+	//item_no
+	$('#itemList-table').on('click', 'input[name=item_no]', function(){
+		var inputBox=$(this);
+		inputBox.autocomplete({
+	        source: function( request, response ) {
+	        	if(inputBox.parent().parent()[0].cellIndex >1){//从第3列开始，不需要去后台查数据
+		    		return;
+		    	}
+	            $.ajax({
+	                url: "/transferOrder/searchItemNo",
+	                dataType: "json",
+	                data: {
+	                    customerId: $('#customer_id').val(),
+	                    input: request.term
+	                },
+	                success: function( data ){
+						var columnName = inputBox.parent().parent()[0].className;
+						var itemNos =[];
+		        		$("input[name=item_no]").each(function(){
+		       				if($(this).val()!=null&&$(this).val()!=""){
+		       					itemNos.push($(this).val());
+		       				}
+		    	   		});
+		        		if(data.length>0){
+		        			response($.map( data, function( data ) {
+		                    	var complete="";
+		                    	for(var i=0;i<itemNos.length;i++){
+		                    		if(data.ITEM_NO == itemNos[i]){
+		                    			complete = data.ITEM_NO;
+		                    		}
+		                    	}
+		                    	if(complete != data.ITEM_NO){
+		                    		return {
+		 	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
+		 	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
+		 	                            id: data.ID,
+		 	                            item_no: data.ITEM_NO,
+		 	                            item_name: data.ITEM_NAME
+		 	                       };
+		                    	}	
+		                    }));
+		        		}else{
+		        			var d = new Array(1);
+		        			if($("input[name='orderType']:checked").val() == "arrangementOrder"){
+		        				d[0] = "当前仓库内客户没有此类产品库存";
+		        			}else{
+		        				d[0] = "当前客户没有维护此类产品";
+		        			}
+		        			
+		        			response($.map(d, function( i ) {
+		        				return {
+	 	                            value:'警告:'+i,
+	 	                            id: '',
+	 	                            item_no: '',
+	 	                            item_name: '',
+	 	                            label: ''
+	 	                       };
+		                    }));
+		        		}
+	                }
+	            });
+	        },
+        	minLength: 2
+        });
+	});
+	
+	
+	
+	
 	// 获取所有网点
 	 $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
@@ -353,22 +511,46 @@ $(document).ready(function() {
 	$('#message_trigger_err').on('click', function(e) {
 		e.preventDefault();
 	});
+	
+	
+	
 	var saveDelivery = function(){
 		
+	////货品明细的构造
+		 $('#deletedIds').val(deletedIds);
+		 deletedIds = [];
+		 var tableRows = $("#itemList-table tr");
+	        var itemsArray=[];
+	        for(var index=0; index<tableRows.length; index++){
+	        	if(index==0)
+	        		continue;
+
+	        	var row = tableRows[index];
+	        	var id = $(row).attr('id');
+	        	if(!id){
+	        		id='';
+	        	}
+	        	
+	        	var item=[
+	        	    id,
+	        		$(row.children[1]).find('input').val(), 
+				 	$(row.children[2]).find('input').val(),
+				 	$(row.children[3]).find('input').val(),
+				 	$(row.children[4]).find('select').val(),
+				 	$(row.children[5]).find('input').val(),
+				 	'空'+'&'
+				];
+	        	itemsArray.push(item);
+	        }
+	        $('#JsonDetail').val(itemsArray);
 		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
 		var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
 		var business_stamp =$('#business_stamp').val();
 		var sp_id = $("#sp_id").val();
-		var car_id = $("#car_id").val();
-		var modeDelvery=$("input[name='modeDelvery']:checked").val();
-		if(sp_id == ""&&modeDelvery=="out_source"){
+		if(sp_id == ""){
 			alert("请选择有效的供应商");
-			return false;
-		}
-		if(car_id == ""&&modeDelvery=="own"){
-			alert("请选择有效的司机");
 			return false;
 		}
 		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
@@ -391,7 +573,6 @@ $(document).ready(function() {
 		$("#saveBtn").attr("disabled", true);
         // 异步向后台提交数据
         $.post('/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
-            console.log(data);
             if(data.ID>0){
             	$("#delivery_id").val(data.ID);
             	$("#change_delivery_id").val(data.DELIVERY_ID);
@@ -401,6 +582,11 @@ $(document).ready(function() {
             	$("#deliveryOrder_status").text(data.STATUS);
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+            	
+            	feeTable.fnSettings().oFeatures.bServerSide = true;
+            	feeTable.fnSettings().sAjaxSource="/delivery/itemsList?delivery_id="+data.ID;
+            	feeTable.fnDraw();
+            	//window.location.reload()
             }else{
                 alert('数据保存失败。');
             }
@@ -415,51 +601,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		saveDelivery();
     });
-	// 回显配送方式
-	$("input[name='modeDelvery']").each(function(){
-		if($("#delveryModeRadio").val() == $(this).val()){
-			$(this).attr('checked', true);			
-			if($(this).val() == 'own'){
-				$("#textDiv1").show();
-				$("#textDiv").hide();
-				$('#spMessage').val("");
-				$('#sp_id').val("");
-				$('#cid').val("");
-				$('#a1').html("");
-				$('#a2').html("");
-				$('#a3').html("");
-				$('#a4').html("");
-			}else{
-				$("#textDiv").show();
-				$("#textDiv1").hide();			
-				$('#car_id').val("");
-				$('#driver_name').val("");
-				$('#a5').html("");
-				$('#a6').html("");
-			}
-		}
-	});
-	//改变配送方式
-	$("input[name='modeDelvery']").on('click',function(){			
-		if($(this).val() == 'own'){
-			$("#textDiv1").show();
-			$("#textDiv").hide();
-			$('#spMessage').val("");
-			$('#sp_id').val("");
-			$('#cid').val("");
-			$('#a1').html("");
-			$('#a2').html("");
-			$('#a3').html("");
-			$('#a4').html("");
-		}else{
-			$("#textDiv").show();
-			$("#textDiv1").hide();			
-			$('#car_id').val("");
-			$('#driver_name').val("");
-			$('#a5').html("");
-			$('#a6').html("");
-		}
-	});
+			
 	// 发车确认
 	$("#ConfirmationBtn").click(function(){
 		// 浏览器启动时,停到当前位置
@@ -475,19 +617,13 @@ $(document).ready(function() {
 		var productIds = $("#productIds").val();
 		var shippingNumbers = $("#shippingNumbers").val();
 		var cargoNature =$("#cargoNature").val();
+		var spMessage = $("#spMessage").val();
 		var business_stamp =$('#business_stamp').val();
 		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
-		var modeDelvery=$("input[name='modeDelvery']:checked").val();
-		var sp_id = $("#sp_id").val();
-		var car_id = $("#car_id").val();
-		if(sp_id == ""&&modeDelvery=="out_source"){
-			alert("请选择有效的供应商");
-			return false;
-		}
-		if(car_id == ""&&modeDelvery=="own"){
-			alert("请选择有效的司机");
+		if(spMessage == ""){
+			alert("请输入供应商名称");
 			return false;
 		}
 		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
@@ -549,20 +685,20 @@ $(document).ready(function() {
     	// 切换到货品明细时,应先保存运输单
     	// 提交前，校验数据
         if($("#delivery_id").val() == ""){
-	    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
+	    	/*$.post('/transferOrder/saveTransferOrder', $("#transferOrderForm").serialize(), function(transferOrder){
 				$("#transfer_order_id").val(transferOrder.ID);
 				$("#update_transfer_order_id").val(transferOrder.ID);
 				$("#order_id").val(transferOrder.ID);
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
-				$("#id").val(transferOrder.ID);
-				if(transferOrder.ID>0){
+				$("#id").val(transferOrder.ID);*/
+				/*if(transferOrder.ID>0){
 					if(transferOrder.STATUS == '已发车'){
 						$("#departureConfirmationBtn").attr("disabled", true);		
 					}else{
 						$("#departureConfirmationBtn").attr("disabled", false);
 					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
-				  	// $("#style").show();
+				  	// $("#style").show();*/
 				  	var order_id = $("#order_id").val();
 					$.post('/deliveryOrderMilestone/transferOrderMilestoneList',{order_id:order_id},function(data){
 						var transferOrderMilestoneTbody = $("#transferOrderMilestoneTbody");
@@ -572,10 +708,10 @@ $(document).ready(function() {
 							transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestones[i].STATUS+"</th><th>"+data.transferOrderMilestones[i].LOCATION+"</th><th>"+data.usernames[j]+"</th><th>"+data.transferOrderMilestones[i].CREATE_STAMP+"</th></tr>");
 						}
 					},'json');
-				}else{
+				/*}else{
 					alert('数据保存失败。');
-				}
-			},'json');
+				}*/
+			/*},'json');*/
         }else{
 		  	var delivery_id = $("#delivery_id").val(); 
 		  	$("#transfer_milestone_delivery_id").val(delivery_id); 
@@ -817,16 +953,7 @@ $(document).ready(function() {
             }     
         ]      
     });
-	/*
-	 * //应收 $("#item_fin_save").click(function(){ var deliveryid
-	 * =$("#delivery_id").val();
-	 * $.post('/deliveryOrderMilestone/receiptSave/'+deliveryid,
-	 * $("#fin_form").serialize(), function(data){ console.log(data);
-	 * if(data.success){ //receipttable.fnDraw();
-	 * $('#fin_item').modal('hide'); $('#resetbutton').click(); }else{ }
-	 * 
-	 * }); });
-	 */
+
 	// 应付
 	$("#addrow").click(function(){
 		var deliveryid =$("#delivery_id").val();
@@ -1133,64 +1260,7 @@ $(document).ready(function() {
     });	
 		
 		
-	/*//回显初始地
-	var locationFrom = $("#locationForm").val();
-	if(locationFrom == "")
-		$("#hideLocationFrom").val();
-	//var searchAllLocationFrom = function(locationFrom){
-	if(locationFrom != ""){
-    	$.get('/transferOrder/searchLocationFrom', {locationFrom:locationFrom}, function(data){
-    		console.log(data);			
-    		var provinceVal = data.PROVINCE;
-    		var cityVal = data.CITY;
-    		var districtVal = data.DISTRICT;
-	        $.get('/serviceProvider/searchAllLocation', {province:provinceVal, city:cityVal}, function(data){	
-		        //获取全国省份
-	         	var province = $("#mbProvinceFrom");
-	     		province.empty();
-	     		province.append("<option>--请选择省份--</option>");
-	     		for(var i = 0; i < data.provinceLocations.length; i++){
-					if(data.provinceLocations[i].NAME == provinceVal){
-						$("#locationForm").val(data.provinceLocations[i].CODE);
-						province.append("<option value= "+data.provinceLocations[i].CODE+" selected='selected'>"+data.provinceLocations[i].NAME+"</option>");
-					}else{
-						province.append("<option value= "+data.provinceLocations[i].CODE+">"+data.provinceLocations[i].NAME+"</option>");						
-					}
-				}
-
-				var cmbCity =$("#cmbCityFrom");
-	     		cmbCity.empty();
-				cmbCity.append("<option  value=''>--请选择城市--</option>");
-				for(var i = 0; i < data.cityLocations.length; i++)
-				{
-					if(data.cityLocations[i].NAME == cityVal){
-						$("#locationForm").val(data.cityLocations[i].CODE);
-						cmbCity.append("<option value= "+data.cityLocations[i].CODE+" selected='selected'>"+data.cityLocations[i].NAME+"</option>");
-					}else{
-						cmbCity.append("<option value= "+data.cityLocations[i].CODE+">"+data.cityLocations[i].NAME+"</option>");						
-					}
-				}
-				
-				if(data.districtLocations.length > 0){
-    				var cmbArea =$("#cmbAreaFrom");
-    				cmbArea.empty();
-    				cmbArea.append("<option  value=''>--请选择区(县)--</option>");
-    				for(var i = 0; i < data.districtLocations.length; i++)
-    				{
-    					if(data.districtLocations[i].NAME == districtVal){
-    						$("#locationForm").val(data.districtLocations[i].CODE);
-    						cmbArea.append("<option value= "+data.districtLocations[i].CODE+" selected='selected'>"+data.districtLocations[i].NAME+"</option>");
-    					}else{
-    						cmbArea.append("<option value= "+data.districtLocations[i].CODE+">"+data.districtLocations[i].NAME+"</option>");						
-    					}
-    				}
-    			}else{
-    				var cmbArea =$("#cmbArea");
-    				cmbArea.empty();
-    			}
-	        },'json');
-    	},'json');
-  	};*/
+	
 		
 	//获取全国省份
     $(function(){
@@ -1283,7 +1353,69 @@ $(document).ready(function() {
 			}
 		}
 	},'json'); 
+    
+  //--------------------product search-----------------
+/*    var bindProductSearch=function(){
+        $('table input[field_type=product_search]').keyup(function(){
+                var me = this;
+                var inputStr = $(me).val();
+                if(inputStr.length<2)
+                    return;
+
+
+                $.get('/transferOrder/searchItemNo', {input:inputStr, customerId:$('#customer_id').val()}, function(data){
+                    $(me).parent().append('');
+                    var productList = $(me).parent().find('ul');
+                    if(productList){
+                    	$(me).parent().append('<ul name="product_list" class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="width: 30%;top: 35%; left: 2%;"></ul>');
+                        productList = $(me).parent().find('ul');
+                    }
+                    productList.empty();
+                    if(data.length>0){
+                        for(var i = 0; i < data.length; i++){
+                            productList.append("<li><a tabindex='-1' class='fromLocationItem' item_id="+data[i].ID+" >"+data[i].ITEM_NO+"</a></li>");
+                        }
+                    }else{
+                        productList.append("<li><a tabindex='-1' item_id='' >无记录</a></li>");
+                    }
+                    
+                    productList.css({ 
+                        left:$(me).position().left+"px", 
+                        top:$(me).position().top+31+"px" 
+                    }); 
+                    
+                    productList.show();
+                });
+            });
+
+           // 没选中，焦点离开，隐藏列表
+           $('table input[field_type=product_search]').on('blur', function(){
+                if ($(this).val().trim().length ==0) {
+                    $(this).parent().find('input[field_type=product_id]').val('');
+                };
+                $('table ul[name=product_list]').hide();
+           });
+        
+	        //当用户只点击了滚动条，没选中记录，再点击页面别的地方时，隐藏列表
+            $('table ul[name=product_list]').on('blur', function(){
+                $('table ul[name=product_list]').hide();
+            });
+
+            $('table ul[name=product_list]').on('mousedown', function(){
+                return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+            });
+
+            // 选中
+            $('table ul[name=product_list] .fromLocationItem').on('click mousedown', function(e){
+            	alert();
+                $(this).parent().parent().parent().find('input[field_type=product_search]').val($(this).text());
+                $(this).parent().parent().parent().find('input[field_type=product_id]').val($(this).attr('item_id'));
+                $('table ul[name=product_list]').hide();
+            });
+    };*/
 });
+
+
 function getChargetype(){
 	//判断修改后相应的计费方式修改
 	var customer_id = $("#customer_id").val();
