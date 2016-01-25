@@ -7,18 +7,16 @@
     
    
   //按钮控制
-    var departOrderId = $("#departOrderId").val();
-    if(departOrderId == ''){
-    	$("#saveDepartOrderBtn").attr("disabled",false);
-    }else{
-    	if($('#departOrderStatus').val()=='新建'){
-    		$("#saveDepartOrderBtn").attr("disabled",false);
-    		$("#departureConfirmationBtn").attr("disabled",false);
-    	}
-    }
-    
-   
-	 
+	if($('#departOrderStatus').val()=='新建'){
+		$("#departureConfirmationBtn").attr("disabled",false);
+	}else{
+		$("#departureConfirmationBtn").attr("disabled",true);
+	}
+	if($('#audit_status').val()=='新建'){
+		$("#saveDepartOrderBtn").attr("disabled",false);
+	}else{
+		$("#saveDepartOrderBtn").attr("disabled",true);
+	}
 	 //from表单验证
 	var validate = $('#orderForm').validate({
         rules: {
@@ -667,22 +665,18 @@
     	    	
     	    	if($('#booking_note_number').val() == ''){
     	    		$.scojs_message('托运单号不能为空', $.scojs_message.TYPE_WARN);
-    	    		$("#saveDepartOrderBtn").attr("disabled", false); 
     	    		return;
     	    	}
     	    	
     	    	
     	    	// 保存
-    	    	$("#saveDepartOrderBtn").attr("disabled", true); 
     	    	$.post('/departOrder/saveDepartOrder', $("#orderForm").serialize(), function(data){
     				if(data.ID>0){
                         $("#depart_order_token").val(data.DEPART_ORDER_TOKEN);
     					$("#departOrderId").val(data.ID);
     					$("#depart_id").val(data.ID);
-    					$("#saveDepartOrderBtn").prop('disabled',false);
     					$("#showDepartNo").text(data.DEPART_NO);
     					$("#milestoneDepartId").val(data.ID);
-    		    	    $("#departureConfirmationBtn").attr("disabled", false);
     		    	    contactUrl("edit?id",data.ID);
     		    	    $.post('/departOrder/saveupdatestate', $("#orderForm").serialize(), function(){	
      	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
@@ -692,7 +686,6 @@
     		    	    
     				}else{
     					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
-    					$("#saveDepartOrderBtn").attr("disabled", false); 
     				}
     			},'json');
     	    };
@@ -743,9 +736,8 @@
     	    $("#saveDepartOrderBtn").click(function(e){
     	    	var priceType = $("input[name='priceType']:checked").val();
     	    	e.preventDefault();
-    	    	
-	    		$("#saveDepartOrderBtn").attr("disabled", true);
 			   	clickSaveDepartOrder(e);
+			   	
     	    });
     	    
     	    //tab-应付
@@ -781,10 +773,8 @@
 	        					$("#depart_order_token").val(data.DEPART_ORDER_TOKEN);
 	        					$("#departOrderId").val(data.ID);
 	        					$("#depart_id").val(data.ID);
-	        					$("#saveDepartOrderBtn").prop('disabled',false);
 	        					$("#showDepartNo").text(data.DEPART_NO);
 	        					$("#milestoneDepartId").val(data.ID);
-	        		    	    $("#departureConfirmationBtn").attr("disabled", false);
                                 contactUrl("edit?id",data.ID);
 	        		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        				}else{
@@ -819,6 +809,8 @@
      	        	$("#arrival_time").after(str);
      	        }else if($("#sp_id").val() == "" && $("#partySpId").val() == ""){
      	        	$.scojs_message('操作失败，请选择供应商', $.scojs_message.TYPE_ERROR);
+     	        }else if($("#departOrderId").val() == ""){
+     	        	$.scojs_message('操作失败，请先保存发车单', $.scojs_message.TYPE_ERROR);
      	        }else{
 	                $("#departureConfirmationBtn").attr("disabled",true);
 	    	    	var priceType = $("input[name='priceType']:checked").val();
@@ -829,8 +821,6 @@
 	    	    		$.post('/departOrder/departureConfirmation',{departOrderId:departOrderId}, function(){
 	    	    			$("#departOrderStatus").val('运输在途');
 	    	    			$("#departStatus").text('运输在途');
-    	                	$("#departureConfirmationBtn").attr("disabled",true);
-              	    	  	$("#saveDepartOrderBtn").attr("disabled",true);
 	            	    	//计算应付
               	    	  	$.scojs_message('确认成功', $.scojs_message.TYPE_OK);
     	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
@@ -999,9 +989,6 @@
     	    	$("#warehousingConfirmBtn").attr("disabled", false);
     	    }*/
     	    
-    	    if($("#departOrderStatus").val() != '' && $("#departOrderStatus").val() != '新建'){
-	    		$("#saveDepartOrderBtn").attr("disabled", true);
-	    	}
     	    
     	    /*if($("#departOrderId").val() != ''){
     	    	$("#departureConfirmationBtn").attr("disabled", false);

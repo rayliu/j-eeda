@@ -1039,7 +1039,7 @@ public class DepartOrderController extends Controller {
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("paymentItemList", paymentItemList);
-
+		setAttr("audit_status", "新建");
 		setAttr("status", "新建");
 		setAttr("saveOK", false);
 		render("/yh/departOrder/editDepartOrder.html");
@@ -1342,6 +1342,7 @@ public class DepartOrderController extends Controller {
 		}
 		createToken(DEPART_ORDER_TOKEN);
 		String serverTokenId = getSessionAttr(DEPART_ORDER_TOKEN);
+		logger.debug("DEPART_ORDER_TOKEN:"+serverTokenId);
 		dp.put(DEPART_ORDER_TOKEN, serverTokenId);
 		renderJson(dp);
 	}

@@ -9,7 +9,7 @@
                 <div class="col-lg-12">
                     <div class="btn-header" style="font-size: 32px">发车单</div>
                     <input type="hidden" id="departOrderId" value="${departOrder.id!''}">
-                    <input type="hidden" id="departOrderStatus" value="${departOrder.status!''}">
+                    <input type="hidden" id="departOrderStatus" value="${status!''}${departOrder.status!''}">
                     <input type="hidden" id="departOrderArrivalMode" value="${transferOrderAttr.arrival_mode!''}">
                 </div>
                 <!-- /.col-lg-12 -->
@@ -54,7 +54,8 @@
                                             <input id="checkedDetail" type="hidden" name="checkedDetail"/>                                    	
           		                            <input id="uncheckedDetail" type="hidden" name="uncheckedDetail"/>
           		                            <input type="hidden" name="routeSp" value="${routeSp!''}"/>
-          		                            <input name='pickupIds'  id="pickupIds" type ="hidden" value="${pickupIds!''}">
+          		                            <input type="hidden" name="audit_status" id="audit_status" value="${audit_status!''}${departOrder.audit_status!''}"/>
+          		                            <input type ="hidden" name='pickupIds'  id="pickupIds"  value="${pickupIds!''}">
                                    		   
 	                                        <div class="form-group">
                                                 <label><h3>计费方式</h3></label>
@@ -441,7 +442,7 @@
 		             		        <button id="saveDepartOrderBtn" disabled="disabled" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		             		  <%}%>
 		             		  <% if(shiro.hasPermission("DepartOrder.completed")){%>
-                            		<button id="departureConfirmationBtn" type="button" disabled="disabled" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
+                            		<button id="departureConfirmationBtn" type="button" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">发车确认</button>
                               <%}%>
                           	<a class="btn  btn-primary" href="/departOrder">返回</a>
                         </div>
