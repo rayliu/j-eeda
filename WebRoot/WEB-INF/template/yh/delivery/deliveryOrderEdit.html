@@ -63,7 +63,7 @@
 	                  						<input id='receivingunit' name='receivingunit' type="hidden">
 	                  						<input id='sign_document_no' name='sign_document_no' type="hidden"  value="${deliveryOrder.ref_no!''}">
 	                  						<!-- 新增空白配送单过滤状态-->
-	                  						<input id='condition' name='condition' type="hidden"  value="${condition!''}">
+	                  						<!-- <input id='condition' name='condition' type="hidden"  value="${condition!''}"> -->
 	                  						<input id='itemList' name='itemList' type="hidden"  value="${itemList!''}">
 	                  						<input id='JsonDetail' name='JsonDetail' type="hidden">
 	                  						<input id='deletedIds' name='deletedIds' type="hidden">
@@ -75,22 +75,15 @@
 							                          <label>联系人：</label> ${customer.contact_person!''}
 							                      </div>
 							                      <div class="form-group">
-							                          <%
-							                              if(condition!="")
-                                							if(condition!="create"){
-							                          %>
+							                       
 							                           		<label>公司：</label>${customer.company_name!''}
-							                           <%
-							                              	}else{
-							                          %>
-							                          <div class="row">
+							                          
+							                          <!-- <div class="row">
 							                          		<div class="col-lg-6">
 							                          	    <%include("/yh/component/form/inputCustomerField.html", { id:'customer_id', label:'公司',  value: '' }){} %>
 	                               						   </div>
-	                               					  </div>
-							                          <%
-							                             	}
-							                          %>
+	                               					  </div> -->
+							                        
 							                      </div>
 							                      <div class="form-group">
 							                          <label>地址:</label> ${customer.address!''}
@@ -109,7 +102,7 @@
 					                    </div>
 						                 <div class="form-group">     
 	                                        	<label>配送方式</label>
-		                                           	<input id="delveryModeRadio" type="hidden" value="${deliveryOrder.delveryMode!''}"/>
+		                                           	<input id="delveryModeRadio" type="hidden" value="${delveryMode!''}${deliveryOrder.delveryMode!''}"/>
 		                                            <label class="radio-inline">
 		                                                <input type="radio" name="modeDelvery" id="delveryMode1" value="out_source" checked="">外包
 		                                            </label>
@@ -392,9 +385,9 @@
                                 <!-- /.col-lg-6 (nested) -->
                                 <div  class="panel-body">
                                 <h3><label >货品明细</label></h3>
-                                <%  
-                                		if(deliveryOrder.isNullOrder!='Y' && condition != 'create'){
-                                %>
+                               
+                                		<!-- if(deliveryOrder.isNullOrder!='Y' && condition != 'create'){ -->
+                                
                                 <div id="cargotable2">                                                                            
 	                  				<div class="table-responsive">
 		                                <table class="table table-striped table-bordered table-hover" id="eeda-table">
@@ -435,10 +428,10 @@
 			                           </table>
 			                       </div>
 			               		</div>
-			               		<%
-                                	}else{
-                                %>
-                                <div class ="form-group">
+			               		
+                                	<!-- }else{ -->
+                                
+                               <!--  <div class ="form-group">
                                     <button class="btn  btn-primary btn-sm" id="addItem">新增明细</button>
                                 </div>
                                 <div class="table-responsive">
@@ -455,9 +448,9 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        	<%  
+                                        	 
                                         		for(item in itemList){ 
-                                        	%>
+                                        	
 	                                            <tr class="" id="${item.ID!''}">
 	                                           		<td class="">${item.ID!''}</td>
 	                                                <td class="">${item.ITEM_NO!''}</td>
@@ -467,21 +460,20 @@
 	                                                <td class="">${item.ITEM_DESC!''}</td>
 	                                                <td class=""></td>
 	                                            </tr>
-	                                        <%
+	                                        
 	                                         	}
-	                                         %>
+	                                         
                                         </tbody>
                                     </table>
                                 </div>
-                                <%
-                                	}
-                                %> 
-                                <div id="unitList" style="display:none;">
-                                    <% 
+                                
+                                	}-->
+                               <!--  <div id="unitList" style="display:none;">
+                                     
                                     		for(list in unitList){ 
-                                    %>
+                                    
                                     <option value='list''}'>${list.NAME!''}</option>
-                                <%}%></div>   
+                                }</div>    -->
 			              	</div>
                                 <!-- /.col-lg-6 (nested) -->
                           </div>

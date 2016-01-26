@@ -740,6 +740,7 @@ public class DeliveryController extends Controller {
 		setAttr("transferOrderPerson", transferOrder.get("receiving_name"));
 		setAttr("transferOrderPhone", transferOrder.get("receiving_phone"));
 		setAttr("warehouse", warehouse);
+		setAttr("delveryMode", "out_source");
 		setAttr("cargoNature", cargoNature);//货品属性
 		//setAttr("cargoNaturName", "普通货品");
 		List<Record> paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -815,7 +816,7 @@ public class DeliveryController extends Controller {
 			}
 			setAttr("locationFrom", locationFrom);
 		}
-		
+		setAttr("delveryMode", "out_source");
 		setAttr("notifyParty", notify);
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);
@@ -1360,7 +1361,7 @@ public class DeliveryController extends Controller {
 			deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
 			deliveryOrder.save();
 			
-			if(!condition.equals("create")){
+			if(!"create".equals(condition)){
 				if("cargo".equals(cargoNature)){
 					TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
 					for (int i = 0; i < productId.length; i++) {
@@ -1454,7 +1455,7 @@ public class DeliveryController extends Controller {
 			}
 			saveDeliveryOrderMilestone(deliveryOrder);
 		} else {                                        //*********************配送单id不为空
-			if(deliveryOrder.getStr("isNullOrder").equals("Y")) {
+			if("Y".equals(deliveryOrder.getStr("isNullOrder")) ) {
 				//***********************新建空白配送单  更新货品明细
 				 if(!getPara("JsonDetail").equals("")){
 					 String tail = getPara("JsonDetail").substring(0, getPara("JsonDetail").length()-1);

@@ -243,6 +243,86 @@ $(document).ready(function() {
 		$('#spChange_id').val($(this).attr("spid"));
         $('#spChangeList').hide();
     });
+    $('#driver_name').on('keyup click', function(){
+        var inputStr = $('#driver_name').val();
+        //定义一个TYPE变量，用来作为车辆的条件
+        var typeStr = "OWN";
+        $.get('/transferOrder/searchAllCarInfo', {input:inputStr,type:typeStr}, function(data){
+            var driverList = $("#driverList");
+            driverList.empty();
+            for(var i = 0; i < data.length; i++)
+            {
+                driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].ID+"' car_no='"+data[i].CAR_NO+"' phone='"+data[i].PHONE+"' driver='"+data[i].DRIVER+"' > "+data[i].DRIVER+" "+data[i].PHONE+"</a></li>");
+            }
+        },'json');
+        $("#driverList").css({ 
+            left:$(this).position().left+"px", 
+            top:$(this).position().top+32+"px" 
+        }); 
+        $('#driverList').show();
+    });
+    // 选中司机
+    $('#driverList').on('mousedown', '.fromLocationItem', function(e){    
+        $('#driver_name').val($(this).attr('driver'));
+        $('#a5').html($(this).attr('car_no'));  
+        $('#a6').html($(this).attr('phone'));
+        $('#car_id').val($(this).attr('pid'));
+        $('#driverList').hide();   
+    });
+    // 没选中司机，焦点离开，隐藏列表
+    $('#driver_name').on('blur', function(){
+        $('#driverList').hide();
+    });
+    // 没选中司机，焦点离开，隐藏列表
+    $('#driverList').on('blur', function(){
+        $('#driverList').hide();
+    });
+    // 回显配送方式
+    $("input[name='modeDelvery']").each(function(){
+        if($("#delveryModeRadio").val() == $(this).val()){
+            $(this).attr('checked', true);            
+            if($(this).val() == 'own'){
+                $("#textDiv1").show();
+                $("#textDiv").hide();
+                $('#spMessage').val("");
+                $('#sp_id').val("");
+                $('#cid').val("");
+                $('#a1').html("");
+                $('#a2').html("");
+                $('#a3').html("");
+                $('#a4').html("");
+            }else{
+                $("#textDiv").show();
+                $("#textDiv1").hide();            
+                $('#car_id').val("");
+                $('#driver_name').val("");
+                $('#a5').html("");
+                $('#a6').html("");
+            }
+        }
+    });
+    //改变配送方式
+    $("input[name='modeDelvery']").on('click',function(){            
+        if($(this).val() == 'own'){
+            $("#textDiv1").show();
+            $("#textDiv").hide();
+            $('#spMessage').val("");
+            $('#sp_id').val("");
+            $('#cid').val("");
+            $('#a1').html("");
+            $('#a2').html("");
+            $('#a3').html("");
+            $('#a4').html("");
+        }else{
+            $("#textDiv").show();
+            $("#textDiv1").hide();            
+            $('#car_id').val("");
+            $('#driver_name').val("");
+            $('#a5').html("");
+            $('#a6').html("");
+        }
+    });
+
 	var trandferOrderId = $("#tranferid").val();
 	var localArr =$("#localArr").val();
 	var localArr2 =$("#localArr2").val();
@@ -333,7 +413,7 @@ $(document).ready(function() {
 	});	
 	$('#deletedIds').val(deletedIds);
 	
-	//添加一行
+	/*//添加一行
 	$("#addItem").click(function(){
 		 feeTable.fnAddData({
 			ID:'',
@@ -344,7 +424,7 @@ $(document).ready(function() {
 		 	ITEM_DESC:'',
 		 });
 		 //bindProductSearch();
-	});	
+	});	*/
 	
 	
 	
@@ -549,6 +629,12 @@ $(document).ready(function() {
 		var cmbAreaTo = $("#cmbAreaTo").find("option:selected").text();
 		var business_stamp =$('#business_stamp').val();
 		var sp_id = $("#sp_id").val();
+        var modeDelvery=$("input[name='modeDelvery']:checked").val();
+        var car_id = $("#car_id").val();
+        if(car_id == ""&&modeDelvery=="own"){
+            alert("请选择有效的司机");
+            return false;
+        }
 		if(sp_id == ""){
 			alert("请选择有效的供应商");
 			return false;
@@ -582,10 +668,10 @@ $(document).ready(function() {
             	$("#deliveryOrder_status").text(data.STATUS);
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-            	
+            	/*
             	feeTable.fnSettings().oFeatures.bServerSide = true;
             	feeTable.fnSettings().sAjaxSource="/delivery/itemsList?delivery_id="+data.ID;
-            	feeTable.fnDraw();
+            	feeTable.fnDraw();*/
             	//window.location.reload()
             }else{
                 alert('数据保存失败。');
@@ -622,10 +708,17 @@ $(document).ready(function() {
 		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
 		var cmbCityTo = $("#cmbCityTo").find("option:selected").text();
-		if(spMessage == ""){
-			alert("请输入供应商名称");
-			return false;
-		}
+        var modeDelvery=$("input[name='modeDelvery']:checked").val();
+        var sp_id = $("#sp_id").val();
+        var car_id = $("#car_id").val();
+        if(sp_id == ""&&modeDelvery=="out_source"){
+            alert("请选择有效的供应商");
+            return false;
+        }
+        if(car_id == ""&&modeDelvery=="own"){
+            alert("请选择有效的司机");
+            return false;
+        }
 		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
 			alert("请输入目的地省份");
 			return false;
@@ -727,7 +820,7 @@ $(document).ready(function() {
         }
         parentId = e.target.getAttribute("id");
 	});
-			
+	
 	// 保存新里程碑
 	$("#deliveryOrderMilestoneFormBtn").click(function(){
 		$.post('/deliveryOrderMilestone/saveTransferOrderMilestone',$("#transferOrderMilestoneForm").serialize(),function(data){

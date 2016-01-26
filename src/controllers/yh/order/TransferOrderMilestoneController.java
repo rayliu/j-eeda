@@ -499,6 +499,7 @@ public class TransferOrderMilestoneController extends Controller {
     				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
     				.set("cargo_nature", transferOrder.get("cargo_nature"))
     				.set("priceType", departOrder1.get("charge_type"))
+    				.set("delveryMode", "out_source")
     				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
     				.set("audit_status", "新建").set("sign_status", "未回单");
             		if(warehouse!=null){
