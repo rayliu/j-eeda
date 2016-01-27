@@ -1,14 +1,13 @@
 <%layout("/yh/layout.html"){%>
 <link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
-        <div id="page-wrapper">
-            
+        <div id="page-wrapper"> 
             <div class="row">
                  <div class="col-lg-12">
                     <div class="btn-header">
                     	<% if(shiro.hasPermission("DeliveryOder.create")){%>
                         	<a class="btn  btn-primary" href="/delivery/add">新增出库配送单</a>
-                        	<!-- <a class="btn  btn-primary" href="/delivery/create">新增空白配送单</a> -->
+                        	<a class="btn  btn-primary" href="/delivery/create">新增空白配送单</a>
                     	<%}%>
                     	<input id="fileUploadBtn" type="button" class="btn  btn-primary" value="导入配送单" size="30" />
                     	<input id="revisefileUploadBtn" type="button" class="btn  btn-primary" value="更新配送单" size="30" />

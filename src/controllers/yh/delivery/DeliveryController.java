@@ -447,7 +447,7 @@ public class DeliveryController extends Controller {
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE})
 	public void create() {
-		setAttr("condition", "create");
+		setAttr("delveryMode", "out_source");
 		long delivery_id = 100;
 		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
@@ -466,6 +466,8 @@ public class DeliveryController extends Controller {
 		List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select * from transfer_order_item toi"
 				+ " where delivery_id = ? ",delivery_id);	
 		setAttr("itemList", itemList);
+		
+		setAttr("isNullOrder", "Y");
 		render("/yh/delivery/deliveryOrderEdit.html");
 	}
 	
@@ -476,7 +478,7 @@ public class DeliveryController extends Controller {
 		//setAttr("itemList", itemList);
 
 		Map map = new HashMap();
-		map.put("sEcho", 1);
+		map.put("sEcho", getPara("sEcho"));
 		map.put("iTotalRecords",itemList.size());
 		map.put("iTotalDisplayRecords", itemList.size());
 		map.put("aaData", itemList);
@@ -488,7 +490,6 @@ public class DeliveryController extends Controller {
 	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_UPDATE})
 	public void edit() {
 		String id = getPara("id");
-		setAttr("condition", "edit");
 		//System.out.println(id);
 		List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select * from transfer_order_item toi"
 				+ " where delivery_id = ? ",id);	
@@ -498,6 +499,7 @@ public class DeliveryController extends Controller {
 		setAttr("unitList", unitList);
 		
 		DeliveryOrder tOrder = DeliveryOrder.dao.findById(id);
+		setAttr("isNullOrder", tOrder.getStr("isNullOrder"));
 		setAttr("cargoNature", tOrder.get("cargo_nature"));
 		setAttr("deliveryOrder", tOrder);
 		List<Record> serIdList = Db
@@ -665,6 +667,7 @@ public class DeliveryController extends Controller {
 		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		
 		setAttr("customizeField", customizeField);
+		setAttr("customizeField", customizeField);
 		render("/yh/delivery/deliveryOrderEdit.html");
 
 	}
@@ -745,6 +748,7 @@ public class DeliveryController extends Controller {
 		//setAttr("cargoNaturName", "普通货品");
 		List<Record> paymentItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("paymentItemList", paymentItemList);
+		setAttr("isNullOrder", "N");
 		
 		render("/yh/delivery/deliveryOrderEdit.html");
 	}
@@ -823,7 +827,8 @@ public class DeliveryController extends Controller {
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("paymentItemList", paymentItemList);
-			render("/yh/delivery/deliveryOrderEdit.html");
+		setAttr("isNullOrder", "N");
+		render("/yh/delivery/deliveryOrderEdit.html");
 	}
 
 	// 获取运输单普通货品list
@@ -1239,7 +1244,7 @@ public class DeliveryController extends Controller {
 		String[] productId =  getPara("productIds").split(",");
 		String[] shippingNumber =  getPara("shippingNumbers").split(",");
 		//校验是否新建的空白配送单
-		String condition = getPara("condition");
+		String isNullOrder = getPara("isNullOrder");
 		String deletedIds = getPara("deletedIds");
 		
 
@@ -1280,8 +1285,10 @@ public class DeliveryController extends Controller {
 			if(!warehouseId.equals("")&& warehouseId!=null){
 				deliveryOrder.set("from_warehouse_id", warehouseId);
 			}
+			if(!customerId.equals("")&& customerId!=null){
+				deliveryOrder.set("customer_id", customerId);
+			}
 			deliveryOrder.set("order_no", orderNo)
-					.set("customer_id", customerId)
 					.set("sp_id", spId)
 					.set("car_id", carId)
 					.set("delveryMode", delveryMode)
@@ -1301,8 +1308,10 @@ public class DeliveryController extends Controller {
 				if(!warehouseId.equals("")&& warehouseId!=null){
 					deliveryChangeOrder.set("from_warehouse_id", warehouseId);
 				}
+				if(!customerId.equals("")&& customerId!=null){
+					deliveryOrder.set("customer_id", customerId);
+				}
 				deliveryChangeOrder.set("order_no", orderNo+"-DB")//生成调拨的配送单
-				.set("customer_id", customerId)
 				.set("sp_id", changeSpId)
 				.set("notify_party_id", party.get("id"))
 				.set("create_stamp", createDate)
@@ -1361,7 +1370,7 @@ public class DeliveryController extends Controller {
 			deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
 			deliveryOrder.save();
 			
-			if(!"create".equals(condition)){
+			if(!"Y".equals(isNullOrder)){
 				if("cargo".equals(cargoNature)){
 					TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
 					for (int i = 0; i < productId.length; i++) {
@@ -1507,20 +1516,24 @@ public class DeliveryController extends Controller {
 	 		 for(int i = 0 ;i < de_ids.length; i++){	
 	 			 if(!de_ids[i].equals("")){
 	 				 TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(de_ids[i]);
-	 				 transferOrderItem.delete() ;
+	 				 if(transferOrderItem!=null)
+	 					 transferOrderItem.delete() ;
 	 				 
 	 				DeliveryOrderItem deliveryOrderItem = DeliveryOrderItem.dao
 			        		 .findFirst("select * from delivery_order_item doi where transfer_item_id =?",de_ids[i]);
-					 deliveryOrderItem.delete() ;
+	 				if(deliveryOrderItem!=null)
+	 					deliveryOrderItem.delete() ;
 	 			 }
 	 		 }
 	 		 
 	 		 
 			DeliveryOrder deliveryChangeOrder =null;
+			if(!customerId.equals("")&& customerId!=null){
+				deliveryOrder.set("customer_id", customerId);
+			}
 			deliveryOrder.set("sp_id", spId)
 					.set("car_id", carId)
 					.set("delveryMode", delveryMode)
-					.set("Customer_id", customerId)
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))
@@ -1552,8 +1565,10 @@ public class DeliveryController extends Controller {
 			if("warehouseNatureYes".equals(warehouseNature)){
 				if(deliveryOrder.get("delivery_id")==null){
 					deliveryChangeOrder = new DeliveryOrder();
+					if(!customerId.equals("")&& customerId!=null){
+						deliveryChangeOrder.set("customer_id", customerId);
+					}
 					deliveryChangeOrder.set("order_no",deliveryOrder.get("order_no")+"-DB")//生成调拨的配送单
-					.set("customer_id", customerId)
 					.set("sp_id", changeSpId)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
@@ -1607,8 +1622,10 @@ public class DeliveryController extends Controller {
 					}
 				} else{
 					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
-					deliveryChangeOrder.set("customer_id", customerId)
-					.set("sp_id", changeSpId)
+					if(!customerId.equals("")&& customerId!=null){
+						deliveryChangeOrder.set("customer_id", customerId);
+					}
+					deliveryChangeOrder.set("sp_id", changeSpId)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))

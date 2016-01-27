@@ -12,7 +12,193 @@ $(document).ready(function() {
 		$("#saveBtn").attr("disabled",false);
 	}
 
+    var feeTable = $('#itemList-table').dataTable({        
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "bPaginate": false, //翻页功能
+        "bInfo": false,//页脚信息
+        "bFilter": false, //不需要默认的搜索框
+        "bSort": false, // 不要排序
+        //"bServerSide": true,
+        "oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        //"sAjaxSource": "/costMiscOrder/costMiscOrderItemList?costMiscOrderId="+$("#costMiscOrderId").val(),
+//        "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+//            $(nRow).attr('id', aData.ID);
+//            return nRow;
+//        },        
+         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+             $(nRow).attr({id: aData.ID}); 
+             $(nRow).attr({order_type: aData.ORDER_TYPE}); 
+             return nRow;
+         },
 
+        "aoColumns": [ 
+            {"mDataProp":"ID",'bVisible':false },
+              {"mDataProp":"ITEM_NO", "sWidth": "20%",
+               "sClass":'item_no',
+               "fnRender": function(obj) {
+                if(obj.aData.ITEM_NO!='' && obj.aData.ITEM_NO != null){
+                     return "<input type='text'  name='item_no' value='"+obj.aData.ITEM_NO+"' class='form-control search-control'>";
+                }else{
+                     return "<input type='text'  name='item_no' class='form-control search-control'>";
+                }//field_type='product_search'
+             }
+            },
+            {"mDataProp":"ITEM_NAME","sWidth": "20%",
+                 "fnRender": function(obj) {
+                     if(obj.aData.ITEM_NAME!='' && obj.aData.ITEM_NAME != null){
+                    return "<input type='text' name='item_name' value='"+obj.aData.ITEM_NAME+"' class='form-control search-control'>";
+                }else{
+                     return "<input type='text' name='item_name' class='form-control search-control'>";
+                }
+             }
+            },
+             {"mDataProp":"AMOUNT","sWidth": "10%",
+                    "fnRender": function(obj) {
+                        if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+                            return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"' class='form-control search-control'>";
+                        }else{
+                            return "<input type='text' name='amount' class='form-control search-control' value ='0'>";
+                        }
+                }
+             },
+             {"mDataProp":"UNIT","sWidth": "10%",
+                    "sClass":'unit',
+                    "fnRender": function(obj) {
+                        if(obj.aData.UNIT!='' && obj.aData.UNIT != null){
+                            var str="";
+                            $("#unitList").children().each(function(){
+                                if(obj.aData.UNIT == $(this).text()){
+                                    str+="<option value='"+$(this).text()+"' selected = 'selected'>"+$(this).text()+"</option>";
+                                }else{
+                                    str+="<option value='"+$(this).text()+"'>"+$(this).text()+"</option>";
+                                };
+                            });
+                            return "<select name='unit_id' class='form-control search-control'>"+str+"</select>";
+                        }else{
+                            var str="";
+                            $("#unitList").children().each(function(){
+                                str+="<option value='"+$(this).text()+"'>"+$(this).text()+"</option>";
+                            });
+                            return "<select name='fin_item_id' class='form-control search-control'>"+str+"</select>";
+                        }
+                 }
+             },
+            {"mDataProp":"ITEM_DESC","sWidth": "20%",
+                "fnRender": function(obj) {
+                    if(obj.aData.ITEM_DESC!='' && obj.aData.ITEM_DESC != null){
+                        return "<input type='text' name='item_desc' value='"+obj.aData.ITEM_DESC+"'  class='form-control search-control'>";
+                    }else{
+                         return "<input type='text'  name='item_desc' class='form-control search-control'>";
+                    }
+                }
+            },
+            {"mDataProp": null,"sWidth": "10%",
+                "fnRender": function(obj) {
+                        return    "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+                }
+            }   
+        ]      
+    });
+    
+    
+    
+    //删除一行
+    var deletedIds=[];
+    $("#itemList-table").on('click', '.finItemdel', function(e){
+        e.preventDefault();
+        var tr = $(this).parent().parent();
+        deletedIds.push(tr.attr('id'));
+        tr.remove();
+    });    
+    $('#deletedIds').val(deletedIds);
+    
+    
+    $("#addItem").click(function(){
+         feeTable.fnAddData({
+            ID:'',
+             ITEM_NO:'',
+             ITEM_NAME:'',
+             UNIT:'',
+             AMOUNT: '0',
+             ITEM_DESC:'',
+         });
+    });
+    
+    
+    
+    //item_no
+    $('#itemList-table').on('click', 'input[name=item_no]', function(){
+        var inputBox=$(this);
+        inputBox.autocomplete({
+            source: function( request, response ) {
+                if(inputBox.parent().parent()[0].cellIndex >1){//从第3列开始，不需要去后台查数据
+                    return;
+                }
+                $.ajax({
+                    url: "/transferOrder/searchItemNo",
+                    dataType: "json",
+                    data: {
+                        customerId: $('#customer_id').val(),
+                        input: request.term
+                    },
+                    success: function( data ){
+                        var columnName = inputBox.parent().parent()[0].className;
+                        var itemNos =[];
+                        $("input[name=item_no]").each(function(){
+                               if($(this).val()!=null&&$(this).val()!=""){
+                                   itemNos.push($(this).val());
+                               }
+                           });
+                        if(data.length>0){
+                            response($.map( data, function( data ) {
+                                var complete="";
+                                for(var i=0;i<itemNos.length;i++){
+                                    if(data.ITEM_NO == itemNos[i]){
+                                        complete = data.ITEM_NO;
+                                    }
+                                }
+                                if(complete != data.ITEM_NO){
+                                    return {
+                                         label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
+                                         value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
+                                         id: data.ID,
+                                         item_no: data.ITEM_NO,
+                                         item_name: data.ITEM_NAME
+                                    };
+                                }    
+                            }));
+                        }else{
+                            var d = new Array(1);
+                            if($("input[name='orderType']:checked").val() == "arrangementOrder"){
+                                d[0] = "当前仓库内客户没有此类产品库存";
+                            }else{
+                                d[0] = "当前客户没有维护此类产品";
+                            }
+                            
+                            response($.map(d, function( i ) {
+                                return {
+                                     value:'警告:'+i,
+                                     id: '',
+                                     item_no: '',
+                                     item_name: '',
+                                     label: ''
+                                };
+                            }));
+                        }
+                    }
+                });
+            },
+            minLength: 2
+        });
+    });
+    
+
+
+	
+	
+	
 	$('#checkQrC').hover(
 			function(){//in
 			$('#qrcodeCanv').show();
@@ -354,6 +540,34 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 	var saveDelivery = function(){
+	////货品明细的构造
+		 $('#deletedIds').val(deletedIds);
+		 deletedIds = [];
+		 var tableRows = $("#itemList-table tr");
+        var itemsArray=[];
+        for(var index=0; index<tableRows.length; index++){
+        	if(index==0)
+        		continue;
+
+        	var row = tableRows[index];
+        	var id = $(row).attr('id');
+        	if(!id){
+        		id='';
+        	}
+        	
+        	var item=[
+        	    id,
+        		$(row.children[0]).find('input').val(), 
+			 	$(row.children[1]).find('input').val(),
+			 	$(row.children[2]).find('input').val(),
+			 	$(row.children[3]).find('select').val(),
+			 	$(row.children[4]).find('input').val(),
+			 	'空'+'&'
+			];
+        	itemsArray.push(item);
+        }
+        $('#JsonDetail').val(itemsArray);
+
 		
 		$("#sign_document_no").val($("#sign_no").val());
 		var mbProvinceTo = $("#mbProvinceTo").find("option:selected").text();
@@ -401,6 +615,13 @@ $(document).ready(function() {
             	$("#deliveryOrder_status").text(data.STATUS);
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+            	
+            	
+            	feeTable.fnSettings().oFeatures.bServerSide = true;
+            	feeTable.fnSettings().sAjaxSource="/delivery/itemsList?delivery_id="+data.ID;
+            	feeTable.fnDraw();
+            	//window.location.reload()
+
             }else{
                 alert('数据保存失败。');
             }

@@ -417,7 +417,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         map.put("username", username);
         
         String isNullOrder = deliveryOrder.getStr("isNullOrder");
-        if(isNullOrder == null){
+        if(!isNullOrder.equals("Y")){
         	Date createDate = Calendar.getInstance().getTime();
         	String orderNo = OrderNoGenerator.getNextOrderNo("HD");
         	ReturnOrder returnOrder = new ReturnOrder();
