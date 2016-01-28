@@ -13,6 +13,7 @@ import models.DepartTransferOrder;
 import models.Party;
 import models.ReturnOrder;
 import models.TransferOrder;
+import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -266,14 +267,67 @@ public class TransferOrderMilestoneController extends Controller {
         //修改发车单信息
         DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
         departOrder.set("status", "已收货").update();
-       
         for (Record record : transferOrderIds) {
         	//获取运输单ID
         	long transerOrderId = record.getLong("order_id");
-        	 //直接生成回单，在把合同等费用带到回单中
-
+       	 	//直接生成回单，在把合同等费用带到回单中
             TransferOrder transferOrder = TransferOrder.dao.findById(transerOrderId);
             TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
+        	//退货单生成配送单
+            if("cargoReturnOrder".equals(transferOrder.getStr("order_type"))){
+		    	DeliveryOrder deliveryOrder = new DeliveryOrder();
+				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+		    	String orderNo = OrderNoGenerator.getNextOrderNo("PS");
+		        List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = "+transerOrderId+" and depart_id ="+ departOrderId);
+		        Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id"));
+				deliveryOrder.set("order_no", orderNo)
+				.set("customer_id", transferOrder.get("customer_id"))
+				.set("create_stamp", sqlDate).set("create_by", users.get(0).get("id")).set("status", "新建")
+				.set("route_from",transferOrder.get("route_to"))
+				.set("route_to",transferOrder.get("route_to"))
+				.set("pricetype", getPara("chargeType"))
+				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
+				.set("cargo_nature", transferOrder.get("cargo_nature"))
+				.set("priceType", departOrder.get("charge_type"))
+				.set("delveryMode", "own")
+				.set("warehouse_nature", "warehouseNatureNo")
+				.set("ltl_price_type", departOrder.get("ltl_price_type")).set("car_type", departOrder.get("car_type"))
+				.set("audit_status", "新建").set("sign_status", "未回单");
+				if(warehouse!=null){
+					deliveryOrder.set("sp_id", warehouse.get("sp_id")).set("office_id", warehouse.get("office_id"));
+				}else{
+					deliveryOrder.set("office_id", users.get(0).get("office_id"));
+				}if(transferorderitemdetail!=null){
+					deliveryOrder.set("notify_party_id", transferorderitemdetail.get(0).getLong("notify_party_id"));
+				}
+				deliveryOrder.save();
+				if("ATM".equals(transferOrder.getStr("cargo_nature"))){
+					for (TransferOrderItemDetail transferdetail:transferorderitemdetail) {
+						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+						.set("transfer_order_id",transferOrder.get("id"))
+						.set("transfer_no",transferOrder.get("order_no"))
+						.set("transfer_item_detail_id",transferdetail.getLong("id"))
+						.set("amount", 1);
+						deliveryOrderItem.save();
+						//在单品中设置delivery_id
+						TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+								.findById(transferdetail.getLong("id"));
+						transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
+						transferOrderItemDetail.set("is_delivered", true);
+						transferOrderItemDetail.update();
+					}
+				}else{
+					List<TransferOrderItem> transferorderitem =TransferOrderItem.dao.find("select * from transfer_order_item where order_id = "+transerOrderId+"");
+					for (TransferOrderItem transferitem:transferorderitem) {
+						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+						.set("transfer_order_id",transferOrder.get("id"))
+						.set("transfer_no",transferOrder.get("order_no"))
+						.set("transfer_item_id",transferitem.getLong("id"))
+						.set("amount", transferitem.get("amount"));
+						deliveryOrderItem.save();
+					}
+				}
+    		}
             String cargo_nature = transferOrder.getStr("cargo_nature");
             if(cargo_nature.equals("ATM")){
             	String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + transerOrderId;
@@ -291,7 +345,9 @@ public class TransferOrderMilestoneController extends Controller {
         			transferOrderMilestone.set("status", "已收货");
         			transferOrder.set("status", "已完成").update();
         			//生成回单
-        			createReturnOrder(transferOrder);
+        			if(!"cargoReturnOrder".equals(transferOrder.getStr("order_type"))){
+        				createReturnOrder(transferOrder);
+        			}
         		}else{
         			transferOrderMilestone.set("status", "部分已收货");
         		}
@@ -500,6 +556,7 @@ public class TransferOrderMilestoneController extends Controller {
     				.set("cargo_nature", transferOrder.get("cargo_nature"))
     				.set("priceType", departOrder1.get("charge_type"))
     				.set("delveryMode", "out_source")
+    				.set("warehouse_nature", "warehouseNatureNo")
     				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
     				.set("audit_status", "新建").set("sign_status", "未回单");
             		if(warehouse!=null){
