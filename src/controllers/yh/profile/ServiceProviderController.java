@@ -361,6 +361,40 @@ public class ServiceProviderController extends Controller {
 		}
 		renderJson(locationList);
 	}
+    public void searchInsurance() {
+		String input = getPara("input");
+		Long parentID = pom.getParentOfficeId();
+		List<Record> locationList = Collections.EMPTY_LIST;
+		if (input.trim().length() > 0) {
+			locationList = Db
+					.find(" select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and"
+					        + " p.party_type = '"
+							+ Party.PARTY_TYPE_INSURANCE_PARTY
+							+ "' and (c.company_name like '%"
+							+ input
+							+ "%' or c.abbr like '%"
+							+ input
+							+ "%' or c.contact_person like '%"
+							+ input
+							+ "%' or c.email like '%"
+							+ input
+							+ "%' or c.mobile like '%"
+							+ input
+							+ "%' or c.phone like '%"
+							+ input
+							+ "%' or c.address like '%"
+							+ input
+							+ "%' or c.postal_code like '%"
+							+ input
+							+ "%')  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office=?) limit 0,10",parentID,parentID);
+		} else {
+			locationList = Db
+					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and"
+					        + " p.party_type = '"
+							+ Party.PARTY_TYPE_INSURANCE_PARTY + "'  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office =?)",parentID,parentID);
+		}
+		renderJson(locationList);
+	}
     public void chargeTypeList(){
     	String id = getPara("typeId");
     	

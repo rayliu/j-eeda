@@ -25,6 +25,7 @@
 
                                         <input id="costMiscOrderId" type="hidden" name="costMiscOrderId" value="${arapMiscCostOrder.id!''}"/>
                                         <input id="sp_id" type="hidden" name="sp_id" value="${arapMiscCostOrder.sp_id!''}"/>
+                                        <input id="insurance_id" type="hidden" name="insurance_id" value="${arapMiscCostOrder.insurance!''}"/>
                                         <input id="customer_id" type="hidden" name="customer_id" value="${arapMiscCostOrder.customer_id!''}"/>
                                         <input type="hidden" id="costCheckOrderIds" name="costCheckOrderIds" value="${costCheckOrderIds!''}${arapMiscCostOrder.cost_order_id!''}"/>
                                         <input type="hidden" name="order_no" value="${order_no!''}${arapMiscCostOrder.order_no!''}"/>
@@ -125,6 +126,12 @@
                                                 checked
                                                 <%}%>>供应商</label>
                                             <label class="radio-inline">
+                                                <input type="radio" name="cost_to_type" value="insurance"
+                                                <%
+                                                    if( cost_to_type == 'insurance'){%>
+                                                checked
+                                                <%}%>>保险公司</label>
+                                            <label class="radio-inline">
                                                 <input type="radio" name="cost_to_type" value="others"
                                                 <%
                                                     if( cost_to_type == 'others'){%>
@@ -142,6 +149,11 @@
                                             <label class="search-label">供应商</label>
                                             <input type="text" class="form-control search-control sp_filter" id="sp_filter" placeholder="请选择供应商" value="${spContact.company_name!''}">
                                             <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;"></ul>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="search-label">保险公司</label>
+                                            <input type="text" class="form-control search-control insurance_filter" id="insurance_filter" placeholder="请选择保险公司" value="${insuranceContact.company_name!''}">
+                                            <ul id='insuranceList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;"></ul>
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">收款人</label>

@@ -41,6 +41,16 @@ $(document).ready(function() {
   	if($("#audit_status").val()!="new"&&$("#audit_status").val()!="新建"){
   		$("#saveCostMiscOrderBtn").attr("disabled",true);
   	}
+  	$('input[name="biz_type"],input[name="cost_to_type"]').on('click',function(){
+  		var biz_type=$('input[name="biz_type"]:checked').val();
+  		var type = $('input[name="cost_to_type"]:checked').val();
+  		if(biz_type=='biz'&& type=='insurance'){
+  			
+  			$.scojs_message('保险只能做非业务', $.scojs_message.TYPE_WARN);
+  			$("input[name=biz_type][value='non_biz']").attr("checked",'checked');
+  			$("input[name=cost_to_type][value='insurance']").attr("checked",'checked');
+  		}
+  	});
 	var saveCostMiscOrder = function(e, callback){
 		//阻止a 的默认响应行为，不需要跳转
 		e.preventDefault();
@@ -61,6 +71,13 @@ $(document).ready(function() {
         }else if(type=='sp'){
         	if($('#sp_filter').val()==''){
         		$.scojs_message('供应商不能为空', $.scojs_message.TYPE_WARN);
+        		$("#saveCostMiscOrderBtn").attr("disabled",false);
+            	return;
+        	}
+        	
+        }else if(type=='insurance'){
+        	if($('#insurance_filter').val()==''){
+        		$.scojs_message('保险公司不能为空', $.scojs_message.TYPE_WARN);
         		$("#saveCostMiscOrderBtn").attr("disabled",false);
             	return;
         	}
@@ -135,6 +152,7 @@ $(document).ready(function() {
         	cost_to_type: $('input[name="cost_to_type"]:checked').val(),
         	customer_id: $('#customer_id').val(),
         	sp_id: $('#sp_id').val(),
+        	insurance_id: $('#insurance_id').val(),
         	route_from: $('#locationForm').val(),
         	route_to: $('#locationTo').val(),
         	others_name: $('#others_name').val(),
@@ -554,114 +572,156 @@ $(document).ready(function() {
    
     
     
-  //删除一行
-    var deletedIds=[];
-	$("#feeItemList-table").on('click', '.finItemdel', function(e){
-		e.preventDefault();
-		var tr = $(this).parent().parent();
-		deletedIds.push(tr.attr('id'));
-		tr.remove();
-	});	
+	  //删除一行
+	    var deletedIds=[];
+		$("#feeItemList-table").on('click', '.finItemdel', function(e){
+			e.preventDefault();
+			var tr = $(this).parent().parent();
+			deletedIds.push(tr.attr('id'));
+			tr.remove();
+		});	
+		
+		 
+		
+		//添加一行
+		$("#addFee").click(function(){
+			 feeTable.fnAddData({
+			 	CUSTOMER_ORDER_NO:'',
+			 	ITEM_DESC:'',
+			 	NAME:'',
+			 	AMOUNT: '0',
+			 	CHANGE_AMOUNT: '',
+			 	STATUS: '新建'
+			 });
+			 feeTable.fnDraw(); 
+		});	
+		
+	    
+	    //获取客户列表，自动填充
+	    $('#customer_filter').on('keyup click', function(){
+	        var inputStr = $('#customer_filter').val();
+	        var companyList =$("#companyList");
+	        $.get("/transferOrder/searchPartCustomer", {input:inputStr}, function(data){
+	            companyList.empty();
+	            for(var i = 0; i < data.length; i++){
+	                var abbr = data[i].ABBR;
+					var company_name = data[i].COMPANY_NAME;
+					if(abbr == null) 
+						abbr = '';
+					if(company_name == null)
+						company_name = '';
+					companyList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
+	            }
+	        },'json');
+	        companyList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
+	    });
+	    $('#companyList').on('click', '.fromLocationItem', function(e){        
+	        $('#customer_filter').val($(this).attr("company_name"));
+	        $("#companyList").hide();
+	        var companyId = $(this).attr('partyId');
+	        $('#customer_id').val(companyId);
+	        //savePartyInfo(companyId,"CUSTOMER");
+	    });
+	    // 没选中客户，焦点离开，隐藏列表
+	    $('#customer_filter').on('blur', function(){
+	        $('#companyList').hide();
+	    });
 	
-	 
+	    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+	    $('#customer_filter').on('blur', function(){
+	        $('#companyList').hide();
+	    });
 	
-	//添加一行
-	$("#addFee").click(function(){
-		 feeTable.fnAddData({
-		 	CUSTOMER_ORDER_NO:'',
-		 	ITEM_DESC:'',
-		 	NAME:'',
-		 	AMOUNT: '0',
-		 	CHANGE_AMOUNT: '',
-		 	STATUS: '新建'
-		 });
-		 feeTable.fnDraw(); 
-	});	
+	    $('#companyList').on('mousedown', function(){
+	        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	    });
+
+	    //保险查询
+	    //获取保险的list，选中信息在下方展示其他信息
+	    $('#insurance_filter').on('keyup click', function(){
+			var inputStr = $('#insurance_filter').val();
+			var insuranceList =$("#insuranceList");
+			$.post('/serviceProvider/searchInsurance', {input:inputStr}, function(data){
+				insuranceList.empty();
+				for(var i = 0; i < data.length; i++){
+					var abbr = data[i].ABBR;
+					var company_name = data[i].COMPANY_NAME;
+					if(abbr == null) 
+						abbr = '';
+					if(company_name == null)
+						company_name = '';
+					insuranceList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
+				}
+			},'json');
+			insuranceList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
+	    });
+	    
+	    // 没选中保险，焦点离开，隐藏列表
+		$('#insurance_filter').on('blur', function(){
+	 		$('#insuranceList').hide();
+	 	});
 	
-    
-    //获取客户列表，自动填充
-    $('#customer_filter').on('keyup click', function(){
-        var inputStr = $('#customer_filter').val();
-        var companyList =$("#companyList");
-        $.get("/transferOrder/searchPartCustomer", {input:inputStr}, function(data){
-            companyList.empty();
-            for(var i = 0; i < data.length; i++){
-                var abbr = data[i].ABBR;
-				var company_name = data[i].COMPANY_NAME;
-				if(abbr == null) 
-					abbr = '';
-				if(company_name == null)
-					company_name = '';
-				companyList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
-            }
-        },'json');
-        companyList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
-    });
-    $('#companyList').on('click', '.fromLocationItem', function(e){        
-        $('#customer_filter').val($(this).attr("company_name"));
-        $("#companyList").hide();
-        var companyId = $(this).attr('partyId');
-        $('#customer_id').val(companyId);
-        savePartyInfo(companyId,"CUSTOMER");
-    });
-    // 没选中客户，焦点离开，隐藏列表
-    $('#customer_filter').on('blur', function(){
-        $('#companyList').hide();
-    });
-
-    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
-    $('#customer_filter').on('blur', function(){
-        $('#companyList').hide();
-    });
-
-    $('#companyList').on('mousedown', function(){
-        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-    });
-
-    //供应商查询
-    //获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('keyup click', function(){
-		var inputStr = $('#sp_filter').val();
-		var spList =$("#spList");
-		$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
-			spList.empty();
-			for(var i = 0; i < data.length; i++){
-				var abbr = data[i].ABBR;
-				var company_name = data[i].COMPANY_NAME;
-				if(abbr == null) 
-					abbr = '';
-				if(company_name == null)
-					company_name = '';
-				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
-			}
-		},'json');
-		spList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
-    });
-    
-    // 没选中供应商，焦点离开，隐藏列表
-	$('#sp_filter').on('blur', function(){
- 		$('#spList').hide();
- 	});
-
-	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
-	$('#spList').on('blur', function(){
- 		$('#spList').hide();
- 	});
-
-	$('#spList').on('mousedown', function(){
-		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+		//当用户只点击了滚动条，没选保险，再点击页面别的地方时，隐藏列表
+		$('#insuranceList').on('blur', function(){
+	 		$('#insuranceList').hide();
+	 	});
+	
+		$('#insuranceList').on('mousedown', function(){
+			return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+		});
+	
+		// 选中保险
+		$('#insuranceList').on('mousedown', '.fromLocationItem', function(e){
+			$('#insurance_filter').val($(this).attr('company_name'));
+			var provider = $(this).attr('partyId');
+			$('#insurance_id').val(provider);
+	        $('#insuranceList').hide();
+	        //savePartyInfo(provider,"INSURANCE_PARTY");
+	    });
+	    
 	});
-
-	// 选中供应商
-	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-		$('#sp_filter').val($(this).attr('company_name'));
-		var provider = $(this).attr('partyId');
-		$('#sp_id').val(provider);
-        $('#spList').hide();
-        savePartyInfo(provider,"SERVICE_PROVIDER");
-    });
-    
-});
+		//供应商查询
+		//获取供应商的list，选中信息在下方展示其他信息
+		$('#sp_filter').on('keyup click', function(){
+			var inputStr = $('#sp_filter').val();
+			var spList =$("#spList");
+			$.get('/serviceProvider/searchSp', {input:inputStr}, function(data){
+				spList.empty();
+				for(var i = 0; i < data.length; i++){
+					var abbr = data[i].ABBR;
+					var company_name = data[i].COMPANY_NAME;
+					if(abbr == null) 
+						abbr = '';
+					if(company_name == null)
+						company_name = '';
+					spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].PID+"' company_name='"+company_name+"'>"+abbr+" "+company_name+"</a></li>");
+				}
+			},'json');
+			spList.css({left:$(this).position().left+"px",top:$(this).position().top+32+"px"}).show();
+		});
+		
+		// 没选中供应商，焦点离开，隐藏列表
+		$('#sp_filter').on('blur', function(){
+				$('#spList').hide();
+			});
+		
+		//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+		$('#spList').on('blur', function(){
+				$('#spList').hide();
+			});
+		
+		$('#spList').on('mousedown', function(){
+			return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+		});
+		
+		// 选中供应商
+		$('#spList').on('mousedown', '.fromLocationItem', function(e){
+			$('#sp_filter').val($(this).attr('company_name'));
+			var provider = $(this).attr('partyId');
+			$('#sp_id').val(provider);
+		    $('#spList').hide();
+		    //savePartyInfo(provider,"SERVICE_PROVIDER");
+		});
 
 function datetimepicker(data){
 	if(!$("#saveCarSummaryBtn").prop("disabled")){

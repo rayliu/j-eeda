@@ -199,6 +199,7 @@ public class CostMiscOrderController extends Controller {
 		String biz_type = (String) dto.get("biz_type");
 		String customerId = (String) dto.get("customer_id");
 		String spId = (String) dto.get("sp_id");
+		String insurance_id = (String) dto.get("insurance_id");
 		String routeFrom = (String) dto.get("route_from");
 		String routeTo = (String) dto.get("route_to");
 		String others_name = (String) dto.get("others_name");
@@ -216,6 +217,9 @@ public class CostMiscOrderController extends Controller {
 			
 			if (!"".equals(customerId) && customerId != null) {
 				arapMiscCostOrder.set("customer_id",customerId);
+			}
+			if (!"".equals(insurance_id) && insurance_id != null) {
+				arapMiscCostOrder.set("insurance_id",insurance_id);
 			}
 			if (spId != null && !"".equals(spId)) {
 				arapMiscCostOrder.set("sp_id",spId);
@@ -240,6 +244,9 @@ public class CostMiscOrderController extends Controller {
 			}
 			if (spId != null && !"".equals(spId)) {
 				arapMiscCostOrder.set("sp_id",spId);
+			}
+			if (!"".equals(insurance_id) && insurance_id != null) {
+				arapMiscCostOrder.set("insurance_id",insurance_id);
 			}
 			arapMiscCostOrder.set("others_name",others_name);
 			arapMiscCostOrder.set("ref_no",ref_no);
@@ -349,6 +356,15 @@ public class CostMiscOrderController extends Controller {
 			setAttr("customerparty", party);
 			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
 			setAttr("customerContact", contact); 
+		}
+		Long insuranceId = null;
+		if(arapMiscCostOrder!=null)	
+			insuranceId = arapMiscCostOrder.get("insurance_id");
+		if (!"".equals(insuranceId) && insuranceId != null) {
+			Party party = Party.dao.findById(insuranceId);
+			setAttr("insuranceparty", party);
+			Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+			setAttr("insuranceContact", contact); 
 		}
 		
 		String routeFrom = arapMiscCostOrder.get("route_from");
