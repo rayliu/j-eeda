@@ -1032,6 +1032,8 @@ public class CostPreInvoiceOrderController extends Controller {
  							payee_id = arapMiscCostOrder.getLong("sp_id").toString();
  						}else if(type.equals("customer")){
  							payee_id = arapMiscCostOrder.getLong("customer_id").toString();
+ 						}else if(type.equals("insurance")){
+ 							payee_id = arapMiscCostOrder.getLong("insurance_id").toString();
  						}
  					}else if("行车单".equals(orderType)){
  						CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
@@ -1194,10 +1196,12 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " union"
 					    + " SELECT aco.id,"
 					    + " (case when aco.cost_to_type = 'sp' then aco.sp_id"
-						+ " when aco.cost_to_type = 'customer' then aco.customer_id end) payee_id,aco.others_name payee_name,"
+						+ " when aco.cost_to_type = 'customer' then aco.customer_id"
+						+ " when aco.cost_to_type = 'insurance' then aco.insurance_id end) payee_id,aco.others_name payee_name,"
 					    + " aco.order_no, '成本单' order_type, aco.audit_STATUS, aco.remark, aco.create_stamp,"
 						+ " (case when aco.cost_to_type = 'sp' then (select c.company_name from contact c where c.id = aco.sp_id)"
-						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id) end) cname,"
+						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id)"
+						+ " when aco.cost_to_type = 'insurance' then (select c.company_name from contact c where c.id = aco.insurance_id) end) cname,"
 						+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
 						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '成本单' "
