@@ -1555,7 +1555,9 @@ public class DeliveryController extends Controller {
 			}
 			if(!"".equals(businessStamp) && businessStamp != null){
 				deliveryOrder.set("business_stamp", businessStamp);
-				deliveryOrder.set("status", "计划中");
+				if("新建".equals(deliveryOrder.get("status"))){
+					deliveryOrder.set("status", "计划中");
+				}
 			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
@@ -1590,15 +1592,13 @@ public class DeliveryController extends Controller {
 					}
 					if(!"".equals(businessStamp) && businessStamp != null){
 						deliveryChangeOrder.set("business_stamp", businessStamp);
-						
+						deliveryChangeOrder.set("status", "新建");
 					}
 					if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 						deliveryChangeOrder.set("client_order_stamp", clientOrderStamp);
 					if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null){
-						deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
+						deliveryChangeOrder.set("order_delivery_stamp", orderDeliveryStamp);
 						
-					}else{
-						deliveryOrder.set("status", "新建");
 					}
 					deliveryChangeOrder.set("audit_status", "新建");
 					deliveryChangeOrder.set("sign_status", "未回单");

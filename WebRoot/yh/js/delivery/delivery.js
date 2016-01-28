@@ -3,15 +3,6 @@ $(document).ready(function() {
 	if(deliverOrder.orderNo){
 		document.title = deliverOrder.orderNo +' | '+document.title;
 	}
-	
-	//按钮控制
-	var deliveryStatus=$("#deliveryOrder_status").text();
-	if(deliveryStatus == ''){
-		$("#saveBtn").attr("disabled",false);
-	}else if(deliveryStatus == '新建'|| deliveryStatus=='计划中'){
-		$("#saveBtn").attr("disabled",false);
-	}
-
     var feeTable = $('#itemList-table').dataTable({        
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bPaginate": false, //翻页功能
@@ -610,16 +601,15 @@ $(document).ready(function() {
             	$("#delivery_id").val(data.ID);
             	$("#change_delivery_id").val(data.DELIVERY_ID);
             	// $("#style").show();
-            	$("#ConfirmationBtn").attr("disabled", false);
             	$("#order_no").text(data.ORDER_NO);
             	$("#deliveryOrder_status").text(data.STATUS);
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-            	
-            	
-            	feeTable.fnSettings().oFeatures.bServerSide = true;
-            	feeTable.fnSettings().sAjaxSource="/delivery/itemsList?delivery_id="+data.ID;
-            	feeTable.fnDraw();
+            	if($('#isNullOrder').val()=='Y'){
+	            	feeTable.fnSettings().oFeatures.bServerSide = true;
+	            	feeTable.fnSettings().sAjaxSource="/delivery/itemsList?delivery_id="+data.ID;
+	            	feeTable.fnDraw();
+            	}
             	//window.location.reload()
 
             }else{
@@ -736,7 +726,6 @@ $(document).ready(function() {
 		},'json');
 		$("#ConfirmationBtn").attr("disabled", true);
 		//$("#receiptBtn").attr("disabled", false);
-		$("#saveBtn").attr("disabled", true);
 	});
 	//应付
 	$("#arapTab").click(function(e){
@@ -777,11 +766,6 @@ $(document).ready(function() {
 				$("#transfer_milestone_order_id").val(transferOrder.ID);
 				$("#id").val(transferOrder.ID);
 				if(transferOrder.ID>0){
-					if(transferOrder.STATUS == '已发车'){
-						$("#departureConfirmationBtn").attr("disabled", true);		
-					}else{
-						$("#departureConfirmationBtn").attr("disabled", false);
-					}
 					$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 				  	// $("#style").show();
 				  	var order_id = $("#order_id").val();
@@ -846,14 +830,22 @@ $(document).ready(function() {
 		}
 	}) ;*/
 	$(function(){
-		if($("#deliverystatus").val()=='已发车'){
-			$("#ConfirmationBtn").attr("disabled", true);
-			$("#receiptBtn").attr("disabled", false);
+		//按钮控制
+		//配送对账状态
+		//只要对账没确认就可以保存
+		var audit_status=$("#audit_status").val();
+		if(audit_status == '新建'){
+			$("#saveBtn").attr("disabled",false);
+		}else{
+			$("#saveBtn").attr("disabled", true);
 		}
-		if($("#deliverystatus").val()=='已签收'||$("#deliverystatus").val()=='已送达'){
-			$("#receiptBtn").attr("disabled", true);
+		if($("#deliverystatus").val() =='新建'|| $("#deliverystatus").val()=='计划中' ){
+			$("#ConfirmationBtn").attr("disabled", false);
+		}else{
+			$("#ConfirmationBtn").attr("disabled", true);
 		}
 	}) ;
+	
 	// 应付datatable
 	var deliveryid =$("#delivery_id").val();
 	var paymenttable=$('#table_fin2').dataTable({
