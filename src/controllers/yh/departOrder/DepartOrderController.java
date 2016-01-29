@@ -1093,10 +1093,6 @@ public class DepartOrderController extends Controller {
 	// 保存发车单
 	@Before(Tx.class)
 	public void saveDepartOrder() {
-	    if(!validateToken(DEPART_ORDER_TOKEN)){
-	        renderJson(new DepartOrder());
-	        return;
-	    }
 		String depart_id = getPara("depart_id");// 发车单id
 		String charge_type = getPara("chargeType");// 供应商计费类型
 		String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
@@ -1295,7 +1291,6 @@ public class DepartOrderController extends Controller {
 					.set("car_follow_phone", getPara("car_follow_phone"))
 					.set("route_from", getPara("route_from"))
 					.set("route_to", getPara("route_to"))
-					.set("status", getPara("status"))
 					.set("ltl_price_type", ltlPriceType)
 					.set("car_type", car_type)
 					.set("driver", getPara("driver_name"))
