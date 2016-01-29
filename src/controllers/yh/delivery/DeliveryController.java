@@ -2111,8 +2111,8 @@ public class DeliveryController extends Controller {
         		+ " then (select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp "
         		+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id "
         		+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
-        		+ " where dor.status is not null and dor.status ='已入库' and dt.order_id = t1.order_id)"
-        		+ " else (select sum(amount) from transfer_order_item toi where toi.order_id = t2.id)"
+        		+ " where dor.status is not null and dor.status ='已入库' and dt.order_id = t1.order_id and dp.order_id = t1.order_id)"
+        		+ " else (t1.amount)"
         		+ " end) is not null "
         		+ " order by t1.id desc";
     	
@@ -2121,8 +2121,8 @@ public class DeliveryController extends Controller {
         		+ " then (select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp "
         		+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id "
         		+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
-        		+ " where dor.status is not null and dor.status ='已入库' and dt.order_id = t1.order_id)"
-        		+ " else (select sum(amount) from transfer_order_item toi where toi.order_id = t2.id)"
+        		+ " where dor.status is not null and dor.status ='已入库' and dt.order_id = t1.order_id and dp.order_id = t1.order_id)"
+        		+ " else (t1.amount)"
         		+ " end) amount,"
         		+ " t1.complete_amount,t2.order_no,t2.customer_order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
         		+ " (select sum(product_number) from delivery_order_item  toi left join delivery_order dor on dor.id = toi.delivery_id "
@@ -2142,8 +2142,8 @@ public class DeliveryController extends Controller {
         		+ " then (select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp "
         		+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id "
         		+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
-        		+ " where dor.status is not null and dor.status ='已入库' and dt.order_id = t1.order_id)"
-        		+ " else (select sum(amount) from transfer_order_item toi where toi.order_id = t2.id)"
+        		+ " where dor.status is not null and dor.status ='已入库' and dt.order_id = t1.order_id and dp.order_id = t1.order_id)"
+        		+ " else (t1.amount)"
         		+ " end) is not null "
         		+ " order by t1.id desc " + sLimit;
         
