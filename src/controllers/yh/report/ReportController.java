@@ -57,6 +57,7 @@ public class ReportController extends Controller {
         outFileName = getContextPath() + outFileName + order_no;
 		String file = PrintPatterns.getInstance().print(fileName, outFileName,
 				hm);
+		arapcostorder.set("amount_pdf",arapcostorder.getInt("amount_pdf")+1 ).set("is_pdf", "N").update();
 		renderText(file.substring(file.indexOf("download")-1));
 	}
 	

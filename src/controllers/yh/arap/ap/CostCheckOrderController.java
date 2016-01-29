@@ -221,6 +221,7 @@ public class CostCheckOrderController extends Controller {
 		setAttr("orderIds", orderIds);
 		setAttr("orderNos", orderNos);
 		setAttr("changeAmount", changeAmount);
+		setAttr("is_pdf", "Y");
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
@@ -565,6 +566,7 @@ public class CostCheckOrderController extends Controller {
 		setAttr("confirm_user", confirm_user);
 
 		setAttr("arapAuditOrder", arapAuditOrder);
+		setAttr("is_pdf", arapAuditOrder.get("is_pdf"));
 
 		String orderIds = "";
 		String orderNos = "";

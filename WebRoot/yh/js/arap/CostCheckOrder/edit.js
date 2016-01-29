@@ -69,8 +69,6 @@ $(document).ready(function() {
 	
     if($("#costCheckOrderStatus").text() == 'new'){
     	$("#costCheckOrderStatus").text('新建');
-	}else{
-		$("#printBtn").attr("disabled",true);
 	}
     
 	// 审核
@@ -84,7 +82,6 @@ $(document).ready(function() {
 			if(data.arapAuditOrder.ID>0){
 				$("#confirm_name").html(data.ul.C_NAME);
 			  	$("#confirm_stamp").html(data.arapAuditOrder.CONFIRM_STAMP);
-				$("#printBtn").attr("disabled",false);
 				$("#costCheckOrderStatus").text("已确认");
 				$("#saveCostCheckOrderBtn").attr("disabled",true);
 			  	$("#auditBtn").attr("disabled",true);
@@ -112,11 +109,9 @@ $(document).ready(function() {
 	if($("#costCheckOrderStatus").text()=="新建"){
 		$("#saveCostCheckOrderBtn").attr("disabled",false);
 		$("#auditBtn").attr("disabled",true);
-		$("#printBtn").attr("disabled",true);
 	}else{
 		$("#saveCostCheckOrderBtn").attr("disabled",true);
 		$("#auditBtn").attr("disabled",true);
-		$("#printBtn").attr("disabled",false);
 	}
 	/*--------------------------------------------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
@@ -253,6 +248,7 @@ $(document).ready(function() {
     	var order_no = $("#sorder_no").text();
     	if(order_no != null && order_no != ""){
     		$.post('/report/printCheckOrder', {order_no:order_no}, function(data){
+    			$("#printBtn").hide();
         		window.open(data);
         	});
     	}else{
