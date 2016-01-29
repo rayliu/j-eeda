@@ -466,7 +466,7 @@ public class DeliveryController extends Controller {
 		List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select * from transfer_order_item toi"
 				+ " where delivery_id = ? ",delivery_id);	
 		setAttr("itemList", itemList);
-		
+		setAttr("audit_status", "新建");
 		setAttr("isNullOrder", "Y");
 		render("/yh/delivery/deliveryOrderEdit.html");
 	}
@@ -748,6 +748,7 @@ public class DeliveryController extends Controller {
 		//setAttr("cargoNaturName", "普通货品");
 		List<Record> paymentItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("paymentItemList", paymentItemList);
+		setAttr("audit_status", "新建");
 		setAttr("isNullOrder", "N");
 		
 		render("/yh/delivery/deliveryOrderEdit.html");
@@ -822,7 +823,6 @@ public class DeliveryController extends Controller {
 		}
 		setAttr("deliveryMode", "out_source");
 		setAttr("audit_status", "新建");
-		setAttr("status", "新建");
 		setAttr("notifyParty", notify);
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);
