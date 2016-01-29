@@ -13,6 +13,7 @@
                     <input type="hidden" id="transferOrderFinItemId">
                     <input type="hidden" id="warehouseIds">
                     <input type="hidden" id="tstatus" value="${transferOrderAttr.status!''}">
+                    
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -66,11 +67,13 @@
 					                    <input id="flag" name="flag" type="hidden" value="${flag!''}">
 					                    <input id="receiverId" name="receiverId" type="hidden"/>
                                         <input id="t_id" name="t_id" type="hidden" value="${transferIds!''}"/>
+                                        <input type="hidden" id="pickup_type" value="${pickupOrder.pickup_type!''}">
+                                        <input type="hidden" id="cargo_nature" value="${cargo_nature!''}">
                                        	
                                        	
 		                                <div class="col-lg-6">
 	                                       	<div id="pickupModes" class="form-group">
-	                                            <label><div>提货方式</div></label>
+	                                            <label>提货方式</label>
 	                                           	<input id="pickupModeRadio" type="hidden" value="${pickupOrder.pickup_mode!''}"/>
 	                                            <label class="radio-inline">
 	                                                <input type="radio" name="pickupMode" id="pickupMode1" value="own" checked="">${customizeField.EX_TYPE!'公司自提'}
@@ -121,8 +124,9 @@
                                         <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div>
                                     </div>
-                                  			 <div class="form-group">
+                                  			 <!-- <div class="form-group">
 												<label>发往</label>
+												<select></select>
 												<div id="div1">
 													<div class="checkbox">
 													<label><input id="checkbox1" type="checkbox" name="checkbox" value="yandCheckbox">货场</label>
@@ -151,7 +155,42 @@
 	                                                    <input class="form-control" id="con_address" name="con_address" value="${transferOrder.receiving_address!''}">
 	                                                </div>
 												</div>
-											</div>
+											</div> -->
+											
+											<div class="form-group">
+		                                	    <label class="form-label">运输去向</label>
+		                                	    <%
+											    	if(flag!='derect'){
+												%>
+		                                	    <div class="form-group">
+			                                        <select id="address_type" class="form-control pay_type" name="address_type">
+				                                       	<option value="yard">货场</option> 
+				                                       	<option value="warehouse">仓库</option>
+				                                        <option value="twice_pickup">二次调拨</option>                                            
+			                                        </select>
+		                                        </div>
+		                                        <div id="addressDiv" class="form-group" style="display: true;">
+			                                            <label>目的地</label>
+			                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
+		                                        </div>
+		                                       
+	                                            <div id="warehouseDiv" class="form-group" style="display: none;">
+	                                                    <label>仓库</label>
+														<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />  
+														<input id="replenishmentOrderId" name="replenishmentOrderId" type="hidden" value="${transferOrderAttr.warehouse_id!''}" />  
+		                                                <select id="gateInSelect" class="form-control" name="gateInSelect"></select>
+	                                            </div>
+	                                            <% }else{ %>
+	                                            <input class="form-control" id="direct_type" name="direct_type" value="直送收货人" disabled="disabled">
+	                                            <div id="receiverDiv" class="form-group" style="display: true;">
+	                                                    <label>收货人地址</label>
+	                                                    <input class="form-control" id="con_address" name="con_address" value="${transferOrder.receiving_address!''}">
+	                                            </div>
+	                                            <% }%>
+                                			</div>
+                                			
+                                			
+                                			
 											<div class="row">
 			                                    <div class="col-lg-6">
 			                                        <div class="form-group">                                        
@@ -218,17 +257,6 @@
                             
                             <div class="tab-pane fade" id="line">  
                             	<div class="panel-body">
-                            	<div class="controls">
-                                	<!-- <button class="btn  btn-primary" data-toggle="modal" data-target="#addExternalTransferOrder" data-backdrop="static">
-									  添加额外运输单
-									</button> -->
-									<!-- <button class="btn  btn-primary" data-toggle="modal" id="editProportionBtn">
-									  编辑比例
-									</button>
-									<button class="btn  btn-primary" data-toggle="modal" id="affirmBtn">
-									  确认
-									</button> -->
-                                </div>
                                 <div class="row">
 	                                    <div class="col-lg-12">
 		                                    <div class="table-responsive"> 
@@ -243,12 +271,9 @@
 			                                                    <th>客户</th>
 			                                                    <th>提货地点</th>
 			                                                    <th>创建时间</th>
-			                                                    <!-- <th>入货场还是仓库?</th> -->
 			                                                    <th>发往类型</th>
 			                                                    <th>状态</th>
 			                                                    <th>备注</th>
-			                                                    <!-- <th>分摊金额</th>
-			                                                    <th>分摊比例</th> -->
 			                                                    <th>操作</th>
 			                                                </tr>
 			                                            </thead>

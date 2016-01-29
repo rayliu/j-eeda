@@ -608,6 +608,7 @@ $(document).ready(function() {
         		}
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+            	
             	if($('#isNullOrder').val()=='Y'){
 	            	feeTable.fnSettings().oFeatures.bServerSide = true;
 	            	feeTable.fnSettings().sAjaxSource="/delivery/itemsList?delivery_id="+data.ID;

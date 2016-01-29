@@ -20,6 +20,54 @@
 	};
 	showFinishBut();
 	
+	
+	
+	
+	$("#address_type").on('change',function(){
+		var address_type = $('#address_type').val();
+		 if(address_type=="yard"){
+			 $("#replenishmentOrderId").val("")
+			 $("#warehouseDiv").hide();
+			 $("#addressDiv").show();
+	     }else if(address_type=="warehouse"){
+	    	 $("#replenishmentOrderId").val("")
+	    	 $("#addressDiv").hide();
+	    	 $("#warehouseDiv").show();
+	     }else if(address_type=="twice_pickup"){
+	    	//普货不可以二次调拨控制
+    		 var cargo_nature = $('#cargo_nature').val();
+    		 if(cargo_nature=='cargo'){
+    			$("#address_type").val('yard');
+				$.scojs_message('普货没有二次调车业务', $.scojs_message.TYPE_FALSE);
+				
+				$("#warehouseDiv").hide();
+				$("#addressDiv").show();
+    		 }else{
+    			 $("#replenishmentOrderId").val("")
+    	    	 $("#addressDiv").hide();
+    	    	 $("#warehouseDiv").hide();
+    		 }
+	     }
+	});
+	
+
+	//运输去向回显
+	var pickup_type = $("#pickup_type").val();
+	if(pickup_type ==  'yard'){
+		$("#address_type").val('yard');
+		$("#addressDiv").show();
+	}else if(pickup_type ==  'warehouse'){
+		$("#address_type").val('warehouse');
+		$("#addressDiv").hide();
+		$("#warehouseDiv").show();
+	}else if(pickup_type ==  'twice_pickup'){
+		$("#address_type").val('twice_pickup');
+		$("#addressDiv").hide();
+		$("#warehouseDiv").hide();
+	}
+	
+	
+	
 	 $('#menu_assign').addClass('active').find('ul').addClass('in');
 	 var pickupOrderId = $("#pickupOrderId").val();
 	 var parentId = "chargeCheckOrderbasic";
@@ -299,6 +347,7 @@
     		$("#saveTransferOrderBtn").prop('disabled',true);
 	    	$.post('/pickupOrder/savePickupOrder', $("#pickupOrderForm").serialize(), function(data){
 				$("#pickupOrderId").val(data.ID);
+				$("#pickup_type").val(data.PICKUP_TYPE);
 				$("#addressPickupOrderId").val(data.ID);
 				$("#milestonePickupId").val(data.ID);
 				if(data.ID>0){
@@ -314,9 +363,12 @@
 		    		var tr_item=$("#tr_itemid_list").val();
 		    		var item_detail=$("#item_detail").val();
 		     	    var pickupId = $("#pickupOrderId").val();
+		     	    var pickup_type = $("#pickup_type").val();
 		     		datatable.fnSettings().oFeatures.bServerSide = true; 
-		     		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+pickupId;
+		     		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&pickup_type="+pickup_type+"&item_detail="+item_detail+"&pickupId="+pickupId;
 		     		datatable.fnDraw();
+		     		routeTable.fnSettings().sAjaxSource = "/pickupOrder/findAllRoute?orderIds="+$("#message").val();
+            		routeTable.fnDraw(); 
 				}else{
 					alert('数据保存失败。');
 				}
@@ -656,8 +708,9 @@
     		var tr_item=$("#tr_itemid_list").val();
     		var item_detail=$("#item_detail").val();
      	    var pickupId = $("#pickupOrderId").val();
+     	    var pickup_type = $("#pickup_type").val();
      		datatable.fnSettings().oFeatures.bServerSide = true; 
-     		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&item_detail="+item_detail+"&pickupId="+pickupId;
+     		datatable.fnSettings().sAjaxSource = "/pickupOrder/getInitPickupOrderItems?localArr="+message+"&tr_item="+tr_item+"&pickup_type="+pickup_type+"&item_detail="+item_detail+"&pickupId="+pickupId;
      		datatable.fnDraw();
      		parentId = e.target.getAttribute("id");
         }else{
@@ -752,18 +805,25 @@
             	var pickupOrderId = $("#pickupOrderId").val();
             	var priceType = $("input[name='priceType']:checked").val();
             	if(pickupOrderId != null && pickupOrderId != ""){
-            		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType, receiverId:$("#receiverId").val()}, function(){
+            		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType, receiverId:$("#receiverId").val()}, function(data){
                 		pickupOrderMilestone();	
                     	var pickupOrderId = $("#pickupOrderId").val();
                     	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;
                     	paymenttable.fnDraw(); 
+                    	routeTable.fnSettings().sAjaxSource = "/pickupOrder/findAllRoute?orderIds="+$("#message").val();
                 		routeTable.fnDraw(); 
                     	$("#saveTransferOrderBtn").attr('disabled', true);	
-                    	if($("#flag").val()=='derect'){
-                    		$("#orderStatus").html("已收货");
+                    	if(data.PICKUP_TYPE=='direct'){
+                    		$("#orderStatus").html(data.STATUS);
                     		$.scojs_message('收货成功', $.scojs_message.TYPE_OK);
+                    	}else if(data.PICKUP_TYPE=='twice_pickup'){
+                    		$("#orderStatus").html(data.STATUS);
+                    		$.scojs_message('调拨成功', $.scojs_message.TYPE_OK);
+                    	}else if(data.PICKUP_TYPE=='warehouse'){
+                    		$("#orderStatus").html(data.STATUS);
+                    		$.scojs_message('入库成功', $.scojs_message.TYPE_OK);
                     	}else{
-                    		$("#orderStatus").html("已入货场");
+                    		("#orderStatus").html(data.STATUS);
                     		$.scojs_message('已入货场', $.scojs_message.TYPE_OK);
                     	}
                 	},'json');
@@ -783,24 +843,24 @@
 	}
 	
     
-	// 判断货场是否选中
-	$("#checkbox1").click(function(){
-		if($(this).prop('checked') == true){
-			$("#addressDiv").show();
-		}else{
-			$("#addressDiv").hide();			
-		}
-	});
-	
-	
-    // 判断直送收货人是否选中
-    $("#checkbox3").click(function(){
-        if($(this).prop('checked') == true){
-            $("#receiverDiv").show();
-        }else{
-            $("#receiverDiv").hide();            
-        }
-    });
+//	// 判断货场是否选中
+//	$("#checkbox1").click(function(){
+//		if($(this).prop('checked') == true){
+//			$("#addressDiv").show();
+//		}else{
+//			$("#addressDiv").hide();			
+//		}
+//	});
+//	
+//	
+//    // 判断直送收货人是否选中
+//    $("#checkbox3").click(function(){
+//        if($(this).prop('checked') == true){
+//            $("#receiverDiv").show();
+//        }else{
+//            $("#receiverDiv").hide();            
+//        }
+//    });
 
 	
 	// 获取所有仓库
@@ -830,38 +890,38 @@
 	});
 	
 	// 回显地址
-	if($("#address").val() != null && $("#address").val() != ''){
-		$("#addressDiv").show();
-		$("#checkbox1").prop('checked', true);
-	}else{
-	    $("#checkbox1").prop('checked', false);	
-	}
+//	if($("#address").val() != null && $("#address").val() != ''){
+//		$("#addressDiv").show();
+//		$("#checkbox1").prop('checked', true);
+//	}else{
+//	    $("#checkbox1").prop('checked', false);	
+//	}
+//	
+//	// 回显仓库
+//	if($("#hideWarehouseId").val() != null && $("#hideWarehouseId").val() != ''){
+//		$("#warehouseDiv").show();
+//		$("#checkbox2").prop('checked', true);
+//	}else{
+//		$("#warehouseDiv").hide();
+//		$("#checkbox2").prop('checked', false);		
+//	}
 	
-	// 回显仓库
-	if($("#hideWarehouseId").val() != null && $("#hideWarehouseId").val() != ''){
-		$("#warehouseDiv").show();
-		$("#checkbox2").prop('checked', true);
-	}else{
-		$("#warehouseDiv").hide();
-		$("#checkbox2").prop('checked', false);		
-	}
-	
-	//只送人地址回显
-	if($("#flag").val()=='derect'){
-    	$("#receiverId").val($("#t_id").val());
-		$("#div1").hide();
-		$("#checkbox3").prop('checked',true);
-        $("#receiverDiv").show();
-	}else if($("#is_direct_deliver").val()=='true'){
-		$("#receiverId").val($("#t_id").val());
-		$("#div1").hide();
-		$("#checkbox3").prop('checked',true);
-        $("#receiverDiv").show();
-	}else{
-		$("#div2").hide();
-		$("#addressDiv").show();
-		$("#checkbox1").prop('checked', true);
-	}
+//	//只送人地址回显
+//	if($("#flag").val()=='derect'){
+//    	$("#receiverId").val($("#t_id").val());
+//		$("#div1").hide();
+//		$("#checkbox3").prop('checked',true);
+//        $("#receiverDiv").show();
+//	}else if($("#is_direct_deliver").val()=='true'){
+//		$("#receiverId").val($("#t_id").val());
+//		$("#div1").hide();
+//		$("#checkbox3").prop('checked',true);
+//        $("#receiverDiv").show();
+//	}else{
+//		$("#div2").hide();
+//		$("#addressDiv").show();
+//		$("#checkbox1").prop('checked', true);
+//	}
 	//datatable, 动态处理
     var externalTable = $('#external-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -1302,18 +1362,21 @@
         "sAjaxSource": "/pickupOrder/findAllRoute?orderIds="+$("#message").val(),
         "aoColumns": [ 
             {"mDataProp":"ORDER_NO", "sWidth":"80px"},
-            {"mDataProp":"CNAME", "sWidth":"200px"},
-            {"mDataProp":"ADDRESS", "sWidth":"200px"},                 	
-            {"mDataProp":"CREATE_STAMP", "sWidth":"150px"},                        
-            {"mDataProp":null, "sWidth":"150px",
+            {"mDataProp":"CNAME", "sWidth":"150px"},
+            {"mDataProp":"ADDRESS", "sWidth":"150px"},                 	
+            {"mDataProp":"CREATE_STAMP", "sWidth":"120px"},                        
+            {"mDataProp":null, "sWidth":"80px",
             	"fnRender": function(obj) {
-            		/*if(obj.aData.STATUS=='已收货' || obj.aData.STATUS=='已签收'){*/
             		if(obj.aData.IS_DIRECT_DELIVER || $("#flag").val()=='derect'){
-            			return "<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='receiver' checked=''>直送收货人</label>";
+            			return "直送收货人";
             		}else{
-            			return  "<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' checked='' value='yard'>货场</label>" +
-         			   			"<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='warehouse'>中转仓</label>"/*+
-         			   			"<label class='radio-inline'><input type='radio' name='lastStopRadio"+obj.aData.ID+"' value='receiver'>直送收货人</label>"*/;
+            			if(obj.aData.PICKUP_TYPE=='warehouse'){
+            				return "中转仓";
+            			}else if(obj.aData.PICKUP_TYPE=='twice_pickup'){
+            				return "二次调拨";
+            			}else{
+            				return "货场";
+            			}
             		}
             }},                           
             {"mDataProp":"STATUS", "sWidth":"100px"},                        

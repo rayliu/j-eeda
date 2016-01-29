@@ -31,6 +31,7 @@ import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 import models.yh.profile.DriverAssistant;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -102,12 +103,17 @@ public class PickupOrderController extends Controller {
         setAttr("saveOK", false);
     
         //多地点提货顺序
+        String cargo_nature = "";
         for (int i = 0; i < transferOrderIds.length; i++) {
             TransferOrder transferOrder = TransferOrder.dao.findById(transferOrderIds[i]);
             transferOrder.set("pickup_seq", i + 1);
             transferOrder.update();
+            
+            if("cargo".equals(transferOrder.getStr("cargo_nature"))){
+            	cargo_nature = "cargo";
+            }
         }
-        
+        setAttr("cargo_nature", cargo_nature);
         
         //直送收货人地址（应该是）
         String sql = "SELECT tra.receiving_address FROM transfer_order tra "
@@ -329,184 +335,83 @@ public class PickupOrderController extends Controller {
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        if (orderNo == null && status == null && address == null && customer == null && routeFrom == null && routeTo == null
-                && beginTime == null && endTime == null) {
-            sqlTotal = "select count(1) total  from transfer_order tor "
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-            		+ " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code"
-                    + " left join office o on o.id = tor.office_id "
-                    + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
-                    + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
-                    + " and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.status!='手动删除' and tor.status!='取消' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-            sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
-            		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
-                    + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
-                    + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
-                    + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
-                    + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
-                    + " from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " 
-                    + " left join contact c on p.contact_id = c.id "
-                    + " left join location l1 on tor.route_from = l1.code " 
-                    + " left join location l2 on tor.route_to = l2.code "
-                    + " left join office o on o.id = tor.office_id "
-                    + " where tor. STATUS != '已完成' and tor.pickup_assign_status != 'ALL' "
-                    + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
-                    + " and tor.status!='手动删除'  and tor.status!='取消' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + sql1
-                    + " order by tor.planning_time desc" + sLimit;
-        } else if ("".equals(routeFrom) && "".equals(routeTo)) {
-            if (beginTime == null || "".equals(beginTime)) {
-                beginTime = "1-1-1";
-            }
-            if (endTime == null || "".equals(endTime)) {
-                endTime = "9999-12-31";
-            }
-            sqlTotal = "select count(1) total from transfer_order tor " 
-            		+ " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " 
-            		+ " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code "
-                    + " left join office o on tor.office_id = o.id "
-                    + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
-                    + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
-                    + " and ifnull(l1.name, '') like '%"
-                    + routeFrom
-                    + "%' and ifnull(l2.name, '') like '%"
-                    + routeTo
-                    + "%'"
-                    + "and tor.order_no like '%"
-                    + orderNo
-                    + "%' and tor.status like '%"
-                    + status
-                    + "%' and ifnull(tor.address, '') like '%"
-                    + address
-                    + "%' and c.abbr like '%"
-                    + customer
-                    + "%' and tor.planning_time between '"
-                    + beginTime
-                    + "' and '"
-                    + endTime
-                    + "' and tor.order_type like '%"
-                    + orderType + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + "and tor.status!='手动删除'  and tor.status!='取消' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
-            sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
-            		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
-                    + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
-                    + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
-                    + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
-                    + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
-                    + " from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " + " left join contact c on p.contact_id = c.id "
-                    + " left join location l1 on tor.route_from = l1.code " 
-                    + " left join location l2 on tor.route_to = l2.code  "
-                    + " left join office o on o.id= tor.office_id"
-                    + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
-                    + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
-                    + " and ifnull(l1.name, '') like '%"
-                    + routeFrom
-                    + "%' and ifnull(l2.name, '') like '%"
-                    + routeTo
-                    + "%' and tor.order_no like '%"
-                    + orderNo
-                    + "%' and tor.status like '%"
-                    + status
-                    + "%' and ifnull(tor.address, '') like '%"
-                    + address
-                    + "%' and c.abbr like '%"
-                    + customer
-                    + "%' and tor.planning_time between '"
-                    + beginTime
-                    + "' and '"
-                    + endTime
-                    + "' and tor.order_type like '%"
-                    + orderType + "%' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.status!='手动删除' and tor.status!='取消' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.planning_time desc" + sLimit;
-        } else {
-            if (beginTime == null || "".equals(beginTime)) {
-                beginTime = "1-1-1";
-            }
-            if (endTime == null || "".equals(endTime)) {
-                endTime = "9999-12-31";
-            }
+        String conditions=" where 1=1 ";
+		if (StringUtils.isNotEmpty(orderNo)){
+        	conditions+=" and order_no like '%"+orderNo+"%'";
+        }
+        if (StringUtils.isNotEmpty(customer)){
+        	conditions+=" and cname like '%"+customer+"%'";
+        }
+        if (StringUtils.isNotEmpty(routeFrom)){
+        	conditions+=" and route_from like '%"+routeFrom+"%'";
+        }
+        if (StringUtils.isNotEmpty(routeTo)){
+        	conditions+=" and route_to like '%"+routeTo+"%'";
+        }
+        if (StringUtils.isNotEmpty(address)){
+        	conditions+=" and address like '%"+address+"%'";
+        }
+        if (StringUtils.isNotEmpty(orderType)){
+        	conditions+=" and order_type like '%"+orderType+"%'";
+        }
+        if (StringUtils.isNotEmpty(beginTime)){
+			beginTime = " and create_stamp between'"+beginTime+"'";
+        }else{
+        	beginTime =" and create_stamp between '2000-1-1'";
+        }
+        if (StringUtils.isNotEmpty(endTime)){
+        	endTime =" and '"+endTime+"'";
+        }else{
+        	endTime =" and '3000-1-1'";
+        }
+        conditions += beginTime + endTime;
+        conditions += " and !(cargo_nature='ATM' and atmamount=0) and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"; 
 
-            sqlTotal = "select count(1) total from transfer_order tor " + " left join party p on tor.customer_id = p.id "
-                    + " left join contact c on p.contact_id = c.id " + " left join location l1 on tor.route_from = l1.code "
-                    + " left join location l2 on tor.route_to = l2.code  "
-                    + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
-                    + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
-                    + " and ifnull(l1.name, '') like '%"
-                    + routeFrom
-                    + "%' and ifnull(l2.name, '') like '%"
-                    + routeTo
-                    + "%'"
-                    + "and tor.order_no like '%"
-                    + orderNo
-                    + "%' and tor.status like '%"
-                    + status
-                    + "%' and ifnull(tor.address, '') like '%"
-                    + address
-                    + "%' and c.abbr like '%"
-                    + customer
-                    + "%' and tor.planning_time between '"
-                    + beginTime
-                    + "' and '"
-                    + endTime
-                    + "' and tor.order_type like '%"
-                    + orderType + "%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.status!='手动删除'  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
-
-            sql = "select tor.id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
-            		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
-                    + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
-                    + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
-                    + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmamount,"
-                    + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmvolume,"
-                    + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null) atmweight,"
-                    + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
-                    + " from transfer_order tor "
-                    + " left join party p on tor.customer_id = p.id " 
-                    + " left join contact c on p.contact_id = c.id "
-                    + " left join location l1 on tor.route_from = l1.code " 
-                    + " left join location l2 on tor.route_to = l2.code  "
-                    + " left join office o on o.id= tor.office_id"
-                    + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
-                    + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
-                    + " and ifnull(l1.name, '') like '%"
-                    + routeFrom
-                    + "%' and ifnull(l2.name, '') like '%"
-                    + routeTo
-                    + "%' and tor.order_no like '%"
-                    + orderNo
-                    + "%' and tor.status like '%"
-                    + status
-                    + "%' and ifnull(tor.address, '') like '%"
-                    + address
-                    + "%' and c.abbr like '%"
-                    + customer
-                    + "%' and tor.planning_time between '"
-                    + beginTime
-                    + "' and '"
-                    + endTime
-                    + "' and tor.order_type like '%"
-                    + orderType + "%' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.status!='手动删除'  and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-                    + " order by tor.planning_time desc" + sLimit;
+        sql = "select tor.id,tor.office_id , tor.customer_id,tor.order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
+        		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
+                + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
+                + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmamount,"
+                + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmvolume,"
+                + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmweight,"
+                + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
+                + " from transfer_order tor "
+                + " left join party p on tor.customer_id = p.id " 
+                + " left join contact c on p.contact_id = c.id "
+                + " left join location l1 on tor.route_from = l1.code "
+                + " left join location l2 on tor.route_to = l2.code  "
+                + " left join office o on o.id= tor.office_id"
+                + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
+                + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
+                + " and tor.status not in('手动删除','取消')"
+                + " union"
+                + " select tor.id,tor.office_id , tor.customer_id,CONCAT(tor.order_no,'<br/>','(二次调拨)') order_no,tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
+        		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
+                + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
+                + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmamount,"
+                + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmvolume,"
+                + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmweight,"
+                + " tor.address,tor.pickup_mode,tor.arrival_mode,tor.status,c.abbr cname,l1.name route_from,l2.name route_to,tor.create_stamp,tor.pickup_assign_status,o.office_name office_name"
+                + " from transfer_order tor "
+                + " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+                + " LEFT JOIN depart_order dor on dor.id = dt.pickup_id "
+                + " left join party p on tor.customer_id = p.id " 
+                + " left join contact c on p.contact_id = c.id "
+                + " left join location l1 on tor.route_from = l1.code " 
+                + " left join location l2 on tor.route_to = l2.code  "
+                + " left join office o on o.id= tor.office_id"
+                + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
+                + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
+                + " and tor.status not in('手动删除','取消')"
+                + " and dor.`STATUS` = '已二次调拨'"
+                + " group by tor.id ";
 
             
-        }
-        Record rec = Db.findFirst(sqlTotal);
+        Record rec = Db.findFirst("select count(1) total from (select * from ("+sql+ ") A "+ conditions + ") B");
         logger.debug("total records:" + rec.getLong("total"));
-        List<Record> transferOrders = Db.find(sql);
+        List<Record> transferOrders = Db.find("select * from ("+sql+ ") A "+ conditions + " order by planning_time desc " + sLimit);
 
         transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
@@ -572,13 +477,19 @@ public class PickupOrderController extends Controller {
     public void getInitPickupOrderItems() {
         String orderId = getPara("localArr");// 运输单id
         String pickId = getPara("pickupId");
-        
+        String pickup_type = getPara("pickup_type");
+    	if("twice_pickup".equals(pickup_type)){
+    		pickup_type = "  twice_pickup_id ";
+    	}else{
+    		pickup_type = "  pickup_id";
+    	}
+    	
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "SELECT COUNT(0) total FROM(SELECT(SELECT count(0) total FROM	transfer_order_item_detail WHERE order_id = tor.id	AND item_id = toi.id AND depart_id = 1632) atmamount, ifnull(toi.amount, 0) cargoamount FROM transfer_order_item toi LEFT JOIN transfer_order tor ON tor.id = toi.order_id WHERE toi.order_id IN (" + orderId + ")) a where (atmamount > 0 or cargoamount>0)";
+        String sqlTotal = "SELECT COUNT(0) total FROM(SELECT(SELECT count(0) total FROM	transfer_order_item_detail WHERE order_id = tor.id	AND item_id = toi.id and"+ pickup_type +" = '"+pickId+"') atmamount, ifnull(toi.amount, 0) cargoamount FROM transfer_order_item toi LEFT JOIN transfer_order tor ON tor.id = toi.order_id WHERE toi.order_id IN (" + orderId + ")) a where (atmamount > 0 or cargoamount>0)";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -587,7 +498,7 @@ public class PickupOrderController extends Controller {
         if(!"".equals(pickId) && pickId != null){
         	 sql = " SELECT * FROM(select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
              		 + " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,c.abbr customer,tor.order_no,toi.remark,"
-             		 + " ifnull((select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and pickup_id = '"+pickId+"'), 0) atmamount,"
+             		 + " ifnull((select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and"+ pickup_type +" = '"+pickId+"'), 0) atmamount,"
                      + " ifnull((select ifnull(dt.amount, 0)  from depart_transfer dt where dt.order_item_id = toi.id and dt.pickup_id = '"+pickId+"'), 0) cargoamount,"
                      + " round(ifnull((select (ifnull(pdd.volume, 0) * ifnull(dt.amount, 0))  from depart_transfer dt left join transfer_order_item toii on toii.id = dt.order_item_id "
                      + " left join product pdd ON pdd.id = toii.product_id where dt.order_item_id = toi.id and dt.pickup_id = '"+pickId+"'), 0),2) cargovolume,"
@@ -664,50 +575,69 @@ public class PickupOrderController extends Controller {
             if (carinfoId != null && !"".equals(carinfoId)) {
                 pickupOrder.set("carinfo_id", carinfoId);
             }
-            String[] values = getParaValues("checkbox");
-            if (values != null) {
-                if (values.length == 1) {
-                    for (int i = 0; i < values.length; i++) {
-                        if ("yandCheckbox".equals(values[i])) {
-                            pickupOrder.set("address", getPara("address"));
-                            pickupOrder.set("warehouse_id", null);
-                        }
-                        if ("warehouseCheckbox".equals(values[i])) {
-                        	
-                        	if(gateInSelect == "" || gateInSelect == null){
-                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-                        	}else{
-                        		pickupOrder.set("warehouse_id", gateInSelect);
-                        	}
-                            pickupOrder.set("address", null);
-                        }
-                        if ("receiverCheckbox".equals(values[i])) {
-                        	pickupOrder.set("is_direct_deliver", true);
-                        	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
-                        	transferOrder.set("receiving_address", con_address).update();
-                        }else{
-                        	pickupOrder.set("is_direct_deliver", false);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < values.length; i++) {
-                        if ("yandCheckbox".equals(values[i])) {
-                            pickupOrder.set("address", getPara("address"));
-                        }
-                        if ("warehouseCheckbox".equals(values[i])) {
-                        	if(gateInSelect == "" || gateInSelect == null){
-                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-                        	}else{
-                        		pickupOrder.set("warehouse_id", gateInSelect);
-                        	}
-                        }
-                    }
-                }
-            } else {
-                pickupOrder.set("address", null);
-                pickupOrder.set("warehouse_id", null);
-                pickupOrder.set("is_direct_deliver", false);
+            
+            String address_type = getPara("address_type");
+            if("yard".equals(address_type)){
+            	pickupOrder.set("is_direct_deliver", false);
+            	pickupOrder.set("address", getPara("address"));
+            	pickupOrder.set("pickup_type", "yard");
+            }else if("warehouse".equals(address_type)){
+            	if(gateInSelect == "" || gateInSelect == null){
+            		pickupOrder.set("warehouse_id", replenishmentOrderId);
+            	}else{
+            		pickupOrder.set("warehouse_id", gateInSelect);
+            	}
+            	pickupOrder.set("pickup_type", "warehouse");
+            	pickupOrder.set("is_direct_deliver", false);
+            }else if("twice_pickup".equals(address_type)){
+            	pickupOrder.set("pickup_type", "twice_pickup");
+            	pickupOrder.set("is_direct_deliver", false);
+            }else{
+            	pickupOrder.set("pickup_type", "direct");
+            	pickupOrder.set("is_direct_deliver", true);
+            	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
+            	transferOrder.set("receiving_address", con_address).update();
             }
+            
+            
+//                if (values.length == 1) {
+//                    for (int i = 0; i < values.length; i++) {
+//                        if ("yandCheckbox".equals(values[i])) {
+//                            pickupOrder.set("address", getPara("address"));
+//                            pickupOrder.set("warehouse_id", null);
+//                        }
+//                        if ("warehouseCheckbox".equals(values[i])) {
+//                        	
+//                        	if(gateInSelect == "" || gateInSelect == null){
+//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+//                        	}else{
+//                        		pickupOrder.set("warehouse_id", gateInSelect);
+//                        	}
+//                            pickupOrder.set("address", null);
+//                        }
+//                        if ("receiverCheckbox".equals(values[i])) {
+//                        	pickupOrder.set("is_direct_deliver", true);
+//                        	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
+//                        	transferOrder.set("receiving_address", con_address).update();
+//                        }else{
+//                        	pickupOrder.set("is_direct_deliver", false);
+//                        }
+//                    }
+//                } else {
+//                    for (int i = 0; i < values.length; i++) {
+//                        if ("yandCheckbox".equals(values[i])) {
+//                            pickupOrder.set("address", getPara("address"));
+//                        }
+//                        if ("warehouseCheckbox".equals(values[i])) {
+//                        	if(gateInSelect == "" || gateInSelect == null){
+//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+//                        	}else{
+//                        		pickupOrder.set("warehouse_id", gateInSelect);
+//                        	}
+//                        }
+//                    }
+//                }
+            
             pickupOrder.set("car_summary_type", "untreated");
             pickupOrder.save();
             
@@ -729,7 +659,11 @@ public class PickupOrderController extends Controller {
                 if(!detail_ids.equals("") && detail_ids != null){
     	            for (int i = 0; i < detailIds.length; i++) {
     					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailIds[i]);
-    					detail.set("pickup_id",pickupOrder.get("id")).update();
+    					if("twice_pickup".equals(address_type)){
+    						detail.set("twice_pickup_id",pickupOrder.get("id")).update();
+                    	}else{
+                    		detail.set("pickup_id",pickupOrder.get("id")).update();
+                    	}
     	            }
                 }
     			
@@ -739,7 +673,13 @@ public class PickupOrderController extends Controller {
 	            	Record totalTransferOrderAmount = Db.findFirst("select count(0) total from transfer_order_item_detail where order_id = ?",orderId);
 	            	Long total = totalTransferOrderAmount.getLong("total");
 	            	//总提货数量（之前+现在）
-	            	Record totalPickAmount = Db.findFirst("select count(0) total from transfer_order_item_detail where pickup_id is not null and order_id = ?",orderId);
+	            	String pickup_type ="";
+	            	if("twice_pickup".equals(address_type)){
+	            		pickup_type = "twice_pickup_id";
+	            	}else{
+	            		pickup_type = "pickup_id";
+	            	}
+	            	Record totalPickAmount = Db.findFirst("select count(0) total from transfer_order_item_detail where "+ pickup_type +" is not null and order_id = ?",orderId);
 	            	Long before_number = totalPickAmount.getLong("total");
 	            	
 	            	//更新运输单
@@ -854,41 +794,75 @@ public class PickupOrderController extends Controller {
             if (carinfoId != null && !"".equals(carinfoId)) {
                 pickupOrder.set("carinfo_id", carinfoId);
             }
-            String[] values = getParaValues("checkbox");
-            if (values != null) {
-                if (values.length == 1) {
-                    for (int i = 0; i < values.length; i++) {
-                        if ("yandCheckbox".equals(values[i])) {
-                            pickupOrder.set("address", getPara("address"));
-                            pickupOrder.set("warehouse_id", null);
-                        }
-                        if ("warehouseCheckbox".equals(values[i])) {
-                        	if(gateInSelect == "" || gateInSelect == null){
-                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-                        	}else{
-                        		pickupOrder.set("warehouse_id", gateInSelect);
-                        	}
-                            pickupOrder.set("address", null);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < values.length; i++) {
-                        if ("yandCheckbox".equals(values[i])) {
-                            pickupOrder.set("address", getPara("address"));
-                        }
-                        if ("warehouseCheckbox".equals(values[i])) {
-                        	if(gateInSelect == "" || gateInSelect == null){
-                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-                        	}else{
-                        		pickupOrder.set("warehouse_id", gateInSelect);
-                        	}
-                        }
-                    }
+            
+            pickupOrder.set("create_stamp", new Date());
+            if (!"own".equals(getPara("pickupMode"))) {
+                if (!getPara("sp_id").equals("")) {
+                    pickupOrder.set("sp_id", getPara("sp_id"));
                 }
-            } else {
-                pickupOrder.set("address", null);
-                pickupOrder.set("warehouse_id", null);
             }
+            if (driverId != null && !"".equals(driverId)) {
+                pickupOrder.set("driver_id", driverId);
+            }else{            	
+            	pickupOrder.set("driver_id", null);
+            }
+            if (carinfoId != null && !"".equals(carinfoId)) {
+                pickupOrder.set("carinfo_id", carinfoId);
+            }
+            
+            String address_type = getPara("address_type");
+            if("yard".equals(address_type)){
+            	pickupOrder.set("address", getPara("address"));
+            	pickupOrder.set("pickup_type", "yard");
+            }else if("warehouse".equals(address_type)){
+            	if(gateInSelect == "" || gateInSelect == null){
+            		pickupOrder.set("warehouse_id", replenishmentOrderId);
+            	}else{
+            		pickupOrder.set("warehouse_id", gateInSelect);
+            	}
+            	pickupOrder.set("pickup_type", "warehouse");
+            }else if("twice_pickup".equals(address_type)){
+            	pickupOrder.set("pickup_type", "twice_pickup");
+            }else{
+            	pickupOrder.set("pickup_type", "direct");
+            	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
+            	transferOrder.set("receiving_address", con_address).update();
+            }
+//            String[] values = getParaValues("checkbox");
+//            if (values != null) {
+//                if (values.length == 1) {
+//                    for (int i = 0; i < values.length; i++) {
+//                        if ("yandCheckbox".equals(values[i])) {
+//                            pickupOrder.set("address", getPara("address"));
+//                            pickupOrder.set("warehouse_id", null);
+//                        }
+//                        if ("warehouseCheckbox".equals(values[i])) {
+//                        	if(gateInSelect == "" || gateInSelect == null){
+//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+//                        	}else{
+//                        		pickupOrder.set("warehouse_id", gateInSelect);
+//                        	}
+//                            pickupOrder.set("address", null);
+//                        }
+//                    }
+//                } else {
+//                    for (int i = 0; i < values.length; i++) {
+//                        if ("yandCheckbox".equals(values[i])) {
+//                            pickupOrder.set("address", getPara("address"));
+//                        }
+//                        if ("warehouseCheckbox".equals(values[i])) {
+//                        	if(gateInSelect == "" || gateInSelect == null){
+//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
+//                        	}else{
+//                        		pickupOrder.set("warehouse_id", gateInSelect);
+//                        	}
+//                        }
+//                    }
+//                }
+//            } else {
+//                pickupOrder.set("address", null);
+//                pickupOrder.set("warehouse_id", null);
+//            }
             pickupOrder.update();
         }
         
@@ -1057,6 +1031,11 @@ public class PickupOrderController extends Controller {
                 + "' and dor.id in(" + getPara("id") + ")";
         DepartOrder pickupOrder = DepartOrder.dao.findFirst(sql);
         setAttr("pickupOrder", pickupOrder);
+        if(pickupOrder.getBoolean("is_direct_deliver")){
+        	setAttr("flag", "derect");
+        }else{
+        	setAttr("flag", "underect");
+        }
         
         String list = pickupOrder.getStr("order_id");
         String[] transferOrderIds = list.split(",");
@@ -1202,7 +1181,7 @@ public class PickupOrderController extends Controller {
         if(pickupOrder.getBoolean("is_direct_deliver")!=null){
         	direct = pickupOrder.getBoolean("is_direct_deliver");
         }
-        
+        String pickup_type = pickupOrder.getStr("pickup_type");
 
         //非直送调车
         if(!direct){
@@ -1213,22 +1192,32 @@ public class PickupOrderController extends Controller {
 	            TransferOrderMilestone milestone = new TransferOrderMilestone();
 	            order_type = transferOrder.getStr("order_type");
 	            String pickup_status  = transferOrder.getStr("pickup_assign_status");
-	            if ("movesOrder".equals(order_type) ||"salesOrder".equals(order_type) || "arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)) {//销售订单
+	            if("twice_pickup".equals(pickup_type)){
 	            	if(pickup_status.equals("PARTIAL")){
-	            		milestone.set("status", "部分已入货场");	
+	            		milestone.set("status", "部分已二次调拨");
 	            	}else{
-	            		milestone.set("status", "已入货场");
+	            		milestone.set("status", "已二次调拨");
+	            		transferOrder.set("pickup_assign_status", "NEW").update();
 	            	}
-                    if("arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)){
-                    	SubtractInventory(pickupOrder,transferOrder);
-                    } 
-	            } else if ("replenishmentOrder".equals(order_type)) {  //补货
-	            	if(pickup_status.equals("PARTIAL")){
-	            		milestone.set("status", "部分已入库");
-	            	}else{
-	            		milestone.set("status", "已入库");
-	            	}
+	            }else{
+	            	if ("movesOrder".equals(order_type) ||"salesOrder".equals(order_type) || "arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)) {//销售订单
+		            	if(pickup_status.equals("PARTIAL")){
+		            		milestone.set("status", "部分已入货场");	
+		            	}else{
+		            		milestone.set("status", "已入货场");
+		            	}
+	                    if("arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)){
+	                    	SubtractInventory(pickupOrder,transferOrder);
+	                    } 
+		            } else if ("replenishmentOrder".equals(order_type)) {  //补货
+		            	if(pickup_status.equals("PARTIAL")){
+		            		milestone.set("status", "部分已入库");
+		            	}else{
+		            		milestone.set("status", "已入库");
+		            	}
+		            }
 	            }
+	            
 	            
 	            //新建里程碑
 	            milestone.set("order_id", transferOrder.getLong("id"));
@@ -1240,15 +1229,22 @@ public class PickupOrderController extends Controller {
 	        }
 	        
 	        TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
-	        if ("movesOrder".equals(order_type) ||"salesOrder".equals(order_type) || "arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)) {//销售订单
-	        	pickupMilestone.set("status", "已入货场");
+	        if("twice_pickup".equals(pickup_type)){
+	        	pickupMilestone.set("status", "已二次调拨");
 	        	//更新调车单状态
-                pickupOrder.set("status", "已入货场");
-            } else if ("replenishmentOrder".equals(order_type)) {  //补货
-            	pickupMilestone.set("status", "已入库");
-            	//更新调车单状态
-            	pickupOrder.set("status", "已入库");
+                pickupOrder.set("status", "已二次调拨");
+            }else{
+            	if ("movesOrder".equals(order_type) ||"salesOrder".equals(order_type) || "arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)) {//销售订单
+    	        	pickupMilestone.set("status", "已入货场");
+    	        	//更新调车单状态
+                    pickupOrder.set("status", "已入货场");
+                } else if ("replenishmentOrder".equals(order_type)) {  //补货
+                	pickupMilestone.set("status", "已入库");
+                	//更新调车单状态
+                	pickupOrder.set("status", "已入库");
+                }
             }
+	        
 	        pickupMilestone.set("create_by", LoginUserController.getLoginUserId(this));
 	        pickupMilestone.set("create_stamp", new Date());
 	        pickupMilestone.set("pickup_id", pickupOrder.get("id"));
@@ -1348,7 +1344,7 @@ public class PickupOrderController extends Controller {
                 tFinItem2.save();
             }
         }
-        renderJson("{\"success\":true}");
+        renderJson(pickupOrder);
     }
     
     
@@ -1543,11 +1539,11 @@ public class PickupOrderController extends Controller {
 //        		+ " left join party p on tor.customer_id = p.id left join contact c on c.id = p.contact_id"
 //        		+ " where tor.id in("+orderIds+") order by tor.pickup_seq desc " + sLimit;
         
-        String sql = "select distinct tor.*,c.abbr cname ,deo.is_direct_deliver from transfer_order tor"
+        String sql = "select tor.*,c.abbr cname ,deo.is_direct_deliver,deo.pickup_type from transfer_order tor"
         		+ " left join party p on tor.customer_id = p.id left join contact c on c.id = p.contact_id "
         		+ " left join depart_transfer dept on dept.order_id = tor.id "
         		+ " left join depart_order deo on deo.id = dept.pickup_id"
-        		+ " where tor.id in("+orderIds+") order by tor.pickup_seq desc " + sLimit;
+        		+ " where tor.id in("+orderIds+") group by tor.id order by tor.pickup_seq desc " + sLimit;
 
         //logger.debug("sql:" + sql);
         List<Record> transferOrders = Db.find(sql);
@@ -2227,6 +2223,13 @@ public class PickupOrderController extends Controller {
     public void findTransferOrderItem(){
     	Map orderMap = new HashMap();
     	String transferOrderId = getPara("order_id");
+    	String pickup_type = getPara("pickup_type");
+    	if("twice_pickup".equals(pickup_type)){
+    		pickup_type = " and twice_pickup_id is not null";
+    	}else{
+    		pickup_type = " and twice_pickup_id is null";
+    	}
+    	
     	if (transferOrderId == null || transferOrderId.equals("")) {
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
@@ -2244,11 +2247,11 @@ public class PickupOrderController extends Controller {
             		+ " where toi.order_id = " + transferOrderId;
             
             String sql = "select distinct toi.id, toi.product_id prod_id, tor.order_no, ifnull(p.item_no, toi.item_no) item_no, ifnull(p.item_name, toi.item_name) item_name,"
-            		+ " (select count(0) total from transfer_order_item_detail where item_id = toi.id  and pickup_id is null) atmamount,toi.pickup_number,toi.amount,"
+            		+ " (select count(0) total from transfer_order_item_detail where item_id = toi.id  and pickup_id is null "+ pickup_type +") atmamount,toi.pickup_number,toi.amount,"
     				+ " ifnull(p.unit, toi.unit) unit, round(toi.volume ,2) sum_volume, round(toi.sum_weight ,2) sum_weight, toi.remark from transfer_order_item toi"
             		+ " left join transfer_order tor on tor.id = toi.order_id"
             		+ " left join product p on p.id = toi.product_id"
-            		+ " where toi.order_id = " +transferOrderId + " order by toi.id ";
+            		+ " where toi.order_id = " +transferOrderId + " order by toi.id";
             
             Record rec = Db.findFirst(totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
@@ -2266,7 +2269,15 @@ public class PickupOrderController extends Controller {
     //查找单品
     public void findTransferOrderItemDetail(){
     	Map orderMap = new HashMap();
+    	String pickup_type = getPara("pickup_type");
     	String transferOrderItemId = getPara("item_id");
+    	if("twice_pickup".equals(pickup_type)){
+    		pickup_type = " and twice_pickup_id is not null";
+    	}else{
+    		pickup_type = " and twice_pickup_id is null";
+    	}
+    	
+    	
     	if (transferOrderItemId == null || transferOrderItemId.equals("")) {
             orderMap.put("sEcho", 0);
             orderMap.put("iTotalRecords", 0);
@@ -2278,8 +2289,8 @@ public class PickupOrderController extends Controller {
     		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
     			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
     		}
-    		String totalWhere = "select count(0) total from transfer_order_item_detail where item_id = '" + transferOrderItemId + "'  and pickup_id is null";
-            String sql = "select id,serial_no,pieces from transfer_order_item_detail where item_id = '" + transferOrderItemId + "'  and pickup_id is null";
+    		String totalWhere = "select count(0) total from transfer_order_item_detail where item_id = '" + transferOrderItemId + "'  and pickup_id is null" +pickup_type;
+            String sql = "select id,serial_no,pieces from transfer_order_item_detail where item_id = '" + transferOrderItemId + "'  and pickup_id is null" +pickup_type;
             
             Record rec = Db.findFirst(totalWhere);
             logger.debug("total records:" + rec.getLong("total"));
@@ -2296,9 +2307,15 @@ public class PickupOrderController extends Controller {
     //按运输单查找所有单品序列号
     public void findSerialNoByOrderId(){
     	String orderId = getPara("order_id");
+    	String pickup_type = getPara("pickup_type");
     	Record serialNoList = null;
+    	if("twice_pickup".equals(pickup_type)){
+    		pickup_type = " and twice_pickup_id is not null";
+    	}else{
+    		pickup_type = " and twice_pickup_id is null";
+    	}
     	if(orderId != ""){
-    		String sql = "select group_concat(cast(id as char) separator ',') id,group_concat(serial_no separator ' ') serial_no from transfer_order_item_detail where pickup_id is null and order_id = '" + orderId + "';";
+    		String sql = "select group_concat(cast(id as char) separator ',') id,group_concat(serial_no separator ' ') serial_no from transfer_order_item_detail where pickup_id is null "+pickup_type+" and order_id = '" + orderId + "';";
     		serialNoList = Db.findFirst(sql);
     		logger.debug("serialNoList:" + serialNoList);
     	}

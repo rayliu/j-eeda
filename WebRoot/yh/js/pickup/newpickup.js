@@ -28,6 +28,8 @@ $(document).ready(function() {
     var have_detail = "";
     //用于控制选择的数量变化
     var select_item_id = '';
+    //判断二次调拨
+    var pickup_type = '';
     
     
     var clean = function(){
@@ -512,6 +514,11 @@ $(document).ready(function() {
 		var office_name = $(this).parent().siblings('.office_name')[0].textContent;
 		var value = $(this).val();
 		
+		pickup_type = '';
+    	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次调拨")>0){
+    		pickup_type ='twice_pickup';
+    	};
+		
 		if(total_amount==0){
 			$.scojs_message('运输单货品可用数量不能为0', $.scojs_message.TYPE_FAIL);
 			$(this).prop('checked',false);
@@ -545,7 +552,7 @@ $(document).ready(function() {
 			
 			transferOrderIds.push(value);
 			if(cargo_nature == 'ATM'){
-				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value}, function(data){
+				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value,pickup_type:pickup_type}, function(data){
 					var ids = data.ID.split(",");
 					var serial_no = data.SERIAL_NO;
 					for ( var i = 0; i < ids.length; i++) {
@@ -561,7 +568,7 @@ $(document).ready(function() {
 			    	$("#sumWeight").text((parseFloat($("#sumWeight").text() == "" ? 0 :parseFloat($("#sumWeight").text())) + weight * 1).toFixed(2));	
 					$("#sumVolume").text((parseFloat($("#sumVolume").text() == "" ? 0 :parseFloat($("#sumVolume").text())) + volume * 1).toFixed(2));
 					console.log("单品id集合-正式:"+detailIds);
-					ckeckedTransferOrderList.append("<tr value='"+value+"' detail_ids='"+data.ID+"' amount='"+detailIds.length+"' itemids=''><td>"+order_no+"</td><td>"+serial_no+"</td><td>"+ids.length+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
+					ckeckedTransferOrderList.append("<tr value='"+value+"' detail_ids='"+data.ID+"' amount='"+ids.length+"' itemids=''><td>"+order_no+"</td><td>"+serial_no+"</td><td>"+ids.length+"</td><td>"+operation_type+"</td><td>"+route_from+"</td><td>"+route_to+"</td><td>"+order_type+"</td><td>"+cargo_nature+"</td><td>"+weight+"</td><td>"+volume+"</td><td>"
 							+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 				},'json');
 			}else{
@@ -615,7 +622,7 @@ $(document).ready(function() {
 			}
 		}else{
 			if(cargo_nature == 'ATM'){
-				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value}, function(data){
+				$.get("/pickupOrder/findSerialNoByOrderId", {order_id:value,pickup_type:pickup_type}, function(data){
 					console.log("单品id集合-正式:"+detailIds);
 					console.log("要删除的单品id:"+data.ID);
 					var ids = data.ID.split(",");
@@ -660,9 +667,9 @@ $(document).ready(function() {
 	
 	
 	
-	var itemTableLoad = function(transferId){
+	var itemTableLoad = function(transferId,pickup_type){
     	itemTable.fnSettings().oFeatures.bServerSide = true; 
-		itemTable.fnSettings().sAjaxSource = "/pickupOrder/findTransferOrderItem?order_id="+transferId,
+		itemTable.fnSettings().sAjaxSource = "/pickupOrder/findTransferOrderItem?order_id="+transferId+"&pickup_type="+pickup_type,
 		itemTable.fnDraw();
     };
     
@@ -671,6 +678,11 @@ $(document).ready(function() {
     	have_detail = [];
     	var transferId = $(this).val();
     	var cargo_nature = $(this).attr("cargoNature");
+    	pickup_type = '';
+    	var orderNo = $(this).parent().text();
+    	if(orderNo.indexOf("二次调拨")>0){
+    		pickup_type ='twice_pickup';
+    	};
     	//判断为修改运输单单品的时候，取出原有的单品id集合、单品序列号
     	if($(this).parent().parent().find("td").find("input[type='checkbox'][class='checkedOrUnchecked']").prop('checked') == true){
     		$("#ckeckedTransferOrderList tr").each(function (){
@@ -697,15 +709,15 @@ $(document).ready(function() {
     	if(cargo_nature == "ATM"){
     		$('#sureBtn').attr('disabled', true);
     		
-    		itemTableLoad(transferId);
+    		itemTableLoad(transferId,pickup_type);
     	}else{
     		$.get("/pickupOrder/findNumberByOrderId", {order_id:transferId}, function(data){
         		if(data.DETAIL_IDS != null){
         			have_detail = "yes";
         			$('#sureBtn').attr('disabled', true);
-        			itemTableLoad(transferId);
+        			itemTableLoad(transferId,pickup_type);
         		}else{
-        			itemTableLoad(transferId);
+        			itemTableLoad(transferId,pickup_type);
         			$('#sureBtn').attr('disabled', false);
         		}
         	});
@@ -741,12 +753,18 @@ $(document).ready(function() {
     //模态窗点击确定
     $('#sureBtn').click(function(e){
     	var transferId = $("#transferId").val();
+    	
+    	
     	if($("#ckeckedTransferOrderList").find("tr").find("td").text() == "表中数据为空"){
 			$("#ckeckedTransferOrderList").empty();
 		}
     	$("input[type='checkbox'][class='checkedOrUnchecked']").each(function(){
+    		var this_pickup_type = '';
+        	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次调拨")>0){
+        		this_pickup_type ='twice_pickup';
+        	};
     		//当运输单没有选中时，已选列表不存在此数据
-        	if($(this).val() == transferId && $(this).prop('checked') == false){
+        	if($(this).val() == transferId && $(this).prop('checked') == false && this_pickup_type == pickup_type){
         		$(this).prop('checked',true);
         		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
         		var order_no = $(this).parent().siblings('.order_no')[0].textContent.substr(0, 15);		
@@ -826,7 +844,7 @@ $(document).ready(function() {
     				
     				
     			}	
-        	}else if($(this).val() == transferId && $(this).prop('checked') == true){
+        	}else if($(this).val() == transferId && $(this).prop('checked') == true && this_pickup_type == pickup_type){
         		//当运输单已选中时，已选列表存在此数据
         		var cargo_nature = $(this).parent().siblings('.cargo_nature')[0].textContent;	
         		$("#ckeckedTransferOrderList tr").each(function (){
@@ -913,7 +931,7 @@ $(document).ready(function() {
 			number = 0;
 			$("#checkboxAll").prop('checked',false);
 			detailTable.fnSettings().oFeatures.bServerSide = true; 
-			detailTable.fnSettings().sAjaxSource = "/pickupOrder/findTransferOrderItemDetail?item_id="+item_id,
+			detailTable.fnSettings().sAjaxSource = "/pickupOrder/findTransferOrderItemDetail?item_id="+item_id+"&pickup_type="+pickup_type,
 			detailTable.fnDraw();
 		}
 	});

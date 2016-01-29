@@ -1093,6 +1093,10 @@ public class DepartOrderController extends Controller {
 	// 保存发车单
 	@Before(Tx.class)
 	public void saveDepartOrder() {
+//	    if(!validateToken(DEPART_ORDER_TOKEN)){
+//	        renderJson(new DepartOrder());
+//	        return;
+//	    }
 		String depart_id = getPara("depart_id");// 发车单id
 		String charge_type = getPara("chargeType");// 供应商计费类型
 		String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
@@ -1343,10 +1347,10 @@ public class DepartOrderController extends Controller {
 				transferOrder.set("sp_id", sp_id).update();
 			}
 		}
-		createToken(DEPART_ORDER_TOKEN);
-		String serverTokenId = getSessionAttr(DEPART_ORDER_TOKEN);
-		logger.debug("DEPART_ORDER_TOKEN:"+serverTokenId);
-		dp.put(DEPART_ORDER_TOKEN, serverTokenId);
+//		createToken(DEPART_ORDER_TOKEN);
+//		String serverTokenId = getSessionAttr(DEPART_ORDER_TOKEN);
+//		logger.debug("DEPART_ORDER_TOKEN:"+serverTokenId);
+//		dp.put(DEPART_ORDER_TOKEN, serverTokenId);
 		renderJson(dp);
 	}
 
