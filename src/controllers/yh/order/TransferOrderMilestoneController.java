@@ -276,7 +276,6 @@ public class TransferOrderMilestoneController extends Controller {
         	//退货单生成配送单
             if("cargoReturnOrder".equals(transferOrder.getStr("order_type"))){
 		    	DeliveryOrder deliveryOrder = new DeliveryOrder();
-				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
 		    	String orderNo = OrderNoGenerator.getNextOrderNo("PS");
 		        List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = "+transerOrderId+" and depart_id ="+ departOrderId);
 		        Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id"));
@@ -303,6 +302,7 @@ public class TransferOrderMilestoneController extends Controller {
 				deliveryOrder.save();
 				if("ATM".equals(transferOrder.getStr("cargo_nature"))){
 					for (TransferOrderItemDetail transferdetail:transferorderitemdetail) {
+						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
 						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
 						.set("transfer_order_id",transferOrder.get("id"))
 						.set("transfer_no",transferOrder.get("order_no"))
@@ -319,6 +319,7 @@ public class TransferOrderMilestoneController extends Controller {
 				}else{
 					List<TransferOrderItem> transferorderitem =TransferOrderItem.dao.find("select * from transfer_order_item where order_id = "+transerOrderId+"");
 					for (TransferOrderItem transferitem:transferorderitem) {
+						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
 						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
 						.set("transfer_order_id",transferOrder.get("id"))
 						.set("transfer_no",transferOrder.get("order_no"))
