@@ -447,7 +447,7 @@ public class DeliveryController extends Controller {
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE})
 	public void create() {
-		setAttr("delveryMode", "out_source");
+		setAttr("deliveryMode", "out_source");
 		long delivery_id = 100;
 		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
@@ -743,7 +743,7 @@ public class DeliveryController extends Controller {
 		setAttr("transferOrderPerson", transferOrder.get("receiving_name"));
 		setAttr("transferOrderPhone", transferOrder.get("receiving_phone"));
 		setAttr("warehouse", warehouse);
-		setAttr("delveryMode", "out_source");
+		setAttr("deliveryMode", "out_source");
 		setAttr("cargoNature", cargoNature);//货品属性
 		//setAttr("cargoNaturName", "普通货品");
 		List<Record> paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -820,7 +820,7 @@ public class DeliveryController extends Controller {
 			}
 			setAttr("locationFrom", locationFrom);
 		}
-		setAttr("delveryMode", "out_source");
+		setAttr("deliveryMode", "out_source");
 		setAttr("notifyParty", notify);
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);
@@ -1221,7 +1221,7 @@ public class DeliveryController extends Controller {
 		DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryid);
 		String notifyId = getPara("notify_id");
 		String warehouseNature = getPara("warehouseNature");
-		String delveryMode = getPara("modeDelvery");
+		String deliveryMode = getPara("modeDelvery");
 		String gateInSelect = getPara("gateInSelect");
 		String changeSpId = getPara("spChange_id");
 		String sign_document_no = getPara("sign_document_no");//签收单据号
@@ -1291,7 +1291,7 @@ public class DeliveryController extends Controller {
 			deliveryOrder.set("order_no", orderNo)
 					.set("sp_id", spId)
 					.set("car_id", carId)
-					.set("delveryMode", delveryMode)
+					.set("deliveryMode", deliveryMode)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
@@ -1533,7 +1533,7 @@ public class DeliveryController extends Controller {
 			}
 			deliveryOrder.set("sp_id", spId)
 					.set("car_id", carId)
-					.set("delveryMode", delveryMode)
+					.set("deliveryMode", deliveryMode)
 					.set("id", deliveryid).set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))

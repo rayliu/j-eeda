@@ -96,7 +96,7 @@ public class CarSummaryController extends Controller {
 		        + " LEFT JOIN carinfo cf on cf.id=dor.car_id"
 		        + " LEFT JOIN office o ON o.id = dor.office_id"
 		        + " LEFT JOIN user_login ul ON ul.id = dor.create_by"
-		        + " where dor.delveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
+		        + " where dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
 		        + " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 		        + " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	       // 获取当前页的数据
@@ -124,7 +124,7 @@ public class CarSummaryController extends Controller {
 	        	+ " LEFT JOIN carinfo cf on cf.id=dor.car_id"
 	        	+ " LEFT JOIN office o ON o.id = dor.office_id"
 	        	+ " LEFT JOIN user_login ul ON ul.id = dor.create_by"
-	        	+ " where dor.delveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed') a "
+	        	+ " where dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed') a "
 	        	+ " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 	        	+ " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	     if (driver != null &&!"".equals(driver)) {	
