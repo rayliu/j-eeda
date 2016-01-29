@@ -268,8 +268,9 @@ public class PermissionConstant {
 	/*报销单*/
 	public static final String PERMSSION_COSTREIMBURSEMENT_LIST = "costReimbureement_list";
 	public static final String PERMSSION_COSTREIMBURSEMENT_CREATE = "costReimbureement_create";
-	public static final String PERMSSION_COSTREIMBURSEMENT_UPDATE = "costReimbureement.update";
-	public static final String PERMSSION_COSTREIMBURSEMENT_CONFIRM = "costReimbureement.confirm";
+	public static final String PERMSSION_COSTREIMBURSEMENT_UPDATE = "costReimbureement_update";
+	public static final String PERMSSION_COSTREIMBURSEMENT_CONFIRM = "costReimbureement_confirm";
+	public static final String PERMSSION_COSTREIMBURSEMENT_ALLDATA = "costReimbureement_alldata";
 	/*报表查询权限点*/
 	public static final String PERMSSION_PRODUCTINDEX_LIST = "ProductIndex.list";
 	public static final String PERMSSION_ORDERINDEX_LIST = "OrderIndex.list";
