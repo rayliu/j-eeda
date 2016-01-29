@@ -103,6 +103,7 @@ import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.Action;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
+import models.yh.profile.CustomerRoute;
 import models.yh.profile.CustomizeField;
 import models.yh.profile.DriverAssistant;
 import models.yh.profile.Module;
@@ -499,6 +500,7 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("charge_type", ProviderChargeType.class);
         //微信位置信息
         arp.addMapping("wechat_location", WechatLocation.class);
+        arp.addMapping("customer_route_provider", CustomerRoute.class);
         
         arp.addMapping("structure", Structure.class);
         arp.addMapping("field", Field.class);

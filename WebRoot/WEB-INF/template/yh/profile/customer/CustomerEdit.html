@@ -1,6 +1,6 @@
 ﻿<%layout("/yh/layout.html"){%>
- 
-
+ <link href="/yh/js/plugins/datatables-1.10.9/css/jquery.dataTables.min.css" rel="stylesheet">
+ <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet"> 
  <div id="page-wrapper">
     
     <div class="row">
@@ -196,6 +196,137 @@
 								</form>       
                             </div>
                             <!-- /.row (nested) -->
+                            <hr>
+                            <div class="row">
+                                <button id="addRouteBtn" class="btn btn-primary" data-toggle="modal" data-backdrop="static" data-target="#myModal" style="margin-left: 15px;">
+                                                 新增线路供应商
+                                </button>
+                                <div class="col-lg-12" style="padding-top: 5px;clear:both;">
+                                    <%include("/yh/component/form/detailTable.html", 
+                                    {
+                                        id:'eeda-table', 
+                                        headers:['','始发城市', 
+                                            '目的城市', 
+                                            '默认供应商',
+                                            '默认计费方式']
+                                    }){} %>
+                                </div>
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="close">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel">线路-供应商</h4>
+                                          </div>
+                                          <div class="modal-body">
+                                                <form id="routeItemForm" action="" method="post">
+                                                    
+                                                    <input id="route_id" name="route_id" type="hidden" value ="">
+                                                    <!-- 根据 始发地 和 目的地 找到 干线id-->
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <%include("/yh/component/form/inputLocationField.html", 
+                                                            {
+                                                                id:'location_from', 
+                                                                label:'始发城市', 
+                                                                value:order.sp_id!'',
+                                                                display_value: order.sp_name!''
+                                                            }){} %>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <%include("/yh/component/form/inputLocationField.html", 
+                                                            {
+                                                                id:'location_to', 
+                                                                label:'目的城市', 
+                                                                value:order.sp_id!'',
+                                                                display_value: order.sp_name!''
+                                                            }){} %>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <%include("/yh/component/form/inputSpField.html", 
+                                                            {
+                                                                id:'sp_id', 
+                                                                label:'供应商', 
+                                                                value:order.sp_id!'',
+                                                                display_value: order.sp_name!''
+                                                            }){} %>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="label-margin">应收计费方式: </label>
+                                                                <label class="radio-inline">
+                                                                    <input type="radio" name="charge_type" id="chargeType1" value="perUnit" checked="">计件
+                                                                </label>
+                                                                <label class="radio-inline">
+                                                                    <input type="radio" name="charge_type" id="chargeType2" value="perCar">整车
+                                                                </label>  
+                                                                <label class="radio-inline">
+                                                                    <input type="radio" name="charge_type" id="chargeType3" value="perCargo">零担
+                                                                </label>  
+                                                            </div>
+                                                            <div style="display: none;" class="form-group" id="car_type_div" >
+                                                              <lable>车辆规格(M),载重(T),集装箱(GP)</lable>
+                                                              <select class="form-control" id="car_type" name="car_type">
+                                                                  <option></option>
+                                                                  <option>40GP</option>
+                                                                  <option>20GP</option>
+                                                                  <option>40T</option>
+                                                                  <option>20T</option>
+                                                                  <option>10T</option>
+                                                                  <option>8T</option>
+                                                                  <option>5T</option>
+                                                                  <option>3T</option>
+                                                                  <option>21M</option>
+                                                                  <option>18.5M</option>
+                                                                  <option>18.0M</option>
+                                                                  <option>17.8M</option>
+                                                                  <option>17.5M</option>
+                                                                  <option>17.0M</option>
+                                                                  <option>16.0M</option>
+                                                                  <option>15.0M</option>
+                                                                  <option>14.5M</option>
+                                                                  <option>13.5M</option>
+                                                                  <option>13.0M</option>
+                                                                  <option>12.5M</option>
+                                                                  <option>9.6M</option>
+                                                                  <option>8.6M</option>
+                                                                  <option>8.0M</option>
+                                                                  <option>7.6M</option>
+                                                                  <option>7.2M</option>
+                                                                  <option>6.8M</option>
+                                                                  <option>6.5M</option>
+                                                                  <option>5.3M</option>
+                                                                  <option>4.3M</option>
+                                                                  <option>4.2M</option>
+                                                                  <option>2.6M</option>
+                                                              </select>
+                                                          </div>
+                                                          <div style="display: none;" class="form-group" id="ltl_price_type" >
+                                                              <lable>零担计费方式:  </lable>
+                                                              <label class="radio-inline">
+                                                                  <input type="radio" name="ltl_price_type" id="optionsRadiosIn1" value="perCBM" checked>按体积（每立方米）
+                                                              </label>
+                                                               <label class="radio-inline">
+                                                                  <input type="radio" name="ltl_price_type" id="optionsRadiosIn3" value="perKg">按重量（每公斤）
+                                                              </label>
+                                                              <label class="radio-inline">
+                                                                  <input type="radio" name="ltl_price_type" id="optionsRadiosIn2" value="perTon">按重量（每吨）
+                                                              </label>
+                                                          </div>
+
+                                                    </div>
+                                                    
+                                                </form> 
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn  btn-primary" data-dismiss="modal" id="cancel">取消</button>
+                                            <button id="saveRouteBtn" type="button" class="btn  btn-primary">保存</button>
+                                          </div>
+                                        </div><!-- /.modal-content -->
+                                      </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal -->
+                            </div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -214,14 +345,19 @@
 <!-- content ends -->
 <%}%>
 <!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/plugins/datatables-1.10.9/js/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/datatables-1.10.9/js/dataTables.bootstrap.js"></script>
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+
 
 <script>
 if('${contact.company_name!''}'){
 	document.title = '${contact.company_name!''}'+' | '+document.title;
 }
 $('#menu_profile').addClass('active').find('ul').addClass('in');
+
     $(document).ready(function() {
     	var province = '${location.province!''}';
     	var city= '${location.city!''}';
@@ -448,5 +584,145 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     	   $("#chargeType option[value='"+svalue+"']").attr("selected","selected");
        }
     }
-            });         
+
+    $("input[name='charge_type']").click(function(){
+         //等于零担的时候
+        if($('input[name="charge_type"]:checked').val()==='perCargo'){
+            $('#ltl_price_type').show();
+            $("#carInfomation").hide();
+            $("#car_type_div").hide();
+        }else if($('input[name="charge_type"]:checked').val()==='perCar'){
+            $("#carInfomation").show();
+            //显示车辆信息
+            $(this).prop('checked', true);
+            $("#car_type_div").show();
+            $('#ltl_price_type').hide();
+        }else{
+            $('#ltl_price_type').hide();
+            $("#car_type_div").hide();
+            //计费方式为计件的时候
+            if($('input[name="charge_type"]:checked').val()==='perUnit'){
+                $("#carInfomation").hide();
+            }else{
+                $("#carInfomation").show();
+            }
+        }
+     });
+
+    var chargeType = $("#chargeTypeRadio").val();
+    
+    $("input[name='chargeType']").each(function(){
+        if(chargeType == $(this).val()){
+            $(this).prop('checked', true);
+        }
+    });
+
+    $('#saveRouteBtn').click(function(){
+        $.post('/customer/saveCustomerRoute', $('#routeItemForm').serialize()+'&customer_id='+$('#partyId').val(), function(data){
+            if(data.ID>0){
+                $('#myModal').modal('hide');
+                dataTable.ajax.reload();
+            }
+        });
+    });
+
+    if($('#partyId').val() == ''){
+        $('#addRouteBtn').hide();
+    }
+
+    var dataTable = $('#eeda-table').DataTable({
+        "processing": true,
+        "searching": false,
+        "serverSide": true,
+        "scrollX": true,
+        "scrollY": "300px",
+        "scrollCollapse": true,
+        "autoWidth": false,
+        "language": {
+            "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
+        },
+        "ajax": "/customer/routeList?customer_id="+$('#partyId').val(),
+        "createdRow": function ( row, data, index ) {
+            $(row).attr('id', data.ID);
+        },
+        "columns": [
+            { "width": "20px", "orderable":false, 
+                "render": function ( data, type, full, meta ) {
+                  return '<a class="delete"  table_id="table_{{id}}" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;&nbsp;&nbsp;<a class="edit"  target="_blank" href="javascript:void(0)" title="编辑"><i class="fa fa-edit"></i></a>';
+                }
+            },
+            { "data": "LOCATION_FROM_NAME"},
+            { "data": "LOCATION_TO_NAME"},
+            { "data": "SP_NAME"}, 
+            { "data": "CHARGE_TYPE", 
+                "render": function ( data, type, full, meta ) {
+                    var str = '';
+                    if('perUnit' == data){
+                        str = '计件';
+                    }else if('perCar' == data){
+                        str = '整车('+full.CAR_TYPE+')';
+                    }else{
+                        var price_type = '';
+                        if('perCBM'==full.LTL_PRICE_TYPE){
+                            price_type = '每立方米';
+                        }else if('perKg'==full.LTL_PRICE_TYPE){
+                            price_type = '每公斤';
+                        }else{
+                            price_type = '每吨';
+                        }
+                        str = '零担('+price_type+')';
+                    }
+                  return str;
+                }
+            }
+        ]
+    });
+
+    $('#eeda-table').on('click', 'a.edit', function(){
+        var id = $(this).closest('tr').attr('id');
+        $('#myModal #route_id').val(id);
+        $.post('/customer/getCustomerRoute', {route_id: id}, function(data){
+            $('#myModal #location_from').val(data.LOCATION_FROM);
+            $('#myModal #location_from_INPUT').val(data.LOCATION_FROM_NAME);
+            $('#myModal #location_to').val(data.LOCATION_TO);
+            $('#myModal #location_to_INPUT').val(data.LOCATION_TO_NAME);
+            $('#myModal #sp_id').val(data.SP_ID);
+            $('#myModal #sp_id_input').val(data.SP_NAME);
+            if("perUnit"==data.CHARGE_TYPE){
+                $('[name=charge_type]:eq(0)').prop("checked", true);
+                $('#car_type_div').hide();
+                $('#ltl_price_type').hide();
+            }else if('perCar'==data.CHARGE_TYPE){
+                $('[name=charge_type]:eq(1)').prop("checked", true);
+                $('#car_type').val(data.CAR_TYPE);
+                $('#car_type_div').show();
+                $('#ltl_price_type').hide();
+            }else if('perCargo'==data.CHARGE_TYPE){
+                $('[name=charge_type]:eq(2)').prop("checked", true);
+                if('perCBM'==data.LTL_PRICE_TYPE){
+                    $('[name=ltl_price_type]:eq(0)').prop("checked", true);
+                }if('perKg'==data.LTL_PRICE_TYPE){
+                    $('[name=ltl_price_type]:eq(1)').prop("checked", true);
+                }else{
+                    $('[name=ltl_price_type]:eq(2)').prop("checked", true);
+                }
+                $('#ltl_price_type').show();
+                $('#car_type_div').hide();
+            }
+            $('#myModal').modal('show');
+        });
+    });
+
+    $('#eeda-table').on('click', 'a.delete', function(){
+        var id = $(this).closest('tr').attr('id');
+        $.post('/customer/deleteCustomerRoute', {route_id: id}, function(data){
+            if('ok' == data){
+                $.scojs_message('删除成功', $.scojs_message.TYPE_OK);
+            }else{
+                $.scojs_message('删除失败', $.scojs_message.TYPE_ERROR);
+            }
+            dataTable.ajax.reload();
+        });
+    });
+});
 </script>

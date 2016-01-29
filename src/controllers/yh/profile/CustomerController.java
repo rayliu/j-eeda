@@ -15,7 +15,9 @@ import models.Party;
 import models.UserCustomer;
 import models.UserRole;
 import models.yh.profile.Contact;
+import models.yh.profile.CustomerRoute;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -333,4 +335,85 @@ public class CustomerController extends Controller {
 		}
 		renderJson(locationList);
 	}
+    
+    public void saveCustomerRoute(){
+        String id = getPara("route_id");
+        String customer_id = getPara("customer_id");
+        String location_from = getPara("location_from");
+        String location_to = getPara("location_to");
+        String sp_id = getPara("sp_id");
+        String charge_type = getPara("charge_type");
+        String car_type = getPara("car_type");
+        String ltl_price_type = getPara("ltl_price_type");
+        CustomerRoute route = null;
+        if(StringUtils.isEmpty(id)){
+            route = new CustomerRoute();
+            route.set("customer_id", customer_id);
+            route.set("location_from", location_from);
+            route.set("location_to", location_to);
+            route.set("sp_id", sp_id);
+            route.set("charge_type", charge_type);
+            route.set("car_type", car_type);
+            route.set("ltl_price_type", ltl_price_type);
+            route.save();
+        }else{
+            route = CustomerRoute.dao.findById(id);
+            route.set("customer_id", customer_id);
+            route.set("location_from", location_from);
+            route.set("location_to", location_to);
+            route.set("sp_id", sp_id);
+            route.set("charge_type", charge_type);
+            route.set("car_type", car_type);
+            route.set("ltl_price_type", ltl_price_type);
+            route.update();
+        }
+        renderJson(route);
+    }
+    
+    public void deleteCustomerRoute(){
+        String id = getPara("route_id");
+        CustomerRoute route = CustomerRoute.dao.findById(id);
+        route.delete();
+        renderText("ok");
+    }
+    
+    public void getCustomerRoute(){
+        String id = getPara("route_id");
+        String sql = "select rp.*, get_loc_full_name(rp.location_from) location_from_name, get_loc_full_name(rp.location_to) location_to_name, sp.abbr sp_name from customer_route_provider rp"
+                +" left join contact sp on rp.sp_id = sp.id"
+                +" where rp.id = ?";
+        Record route = Db.findFirst(sql, id);
+        renderJson(route);
+    }
+    
+    public void routeList(){
+        String draw = getPara("draw");
+        String start = getPara("start");
+        String length = getPara("length");
+        
+        String customer_id = getPara("customer_id");
+        
+        String sql = "select rp.*, l1.name location_from_name, l2.name location_to_name, sp.abbr sp_name from customer_route_provider rp"
+                +" left join location l1 on rp.location_from = l1.code"
+                +" left join location l2 on rp.location_to = l2.code"
+                +" left join contact sp on rp.sp_id = sp.id"
+                +" where customer_id = ?";
+        
+        String totalSql = "select count(1) total from (" + sql + ") A";
+        
+        Record rec = Db.findFirst(totalSql, customer_id);
+        String sLimit = " limit " + start + ", " +length; 
+        
+        List<Record> locationList = Db.find(sql +" order by id desc " + sLimit, customer_id);
+        if(locationList == null)
+            locationList = Collections.EMPTY_LIST;
+        
+        Map orderListMap = new HashMap();
+        orderListMap.put("draw", draw);
+        orderListMap.put("recordsTotal", rec.getLong("total"));
+        orderListMap.put("recordsFiltered", rec.getLong("total"));
+
+        orderListMap.put("data", locationList);
+        renderJson(orderListMap);
+    }
 }

@@ -1,0 +1,1 @@
+package models.yh.profile;import com.jfinal.plugin.activerecord.Model;public class CustomerRoute extends Model<CustomerRoute> {    public static final CustomerRoute dao = new CustomerRoute();}
