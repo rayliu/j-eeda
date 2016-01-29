@@ -39,7 +39,7 @@
                                 <div class="row">
                                 <form action="" id="deliveryForm">
                                 	<div class="col-lg-6">
-                                	 <input id="deliverystatus" name="deliverystatus" type="hidden" value="${deliveryId.status!''}">
+                                	 <input id="deliverystatus" name="deliverystatus" type="hidden" value="${status!''}${deliveryId.status!''}">
 		                                    <input id="tranferid" name="tranferid" type="hidden" value="${transferId!''}">
 		                                    <!-- 运输单ID -->
 		                                    <input id = "localArr" type="hidden" name="localArr" value="${localArr!''}"/>
@@ -63,7 +63,7 @@
 	                  						<input id='receivingunit' name='receivingunit' type="hidden">
 	                  						<input id='sign_document_no' name='sign_document_no' type="hidden"  value="${deliveryOrder.ref_no!''}">
 	                  						<!-- 配送单对账状态-->
-	                  						<input id='audit_status' name='audit_status' type="hidden"  value="${deliveryOrder.audit_status!''}">
+	                  						<input id='audit_status' name='audit_status' type="hidden"  value="${audit_status!''}${deliveryOrder.audit_status!''}">
 	                  						<!-- 新增空白配送单过滤状态-->
 	                  						<input id='isNullOrder' name='isNullOrder' type="hidden"  value="${isNullOrder!''}">
 	                  						<input id='itemList' name='itemList' type="hidden"  value="${itemList!''}">
@@ -111,12 +111,12 @@
 					                    </div>
 						                 <div class="form-group">     
 	                                        	<label>配送方式</label>
-		                                           	<input id="delveryModeRadio" type="hidden" value="${delveryMode!''}${deliveryOrder.delveryMode!''}"/>
+		                                           	<input id="deliveryModeRadio" type="hidden" value="${deliveryMode!''}${deliveryOrder.deliveryMode!''}"/>
 		                                            <label class="radio-inline">
-		                                                <input type="radio" name="modeDelvery" id="delveryMode1" value="out_source" checked="">外包
+		                                                <input type="radio" name="modeDelvery" id="deliveryMode1" value="out_source" checked="">外包
 		                                            </label>
 		                                            <label class="radio-inline">
-		                                                <input type="radio" name="modeDelvery" id="delveryMode2" value="own">自营
+		                                                <input type="radio" name="modeDelvery" id="deliveryMode2" value="own">自营
 		                                   			</label>
 		                                     <div id= "textDiv"  class="form-group">
 		                                        <div class="form-group">

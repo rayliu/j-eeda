@@ -603,6 +603,9 @@ $(document).ready(function() {
             	// $("#style").show();
             	$("#order_no").text(data.ORDER_NO);
             	$("#deliveryOrder_status").text(data.STATUS);
+            	if(data.STATUS=='新建'|| data.STATUS=='计划中' ){
+        			$("#ConfirmationBtn").attr("disabled", false);
+        		}
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
             	if($('#isNullOrder').val()=='Y'){
@@ -628,7 +631,7 @@ $(document).ready(function() {
     });
 	// 回显配送方式
 	$("input[name='modeDelvery']").each(function(){
-		if($("#delveryModeRadio").val() == $(this).val()){
+		if($("#deliveryModeRadio").val() == $(this).val()){
 			$(this).attr('checked', true);			
 			if($(this).val() == 'own'){
 				$("#textDiv1").show();

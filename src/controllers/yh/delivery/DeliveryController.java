@@ -821,6 +821,7 @@ public class DeliveryController extends Controller {
 			setAttr("locationFrom", locationFrom);
 		}
 		setAttr("deliveryMode", "out_source");
+		setAttr("audit_status", "新建");
 		setAttr("notifyParty", notify);
 		setAttr("warehouse", warehouse);
 		setAttr("cargoNature", cargoNature);

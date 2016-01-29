@@ -45,9 +45,8 @@ $(document).ready(function() {
   		var biz_type=$('input[name="biz_type"]:checked').val();
   		var type = $('input[name="cost_to_type"]:checked').val();
   		if(biz_type=='biz'&& type=='insurance'){
-  			
   			$.scojs_message('保险只能做非业务', $.scojs_message.TYPE_WARN);
-  			$("input[name=biz_type][value='non_biz']").attr("checked",'checked');
+  			$('[name=biz_type]:eq(1)').prop('checked', true)
   			$("input[name=cost_to_type][value='insurance']").attr("checked",'checked');
   		}
   	});
