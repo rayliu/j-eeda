@@ -245,7 +245,7 @@ public class InsuranceOrderController extends Controller {
 		    				+"%' and ior.create_stamp between '"
 		    				+beginTime
 		    				+"' and '"+endTime+"'"
-		    				+" and (SELECT group_concat(cast(tor.planning_time AS CHAR) SEPARATOR '\r\n')  FROM transfer_order tor WHERE tor.insurance_id = ior.id) between '"
+		    				+" and (SELECT group_concat(DISTINCT cast(tor.planning_time AS CHAR) SEPARATOR '\r\n')  FROM transfer_order tor WHERE tor.insurance_id = ior.id) between '"
 		    				+ planningBeginTime
 		    				+"' and '"+planningEndTime+"'";;
         	sqlTotal = sqlTotal + condition;
