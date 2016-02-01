@@ -102,7 +102,7 @@
                                           <div></div>
                                  		<div style="font-size: 32px">车辆信息</div>                                         
                                         <div class="form-group">
-                                            <label>车牌</label>
+                                            <label>车牌<span style="color:red"> *</span></label>
                                              <div class="form-group">											
 										        <input type="text" name="car_no" class="form-control" id="carNoMessage" value="${carinfo.car_no!''}">
 										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="carNoList">
@@ -110,7 +110,7 @@
 										    </div>
                                         </div>
                                         <div class="form-group">
-											<label>司机</label>
+											<label>司机<span style="color:red"> *</span></label>
 										    <div class="form-group">													    								
 										        <input type="hidden" id="carInfoDriverMessage" value="${carinfo.driver!''}">
 										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
@@ -119,7 +119,7 @@
 										    </div>
 									                                     
                                         <div class="form-group">
-                                        <label>电话</label>
+                                        <label>电话<span style="color:red"> *</span></label>
                                         <input id="carInfoDriverPhone" value="${carinfo.phone!''}" type="hidden">
                                         <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div>
@@ -195,7 +195,7 @@
 			                                    <div class="col-lg-6">
 			                                        <div class="form-group">                                        
 			                                            <div id="datetimepicker" class="input-append date "> 
-			                                                <label class="search-label">出车时间</label> 
+			                                                <label class="search-label">出车时间<span style="color:red"> *</span></label> 
 			                                                <input id="turnout_time" class="form-control search-control  beginTime_filter" type="text" name="turnout_time" value="${pickupOrder.turnout_time!''}">
 			                                                <span class="add-on">  
 			                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  

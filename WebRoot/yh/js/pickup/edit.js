@@ -74,7 +74,10 @@
     //from表单验证
 	var validate = $('#pickupOrderForm').validate({
         rules: {
-        	turnout_time: {required: true}
+        	turnout_time: {required: true},
+        	car_no: {required: true},
+        	driver_name: {required: true},
+        	driver_phone: {required: true}
         },
         messages : {	             
         }
