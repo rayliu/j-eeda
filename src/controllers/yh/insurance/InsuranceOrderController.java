@@ -238,14 +238,14 @@ public class InsuranceOrderController extends Controller {
 			}
         	String condition=" and ifnull(ior.order_no,'') like '%"
 		    				+departNo
-		    				+"%' and ifnull((select group_concat(tor.order_no separator '\r\n') from transfer_order tor where tor.insurance_id = ior.id),'') like '%"
+		    				+"%' and ifnull(tor.order_no,'') like '%"
 		    				+orderNo
 		    				+"%' and (SELECT c.abbr FROM party p LEFT JOIN contact c ON p.contact_id = c.id WHERE p.id = tor.customer_id) like '%"
 		    				+customer
 		    				+"%' and ior.create_stamp between '"
 		    				+beginTime
 		    				+"' and '"+endTime+"'"
-		    				+" and (SELECT group_concat(DISTINCT cast(tor.planning_time AS CHAR) SEPARATOR '\r\n')  FROM transfer_order tor WHERE tor.insurance_id = ior.id) between '"
+		    				+" and tor.planning_time between '"
 		    				+ planningBeginTime
 		    				+"' and '"+planningEndTime+"'";;
         	sqlTotal = sqlTotal + condition;
@@ -626,6 +626,16 @@ public class InsuranceOrderController extends Controller {
     	String customer=getPara("customer");
     	String planningEndTime = getPara("planningEndTime");
     	String planningBeginTime = getPara("planningBeginTime");
+    	String condition="";
+    	if (planningBeginTime == null || "".equals(planningBeginTime)) {
+    		planningBeginTime = "1-1-1";
+		}
+		if (planningEndTime == null || "".equals(planningEndTime)) {
+			planningEndTime = "9999-12-31";
+		}
+		if(customer!=null&&!"".equals(customer)){
+			condition=" where customer like '%" +customer+ "%'";
+		}
     	String sql = "SELECT ROUND(sum(sum_amount),2) sum_amount from (SELECT DISTINCT ior.create_stamp,"
     			+ " (SELECT c.abbr FROM party p LEFT JOIN contact c ON p.contact_id = c.id WHERE p.id = tor.customer_id) AS customer,"
     			+ " (SELECT group_concat(cast(tor.planning_time AS CHAR) SEPARATOR '\r\n')  FROM transfer_order tor WHERE tor.insurance_id = ior.id) planning_time,"
@@ -635,19 +645,9 @@ public class InsuranceOrderController extends Controller {
     			+ " LEFT JOIN party p ON p.id = ior.insurance_id"
     			+ " LEFT JOIN contact con ON con.id = p.contact_id"
     			+ " WHERE o.id IN (SELECT office_id FROM user_office WHERE user_name = 'admin@eeda123.com' )"
-    			+ " AND tor.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = 'admin@eeda123.com')) a";
-    		String condition="";
-        	if (planningBeginTime == null || "".equals(planningBeginTime)) {
-        		planningBeginTime = "1-1-1";
-			}
-			if (planningEndTime == null || "".equals(planningEndTime)) {
-				planningEndTime = "9999-12-31";
-			}
-			if(customer!=null&&!"".equals(customer)){
-				condition=" where customer like '%" +customer+ "%'"
-						+ " and planning_time between '"+planningBeginTime+"' and '"+planningEndTime+"'";
-			}
-        	
+    			+ " AND tor.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = 'admin@eeda123.com')"
+    			+ "	and tor.planning_time between '"+planningBeginTime+"' and '"+planningEndTime+"'"
+    			+ ") a";
         List<Record> orders = Db.find(sql+condition);
    		orderMap.put("orders", orders);
        	renderJson(orderMap);
