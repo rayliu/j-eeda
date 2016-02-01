@@ -389,6 +389,9 @@ public class TransferOrderController extends Controller {
 								+ routeFrom + "'");
 			}
 			setAttr("locationFrom", locationFrom);
+			
+			Record re = Db.findFirst("select get_loc_full_name('"+routeFrom+"') as fromRoute");
+			setAttr("fromRoute", re.getStr("fromRoute"));
 		}
 
 		String routeTo = transferOrder.get("route_to");
@@ -409,6 +412,9 @@ public class TransferOrderController extends Controller {
 								+ routeTo + "'");
 			}
 			setAttr("locationTo", locationTo);
+			
+			Record re = Db.findFirst("select get_loc_full_name('"+routeTo+"') as toRoute");
+			setAttr("toRoute", re.getStr("toRoute"));
 		}
 		Office office = Office.dao
 				.findFirst(
@@ -1530,6 +1536,21 @@ public class TransferOrderController extends Controller {
 	public void searchAllUnit() {
 		List<Record> offices = Db.find("select * from unit");
 		renderJson(offices);
+	}
+	
+	
+	//通过路线获取供应商信息
+	public void findSpByRoute(){
+		String route_from = getPara("route_from");
+		String route_to = getPara("route_to");
+		String customer_id = getPara("customer_id");
+		Record c_r_p  = Db.findFirst("SELECT cr.*,c.company_name,c.abbr,c.phone,c.address,c.contact_person FROM `customer_route_provider` cr"
+				+ " LEFT JOIN contact c on c.id = cr.sp_id "
+				+ " where cr.customer_id = "+customer_id+" and cr.location_from ='"+route_from+"' and cr.location_to = '"+ route_to + "'");
+		if(c_r_p!=null)
+		    renderJson(c_r_p);
+		else
+			renderJson("{\"success\":false}");
 	}
 
 }

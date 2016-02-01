@@ -3,6 +3,50 @@ $(document).ready(function() {
 	if(Transfer.orderNo){
         document.title = Transfer.orderNo +' | '+document.title;
     }
+	
+	
+	//通过路线吧供应商带过来
+	$("#route_from_INPUT,#route_to_INPUT,#customerMessage").on('blur',function(){
+		var route_from = $("#route_from").val();
+		var route_to = $("#route_to").val();
+		var customer_id = $("#customer_id").val();
+		if(route_from=!'' && route_to!='' && customer_id!=''){
+			$.post("/transferOrder/findSpByRoute?customer_id="+customer_id+"&route_from="+$("#route_from").val()+"&route_to="+route_to,function(data){
+				if(data.ID>0){
+					 $("#spMessage").val(data.ABBR);
+					 $("#sp_id").val(data.SP_ID);
+					 var pageSpName = $("#pageSpName");
+					 pageSpName.empty();
+					 var pageSpAddress = $("#pageSpAddress");
+					 pageSpAddress.empty();
+					 $("#pageSpName").append(data.CONTACT_PERSON+"&nbsp;"+data.PHONE);
+					 $("#pageSpAddress").append(data.ADDRESS);
+					 
+					 var chargeTypeRadio2 = data.CHARGE_TYPE;
+					 $("input[name='chargeType2']").each(function(){
+						if(chargeTypeRadio2 == $(this).val()){
+							$(this).prop('checked', true);
+					    }
+					 });
+					 //getChargetype();
+				}else{
+					$("#sp_id").val('');
+					$("#spMessage").val('');
+					var chargeTypeRadio2 = 'perUnit';
+					$("input[name='chargeType2']").each(function(){
+						if(chargeTypeRadio2 == $(this).val()){
+							$(this).prop('checked', true);
+					    }
+					});
+					var pageSpName = $("#pageSpName");
+					pageSpName.empty();
+					var pageSpAddress = $("#pageSpAddress");
+					pageSpAddress.empty();
+					$('#sp_id').val($(this).attr(''));
+				}
+			});
+		}
+	});
 		
 	if(Transfer.orderNo){
 		$('#checkQrCode').hover(
@@ -231,7 +275,7 @@ $(document).ready(function() {
 		}
 		
 		
-		getChargetype();
+		//getChargetype();
 		
 		
  		$('#customerList').hide();
@@ -477,7 +521,7 @@ $(document).ready(function() {
 			}
 		});*/
         /*if($("#chargeTypeRadio2").val() == null || $("#chargeTypeRadio2").val() == ""){*/
-			getChargetype();
+			//getChargetype();
 		/*}*/
     });
 	
