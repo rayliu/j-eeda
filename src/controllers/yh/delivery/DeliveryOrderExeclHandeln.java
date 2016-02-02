@@ -166,8 +166,8 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			 */else if ("".equals(content.get(j).get("货品数量").trim())) {
 				title = "货品数量";
 				break;
-			} else if ("".equals(content.get(j).get("客户名称(简称)").trim())) {
-				title = "客户名称(简称)";
+			} else if ("".equals(content.get(j).get("客户名称").trim())) {
+				title = "客户名称";
 				break;
 			} else if ("".equals(content.get(j).get("货品型号").trim())) {
 				title = "货品型号";
@@ -176,8 +176,8 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					&& "".equals(content.get(j).get("单品ID").trim())) {
 				title = "单品序列号/单品ID";
 				break;
-			} else if ("".equals(content.get(j).get("供应商名称(简称)").trim())) {
-				title = "供应商名称(简称)";
+			} else if ("".equals(content.get(j).get("供应商名称").trim())) {
+				title = "供应商名称";
 				break;
 			} else if ("".equals(content.get(j).get("配送仓库").trim())) {
 				title = "配送仓库";
@@ -248,9 +248,9 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and c.abbr ='"
-							+ content.get(j).get("供应商名称(简称)") + "';");
+							+ content.get(j).get("供应商名称") + "';");
 			if (provider == null) {
-				title = "供应商名称(简称)";
+				title = "供应商名称";
 				break;
 			}
 
@@ -268,9 +268,9 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 							+ Party.PARTY_TYPE_CUSTOMER
 							+ "' and c.abbr ='"
-							+ content.get(j).get("客户名称(简称)") + "';");
+							+ content.get(j).get("客户名称") + "';");
 			if (customer == null) {
-				title = "客户名称(简称)";
+				title = "客户名称";
 				break;
 			} else {
 				// 单品序列号校验
@@ -397,7 +397,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 				.findFirst(
 						"select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 								+ Party.PARTY_TYPE_SERVICE_PROVIDER
-								+ "' and c.abbr = ?;", content.get("供应商名称(简称)"));
+								+ "' and c.abbr = ?;", content.get("供应商名称"));
 		Location location1 = Location.dao.findFirst(
 				"select code from location where name = ?;",
 				content.get("始发地城市"));
@@ -542,13 +542,13 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 				causeRow = j + 2;
 				System.out.println("更新至第【" + causeRow + "】行");
 				//拿到客户ID
-				Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称(简称)") + "';");
+				Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称") + "';");
 				// 通过客户和序列号拿到配送单ID
 				TransferOrderItemDetail transferorderitemdetail = TransferOrderItemDetail.dao
 						.findFirst("SELECT delivery_id from transfer_order_item_detail toid LEFT JOIN transfer_order toi on toi.id=toid.order_id where serial_no ='"
 								+ content.get(j).get("序列号") + "' and toi.customer_id='"+customer.getLong("pid")+"'");
 				if(transferorderitemdetail==null){
-					throw new Exception("没有找到'"+content.get(j).get("客户名称(简称)")+"-'"+content.get(j).get("序列号"));
+					throw new Exception("没有找到'"+content.get(j).get("客户名称")+"-'"+content.get(j).get("序列号"));
 				}
 				if (transferorderitemdetail != null) {
 					DeliveryOrder deliveryorder = DeliveryOrder.dao
@@ -647,8 +647,8 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			            //}
 			        }
 					//供应商简称
-					if (content.get(j).get("供应商名称(简称)") != null) {
-					Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称(简称)") + "';");
+					if (content.get(j).get("供应商名称") != null) {
+					Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称") + "';");
 					if(provider==null){
 						throw new Exception("供应商名称信息有误");
 					}
@@ -806,7 +806,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 							if (deliverOrderNo.equals(content.get(j)
 									.get("配送单号"))
 									&& customer.equals(content.get(j).get(
-											"客户名称(简称)"))
+											"客户名称"))
 									&& companyName.equals(content.get(j).get(
 											"收货单位"))
 									&& destinationCity.equals(content.get(j)
@@ -827,7 +827,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 										deliveryOrder);
 							} else {
 								deliverOrderNo = content.get(j).get("配送单号");
-								customer = content.get(j).get("客户名称(简称)");
+								customer = content.get(j).get("客户名称");
 								companyName = content.get(j).get("收货单位");
 								destinationCity = content.get(j).get("目的地城市");
 								warehouse = content.get(j).get("配送仓库");
