@@ -313,34 +313,52 @@ public class InsuranceOrderController extends Controller {
 
     // 初始化货品数据
     public void getInitPickupOrderItems() {
-        String order_id = getPara("localArr");// 运输单id
+        String order_id = getPara("orderid");// 运输单id
         String tr_item = getPara("tr_item");// 货品id
         String item_detail = getPara("item_detail");// 单品id
         String insuranceOrderId = getPara("insuranceOrderId");// 单品id
 
         String sLimit = "";
+        String sqlTotal ="";
+        String sql ="";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "select count(1) total from insurance_fin_item where insurance_order_id = " + insuranceOrderId;
+        if(insuranceOrderId!=null&&!"".equals(insuranceOrderId)){
+            sqlTotal = "select count(1) total from insurance_fin_item where insurance_order_id = " + insuranceOrderId;
+            sql = "select ifi.id ,tor.order_no,c.abbr customer,toi.amount,tor.remark,ifi.amount fin_amount,ifi.rate,ifi.insurance_no,"
+                    + " round(ifi.amount * toi.amount,2) total_amount,ifi.insurance_amount,ifnull(toi.item_no, pd.item_no) item_no,"
+            		+ " ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.volume, pd.volume) * toi.amount volume,"
+            		+ " (select group_concat(cast(tom.create_stamp AS CHAR) SEPARATOR '\r\n')  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
+            		+ " ifnull((select name from location l where l.code = tor.route_from),'') route_from,ifnull((select name from location l where l.code = tor.route_to),'') route_to "
+                    + " from insurance_fin_item  ifi "
+                    + " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
+            		+ " left join transfer_order tor on tor.id = toi.order_id"
+            		+ " left join party p on p.id = tor.customer_id"
+            		+ " left join contact c on c.id = p.contact_id"
+            		+ " left join product pd ON pd.id = toi.product_id"
+                    + " where ifi.insurance_order_id = '" + insuranceOrderId + "'"
+                    + " order by ifi.create_stamp desc " + sLimit;
+        }else{
+        	sqlTotal = "select count(1) total from transfer_order_item toi where  toi.order_id in ("+order_id+")";
+            sql = "select toi.id,tor.order_no,c.abbr customer, toi.amount, tor.remark, pd.insurance_amount fin_amount, pit.insurance_rate rate,round(pd.insurance_amount * toi.amount, 2) total_amount,"
+            		+ " round(pd.insurance_amount * toi.amount * pit.insurance_rate, 2) insurance_amount, ifnull(toi.item_no, pd.item_no) item_no,"
+            		+ " ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.volume, pd.volume) * toi.amount volume,"
+            		+ " (select group_concat(cast(tom.create_stamp AS CHAR) SEPARATOR '\r\n')  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
+            		+ " ifnull((select name from location l where l.code = tor.route_from),'') route_from,ifnull((select name from location l where l.code = tor.route_to),'') route_to "
+            		+ " from transfer_order_item toi "
+            		+ " left join transfer_order tor on tor.id = toi.order_id"
+            		+ " left join party p on p.id = tor.customer_id"
+            		+ " left join contact c on c.id = p.contact_id"
+            		+ " left join product pd ON pd.id = toi.product_id"
+            		+ " left join party_insurance_item pit on pit.customer_id = tor.customer_id"
+            		+ " where toi.order_id in ("+order_id+")"+ sLimit;
+        }
         logger.debug("sql :" + sqlTotal);
+        
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
-
-        String sql = "select ifi.id ,tor.order_no,c.abbr customer,toi.amount,tor.remark,ifi.amount fin_amount,ifi.rate,ifi.insurance_no,"
-        		+ " round(ifi.amount * toi.amount,2) total_amount,ifi.insurance_amount,ifnull(toi.item_no, pd.item_no) item_no,"
-        		+ " ifnull(toi.item_name, pd.item_name) item_name,ifnull(toi.volume, pd.volume) * toi.amount volume,"
-        		+ " (select group_concat(cast(tom.create_stamp AS CHAR) SEPARATOR '\r\n')  from transfer_order_milestone tom where tom.order_id = tor.id and tom.status = '已发车') start_create_stamp,"
-        		+ " ifnull((select name from location l where l.code = tor.route_from),'') route_from,ifnull((select name from location l where l.code = tor.route_to),'') route_to "
-        		+ " from insurance_fin_item  ifi "
-        		+ " left join transfer_order_item toi on toi.id = ifi.transfer_order_item_id"
-        		+ " left join transfer_order tor on tor.id = toi.order_id"
-        		+ " left join party p on p.id = tor.customer_id"
-        		+ " left join contact c on c.id = p.contact_id"
-        		+ " left join product pd ON pd.id = toi.product_id"
-        		+ " where ifi.insurance_order_id = '" + insuranceOrderId + "'"
-				+ " order by ifi.create_stamp desc " + sLimit;
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
         Map.put("sEcho", pageIndex);
@@ -430,12 +448,12 @@ public class InsuranceOrderController extends Controller {
     			List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select id,product_id,amount from transfer_order_item where order_id = ?",orderIds[i]);
     			for (TransferOrderItem transferOrderItem : itemList) {
     				InsuranceFinItem insuranceFinItem = new InsuranceFinItem();
-    				if(transferOrderItem.get("product_id") != null && !"".equals(transferOrderItem.get("product_id"))){
+    				if(transferOrderItem!= null){
     					Product product = Product.dao.findById(transferOrderItem.get("product_id"));
-            			if(product.get("insurance_amount") != null && !"".equals(product.get("insurance_amount"))){
+            			if(product!= null){
             				double prodoctInsuranceAmount = product.getDouble("insurance_amount");
             				insuranceFinItem.set("amount", prodoctInsuranceAmount);
-    						if(party.get("insurance_rates") != null && !"".equals(party.get("insurance_rates"))){
+    						if(party!= null){
     					    	insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
     					    	if(insurance != null){
     					    		double insuranceRates = insurance.getDouble("insurance_rate");
@@ -443,13 +461,7 @@ public class InsuranceOrderController extends Controller {
         							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
         					    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
-        						}else{
-        							double insuranceRates = 0;
-        							double productAmount = transferOrderItem.getDouble("amount");
-        							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
-        					    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
-    					    	}
+        						}
         					}
     					}
     				}

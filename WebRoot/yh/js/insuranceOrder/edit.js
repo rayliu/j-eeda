@@ -100,9 +100,10 @@
      });
  	
  	var findInsuranceItems =  function(){
+ 		var orderid=$("#orderid").val();
  		var insuranceOrderId=$("#insuranceOrderId").val();
 		pickupItemTable.fnSettings().oFeatures.bServerSide = true; 
-		pickupItemTable.fnSettings().sAjaxSource = "/insuranceOrder/getInitPickupOrderItems?insuranceOrderId="+insuranceOrderId;
+		pickupItemTable.fnSettings().sAjaxSource = "/insuranceOrder/getInitPickupOrderItems?orderid="+orderid+"&insuranceOrderId="+insuranceOrderId;
 		pickupItemTable.fnDraw();
  	};
  	
@@ -154,11 +155,7 @@
  	
   	//tab 货品信息
 	$("#insuranceOrderItemList").click(function(e){
-		if(clickTabId == "chargeCheckOrderbasic"){
-			saveInsuranceOrder();
-		}else{
-			findInsuranceItems();
-		}
+		findInsuranceItems();
 		clickTabId = e.target.getAttribute("id");
 	});
 
@@ -168,6 +165,11 @@
  		var itemId = $(this).parent().parent().attr("id");
  		var name = $(this).attr("name");
  		var value = $(this).val();
+ 		var insuranceOrderId=$("#insuranceOrderId").val();
+ 		if(insuranceOrderId==""){
+ 			$.scojs_message('请先保存以后再修改', $.scojs_message.TYPE_ERROR);
+ 			return false;
+ 		}
  		if(value != ""){
  			var insuranceAmount = 0;
 	 		if(name == 'amount'){
