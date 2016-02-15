@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="nonghang" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0ad70e3f-e9f0-4944-b70f-531a1df6ff02">
 	<property name="ireport.zoom" value="1.6105100000000012"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="24"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -217,28 +217,28 @@ where tor.order_no = $P{order_no}]]>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="table_TD" x="0" y="17" width="255" height="25" uuid="309bf667-b543-43e1-bdb9-da2168865bd8"/>
-					<textElement verticalAlignment="Middle">
+					<textElement verticalAlignment="Top">
 						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" 收货网点: "+$F{rec_address}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="table_TD" x="0" y="0" width="255" height="17" uuid="3491e5fc-d9b4-4615-9a1e-1b5cc8124e39"/>
-					<textElement verticalAlignment="Middle">
+					<textElement verticalAlignment="Top">
 						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" 合同名称:"]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
 					<reportElement style="table_TD" x="255" y="0" width="255" height="17" uuid="c407dd84-c60b-4e3f-bc53-1cd1b3120ac3"/>
-					<textElement verticalAlignment="Middle">
+					<textElement verticalAlignment="Top">
 						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" 合同编号:"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="table_TD" x="255" y="17" width="255" height="25" uuid="1d3f1f1e-5636-4394-91c6-54e18cca9ed9"/>
-					<textElement verticalAlignment="Middle">
+					<textElement verticalAlignment="Top">
 						<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" 甲方验收单位地址: "+$F{address}]]></textFieldExpression>
