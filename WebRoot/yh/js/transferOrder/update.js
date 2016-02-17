@@ -143,15 +143,15 @@ $(document).ready(function() {
         	deliveryOfficeSelect: {required: true},
         	arrival_time: {required: true},
         	officeSelect: {required:true},
-        	cmbCityFrom: {required:true},
-        	cmbCityTo: {required:true}
+        	route_from_INPUT: {required:true},
+        	route_to_INPUT: {required:true}
         },
         messages : {	             
         	customerMessage : {required:  "请选择一个客户"},
         	officeSelect: {required: "运作网点不能为空"},
         	deliveryOfficeSelect: {required: "RDC仓不能为空"},
-        	cmbCityFrom: {required:"始发城市不能为空"},
-        	cmbCityTo: {required:"目的地城市不能为空"}
+        	route_from_INPUT: {required:"始发城市不能为空"},
+        	route_to_INPUT: {required:"目的地城市不能为空"}
         }
     });
 		
