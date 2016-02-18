@@ -12,7 +12,7 @@
         保存成功。
       </div>
       <%}%>
-      <div class="btn-header" style="font-size: 32px">创建配送单</div>
+      <div id="title" class="btn-header" style="font-size: 32px"></div>
       
       
     </div>
@@ -342,6 +342,10 @@
 		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
 		                                                </span>  
 		                                            </span>
+		                                        </div>
+		                                        <div class="form-group">
+		                                        	<%include("/yh/component/form/dateInputField.html",
+		                                        		{id:'depart_date', label:'发车时间:', value: deliveryOrder.depart_stamp!''}){} %>
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>客户现场及需求确认</label>

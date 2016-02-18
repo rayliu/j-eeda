@@ -1248,7 +1248,7 @@ public class DeliveryController extends Controller {
 		//校验是否新建的空白配送单
 		String isNullOrder = getPara("isNullOrder");
 		String deletedIds = getPara("deletedIds");
-		
+	    String depart_date = getPara("depart_date");//发车时间
 
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
@@ -1339,7 +1339,8 @@ public class DeliveryController extends Controller {
 					deliveryChangeOrder.set("client_order_stamp", clientOrderStamp);
 				if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
 					deliveryChangeOrder.set("order_delivery_stamp", orderDeliveryStamp);
-
+				
+				
 				deliveryChangeOrder.set("audit_status", "新建");
 				deliveryChangeOrder.set("sign_status", "未回单");
 				if("cargo".equals(cargoNature)){
@@ -1364,6 +1365,8 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
 			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
 				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
+            if(!"".equals(depart_date) && depart_date!= null)
+                deliveryOrder.set("depart_stamp", depart_date);
 			deliveryOrder.set("audit_status", "新建");
 			deliveryOrder.set("sign_status", "未回单");
 			if("cargo".equals(cargoNature)){
@@ -1566,6 +1569,8 @@ public class DeliveryController extends Controller {
 			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null){
 				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);	
 			}
+			if(!"".equals(depart_date) && depart_date!= null)
+			    deliveryOrder.set("depart_stamp", depart_date);
 			if("warehouseNatureYes".equals(warehouseNature)){
 				if(deliveryOrder.get("delivery_id")==null){
 					deliveryChangeOrder = new DeliveryOrder();

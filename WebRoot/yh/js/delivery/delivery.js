@@ -2,7 +2,10 @@
 $(document).ready(function() {
 	if(deliverOrder.orderNo){
 		document.title = deliverOrder.orderNo +' | '+document.title;
-	}
+        $('#title').text('编辑配送单');
+	}else{
+        $('#title').text('创建配送单');
+    }
     var feeTable = $('#itemList-table').dataTable({        
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bPaginate": false, //翻页功能
@@ -717,9 +720,18 @@ $(document).ready(function() {
 			alert("请输入业务要求配送时间");
 			return false;
 		}
+        var depart_date =$('#depart_date').val();
+
+        if(depart_date == ""){
+            alert("请输发车时间");
+            return false;
+        }
+
 		$.post('/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType,
 			warehouseId:warehouseId,customerId:customerId,transferItemIds:transferItemIds,
-			productIds:productIds,shippingNumbers:shippingNumbers,cargoNature:cargoNature},function(data){
+			productIds:productIds,shippingNumbers:shippingNumbers,cargoNature:cargoNature,
+            depart_date: depart_date
+        },function(data){
 			var MilestoneTbody = $("#transferOrderMilestoneTbody");
 			MilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
 
