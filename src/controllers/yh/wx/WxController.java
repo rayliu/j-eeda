@@ -594,8 +594,10 @@ public class WxController extends ApiController {
 		renderJson("{\"status\":\"ok\"}");
 	}
 	
+
+	
 	//查询调车单
-	public void searchPickupOrder()  throws Exception{	
+	public void searchPickupOrder() throws Exception{	
 		String openid = getPara("openid");
         if(openid == null){
             logger.debug(getRequest().getQueryString());
@@ -608,10 +610,9 @@ public class WxController extends ApiController {
         Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
         if(userRec != null){
         	setAttr("openid", openid);
+        	setPageAttr("/wx/searchPickupOrder");
             render("/yh/wx/yh/searchPickupOrder.html");
         }else{
-            setAttr("openid", openid);
-            setAttr("redirect", "queryStatus");
             render("/yh/wx/login.html");
         }
 	}
