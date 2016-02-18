@@ -328,6 +328,7 @@ public class EedaConfig extends JFinalConfig {
         me.add("/doc", controllers.yh.doc.DocController.class, contentPath);
         //微信页面路由
         me.add("/wx", controllers.yh.wx.WxController.class, contentPath);
+        me.add("/wx/departOrder", controllers.yh.wx.departOrderController.class, contentPath);
         //微信API路由
         me.add("/msg", WeixinMsgController.class);
 		me.add("/api", WeixinApiController.class, "/api");

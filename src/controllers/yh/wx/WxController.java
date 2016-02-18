@@ -35,6 +35,9 @@ import org.apache.http.util.EntityUtils;
 
 
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+
 import com.google.gson.Gson;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.PropKit;
@@ -590,4 +593,47 @@ public class WxController extends ApiController {
 		scanOrder.set("structure_id", 1).set("text1", resultStr).set("date1", new Date()).save();
 		renderJson("{\"status\":\"ok\"}");
 	}
+	
+	//查询调车单
+	public void searchPickupOrder()  throws Exception{	
+		String openid = getPara("openid");
+        if(openid == null){
+            logger.debug(getRequest().getQueryString());
+            //第一步：用户同意授权，获取code
+            String code = getPara("code");//该code用来向微信服务器请求获得openId
+            logger.debug("code: " + code);
+            //第二步：通过code换取网页授权access_token
+            openid = getOpenId(code);
+        }
+        Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+        if(userRec != null){
+        	setAttr("openid", openid);
+            render("/yh/wx/yh/searchPickupOrder.html");
+        }else{
+            setAttr("openid", openid);
+            setAttr("redirect", "queryStatus");
+            render("/yh/wx/login.html");
+        }
+	}
+	
+	public void searchTransferOrder(){
+		String openid = getPara("openid");
+		String departOrder = getPara("orderNo"
+				+ "");
+		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+
+		String sql = "select tor.id,tor.customer_id,tor.order_no,l.`name` route_to, "
+				+ " (select count(*) from depart_pickup where order_id = tor.id and pickup_id = dor.id and depart_id is not null) disabled ,"
+				+ " dor.status status "
+				+ " from transfer_order tor"
+				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
+				+ " LEFT JOIN depart_order dor on dor.id = dt.pickup_id"
+				+ " LEFT JOIN location l on l.`code` = tor.route_to"
+				+ " where  dor.depart_no = '"+departOrder+"'"
+				+ " and tor.office_id in (select office_id from user_office where user_name='"+userRec.getStr("user_name")+"') "
+				+ "and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"')"
+				+ " GROUP BY tor.id";
+		List<Record> re = Db.find(sql);
+		renderJson(re);
+	}	
 }
