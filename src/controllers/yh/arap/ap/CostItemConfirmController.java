@@ -103,7 +103,7 @@ public class CostItemConfirmController extends Controller {
         		+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n') transfer_order_no,"
         		+ " dor.sign_status return_order_collection,"
         		+ " dor.remark,"
-        		+ " DATE(dor.appointment_stamp) as depart_time,"
+        		+ " DATE(dor.depart_stamp) as depart_time,"
         		+ " group_concat(distinct(SELECT CAST(tor.planning_time AS CHAR) FROM transfer_order tor WHERE tor.id = doi.transfer_order_id GROUP BY tor.id) SEPARATOR '\r\n') planning_time,"
         		+ " oe.office_name office_name,"
         		+ " c1.abbr cname,"
