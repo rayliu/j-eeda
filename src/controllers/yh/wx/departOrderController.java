@@ -131,7 +131,7 @@ public class departOrderController extends ApiController {
 				+ " WHEN cr.charge_type = 'perCargo' and cr.ltl_price_type = 'perCBM' "
 				+ " THEN '零担(每立方米)'"
 				+ " WHEN cr.charge_type = 'perCargo' and cr.ltl_price_type = 'perKg' "
-				+ " THEN '零担(每千克)'"
+				+ " THEN '零担(每公斤)'"
 				+ " WHEN cr.charge_type = 'perCargo' and cr.ltl_price_type = 'perTon'"
 				+ " THEN '零担(每吨)'"
 				+ " when cr.charge_type='perCar'"
@@ -147,22 +147,22 @@ public class departOrderController extends ApiController {
 				+ " where cr.customer_id = "+customer_id+" and cr.location_from ='"+route_from+"' and cr.location_to = '"+ route_to + "'");
 		if(c_r_p==null){
 			c_r_p =Db.findFirst("select tor.*,l_f.name routeFrom,l_t.name routeTo,"
-					+ " (case"
-					+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perCBM' "
-					+ " THEN '零担(每立方米)'"
-					+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perKg' "
-					+ " THEN '零担(每千克)'"
-					+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perTon'"
-					+ " THEN '零担(每吨)'"
-					+ " when tor.charge_type='perCar'"
-					+ " then CONCAT('整车(',tor.car_type,')')"
-					+ " else '计件'"
-					+ " end) chargeType,"
-					+ " c_c.company_name customer_name from transfer_order tor"
-					+ " LEFT JOIN contact c_c on c_c.id = tor.customer_id"
-					+ " LEFT JOIN location l_t on l_t.code = tor.route_to"
-					+ " LEFT JOIN location l_f on l_f.code = tor.route_from"
-					+ " where tor.id="+array[0]);
+				+ " (case"
+				+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perCBM' "
+				+ " THEN '零担(每立方米)'"
+				+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perKg' "
+				+ " THEN '零担(每公斤)'"
+				+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perTon'"
+				+ " THEN '零担(每吨)'"
+				+ " when tor.charge_type='perCar'"
+				+ " then CONCAT('整车(',tor.car_type,')')"
+				+ " else '计件'"
+				+ " end) chargeType,"
+				+ " c_c.company_name customer_name from transfer_order tor"
+				+ " LEFT JOIN contact c_c on c_c.id = tor.customer_id"
+				+ " LEFT JOIN location l_t on l_t.code = tor.route_to"
+				+ " LEFT JOIN location l_f on l_f.code = tor.route_from"
+				+ " where tor.id="+array[0]);
 		}
 		setAttr("c_r_p", c_r_p);
 		

@@ -608,13 +608,14 @@ public class WxController extends ApiController {
             openid = getOpenId(code);
         }
         Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+        
         if(userRec != null){
         	setAttr("openid", openid);
         	setPageAttr("/wx/searchPickupOrder");
             render("/yh/wx/yh/searchPickupOrder.html");
         }else{
         	setAttr("openid", openid);
-            setAttr("redirect", "searchPickupOrder");
+            setAttr("redirect", "/wx/searchPickupOrder");
             render("/yh/wx/login.html");
         }
 	}
@@ -622,7 +623,7 @@ public class WxController extends ApiController {
 	public void searchTransferOrder(){
 		String openid = getPara("openid");
 		String departOrder = getPara("orderNo"
-				+ "");
+				+ "").toUpperCase();
 		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
 
 		String sql = "select tor.id,tor.customer_id,tor.order_no,l.`name` route_to, "

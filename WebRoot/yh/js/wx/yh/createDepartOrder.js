@@ -1,21 +1,28 @@
 $(document).ready(function() {
 	
-	var sp = $('#sp').val();
-	if(sp == ''){
-		$('#sp').val('没有找到相应的供应商');
-		$('#sp').css("color","red");
+	var checkSp = function(){
+		var sp = $('#sp').val();
+		if(sp == ''){
+			$('#sp').val('没有找到相应的供应商');
+			$('#sp').css("color","red");
 
-		var $sp = $('#warn_sp');
-		$sp.show();
-		
-		$('#saveBtn').hide();
-		$('#returnBtn').show();
+			var $sp = $('#warn_sp');
+			$sp.show();
+			
+			$('#saveBtn').hide();
+			$('#returnBtn').show();
+			return;
+		}
 	}
+	checkSp();
+	
 	
 	$('#saveBtn').click(function(){ 
 		//非空校验
 		if(!check())
 			return;
+		checkSp();
+		
 		$('#saveBtn').hide();
 		$.post('/wx/departOrder/departOrderCreate',$('#orderForm').serialize(),function(data){
 			if(data.ID>0){
