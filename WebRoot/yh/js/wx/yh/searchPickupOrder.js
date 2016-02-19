@@ -1,5 +1,4 @@
 $(document).ready(function() {
-	$('#createOrder').hide();
 	$("#searchNo").click(function(){
 		$('#massage').empty();
 		$('#show').css('display','none');

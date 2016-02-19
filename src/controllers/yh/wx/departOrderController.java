@@ -98,11 +98,6 @@ public class departOrderController extends ApiController {
 		return ac;
 	}
 	
-
-	//查询调车单
-//	public void index() {		
-//		render("/yh/wx/yh/searchPickupOrder.html");
-//	}
 	
 	public void createDepartOrder(){
 		String openid = getPara("openid");
@@ -187,10 +182,25 @@ public class departOrderController extends ApiController {
 		String pickupOrderNo = getPara("pickupOrder");
 		String transferIds = getPara("transferIds");  //运单IDs
 		
+		DepartOrder dp = new DepartOrder();
+		//过去调车单信息
+		DepartOrder pickupOrder = DepartOrder.dao.findFirst("select * from depart_order where depart_no = '"+pickupOrderNo+"'");
+		long pickupId = pickupOrder.getLong("id");
+		
+		//校验是否已经生成了发车单
+		String[] arr = transferIds.split(",");
+		for (int j = 0; j < arr.length; j++) {
+			Record check = Db.findFirst("select count(*) sum from depart_pickup where pickup_id = ? and order_id = ?",pickupId,arr[j]);
+			
+			if(check.getLong("sum")>0){
+				renderJson(dp);
+				return;
+			}	
+		}
+		
 		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
 		long userId = userRec.getLong("id");
 		//创建发车单
-		DepartOrder dp = new DepartOrder();
 		dp.set("charge_type", charge_type)
 				.set("route_from", route_from)
 				.set("route_to", route_to)
@@ -214,8 +224,6 @@ public class departOrderController extends ApiController {
 		dp.save();	
 		
 		//保存中间表
-		DepartOrder pickupOrder = DepartOrder.dao.findFirst("select * from depart_order where depart_no = '"+pickupOrderNo+"'");
-		long pickupId = pickupOrder.getLong("id");
 		long departId = dp.getLong("id");
 		String[] array = transferIds.split(",");
 		for (int i = 0; i < array.length; i++) {
