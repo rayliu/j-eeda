@@ -1664,6 +1664,10 @@ $(document).ready(function() {
 	
 	// 删除货品
 	$("#itemTable").on('click', '.deleteItem', function(e){
+		if($("#status").val()!='新建'){
+			$.scojs_message('只能删除新建数据', $.scojs_message.TYPE_ERROR);
+			return;
+		}
 		var code = $(this).attr('code');
 		var itemId = code.substring(code.indexOf('=')+1);
 		$("#item_id").val(itemId);
