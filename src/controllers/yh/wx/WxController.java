@@ -615,7 +615,7 @@ public class WxController extends ApiController {
             render("/yh/wx/yh/searchPickupOrder.html");
         }else{
         	setAttr("openid", openid);
-            setAttr("redirect", "/wx/searchPickupOrder");
+            setAttr("redirect", "searchPickupOrder");
             render("/yh/wx/login.html");
         }
 	}
