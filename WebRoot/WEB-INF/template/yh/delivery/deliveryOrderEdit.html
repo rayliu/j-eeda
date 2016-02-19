@@ -144,7 +144,7 @@
 							                <div id= "textDiv1"  class="form-group">
 		                                        <div class="form-group">
 		                                        	<h3><label>司机</label></h3>
-		                                            <div class="form-group">													    								
+		                                            <div class="form-group">
 												        <input type="hidden" id="car_id" name="car_id" value="${carinfo.driver!''}">
 												        <input type="text" name="driver_name" id="driver_name" class="form-control" id="driverMessage" value="${carContact.driver!''}">
 												        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
@@ -325,7 +325,7 @@
 		                                                </span>  
 		                                            </span>
 		                                        </div>
-		                                        <div class="form-group">                                                    
+		                                        <div class="form-group">
 		                                            <span id="datetimepicker1" class="input-append date search-control "> 
 		                                                <label class="search-label">向客户预约时间:</label> 
 		                                                <input id="client_order_stamp" class="form-control search-control endTime_filter" type="text" name="client_order_stamp" value="${deliveryOrder.client_order_stamp!''}">
@@ -334,7 +334,7 @@
 		                                                </span>  
 		                                            </span>
 		                                        </div>
-		                                        <div class="form-group">                                                    
+		                                        <div class="form-group">
 		                                            <span id="datetimepicker2" class="input-append date search-control "> 
 		                                                <label class="search-label">业务要求配送时间:</label> 
 		                                                <input id="business_stamp" class="form-control search-control endTime_filter" type="text" name="business_stamp" value="${deliveryOrder.business_stamp!''}">
@@ -344,8 +344,10 @@
 		                                            </span>
 		                                        </div>
 		                                        <div class="form-group">
+		                                        	<% var default_date = strutil.formatDate(date(),'yyyy-MM-dd');
+		                                        	%>
 		                                        	<%include("/yh/component/form/dateInputField.html",
-		                                        		{id:'depart_date', label:'发车时间:', value: deliveryOrder.depart_stamp!''}){} %>
+		                                        		{id:'depart_date', label:'发车时间:', value: deliveryOrder.depart_stamp!default_date}){} %>
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>客户现场及需求确认</label>
@@ -353,7 +355,7 @@
 		                                        </div> 
 		                                        <div class="panel-body"> </div>
 	                                      </div>
-						                      
+
 						                  <div>   
 		                                        <h3><label >收货人信息</label></h3>
 		                                        <div class="form-group" >
