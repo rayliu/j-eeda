@@ -4,7 +4,7 @@
 //$(document).ready(function(template) {
 	document.title = '模块定义 | '+document.title;
     $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
-
+    $('[data-toggle=tooltip]').tooltip();
     //-------------   子表的动态处理
     var subIndex=0;
     //添加一个新子表
@@ -25,6 +25,15 @@
         bindFieldTableEvent();
     });
 
+    var deletedTableIds=[];
+    //删除一个新子表
+    $('#fields_body').on('click', 'a.remove', function(event) {
+        var s_id = $(this).parent().find('input.s_id').val();
+        $(this).parent().remove();
+        deletedTableIds.push(s_id);
+    });
+
+    //添加字段
     $('#fields_body').on('click', 'button[name=addFieldBtn]', function(event) {
         var section = $(this).parent().parent();
         var sectionDataTable = $(section.find('table:first')[0]).DataTable();
@@ -249,7 +258,7 @@
         $("#editField").modal('hide');
     });
 
-    var deletedTableIds=[];
+    var deletedItemIds=[];
 
     var buildStructureFieldsArray=function(structure_table){
         var table_rows = $(structure_table).find('tr');
@@ -287,8 +296,8 @@
         }
 
         //add deleted items
-        for(var index=0; index<deletedTableIds.length; index++){
-            var id = deletedTableIds[index];
+        for(var index=0; index<deletedItemIds.length; index++){
+            var id = deletedItemIds[index];
             var item={
                 id: id,
                 action: 'DELETE'
@@ -316,6 +325,15 @@
                 parent_id: $($(structure_section).find('.s_parent_id')[0]).val(),
                 field_list: fields
             }
+            structure_table_array.push(structure);
+        }
+        //add deleted tables
+        for(var index=0; index<deletedTableIds.length; index++){
+            var id = deletedTableIds[index];
+            var structure={
+                id: id,
+                action: 'DELETE'
+            };
             structure_table_array.push(structure);
         }
         return structure_table_array;
@@ -358,10 +376,7 @@
             console.log(order);
             if(order.MODULE_ID>0){
                 $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
-
                 btn.attr('disabled', false);
-
-                damageOrder.reDrawTable(order);
             }else{
                 $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
                 btn.attr('disabled', false);

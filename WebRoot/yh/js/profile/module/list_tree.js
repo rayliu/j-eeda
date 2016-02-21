@@ -164,6 +164,7 @@
                 var dataTable = $('body').find('table#'+'sub'+subIndex+'_table').DataTable(tableSetting);
                 subIndex++;
 
+                $('[data-toggle=tooltip]').tooltip();
                 // Module.dataTable.clear().draw();
 
                 if(!structure.FIELDS_LIST)

@@ -2,6 +2,7 @@
 //$(document).ready(function(template) {
 
     //$('#menu_sys_profile').addClass('active').find('ul').addClass('in');
+    $('[data-toggle=tooltip]').tooltip();
 
     $.post('/module/getOrderStructure', {module_id: $("#module_id").val()}, function(json){
         console.log('getOrderStructure....');

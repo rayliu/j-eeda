@@ -20,6 +20,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.CollectionUtils;
 
 import com.google.gson.Gson;
 import com.jfinal.aop.Before;

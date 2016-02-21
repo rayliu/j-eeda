@@ -581,4 +581,12 @@ table .form-control{
 .area-list a:hover{
     color: #34b2fb;
 }
+
+section>a.remove {
+    position: absolute;
+    margin-top: -15px;
+    margin-left: -10px;
+    color: red;
+}
+    
 /* ray added */

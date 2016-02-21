@@ -3,6 +3,8 @@
 
 'use strict';
 
+ $('[data-toggle=tooltip]').tooltip();
+
 var global_order_structure;
 var global_customer_id;
 var global_data_table={};
@@ -27,7 +29,9 @@ $.post('/module/getOrderStructure', {
         buildStructureUI(json);
         buildButtonUI(json);
         bindBtnClick(); //绑定按钮事件
+        $('[data-toggle=tooltip]').tooltip();
     }
+
 }, 'json');
 
 var fillOrderData = function(structure_json) {
@@ -56,6 +60,7 @@ var fillOrderData = function(structure_json) {
 
             bindProductSearch();
             bindBtnClick();
+            $('[data-toggle=tooltip]').tooltip();
         }, 'json');
 };
 

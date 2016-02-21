@@ -1,7 +1,7 @@
 
 
 var buildButtonUI = function(module, order_dto) {
-    $('#button-bar').empty();
+    //$('#button-bar').empty();
     for (var i = 0; i < module.ACTION_LIST.length; i++) {
         var buttonObj = module.ACTION_LIST[i];
         var is_show = false;
@@ -39,8 +39,6 @@ var buildButtonUI = function(module, order_dto) {
 
                     }
                 };
-
-                
             };
         }
 

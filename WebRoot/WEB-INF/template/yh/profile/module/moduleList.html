@@ -25,7 +25,9 @@
 			<div>
 				  <!-- Nav tabs -->
 				  <ul class="nav nav-tabs" role="tablist">
-				    <li role="presentation" class="active"><a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">字段</a></li>
+				    <li role="presentation" class="active">
+				    	<a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">字段</a>
+				    </li>
 				    <li role="presentation"><a href="#action" aria-controls="action" role="tab" data-toggle="tab">按钮及操作</a></li>
 				    <li role="presentation"><a href="#permission" aria-controls="permission" role="tab" data-toggle="tab">权限</a></li>
 				    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">高级</a></li>
@@ -41,15 +43,17 @@
 				    	</div>
 						
 						<div class="row" id="fields_body">
-				    		<div class="form-group button-bar" >
-						    	<button id="addTableBtn" type="button" class="btn btn-success btn-xs">添加新子表</button>
-						    </div>
+				    		
 				    	</div>
 				    </div>
 				    <div role="tabpanel" class="tab-pane" id="action">
 				    	<section class=''>
 				    		<div class="form-group button-bar" >
+				    			<h4>默认已经生成按钮</h4>
+				    			<p>查询页面: 查询，新增，编辑，删除</p>
+				    			<p>编辑页面: 保存</p>
 					            <button id="addActionBtn" type="button" class="btn btn-success btn-xs">添加新按钮</button>
+
 					        </div>
 					        <table id="action_table" class="display" cellspacing="0" style="width: 100%;">
 					            <thead class="eeda">
@@ -91,14 +95,25 @@
 							</div>
 				    	</section>
 				    </div>
-				    <div role="tabpanel" class="tab-pane" id="permission">...</div>
+				    <div role="tabpanel" class="tab-pane" id="permission">
+					    <section class=''>
+					        <div class="row">
+					    		<div class="form-group button-bar" >
+							    	<button type="button" class="btn btn-success btn-xs">添加岗位</button>
+							    </div>
+					    	</div>
+							<div class="row" name="body">
+					    		
+					    	</div>
+					    </section>
+				    </div>
 				    <div role="tabpanel" class="tab-pane" id="settings">...</div>
 				  </div>
 
 				  <div class="form-group button-bar" >
 				    	<button id="saveBtn" type="button" class="btn btn-success">保存</button>
 				    	<button id="previewBtn" type="button" class="btn btn-default">预览</button>
-				    	<button id="startBtn" type="button" class="btn btn-default">启用</button>
+				    	<button id="startBtn" type="button" class="btn btn-default">发布</button>
 				    	<button id="stopBtn" type="button" class="btn btn-default">停用</button>
 				  </div>
 			</div>
@@ -142,6 +157,9 @@
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.excheck-3.5.js"></script>
 <script type="text/javascript" src="/yh/js/plugins/zTree_v3/js/jquery.ztree.exedit-3.5.js"></script>
 
+<script type="text/javascript" src="/plugins/knockout/knockout-3.4.0.js"></script>
+
+
 <%include("/yh/component/jsTemplate/moduleDetailTable.js", { id:'table_template'}){} %>
 <%include("/yh/component/jsTemplate/moduleTableAddBtnField.js", {}){} %>
 <%include("/yh/component/jsTemplate/moduleTableAddBtnConditionField.js", {}){} %>
@@ -152,3 +170,5 @@
 <script src="/yh/js/profile/module/list_tree.js"></script>
 <script src="/yh/js/profile/module/action.js"></script>
 <script src="/yh/js/profile/module/action_btn_visible.js"></script>
+
+<script src="/yh/js/profile/module/fields_ko.js"></script>

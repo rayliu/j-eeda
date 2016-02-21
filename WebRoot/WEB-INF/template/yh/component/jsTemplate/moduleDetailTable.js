@@ -1,6 +1,8 @@
 <script id="${id}" type="text/html">
 
     <section id="{{id}}_section" class='well structure'>
+        <a data-bind="click: deleteTableSection"
+           class="remove delete" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i> </a>
         <div class="col-lg-4">
             <div class="form-group">
                 <label class="search-label">名称</label>
@@ -64,9 +66,7 @@
         <div class="col-lg-4">
             <div class="form-group">
                 <label class="search-label">上级ID
-                    <a name="addBtnSetting" style="cursor:pointer;">
-                        <i class="fa fa-info-circle"></i>
-                    </a>
+                    <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="主从表结构，此处填上级表ID"></i>
                 </label>
                 
                 <input type="text" 
