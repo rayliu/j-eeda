@@ -1,4 +1,7 @@
 $(document).ready(function() {
+
+	$("#orderNo").val('DC'+$.format.date(new Date(), "yyyyMMdd"));
+
 	$("#searchNo").click(function(){
 		$('#massage').empty();
 		$('#show').css('display','none');
