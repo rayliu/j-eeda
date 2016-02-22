@@ -1,7 +1,8 @@
 
 
 	<div class="form-group">
-		<input id="${id}" type="text" name="${id}" field_type='list' value="${value}" style="display:none;"/>
+	    <input id="${id}_province" type="text" name="${id}_province" field_type='list' value="" style="display:block;"/>
+		<input id="${id}" type="text" name="${id}" field_type='list' value="${value}" style="display:block;"/>
 		<label class="search-label">${label}</label>
 		<input type="text" class="form-control search-control" 
 		id="${id}_INPUT" name="${id}_INPUT" 
@@ -27,13 +28,32 @@
 <script>
 
 	$(document).ready(function() {
-		//获取sp列表，自动填充
+		
 		var spList =$("#${id}_list");
+		var area_list_title = $("#${id}_list .area-list-title input");
 		var spListContent =$("#${id}_list .area-list-content");
 		var inputField = $('#${id}_INPUT');
 		var hiddenField = $('#${id}');
+		var hiddenProvinceField = $('#${id}_province');//这里是方便用户选错时，回选上级
 		
-		//供应商查询
+		area_list_title.click(function(){
+			var selectedLevel=$(this).attr('data-level');
+			var currentLevel=$(this).parent().find('.this').attr('data-level');
+			if(selectedLevel>=currentLevel)
+			    return;
+			
+			if(selectedLevel<currentLevel && selectedLevel==0){
+				inputField.val('');
+	            hiddenField.val('');
+	            hiddenProvinceField.val('');
+				searchLocation();
+			}else{
+				inputField.val(inputField.val().split('-')[0]);
+				searchLocation(1, hiddenProvinceField.val());
+			}
+			    
+		});
+		
 		var searchLocation = function(level, code){
 			var locLevel = "province";
 			level = level | 0;
@@ -56,7 +76,7 @@
 				
 			},'json');
 		};
-	    //获取供应商的list，选中信息在下方展示其他信息
+	    
 	    inputField.on('input click', function(){
 	    	var me = this;
 			var inputStr = inputField.val();
@@ -73,6 +93,10 @@
 	    	var code = $(this).attr('code');
 	    	var name = $(this).attr('name');
 	    	var oldValue = inputField.val();
+	    	if(dataLevel == 1){
+	    		hiddenProvinceField.val(code);
+	    	}
+	    	
 	    	if(dataLevel>1){
 	    		name = oldValue+'-'+name;
 	    	}
@@ -89,15 +113,16 @@
 	    	spList.find('input[data-level='+dataLevel+']').addClass('this');
 	    });
 	    
-	    // 没选中供应商，焦点离开，隐藏列表
+	    // 没选中，焦点离开，隐藏列表
 		inputField.on('blur', function(){
-			if (inputField.val().trim().length ==0) {
+			if (inputField.val().trim().length ==0 || inputField.val().split('-').length==1) {
+				inputField.val('');
 				hiddenField.val('');
 			};
 			spList.hide();
 	 	});
 
-		//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+		//当用户只点击了滚动条，没选，再点击页面别的地方时，隐藏列表
 		spList.on('blur', function(){
 			spList.hide();
 	 	});
