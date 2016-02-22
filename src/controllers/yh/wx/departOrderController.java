@@ -70,8 +70,6 @@ import controllers.yh.LoginUserController;
 import controllers.yh.util.EedaHttpKit;
 import controllers.yh.util.OrderNoGenerator;
 
-@RequiresAuthentication
-@Before(SetAttrLoginUserInterceptor.class)
 public class departOrderController extends ApiController {
 	private Logger logger = Logger.getLogger(departOrderController.class);
 	
@@ -102,6 +100,13 @@ public class departOrderController extends ApiController {
 	public void createDepartOrder(){
 		String openid = getPara("openid");
 		setAttr("openid", openid);
+		logger.debug("createDepartOrder openid="+openid);
+		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+		if(userRec ==null){
+		    setAttr("redirect", "searchPickupOrder");
+            render("/yh/wx/login.html");
+            return;
+		}
 		
 		String transferIds = getPara("transferIds");
 		setAttr("transferIds", transferIds);
