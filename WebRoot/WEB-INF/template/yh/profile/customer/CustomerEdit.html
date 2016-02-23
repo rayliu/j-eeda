@@ -208,6 +208,7 @@
                                         headers:['','始发城市', 
                                             '目的城市', 
                                             '默认供应商',
+                                            '时效（天）',
                                             '默认计费方式']
                                     }){} %>
                                 </div>
@@ -242,6 +243,13 @@
                                                                 value:order.sp_id!'',
                                                                 display_value: order.sp_name!''
                                                             }){} %>
+                                                        </div>
+                                                        <div class="form-group">
+                                                             <%include("/yh/component/form/inputField.html", 
+				                                            {   id:'limitationFile', 
+				                                                label:'时效(天)', 
+				                                                value:order.limitation!''
+				                                            }){} %>
                                                         </div>
                                                         <div class="form-group">
                                                             <%include("/yh/component/form/inputSpField.html", 
@@ -618,7 +626,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
     });
 
     $('#saveRouteBtn').click(function(){
-        $.post('/customer/saveCustomerRoute', $('#routeItemForm').serialize()+'&customer_id='+$('#partyId').val(), function(data){
+        $.post('/customer/saveCustomerRoute', $('#routeItemForm').serialize()+'&limitationFile='+$('#limitationFile').val()+'&customer_id='+$('#partyId').val(), function(data){
             if(data.ID>0){
                 $('#myModal').modal('hide');
                 dataTable.ajax.reload();
@@ -654,6 +662,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
             { "data": "LOCATION_FROM_NAME"},
             { "data": "LOCATION_TO_NAME"},
             { "data": "SP_NAME"}, 
+            { "data": "LIMITATION"}, 
             { "data": "CHARGE_TYPE", 
                 "render": function ( data, type, full, meta ) {
                     var str = '';
@@ -688,6 +697,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
             $('#myModal #location_to_INPUT').val(data.LOCATION_TO_NAME);
             $('#myModal #sp_id').val(data.SP_ID);
             $('#myModal #sp_id_input').val(data.SP_NAME);
+            $('#myModal #limitationFile').val(data.LIMITATION);
             if("perUnit"==data.CHARGE_TYPE){
                 $('[name=charge_type]:eq(0)').prop("checked", true);
                 $('#car_type_div').hide();

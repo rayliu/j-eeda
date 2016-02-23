@@ -345,6 +345,7 @@ public class CustomerController extends Controller {
         String charge_type = getPara("charge_type");
         String car_type = getPara("car_type");
         String ltl_price_type = getPara("ltl_price_type");
+        String limitation = getPara("limitationFile");
         CustomerRoute route = null;
         if(StringUtils.isEmpty(id)){
             route = new CustomerRoute();
@@ -355,6 +356,7 @@ public class CustomerController extends Controller {
             route.set("charge_type", charge_type);
             route.set("car_type", car_type);
             route.set("ltl_price_type", ltl_price_type);
+            route.set("limitation", limitation);
             route.save();
         }else{
             route = CustomerRoute.dao.findById(id);
@@ -365,6 +367,7 @@ public class CustomerController extends Controller {
             route.set("charge_type", charge_type);
             route.set("car_type", car_type);
             route.set("ltl_price_type", ltl_price_type);
+            route.set("limitation", limitation);
             route.update();
         }
         renderJson(route);
