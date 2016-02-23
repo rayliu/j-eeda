@@ -135,7 +135,7 @@ public class departOrderController extends ApiController {
 				+ " WHEN cr.charge_type = 'perCargo' and cr.ltl_price_type = 'perTon'"
 				+ " THEN '零担(每吨)'"
 				+ " when cr.charge_type='perCar'"
-				+ " then CONCAT('整车(',cr.car_type,')')"
+				+ " then '整车'"
 				+ " else '计件'"
 				+ " end) chargeType,"
 				+ " c_c.company_name customer_name,"
@@ -155,7 +155,7 @@ public class departOrderController extends ApiController {
 				+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perTon'"
 				+ " THEN '零担(每吨)'"
 				+ " when tor.charge_type='perCar'"
-				+ " then CONCAT('整车(',tor.car_type,')')"
+				+ " then '整车'"
 				+ " else '计件'"
 				+ " end) chargeType,"
 				+ " c_c.company_name customer_name from transfer_order tor"
@@ -176,7 +176,7 @@ public class departOrderController extends ApiController {
 		String route_from = getPara("route_from");
 		String route_to = getPara("route_to");
 		String charge_type = getPara("charge_type");
-		String car_type = getPara("car_type");
+		String car_type = getPara("car_type_input");
 		String ltl_price_type = getPara("ltl_price_type");
 		
 		String weight = getPara("weigh");

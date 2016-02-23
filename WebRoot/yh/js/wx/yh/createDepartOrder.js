@@ -1,5 +1,13 @@
 $(document).ready(function() {
 	
+	var chargeType= $('#chargeType').val();
+	if(chargeType=='整车'){
+		$('#car_type_div').show();
+		var car_type= $('#car_type').val();
+		$('#car_type_input').val(car_type);
+	}
+	
+	
 	var checkSp = function(){
 		var sp = $('#sp').val();
 		if(sp == ''){

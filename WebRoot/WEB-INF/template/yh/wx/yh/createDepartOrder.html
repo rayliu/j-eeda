@@ -16,7 +16,7 @@
     	 	<input type="hidden" id="openid" name="openid" value="${openid!''}"> 
     	 	 <input type="hidden" id="transferIds" name="transferIds" value="${transferIds!''}"> 
     	 	 <input type="hidden" id="pickupOrder" name="pickupOrder" value="${pickupOrder!''}"> 
-    	 	 <div style="background: #CDCDCD;">
+    	 	 <div style="background: #DDDDDD;">
     	 	     <div class="weui_cell" >
 		             <label>供应商：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
@@ -49,15 +49,6 @@
 		             </div>
 	             </div>
 	             <div class="weui_cell">
-		             <label>计费方式：</label>
-		             <div class="weui_cell_bd weui_cell_primary">
-		            	 <input class="weui_input" type="hidden" id="charge_type" name='charge_type' value="${c_r_p.charge_type!''}">
-		            	 <input class="weui_input" type="hidden" id="ltl_price_type" name='ltl_price_type' value="${c_r_p.ltl_price_type!''}">
-		            	 <input class="weui_input" type="hidden" id="car_type" name='car_type' value="${c_r_p.car_type!''}">
-		             	 <input class="weui_input" type="text" id="chargeType" name='chargeType' value="${c_r_p.chargeType!''}">
-		             </div>
-	             </div>
-	             <div class="weui_cell">
 		             <label>选中的运输单：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
 		             <%
@@ -69,8 +60,58 @@
 		              %>
 		             </div>
 	             </div>
+	             <div class="weui_cell">
+		             <label>计费方式：</label>
+		             <div class="weui_cell_bd weui_cell_primary">
+		            	 <input class="weui_input" type="hidden" id="charge_type" name='charge_type' value="${c_r_p.charge_type!''}">
+		            	 <input class="weui_input" type="hidden" id="ltl_price_type" name='ltl_price_type' value="${c_r_p.ltl_price_type!''}">
+		            	 <input class="weui_input" type="hidden" id="car_type" name='car_type' value="${c_r_p.car_type!''}">
+		             	 <input class="weui_input" type="text" id="chargeType" name='chargeType' value="${c_r_p.chargeType!''}">
+		             </div>
+	             </div>
     	 	 </div>
     	 	 <hr>
+    	 	 <div class="weui_cell" style="display: none;" id="car_type_div">
+	             <div class="weui_cell weui_cell_select weui_select_before">
+	                <div class="weui_cell_hd" >
+                        <lable>车辆规格(M),载重(T),集装箱(GP)</lable>
+                        <select class="weui_select" id="car_type_input" name="car_type_input" style="text-align: right;">
+                            <option></option>
+                            <option>40GP</option>
+                            <option>20GP</option>
+                            <option>40T</option>
+                            <option>20T</option>
+                            <option>10T</option>
+                            <option>8T</option>
+                            <option>5T</option>
+                            <option>3T</option>
+                            <option>21M</option>
+                            <option>18.5M</option>
+                            <option>18.0M</option>
+                            <option>17.8M</option>
+                            <option>17.5M</option>
+                            <option>17.0M</option>
+                            <option>16.0M</option>
+                            <option>15.0M</option>
+                            <option>14.5M</option>
+                            <option>13.5M</option>
+                            <option>13.0M</option>
+                            <option>12.5M</option>
+                            <option>9.6M</option>
+                            <option>8.6M</option>
+                            <option>8.0M</option>
+                            <option>7.6M</option>
+                            <option>7.2M</option>
+                            <option>6.8M</option>
+                            <option>6.5M</option>
+                            <option>5.3M</option>
+                            <option>4.3M</option>
+                            <option>4.2M</option>
+                            <option>2.6M</option>
+                        </select>
+                      </div>
+	            </div>
+		     </div>
 	         <div class="weui_cell">
 	             <label>货品总重量/(公斤)</label>
 	             <div class="weui_cell_bd weui_cell_primary">
