@@ -50,12 +50,12 @@
 		             </div>
 	             </div>
 	             <div class="weui_cell">
-		             <label>选中的运输单：</label>
+		             <label>运输单：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
 		             <%
 		                  for(list in transferList){
 		              %>
-		                 <input class="weui_input" type="text" id="weight" name='weight' value="${list.order_no!''}   (${list.amount})">
+		                 <input class="weui_input" type="text" id="weight" name='weight' value="${list.order_no!''}   (数量：${list.amount})">
 		             <%
 		                  }
 		              %>
@@ -75,8 +75,8 @@
     	 	 <div class="weui_cell" style="display: none;" id="car_type_div">
 	             <div class="weui_cell weui_cell_select weui_select_before">
 	                <div class="weui_cell_hd" >
-                        <lable>车辆规格(M),载重(T),集装箱(GP)</lable>
-                        <select class="weui_select" id="car_type_input" name="car_type_input" style="text-align: right;">
+                        <lable>车辆规格</lable>
+                        <select class="weui_select" id="car_type_input" name="car_type_input">
                             <option></option>
                             <option>40GP</option>
                             <option>20GP</option>
