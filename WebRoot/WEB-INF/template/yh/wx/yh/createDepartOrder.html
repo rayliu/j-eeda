@@ -16,6 +16,7 @@
     	 	<input type="hidden" id="openid" name="openid" value="${openid!''}"> 
     	 	 <input type="hidden" id="transferIds" name="transferIds" value="${transferIds!''}"> 
     	 	 <input type="hidden" id="pickupOrder" name="pickupOrder" value="${pickupOrder!''}"> 
+    	 	 <input type="hidden" id="limitation" name="limitation" value="${c_r_p.limitation!'0'}"> 
     	 	 <div style="background: #DDDDDD;">
     	 	     <div class="weui_cell" >
 		             <label>供应商：</label>
@@ -188,5 +189,6 @@
 
 <!-- 某些型号android 不加Version,js文件会不刷新-->
 <script src="/yh/js/wx/yh/createDepartOrder.js"></script>
+<script src="/yh/js/plugins/jquery-dateFormat/jquery-dateFormat.min.js"></script>
 
 </html>
