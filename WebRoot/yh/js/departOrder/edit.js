@@ -17,6 +17,15 @@
 	}else{
 		$("#saveDepartOrderBtn").attr("disabled",true);
 	}
+	
+	   
+    //体积和重量回显
+    var volume = $('#volume').val();
+    if(volume!=''){
+ 	   $('#w_v').show();
+    }
+	
+	
 	 //from表单验证
 	var validate = $('#orderForm').validate({
         rules: {

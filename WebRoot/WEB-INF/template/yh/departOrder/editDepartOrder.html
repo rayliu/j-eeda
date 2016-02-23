@@ -56,6 +56,7 @@
           		                            <input type="hidden" name="routeSp" value="${routeSp!''}"/>
           		                            <input type="hidden" name="audit_status" id="audit_status" value="${audit_status!''}${departOrder.audit_status!''}"/>
           		                            <input type ="hidden" name='pickupIds'  id="pickupIds"  value="${pickupIds!''}">
+          		                            <input type ="hidden" name='volume'  id="volume"  value="${departOrder.volume!''}">
                                    		   
 	                                        <div class="form-group">
                                                 <label><h3>计费方式</h3></label>
@@ -201,6 +202,20 @@
 		                                        </div>
 		                                    </div>
 		                                </div>
+		                                <div class="row" id="w_v" style="display:none;">			                                    
+	                                    	<div class="col-lg-10">                                
+		                                       <div class="form-group">
+		                                           <label class="search-label">货品总体积/(m³):</label>
+					                               <input type="text" class="form-control search-control orderNo_filter" disabled="disabled" id="" name="" value="${departOrder.volume!''}">
+		                                       </div> 
+                                       		</div>		                                    
+	                                    	<div class="col-lg-10">                                
+		                                       <div class="form-group">
+		                                           <label class="search-label">货品总重量/(公斤):</label>
+					                               <input type="text" class="form-control search-control orderNo_filter" disabled="disabled" id="" name="" value="${departOrder.weight!''}">
+		                                       </div> 
+                                       		</div>
+                                       </div>
                                    	</div>
                                       <div class="col-lg-6">
                                       <h2>发车信息</h2>  
