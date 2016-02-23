@@ -114,7 +114,9 @@ public class departOrderController extends ApiController {
 		String pickupOrder = getPara("orderNo");
 		setAttr("pickupOrder", pickupOrder);
 		
-		List<Record> re = Db.find("select order_no from transfer_order where id in ("+transferIds+")");
+		List<Record> re = Db.find("select dt.transfer_order_no order_no,dt.amount  from depart_transfer dt "
+				+ " LEFT JOIN depart_order dor on dor.id = dt.pickup_id "
+				+ " where dt.order_id in ("+transferIds+") and dor.depart_no = '"+pickupOrder+"'");
 		setAttr("transferList", re);
 		
 		String[] array = transferIds.split(",");
