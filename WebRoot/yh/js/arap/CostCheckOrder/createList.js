@@ -384,79 +384,23 @@ $(document).ready(function() {
 		    	},'json');*/
 		 }
 	}); 
-	//获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter2').on('input click', function(){
-    		var me=this;
-    		var inputStr = $('#sp_filter2').val();
-    		if(inputStr == ""){
-    			var pageSpName = $("#pageSpName");
-    			pageSpName.empty();
-    			var pageSpAddress = $("#pageSpAddress");
-    			pageSpAddress.empty();
-    			$('#sp_id2').val($(this).attr(''));
-    		}
-    		$.get('/customerContract/searchSp', {spName:inputStr}, function(data){
-    			if(inputStr!=$('#sp_filter2').val()){//查询条件与当前输入值不相等，返回
-					return;
-				}
-    			var spList =$("#spList2");
-    			spList.empty();
-    			for(var i = 0; i < data.length; i++)
-    			{
-    				var abbr = data[i].ABBR;
- 				if(abbr == null){
- 					abbr = '';
- 				}
- 				var company_name = data[i].COMPANY_NAME;
- 				if(company_name == null){
- 					company_name = '';
- 				}
- 				var contact_person = data[i].CONTACT_PERSON;
- 				if(contact_person == null){
- 					contact_person = '';
- 				}
- 				var phone = data[i].PHONE;
- 				if(phone == null){
- 					phone = '';
- 				}
- 				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
- 			}
- 			$("#spList2").css({ 
-            	left:$(me).position().left+"px", 
-            	top:$(me).position().top+32+"px" 
-            }); 
-            $('#spList2').show();
-    		},'json');
-
-    		
-    	});
-
     	// 没选中供应商，焦点离开，隐藏列表
-    	$('#sp_filter2').on('blur', function(){
-            if($(this).val().trim().length == 0)
-                $('#sp_id2').val('');
-     		$('#spList2').hide();
+    	$('#sp_id_input').on('blur', function(){
+     		$('#sp_id_list').hide();
             refreshCreateList();
      	});
 
     	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
-    	$('#spList2').on('blur', function(){
-     		$('#spList2').hide();
+    	$('#sp_id_list').on('blur', function(){
+     		$('#sp_id_list').hide();
      	});
 
-    	$('#spList2').on('mousedown', function(){
+    	$('#sp_id_list').on('mousedown', function(){
     		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     	});
 
     	// 选中供应商
-    	$('#spList2').on('mousedown', '.fromLocationItem', function(e){
-    		console.log($('#spList').is(":focus"))
-    		var message = $(this).text();
-    		$('#sp_filter2').val(message.substring(0, message.indexOf(" ")));
-    		$('#sp_id2').val($(this).attr('spid'));
-    		
-            $('#spList2').hide();
-            
+    	$('#sp_id_list').on('mousedown', '.fromLocationItem', function(e){
             refreshCreateList();
             
     });
@@ -516,8 +460,8 @@ $(document).ready(function() {
     var refreshCreateList = function() {
     	var booking_id = $("#booking_id").val();
     	var orderNo = $("#orderNo_filter").val();
-    	var sp = $("#sp_filter2").val();
-        var sp_id2 = $("#sp_id2").val();
+    	var sp = $("#sp_id_input").val();
+        var sp_id2 = $("#sp_id").val();
     	var no = $("#no").val();
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
