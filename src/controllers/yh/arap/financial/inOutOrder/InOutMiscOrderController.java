@@ -48,13 +48,13 @@ public class InOutMiscOrderController extends Controller {
 	private Logger logger = Logger.getLogger(InOutMiscOrderController.class);
 	
 
-	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_LIST })
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_IMO_LIST })
 	public void index() {
 		render("/yh/arap/InOutMiscOrder/InOutMiscOrderList.html");
 	}
 
 
-	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_LIST })
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_IMO_LIST })
 	public void list() {
 		String order_no = getPara("order_no");
 		String biz_type = getPara("biz_type");
@@ -118,7 +118,7 @@ public class InOutMiscOrderController extends Controller {
 		renderJson(BillingOrderListMap);
 	}
 
-	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_CREATE })
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_IMO_CREATE })
 	public void create() {
 		UserLogin user=LoginUserController.getLoginUser(this);
 		String sql = "select o.id, o.office_name, ifnull(o.is_stop, 0) is_stop from user_office uo, office o "
@@ -130,8 +130,8 @@ public class InOutMiscOrderController extends Controller {
 		render("/yh/arap/InOutMiscOrder/InOutMiscOrderEdit.html");
 	}
 
-	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_CREATE,
-			PermissionConstant.PERMSSION_CPIO_UPDATE }, logical = Logical.OR)
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_IMO_CREATE,
+			PermissionConstant.PERMSSION_IMO_UPDATE }, logical = Logical.OR)
 	@Before(Tx.class)
 	public void save() throws Exception {
 		String jsonStr = getPara("params");
@@ -244,7 +244,7 @@ public class InOutMiscOrderController extends Controller {
 
 	
 
-	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CPIO_UPDATE })
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_IMO_UPDATE })
 	public void edit() throws ParseException {
 		String id = getPara("id");
 

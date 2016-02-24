@@ -276,7 +276,11 @@ public class PermissionConstant {
 	public static final String PERMSSION_ORDERINDEX_LIST = "OrderIndex.list";
 	public static final String PERMSSION_DAILYREPORT_LIST = "DailyReport.list";
 	public static final String PERMSSION_ORDER_FLOW_LIST = "OrderFlowReport.list";
-	
+	/*往来票据权限点*/
+	public static final String PERMSSION_IMO_LIST = "InOutMiscOrder.list";
+	public static final String PERMSSION_IMO_CREATE = "InOutMiscOrder.create";
+	public static final String PERMSSION_IMO_UPDATE = "InOutMiscOrder.update";
+	public static final String PERMSSION_IMO_DELETE = "InOutMiscOrder.delete";
 	
 	
 	
