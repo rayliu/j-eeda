@@ -54,10 +54,11 @@
                                     <!-- end of col-lg-6-->
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label class="search-label">供应商</label>
-                                            <input type="text" class="form-control search-control sp_filter" id="sp_filter" placeholder="请选择供应商">
-                                        	<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
-											</ul>
+                                            <%include("/yh/component/form/inputSpField.html", 
+                                                {
+                                                    id:'sp_id', 
+                                                    label:'供应商'
+                                                }){} %>
                                         </div>
                                      	<div class="form-group">
                                             <label class="search-label">业务单号</label>
