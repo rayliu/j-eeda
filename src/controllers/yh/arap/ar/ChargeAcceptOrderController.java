@@ -62,7 +62,7 @@ public class ChargeAcceptOrderController extends Controller {
         	status = "'已审批','收款申请中','部分已复核','部分已收款'";    //开票记录单
         	status2 = "'新建','收款申请中','部分已复核','部分已收款'";     //手工单
         	status3 = "'已确认','收款申请中','部分已复核','部分已收款'";    //对账单
-        	status4 = "'未收款','收款申请中','部分已复核','部分已收款'";  //往来票据单                                            
+        	status4 = "'未收','收款申请中','部分已复核','部分已收款'";  //往来票据单                                            
         }else if(status.equals("部分申请中")){
         	status = status2 = status3 = status4 = "'收款申请中'";
         	
@@ -144,18 +144,6 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
         	    + " where amco.status in(" + status3 + ") and amco.have_invoice = 'N'"
-        	    + " UNION"
-        		+ " SELECT aio.id, '往来票据单' order_type, aio.order_no, aio.charge_status status , aio.charge_person AS payee,"
-        		+ " NULL AS invoice_no, aio.create_date create_stamp,"
-        		+ " aio.remark, aio.charge_amount charge_amount,null cname,"
-        		 + " ( SELECT ifnull(sum(caor.receive_amount),0) FROM charge_application_order_rel caor "
- 				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单' "
- 				+ " ) receive_amount,"
- 				+ " (aio.charge_amount - (SELECT ifnull(sum(caor.receive_amount), 0) "
- 				+ " FROM charge_application_order_rel caor "
- 				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单'"
- 				+ " )) noreceive_amount"
-        		+ " FROM arap_in_out_misc_order aio WHERE aio.charge_status IN (" + status4 + ")"
         		+ " UNION"
         		+ " SELECT aio.id, '往来票据单' order_type, aio.order_no, aio.charge_status status , aio.charge_person AS payee,"
         		+ " NULL AS invoice_no, aio.create_date create_stamp,"
