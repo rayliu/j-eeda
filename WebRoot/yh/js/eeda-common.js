@@ -51,8 +51,6 @@ var refreshUrl=function(url){
          str = "<a href='/chargeConfirm/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }else if(orderNo.indexOf("YSFP") == 0){//应收开票记录
          str = "<a href='/chargeInvoiceOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
-     }else if(orderNo.indexOf("YS") == 0){//配送
-        str = "<a href='/transferOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }else if(orderNo.indexOf("XC") == 0){
          str = "<a href='/carsummary/edit?carSummaryId="+id+"' target='_blank'>"+orderNo+"</a>";
      }else if(orderNo.indexOf("YSDZ") == 0){//应收对账
@@ -67,6 +65,8 @@ var refreshUrl=function(url){
          str = "<a href='/costPrePayOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }else if(orderNo.indexOf("HSD") == 0){//预付
          str = "<a href='/damageOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("YS") == 0){//配送
+        str = "<a href='/transferOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }
 
      return str;
