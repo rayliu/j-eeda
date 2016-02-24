@@ -578,7 +578,10 @@ public class ContractController extends Controller {
 							parentID, parentID);
 		} else {
 			locationList = Db
-					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
+					.find("select p.id, c.abbr,c.postal_code,c.contact_person,c.email,c.phone,c.address,c.company_name, p.id AS pid from party p "
+							+ " LEFT JOIN contact c on p.contact_id = c.id "
+							+ " LEFT JOIN office o on o.id = p.office_id"
+							+ " where p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
 							parentID, parentID);
