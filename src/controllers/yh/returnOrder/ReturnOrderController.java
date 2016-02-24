@@ -81,6 +81,7 @@ public class ReturnOrderController extends Controller {
 		String serial_no = getPara("serial_no");
 		String to_name = getPara("to_name");
 		String province = getPara("province");
+		String imgaudit = getPara("imgaudit");
 		String sign_no = getPara("sign_no");
 		String pageIndex = getPara("sEcho");
 		String sLimit = "";
@@ -99,6 +100,9 @@ public class ReturnOrderController extends Controller {
 		String conditions=" where 1=1 ";
 		if (StringUtils.isNotEmpty(order_no)){
         	conditions+=" and UPPER(order_no) like '%"+order_no+"%'";
+        }
+		if (StringUtils.isNotEmpty(imgaudit)){
+        	conditions+=" and UPPER(imgaudit) like '%"+imgaudit+"%'";
         }
 		if (StringUtils.isNotEmpty(tr_order_no)){
         	conditions+=" and UPPER(transfer_order_no) like '%"+tr_order_no+"%'";
@@ -150,7 +154,7 @@ public class ReturnOrderController extends Controller {
         
         conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
         		//+ " and (!(unix_timestamp(planning_time) < unix_timestamp('2015-07-01')) AND cname = '江苏国光') " ;
-        String totalSql = " SELECT ror.order_no,ror.customer_id,ror.transaction_status,dor.order_no delivery_order_no, "
+        String totalSql = " SELECT ror.id, ror.order_no,ror.customer_id,'' create_date,'' remark ,"
     		    + " ( CASE tor.arrival_mode  "
 				+ " WHEN 'gateIn' THEN '配送' "
 				+ " WHEN 'delivery' THEN '运输'"
@@ -180,19 +184,45 @@ public class ReturnOrderController extends Controller {
 				+ " FROM transfer_order_item_detail toid"
 				+ " WHERE toid.order_id = tor.id ) END "
 				+ " ) serial_no,"
-				+ " ifnull( w.warehouse_name, w1.warehouse_name ) warehouse_name, c2.abbr cname,"
+				+ " ( CASE"
+				+ " WHEN ror.delivery_order_id IS NOT NULL THEN"
+				+ " ( SELECT group_concat( toid.item_no SEPARATOR '<br/>' )"
+				+ " FROM transfer_order_item_detail toid"
+				+ " WHERE toid.delivery_id = dor.id )"
+				+ " ELSE ( SELECT group_concat( toi.item_no SEPARATOR '<br/>' )"
+				+ " FROM transfer_order_item toi "
+				+ " WHERE toi.order_id = ror.transfer_order_id ) END ) item_no,"
+				+ " ifnull( c.contact_person, tor.receiving_name ) receipt_person,"
+				+ " ifnull( c.phone, tor.receiving_phone ) receipt_phone,"
+				+ " ifnull( (c.company_name), tor.receiving_unit ) receiving_unit,"
+				+ " ifnull( c.address, tor.receiving_address ) receipt_address,"
+				+ " ifnull( w.warehouse_name, w1.warehouse_name ) warehouse_name,"
+				+ " ifnull(( SELECT sum(amount) FROM delivery_order_item doi "
+				+ " WHERE doi.delivery_id = dor.id ), "
+				+ " (SELECT sum(amount) FROM transfer_order_item "
+				+ " WHERE order_id = tor.id) ) a_amount,  c2.abbr cname,"
 				+ " ifnull( tor.order_no, "
 				+ " ( SELECT group_concat( DISTINCT CAST(tor.order_no AS CHAR) SEPARATOR '<br/>' )"
 				+ " FROM transfer_order tor"
 				+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id"
 				+ " WHERE doi.delivery_id = dor.id )"
 				+ " ) transfer_order_no,"
-				+ " lo2. NAME to_name,"
+				+ " lo. NAME from_name, lo2. NAME to_name,"
 				+ " ifnull( ( SELECT NAME FROM location WHERE CODE = lo2.pcode AND pcode = 1 ),"
 				+ " ( SELECT l. NAME FROM location l"
 				+ " LEFT JOIN location lo3 ON lo3.pcode = l. CODE"
 				+ "  WHERE lo3. CODE = lo2.pcode AND l.pcode = 1 )"
-				+ " ) province,dor.ref_no sign_no"
+				+ " ) province,"
+				+ " ifnull( tor.address, ( SELECT group_concat( DISTINCT CAST(tor.address AS CHAR) SEPARATOR '<br/>' )"
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id"
+				+ " WHERE doi.delivery_id = dor.id )"
+				+ " ) address, dor.order_no delivery_order_no, ifnull(ul.c_name, ul.user_name) creator_name,"
+				+ " ror.receipt_date, ror.transaction_status, ( SELECT CASE WHEN ( SELECT count(0) FROM order_attachment_file"
+				+ " WHERE order_type = 'RETURN' AND order_id = ror.id ) = 0 THEN '无图片'"
+				+ " WHEN ( SELECT count(0) FROM order_attachment_file"
+				+ " WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) and file_path is not null ) > 0 THEN '有图片待审核'"
+				+ " ELSE '有图片已审核' END ) imgaudit, dor.ref_no sign_no"
 				+ " FROM return_order ror"
 				+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
@@ -200,8 +230,9 @@ public class ReturnOrderController extends Controller {
 				+ " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"
 				+ " LEFT JOIN warehouse w1 ON ifnull( dor.change_warehouse_id, dor.from_warehouse_id ) = w1.id"
 				+ " LEFT JOIN contact c2 ON c2.id = ror.customer_id"
-				+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to) "
-				;
+				+ " LEFT JOIN location lo ON lo. CODE = ifnull(tor.route_from, dor.route_from )"
+				+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
+				+ " LEFT JOIN user_login ul ON ul.id = ror.creator " ;
 
 			// 获取当前页的数据
 	    sql = " SELECT ror.id, ror.order_no,ror.customer_id,'' create_date,'' remark ,"
@@ -271,8 +302,8 @@ public class ReturnOrderController extends Controller {
 					+ " ror.receipt_date, ror.transaction_status, ( SELECT CASE WHEN ( SELECT count(0) FROM order_attachment_file"
 					+ " WHERE order_type = 'RETURN' AND order_id = ror.id ) = 0 THEN '无图片'"
 					+ " WHEN ( SELECT count(0) FROM order_attachment_file"
-					+ " WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) ) > 0 THEN '待审核'"
-					+ " ELSE '已审核' END ) imgaudit, dor.ref_no sign_no"
+					+ " WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) and file_path is not null ) > 0 THEN '有图片待审核'"
+					+ " ELSE '有图片已审核' END ) imgaudit, dor.ref_no sign_no"
 					+ " FROM return_order ror"
 					+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 					+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
