@@ -231,65 +231,6 @@ $(document).ready(function() {
         	}
         },'json');
     });
-    
-    /*--------------------------------------------------------------------*/
-    //获取所有客户
-   /* $('#customer_filter').on('keyup click', function(){
-           var inputStr = $('#customer_filter').val();
-           
-           $.get("/customerContract/search", {locationName:inputStr}, function(data){
-               //console.log(data);
-               var companyList =$("#companyList");
-               companyList.empty();
-               for(var i = 0; i < data.length; i++)
-               {
-                   companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
-               }
-               if(data.length>0)
-                   companyList.show();
-               
-           },'json');
-
-          
-       });*/
-    $('#customer_name').on('keyup click', function(){
-        var inputStr = $('#customer_name').val();
-        $.get("/customerContract/search", {locationName:inputStr}, function(data){
-            //console.log(data);
-            var companyList =$("#companyList");
-            companyList.empty();
-            for(var i = 0; i < data.length; i++)
-            {
-                companyList.append("<li><a tabindex='-1' class='fromLocationItem' >"+data[i].ABBR+"</a></li>");
-            }
-            if(data.length>0)
-                companyList.show();
-            
-        },'json');
-
-       
-    });
-
-
-
-   //选中某个客户时候
-      $('#companyList').on('click', '.fromLocationItem', function(e){        
-           $('#customer_name').val($(this).text());
-           $("#companyList").hide();
-           var companyId = $(this).attr('partyId');
-           $('#customerId').val(companyId);
-          
-       });
-    // 没选中客户，焦点离开，隐藏列表
-       $('#customer_name').on('blur', function(){
-           $('#companyList').hide();
-       });
-
-       //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
-       $('#companyList').on('blur', function(){
-           $('#companyList').hide();
-       });
-
        $('#companyList').on('mousedown', function(){
            return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        });
@@ -324,7 +265,7 @@ $(document).ready(function() {
     		var booking_note_number = $("#booking_note_number").val();
     		var route_from =$("#route_from").val();
     		var route_to = $("#route_to").val();
-    		var customer_name = $("#customer_name").val();
+    		var customer_name = $("#customer_id_input").val();
     		var plantime = $("#plantime").val();
     		var arrivaltime = $("#arrivaltime").val();
     		var serial_no = $("#serial_no").val();
