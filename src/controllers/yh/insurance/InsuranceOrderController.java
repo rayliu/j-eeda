@@ -450,14 +450,14 @@ public class InsuranceOrderController extends Controller {
     				InsuranceFinItem insuranceFinItem = new InsuranceFinItem();
     				if(transferOrderItem!= null){
     					Product product = Product.dao.findById(transferOrderItem.get("product_id"));
-            			if(product!= null){
-            				double prodoctInsuranceAmount = product.getDouble("insurance_amount") != null?product.getDouble("insurance_amount"):0;
+            			if(product.getDouble("insurance_amount")!= null){
+            				double prodoctInsuranceAmount = product.getDouble("insurance_amount");
             				insuranceFinItem.set("amount", prodoctInsuranceAmount);
     						if(party!= null){
     					    	insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
-    					    	if(insurance != null){
-    					    		double insuranceRates = insurance.getDouble("insurance_rate")!= null?insurance.getDouble("insurance_rate"):0;
-        							double productAmount = transferOrderItem.getDouble("amount")!= null?insurance.getDouble("insurance_rate"):0;;
+    					    	if(insurance.getDouble("insurance_rate") != null){
+    					    		double insuranceRates = insurance.getDouble("insurance_rate");
+        							double productAmount = transferOrderItem.getDouble("amount");
         							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
         					    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
