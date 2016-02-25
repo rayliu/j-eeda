@@ -122,9 +122,9 @@
 		                                        <div class="form-group">
 		                                        	<h3> <label >供应商信息</label></h3>
 		                                            <label>供应商名称</label>
-		                                            <input id="sp_id" name="sp_id" type="hidden" value="${spContact.spId!''}">
+		                                            <input id="sp_id" name="sp_id" type="hidden"  value="${spContact.spId!''}">
 		                                            <input id="cid" name="cid" type="hidden" value="${spContact.spId!''}">
-		                                            <input id="spMessage" class="form-control" placeholder="选择供应商" type="text" name="spMessage" value="${spContact.company_name!''}"/>
+		                                            <input id="spMessage" class="form-control" autocomplete="off" placeholder="选择供应商" type="text" name="spMessage" value="${spContact.company_name!''}"/>
 		                                            <ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 													</ul>
 		                                        </div>
