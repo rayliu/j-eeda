@@ -91,97 +91,13 @@ $(document).ready(function() {
        $('#companyList').on('mousedown', function(){
            return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        });
-       
-     //获取供应商的list，选中信息在下方展示其他信息
-       $('#sp_filter').on('input click', function(){
-       		var me= this;
-       		var inputStr = $('#sp_filter').val();
-       		if(inputStr == ""){
-       			var pageSpName = $("#pageSpName");
-       			pageSpName.empty();
-       			var pageSpAddress = $("#pageSpAddress");
-       			pageSpAddress.empty();
-       			$('#sp_id').val($(this).attr(''));
-       		}
-       		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
-       			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
-					return;
-				}
-       			var spList =$("#spList");
-       			spList.empty();
-       			for(var i = 0; i < data.length; i++)
-       			{
-       				var abbr = data[i].ABBR;
-    				if(abbr == null){
-    					abbr = '';
-    				}
-    				var company_name = data[i].COMPANY_NAME;
-    				if(company_name == null){
-    					company_name = '';
-    				}
-    				var contact_person = data[i].CONTACT_PERSON;
-    				if(contact_person == null){
-    					contact_person = '';
-    				}
-    				var phone = data[i].PHONE;
-    				if(phone == null){
-    					phone = '';
-    				}
-    				spList.append("<li><a tabindex='-1' class='fromLocationItem' chargeType='"+data[i].CHARGE_TYPE+"' partyId='"+data[i].PID+"' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' spid='"+data[i].ID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+abbr+" "+company_name+" "+contact_person+" "+phone+"</a></li>");
-    			}
-    			$("#spList").css({ 
-           	left:$(me).position().left+"px", 
-           	top:$(me).position().top+28+"px" 
-          }); 
-          $('#spList').show();
 
-       		},'json');
-
-       		
-       	});
-
-       	// 没选中供应商，焦点离开，隐藏列表
-       	$('#sp_filter').on('blur', function(){
-        		$('#spList').hide();
-        	});
-
-       	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
-       	$('#spList').on('blur', function(){
-        		$('#spList').hide();
-        	});
-
-       	$('#spList').on('mousedown', function(){
+       	$('#sp_id1_list').on('mousedown', function(){
        		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        	});
 
        	// 选中供应商
-       	$('#spList').on('mousedown', '.fromLocationItem', function(e){
-       		//console.log($('#spList').is(":focus"))
-       		var message = $(this).text();
-       		$('#sp_filter').val(message.substring(0, message.indexOf(" ")));
-       		$('#sp_id').val($(this).attr('partyId'));
-       		var pageSpName = $("#pageSpName");
-       		pageSpName.empty();
-       		var pageSpAddress = $("#pageSpAddress");
-       		pageSpAddress.empty();
-       		pageSpAddress.append($(this).attr('address'));
-       		var contact_person = $(this).attr('contact_person');
-       		if(contact_person == 'null'){
-       			contact_person = '';
-       		}
-       		pageSpName.append(contact_person+'&nbsp;');
-       		var phone = $(this).attr('phone');
-       		if(phone == 'null'){
-       			phone = '';
-       		}
-       		pageSpName.append(phone); 
-       		pageSpAddress.empty();
-       		var address = $(this).attr('address');
-       		if(address == 'null'){
-       			address = '';
-       		}
-       		pageSpAddress.append(address);
-               $('#spList').hide();
+       	$('#sp_id1_list').on('mousedown', function(e){
                refreshList();
            });
         $('#datetimepicker3').datetimepicker({  
@@ -207,7 +123,7 @@ $(document).ready(function() {
         var refreshList = function(){
         	var order_no = $("#order_no").val();
           	var status = $("#status_filter").val();
-        	var sp = $("#sp_filter").val();
+        	var sp = $("#sp_id1_input").val();
         	var serial_no = $("#serial_no_filter").val();
         	datatable.fnSettings().sAjaxSource = "/costCheckOrder/list?order_no="+order_no
                                 +"&status="+status
@@ -216,7 +132,7 @@ $(document).ready(function() {
         	datatable.fnDraw();
         };
 
-        $("#order_no, #sp_filter,  #customer_filter, #serial_no_filter").on('keyup',function(){
+        $("#order_no, #sp_id1_input,  #customer_filter, #serial_no_filter").on('keyup',function(){
         	refreshList();
         });
 
