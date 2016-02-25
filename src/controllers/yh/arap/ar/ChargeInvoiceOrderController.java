@@ -2,6 +2,7 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +55,8 @@ public class ChargeInvoiceOrderController extends Controller {
         String order_type = getPara("order_type");
         setAttr("order_type", order_type);
 
+        DecimalFormat df = new DecimalFormat("0.00");
+
         if(order_type.equals("对账单")){
         	setAttr("chargePreInvoiceOrderIds", ids);	
             if(ids != null && !"".equals(ids)){
@@ -65,7 +68,7 @@ public class ChargeInvoiceOrderController extends Controller {
     				Double amount = rOrder.getDouble("charge_amount")==null?0.0:rOrder.getDouble("charge_amount");
     				totalAmount = totalAmount + amount;
     			}
-    			setAttr("totalAmount", totalAmount);
+    			setAttr("totalAmount", df.format(totalAmount));
     			
     			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
     			Long customerId = arapChargeOrder.get("payee_id");
@@ -282,6 +285,7 @@ public class ChargeInvoiceOrderController extends Controller {
     	ArapChargeInvoice arapAuditInvoice = null;
     	String order_type = getPara("order_type");
     	String chargeInvoiceOrderId = getPara("chargeInvoiceOrderId");
+    	String total_amount= getPara("total_amount");
     	if(order_type.equals("申请单")){
     		if(!"".equals(chargeInvoiceOrderId) && chargeInvoiceOrderId != null){
         		arapAuditInvoice = ArapChargeInvoice.dao.findById(chargeInvoiceOrderId);
@@ -297,8 +301,8 @@ public class ChargeInvoiceOrderController extends Controller {
         		arapAuditInvoice.set("create_by", getPara("create_by"));
         		arapAuditInvoice.set("status", getPara("status"));
     	    	arapAuditInvoice.set("create_stamp", new Date());
-    	    	if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
-    	    		arapAuditInvoice.set("total_amount", getPara("total_amount"));
+    	    	if(total_amount != null && !"".equals(total_amount)){
+    	    		arapAuditInvoice.set("total_amount", total_amount);
     	    	}
     	    	arapAuditInvoice.set("remark", getPara("remark"));
     	    	if(getPara("customer_id") != null && !"".equals(getPara("customer_id"))){
@@ -337,8 +341,8 @@ public class ChargeInvoiceOrderController extends Controller {
         		arapAuditInvoice.set("create_by", getPara("create_by"));
         		arapAuditInvoice.set("status", getPara("status"));
     	    	arapAuditInvoice.set("create_stamp", new Date());
-    	    	if(getPara("total_amount") != null && !"".equals(getPara("total_amount"))){
-    	    		arapAuditInvoice.set("total_amount", getPara("total_amount"));
+    	    	if(total_amount != null && !"".equals(total_amount)){
+    	    		arapAuditInvoice.set("total_amount", total_amount);
     	    	}
     	    	arapAuditInvoice.set("remark", getPara("remark"));
     	    	if(getPara("customer_id") != null && !"".equals(getPara("customer_id"))){
