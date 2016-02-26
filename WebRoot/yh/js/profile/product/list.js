@@ -61,7 +61,34 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "aoColumns": [   
+        "aoColumns": [
+				{ 
+				    "mDataProp": null, 
+				    "sWidth": "60px", 
+				    "bVisible":Product.isDel,
+					"sClass": "item_desc",              
+				    "fnRender": function(obj) {
+				    	var str="<nobr>";
+				    	if(Product.isDel){
+				    		if(obj.aData.IS_STOP != true){
+				    			str +="<a class='btn btn-danger  btn-xs deleteProduct' id="+obj.aData.ID+" title='停用'>"+
+					                    "<i class='fa fa-edit fa-fw'></i>"+
+					                    "</a>";
+				        	}else{
+				        		str +=	"<a class='btn btn-success  btn-xs deleteProduct' id="+obj.aData.ID+" title='启用'>"+
+					                    "<i class='fa fa-edit fa-fw'></i>"+
+					                    "</a>";
+				        	}
+				    	}
+				    	if(Product.isUpdate){
+				    		str +="<a class='btn btn-primary btn-xs updateProduct' data-toggle='modal' data-target='#addOrder' data-backdrop='static' id="+obj.aData.ID+" target='_blank' title='编辑'>"+
+                            "<i class='fa fa-edit fa-fw'></i>"+
+                            "</a> "
+				    	}
+				    	str +="</nobr>";
+				        return str;
+				    }
+				}, 
             {
             	"mDataProp":"ITEM_NO",
             	"sClass": "item_no",
@@ -70,7 +97,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='item_no' value='"+str+"'>";
+            		return str;
             	}
             },       	
             {
@@ -82,7 +109,7 @@ $(document).ready(function() {
             			str ="";
             		}
             			
-            		return "<input type='text' name='serial_no' style='width:80px;' value='"+ str +"'>";
+            		return str;
             	}
             },        	
             {
@@ -93,7 +120,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='item_name' style='width:100px;' value='"+ str +"'>";
+            		return str;
             	}
             },
             {
@@ -104,7 +131,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='size' style='width:80px;' value='"+ str +"'>";
+            		return str;
             	}
         	},
             {
@@ -115,7 +142,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='width' style='width:80px;' value='"+ str +"'>";
+            		return str;
             	}
             },
             {
@@ -126,7 +153,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='height' style='width:80px;' value='"+ str +"'>";
+            		return str;
             	}
         	},
         	{
@@ -137,7 +164,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='insurance_amount' style='width:80px;' value='"+ str +"'>";
+            		return str;
             	}
         	},
             {
@@ -149,25 +176,18 @@ $(document).ready(function() {
             		if(str==null){
             			str = '';
             		}
-            		return "<input type='text' name='category' style='width:80px;' disabled = 'disabled' value='"+str+"'>";
+            		return str;
             	}
         	},
         	{
             	"mDataProp":"UNIT",
             	"sClass": "unit",
             	"fnRender":function(obj){
-		        	var str="";
-		        	$("#unitOptions").children().each(function(){
-		        		if(obj.aData.UNIT == $(this).val()){
-		        			str+="<option value='"+$(this).val()+"' selected=''>"+$(this).text()+"</option>";			        			
-		        		}else{			        			
-		        			str+="<option value='"+$(this).val()+"'>"+$(this).text()+"</option>";
-		        		}
-		        	});
-		        	inputBox = "<select name='unit'>"+str+"</select>";
-			        
-        			return inputBox;
-            		
+		        	var str =obj.aData.UNIT;
+            		if(str==null){
+            			str = '';
+            		}
+            		return str;
             	}
             },
             {
@@ -178,7 +198,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='volume' style='width:80px;' value='"+ str +"'>";
+            		return str;
             	}
             }, 
             {
@@ -189,7 +209,7 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='weight' style='width:80px;' value='"+ str +"'>";
+            		return str;
             	}
             },
             {"mDataProp":"ITEM_DESC",
@@ -198,50 +218,10 @@ $(document).ready(function() {
             		if(str == null){
             			str ="";
             		}
-            		return "<input type='text' name='item_desc' style='width:120px;' value='"+ str +"'>";
-            	}},
-            { 
-                "mDataProp": null, 
-                "sWidth": "60px", 
-                "bVisible":Product.isDel,
-            	"sClass": "item_desc",              
-                "fnRender": function(obj) {
-                	if(Product.isDel){
-                		if(obj.aData.IS_STOP != true){
-                    		return	"<a class='btn btn-danger  btn-sm deleteProduct' id="+obj.aData.ID+" title='删除'>"+
-    			                    "<i class='fa fa-trash-o fa-fw'></i> 停用"+
-    			                    "</a>";
-                    	}else{
-                    		return	"<a class='btn btn-success  btn-sm deleteProduct' id="+obj.aData.ID+" title='删除'>"+
-    			                    "<i class='fa fa-trash-o fa-fw'></i> 启用"+
-    			                    "</a>";
-                    	}
-                	}
-                	
-                    
-                }
-            }                         
+            		return str;
+            	}}
         ],      
     });
-    
-    
-    $('#eeda-table').on('blur', 'input,select', function(){
-    	var id = $(this).parent().parent()[0].id;
-    	var fieldName=$(this).attr("name");
-		var value= $(this).val();
-		console.log(value);
-		if(value != null && value != "" ){
-			$.post('/product/updateProductById',{id:id,fieldName:fieldName,value:value},function(data){
-                if(data.ID){
-				    $.scojs_message('数据保存成功', $.scojs_message.TYPE_OK);
-                }else{
-                    $.scojs_message('该型号已存在', $.scojs_message.TYPE_ERROR);
-                }
-				
-			},'json');
-		}
-		
-	});
    
   /*  var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable" style="display:none">'+
 			    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
@@ -401,7 +381,57 @@ $(document).ready(function() {
 		},'json');
     	refreshProductTable();
     });
-    
+    $.post('/gateOut/alluom',function(data){
+		var uom=$('#unit_update');
+		uom.empty();
+		uom.append("<option>请选择</option>");
+		for(var i=0; i<data.length; i++){
+			var name=data[i].NAME;
+			uom.append("<option value='"+name+"'>"+name+"</option>");
+		}
+	},'json');
+    // 编辑产品
+    $("#eeda-table").on('click', '.updateProduct', function(e){
+    	var productId = $(this).attr('id');
+    	$("#itemId").val(productId);	
+    	$.post('/product/update', {productId:productId}, function(data){ 	
+    		$("#item_no_update").val(data.ITEM_NO); 
+    		$("#item_no_hidden").val(data.ITEM_NO); 
+    		$("#serial_no_update").val(data.SERIAL_NO); 
+    		$("#item_name_update").val(data.ITEM_NAME);
+    		$("#size_update").val(data.SIZE);
+    		$("#width_update").val(data.WIDTH);
+    		$("#height_update").val(data.HEIGHT);
+    		$("#insurance_amount_update").val(data.INSURANCE_AMOUNT);
+    		$("#category_update").val(data.CNAME);
+    		$("#unit_update").val(data.UNIT);
+    		$("#volume_update").val(data.VOLUME);
+    		$("#weight_update").val(data.WEIGHT);
+    		$("#item_desc_update").val(data.ITEM_DESC);
+		},'json');
+    });
+    $('#addOrder').on('hidden.bs.modal', function () {
+    	$("#itemId").val("");
+    	$("#item_no_update").val(""); 
+    	$("#item_no_hidden").val(""); 
+		$("#serial_no_update").val(""); 
+		$("#item_name_update").val("");
+		$("#size_update").val("");
+		$("#width_update").val("");
+		$("#height_update").val("");
+		$("#insurance_amount_update").val("");
+		$("#category_update").val("");
+		$("#unit_update").val("");
+		$("#volume_update").val("");
+		$("#weight_update").val("");
+		$("#item_desc_update").val("");
+    });
+    $("#editProduct").on('click', function(e){
+    	var categoryId = $("#categoryId").val();
+    	$.post('/product/getCategory', {categoryId:categoryId}, function(data){
+    		$("#category_update").val(data.CNAME);
+		});
+    });
     var selectCategory = function(){
     	// 获取所有类别
     	/*var treeObj = $.fn.zTree.getZTreeObj("categoryTree");
@@ -417,12 +447,95 @@ $(document).ready(function() {
 	   		}
    	    },'json');
     };
-    
-    // 新增产品
-    $('#editProduct').on('click', function() { 
-    	var categoryId = $("#categoryId").val();
- 		$.post('/product/addNewRow', {categoryId:categoryId}, function(data){
- 			productDataTable.fnDraw(); 
+    $("#item_no_update,#size_update,#width_update,#height_update,#volume_update,#weight_update,#insurance_amount_update").on('keyup click', function(){
+    	var item_no_update=$("#item_no_update").val();
+    	var size_update=$("#size_update").val();
+    	var width_update=$("#width_update").val();
+    	var height_update=$("#height_update").val();
+    	var volume_update=$("#volume_update").val();
+    	var weight_update=$("#weight_update").val();
+    	var insurance_amount_update=$("#insurance_amount_update").val();
+    	if(item_no_update!=""){
+    		$("#item_no_err").hide();
+    	}else{
+    		$("#item_no_err").show();
+    	}
+    	if(!isNaN(size_update)){
+    		$("#size_err").hide();
+    	}else{
+    		$("#size_err").show();
+    	}
+		if(!isNaN(width_update)){
+			$("#width_err").hide();
+		}else{
+			$("#width_err").show();
+    	}
+		if(!isNaN(height_update)){
+			$("#height_err").hide();
+		}else{
+			$("#height_err").show();
+    	}
+		if(!isNaN(insurance_amount_update)){
+			$("#insurance_amount_err").hide();
+		}else{
+			$("#insurance_amount_err").show();
+    	}
+		if(!isNaN(volume_update)){
+			$("#volume_err").hide();
+		}else{
+			$("#volume_err").show();
+    	}
+		if(!isNaN(weight_update)){
+			$("#weight_err").hide();
+		}else{
+			$("#weight_err").show();
+    	}	
+    });
+    // 新增或者编辑产品 
+    $('#productSave').on('click', function() { 
+    	var item_no_update=$("#item_no_update").val();
+    	var size_update=$("#size_update").val();
+    	var width_update=$("#width_update").val();
+    	var height_update=$("#height_update").val();
+    	var volume_update=$("#volume_update").val();
+    	var weight_update=$("#weight_update").val();
+    	var insurance_amount_update=$("#insurance_amount_update").val();
+    	if(item_no_update==""){
+    		$("#item_no_err").show();
+    		return false;
+    	}
+    	if(isNaN(size_update)){
+    		$("#size_err").show();
+    		return false;
+    	}
+		if(isNaN(width_update)){
+			$("#width_err").show();
+    		return false;	
+		}
+		if(isNaN(height_update)){
+			$("#height_err").show();
+    		return false;
+		}
+		if(isNaN(insurance_amount_update)){
+			$("#insurance_amount_err").show();
+    		return false;
+		} 
+		if(isNaN(volume_update)){
+			$("#volume_err").show();
+    		return false;
+		}
+		if(isNaN(weight_update)){
+			$("#weight_err").show();
+    		return false;
+		}	
+ 		$.post('/product/productSave',$("#itemForm").serialize(), function(data){
+ 			if(data=="item_no"){
+ 				$.scojs_message('该型号已存在', $.scojs_message.TYPE_ERROR);			
+            }else{
+                $.scojs_message('数据保存成功', $.scojs_message.TYPE_OK);
+ 				$('#addOrder').modal('hide')
+ 				refreshProductTable();
+            }
  		});
 
     });
@@ -628,6 +741,7 @@ $(document).ready(function() {
 	            $("#displayDiv").hide();
         	}
             $("#categoryId").val(treeNode.categoryId);
+            $("#category_UpdateId").val(treeNode.categoryId);
             $("#hiddenCategoryId").val(treeNode.categoryId);
             productDataTable.fnSettings().sAjaxSource = "/product/list?categoryId="+treeNode.categoryId;
             productDataTable.fnDraw();

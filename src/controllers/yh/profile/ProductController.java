@@ -111,6 +111,14 @@ public class ProductController extends Controller {
         product.update();
         renderJson("{\"success\":true}");
     }
+    public void update() {
+    	Product product = Product.dao.findFirst("select p.*,c.name cname from product p left join category c on c.id = p.category_id where p.id = ?", getPara("productId"));
+        renderJson(product);
+    }
+    public void getCategory() {
+    	Category category = Category.dao.findFirst("select c.name cname from category c  where c.id = ?", getPara("categoryId"));
+        renderJson(category);
+    }
     @Before(Tx.class)
     public void save() {
         Product product = null;
@@ -368,11 +376,70 @@ public class ProductController extends Controller {
     }
     
     // 添加一行新数据
-    public void addNewRow() {
-        String categoryId = getPara("categoryId");
-        Product p = new Product();
-        p.set("category_id", categoryId).set("size", 0).set("width", 0).set("height", 0).set("weight", 0).save();
-        renderJson("{\"success\":true}");
+    public void productSave() {
+        String category_id = getPara("category_UpdateId");
+        String itemId = getPara("itemId");
+        String item_no = getPara("item_no_update");
+        String serial_no = getPara("serial_no_update");
+        String item_name = getPara("item_name_update");
+        String size = getPara("size_update")==""?null:getPara("size_update");
+        String width = getPara("width_update")==""?null:getPara("width_update");;
+        String height = getPara("height_update")==""?null:getPara("height_update");;
+        String insurance_amount = getPara("insurance_amount_update")==""?null:getPara("insurance_amount_update");;
+        String unit = getPara("unit_update");
+        String volume = getPara("volume_update")==""?null:getPara("volume_update");;
+        String weight = getPara("weight_update")==""?null:getPara("weight_update");;
+        String item_desc = getPara("item_desc_update");
+        String item_no_hidden = getPara("item_no_hidden");//隐藏属性用于判断编辑是否改了产品型号
+        String status="ok";
+        Product p=null;
+        if(!"".equals(itemId)){
+        	if(!item_no_hidden.equals(item_no)){
+        		Record rec = Db.findFirst("select c.customer_id from category c where c.id =?", category_id);
+                String findSame = "select c.customer_id, p.* from product p, category c where p.category_id=c.id and item_no =? and c.customer_id=?";
+                Record sameRec = Db.findFirst(findSame, item_no.trim(), rec.get("customer_id"));
+                if(sameRec != null){
+                	status="item_no";
+                }
+        	}
+        	if(!"item_no".equals(status)){
+        	p = Product.dao.findById(itemId);
+        	p.set("category_id", category_id)
+            .set("size", size)
+            .set("width", width)
+            .set("height", height)
+            .set("volume", volume)
+            .set("weight", weight)
+            .set("serial_no", serial_no)
+            .set("item_name", item_name)
+            .set("item_no", item_no)
+            .set("insurance_amount", insurance_amount)
+            .set("unit", unit)
+            .set("item_desc", item_desc).update();
+        	}
+        }else{
+        	Record rec = Db.findFirst("select c.customer_id from category c where c.id =?", category_id);
+            String findSame = "select c.customer_id, p.* from product p, category c where p.category_id=c.id and item_no =? and c.customer_id=?";
+            Record sameRec = Db.findFirst(findSame, item_no.trim(), rec.get("customer_id"));
+            if(sameRec != null){
+            	status="item_no";
+            }else{
+            	p = new Product();
+                p.set("category_id", category_id)
+                 .set("size", size)
+                 .set("width", width)
+                 .set("height", height)
+                 .set("volume", volume)
+                 .set("weight", weight)
+                 .set("serial_no", serial_no)
+                 .set("item_name", item_name)
+                 .set("item_no", item_no)
+                 .set("unit", unit)
+                 .set("item_desc", item_desc)
+                 .set("insurance_amount", insurance_amount).save();
+            }
+        }
+        renderText(status);
     }
 
     // 保存产品
