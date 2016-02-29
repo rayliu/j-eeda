@@ -801,4 +801,30 @@ $(document).ready(function() {
                                                             +"&customer_no="+customer_no;
             addChargeCheckTable.fnDraw();
         };
+        
+        
+        $('#serial_no_filter,#customerNo_filter').on('blur',function(){
+        	var serial_no =  $('#serial_no_filter').val();
+        	var customer_no =  $('#customerNo_filter').val();
+        	var miscOrderIds = $("#miscOrderIds").val();
+        	var chargeCheckOrderId = $("#chargeCheckOrderId").val();
+        	var returnOrderIds = $("#returnOrderIds").val();
+
+        	
+        		if(chargeCheckOrderId!='' && chargeCheckOrderId!=null){
+        			chargeConfiremTable.fnSettings().oFeatures.bServerSide=true;
+                    chargeConfiremTable.fnSettings().sAjaxSource = "/chargeCheckOrder/returnOrderList?chargeCheckOrderId="+chargeCheckOrderId
+                    +"&serial_no="+serial_no+"&customer_no="+customer_no;
+                    chargeConfiremTable.fnDraw();
+        		}else{
+        			chargeConfiremTable.fnSettings().oFeatures.bServerSide=true;
+                    chargeConfiremTable.fnSettings().sAjaxSource = "/chargeCheckOrder/searchItemList?returnOrderIds="+returnOrderIds
+                    +"&miscOrderIds="+miscOrderIds+"&serial_no="+serial_no+"&customer_no="+customer_no;
+                    chargeConfiremTable.fnDraw();
+        		}
+        		
+        	
+        })
+        
+        
 } );

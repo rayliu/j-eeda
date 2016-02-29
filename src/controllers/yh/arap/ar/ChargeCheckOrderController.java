@@ -149,7 +149,7 @@ public class ChargeCheckOrderController extends Controller {
 
 		setAttr("status", "new");
 
-		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds);
+		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null);
 		setAttr("itemList", itemList);
 		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
@@ -252,8 +252,36 @@ public class ChargeCheckOrderController extends Controller {
 
 		renderText("ok");
 	}
+	
+	
+	public void searchItemList(){
+		String serail_no = getPara("serial_no");
+		String customer_no = getPara("customer_no");
+		String miscOrderIds = getPara("miscOrderIds");
+		String returnOrderIds = getPara("returnOrderIds");
+		
+		List<Record> orders =  getItemList(returnOrderIds,miscOrderIds,serail_no,customer_no);
+		
+		Map orderMap = new HashMap();
+		orderMap.put("sEcho", 8);
+		orderMap.put("iTotalRecords", 1);
+		orderMap.put("iTotalDisplayRecords", 1);
+		orderMap.put("aaData", orders);
+		renderJson(orderMap);
+	}
 
-	private List<Record> getItemList(String returnOrderIds, String miscOrderIds) {
+	private List<Record> getItemList(String returnOrderIds, String miscOrderIds,String serial_no,String customer_no) {
+		String conditions =" and 1=1";
+		if(customer_no != null && !"".equals(customer_no) ){
+			conditions += " and ifnull(tor.customer_order_no,tor2.customer_order_no) like '%"+ customer_no+"%'";
+		}
+		if(serial_no != null && !"".equals(serial_no)){
+			conditions += " and (SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '\r\n' ) "
+					+ " FROM transfer_order_item_detail toid "
+					+ " LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  "
+					+ " LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id "
+					+ " WHERE d_o.id = ror.delivery_order_id)  like '%"+ serial_no+"%'";
+		}
 		String itemReturnSql = "select distinct ror.*, "
 				+ " usl.user_name as creator_name, "
 				+ " ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, "
@@ -288,7 +316,9 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 				+ " left join user_login usl on usl.id=ror.creator "
 				+ " where ror.id in(" + returnOrderIds
-				+ ") group by ror.id,tor2.id ";
+				+ ")"
+				+ conditions
+				+ " group by ror.id,tor2.id ";
 
 		String itemMiscSql = " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
@@ -416,7 +446,16 @@ public class ChargeCheckOrderController extends Controller {
 				 * +
 				 * " ifnull((select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor.id order by dtr.turnout_time asc limit 0,1), (select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor2.id order by dtr.turnout_time asc limit 0,1)) departure_time"
 				 */
-				+ " null sp"
+				+ " null sp,"
+				+ " ( CASE "
+				+ " WHEN ror.delivery_order_id IS NOT NULL THEN "
+				+ " (  SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR  '<br/>' )"
+				+ " FROM transfer_order_item_detail toid "
+				+ " WHERE toid.delivery_id = dvr.id ) "
+				+ " ELSE "
+				+ " ( SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR  '<br/>' )"
+				+ " FROM transfer_order_item_detail toid "
+				+ " WHERE toid.order_id = tor.id ) END ) serial_no"
 				+ " from return_order ror"
 				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
 				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
@@ -440,7 +479,8 @@ public class ChargeCheckOrderController extends Controller {
 				+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
 				+ " NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
 				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,amco.total_amount charge_total_amount , "
-				+ " c1.abbr sp " + " FROM arap_misc_charge_order amco"
+				+ " c1.abbr sp,null serial_no "
+				+ " FROM arap_misc_charge_order amco"
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
 				+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
 				+ " WHERE amco. STATUS = '已确认' ";
@@ -737,12 +777,26 @@ public class ChargeCheckOrderController extends Controller {
 		setAttr("beginTime", beginTime);
 		setAttr("endTime", endTime);
 
-		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds);
+		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null);
 		setAttr("itemList", itemList);
 		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
 
 	public void returnOrderList() {
+		String serial_no = getPara("serial_no");
+		String customer_no = getPara("customer_no");
+		String conditions =" and 1=1";
+		if(customer_no != null && !"".equals(customer_no)){
+			conditions += " and ifnull(tor.customer_order_no,tor2.customer_order_no) like '%"+ customer_no+"%'";
+		}
+		if(serial_no != null && !"".equals(serial_no) ){
+			conditions += " and (SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '\r\n' ) "
+					+ " FROM transfer_order_item_detail toid "
+					+ " LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  "
+					+ " LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id "
+					+ " WHERE d_o.id = ror.delivery_order_id)  like '%"+ serial_no+"%'";
+		}
+		
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
 		String returnOrderIds = "";
 		String miscOrderIds = "";
@@ -790,7 +844,7 @@ public class ChargeCheckOrderController extends Controller {
 							+ " usl.user_name as creator_name, "
 							+ " ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, "
 							+ " ifnull(CAST(tor.planning_time AS char),(select group_concat(distinct CAST(tor.planning_time AS char) separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) planning_time, "
-							+ " (SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '\r\n' ) FROM transfer_order_item_detail toid LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id WHERE d_o.id = ror.delivery_order_id) serial_no,"
+							+ " (SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR '\r\n' ) FROM transfer_order_item_detail toid LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id WHERE d_o.id = ror.delivery_order_id) serial_no,"
 							+ " dvr.order_no as delivery_order_no, '回单' as tporder,"
 							+ " ifnull(c.abbr,c2.abbr) cname,"
 							+ " ifnull(tor.customer_order_no,tor2.customer_order_no) customer_order_no,"
@@ -821,7 +875,9 @@ public class ChargeCheckOrderController extends Controller {
 							+ " left join user_login usl on usl.id=ror.creator "
 							+ " where ror.id in("
 							+ returnOrderIds
-							+ ") group by ror.id,tor2.id "
+							+ ")"
+							+ conditions
+							+ " group by ror.id,tor2.id "
 							+ " union"
 							+ " SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 							+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
