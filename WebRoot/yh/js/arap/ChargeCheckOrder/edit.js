@@ -803,7 +803,7 @@ $(document).ready(function() {
         };
         
         
-        $('#serial_no_filter,#customerNo_filter').on('blur',function(){
+        $('#searchBtn').on('click',function(){
         	var serial_no =  $('#serial_no_filter').val();
         	var customer_no =  $('#customerNo_filter').val();
         	var miscOrderIds = $("#miscOrderIds").val();
