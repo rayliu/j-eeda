@@ -85,7 +85,7 @@
 			
 	 // 列出所有的司机
 	 /*red*/
-	 $('#driverMessage').on('keyup click', function(){
+	 /*$('#driverMessage').on('keyup click', function(){
  		var inputStr = $('#driverMessage').val();
  		//var inputStr = $('#carNoMessage').val();
 		//获取到inputiD，判断是否为空
@@ -114,7 +114,7 @@
          	top:$(this).position().top+32+"px" 
         }); 
         $('#driverList').show();
-	 });
+	 });*/
 	  	
  	 // 选中司机
  	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
@@ -130,9 +130,15 @@
   	});
  	
  	// 列出所有的车辆
-	$('#carNoMessage').on('keyup click', function(){
-	
-		var inputStr = $('#carNoMessage').val();
+	$('#carNoMessage,#driverMessage').on('keyup click', function(){
+		
+		var inputStr = '';
+		if($('#driverMessage').is(":focus")){
+			inputStr = $('#driverMessage').val();
+		}
+		if($('#carNoMessage').is(":focus")){
+			inputStr = $('#carNoMessage').val();
+		}
 		
 		//获取到inputiD，判断是否为空
 		if(inputId==null){
@@ -151,12 +157,19 @@
 			var carNoList = $("#carNoList");
 			carNoList.empty();
 			for(var i = 0; i < data.length; i++)
-			{
-				carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].CAR_NO+"</a></li>");
+			{ 	
+				if($('#driverMessage').is(":focus")){
+					var driverList = $("#driverList");
+		 			driverList.empty();
+					carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].DRIVER+"</a></li>");
+				};
+				if($('#carNoMessage').is(":focus")){
+					carNoList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].CAR_NO+"</a></li>");
+				};
 			}
 	},'json');
 
-	$("#carNoList").css({ 
+	$("#carNoList,#driverList").css({ 
        	left:$(this).position().left+"px", 
        	top:$(this).position().top+32+"px" 
       }); 
@@ -164,7 +177,7 @@
 	});
 	 	
 	// 选中车辆
-	$('#carNoList').on('mousedown', '.fromLocationItem', function(e){		
+	$('#carNoList,#driverList').on('mousedown', '.fromLocationItem', function(e){		
 		 $("#driver_id").val('');
 	     $("#carinfoId").val($(this).attr('id'));
 	 	 $('#carNoMessage').val($(this).attr('carNo'));
@@ -176,7 +189,7 @@
     });
 
 	// 没选中车辆，焦点离开，隐藏列表
-	$('#carNoMessage').on('blur', function(){
+	$('#carNoMessage,#driverMessage').on('blur', function(){
  		$('#carNoList').hide();
  	});
 	

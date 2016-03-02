@@ -99,124 +99,82 @@
                                            	   <h5 id="pageSpName">${spContact.contact_person!''} ${spContact.phone!''}</h5><h5 id="pageSpAddress">${spContact.address!''}</h5>     
                                            </div>
                                         </div>    
-                                          <div></div>
                                  		<div style="font-size: 32px">车辆信息</div>                                         
                                         <div class="form-group">
-                                            <label>车牌<span style="color:red"> *</span></label>
-                                             <div class="form-group">											
-										        <input type="text" name="car_no" class="form-control" id="carNoMessage" value="${carinfo.car_no!''}">
-										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="carNoList">
-												</ul>
-										    </div>
-                                        </div>
-                                        <div class="form-group">
 											<label>司机<span style="color:red"> *</span></label>
-										    <div class="form-group">													    								
-										        <input type="hidden" id="carInfoDriverMessage" value="${carinfo.driver!''}">
-										        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
-										        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
-												</ul>
-										    </div>
-									                                     
+											<input type="hidden" id="carInfoDriverMessage" value="${carinfo.driver!''}">
+									        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
+									        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
+											</ul> 
+										</div>  
+										<div class="form-group">
+                                            <label>车牌<span style="color:red"> *</span></label>
+                                            <input type="text" name="car_no" class="form-control" id="carNoMessage" value="${carinfo.car_no!''}">
+									        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="carNoList">
+											</ul>
+										</div>            
                                         <div class="form-group">
-                                        <label>电话<span style="color:red"> *</span></label>
-                                        <input id="carInfoDriverPhone" value="${carinfo.phone!''}" type="hidden">
-                                        <input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
+                                        	<label>电话<span style="color:red"> *</span></label>
+                                        	<input id="carInfoDriverPhone" value="${carinfo.phone!''}" type="hidden">
+                                        	<input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div>
-                                    </div>
-                                  			 <!-- <div class="form-group">
-												<label>发往</label>
-												<select></select>
-												<div id="div1">
-													<div class="checkbox">
-													<label><input id="checkbox1" type="checkbox" name="checkbox" value="yandCheckbox">货场</label>
-													</div>
-		                                            <div id="addressDiv" class="form-group" style="display: none;">
-			                                            <label>目的地</label>
-			                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
+                                 		<div class="form-group">
+	                                	    <label class="form-label">运输去向</label>
+	                                	    <%
+										    	if(flag!='derect'){
+											%>
+	                                	    <div class="form-group">
+		                                        <select id="address_type" class="form-control pay_type" name="address_type">
+			                                       	<option value="yard">货场</option> 
+			                                       	<option value="warehouse">仓库</option>
+			                                        <option value="twice_pickup">二次调拨</option>                                            
+		                                        </select>
+	                                        </div>
+	                                        <div id="addressDiv" class="form-group" style="display: true;">
+		                                            <label>目的地</label>
+		                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
+	                                        </div>
+	                                       
+                                            <div id="warehouseDiv" class="form-group" style="display: none;">
+                                                    <label>仓库</label>
+													<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />  
+													<input id="replenishmentOrderId" name="replenishmentOrderId" type="hidden" value="${transferOrderAttr.warehouse_id!''}" />  
+	                                                <select id="gateInSelect" class="form-control" name="gateInSelect"></select>
+                                            </div>
+                                            <% }else{ %>
+                                            <input class="form-control" id="direct_type" name="direct_type" value="直送收货人" disabled="disabled">
+                                            <div id="receiverDiv" class="form-group" style="display: true;">
+                                                    <label>收货人地址</label>
+                                                    <input class="form-control" id="con_address" name="con_address" value="${transferOrder.receiving_address!''}">
+                                            </div>
+                                            <% }%>
+                               			</div>
+                               			<div class="row">
+		                                    <div class="col-lg-6">
+		                                        <div class="form-group">                                        
+		                                            <div id="datetimepicker" class="input-append date "> 
+		                                                <label class="search-label">出车时间<span style="color:red"> *</span></label> 
+		                                                <input id="turnout_time" class="form-control search-control  beginTime_filter" type="text" name="turnout_time" value="${pickupOrder.turnout_time!''}">
+		                                                <span class="add-on">  
+		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+		                                                </span>  
 		                                            </div>
-		                                            
-													<div class="checkbox">
-														<label><input id="checkbox2" type="checkbox" name="checkbox" value="warehouseCheckbox">仓库</label>
-													</div>
-													<div id="warehouseDiv" class="form-group" style="display: none;">
-														<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />  
-														<input id="replenishmentOrderId" name="replenishmentOrderId" type="hidden" value="${transferOrderAttr.warehouse_id!''}" />  
-		                                                <select id="gateInSelect" class="form-control" name="gateInSelect"></select>
-	                                                </div>
-												</div>
-												<div id="div2">
-													<div class="checkbox" type="hide">
-                                                    <input id="is_direct_deliver" name="is_direct_deliver" type="hidden" value="${pickupOrder.is_direct_deliver!''}">
-                                                    <label><input id="checkbox3" type="checkbox" name="checkbox" value="receiverCheckbox">直送收货人</label>
-	                                                </div>
-	                                                <div id="receiverDiv" class="form-group" style="display: none;">
-	                                                    <label>收货人地址</label>
-	                                                    <input class="form-control" id="con_address" name="con_address" value="${transferOrder.receiving_address!''}">
-	                                                </div>
-												</div>
-											</div> -->
-											
-											<div class="form-group">
-		                                	    <label class="form-label">运输去向</label>
-		                                	    <%
-											    	if(flag!='derect'){
-												%>
-		                                	    <div class="form-group">
-			                                        <select id="address_type" class="form-control pay_type" name="address_type">
-				                                       	<option value="yard">货场</option> 
-				                                       	<option value="warehouse">仓库</option>
-				                                        <option value="twice_pickup">二次调拨</option>                                            
-			                                        </select>
+		                                        </div>    
+		                                    </div>
+		                                    <!-- end of col-lg-6-->
+		                                    <div class="col-lg-6">
+		                                        <div class="form-group">                                                    
+		                                            <span id="datetimepicker2" class="input-append date search-control "> 
+		                                                <label class="search-label">返回时间</label> 
+		                                                <input id="return_time" class="form-control search-control endTime_filter" type="text" name="return_time" value="${pickupOrder.return_time!''}">
+		                                                <span class="add-on">  
+		                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
+		                                                </span>  
+		                                            </span>
 		                                        </div>
-		                                        <div id="addressDiv" class="form-group" style="display: true;">
-			                                            <label>目的地</label>
-			                                            <input class="form-control" id="address" name="address" value="${pickupOrder.address!''}">
-		                                        </div>
-		                                       
-	                                            <div id="warehouseDiv" class="form-group" style="display: none;">
-	                                                    <label>仓库</label>
-														<input id="hideWarehouseId" type="hidden" value="${pickupOrder.warehouse_id!''}" />  
-														<input id="replenishmentOrderId" name="replenishmentOrderId" type="hidden" value="${transferOrderAttr.warehouse_id!''}" />  
-		                                                <select id="gateInSelect" class="form-control" name="gateInSelect"></select>
-	                                            </div>
-	                                            <% }else{ %>
-	                                            <input class="form-control" id="direct_type" name="direct_type" value="直送收货人" disabled="disabled">
-	                                            <div id="receiverDiv" class="form-group" style="display: true;">
-	                                                    <label>收货人地址</label>
-	                                                    <input class="form-control" id="con_address" name="con_address" value="${transferOrder.receiving_address!''}">
-	                                            </div>
-	                                            <% }%>
-                                			</div>
-                                			
-                                			
-                                			
-											<div class="row">
-			                                    <div class="col-lg-6">
-			                                        <div class="form-group">                                        
-			                                            <div id="datetimepicker" class="input-append date "> 
-			                                                <label class="search-label">出车时间<span style="color:red"> *</span></label> 
-			                                                <input id="turnout_time" class="form-control search-control  beginTime_filter" type="text" name="turnout_time" value="${pickupOrder.turnout_time!''}">
-			                                                <span class="add-on">  
-			                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-			                                                </span>  
-			                                            </div>
-			                                        </div>    
-			                                    </div>
-			                                    <!-- end of col-lg-6-->
-			                                    <div class="col-lg-6">
-			                                        <div class="form-group">                                                    
-			                                            <span id="datetimepicker2" class="input-append date search-control "> 
-			                                                <label class="search-label">返回时间</label> 
-			                                                <input id="return_time" class="form-control search-control endTime_filter" type="text" name="return_time" value="${pickupOrder.return_time!''}">
-			                                                <span class="add-on">  
-			                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-			                                                </span>  
-			                                            </span>
-			                                        </div>
-			                                    </div>
-			                                    <!-- end of col-lg-6-->
-			                                </div>
+		                                    </div>
+		                                    <!-- end of col-lg-6-->
+		                                </div>
                                         </div> 
                                   
 	                                   <div class="col-lg-6">
