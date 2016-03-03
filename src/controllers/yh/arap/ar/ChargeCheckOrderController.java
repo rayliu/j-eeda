@@ -149,7 +149,7 @@ public class ChargeCheckOrderController extends Controller {
 
 		setAttr("status", "new");
 
-		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null);
+		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null,null);
 		setAttr("itemList", itemList);
 		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
@@ -256,11 +256,12 @@ public class ChargeCheckOrderController extends Controller {
 	
 	public void searchItemList(){
 		String serail_no = getPara("serial_no");
+		String ref_no = getPara("ref_no");
 		String customer_no = getPara("customer_no");
 		String miscOrderIds = getPara("miscOrderIds");
 		String returnOrderIds = getPara("returnOrderIds");
 		
-		List<Record> orders =  getItemList(returnOrderIds,miscOrderIds,serail_no,customer_no);
+		List<Record> orders =  getItemList(returnOrderIds,miscOrderIds,serail_no,customer_no,ref_no);
 		
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", 8);
@@ -270,7 +271,7 @@ public class ChargeCheckOrderController extends Controller {
 		renderJson(orderMap);
 	}
 
-	private List<Record> getItemList(String returnOrderIds, String miscOrderIds,String serial_no,String customer_no) {
+	private List<Record> getItemList(String returnOrderIds, String miscOrderIds,String serial_no,String customer_no,String ref_no) {
 		String conditions =" and 1=1";
 		if(customer_no != null && !"".equals(customer_no) ){
 			conditions += " and ifnull(tor.customer_order_no,tor2.customer_order_no) like '%"+ customer_no+"%'";
@@ -281,6 +282,9 @@ public class ChargeCheckOrderController extends Controller {
 					+ " LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  "
 					+ " LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id "
 					+ " WHERE d_o.id = ror.delivery_order_id)  like '%"+ serial_no+"%'";
+		}
+		if(ref_no != null && !"".equals(ref_no) ){
+			conditions += " and ifnull(dvr.ref_no,'') like '%"+ ref_no+"%'";
 		}
 		String itemReturnSql = "select distinct ror.*, "
 				+ " usl.user_name as creator_name, "
@@ -777,13 +781,14 @@ public class ChargeCheckOrderController extends Controller {
 		setAttr("beginTime", beginTime);
 		setAttr("endTime", endTime);
 
-		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null);
+		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null,null);
 		setAttr("itemList", itemList);
 		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
 
 	public void returnOrderList() {
 		String serial_no = getPara("serial_no");
+		String ref_no = getPara("ref_no");
 		String customer_no = getPara("customer_no");
 		String conditions =" and 1=1";
 		if(customer_no != null && !"".equals(customer_no)){
@@ -795,6 +800,9 @@ public class ChargeCheckOrderController extends Controller {
 					+ " LEFT JOIN delivery_order_item doi ON toid.id = doi.transfer_item_detail_id  "
 					+ " LEFT JOIN delivery_order d_o ON d_o.id = doi.delivery_id "
 					+ " WHERE d_o.id = ror.delivery_order_id)  like '%"+ serial_no+"%'";
+		}
+		if(ref_no != null && !"".equals(ref_no) ){
+			conditions += " and ifnull(dvr.ref_no,'') like '%"+ ref_no+"%'";
 		}
 		
 		String chargeCheckOrderId = getPara("chargeCheckOrderId");
