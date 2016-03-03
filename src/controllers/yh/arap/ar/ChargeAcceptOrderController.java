@@ -240,7 +240,7 @@ public class ChargeAcceptOrderController extends Controller {
         String beginTime = getPara("beginTime")!=null?getPara("beginTime"):"";
         String endTime = getPara("endTime")!=null?getPara("endTime"):"";
         String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
-        String applictionOrderNo = getPara("applictionOrderNo")!=null?getPara("applictionOrderNo"):"";
+        String applictionOrderNo = getPara("applicationOrderNo")!=null?getPara("applicationOrderNo"):"";
         String status = getPara("status")!=null?getPara("status"):"";
 		
 //		String sortColIndex = getPara("iSortCol_0");
