@@ -66,7 +66,8 @@ $(document).ready(function() {
             }                         
         ]      
     });	
-    var refreshList = function(){
+    
+    $('#searchBtn').on('click',function(){
     	var orderNo = $('#select_orderNo_filter').val();
 		var beginTime = $("#kaishi_filter").val();
 		var endTime = $("#jieshu_filter").val();
@@ -75,6 +76,9 @@ $(document).ready(function() {
 		var sp = $("#sp_filter").val();
 		var tihuo = $("#tihuo_filter").val();
 		var office = $("#officeName_filter").val();
+		var transferOrderNo = $("#transferOrderNo_filter").val();
+		var refNo = $("#refNo_filter").val();
+		var serialNo = $("#serialNo_filter").val();
 		datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/list?orderNo="+orderNo
 															+"&beginTime="+beginTime
 															+"&endTime="+endTime
@@ -82,16 +86,13 @@ $(document).ready(function() {
 															+"&customer="+customer
 															+"&sp="+sp
 															+"&tihuo="+tihuo
+															+"&transferOrderNo="+transferOrderNo
+															+"&refNo="+refNo
+															+"&serialNo="+serialNo
 															+"&office="+office;
 		datatable.fnDraw();
-    };
-    $('#select_orderNo_filter,#status_filter,#tihuo_filter,#kaishi_filter,#jieshu_filter').on( 'keyup', function () {
-    	//alert("OK");
-    	refreshList();
-	} );
-    $('#status_filter,#officeName_filter').on( 'change', function () { 	
-    	refreshList();
-	} );
+    });
+   
     /*--------------------------------------------------------------------*/
     //获取客户的list，选中信息自动填写其他信息
     $('#select_customer_filter').on('keyup click', function(){

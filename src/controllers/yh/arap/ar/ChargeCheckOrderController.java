@@ -26,6 +26,7 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -948,6 +949,22 @@ public class ChargeCheckOrderController extends Controller {
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_LIST })
 	public void list() {
+		
+
+		String orderNo = getPara("orderNo");
+		String beginTime = getPara("beginTime");
+		String endTime = getPara("endTime");
+		String status = getPara("status");
+		String customer = getPara("customer");
+		String sp = getPara("sp");
+		String tihuo = getPara("tihuo");
+		String office = getPara("office");
+		String transferOrderNo = getPara("transferOrderNo");
+		String refNo = getPara("refNo");
+		String serialNo = getPara("serialNo");
+		String sqlTotal = "";
+		
+		
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -965,16 +982,7 @@ public class ChargeCheckOrderController extends Controller {
 		if (colName.length() > 0) {
 			orderByStr = " order by A." + colName + " " + sortBy;
 		}
-
-		String orderNo = getPara("orderNo");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String status = getPara("status");
-		String customer = getPara("customer");
-		String sp = getPara("sp");
-		String tihuo = getPara("tihuo");
-		String office = getPara("office");
-		String sqlTotal = "";
+		
 		String sql = "select distinct "// aao.*,
 				+ " aao.id,"
 				+ " aao.order_no,"
@@ -1001,43 +1009,127 @@ public class ChargeCheckOrderController extends Controller {
 				+ "	left join arap_charge_invoice_application_order aciao on aciai.invoice_application_id = aciao.id"
 				+ "	left join arap_charge_invoice aci on aciao.invoice_order_id = aci.id"
 				+ " where aco.id = aao.id) as order_status,"
-				+ " c1.abbr sp "
+				+ " c1.abbr sp,"
+				+ " GROUP_CONCAT(case when aci.ref_order_type='回单'"
+				
+				
+				+ " then (SELECT dor.ref_no from return_order ror"
+				+ " LEFT JOIN delivery_order dor on dor.id = ror.delivery_order_id"
+				+ " where "
+				+ " ror.id = ref_order_id) end  SEPARATOR ' ') ref_no,"
+				
+				+ " GROUP_CONCAT(case when aci.ref_order_type='回单'"
+				+ " then ifnull(( SELECT GROUP_CONCAT(DISTINCT tor.order_no SEPARATOR ' ') from transfer_order tor"
+				+ " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
+				+ " LEFT JOIN return_order ror on ror.delivery_order_id = doi.delivery_id"
+				+ " where "
+				+ " ror.id = aci.ref_order_id ),(SELECT GROUP_CONCAT(DISTINCT tor.order_no SEPARATOR '<br/>') from transfer_order tor"
+				+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id"
+				+ " where ror.id = aci.ref_order_id)) end  SEPARATOR ' ') transfer_order_no,"
+				
+				+ " GROUP_CONCAT(case when aci.ref_order_type='回单' "
+				+ " then ifnull(( SELECT GROUP_CONCAT(DISTINCT toid.serial_no SEPARATOR ' ') from transfer_order_item_detail toid"
+				+ " LEFT JOIN delivery_order dor on dor.id = toid.delivery_id"
+				+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id"
+				+ " where "
+				+ " ror.id = aci.ref_order_id ),(SELECT GROUP_CONCAT(DISTINCT toid.serial_no SEPARATOR ' ') from transfer_order_item_detail toid"
+				+ " LEFT JOIN return_order ror on ror.transfer_order_id  = toid.order_id"
+				+ " where "
+				+ " ror.id = aci.ref_order_id)) end SEPARATOR ' ') serial_no "
 				+ " from arap_charge_order aao "
+				+ " LEFT JOIN arap_charge_item aci on aci.charge_order_id = aao.id"
 				+ " left join party p on p.id = aao.payee_id "
 				+ " left join contact c on c.id = p.contact_id"
 				+ " left join contact c1 on c1.id = aao.sp_id"
-				+ " left join user_login usl on usl.id=aao.create_by ";
+				+ " left join user_login usl on usl.id=aao.create_by "
+				+ "	group by aao.id ";
+		
+//		String conditions = "where 1 = 1 ";
+//		if (StringUtils.isNotEmpty(orderNo)){
+//			conditions += " and ifnull(aao.order_no,'') like '%" + orderNo+"%' ";
+//		}
+//		if (StringUtils.isNotEmpty(customer)){
+//			conditions += " and ifnull(c.abbr,'') like '%" + customer+"%' ";
+//		}
+//		if (StringUtils.isNotEmpty(status)){
+//			conditions += " and ifnull(aao.status,'') like '%" + status+"%' ";
+//		}
+//		
+//		if (StringUtils.isNotEmpty(transferOrderNo)){
+//			conditions += " and GROUP_CONCAT(case when aci.ref_order_type='回单'"
+//				+ " then ( SELECT GROUP_CONCAT(tor.order_no SEPARATOR '<br/>') from transfer_order tor"
+//				+ " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
+//				+ " LEFT JOIN return_order ror on ror.delivery_order_id = doi.delivery_id"
+//				+ " where "
+//				+ " ror.id = aci.ref_order_id ) end  SEPARATOR '<br/>') like '%" + transferOrderNo+"%' ";
+//		}
+//		if (StringUtils.isNotEmpty(refNo)){
+//			conditions += " and GROUP_CONCAT(case when aci.ref_order_type='回单'"
+//				+ " then (SELECT dor.ref_no from return_order ror"
+//				+ " LEFT JOIN delivery_order dor on dor.id = ror.delivery_order_id"
+//				+ " where "
+//				+ " ror.id = ref_order_id) end  SEPARATOR '<br/>') like '%" + refNo+"%' ";
+//		}
+//		if (StringUtils.isNotEmpty(serialNo)){
+//			conditions += " and GROUP_CONCAT(case when aci.ref_order_type='回单' then ("
+//				+ " SELECT GROUP_CONCAT(toid.serial_no SEPARATOR '<br/>') from transfer_order_item_detail toid"
+//				+ " LEFT JOIN delivery_order dor on dor.id = toid.delivery_id"
+//				+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id"
+//				+ " where "
+//				+ " ror.id = aci.ref_order_id ) end SEPARATOR '<br/>') like '%" + serialNo+"%' ";
+//		}
+//		if (StringUtils.isNotEmpty(beginTime)){
+//        	beginTime = " and aao.create_stamp between'"+beginTime+"'";
+//        }else{
+//        	beginTime =" and aao.create_stamp between '1970-1-1'";
+//        }
+//        if (StringUtils.isNotEmpty(endTime)){
+//        	endTime =" and '"+endTime+"'";
+//        }else{
+//        	endTime =" and '3000-1-1' ";
+//        }
+//        conditions+=beginTime+endTime;
 
-		String condition = "";
+		String conditions = " where 1=1 ";
 
 		// TODO 订单号，客户，状态，开始和结束时间 已做完
-		if (orderNo == null && beginTime == null && endTime == null
-				&& status == null && customer == null && sp == null
-				&& tihuo == null && office == null) {
-
-			condition = " order by aao.create_stamp desc ";
-		} else {
-
-			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1970-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "2037-12-31";
-			}
-			condition = " where ifnull(aao.order_no,'') like '%" + orderNo
-					+ "%' " + " and ifnull(c.abbr,'') like '%" + customer
-					+ "%' " + " and ifnull(aao.status,'') like '%" + status
-					+ "%' " + " and aao.create_stamp between '" + beginTime
-					+ "' and '" + endTime + " 23:59:59' "
-					+ " order by aao.create_stamp desc ";
+		if (StringUtils.isNotEmpty(orderNo)){
+			conditions += " and ifnull(order_no,'') like '%" + orderNo+"%' ";
 		}
-		sqlTotal = "select count(1) total from (" + sql + condition + ") as A";
+		if (StringUtils.isNotEmpty(customer)){
+			conditions += " and ifnull(cname,'') like '%" + customer+"%' ";
+		}
+		if (StringUtils.isNotEmpty(status)){
+			conditions += " and ifnull(status_type,'') like '%" + status+"%' ";
+		}
+		if (StringUtils.isNotEmpty(transferOrderNo)){
+			conditions += " and ifnull(transfer_order_no,'') like '%" + transferOrderNo+"%' ";
+		}
+		if (StringUtils.isNotEmpty(refNo)){
+			conditions += " and ifnull(ref_no,'') like '%" + refNo+"%' ";
+		}
+		if (StringUtils.isNotEmpty(serialNo)){
+			conditions += " and ifnull(serial_no,'') like '%" + serialNo+"%' ";
+		}
+		if (StringUtils.isNotEmpty(beginTime)){
+        	beginTime = " and create_stamp between'"+beginTime+"'";
+        }else{
+        	beginTime =" and create_stamp between '1970-1-1'";
+        }
+        if (StringUtils.isNotEmpty(endTime)){
+        	endTime =" and '"+endTime+"'";
+        }else{
+        	endTime =" and '3000-1-1' ";
+        }
+        conditions+=beginTime+endTime;
+        
+        
+		sqlTotal = "select count(1) total from (select * from (" + sql + ") as A "+conditions+" ) B";
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// logger.debug("sql:" + sql);
-		List<Record> BillingOrders = Db.find("select * from (" + sql
-				+ condition + ") A" + orderByStr + sLimit);
+		List<Record> BillingOrders = Db.find("select * from (" + sql + ") as A "+conditions + orderByStr + sLimit);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
