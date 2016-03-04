@@ -44,10 +44,6 @@
                                         <label class="search-label">省份</label>
                                         <input type="text" class="form-control search-control" id="province">
                                     </div>
-                                    <div class="form-group">
-                                        <button id="searchBtn" class="btn btn-primary" type="button">查询</button> 
-                                        <button id="resetBtn" class="btn btn-default" type="button">清空条件</button>
-                                    </div> 
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -110,8 +106,20 @@
                                         <label class="search-label">目的城市</label>
                                         <input type="text" class="form-control search-control" id="to_name">
                                     </div>
+                                    <div class="form-group">
+                                    	<%include("/yh/component/form/dateInputField.html",{id:'q_begin_date', label:'开始签收时间', value: ''}){} %>
+		                        	</div>
+		                        	<div class="form-group">
+		                            	<%include("/yh/component/form/dateInputField.html", {id:'q_end_date',  
+		                                                    label:'结束签收时间',value:''
+		                                                }){}%>
+		                            </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                        <button id="searchBtn" class="btn btn-primary" type="button">查询</button> 
+                                        <button id="resetBtn" class="btn btn-default" type="button">清空条件</button>
+                            </div> 
                          </form>
                          
                     		<div class="col-lg-12">

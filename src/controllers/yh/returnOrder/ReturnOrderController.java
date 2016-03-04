@@ -84,6 +84,8 @@ public class ReturnOrderController extends Controller {
 		String imgaudit = getPara("imgaudit");
 		String sign_no = getPara("sign_no");
 		String pageIndex = getPara("sEcho");
+		String q_begin = getPara("q_begin");
+		String q_end = getPara("q_end");
 		String sLimit = "";
 		String sqlTotal = "";
 		String sql = "";
@@ -151,6 +153,20 @@ public class ReturnOrderController extends Controller {
         	time_two =" and '2050-1-1'";
         }
         conditions += time_one + time_two;
+        
+        
+        if (StringUtils.isNotEmpty(q_begin)){
+        	q_begin = " and receipt_date between'"+q_begin+"'";
+        }else{
+        	q_begin =" and receipt_date between '2000-1-1'";
+        }
+        if (StringUtils.isNotEmpty(q_end)){
+        	q_end =" and '"+q_end+"'";
+        }else{
+        	q_end =" and '2050-1-1'";
+        }
+        if(!status.equals("'新建'"))
+        	conditions += q_begin + q_end;
         
         conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
         		//+ " and (!(unix_timestamp(planning_time) < unix_timestamp('2015-07-01')) AND cname = '江苏国光') " ;
