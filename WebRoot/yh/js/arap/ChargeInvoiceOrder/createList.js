@@ -48,7 +48,7 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"CNAME","sWidth":"180px"},
+            {"mDataProp":"CNAME","sWidth":"180px","sClass":"customer"},
             {"mDataProp":"SP","sWidth":"200px"},
             {"mDataProp":"TOTAL_AMOUNT","sWidth":"60px"},
             {"mDataProp":"REMARK","sWidth":"180px"},
@@ -58,16 +58,31 @@ $(document).ready(function() {
     });	
 	
     var ids = [];
+    var customer='';
     // 未选中列表
 	$("#uncheckedChargePreInvoiceOrder-table").on('click', '.checkedOrUnchecked', function(e){
 		if($(this).prop("checked") == true){
-			$(this).parent().parent().clone().appendTo($("#checkedChargePreInvoiceOrderList"));
+			if(customer!=''){
+				if(customer != $(this).parent().parent().find('.customer').text()){
+					$.scojs_message('不可勾选不同客户', $.scojs_message.TYPE_FALSE);
+					return false;
+				}
+			}else{
+				customer= $(this).parent().parent().find('.customer').text();
+			}
+			
+			
+			//$(this).parent().parent().clone().appendTo($("#checkedChargePreInvoiceOrderList"));
 			ids.push($(this).val());
-			$("#checkedPreInvoiceOrder").val(ids);
+			//$("#checkedPreInvoiceOrder").val(ids);
 			$("#order_type").val($(this).parent().parent().find(".order_type").text());
 			$('#saveBtn').attr('disabled', false);
-		}
-        console.log(ids);			
+		}else{
+			ids.splice($.inArray($(this).val(),ids),1);
+			if(ids==''){
+				customer='';
+			}
+		}		
 	});
 	
 	// 已选中列表
@@ -85,7 +100,15 @@ $(document).ready(function() {
 	});
 	
 	$('#saveBtn').click(function(e){
+		var trArr = [];
         e.preventDefault();
+        
+        $("input[name='order_check_box']").each(function(){
+        	if($(this).prop('checked') == true){
+        		trArr.push($(this).val());
+        	}
+        }); 
+        $("#checkedPreInvoiceOrder").val(trArr);
         $('#createForm').submit();
     });
 	
