@@ -97,7 +97,7 @@ public class CostItemConfirmController extends Controller {
         		+ " dor.ref_no ref_no,"
         		+ " '配送' business_type, "
         		+ " null as booking_note_number,"
-        		+ " (SELECT toid.serial_no from transfer_order_item_detail toid WHERE  doi.transfer_item_detail_id=toid.id) serial_no,"
+        		+ " GROUP_CONCAT((SELECT toid.serial_no from transfer_order_item_detail toid WHERE  doi.transfer_item_detail_id=toid.id) SEPARATOR '<br/>') serial_no,"
         		+ " (select ifnull(sum(dofi.amount),0) from delivery_order_fin_item dofi where dofi.order_id = dor.id and IFNULL(dofi.cost_source,'') != '对账调整金额') pay_amount,"
         		+ " (SELECT ifnull(sum(amount),0) FROM delivery_order_fin_item dofi WHERE dofi.order_id = dor.id) change_amount,"
         		+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = doi.transfer_order_id group by tor.id) separator '\r\n') transfer_order_no,"
