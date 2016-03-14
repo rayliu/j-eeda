@@ -177,7 +177,7 @@ $(document).ready(function() {
                    companyList.show();
                
            },'json');
-           refreshCreateList();
+           //refreshCreateList();
        });
     
     var refreshCreateList = function(){
@@ -202,7 +202,8 @@ $(document).ready(function() {
 	   												+"&serial_no="+serial_no
 	   												+"&ref_no="+ref_no
 	   												+"&status="+status;
-		   chargeConfiremTable.fnDraw(); 
+	    saveConditions();
+		chargeConfiremTable.fnDraw(); 
     };
    //选中某个客户时候
       $('#companyList').on('click', '.fromLocationItem', function(e){        
@@ -211,7 +212,7 @@ $(document).ready(function() {
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
 
-           refreshCreateList();
+          // refreshCreateList();
            
        });
       // 没选中客户，焦点离开，隐藏列表
@@ -230,11 +231,16 @@ $(document).ready(function() {
        
        //过滤客户
        $('#beginTime_filter,#endTime_filter,#orderNo_filter,#transfer_Order_filter,#customerNo_filter,#serial_no,#ref_no,#start_filter').on( 'keyup ',function(){
-    	   refreshCreateList();  
+    	   //refreshCreateList();
        });
        $("#shouru_filter").on('change',function(){
-    	   refreshCreateList();
+    	   //refreshCreateList();
        });
+       
+       $('#searchBtn').on('click',function(){
+    	   refreshCreateList();  
+       });
+       
        
        $('#datetimepicker').datetimepicker({  
            format: 'yyyy-MM-dd',  
@@ -254,5 +260,47 @@ $(document).ready(function() {
            $(".bootstrap-datetimepicker-widget").hide();
            $('#endTime_filter').trigger('keyup');
        });
+       
+       
+       var saveConditions=function(){
+           var conditions={
+           	customer : $('#customer_filter').val()//申请单号
+//               orderNo : $("#orderNo").val(),//业务单号
+//               status : $("#status2").val(),
+//               sp : $("#sp_id_input").val(),
+//               beginTime : $("#begin_date").val(),
+//               endTime : $("#end_date").val(),
+//               check_begin_date : $("#check_begin_date").val(),
+//               check_end_date : $("#check_end_date").val(),
+//               confirmBeginTime : $("#confirmBegin_date").val(),
+//               confirmEndTime : $("#confirmEnd_date").val(),
+//               insurance : $("#insurance").val()
+           };
+           if(!!window.localStorage){//查询条件处理
+               localStorage.setItem("query_chargeItemConfirm", JSON.stringify(conditions));
+           }
+       };
+       
+       
+       //未申请界面
+       var loadConditions=function(){
+           if(!!window.localStorage){//查询条件处理
+               var query_json = localStorage.getItem('query_chargeItemConfirm');
+               if(!query_json)
+                   return;
+
+               var conditions = JSON.parse(query_json);
+
+               $("#customer_filter").val(conditions.customer);//单号
+//               $("#status_filter1").val(conditions.status);
+//               //var customer = $("#customer_filter").val();
+//               $("#sp_filter1").val(conditions.sp);
+//               $("#beginTime_filter2").val(conditions.beginTime);
+//               $("#endTime_filter2").val(conditions.endTime);
+           }
+       };
+       loadConditions();
+       
+       
   
 } );
