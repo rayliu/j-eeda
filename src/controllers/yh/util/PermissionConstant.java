@@ -282,7 +282,8 @@ public class PermissionConstant {
 	public static final String PERMSSION_IMO_UPDATE = "InOutMiscOrder.update";
 	public static final String PERMSSION_IMO_DELETE = "InOutMiscOrder.delete";
 	
-	
+	public static final String costQueryReport ="costQueryReport";
+	public static final String revenueQueryReport ="revenueQueryReport";
 	
 	
 }

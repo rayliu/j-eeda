@@ -535,12 +535,16 @@
                    		var orderIndexPermission = map.OrderIndex_list;
                    		var dailyReportPermission = map.DailyReport_list;
                         var orderFlowPermission = map.OrderFlowReport_list;
+                        var revenueQueryReport = map.revenueQueryReport;
+                        var costQueryReport = map.costQueryReport;
                    		
                    		if(nvl(productIndexPermission, '') != '' || 
                             nvl(orderIndexPermission, '') !='' || 
                             nvl(dailyReportPermission, '') !='' || 
                             nvl(InventoryListPermission, '') !='' ||
-                            nvl(orderFlowPermission, '') !='')
+                            nvl(orderFlowPermission, '') !=''||
+                            nvl(revenueQueryReport, '') !=''||
+                            nvl(costQueryReport, '') !='')
                    {%>
                     <li id="menu_report">
                         <a href="#"><i class="fa fa-table fa-fw"></i> 报表查询<span class="fa arrow"></span></a>
@@ -574,6 +578,20 @@
                             %>
                             <li>
                                 <a href="/statusReport/orderFlow">单据流转查询</a>
+                            </li>
+                            <%}%>
+                            <%
+                                if(costQueryReport !=''){
+                            %>
+                            <li>
+                                <a href="/statusReport/costQueryReport">应付业务单据查询</a>
+                            </li>
+                            <%}%>
+                            <%
+                                if(revenueQueryReport !=''){
+                            %>
+                            <li>
+                                <a href="/statusReport/revenueQueryReport">应收业务单据查询</a>
                             </li>
                             <%}%>
                         </ul>

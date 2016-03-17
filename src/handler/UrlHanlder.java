@@ -29,12 +29,12 @@ public class UrlHanlder extends Handler {
             }  
         }  
 		
-		logger.debug("handle url: " + target);
-		logger.debug("IP: " + ip);
-		logger.debug("GET params: " + params);
-		logger.debug("POST params: " + queryString);
-		logger.debug("host: " + host + ":" + port);
-		logger.debug("----------------------------------------------------------");
+//		logger.debug("handle url: " + target);
+//		logger.debug("IP: " + ip);
+//		logger.debug("GET params: " + params);
+//		logger.debug("POST params: " + queryString);
+//		logger.debug("host: " + host + ":" + port);
+//		logger.debug("----------------------------------------------------------");
 		// login page handle
 		if (target.indexOf("/login") > 0 && target.split("/").length > 2) {
 			target = target.substring(target.indexOf("/", 2));
