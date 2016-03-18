@@ -158,7 +158,10 @@ public class CustomerController extends Controller {
                             + code + "'");
         }
         setAttr("location", location);
-
+        
+        Record re = Db.findFirst("select get_loc_full_name('"+party.getStr("default_loc_from")+"') as locFrom");
+        setAttr("default_loc_from", re.getStr("locFrom"));
+        
         setAttr("party", party);
         if(party.getInt("is_inventory_control")>0){
         	setAttr("is_inventory_control", "Y");
@@ -201,6 +204,7 @@ public class CustomerController extends Controller {
             party.set("receipt", getPara("receipt"));
             party.set("charge_type", getPara("chargeType"));
             party.set("is_auto_ps", getPara("isAutoPS"));
+            party.set("default_loc_from", getPara("default_loc_from"));
             if("Y".equals(getPara("isInventoryControl"))){
             	party.set("is_inventory_control", true);
             }else{
@@ -230,6 +234,7 @@ public class CustomerController extends Controller {
             party.set("charge_type", getPara("chargeType"));
             party.set("office_id", pom.getCurrentOfficeId());
             party.set("is_auto_ps", getPara("isAutoPS"));
+            party.set("default_loc_from", getPara("default_loc_from"));
             if("Y".equals(getPara("isInventoryControl"))){
             	party.set("is_inventory_control", true);
             }else{

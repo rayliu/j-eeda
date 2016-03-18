@@ -43,8 +43,6 @@
                                             <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
                                         </div>
                                     </div>
-                                    
-                                    <!-- /.col-lg-6 (even) 偶数列 -->
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
@@ -53,11 +51,25 @@
                                             </div>
                                         </fieldset>
                                     </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <%include("/yh/component/form/inputLocationField.html", 
+                                            {
+                                                id:'default_loc_from', 
+                                                label:'始发城市', 
+                                                value: party.default_loc_from!'',
+                                                display_value: default_loc_from!'',
+                                                vertical: true
+                                            }){} %>
+                                        </div>
+                                        <!-- /.col-lg-6 (even) 偶数列 -->
+                                    </div>
+                                    
                                     
                                     <div class="col-lg-6">
                                         <fieldset>
                                             <div class="form-group">
-
+                                                
                                                 <label>公司名称(必填)</label>
                                                 <input  class="form-control" id="company_name" name="company_name" type="text" value="${contact.company_name!''}">
                                             </div>                                     
@@ -221,17 +233,24 @@
                                           </div>
                                           <div class="modal-body">
                                                 <form id="routeItemForm" action="" method="post">
-                                                    
                                                     <input id="route_id" name="route_id" type="hidden" value ="">
                                                     <!-- 根据 始发地 和 目的地 找到 干线id-->
                                                     <div class="modal-body">
+                                                        <div class="form-group">
+                                                             <%include("/yh/component/form/inputField.html", 
+                                                            {   id:'customer_name', 
+                                                                label:'客户简称', 
+                                                                value: contact.abbr!'', 
+                                                                disabled: 'disabled'
+                                                            }){} %>
+                                                        </div>
                                                         <div class="form-group">
                                                             <%include("/yh/component/form/inputLocationField.html", 
                                                             {
                                                                 id:'location_from', 
                                                                 label:'始发城市', 
-                                                                value:order.sp_id!'',
-                                                                display_value: order.sp_name!''
+                                                                value: party.default_loc_from!'',
+                                                                display_value: default_loc_from!''
                                                             }){} %>
                                                         </div>
                                                         
@@ -248,7 +267,7 @@
                                                              <%include("/yh/component/form/inputField.html", 
 				                                            {   id:'limitationFile', 
 				                                                label:'时效(天)', 
-				                                                value:order.limitation!''
+				                                                value:order.limitation!'1'
 				                                            }){} %>
                                                         </div>
                                                         <div class="form-group">
@@ -524,10 +543,9 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 				{
 					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
 				}
-				
 			},'json');
 		});
-        
+
         $('#cmbArea').on('change', function(){
         	//var inputStr = $(this).parent("option").attr('id'); 
 			var inputStr = $(this).val();
@@ -547,7 +565,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 					if(data[i].NAME == hideCity){
 						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 					}else{
-						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
 					}
 				}
 			}
@@ -566,7 +584,7 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 					if(data[i].NAME == hideDistrict){
 						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
 					}else{
-						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");
 					}
 				}
 			}
