@@ -206,7 +206,7 @@ $(document).ready(function() {
     		var serial_no = $("#serial_no").val();
     		var sign_no = $("#sign_no").val();
 
-        costConfiremTable.fnSettings().oFeatures.bServerSide = true;
+            costConfiremTable.fnSettings().oFeatures.bServerSide = true;
     		costConfiremTable.fnSettings().sAjaxSource = "/statusReport/costQueryReportSearch?orderNo="+orderNo
                               							+"&sp="+sp
 											    		+"&no="+no

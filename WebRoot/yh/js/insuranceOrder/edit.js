@@ -48,7 +48,7 @@
                      if(obj.aData.FIN_AMOUNT !='' && obj.aData.FIN_AMOUNT != null){
                     	 return "<input type='text' name='amount' value='"+obj.aData.FIN_AMOUNT+"'>";
                      }else{
-                    	 return "<input type='text' name='amount' value=''>";
+                    	 return "<input type='text' name='amount' value='0'>";
                      }
              }},
              {"mDataProp": "TOTAL_AMOUNT","sWidth": "50px","sClass": "total_amount"},
@@ -59,7 +59,7 @@
                      if(obj.aData.RATE!='' && obj.aData.RATE != null){
                     	 return "<input type='text' name='rate' value='"+obj.aData.RATE+"'>";
                      }else{
-                    	 return "<input type='text' name='rate' value=''>";
+                    	 return "<input type='text' name='rate' value='0'>";
                      }
              }},
              { "mDataProp": "START_CREATE_STAMP","sWidth": "150px"},

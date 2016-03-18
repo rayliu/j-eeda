@@ -450,19 +450,34 @@ public class InsuranceOrderController extends Controller {
     				InsuranceFinItem insuranceFinItem = new InsuranceFinItem();
     				if(transferOrderItem!= null){
     					Product product = Product.dao.findById(transferOrderItem.get("product_id"));
-            			if(product.getDouble("insurance_amount")!= null){
-            				double prodoctInsuranceAmount = product.getDouble("insurance_amount");
-            				insuranceFinItem.set("amount", prodoctInsuranceAmount);
-    						if(party!= null){
-    					    	insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
-    					    	if(insurance.getDouble("insurance_rate") != null){
-    					    		double insuranceRates = insurance.getDouble("insurance_rate");
-        							double productAmount = transferOrderItem.getDouble("amount");
-        							BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
-        					    	double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        					    	insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
-        						}
-        					}
+    					if(product ==null){
+    					    double prodoctInsuranceAmount = 0;
+                            insuranceFinItem.set("amount", prodoctInsuranceAmount);
+                            if(party!= null){
+                                insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
+                                if(insurance.getDouble("insurance_rate") != null){
+                                    double insuranceRates = insurance.getDouble("insurance_rate");
+                                    double productAmount = transferOrderItem.getDouble("amount");
+                                    BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
+                                    double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                    insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
+                                }
+                            } 
+    					}else{
+                            if(product.getDouble("insurance_amount")!= null){
+                                double prodoctInsuranceAmount = product.getDouble("insurance_amount");
+                                insuranceFinItem.set("amount", prodoctInsuranceAmount);
+                                if(party!= null){
+                                    insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
+                                    if(insurance.getDouble("insurance_rate") != null){
+                                        double insuranceRates = insurance.getDouble("insurance_rate");
+                                        double productAmount = transferOrderItem.getDouble("amount");
+                                        BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
+                                        double InsuranceInsuranceAmount = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                                        insuranceFinItem.set("rate", insuranceRates).set("insurance_amount", InsuranceInsuranceAmount);
+                                    }
+                                }
+                            }
     					}
     				}
     				insuranceFinItem.set("transfer_order_item_id", transferOrderItem.get("id"))

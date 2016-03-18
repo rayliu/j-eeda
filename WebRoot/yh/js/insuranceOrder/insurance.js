@@ -87,12 +87,19 @@ $(document).ready(function() {
         e.preventDefault();
     	var trArr=[];
         var tableArr=[];
-        $("input[name='order_check_box']").each(function(){
-        	if($(this).prop('checked') == true){
-        		trArr.push($(this).val());
-        	}
-        });
-        tableArr.push(trArr);        
+        // $("input[name='order_check_box']").each(function(){
+        // 	if($(this).prop('checked') == true){
+        // 		trArr.push($(this).val());
+        // 	}
+        // });
+        //tableArr.push(trArr);   
+		
+		$('#ckeckedTransferOrderList tr').each(function(index, el) {
+			var id = $(el).attr('value');
+			tableArr.push(id);
+		});
+
+             
         console.log(tableArr);
         $('#insuranceOrder_message').val(tableArr);
         $('#createForm').submit();
