@@ -411,12 +411,14 @@
                 	var costPreInvoiceListPermission = map.CostPreInvoiceOrder_list;
                 	var costListPermission = map.CostItemConfirm_affirm;
                     var costPrePayOrderListPermission = map.PrePayOrder_list;
+                    var manualCostOrderPermission = map.manualCostOrder_list;
 
                		if(nvl(costListPermission, '')!=''
                         || nvl(costConfirmListPermission, '') != '' 
                         || nvl(costCheckListPermission, '') != '' 
                         || nvl(costPreInvoiceListPermission, '') != ''
-                        || nvl(costPrePayOrderListPermission, '') != ''){
+                        || nvl(costPrePayOrderListPermission, '') != ''
+                        || nvl(manualCostOrderPermission, '') != ''){
 
                 %>
                     <li id="menu_cost">
@@ -437,7 +439,7 @@
                                     <a href="/costPrePayOrder">预付单</a>
                                 </li>
                             <%}%>
-                            <% if(costListPermission != ''){%>
+                            <% if(manualCostOrderPermission != ''){%>
                                 <li>
                                     <a href="/costMiscOrder">手工成本单</a>
                                 </li>
