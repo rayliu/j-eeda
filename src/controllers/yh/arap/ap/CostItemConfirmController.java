@@ -15,8 +15,10 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -30,6 +32,8 @@ import controllers.yh.util.PermissionConstant;
 @Before(SetAttrLoginUserInterceptor.class)
 public class CostItemConfirmController extends Controller {
     private Logger logger = Logger.getLogger(CostItemConfirmController.class);
+    Subject currentUser = SecurityUtils.getSubject();
+    
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CTC_AFFIRM})
     public void index() {
     	    render("/yh/arap/CostItemConfirm/CostItemConfirmList.html");
@@ -80,6 +84,8 @@ public class CostItemConfirmController extends Controller {
         String serial_no=getPara("serial_no");
         String sign_no = getPara("sign_no");
        
+        String user_name = currentUser.getPrincipal().toString();
+        
         String sqlTotal = "";
         String sql = "select cast(planning_time as CHAR) planning_time1, A.* from (select distinct dor.id,"
         		+ " dor.order_no order_no,"
@@ -140,7 +146,10 @@ public class CostItemConfirmController extends Controller {
 				+ " left join user_login ul on dor.create_by = ul.id "
 				+ " left join warehouse w on dor.from_warehouse_id = w.id "
 				+ " left join office oe on w.office_id = oe.id "
-				+ " where ror.transaction_status != '新建' and unix_timestamp(dor.appointment_stamp) > unix_timestamp('2015-06-01 10:34:36') and  dor.audit_status='新建'and (dor.status !='新建' or dor.status !='计划中' or dor.status != '初始化') and p.party_type='SERVICE_PROVIDER' group by dor.id "
+				+ " where ror.transaction_status != '新建' and unix_timestamp(dor.appointment_stamp) > unix_timestamp('2015-06-01 10:34:36') and  dor.audit_status='新建'and (dor.status !='新建' or dor.status !='计划中' or dor.status != '初始化') and p.party_type='SERVICE_PROVIDER' "
+				+" and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
+		        +" and w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				+ "group by dor.id "
 				+ " union"
 				+ " select distinct dpr.id,"
 				+ " dpr.depart_no order_no,"
@@ -200,7 +209,10 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN warehouse w ON w.id = tor.warehouse_id"
 				+ " left join office oe on oe.id = tor.office_id"
 				+ "  where  unix_timestamp(dpr.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='新建'  and dpr.combine_type='DEPART'"
-				+ " 	and p.party_type='SERVICE_PROVIDER'  group by dpr.id"
+				+ " 	and p.party_type='SERVICE_PROVIDER' "
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				+ " group by dpr.id"
 				+ " union "
 				+ " select distinct dpr.id,"
 				+ " dpr.depart_no order_no,"
@@ -262,6 +274,8 @@ public class CostItemConfirmController extends Controller {
 				+ " where unix_timestamp(dpr.create_stamp) > unix_timestamp('2015-06-01 10:34:36') "
 				+ " and (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' "
 				+ " and p.party_type='SERVICE_PROVIDER' and dpr.combine_type='PICKUP' "
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+                + " and w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				+ " group by dpr.id"
 				+ " union "
 				+ " select distinct ior.id,"
@@ -311,7 +325,10 @@ public class CostItemConfirmController extends Controller {
 				+ " left join party p on ior.insurance_id = p.id "
 				+ " left join contact c on p.contact_id = c.id "
 				+ " left join office oe on oe.id = tor.office_id "
-				+ " where unix_timestamp(ior.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and ior.audit_status='新建' and p.party_type = 'INSURANCE_PARTY' and ifit.id is not null group by ior.id "
+				+ " where unix_timestamp(ior.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and ior.audit_status='新建' and p.party_type = 'INSURANCE_PARTY' and ifit.id is not null "
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
+				+ "group by ior.id "
 				+ " union "
 				+ " SELECT DISTINCT	amco.id,amco.order_no, amco.STATUS, l.name route_from,"
 				+ " l1.name route_to,'' receivingunit,c.abbr spname,NULL as amount,NULL as volume,NULL as weight,"
@@ -364,6 +381,7 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN location l1 ON amco.route_to=l1.code"
 				+ " LEFT JOIN office o ON o.id=amco.office_id"
 				+ " where amco.audit_status = '新建' and amco.type = 'biz' and amco.total_amount!=0"
+				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 				+ " GROUP BY amco.id) as A ";
         String condition = "";
       

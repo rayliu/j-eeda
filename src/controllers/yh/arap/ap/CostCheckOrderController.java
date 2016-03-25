@@ -289,7 +289,7 @@ public class CostCheckOrderController extends Controller {
 	}
 
 	// billing order 列表
-	@RequiresPermissions(value = { PermissionConstant.PERMISSION_TO_CREATE })
+	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCOI_LIST })
 	public void list() {
 		String sLimit = "";		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null
@@ -306,6 +306,9 @@ public class CostCheckOrderController extends Controller {
 		}else{
 			serial_no="'"+serial_no+"'";
 		}
+		
+		String user_name = currentUser.getPrincipal().toString();
+		
 		String sqlTotal = "";
 		String sql = "select aco.*,MONTH(aco.begin_time) as c_stamp,o.office_name oname, '' as company_name,"
 				+ " group_concat(acoo.invoice_no separator ',') invoice_no,"
@@ -341,11 +344,14 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN arap_cost_item aci ON aci.cost_order_id = aco.id"
 				+ " left join office o ON o.id=p.office_id"
 				+ " left join user_login ul on ul.id = aco.create_by"
-				+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id ";
-		String condition = " where 1=1";
+				+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id "
+		        + " left join user_login u on aco.create_by = u.id"
+		        + " left join user_office uo on u.user_name = uo.user_name and uo.is_main=1";
+		String condition = " where 1=1 and uo.office_id in (select office_id from user_office where user_name='"+user_name+"')";
+		        
 		// TODO 始发地和目的地 客户没有做
 		if (orderNo != null || sp != null || status != null|| (status != null && !"''".equals(serial_no))) {
-			condition = " where aco.order_no like '%"
+			condition += " and aco.order_no like '%"
 					+ orderNo
 					+ "%' "
 					+ " and ifnull(c.abbr,'') like '%"
@@ -883,6 +889,9 @@ public class CostCheckOrderController extends Controller {
 		String type = getPara("type");
 		String status = getPara("status");
 		String ispage = getPara("ispage");
+		
+		String user_name = currentUser.getPrincipal().toString();
+		
 		String sqlTotal = "";
 		String sql = " select * from (select distinct dor.id,dofi.id did,IFNULL(c2.address,IFNULL(toid.notify_party_company,'')) receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,"
 				+ " c.id sp_id, c.abbr spname,c1.abbr customer_name,"
@@ -921,7 +930,10 @@ public class CostCheckOrderController extends Controller {
 				+ " left join warehouse w on w.id = dor.from_warehouse_id "
 				+ " left join location lo on lo.code = dor.route_from "
 				+ " left join location lo2 on lo2.code = dor.route_to "
-				+ " left join office oe on oe.id = w.office_id where dor.audit_status='已确认' group by dor.id "
+				+ " left join office oe on oe.id = w.office_id where dor.audit_status='已确认' "
+				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
+		        + " and w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				+ " group by dor.id "
 				+ " union"
 				+ " select distinct dpr.id,dofi.id did,(CASE tor.arrival_mode WHEN 'gateIn' THEN w.warehouse_name WHEN 'delivery' THEN tor.receiving_address WHEN 'deliveryToFactory' THEN tor.receiving_address "
 				+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END)  receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,"
@@ -954,7 +966,10 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN warehouse w on w.id=tor.warehouse_id"
 				+ " left join location lo on lo.code = dpr.route_from "
 				+ " left join location lo2 on lo2.code = dpr.route_to "
-				+ " left join office oe on oe.id = tor.office_id where  (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'DEPART' group by dpr.id"
+				+ " left join office oe on oe.id = tor.office_id where  (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'DEPART' "
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				+ " group by dpr.id"
 				+ " union "
 				+ " select distinct dpr.id,dofi.id did,(CASE tor.arrival_mode WHEN 'gateIn' THEN w.warehouse_name WHEN 'delivery' THEN tor.receiving_address WHEN 'deliveryToFactory' THEN tor.receiving_address "
 				+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END)  receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,"
@@ -991,7 +1006,10 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN warehouse w on w.id=tor.warehouse_id"
 				+ " left join location lo on lo.code = dpr.route_from "
 				+ " left join location lo2 on lo2.code = dpr.route_to "
-				+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' group by dpr.id"
+				+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' "
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+                + " and w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				+ " group by dpr.id"
 				+ " union "
 				+ " select distinct ior.id,ifi.id did,NULL as receivingunit, tor.route_from ,lo.name from_name ,tor.route_to ,lo2.name to_name ,tor.planning_time ,ior.order_no order_no,ior.status,"
 				+ " con.id sp_id, con.abbr spname,c_c.abbr customer_name,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,"
@@ -1020,7 +1038,10 @@ public class CostCheckOrderController extends Controller {
 				+ " left join location lo2 on lo2.code = tor.route_to"
 				+ " LEFT JOIN party p1 ON p1.id = ior.insurance_id "
 				+ " LEFT JOIN contact con ON con.id = p1.contact_id "
-				+ " where ior.audit_status='已确认' group by ior.id"
+				+ " where ior.audit_status='已确认' "
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+                + " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
+			    + " group by ior.id"
 				+ " union "
 				+ " SELECT DISTINCT amco.id,amcoi.id did,NULL as receivingunit,amco.route_from,l. NAME route_name,"
 				+ " amco.route_to,l1. NAME to_name,NULL AS planning_time,"
@@ -1044,7 +1065,8 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN contact c ON p.contact_id = c.id"
 				+ " LEFT JOIN location l ON amco.route_from = l. CODE"
 				+ " LEFT JOIN location l1 ON amco.route_to = l1. CODE"
-				+ " WHERE	amco.audit_status = '已确认'"
+				+ " WHERE amco.audit_status = '已确认'"
+				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 				+ " GROUP BY amco.id) as A ";
 		String condition = "";
 		if (orderNo != null || sp_id2 != null || serial_no != null
