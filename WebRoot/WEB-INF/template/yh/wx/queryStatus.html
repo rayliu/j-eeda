@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title id="titleName">单据查询</title>
@@ -14,6 +15,7 @@
     <p class="page_desc">可查询序列号、客户订单号</p>
     <div class="lbox_close wxapi_form">
     	<form id="returnFrom" method="post">
+    	<input type="hidden" id="openid" name="openid" value="${openid!''}">
           <div class="weui_cell">
               <div class="weui_cell_hd"><label class="weui_label">单号</label></div>
               <div class="weui_cell_bd weui_cell_primary">
@@ -24,12 +26,15 @@
       
       <h3 id="menu-image1"></h3>
       <input type="hidden" id="returnId" name='returnId' value="" />
+      
       <button class="weui_btn weui_btn_primary" id="searchNo">查询</button>
-        
-      <article class="weui_article">
-        
+<!--       <article class="weui_article">
         <section id="orderNoList"></section>
-      </article>  
+      </article>   -->
+    </div>
+    <div style="margin-top: 10px;">
+        <div class="weui_cells" id="massage">    
+        </div>
     </div>
   </div>
 </body>

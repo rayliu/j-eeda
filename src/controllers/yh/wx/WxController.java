@@ -346,7 +346,7 @@ public class WxController extends ApiController {
     public void queryStatusJson() {
     	List<Record> rec= new ArrayList<Record>();;
         String orderNo = getPara("orderNo").toUpperCase();
-        String sql = " SELECT toid.serial_no AS orderno,"
+        /*String sql = " SELECT toid.serial_no AS orderno,"
         		+ " (CASE"
         		+ " WHEN ifnull((SELECT roi.transaction_status FROM delivery_order doi LEFT JOIN return_order roi ON roi.delivery_order_id = doi.id WHERE doi.id=toid.delivery_id),'新建')!='新建' THEN '已签收'"
         		+ " WHEN ifnull((SELECT doi.`STATUS` FROM delivery_order doi where doi.id = toid.delivery_id),'新建') != '新建' THEN '配送在途'"
@@ -366,17 +366,68 @@ public class WxController extends ApiController {
         		+ " END) orderstatus"
         		+ " FROM transfer_order toi"
         		+ " LEFT JOIN transfer_order_item_detail toid ON toid.order_id = toi.id"
-        		+ " WHERE upper(toi.customer_order_no) =?";
-        List<Record> rec1 = Db.find(sql, orderNo);
-        List<Record> rec2 = Db.find(sql1, orderNo,orderNo);
-        if(rec1.size()>0&&rec2.size()>0){
-        	rec= rec2;
-        }else if(rec1.size()>0){
-        	rec= rec1;
-        }else if(rec2.size()>0){
-        	rec= rec2;
-        }
-        renderJson(rec);
+        		+ " WHERE upper(toi.customer_order_no) =?";*/
+        String openid = getPara("openid");
+        Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+        /*String sql= "SELECT CONCAT(tor.order_no, '<br/>', tor. STATUS,'<br/>',cast(tor.create_stamp as char)) transfer_order_no,  "
+        		+ " (select c.abbr  from contact c where id = tor.customer_id) customer_name, "
+        		+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( dor.depart_no ,'<br/>',dor.`STATUS`,'<br/>',cast(dor.create_stamp as char)) FROM depart_order dor  WHERE dor.combine_type = 'PICKUP' AND dor.id = dt.pickup_id ) SEPARATOR '<br/>') pickup_order_no ,"
+        		+ " group_concat(DISTINCT (select group_concat( dor.depart_no ,'<br/>',dor.`STATUS`,'<br/>',cast(dor.create_stamp as char) )  from depart_order dor  where dor.combine_type='DEPART' and dor.id = dt.depart_id)  SEPARATOR '<br/>') depart_order_no ,"
+        		+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(deo.order_no ,'<br/>',deo.`STATUS`,'<br/>',cast(deo.create_stamp as char))  FROM delivery_order deo  WHERE deo.id = doi.delivery_id ) SEPARATOR '<br/>') delivery_order_no , "
+        		+ " group_concat(DISTINCT( ifnull((select group_concat(  ror.order_no ,'<br/>',ror.transaction_status ,'<br/>',cast(ror.create_date as char))  from return_order ror where ror.id = ror1.id )  , (select group_concat(ror.order_no,'<br/>',ror.transaction_status,'<br/>',cast(ror.create_date as char) )  from return_order ror where ror.id = ror2.id ))) SEPARATOR '<br/>') return_order_no "
+        		+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(  aco.order_no ,'-',aco.`STATUS` ,'<br/>',cast(aco.create_stamp as char)) FROM arap_charge_order aco WHERE aco.id = aci.charge_order_id ) SEPARATOR '<br/>') charge_order_no ,"
+        		+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(acor.order_no ,'-',acor.`STATUS` ,'<br/>',cast(acor.create_stamp as char)) FROM arap_cost_order acor WHERE acor.id = acoi1.cost_order_id ) SEPARATOR '<br/>') cost_order_no1 ,"
+        		+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( acor.order_no ,'-',acor.`STATUS` ,'<br/>',cast(acor.create_stamp as char))   FROM arap_cost_order acor  WHERE acor.id = acoi2.cost_order_id ) SEPARATOR '<br/>') cost_order_no2 ,"
+        		+ " GROUP_CONCAT(DISTINCT( SELECT group_concat( acor.order_no ,'-',acor.`STATUS` ,'<br/>',cast(acor.create_stamp as char)) FROM arap_cost_order acor WHERE acor.id = acoi3.cost_order_id ) SEPARATOR '<br/>') cost_order_no3 "
+        		
+        		+ " FROM transfer_order tor LEFT JOIN depart_transfer dt ON dt.order_id = tor.id "
+        		+ " LEFT JOIN depart_order dor_pi on dor_pi.id = dt.pickup_id "
+        		+ " LEFT JOIN depart_pickup dp ON dt.pickup_id = dp.pickup_id "
+        		+ " LEFT JOIN depart_order dor_de on dor_de.id = dt.depart_id "
+        		+ " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id "
+        		+ " LEFT JOIN delivery_order deo on deo.id = doi.delivery_id "
+        		+ " LEFT JOIN return_order ror1 on ror1.transfer_order_id = tor.id "
+        		+ " LEFT JOIN return_order ror2 on ror2.delivery_order_id = doi.delivery_id "
+        		+ " LEFT JOIN arap_charge_item aci on aci.ref_order_id = IFNULL(ror1.id,ror2.id) "
+        		+ " LEFT JOIN arap_charge_order aco on aco.id = aci.charge_order_id "
+        		+ " LEFT JOIN arap_cost_item acoi1 on acoi1.ref_order_id = dt.pickup_id and acoi1.ref_order_no = '提货' "
+        		+ " LEFT JOIN arap_cost_item acoi2 on acoi2.ref_order_id = dt.depart_id and acoi2.ref_order_no = '零担' "
+        		+ " LEFT JOIN arap_cost_item acoi3 on acoi3.ref_order_id = doi.delivery_id and acoi3.ref_order_no = '配送' "
+        		+ " LEFT JOIN arap_cost_order acoo1 on acoo1.id = acoi1.cost_order_id "
+        		+ " LEFT JOIN arap_cost_order acoo2 on acoo2.id = acoi2.cost_order_id "
+        		+ " LEFT JOIN arap_cost_order acoo3 on acoo3.id = acoi3.cost_order_id  "
+
+        		+ " where 1=1  and UPPER(tor.order_no) = '"+orderNo+"' "
+        		+ " and tor.office_id in (select office_id from user_office where user_name='"+userRec.getStr("user_name")+"') "
+        		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"') "
+        		+ " GROUP BY tor.id  LIMIT 0, 10";*/
+        String sql = "select CONCAT(('订单成功接收'),"
+        		+ " '-',"
+        		+ " cast(tor.create_stamp AS CHAR)"
+        		+ " ) transfer_order,"
+        		+ " CONCAT("
+        		+ " (select if((dor_pi.STATUS = '新建'),'提货计划中','已提货')),"
+        		+ " '-',"
+        		+ " cast(max(dor_pi.create_stamp) AS CHAR)"
+        		+ " ) pickup_order,"
+        		+ " (select if((max(dor_de.create_stamp) = dor_de.create_stamp),concat((CASE when dor_de.status='新建' then '发车计划中' else '运输在途' end),'-',cast(dor_de.create_stamp as char)),'')) depart_order, "
+        		+ " (select if(max(deo.create_stamp) = deo.create_stamp,concat((CASE when deo.status='新建' then '配送计划中' else '配送在途' end),'-',cast(deo.create_stamp as char)),'')) delivery_order"
+        		+ " ,ifnull((select if((max(ror1.create_date) = ror1.create_date),concat((CASE when ror1.status_code ='新建' then '签收计划中' else '已签收' end),'-',cast(ror1.create_date as char)),null)) "
+        		+ " ,(select if((max(ror2.create_date) = ror2.create_date),concat((CASE when ror2.status_code ='新建' then '签收计划中' else '已签收' end),'-',cast(ror2.create_date as char)),null))) return_order "
+        		+ " from transfer_order tor "
+        		+ " LEFT JOIN depart_transfer dt ON dt.order_id = tor.id and  dt.pickup_id is not null  "
+        		+ " LEFT JOIN depart_order dor_pi ON dor_pi.id = dt.pickup_id  "
+        		+ " LEFT JOIN depart_transfer dt2 ON dt2.order_id = tor.id and dt2.depart_id is not null  "
+        		+ " LEFT JOIN depart_order dor_de ON dor_de.id = dt2.depart_id "
+        		+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id "
+        		+ " LEFT JOIN delivery_order deo ON deo.id = doi.delivery_id "
+        		+ " LEFT JOIN return_order ror1 ON ror1.transfer_order_id = tor.id "
+        		+ " LEFT JOIN delivery_order_item doi2 ON doi2.transfer_order_id = tor.id"
+        		+ " LEFT JOIN return_order ror2 ON ror2.delivery_order_id = doi2.delivery_id "
+        		+ " where tor.order_no = '"+orderNo+"'";
+        List<Record> rec1 = Db.find(sql);
+
+        renderJson(rec1);
     }
 	
 	//扫单助手

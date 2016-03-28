@@ -3,6 +3,7 @@ $(document).ready(function() {
 	$('#orderNo').focus();
 	
 	$("#searchNo").click(function(){
+		$('#massage').empty();
 		if($('#orderNo').val() == ''){
     		$('#orderDesc').text('请先输入号码');
     		$('#orderDesc').show();
@@ -12,7 +13,7 @@ $(document).ready(function() {
 			var orderNo=$("#orderNoList")
 			orderNo.empty();
 			if(data.length>0){	
-				for(var i = 0; i < data.length; i++){
+				/*for(var i = 0; i < data.length; i++){
 					var orderNoList=data[i].ORDERNO;
 					var orderstatus=data[i].ORDERSTATUS;
 					if(orderstatus==''){
@@ -22,7 +23,67 @@ $(document).ready(function() {
 					}else{
 						orderNo.append("<h2 class='title'>--"+orderNoList+" <span style='color:#E64340'>&nbsp;&nbsp;&nbsp;&nbsp;"+orderstatus+"</span> </h2>");
 					}
-				}
+				}*/
+				data.forEach(function(da){
+					var TRANSFER_ORDER_NO = da.TRANSFER_ORDER;
+					var PICKUP_ORDER_NO = da.PICKUP_ORDER;
+					var DEPART_ORDER_NO = da.DEPART_ORDER;
+					var DELIVERY_ORDER_NO = da.DELIVERY_ORDER;
+					var RETURN_ORDER_NO = da.RETURN_ORDER;
+			
+					
+					if(TRANSFER_ORDER_NO)
+						$('#massage').append('<label class="weui_cell weui_check_label">'
+								
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+TRANSFER_ORDER_NO.substring(TRANSFER_ORDER_NO.indexOf('-')+1,TRANSFER_ORDER_NO.length)+'</p>'
+				                +'</div>'
+				               +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+TRANSFER_ORDER_NO.substring(0, TRANSFER_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+					if(PICKUP_ORDER_NO)
+						$('#massage').append('<label class="weui_cell weui_check_label">'
+								
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+PICKUP_ORDER_NO.substring(PICKUP_ORDER_NO.indexOf('-')+1,PICKUP_ORDER_NO.length)+'</p>'
+				                +'</div>'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+PICKUP_ORDER_NO.substring(0, PICKUP_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+					if(DEPART_ORDER_NO)
+						$('#massage').append('<label class="weui_cell weui_check_label">'
+								
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+DEPART_ORDER_NO.substring(DEPART_ORDER_NO.indexOf('-')+1,DEPART_ORDER_NO.length)+'</p>'
+				                +'</div>'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+DEPART_ORDER_NO.substring(0, DEPART_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+			        if(DELIVERY_ORDER_NO)
+			        	$('#massage').append('<label class="weui_cell weui_check_label">'
+			        			
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+DELIVERY_ORDER_NO.substring(DELIVERY_ORDER_NO.indexOf('-')+1,DELIVERY_ORDER_NO.length)+'</p>'
+				                +'</div>'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">状态'+DELIVERY_ORDER_NO.substring(0, DELIVERY_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+					if(RETURN_ORDER_NO)
+						$('#massage').append('<label class="weui_cell weui_check_label">'
+								
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+RETURN_ORDER_NO.substring(RETURN_ORDER_NO.indexOf('-')+1,RETURN_ORDER_NO.length)+'</p>'
+				                +'</div>'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left">'+RETURN_ORDER_NO.substring(0, RETURN_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+
+				})	
 			}
 			else{
 				orderNo.append("<h2 class='title'>没有找到此单据信息</h2>");
