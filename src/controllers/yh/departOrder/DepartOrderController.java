@@ -1186,8 +1186,10 @@ public class DepartOrderController extends Controller {
 			for (int i = 0; i < list.length; i++) {
 				String[] array = list[i].split(":");
 				String orderId = array[0];
-				String pickupId = array[1];
-				if(pickupId.equals("wu")){
+				String pickupId = null;
+				if(array.length>1)
+					pickupId = array[1];
+				if("wu".equals(pickupId)){
 					pickupId = null;
 				}
 
