@@ -92,11 +92,12 @@
                                 <div class="row">
                                     <br/>
                                         <div class="form-group">                                                    
-                                            <span id="datetimepicker2" class="input-append date search-control "> 
+                                            <span id="datetimepicker2" class="input-append date search-control ">
+                                            	<a id="searchBtn" class="btn btn-primary"  >查询</a>
                                             	<% if(shiro.hasPermission("ChargeItem.affirm")){%>
-                                                	<button id="chargeConfiremBtn" class="btn  btn-primary">确认</button>
+                                                	<button id="chargeConfiremBtn" class="btn btn-success  btn-primary">确认</button>
                                             	<%}%>
-                                            	<a id="searchBtn" class="btn  btn-primary" style="float: right">查询</a>
+                                            	
                                             </span>
                                         </div>
                                 </div>
