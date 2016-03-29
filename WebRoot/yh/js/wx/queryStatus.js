@@ -3,42 +3,44 @@ $(document).ready(function() {
 	$('#orderNo').focus();
 	
 	$("#searchNo").click(function(){
+		$("#searchNo").attr('disabled',true);
 		$('#massage').empty();
 		if($('#orderNo').val() == ''){
     		$('#orderDesc').text('请先输入号码');
     		$('#orderDesc').show();
     		return;
     	}
+		
+		//加载中
+		var $loadingToast = $('#loadingToast');
+        if ($loadingToast.css('display') != 'none') {
+            return;
+        }
+        $loadingToast.show();
 		$.post('/wx/queryStatusJson',$("#returnFrom").serialize(), function(data){
+			 $loadingToast.hide();
+			$("#searchNo").attr('disabled',false);
 			var orderNo=$("#orderNoList")
 			orderNo.empty();
 			if(data.length>0){	
-				/*for(var i = 0; i < data.length; i++){
-					var orderNoList=data[i].ORDERNO;
-					var orderstatus=data[i].ORDERSTATUS;
-					if(orderstatus==''){
-						orderNo.append("<h2 class='title'>单据号码："+orderNoList+"</h2>");
-					}else if(orderNoList==''||orderNoList==null){
-						orderNo.append("<h2 class='title'>此单据下面的单品没有序列号</h2>");
-					}else{
-						orderNo.append("<h2 class='title'>--"+orderNoList+" <span style='color:#E64340'>&nbsp;&nbsp;&nbsp;&nbsp;"+orderstatus+"</span> </h2>");
-					}
-				}*/
 				data.forEach(function(da){
 					var TRANSFER_ORDER_NO = da.TRANSFER_ORDER;
 					var PICKUP_ORDER_NO = da.PICKUP_ORDER;
 					var DEPART_ORDER_NO = da.DEPART_ORDER;
 					var DELIVERY_ORDER_NO = da.DELIVERY_ORDER;
 					var RETURN_ORDER_NO = da.RETURN_ORDER;
-			
+					$('#massage').append('<label class="weui_cell weui_check_label">'
+			                +'<div class="weui_cell_bd weui_cell_primary">'
+			                +'<p align="center">开始</p>'
+			                +'</div>'
+			                +'</label>');
 					
 					if(TRANSFER_ORDER_NO)
 						$('#massage').append('<label class="weui_cell weui_check_label">'
-								
 				                +'<div class="weui_cell_bd weui_cell_primary">'
 				                +'<p align="left">'+TRANSFER_ORDER_NO.substring(TRANSFER_ORDER_NO.indexOf('-')+1,TRANSFER_ORDER_NO.length)+'</p>'
 				                +'</div>'
-				               +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
 				                +'<p align="left">'+TRANSFER_ORDER_NO.substring(0, TRANSFER_ORDER_NO.indexOf('-'))+'</p>'
 				                +'</div>'
 				                +'</label>');
@@ -69,7 +71,7 @@ $(document).ready(function() {
 				                +'<p align="left">'+DELIVERY_ORDER_NO.substring(DELIVERY_ORDER_NO.indexOf('-')+1,DELIVERY_ORDER_NO.length)+'</p>'
 				                +'</div>'
 				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left">状态'+DELIVERY_ORDER_NO.substring(0, DELIVERY_ORDER_NO.indexOf('-'))+'</p>'
+				                +'<p align="left">'+DELIVERY_ORDER_NO.substring(0, DELIVERY_ORDER_NO.indexOf('-'))+'</p>'
 				                +'</div>'
 				                +'</label>');
 					if(RETURN_ORDER_NO)
@@ -80,6 +82,12 @@ $(document).ready(function() {
 				                +'</div>'
 				                +'<div class="weui_cell_bd weui_cell_primary">'
 				                +'<p align="left">'+RETURN_ORDER_NO.substring(0, RETURN_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+					if(RETURN_ORDER_NO.substring(0, RETURN_ORDER_NO.indexOf('-'))=='已签收')
+						$('#massage').append('<label class="weui_cell weui_check_label">'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="center">结束</p>'
 				                +'</div>'
 				                +'</label>');
 
