@@ -65,8 +65,10 @@ var refreshUrl=function(url){
          str = "<a href='/costPrePayOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }else if(orderNo.indexOf("HSD") == 0){//预付
          str = "<a href='/damageOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
-     }else if(orderNo.indexOf("YS") == 0){//配送
+     }else if(orderNo.indexOf("YS") == 0 ){//运输单
         str = "<a href='/transferOrder/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
+     }else if(orderNo.indexOf("TH") == 0 ){//退货单
+        str = "<a href='/returnTransfer/edit?id="+id+"' target='_blank'>"+orderNo+"</a>";
      }
 
      return str;
