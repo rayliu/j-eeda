@@ -42,7 +42,7 @@ $(document).ready(function() {
     		else{
     			ids.splice($.inArray($(this).attr('id'),ids),1);
     			change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
-    			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+    			orderNos.splice($.inArray($(this).attr('id'),orderNos),1);
                 allType.splice($.inArray($(this).attr('spname'),allType),1);
                 spType.splice($.inArray($(this).attr('spname'),spType),1);
     			//$("#checkedCostCheckList").remove("tbody",$(this).parent().parent());
