@@ -29,16 +29,37 @@ $(document).ready(function() {
 					var DEPART_ORDER_NO = da.DEPART_ORDER;
 					var DELIVERY_ORDER_NO = da.DELIVERY_ORDER;
 					var RETURN_ORDER_NO = da.RETURN_ORDER;
-					
-					
-					if(TRANSFER_ORDER_NO)
+					if(RETURN_ORDER_NO)
 						$('#massage').append('<label class="weui_cell weui_check_label" style="padding: 0px 15px;">'
+								
 				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 10px;">'+TRANSFER_ORDER_NO.substring(TRANSFER_ORDER_NO.indexOf('-')+1,TRANSFER_ORDER_NO.length)+'</p>'
+				                +'<p align="left" style="font-size: 10px;">'+RETURN_ORDER_NO.substring(RETURN_ORDER_NO.indexOf('-')+1,RETURN_ORDER_NO.length)+'</p>'
 				                +'</div>'
-				                +'<div style="background: url(/yh/img/connector_start.png);height: 43px;width: 30px;"></div>'
+				                +'<div style="background: url(/yh/img/connector_start.png) no-repeat;height: 43px;width: 40px;"></div>'
 				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 11px;">'+TRANSFER_ORDER_NO.substring(0, TRANSFER_ORDER_NO.indexOf('-'))+'</p>'
+				                +'<p align="left" style="font-size: 11px;">'+RETURN_ORDER_NO.substring(0, RETURN_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+					if(DELIVERY_ORDER_NO)
+			        	$('#massage').append('<label class="weui_cell weui_check_label" style="padding: 0px 15px;">'
+			        			
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left" style="font-size: 10px;">'+DELIVERY_ORDER_NO.substring(DELIVERY_ORDER_NO.indexOf('-')+1,DELIVERY_ORDER_NO.length)+'</p>'
+				                +'</div>'
+				                +'<div style="background: url(/yh/img/connector.png) no-repeat;height: 43px;width: 40px;"></div>'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left" style="font-size: 11px;">'+DELIVERY_ORDER_NO.substring(0, DELIVERY_ORDER_NO.indexOf('-'))+'</p>'
+				                +'</div>'
+				                +'</label>');
+			        if(DEPART_ORDER_NO)
+						$('#massage').append('<label class="weui_cell weui_check_label" style="padding: 0px 15px;">'
+								
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left" style="font-size: 10px;">'+DEPART_ORDER_NO.substring(DEPART_ORDER_NO.indexOf('-')+1,DEPART_ORDER_NO.length)+'</p>'
+				                +'</div>'
+				                +'<div style="background: url(/yh/img/connector.png) no-repeat;height: 43px;width: 40px;"></div>'
+				                +'<div class="weui_cell_bd weui_cell_primary">'
+				                +'<p align="left" style="font-size: 11px;">'+DEPART_ORDER_NO.substring(0, DEPART_ORDER_NO.indexOf('-'))+'</p>'
 				                +'</div>'
 				                +'</label>');
 					if(PICKUP_ORDER_NO)
@@ -47,44 +68,27 @@ $(document).ready(function() {
 				                +'<div class="weui_cell_bd weui_cell_primary">'
 				                +'<p align="left" style="font-size: 10px;">'+PICKUP_ORDER_NO.substring(PICKUP_ORDER_NO.indexOf('-')+1,PICKUP_ORDER_NO.length)+'</p>'
 				                +'</div>'
-				                +'<div style="background: url(/yh/img/connector.png);height: 43px;width: 30px;"></div>'
+				                +'<div style="background: url(/yh/img/connector.png) no-repeat;height: 43px;width: 40px;"></div>'
 				                +'<div class="weui_cell_bd weui_cell_primary">'
 				                +'<p align="left" style="font-size: 11px;">'+PICKUP_ORDER_NO.substring(0, PICKUP_ORDER_NO.indexOf('-'))+'</p>'
 				                +'</div>'
 				                +'</label>');
-					if(DEPART_ORDER_NO)
+
+
+					if(TRANSFER_ORDER_NO)
 						$('#massage').append('<label class="weui_cell weui_check_label" style="padding: 0px 15px;">'
-								
 				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 10px;">'+DEPART_ORDER_NO.substring(DEPART_ORDER_NO.indexOf('-')+1,DEPART_ORDER_NO.length)+'</p>'
+				                +'<p align="left" style="font-size: 10px;">'+TRANSFER_ORDER_NO.substring(TRANSFER_ORDER_NO.indexOf('-')+1,TRANSFER_ORDER_NO.length)+'</p>'
 				                +'</div>'
-				                +'<div style="background: url(/yh/img/connector.png);height: 43px;width: 30px;"></div>'
+				                +'<div style="background: url(/yh/img/connector_end.png) no-repeat;height: 43px;width: 40px;"></div>'
 				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 11px;">'+DEPART_ORDER_NO.substring(0, DEPART_ORDER_NO.indexOf('-'))+'</p>'
-				                +'</div>'
-				                +'</label>');
-			        if(DELIVERY_ORDER_NO)
-			        	$('#massage').append('<label class="weui_cell weui_check_label" style="padding: 0px 15px;">'
-			        			
-				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 10px;">'+DELIVERY_ORDER_NO.substring(DELIVERY_ORDER_NO.indexOf('-')+1,DELIVERY_ORDER_NO.length)+'</p>'
-				                +'</div>'
-				                +'<div style="background: url(/yh/img/connector.png);height: 43px;width: 30px;"></div>'
-				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 11px;">'+DELIVERY_ORDER_NO.substring(0, DELIVERY_ORDER_NO.indexOf('-'))+'</p>'
+				                +'<p align="left" style="font-size: 11px;">'+TRANSFER_ORDER_NO.substring(0, TRANSFER_ORDER_NO.indexOf('-'))+'</p>'
 				                +'</div>'
 				                +'</label>');
-					if(RETURN_ORDER_NO)
-						$('#massage').append('<label class="weui_cell weui_check_label" style="padding: 0px 15px;">'
-								
-				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 10px;">'+RETURN_ORDER_NO.substring(RETURN_ORDER_NO.indexOf('-')+1,RETURN_ORDER_NO.length)+'</p>'
-				                +'</div>'
-				                +'<div style="background: url(/yh/img/connector_end.png);height: 43px;width: 30px;"></div>'
-				                +'<div class="weui_cell_bd weui_cell_primary">'
-				                +'<p align="left" style="font-size: 11px;">'+RETURN_ORDER_NO.substring(0, RETURN_ORDER_NO.indexOf('-'))+'</p>'
-				                +'</div>'
-				                +'</label>');
+					
+					
+			        
+					
 					
 
 				})	
