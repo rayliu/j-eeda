@@ -54,45 +54,64 @@ $(document).ready(function() {
                 data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
             }],
             yAxis: [{
-                type: 'value',
-                name: '金额（元）',
-                position: 'left'
+                    type: 'value',
+                    name: '金额（元）',
+                    position: 'left'
                 }, {
-                type: 'value',
-                name: '百分比',
-                position: 'right',
-                axisLabel : {
-                formatter: '{value} %'
+                    type: 'value',
+                    name: '百分比',
+                    position: 'right',
+                    axisLabel : {
+                        formatter: '{value} %'
                     }
-            }],
+                }
+            ],
             series: [{
                     name: '收入',
-                    type: 'bar',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            label : {
+                                show: true, position: 'top'
+                            }
+                        }
+                    },
                     data: revenue
                 }, {
+                    name: '毛利率(%)',
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            label : {
+                                show: true, 
+                                position: 'top',
+                                formatter: function (params){
+                                    return params.value+'%';
+                                }
+                            }
+                        }
+                    },
+                    yAxisIndex: 1,
+                    data: profit_rate
+                },{
                     name: '成本',
                     type: 'bar',
+                    stack: '总量',
                     data: cost
                 }, {
                     name: '毛利',
                     type: 'bar',
+                    stack: '总量',
                     data: profit
-                }, {
-                    name: '毛利率(%)',
-                    type: 'line',
-                    yAxisIndex: 1,
-                    data: profit_rate
-                },
-
-                {
+                },{
                     name: '总收入饼图',
                     type: 'pie',
                     tooltip: {
                         trigger: 'item',
                         formatter: '{a} <br/>{b} : {c} ({d}%)'
                     },
-                    center: [160, 130],
-                    radius: [0, 50],
+                    center: [660, 130],
+                    radius: [0, 35],
                     itemStyle: {
                         normal: {
                             labelLine: {
@@ -145,6 +164,7 @@ $(document).ready(function() {
                 profit_rate=data.profit_rate;
                 sum_profit=data.sum_profit;
                 sum_cost=data.sum_cost
+
                 var profit_option = get_charts_option(revenue, cost, profit, profit_rate, sum_profit, sum_cost);
                 profit_chart.setOption(profit_option);
             }

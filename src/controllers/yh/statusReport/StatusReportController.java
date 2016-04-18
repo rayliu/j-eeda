@@ -198,9 +198,15 @@ public class StatusReportController extends Controller{
 		double sum_profit=0.0;
 		Record rec =null;
 		for(int i=1; i<=12;i++){
-			String sql=" SELECT round(ifnull((sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2) cost_sum, round( ifnull((sum((ys_insurance + return_amount))),0),2) revenue_sum,"
-					+ " round(ifnull((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2) profit,"
-					+ " round(ifnull(((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))) / sum((ys_insurance + return_amount))),0),2) profit_rate FROM"
+			String sql=" SELECT round(ifnull((sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2) cost_sum, "
+			        + " round( ifnull((sum((ys_insurance + return_amount))),0),2) revenue_sum,"
+//			        + " round(ifnull((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2) profit,"
+//                    + " round(ifnull(((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))) / sum((ys_insurance + return_amount))),0),2) profit_rate"
+					+ " if(round(ifnull((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2)<0,0, "
+					+ "    round(ifnull((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))),0),2) ) profit,"
+					+ " if(round(ifnull(((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))) / sum((ys_insurance + return_amount))),0),2)<0, 0,"
+					+ "    round(ifnull(((sum((ys_insurance + return_amount)) - sum((yf_pickup + yf_depart + yf_insurance + delivery))) / sum((ys_insurance + return_amount))),0),2) ) profit_rate"
+					+ " FROM"
 					+ " (SELECT ifnull((SELECT IFNULL(sum(pofi.amount), 0) FROM pickup_order_fin_item pofi LEFT JOIN depart_order d_o ON d_o.id = pofi.pickup_order_id LEFT JOIN depart_transfer dt ON dt.pickup_id = d_o.id LEFT JOIN fin_item fi ON fi.id = pofi.fin_item_id WHERE"
 					+ " dt.order_id = tor.id AND fi.type = '应付' AND pofi.fin_item_id != 7 AND d_o.audit_status = '对账已确认' AND d_o.combine_type = 'PICKUP') / ( SELECT count(0) FROM transfer_order_item_detail WHERE pickup_id = toid.pickup_id),0) yf_pickup,"
 					+ " ifnull((SELECT IFNULL(sum(dofi.amount), 0) FROM depart_order_fin_item dofi LEFT JOIN depart_order d_o ON d_o.id = dofi.depart_order_id LEFT JOIN depart_transfer dt ON dt.depart_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id"
