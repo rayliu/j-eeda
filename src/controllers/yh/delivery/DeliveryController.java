@@ -108,7 +108,13 @@ public class DeliveryController extends Controller {
 				condition += " and ifnull(tor.customer_order_no,'') like '" + orderNo_filter.trim() + "' ";
 			}
 			if(status_filter!=null&&!"".equals(status_filter)){
-				condition += " and ifnull(d.status,'') like '%"+ status_filter.trim()+ "%' ";
+				if("已签收".equals(status_filter)){
+					condition += " and ror.transaction_status !='新建'";
+				}else{
+					if("已送达".equals(status_filter))
+						status_filter="已送达','已完成";
+					condition += " and ifnull(d.status,'') in('"+ status_filter+ "') ";
+				}
 			}
 			if(customer_filter!=null&&!"".equals(customer_filter)){
 				condition += " and ifnull(c.abbr,'') like '%"+ customer_filter.trim()+ "%'";
@@ -174,7 +180,8 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
 					+ " LEFT JOIN office o ON o.id = d.office_id"
-					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id";
+					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
+					+ " left join return_order ror on ror.delivery_order_id = d.id  and ror.transaction_status is not null " ;
 			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w1.warehouse_name,w.warehouse_name) warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
@@ -215,7 +222,8 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
 					+ " LEFT JOIN office o ON o.id = d.office_id"
-					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id";
+					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
+					+ " left join return_order ror on ror.delivery_order_id = d.id  and ror.transaction_status is not null " ;
 
 			
 			String orderByStr = " order by A.create_stamp desc ";
