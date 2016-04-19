@@ -110,12 +110,12 @@ $(document).ready(function() {
                         trigger: 'item',
                         formatter: '{a} <br/>{b} : {c} ({d}%)'
                     },
-                    center: [660, 130],
+                    center: [560, 80],
                     radius: [0, 35],
                     itemStyle: {
                         normal: {
                             labelLine: {
-                                length: 20
+                                length: 10
                             }
                         }
                     },
