@@ -94,7 +94,6 @@
     
 
     //申请保存
-  //收款确认
 	$("#saveBtn").on('click',function(){
 		$("#saveBtn").attr("disabled", true);
 		$("#printBtn").attr("disabled", true);
@@ -116,6 +115,7 @@
 				$("#saveBtn").attr("disabled", false);
 				$("#printBtn").attr("disabled", false);
 				$("#checkBtn").attr('disabled',false);
+				$("#deleteBtn").attr("disabled", false);
 				contactUrl("edit?id",data.ID);
 				total = 0.00;
 				nopay = 0.00;
@@ -170,7 +170,7 @@
 		});
 	  
 	  
-	  //撤回
+	  //退回
 	  $("#returnBtn").on('click',function(){
 		  	$("#returnBtn").attr("disabled", true);
 		  	orderjson();
@@ -188,6 +188,28 @@
 		});
 	  
 	  
+	//撤销单据
+	  $("#deleteBtn").on('click',function(){
+		  	$("#deleteBtn").attr("disabled", true);
+		  	if(confirm("确定撤撤销此单据？返回到上一步重新做单？")){
+		  		orderjson();
+				$.get("/chargePreInvoiceOrder/deleteOrder", {application_id:$('#application_id').val()}, function(data){
+					if(data.success){
+						$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+						setTimeout(function(){
+							location.href="/chargeAcceptOrder";
+						}, 1000);
+					}else{
+						$("#deleteBtn").attr("disabled", false);
+						$.scojs_message('撤销失败', $.scojs_message.TYPE_FALSE);
+					}
+				},'json');
+		  	}else{
+		  		$("#deleteBtn").attr("disabled", false);
+		  	}
+		});
+	  
+	  
 	  //确认
 	  $("#confirmBtn").on('click',function(){
 		  	$("#confirmBtn").attr("disabled", true);
@@ -196,6 +218,7 @@
 				if(data.success){
 					$("#returnBtn").attr("disabled", true);
 					$("#returnConfirmBtn").attr("disabled", false);
+					$("#deleteBtn").attr("disabled", true);
 					$.scojs_message('收款成功', $.scojs_message.TYPE_OK);
 				}else{
 					$("#confirmBtn").attr("disabled", false);
@@ -215,6 +238,7 @@
 					if(data.success){
 						$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
 					  	$("#confirmBtn").attr("disabled", false);
+					  	$("#deleteBtn").attr("disabled", false);
 					}else{
 						$("#returnConfirmBtn").attr("disabled", false);
 						$("#returnBtn").attr("disabled", false);
@@ -285,6 +309,7 @@
     //按钮控制
 	if($('#status').val()=='new'){
 		$("#saveBtn").attr('disabled',false);
+		$("#deleteBtn").attr("disabled", true);
 	}else if($('#status').val()=='新建' || $('#status').val()=='已审批'){
 		if($('#application_id').val()!=''){
 			$("#saveBtn").attr('disabled',false);
@@ -298,6 +323,7 @@
 	}else if($('#status').val()=='已收款'){
 		$("#returnConfirmBtn").attr('disabled',false);
 		$("#printBtn").attr('disabled',false);
+		$("#deleteBtn").attr("disabled", true);
 	}
 	
 

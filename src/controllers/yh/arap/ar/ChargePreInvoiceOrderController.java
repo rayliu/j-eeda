@@ -16,12 +16,19 @@ import models.ArapAccountAuditLog;
 import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
+import models.ArapCostInvoiceApplication;
+import models.ArapCostOrder;
 import models.ChargeApplicationOrderRel;
+import models.CostApplicationOrderRel;
 import models.Party;
 import models.UserLogin;
 import models.yh.arap.ArapAccountAuditSummary;
+import models.yh.arap.ArapMiscCostOrder;
+import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 import models.yh.arap.inoutorder.ArapInOutMiscOrder;
+import models.yh.arap.prePayOrder.ArapPrePayOrder;
+import models.yh.carmanage.CarSummaryOrder;
 import models.yh.damageOrder.DamageOrder;
 import models.yh.profile.Contact;
 
@@ -1213,6 +1220,50 @@ public class ChargePreInvoiceOrderController extends Controller {
 			
 		renderJson("{\"success\":true}");
         
+    }
+	
+	
+	//撤销申请单据
+	@Before(Tx.class)
+    public void deleteOrder(){
+		//先更改对应的单据状态
+		//删除从表数据
+		//删除主单据数据
+		
+        String application_id=getPara("application_id");
+        //删除从表数据
+        String sql = "select * from charge_application_order_rel "
+				+ " where application_order_id = '"+application_id+"'";
+		List<ChargeApplicationOrderRel> rel = ChargeApplicationOrderRel.dao.find(sql);
+		for(ChargeApplicationOrderRel crel:rel){
+			long id = crel.getLong("charge_order_id");
+			String order_type = crel.getStr("order_type");
+			
+			//修改相关单据状态
+			if(order_type.equals("应收对账单")){
+				ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(id);
+				arapChargeOrder.set("status", "已确认").update();
+			}else if(order_type.equals("手工收入单")){
+				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
+				arapMiscChargeOrder.set("status", "新建").update();
+			}else if(order_type.equals("开票记录单")){
+				ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(id);
+				arapChargeInvoice.set("status", "已审批").update();
+			}else if(order_type.equals("往来票据单")){
+				ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+				arapInOutMiscOrder.set("charge_status", "未收").update();
+			}
+			
+			//删除从表数据
+			crel.delete();
+		}
+		
+		//删除主表数据
+		ArapChargeInvoiceApplication arapCostInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(application_id);
+        arapCostInvoiceApplication.delete();
+	        
+		
+		renderJson("{\"success\":true}");
     }
 
 }
