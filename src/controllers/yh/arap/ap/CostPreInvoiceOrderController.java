@@ -1617,7 +1617,59 @@ public class CostPreInvoiceOrderController extends Controller {
 			}
 			renderJson("{\"success\":true}");
 	    }
-	    
+		
+		
+		
+		//撤销申请单据
+		@Before(Tx.class)
+	    public void deleteOrder(){
+			//先更改对应的单据状态
+			//删除从表数据
+			//删除主单据数据
+			
+	        String application_id=getPara("application_id");
+	        //删除从表数据
+	        String sql = "select * from cost_application_order_rel "
+					+ " where application_order_id = '"+application_id+"'";
+			List<CostApplicationOrderRel> rel = CostApplicationOrderRel.dao.find(sql);
+			for(CostApplicationOrderRel crel:rel){
+				long id = crel.getLong("cost_order_id");
+				String order_type = crel.getStr("order_type");
+				
+				//修改相关单据状态
+				if(order_type.equals("对账单")){
+					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
+					arapCostOrder.set("status", "已确认").update();
+				}else if(order_type.equals("成本单")){
+					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
+					arapMiscCostOrder.set("audit_status", "新建").update();
+				}else if(order_type.equals("行车单")){
+					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
+					carSummaryOrder.set("status", "已审核").update();
+				}else if(order_type.equals("预付单")){
+					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
+					arapPrePayOrder.set("status", "新建").update();
+				}else if(order_type.equals("报销单")){
+					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
+					reimbursementOrder.set("status", "新建").update();
+				}else if(order_type.equals("往来票据单")){
+					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
+					arapInOutMiscOrder.set("pay_status", "未付").update();
+				}
+				
+				//删除从表数据
+				crel.delete();
+			}
+			
+			//删除主表数据
+			ArapCostInvoiceApplication arapCostInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
+	        arapCostInvoiceApplication.delete();
+		        
+			
+			renderJson("{\"success\":true}");
+	    }
+		
+		
 	    
 		//付款确认
 		@Before(Tx.class)

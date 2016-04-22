@@ -119,6 +119,7 @@
 				$("#saveBtn").attr("disabled", false);
 				$("#printBtn").attr("disabled", false);
 				$("#checkBtn").attr('disabled',false);
+				$("#deleteBtn").attr("disabled", false);
 				contactUrl("edit?id",data.ID);
 				total = 0.00;
 				nopay = 0.00;
@@ -204,6 +205,7 @@
 			$.get("/costPreInvoiceOrder/confirmOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val(),pay_time:$('#pay_date').val(),pay_type:$('#pay_type').val(),pay_bank:$('#pay_bank').val()}, function(data){
 				if(data.success){
 					$("#returnBtn").attr("disabled", true);
+					$("#deleteBtn").attr("disabled", true);
 					$("#returnConfirmBtn").attr("disabled", false);
 					$.scojs_message('付款成功', $.scojs_message.TYPE_OK);
 				}else{
@@ -223,6 +225,7 @@
 						$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
 					  	$("#confirmBtn").attr("disabled", false);
 					  	$("#returnBtn").attr("disabled", false);
+					  	$("#deleteBtn").attr("disabled", false);
 					}else{
 						$("#returnConfirmBtn").attr("disabled", false);
 						$("#returnBtn").attr("disabled", false);
@@ -231,6 +234,29 @@
 				},'json');
 		  	}else{
 		  		$("#returnConfirmBtn").attr("disabled", false);
+		  	}
+		});
+	  
+	  
+	  
+	//撤销单据
+	  $("#deleteBtn").on('click',function(){
+		  	$("#deleteBtn").attr("disabled", true);
+		  	if(confirm("确定撤撤销此单据？返回到上一步重新做单？")){
+		  		orderjson();
+				$.get("/costPreInvoiceOrder/deleteOrder", {application_id:$('#application_id').val()}, function(data){
+					if(data.success){
+						$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+						setTimeout(function(){
+							location.href="/costAcceptOrder";
+						}, 1000);
+					}else{
+						$("#deleteBtn").attr("disabled", false);
+						$.scojs_message('撤销失败', $.scojs_message.TYPE_FALSE);
+					}
+				},'json');
+		  	}else{
+		  		$("#deleteBtn").attr("disabled", false);
 		  	}
 		});
 	
@@ -297,6 +323,7 @@
     //按钮控制
 	if($('#status').val()=='new'){
 		$("#saveBtn").attr('disabled',false);
+		$("#deleteBtn").attr('disabled',true);
 	}else if($('#status').val()=='新建' || $('#status').val()=='已审批'){
 		if($('#application_id').val()!=''){
 			$("#saveBtn").attr('disabled',false);
@@ -308,6 +335,7 @@
 		$("#returnBtn").attr('disabled',false);
 		$("#confirmBtn").attr('disabled',false);
 	}else if($('#status').val()=='已付款'){
+		$("#deleteBtn").attr('disabled',true);
 		$("#printBtn").attr('disabled',false);
 		$("#returnConfirmBtn").attr('disabled',false);
 	}
