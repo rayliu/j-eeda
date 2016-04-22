@@ -23,6 +23,7 @@ import models.Party;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
 import models.TransferOrderItem;
+import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.UserOffice;
@@ -41,6 +42,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
@@ -959,7 +961,8 @@ public class TransferOrderController extends Controller {
 		redirect("/transferOrder");
 	}
 
-	// 取消
+	//撤销单据
+	@Before(Tx.class)
 	public void cancel() {
 		String id = getPara("orderId");
 		String sql = "select dt.transfer_order_no, dor.depart_no, dor.STATUS as pickup_status from depart_transfer dt "
@@ -967,11 +970,29 @@ public class TransferOrderController extends Controller {
 				+ "where dor.STATUS not in('新建','取消') and dt.order_id=" + id;
 		List<Record> nextOrders = Db.find(sql);
 		if (nextOrders.size() == 0) {
+			//先删除从表
+			//删除主表
+			//1.删除里程碑数据
+			List<TransferOrderMilestone> tms = TransferOrderMilestone.dao.find("select * from transfer_order_milestone where order_id =?",id);
+			for(TransferOrderMilestone tm :tms){
+				tm.delete();
+			}
+			
+			//2.删除单品明细表
+			List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id =?",id);
+			for(TransferOrderItemDetail toid :toids){
+				toid.delete();
+			}
+			
+			//3.删除单品表
+			List<TransferOrderItem> tois = TransferOrderItem.dao.find("select * from transfer_order_item where order_id =?",id);
+			for(TransferOrderItem toi :tois){
+				toi.delete();
+			}
+			
+			//4.删除主表
 			TransferOrder order = TransferOrder.dao.findById(id);
-			order.set("Status", "取消")
-					.set("last_modified_by",
-							LoginUserController.getLoginUserId(this))
-					.set("last_modified_stamp", new Date()).update();
+			order.delete();
 			renderJson("{\"success\":true}");
 		} else {
 			renderJson("{\"success\":false}");

@@ -2752,13 +2752,23 @@ $(document).ready(function() {
     });
 
     $("#cancelBtn").on('click',function(){
-    	$.post('/transferOrder/cancel', {orderId:$("#order_id").val()}, function(data){ 
-    		if(!data.success){
-    			$.scojs_message('对不起，当前单据已有下级单据(调车单/发车单)，不能撤销', $.scojs_message.TYPE_ERROR);
-    		}else{
-    			$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
-    		}
-    	});
+    	var status = $('#status').val();
+    	if(!confirm("是否确认撤销此订单？"))
+    		return;
+    	if(status!='新建'){
+    		$.scojs_message('对不起，当前单据已有下级单据(调车单/发车单)，不能撤销', $.scojs_message.TYPE_ERROR);
+    	}else{
+    		$.post('/transferOrder/cancel', {orderId:$("#order_id").val()}, function(data){ 
+        		if(!data.success){
+        			$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
+        		}else{
+        			$.scojs_message('撤销成功!,3秒后自动返回运输单列表。。。', $.scojs_message.TYPE_OK);
+        			setTimeout(function(){
+						location.href="/transferOrder";
+					}, 3000);
+        		}
+        	});
+    	}
     });
 
     $("#btnOK").on('click',function(){
