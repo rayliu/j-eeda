@@ -2758,8 +2758,10 @@ $(document).ready(function() {
     	if(status!='新建'){
     		$.scojs_message('对不起，当前单据已有下级单据(调车单/发车单)，不能撤销', $.scojs_message.TYPE_ERROR);
     	}else{
+    		$("#cancelBtn").attr('disabled',true);
     		$.post('/transferOrder/cancel', {orderId:$("#order_id").val()}, function(data){ 
         		if(!data.success){
+        			$("#cancelBtn").attr('disabled',false);
         			$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
         		}else{
         			$.scojs_message('撤销成功!,3秒后自动返回运输单列表。。。', $.scojs_message.TYPE_OK);

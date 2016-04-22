@@ -18,6 +18,45 @@
 		$("#saveDepartOrderBtn").attr("disabled",true);
 	}
 	
+	
+	//撤销发车单
+	$("#deleteBtn").on('click',function(){
+		var status = $('#departOrderStatus').val();//单据状态
+		var audit_status = $('#audit_status').val();  //财务状态
+		var departOrderId = $("#departOrderId").val();  //发车单id
+		//按钮控制
+		$("#deleteBtn").attr("disabled",true);
+		
+		if(!confirm("是否确认撤销此订单？"))
+    		return;
+		if(departOrderId==''){
+			$.scojs_message('单据未生成，无法撤销！', $.scojs_message.TYPE_FALSE);
+			return;
+		}
+		if(audit_status!='新建'){
+			$.scojs_message('此单据已做了财务，无法撤销！', $.scojs_message.TYPE_FALSE);
+			return;
+		}
+		if(status!='新建' && status!='运输在途'){
+			$.scojs_message('此单据已做了下级单据，无法撤销！', $.scojs_message.TYPE_FALSE);
+			return;
+		}
+		$.post('/departOrder/cancelOrder',{orderId:departOrderId},function(data){
+			if(!data.success){
+    			$("#deleteBtn").attr('disabled',false);
+    			$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
+    		}else{
+    			$.scojs_message('撤销成功!,3秒后自动返回运输单列表。。。', $.scojs_message.TYPE_OK);
+    			setTimeout(function(){
+					location.href="/departOrder";
+				}, 3000);
+    		}
+		});
+		
+				
+		
+	});
+	
 	   
     //体积和重量回显
     var volume = $('#volume').val();
@@ -691,6 +730,7 @@
      	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
      	                	paymenttable.fnDraw(); 
      	                	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+     	                	$("#deleteBtn").attr("disabled",false);
      	                });
     		    	    
     				}else{
@@ -997,15 +1037,7 @@
     	    if($("#departOrderArrivalMode").val() == 'delivery' && $("#departOrderStatus").val() == '已发车'){
     	    	$("#receiptBtn").attr("disabled", false);
     	    }
-    	    
-    	    /*if($("#departOrderArrivalMode").val() == 'gateIn' && $("#departOrderStatus").val() == '已发车'){
-    	    	$("#warehousingConfirmBtn").attr("disabled", false);
-    	    }*/
-    	    
-    	    
-    	    /*if($("#departOrderId").val() != ''){
-    	    	$("#departureConfirmationBtn").attr("disabled", false);
-    	    }*/
+
     	    
     	    $("#cancelBtn").click(function(){
     	    	$("#detailDialog").modal('hide');

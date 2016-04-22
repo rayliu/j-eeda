@@ -2958,5 +2958,65 @@ public class DepartOrderController extends Controller {
         Map.put("aaData", departOrderitem);
         renderJson(Map);
     }
+    
+    @Before(Tx.class)
+    public void cancelOrder(){
+    	String id = getPara("orderId");
+    	List transferOrderIds = new ArrayList();
+    	
+    	if(id==null || "".equals(id))
+    		return;
+    	//再次校验是否存在下级单据
+    	Record re = Db.findFirst("select * from transfer_order_item_detail where depart_id = ? and delivery_id is not null",id);
+    	if(re!=null){
+    		renderJson("{\"success\":false}");
+    	}else{
+    		//1.清除单品明细表发车单数据
+    		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where depart_id = ?",id);
+    		for(TransferOrderItemDetail toid :toids){
+				toid.set("depart_id",null).update();
+			}
+    		
+    		//2.清除中间关联表数据
+    		List<DepartTransferOrder> dtos = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?",id);
+    		for(DepartTransferOrder dto :dtos){
+    			Long tranId = dto.getLong("order_id");
+    			transferOrderIds.add(tranId);
+    			//保存运输单id
+    			dto.delete();
+			}
+    		
+    		//3.清除depart_pickup表数据
+    		List<DepartPickupOrder> dpos = DepartPickupOrder.dao.find("select * from depart_pickup where depart_id = ?",id);
+    		for(DepartPickupOrder dpo : dpos){
+    			//保存运输单id
+    			dpo.delete();
+			}
+    		
+    		//4.删除主单据
+    		DepartOrder dep  = DepartOrder.dao.findById(id);
+    		dep.delete();
+    		
+    		//5.删除相对于的里程碑数据
+    		List<TransferOrderMilestone> toms = TransferOrderMilestone.dao.find("select * from transfer_order_milestone where depart_id = ?",id);
+    		for(TransferOrderMilestone tom :toms){
+    			tom.delete();
+			}
+    		
+    		//6.更新相对的运输单
+    		for(int i=0;i<transferOrderIds.size();i++){
+    			//查看此单据为多次发车还是一次发车
+    			Record dt = Db.findFirst("select * from depart_transfer where order_id =? and depart_id is not null",transferOrderIds.get(i));
+    			TransferOrder to = TransferOrder.dao.findById(transferOrderIds.get(i));
+    			if(dt!=null){//多次发车
+        			to.set("depart_assign_status", "PARTIAL").update();
+    			}else{
+        			to.set("depart_assign_status", "NEW").update();
+    			}
+			}
+    		
+    		renderJson("{\"success\":true}");
+    	}
+    }
 
 }
