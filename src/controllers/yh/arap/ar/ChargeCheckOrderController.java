@@ -1249,7 +1249,7 @@ public class ChargeCheckOrderController extends Controller {
 		if("".equals(id)||id==null)
 			return;
 		//校验有没下级单据（申请单）
-		String sql = "SELECT * FROM `charge_application_order_rel` where order_type = '对账单' and charge_order_id =" + id;
+		String sql = "SELECT * FROM `charge_application_order_rel` where order_type = '应收对账单' and charge_order_id =" + id;
 		List<Record> nextOrders = Db.find(sql);
 		
 		//校验有没下级单据（开票单）
