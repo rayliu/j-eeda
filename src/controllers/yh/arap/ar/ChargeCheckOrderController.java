@@ -14,6 +14,7 @@ import java.util.Map;
 import models.ArapChargeItem;
 import models.ArapChargeOrder;
 import models.ArapCostItem;
+import models.ArapCostOrder;
 import models.DepartOrder;
 import models.InsuranceOrder;
 import models.Party;
@@ -1238,5 +1239,53 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.update();
 		}
 		renderJson(arapChargeOrder);
+	}
+	
+	
+	//撤销单据
+	@Before(Tx.class)
+	public void deleteOrder() {
+		String id = getPara("orderId");
+		if("".equals(id)||id==null)
+			return;
+		//校验有没下级单据（申请单）
+		String sql = "SELECT * FROM `charge_application_order_rel` where order_type = '对账单' and charge_order_id =" + id;
+		List<Record> nextOrders = Db.find(sql);
+		
+		//校验有没下级单据（开票单）
+		ArapChargeOrder aco = ArapChargeOrder.dao.findById(id);
+		
+		if (nextOrders.size() == 0 && aco.getLong("invoice_id")==null) {
+			//更新相关单据的状态
+			//先删除从表
+			//删除主表
+			//1.
+			List<ArapChargeItem> acis = ArapChargeItem.dao.find("select * from arap_charge_item where charge_order_id = ?",id);
+			for (ArapChargeItem aci:acis) {
+				long ref_order_id = aci.getLong("ref_order_id");
+				String order_type = aci.getStr("ref_order_type");
+				
+				if ("回单".equals(order_type)) {
+					ReturnOrder ror = ReturnOrder.dao.findById(ref_order_id);
+					ror.set("transaction_status", "已确认");
+					ror.update();
+				} else if ("收入单".equals(order_type)) {
+					ArapMiscChargeOrder amco = ArapMiscChargeOrder.dao
+							.findById(ref_order_id);
+					amco.set("status", "已确认");
+					amco.update();
+				} 
+				
+				//删除中间表数据集
+				aci.delete();
+			}
+			
+			//4.删除主表
+			aco.delete();
+			
+			renderJson("{\"success\":true}");
+		} else {
+			renderJson("{\"success\":false}");
+		}
 	}
 }
