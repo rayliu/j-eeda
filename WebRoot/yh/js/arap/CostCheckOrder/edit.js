@@ -556,4 +556,30 @@ $(document).ready(function() {
 			}
 		},'json');
 	});
+	
+	
+	$("#deleteBtn").on('click',function(){
+    	var status = $("#costCheckOrderStatus").html();
+    	if(!confirm("是否确认撤销此订单？"))
+    		return;
+    	if($("#costCheckOrderId").val()==""){
+    		$.scojs_message('对不起，当前单据尚未保存，不能撤销', $.scojs_message.TYPE_ERROR);
+    		return;
+    	}else if(status!='新建'&& status!='已确认'){
+	    	$.scojs_message('对不起，当前单据已有下级单据(申请单。。。)，不能撤销', $.scojs_message.TYPE_ERROR);
+    	}else{
+    		$("#deleteBtn").attr('disabled',true);
+    		$.post('/costCheckOrder/deleteOrder', {orderId:$("#costCheckOrderId").val()}, function(data){ 
+        		if(!data.success){
+        			$("#deleteBtn").attr('disabled',false);
+        			$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
+        		}else{
+        			$.scojs_message('撤销成功!,3秒后自动返回。。。', $.scojs_message.TYPE_OK);
+        			setTimeout(function(){
+						location.href="/costCheckOrder";
+					}, 3000);
+        		}
+        	});
+    	}
+    });
 } );

@@ -17,6 +17,10 @@ import models.InsuranceFinItem;
 import models.InsuranceOrder;
 import models.Party;
 import models.PickupOrderFinItem;
+import models.TransferOrder;
+import models.TransferOrderItem;
+import models.TransferOrderItemDetail;
+import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.ArapMiscCostOrderItem;
@@ -1626,5 +1630,61 @@ public class CostCheckOrderController extends Controller {
 		}
 
 		renderJson("{\"success\":true}");
+	}
+	
+	
+	//撤销单据
+	@Before(Tx.class)
+	public void deleteOrder() {
+		String id = getPara("orderId");
+		if("".equals(id)||id==null)
+			return;
+		String sql = "SELECT * FROM `cost_application_order_rel` where order_type = '对账单' and cost_order_id =" + id;
+		List<Record> nextOrders = Db.find(sql);
+		if (nextOrders.size() == 0) {
+			//更新相关单据的状态
+			//先删除从表
+			//删除主表
+			//1.
+			List<ArapCostItem> acis = ArapCostItem.dao.find("select * from arap_cost_item where cost_order_id = ?",id);
+			for (ArapCostItem aci:acis) {
+				long ref_order_id = aci.getLong("ref_order_id");
+				String order_type = aci.getStr("ref_order_no");
+				
+				if ("提货".equals(order_type)) {
+					DepartOrder pickupOrder = DepartOrder.dao.findById(ref_order_id);
+					pickupOrder.set("audit_status", "已确认");
+					pickupOrder.update();
+				} else if ("零担".equals(order_type) || "整车".equals(order_type)) {
+					DepartOrder departOrder = DepartOrder.dao.findById(ref_order_id);
+					departOrder.set("audit_status", "已确认");
+					departOrder.update();
+				} else if ("配送".equals(order_type)) {
+					DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(ref_order_id);
+					deliveryOrder.set("audit_status", "已确认");
+					deliveryOrder.update();
+				} else if ("成本单".equals(order_type)) {
+					ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao
+							.findById(ref_order_id);
+					arapmisccostOrder.set("audit_status", "已确认");
+					arapmisccostOrder.update();
+				} else {
+					InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(ref_order_id);
+					insuranceOrder.set("audit_status", "已确认");
+					insuranceOrder.update();
+				}
+				
+				//删除中间表数据集
+				aci.delete();
+			}
+			
+			//4.删除主表
+			ArapCostOrder aco = ArapCostOrder.dao.findById(id);
+			aco.delete();
+			
+			renderJson("{\"success\":true}");
+		} else {
+			renderJson("{\"success\":false}");
+		}
 	}
 }
