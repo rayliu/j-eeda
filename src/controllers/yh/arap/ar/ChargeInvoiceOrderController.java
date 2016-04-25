@@ -14,8 +14,14 @@ import models.ArapChargeInvoice;
 import models.ArapChargeInvoiceApplication;
 import models.ArapChargeInvoiceItemInvoiceNo;
 import models.ArapChargeOrder;
+import models.ArapCostItem;
+import models.ArapCostOrder;
+import models.DepartOrder;
+import models.InsuranceOrder;
 import models.Party;
 import models.UserLogin;
+import models.yh.arap.ArapMiscCostOrder;
+import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
 import org.apache.shiro.SecurityUtils;
@@ -644,5 +650,35 @@ public class ChargeInvoiceOrderController extends Controller {
     	
     	renderJson(arapAuditInvoice);
     }
+    
+    
+  //撤销单据
+  	@Before(Tx.class)
+  	public void deleteOrder() {
+  		String id = getPara("orderId");
+  		if("".equals(id)||id==null)
+  			return;
+  		String sql = "SELECT * FROM `charge_application_order_rel` where order_type = '开票记录单' and charge_order_id =" + id;
+  		List<Record> nextOrders = Db.find(sql);
+  		if (nextOrders.size() == 0) {
+  			//更新相关单据的状态
+  			//删除主表
+  			//1.
+  			List<ArapChargeOrder> acos = ArapChargeOrder.dao.find("select * from arap_charge_order where invoice_order_id = ?",id);
+  			for (ArapChargeOrder aco:acos) {
+  				aco.set("status", "已确认");
+  				//清空开票单据号
+  				aco.set("invoice_order_id", null).update();
+  			}
+  			
+  			//2.删除主表
+  			ArapChargeInvoice acic = ArapChargeInvoice.dao.findById(id);
+  			acic.delete();
+  			
+  			renderJson("{\"success\":true}");
+  		} else {
+  			renderJson("{\"success\":false}");
+  		}
+  	}
     
 }

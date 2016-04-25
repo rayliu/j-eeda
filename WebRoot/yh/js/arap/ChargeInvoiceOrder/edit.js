@@ -142,6 +142,33 @@ $(document).ready(function() {
 		
 	});	
 	
+	//撤销订单
+	$("#deleteBtn").on('click',function(){
+    	var status = $("#chargeInvoiceOrderStatus").text();
+    	var invoiceId = $("#chargeInvoiceOrderId").val();
+    	if(!confirm("是否确认撤销此订单？"))
+    		return;
+    	if(invoiceId==""){
+    		$.scojs_message('对不起，当前单据尚未保存，不能撤销', $.scojs_message.TYPE_ERROR);
+    		return;
+    	}else if(status!='新建'&& status!='已审批'){
+	    	$.scojs_message('对不起，当前单据已有下级单据(申请单。。。)，不能撤销', $.scojs_message.TYPE_ERROR);
+    	}else{
+    		$("#deleteBtn").attr('disabled',true);
+    		$.post('/chargeInvoiceOrder/deleteOrder', {orderId:invoiceId}, function(data){ 
+        		if(!data.success){
+        			$("#deleteBtn").attr('disabled',false);
+        			$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
+        		}else{
+        			$.scojs_message('撤销成功!,3秒后自动返回。。。', $.scojs_message.TYPE_OK);
+        			setTimeout(function(){
+						location.href="/chargeInvoiceOrder";
+					}, 3000);
+        		}
+        	});
+    	}
+    });
+	
 	
 	
 	if($("#chargeInvoiceOrderId").val() == ""){
