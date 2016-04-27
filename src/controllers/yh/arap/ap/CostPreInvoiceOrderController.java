@@ -71,7 +71,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String customerId = getPara("customerId");
 		Party party = Party.dao.findById(customerId);
 
-		Contact contact = Contact.dao.findById(party.get("contact_id")
+		Contact contact = Contact.dao.findFirst("select c.company_name from contact c left join party p on c.id = p.contact_id where p.id =?",party.get("contact_id")
 				.toString());
 		setAttr("customer", contact);
 		setAttr("type", "CUSTOMER");
@@ -1057,7 +1057,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			}
 			
 			if(!payee_id.equals("")){
-				Contact contact = Contact.dao.findById(payee_id);
+				Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",payee_id);
 				payee_filter = contact.getStr("company_name");
 				deposit_bank = contact.getStr("bank_name");
 				bank_no = contact.getStr("bank_no");
@@ -1199,9 +1199,9 @@ public class CostPreInvoiceOrderController extends Controller {
 						+ " when aco.cost_to_type = 'customer' then aco.customer_id"
 						+ " when aco.cost_to_type = 'insurance' then aco.insurance_id end) payee_id,aco.others_name payee_name,"
 					    + " aco.order_no, '成本单' order_type, aco.audit_STATUS, aco.remark, aco.create_stamp,"
-						+ " (case when aco.cost_to_type = 'sp' then (select c.company_name from contact c where c.id = aco.sp_id)"
-						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id)"
-						+ " when aco.cost_to_type = 'insurance' then (select c.company_name from contact c where c.id = aco.insurance_id) end) cname,"
+						+ " (case when aco.cost_to_type = 'sp' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.sp_id)"
+						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.customer_id)"
+						+ " when aco.cost_to_type = 'insurance' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.insurance_id) end) cname,"
 						+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
 						+ " WHERE caor.cost_order_id = aco.id AND caor.order_type = '成本单' "
@@ -1285,7 +1285,8 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " FROM damage_order dor"
 					    + " LEFT JOIN damage_order_fin_item dofi on dofi.order_id = dor.id and dofi.type = 'cost' and dofi.status='已确认'"
 					    + " LEFT JOIN user_login ul ON ul.id = dor.creator"
-					    + " left join contact c on c.id = dor.customer_id "
+					    + "	left join party p on p.id = dor.customer_id "
+					    + " left join contact c on c.id = p.contact_id "
 					    + " WHERE dor.id in(" + hs_id +")"
 					    +   cname
 					    + " group by dofi.party_name ";
@@ -1340,8 +1341,8 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " (case when aco.cost_to_type = 'sp' then aco.sp_id"
 						+ " when aco.cost_to_type = 'customer' then aco.customer_id end) payee_id,aco.others_name payee_name, "
 					    + " aco.order_no, '成本单' order_type, aco.audit_STATUS, aco.remark, aco.create_stamp,"
-						+ " (case when aco.cost_to_type = 'sp' then (select c.company_name from contact c where c.id = aco.sp_id)"
-						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id) end) cname,"
+						+ " (case when aco.cost_to_type = 'sp' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.sp_id)"
+						+ " when aco.cost_to_type = 'customer' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.customer_id) end) cname,"
 						+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount cost_amount,"
 						+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "
 						+ " WHERE "
@@ -1439,7 +1440,8 @@ public class CostPreInvoiceOrderController extends Controller {
 					    //+ " and dofi.id in(caor.item_ids)"
 						+ " LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id = caor.application_order_id"
 					    + " LEFT JOIN user_login ul ON ul.id = dor.creator"
-					    + " left join contact c on c.id = dor.customer_id "
+					    + " left join party p on p.id = dor.customer_id "
+					    + " left join contact c on c.id = p.contact_id "
 					    + " where caor.order_type = '货损单'"
 					    + " GROUP BY caor.application_order_id"
 						+ " ) A where app_id ="+application_id ;
@@ -1464,7 +1466,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(id);
 			setAttr("invoiceApplication", arapAuditInvoiceApplication);
 			
-			Contact con  = Contact.dao.findById(arapAuditInvoiceApplication.get("payee_id"));
+			Contact con  = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id =?",arapAuditInvoiceApplication.get("payee_id"));
 			if(con != null){
 				String payee_filter = con.get("company_name");
 				setAttr("payee_filter", payee_filter);
