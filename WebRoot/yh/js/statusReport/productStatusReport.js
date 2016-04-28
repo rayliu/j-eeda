@@ -36,23 +36,39 @@ $(document).ready(function() {
 						已收款
 					*/
             		var status = "新建运输";
-            		if(obj.aData.TRANSACTION_STATUS == "已签收"){
-            			status = "回单签收";
-            		}else if(obj.aData.TRANSACTION_STATUS == "新建"){
-            			status = "客户签收（回单在途）";
-            		}else if(obj.aData.DELIVERY_STATUS == "已发车"){
-            			status = "配送在途";
-            		}else if(obj.aData.DELIVERY_STATUS == "新建"){
-            			status = "新建配送";
-            		}else if(obj.aData.DEPART_STATUS == "已入库"){
-            			status = "在中转仓";
-            		}else if(obj.aData.DEPART_STATUS == "已发车"){
-            			status = "运输在途";
-            		}else if(obj.aData.PICK_STATUS == "已入货场"){
-            			status = "在货场";
-            		}else if(obj.aData.PICK_STATUS == "新建"){
-            			status = "新建运输";
+            		var TRANSACTION_STATUS = obj.aData.TRANSACTION_STATUS;  //回单
+            		var DELIVERY_STATUS = obj.aData.DELIVERY_STATUS;        //配送
+            		var DEPART_STATUS = obj.aData.DEPART_STATUS;            //发车
+            		var PICK_STATUS = obj.aData.PICK_STATUS;                //提货
+            		
+            		if(TRANSACTION_STATUS != null){
+            			if(TRANSACTION_STATUS == "新建"){
+            				status = "回单未签收";
+            			}else{
+            				status = "回单已签收";
+            			}
+            		}else if(DELIVERY_STATUS != null){
+            			if(DELIVERY_STATUS == "已完成" || DELIVERY_STATUS == "已送达"){
+            				status = "回单未签收";
+            			}else if(DELIVERY_STATUS == "配送在途"){
+            				status = "配送在途";
+            			}else if(DELIVERY_STATUS == "新建"){
+            				status = "新建配送";
+            			}
+            		}else if(DEPART_STATUS != null){
+            			if(DEPART_STATUS == "新建"){
+            				status = "新建发车";
+            			}else{
+            				status = "已发车";
+            			}
+            		}else if(PICK_STATUS != null){
+            			if(PICK_STATUS == "新建"){
+            				status = "新建调车";
+            			}else{
+            				status = "已入货场";
+            			}
             		}
+            		
             		return "<b style='color:red'>"+status+"</b>";
                 }
             },       	
