@@ -22,6 +22,7 @@ import models.UserLogin;
 import models.yh.structure.Contentlet;
 import models.yh.wx.WechatLocation;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -657,20 +658,28 @@ public class WxController extends ApiController {
 	
 	public void searchTransferOrder(){
 		String openid = getPara("openid");
-		String departOrder = getPara("orderNo"
-				+ "").toUpperCase();
+		String departOrder = getPara("orderNo").toUpperCase();
+		String carNo = getPara("carNo").toUpperCase();
 		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+		String conditions=" where 1 = 1 ";
+		if(StringUtils.isNotEmpty(departOrder)){
+			conditions += " and dor.depart_no = '"+departOrder+"'";
+		}
+			
+		if(StringUtils.isNotEmpty(carNo)){
+			conditions += " and dor.car_no like '%"+carNo+"%'";
+		}
 
-		String sql = "select tor.id,tor.customer_id,tor.order_no,l.`name` route_to, "
+		String sql = "select tor.id,dt.amount,dor.car_no,tor.customer_id,tor.order_no,l.`name` route_to, "
 				+ " (select count(*) from depart_pickup where order_id = tor.id and pickup_id = dor.id and depart_id is not null) disabled ,"
 				+ " dor.status status "
 				+ " from transfer_order tor"
 				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
 				+ " LEFT JOIN depart_order dor on dor.id = dt.pickup_id"
 				+ " LEFT JOIN location l on l.`code` = tor.route_to"
-				+ " where  dor.depart_no = '"+departOrder+"'"
+				+ conditions
 				+ " and tor.office_id in (select office_id from user_office where user_name='"+userRec.getStr("user_name")+"') "
-				+ "and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"')"
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"')"
 				+ " GROUP BY tor.id";
 		List<Record> re = Db.find(sql);
 		renderJson(re);

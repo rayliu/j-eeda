@@ -5,7 +5,7 @@ $(document).ready(function() {
 	$("#searchNo").click(function(){
 		$('#massage').empty();
 		$('#show').css('display','none');
-		if($('#orderNo').val() == ''){
+		if($('#orderNo').val().trim() == '' && $('#carNo').val().trim() == ''){
     		return;
     	}
 		//加载中
@@ -34,7 +34,7 @@ $(document).ready(function() {
 		                +'<p align="center">'+data[i].ORDER_NO+'</p>'
 		                +'</div>'
 		                +'<div class="weui_cell_bd weui_cell_primary">'
-		                +'<p align="center">'+data[i].ROUTE_TO+'</p>'
+		                +'<p align="center">'+data[i].ROUTE_TO+"("+data[i].AMOUNT+"件)"+'</p>'
 		                +'</div>'
 		                +'</label>');
 					if(data[i].STATUS=='新建')	
