@@ -69,7 +69,7 @@ public class ChargePreInvoiceOrderController extends Controller {
         String customerId = getPara("customerId");
         Party party = Party.dao.findById(customerId);
 
-        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+        Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",party.get("contact_id").toString());
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
@@ -114,7 +114,8 @@ public class ChargePreInvoiceOrderController extends Controller {
         		+ " from arap_charge_invoice_application_order aaia "
 				+ " left join party p on p.id = aaia.payee_id"
 				+ " left join contact c on c.id = p.contact_id"
-				+ " left join contact c1 on c1.id = aaia.sp_id"
+				+ " left join party p2 on p2.id = aaia.sp_id"
+				+ " left join contact c1 on c1.id = p2.contact_id"
 				+ " left join user_login ul on ul.id = aaia.create_by"
 				+ " left join user_login ul2 on ul2.id = aaia.audit_by"
 				+ " left join user_login ul3 on ul3.id = aaia.approver_by ";
@@ -237,7 +238,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 					+ " from arap_charge_order aao "
 					+ " left join party p on p.id = aao.payee_id "
 					+ " left join contact c on c.id = p.contact_id"
-					+ " left join contact c1 on c1.id = aao.sp_id"
+					+ " left join party p2 on p2.id = aao.sp_id "
+					+ " left join contact c1 on c1.id = p2.contact_id"
 					+ " left join office o on o.id = p.office_id"
 					+ " left join user_login usl on usl.id=aao.create_by"
 					+ " where (aao.status = '已确认' "
@@ -478,7 +480,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		}
 		
 		if(!payee_id.equals("")){
-			Contact contact = Contact.dao.findById(payee_id);
+			Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",payee_id);
 			deposit_bank = contact.getStr("bank_name");
 			bank_no = contact.getStr("bank_no");
 			account_name = contact.getStr("receiver");
@@ -597,8 +599,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 				    + " (case when aco.charge_from_type = 'sp' then aco.sp_id"
 					+ " when aco.charge_from_type = 'customer' then aco.customer_id end) payee_id,aco.others_name payee_name,"
 				    + " aco.order_no, '手工收入单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
-					+ " (case when aco.charge_from_type = 'sp' then (select c.company_name from contact c where c.id = aco.sp_id)"
-					+ " when aco.charge_from_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id) end) cname,"
+					+ " (case when aco.charge_from_type = 'sp' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.sp_id)"
+					+ " when aco.charge_from_type = 'customer' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.customer_id) end) cname,"
 					+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount charge_amount,"
 					+ " ( SELECT ifnull(sum(caor.receive_amount), 0)"
 					+ "  FROM charge_application_order_rel caor "
@@ -650,9 +652,12 @@ public class ChargePreInvoiceOrderController extends Controller {
 				    + " FROM damage_order dor"
 				    + " LEFT JOIN user_login ul ON ul.id = dor.creator"
 				    + " LEFT JOIN damage_order_fin_item dofi on dofi.order_id = dor.id and dofi.type = 'charge' and dofi.status='已确认'"
-				    + " left join contact c on c.id = dor.sp_id "
-				    + " left join contact c2 on c2.id = dor.customer_id "
-				    + " left join contact c3 on c3.id = dor.insurance_id "
+				    + " left join party p on p.id = dor.sp_id "
+				    + " left join contact c on c.id = p.contact_id "
+				    + " left join party p2 on p2.id = dor.customer_id "
+				    + " left join contact c2 on c2.id = p2.contact_id "
+				    + " left join party p3 on p3.id = dor.insurance_id "
+				    + " left join contact c3 on c3.id = p3.contact_id "
 				    + " WHERE dor.id in(" + hs_id +")"
 				    +   cname
 				    + " group by dofi.party_name ";
@@ -694,8 +699,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 				    + " (case when aco.charge_from_type = 'sp' then aco.sp_id"
 					+ " when aco.charge_from_type = 'customer' then aco.customer_id end) payee_id,aco.others_name payee_name,"
 				    + " aco.order_no, '手工收入单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
-					+ " (case when aco.charge_from_type = 'sp' then (select c.company_name from contact c where c.id = aco.sp_id)"
-					+ " when aco.charge_from_type = 'customer' then (select c.company_name from contact c where c.id = aco.customer_id) end) cname,"
+					+ " (case when aco.charge_from_type = 'sp' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.sp_id)"
+					+ " when aco.charge_from_type = 'customer' then (select c.company_name from contact c left join party p on c.id = p.contact_id where p.id = aco.customer_id) end) cname,"
 					+ "  ifnull(ul.c_name, ul.user_name) creator_name, aco.total_amount charge_amount,"
 					+ " ( SELECT ifnull(sum(caor.receive_amount), 0)"
 					+ "  FROM charge_application_order_rel caor "
@@ -752,9 +757,16 @@ public class ChargePreInvoiceOrderController extends Controller {
 				    + " and dofi.party_name = caor.payee_unit and dofi.status = '已确认' and dofi.type = 'charge'"
 					+ " LEFT JOIN arap_charge_invoice_application_order aciao on aciao.id = caor.application_order_id"
 				    + " LEFT JOIN user_login ul ON ul.id = dor.creator"
-				    + " left join contact c on c.id = dor.sp_id "
-				    + " left join contact c2 on c2.id = dor.customer_id "
-				    + " left join contact c3 on c3.id = dor.insurance_id "
+					
+				    + " left join party p on p.id = dor.sp_id "
+				    + " left join contact c on c.id = p.contact_id "
+				    
+				    + " left join party p2 on p2.id = dor.customer_id "
+				    + " left join contact c2 on c2.id = p2.contact_id "
+				    
+				    + " left join party p3 on p3.id = dor.insurance_id "
+				    + " left join contact c3 on c3.id = p3.contact_id "
+				    
 				    + " where caor.order_type = '货损单'"
 				    + " GROUP BY caor.application_order_id"
 					+ " ) A where app_id ="+application_id ;	    
@@ -778,7 +790,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		ArapChargeInvoiceApplication arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(id);
 		setAttr("invoiceApplication", arapAuditInvoiceApplication);
 		
-		Contact con  = Contact.dao.findById(arapAuditInvoiceApplication.get("payee_id"));
+		Contact con  = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",arapAuditInvoiceApplication.get("payee_id"));
 		if(con != null){
 			String payee_filter = con.get("company_name");
 			setAttr("payee_filter", payee_filter);

@@ -197,7 +197,7 @@ public class ChargeAcceptOrderController extends Controller {
         	conditions+=" and UPPER(order_no) like '%"+orderNo_filter.toUpperCase()+"%'";
         }
         if (StringUtils.isNotEmpty(customer_filter)){
-        	conditions+=" and UPPER(customer) like '%"+customer_filter+"%'";
+        	conditions+=" and UPPER(cname) like '%"+customer_filter+"%'";
         }   
         if (StringUtils.isNotEmpty(beginTime)){
         	beginTime = " and create_time between'"+beginTime+"'";
