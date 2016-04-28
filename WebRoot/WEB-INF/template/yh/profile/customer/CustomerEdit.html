@@ -752,5 +752,13 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
             dataTable.ajax.reload();
         });
     });
+
+    $('#myModal').on('show.bs.modal', function (e) {
+        var route_id = $('#myModal #route_id').val();
+        if(!route_id){
+            $('#location_from').val($('#default_loc_from').val());
+            $('#location_from_INPUT').val($('#default_loc_from_INPUT').val());
+        }
+    });
 });
 </script>
