@@ -3009,10 +3009,17 @@ public class DepartOrderController extends Controller {
     			Record dt = Db.findFirst("select * from depart_transfer where order_id =? and depart_id is not null",transferOrderIds.get(i));
     			TransferOrder to = TransferOrder.dao.findById(transferOrderIds.get(i));
     			if(dt!=null){//多次发车
-        			to.set("depart_assign_status", "PARTIAL").update();
+        			to.set("depart_assign_status", "PARTIAL");
     			}else{
-        			to.set("depart_assign_status", "NEW").update();
+        			to.set("depart_assign_status", "NEW");
+        			//判断是否外包
+        			String operation_type = to.getStr("operation_type");
+        			if("out_source".equals(operation_type)){
+        				to.set("status", "新建");
+        			}
     			}
+    			
+    			to.update();
 			}
     		
     		renderJson("{\"success\":true}");
