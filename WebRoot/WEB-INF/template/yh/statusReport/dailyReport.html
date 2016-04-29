@@ -21,14 +21,37 @@
 								<%include("/yh/component/form/inputCustomerField.html", {
 								id:'customer_id', label:'客户名称', value: '' }){} %>
 							</div>
+							<div class="col-lg-4">
+								<!--  三列排版  -->
+								<%include("/yh/component/form/inputField.html", { id:
+								'routeTo', label: '目的城市'}){}%>
+							</div>
 						</div>
 						<div class="row">
 						<div class="col-lg-4">        
-                                            <%include("/yh/component/form/dateInputField.html", {id:'start_date', label:'计划时间', value:''}){} %>
-                                        </div><!-- /.col-lg-4 -->
-                                        <div class="col-lg-4">${order.accident_date!''}
-                                            <%include("/yh/component/form/dateInputField.html", {id:'end_date', label:'~', value:''}){} %>
-                                        </div><!-- /.col-lg-4 -->
+                              <%include("/yh/component/form/dateInputField.html", {id:'start_date', label:'计划时间', value:''}){} %>
+                              </div><!-- /.col-lg-4 -->
+                              <div class="col-lg-4">${order.accident_date!''}
+                                  <%include("/yh/component/form/dateInputField.html", {id:'end_date', label:'~', value:''}){} %>
+                              </div><!-- /.col-lg-4 -->
+                              <div class="col-lg-4">
+								<!--  三列排版  -->
+								<%include("/yh/component/form/inputField.html", { id:
+								'serialNo', label: '序列号', value: '' }){}%>
+							</div>
+						</div>
+						<div class="row">	
+							<div class="col-lg-3">    	
+							</div>
+							<div class="col-lg-2">    
+								<label><input type="checkBox" name="checkbox" value="统计已收款"/>统计已收款</label>
+							</div>
+							<div class="col-lg-2">    
+								<label><input type="checkBox" name="checkbox" value="统计已签收未收款"/>统计已签收未收款</label>
+							</div>
+							<div class="col-lg-2">    
+								<label><input type="checkBox" name="checkbox" value="统计在库的"/>统计在库的</label>
+							</div>
 						</div>
 						<div class="form-group button-bar" >
                                 <button id="queryBtn" class="btn btn-primary btn-sm" type="button">查询</button>

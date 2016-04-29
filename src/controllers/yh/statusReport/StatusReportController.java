@@ -700,6 +700,8 @@ public class StatusReportController extends Controller{
 		String customerId = getPara("customer_id");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String route_to = getPara("route_to");
+		String serial_no = getPara("serial_no");
 		String sLimit = "";
 		
 		Map orderMap = new HashMap();
@@ -812,6 +814,12 @@ public class StatusReportController extends Controller{
 					}
 					if(!"".equals(orderNo)){
 						condition +=" and ifnull(transferno,'') like '%" + orderNo + "%' ";
+					}
+					if(!"".equals(route_to)){
+						condition +=" and ifnull(route_to,'') like '%" + route_to + "%' ";
+					}
+					if(!"".equals(serial_no)){
+						condition +=" and ifnull(serial_no,'') like '%" + serial_no + "%' ";
 					}
 					if ((beginTime != null && !"".equals(beginTime))||(endTime != null && !"".equals(endTime))) {
 		        		if (beginTime == null || "".equals(beginTime)) {

@@ -128,9 +128,12 @@ $(document).ready(function() {
         var endTime = $("#end_date").val();
     	var order_no = $("#order_no").val();
     	var customer_id = $("#customer_id").val();
+    	var routeTo = $("#routeTo").val();
+    	var serialNo = $("#serialNo").val();
+    	//var checkBox = $("[name:checkbox]").val();
     		statusTable.fnSettings().oFeatures.bServerSide = true;
     		statusTable.fnSettings()._iDisplayStart = 0;
-	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&order_no="+order_no+"&customer_id="+customer_id;
+	    	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&order_no="+order_no+"&customer_id="+customer_id+"&route_to="+routeTo+"&serial_no="+serialNo;
 	    	statusTable.fnDraw(); 
 	    	/*$.get("/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 		    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType, null, function(data){
