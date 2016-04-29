@@ -663,7 +663,7 @@ public class WxController extends ApiController {
 		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
 		String conditions=" where 1 = 1 ";
 		if(StringUtils.isNotEmpty(departOrder)){
-			conditions += " and dor.depart_no = '"+departOrder+"'";
+			conditions += " and dor.depart_no like '%"+departOrder+"%'";
 		}
 			
 		if(StringUtils.isNotEmpty(carNo)){
