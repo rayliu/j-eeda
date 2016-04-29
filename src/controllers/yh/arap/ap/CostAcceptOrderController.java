@@ -100,6 +100,7 @@ public class CostAcceptOrderController extends Controller {
         String endTime = getPara("endTime")!=null?getPara("endTime"):"";
         String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
         String status = getPara("status")!=null?getPara("status"):"";
+        String orderType = getPara("orderType")!=null?getPara("orderType"):"";
         String status2 = "";
         String status3 = "";
         String status4 = "";
@@ -143,8 +144,9 @@ public class CostAcceptOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "2037-12-31";
 			}
-		condition = " where nopaid_amount!=0 and "
-					+ " ifnull(cname,'') like '%" + spName + "%' "
+		condition = " where nopaid_amount!=0 "
+					+ " and ifnull(cname,'') like '%" + spName + "%' "
+					+ " and ifnull(order_type,'') like '%" + orderType + "%' "
 					+ " and create_time between '" + beginTime + "' and '" + endTime+ " 23:59:59' "
 				    + " and ifnull(order_no,'') like '%" + orderNo + "%' ";
         }
