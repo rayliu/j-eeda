@@ -2939,7 +2939,7 @@ public class DepartOrderController extends Controller {
                      + " when tor.operation_type != 'out_source'"
                      + " then (SELECT ifnull(sum(dt.amount), 0) FROM depart_transfer dt LEFT JOIN transfer_order tor1 ON tor1.id = dt.order_id"
                      + " LEFT JOIN depart_pickup dp ON dp.pickup_id = dt.pickup_id WHERE dp.depart_id =  "+departOrderId
-                     + " AND tor1.cargo_nature = 'cargo' AND tor1.id = tor.id)"
+                     + " AND  tor1.cargo_nature = 'cargo' and dt.order_item_id = toi.id AND tor1.id = tor.id)"
                      + " else"
                      + " toi.amount"
                      + " end"
