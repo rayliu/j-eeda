@@ -170,11 +170,11 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },
-            {"mDataProp":"RETURN_ORDER_COLLECTION"},
-		    {"mDataProp":null, 
+            /*{"mDataProp":"RETURN_ORDER_COLLECTION"},*/
+		    /*{"mDataProp":null, 
                 "fnRender": function(obj) {
                     return "未收款";
-            }},
+            }},*/
             {"mDataProp":"ORDER_NO"},
             {"mDataProp":"BOOKING_NOTE_NUMBER"},
             {"mDataProp":"SERIAL_NO"},
