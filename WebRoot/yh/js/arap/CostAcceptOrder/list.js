@@ -600,7 +600,11 @@ $(document).ready(function() {
     	refreshData();
     });
     
-    $('#beginTime_filter2,#endTime_filter2,#orderNo_filter1').on('keyup', function () {
+    $("#orderType").on('change', function () {
+    	refreshData();
+    });
+    
+    $('#beginTime_filter2,#endTime_filter2,#orderNo_filter1,#orderType').on('keyup', function () {
     	refreshData();
     } );
     
@@ -611,6 +615,7 @@ $(document).ready(function() {
             orderNo : $("#orderNo_filter1").val(),
             status : $("#status_filter1").val(),
             sp : $("#sp_filter1").val(),
+            orderTpye : $("#orderTpye").val(),
             beginTime : $("#beginTime_filter2").val(),
             endTime : $("#endTime_filter2").val()
         }
@@ -627,10 +632,11 @@ $(document).ready(function() {
         var sp = $("#sp_filter1").val();
         var beginTime = $("#beginTime_filter2").val();
         var endTime = $("#endTime_filter2").val();
+        var orderType = $("#orderType").val();
 
         costAcceptOrderTab.fnSettings().oFeatures.bServerSide = true;
         costAcceptOrderTab.fnSettings().sAjaxSource = "/costAcceptOrder/list?status="+status
-            +"&beginTime="+beginTime+"&endTime="+endTime+"&orderNo="+orderNo+"&sp="+sp;
+            +"&beginTime="+beginTime+"&endTime="+endTime+"&orderNo="+orderNo+"&sp="+sp+"&orderType="+orderType;
 
         costAcceptOrderTab.fnDraw(); 
 
@@ -701,6 +707,7 @@ $(document).ready(function() {
             $("#status_filter1").val(conditions.status);
             //var customer = $("#customer_filter").val();
             $("#sp_filter1").val(conditions.sp);
+            $("#orderType").val(conditions.orderType);
             $("#beginTime_filter2").val(conditions.beginTime);
             $("#endTime_filter2").val(conditions.endTime);
         }
