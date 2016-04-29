@@ -354,46 +354,29 @@ public class CustomerController extends Controller {
         String ltl_price_type = getPara("ltl_price_type");
         String limitation = getPara("limitationFile");
         CustomerRoute route = null;
- 
         try{
             if(StringUtils.isEmpty(id)){
-            	//路线重复校验
-                String sql = "SELECT * FROM `customer_route_provider` crp where crp.customer_id ="+ customer_id
-                		+ " and  crp.location_from ="+location_from + " and crp.location_to = "+location_to;
-                CustomerRoute cRoute = CustomerRoute.dao.findFirst(sql);
                 route = new CustomerRoute();
-                if(cRoute==null){	 
-                     route.set("customer_id", customer_id);
-                     route.set("location_from", location_from);
-                     route.set("location_to", location_to);
-                     route.set("sp_id", sp_id);
-                     route.set("charge_type", charge_type);
-                     route.set("car_type", car_type);
-                     route.set("ltl_price_type", ltl_price_type);
-                     route.set("limitation", limitation);
-                     route.save();
-                }else{
-                	 route.set("id", -1);
-                }
+                route.set("customer_id", customer_id);
+                route.set("location_from", location_from);
+                route.set("location_to", location_to);
+                route.set("sp_id", sp_id);
+                route.set("charge_type", charge_type);
+                route.set("car_type", car_type);
+                route.set("ltl_price_type", ltl_price_type);
+                route.set("limitation", limitation);
+                route.save();
             }else{
-            	String sql = "SELECT * FROM `customer_route_provider` crp where crp.customer_id ="+ customer_id
-                		+ " and  crp.location_from ="+location_from + " and crp.location_to = "+location_to+" and crp.id != "+id;
-                CustomerRoute cRoute = CustomerRoute.dao.findFirst(sql);
-                if(cRoute==null){
-                	route = CustomerRoute.dao.findById(id);
-                    route.set("customer_id", customer_id);
-                    route.set("location_from", location_from);
-                    route.set("location_to", location_to);
-                    route.set("sp_id", sp_id);
-                    route.set("charge_type", charge_type);
-                    route.set("car_type", car_type);
-                    route.set("ltl_price_type", ltl_price_type);
-                    route.set("limitation", limitation);
-                    route.update();
-                }else{
-                	route = new CustomerRoute();
-                	route.set("id", -1);
-                }
+                route = CustomerRoute.dao.findById(id);
+                route.set("customer_id", customer_id);
+                route.set("location_from", location_from);
+                route.set("location_to", location_to);
+                route.set("sp_id", sp_id);
+                route.set("charge_type", charge_type);
+                route.set("car_type", car_type);
+                route.set("ltl_price_type", ltl_price_type);
+                route.set("limitation", limitation);
+                route.update();
             }
         }catch(Exception e){
             String errMsg = e.getMessage();
