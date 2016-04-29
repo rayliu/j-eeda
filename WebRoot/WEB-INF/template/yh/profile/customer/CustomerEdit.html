@@ -592,13 +592,13 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
      // 回显入库是否生成配送
     	$("input[name='isAutoPS']").each(function(){
     		if($("#AutoPS").val() == $(this).val()){
-    			$(this).attr('checked', true);		
+    			$(this).attr('checked', true);
     		}
     	});
         // 回显入库是否库存管理
         $("input[name='isInventoryControl']").each(function(){
             if($("#inventoryControl").val() == $(this).val()){
-                $(this).attr('checked', true);      
+                $(this).attr('checked', true);
             }
         });
     // 回显车长
@@ -645,9 +645,15 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
 
     $('#saveRouteBtn').click(function(){
         $.post('/customer/saveCustomerRoute', $('#routeItemForm').serialize()+'&limitationFile='+$('#limitationFile').val()+'&customer_id='+$('#partyId').val(), function(data){
+            if(data.ID==-1){
+                $.scojs_message('保存失败，相同路线已存在', $.scojs_message.TYPE_ERROR);
+                return;
+            }
             if(data.ID>0){
                 $('#myModal').modal('hide');
                 dataTable.ajax.reload();
+            }else{
+                $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
             }
         });
     });
@@ -758,6 +764,8 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
         if(!route_id){
             $('#location_from').val($('#default_loc_from').val());
             $('#location_from_INPUT').val($('#default_loc_from_INPUT').val());
+            $('#location_to').val('');
+            $('#location_to_INPUT').val('');
         }
     });
 });

@@ -2,6 +2,7 @@
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -352,28 +353,36 @@ public class CustomerController extends Controller {
         String ltl_price_type = getPara("ltl_price_type");
         String limitation = getPara("limitationFile");
         CustomerRoute route = null;
-        if(StringUtils.isEmpty(id)){
-            route = new CustomerRoute();
-            route.set("customer_id", customer_id);
-            route.set("location_from", location_from);
-            route.set("location_to", location_to);
-            route.set("sp_id", sp_id);
-            route.set("charge_type", charge_type);
-            route.set("car_type", car_type);
-            route.set("ltl_price_type", ltl_price_type);
-            route.set("limitation", limitation);
-            route.save();
-        }else{
-            route = CustomerRoute.dao.findById(id);
-            route.set("customer_id", customer_id);
-            route.set("location_from", location_from);
-            route.set("location_to", location_to);
-            route.set("sp_id", sp_id);
-            route.set("charge_type", charge_type);
-            route.set("car_type", car_type);
-            route.set("ltl_price_type", ltl_price_type);
-            route.set("limitation", limitation);
-            route.update();
+        try{
+            if(StringUtils.isEmpty(id)){
+                route = new CustomerRoute();
+                route.set("customer_id", customer_id);
+                route.set("location_from", location_from);
+                route.set("location_to", location_to);
+                route.set("sp_id", sp_id);
+                route.set("charge_type", charge_type);
+                route.set("car_type", car_type);
+                route.set("ltl_price_type", ltl_price_type);
+                route.set("limitation", limitation);
+                route.save();
+            }else{
+                route = CustomerRoute.dao.findById(id);
+                route.set("customer_id", customer_id);
+                route.set("location_from", location_from);
+                route.set("location_to", location_to);
+                route.set("sp_id", sp_id);
+                route.set("charge_type", charge_type);
+                route.set("car_type", car_type);
+                route.set("ltl_price_type", ltl_price_type);
+                route.set("limitation", limitation);
+                route.update();
+            }
+        }catch(Exception e){
+            String errMsg = e.getMessage();
+            logger.debug(errMsg);
+            if(errMsg.indexOf("index_route")>0){
+                route.set("id", -1);
+            }
         }
         renderJson(route);
     }
