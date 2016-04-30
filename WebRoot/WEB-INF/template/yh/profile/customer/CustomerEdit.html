@@ -759,6 +759,16 @@ $('#menu_profile').addClass('active').find('ul').addClass('in');
         });
     });
 
+    $('#addRouteBtn').on('click', function (e) {
+        $('#myModal #route_id').val('');
+        $('#location_from').val($('#default_loc_from').val());
+        $('#location_from_INPUT').val($('#default_loc_from_INPUT').val());
+        $('#location_to').val('');
+        $('#location_to_INPUT').val('');
+        $('#sp_id').val('');
+        $('#sp_id_input').val('');
+    });
+
     $('#myModal').on('show.bs.modal', function (e) {
         var route_id = $('#myModal #route_id').val();
         if(!route_id){
