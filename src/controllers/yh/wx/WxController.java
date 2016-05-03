@@ -670,7 +670,7 @@ public class WxController extends ApiController {
 			conditions += " and dor.car_no like '%"+carNo+"%'";
 		}
 
-		String sql = "select tor.id,dt.amount,dor.car_no,tor.customer_id,tor.order_no,l.`name` route_to, "
+		String sql = "select tor.id,dor.id pickup_id,dor.depart_no pickup_no,dt.amount,dor.car_no,tor.customer_id,tor.order_no,l.`name` route_to, "
 				+ " (select count(*) from depart_pickup where order_id = tor.id and pickup_id = dor.id and depart_id is not null) disabled ,"
 				+ " dor.status status "
 				+ " from transfer_order tor"
@@ -680,7 +680,7 @@ public class WxController extends ApiController {
 				+ conditions
 				+ " and tor.office_id in (select office_id from user_office where user_name='"+userRec.getStr("user_name")+"') "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"')"
-				+ " GROUP BY tor.id";
+				+ " ";
 		List<Record> re = Db.find(sql);
 		renderJson(re);
 	}	

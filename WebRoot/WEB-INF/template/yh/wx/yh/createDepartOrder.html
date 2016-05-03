@@ -15,6 +15,7 @@
     	 <form id="orderForm" action="/wx/createDepartOrder" method="post">
     	 	<input type="hidden" id="openid" name="openid" value="${openid!''}"> 
     	 	 <input type="hidden" id="transferIds" name="transferIds" value="${transferIds!''}"> 
+    	 	 <input type="hidden" id="trans_pickups" name="trans_pickups" value="${trans_pickups!''}">
     	 	 <input type="hidden" id="pickupOrder" name="pickupOrder" value="${pickupOrder!''}"> 
     	 	 <input type="hidden" id="limitation" name="limitation" value="${c_r_p.limitation!'0'}"> 
     	 	 <div style="background: #DDDDDD;">
@@ -55,7 +56,7 @@
 		             <%
 		                  for(list in transferList){
 		              %>
-		                 <input class="weui_input" type="text" id="weight" name='weight' value="${list.order_no!''}   (数量：${list.amount})">
+		                 <input class="weui_input" type="text" id="weight" name='weight' value="${list.order_no!''}">
 		             <%
 		                  }
 		              %>

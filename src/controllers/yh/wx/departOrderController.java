@@ -108,15 +108,18 @@ public class departOrderController extends ApiController {
             return;
 		}
 		
+		String trans_pickups = getPara("trans_pickups");
 		String transferIds = getPara("transferIds");
+		setAttr("trans_pickups", trans_pickups);
 		setAttr("transferIds", transferIds);
 		
 		String pickupOrder = getPara("orderNo");
 		setAttr("pickupOrder", pickupOrder);
 		
-		List<Record> re = Db.find("select dt.transfer_order_no order_no,dt.amount  from depart_transfer dt "
+		/*List<Record> re = Db.find("select dt.transfer_order_no order_no,dt.amount  from depart_transfer dt "
 				+ " LEFT JOIN depart_order dor on dor.id = dt.pickup_id "
-				+ " where dt.order_id in ("+transferIds+") and dor.depart_no = '"+pickupOrder+"'");
+				+ " where dt.order_id in ("+transferIds+") and dor.depart_no = '"+pickupOrder+"'");*/
+		List<Record> re = Db.find("select * from transfer_order where id in("+transferIds+")");
 		setAttr("transferList", re);
 		
 		String[] array = transferIds.split(",");
@@ -188,9 +191,10 @@ public class departOrderController extends ApiController {
 		String arrival_time = getPara("arrival_time");
 		String pickupOrderNo = getPara("pickupOrder");
 		String transferIds = getPara("transferIds");  //运单IDs
+		String trans_pickups = getPara("trans_pickups");  //运单IDs
 		
 		DepartOrder dp = new DepartOrder();
-		//过去调车单信息
+		/*		//过去调车单信息
 		DepartOrder pickupOrder = DepartOrder.dao.findFirst("select * from depart_order where depart_no = '"+pickupOrderNo+"'");
 		long pickupId = pickupOrder.getLong("id");
 		
@@ -203,7 +207,7 @@ public class departOrderController extends ApiController {
 				renderJson(dp);
 				return;
 			}	
-		}
+		}*/
 		
 		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
 		long userId = userRec.getLong("id");
@@ -232,9 +236,11 @@ public class departOrderController extends ApiController {
 		
 		//保存中间表
 		long departId = dp.getLong("id");
-		String[] array = transferIds.split(",");
-		for (int i = 0; i < array.length; i++) {
-			String transferId = array[i];
+		String[] arrays = trans_pickups.split(",");
+		for (int i = 0; i < arrays.length; i++) {
+			String[] array = arrays[i].split(":");
+			String transferId = array[0];
+			String pickupId = array[1];
 			
 			String sql = "select * from transfer_order_item_detail toid where toid.order_id = "
 					+transferId+" and toid.pickup_id ="+pickupId;
@@ -250,11 +256,11 @@ public class departOrderController extends ApiController {
 					.set("order_id", transferId).save();
 
 			//保存depart_transfer
-			TransferOrder transferOrder = TransferOrder.dao.findById(transferIds);
+			TransferOrder transferOrder = TransferOrder.dao.findById(transferId);
 			DepartTransferOrder departTransferOrder = new DepartTransferOrder();
 			departTransferOrder.set("depart_id", departId);
 			departTransferOrder.set("order_id",transferId);
-			departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+			departTransferOrder.set("transfer_order_no", transferOrder.getStr("order_no"));
 			departTransferOrder.save();
 		
             //更新运输单的日记账 
@@ -272,11 +278,11 @@ public class departOrderController extends ApiController {
 					// 运输单单品总数
 					Record totalTransferOrderAmount = Db
 							.findFirst("select count(0) total from transfer_order_item_detail where order_id = "
-									+ transferIds);
+									+ transferId);
 					// 总提货数量（之前+现在）
 					Record totalPickAmount = Db
 							.findFirst("select count(0) total from transfer_order_item_detail where depart_id is not null and order_id = "
-									+ transferIds);
+									+ transferId);
 					// 运输单
 					if (totalPickAmount.getLong("total") == totalTransferOrderAmount
 							.getLong("total")) {
