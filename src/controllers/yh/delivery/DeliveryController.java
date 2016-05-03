@@ -12,10 +12,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.ArapCostItem;
+import models.ArapCostOrder;
 import models.DeliveryOrderFinItem;
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
+import models.DepartOrder;
 import models.DepartTransferOrder;
+import models.InsuranceOrder;
 import models.Location;
 import models.Office;
 import models.ParentOfficeModel;
@@ -26,6 +30,7 @@ import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.Warehouse;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
@@ -2299,5 +2304,123 @@ public class DeliveryController extends Controller {
  		}
  		renderJson(locationList);
  	}
-
+ 	
+ 	
+ 	//撤销单据
+	@Before(Tx.class)
+	public void deleteOrder() {
+		String id = getPara("orderId");
+		String cargoNature = getPara("cargoNature");
+		if("".equals(id)||id==null)
+			return;
+		String sql = "SELECT * FROM `return_order` where delivery_order_id =" + id;
+		List<Record> nextOrders = Db.find(sql);
+		if (nextOrders.size() == 0) {
+			//更新相关单据的状态
+			//先删除从表
+			//删除主表
+			//1.
+			if("cargo".equals(cargoNature)){
+				deleteCargo(id);
+			}else{
+				deleteATM(id);
+			}
+			
+			
+			
+			
+			//4.删除主表
+			DeliveryOrder dor = DeliveryOrder.dao.findById(id);
+			dor.delete();
+			
+			renderJson("{\"success\":true}");
+		} else {
+			renderJson("{\"success\":false}");
+		}
+	}
+	
+	
+	//ATM撤销
+	public void deleteATM(String id){
+		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where delivery_id = ?",id);
+		for (TransferOrderItemDetail toid:toids) {
+			toid.set("delivery_id", null);
+			toid.set("status", "已发车");
+			toid.update();
+			
+			//更新发车单状态
+			long depart_id = toid.getLong("depart_id");
+			DepartOrder deo =  DepartOrder.dao.findById(depart_id);
+			deo.set("status", "运输在途").update();
+		}
+		
+		//删除里程碑相关数据
+		List<DeliveryOrderMilestone> doms = DeliveryOrderMilestone.dao.find("select * from delivery_order_milestone where delivery_id = ?",id);
+		for (DeliveryOrderMilestone dom:doms) {
+			dom.delete();
+		}
+		
+		//删除配送字表(费用明细)
+		List<DeliveryOrderFinItem> dofis = DeliveryOrderFinItem.dao.find("select * from delivery_order_fin_item where order_id = ?",id);
+		for (DeliveryOrderFinItem dofi:dofis) {
+			dofi.delete();
+		}	
+		
+		//删除配送字表
+		List<DeliveryOrderItem> dois = DeliveryOrderItem.dao.find("select * from delivery_order_item where order_id = ?",id);
+		for (DeliveryOrderItem doi:dois) {
+			doi.delete();
+		}
+		
+	}
+	
+	
+	//普货撤销
+	public void deleteCargo(String id){
+		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where delivery_id = ?",id);
+		for (TransferOrderItemDetail toid:toids) {
+			toid.set("delivery_id", null);
+			toid.set("status", "已发车");
+			toid.update();
+		}
+		
+		//删除配送子表
+		List<DeliveryOrderItem> dois = DeliveryOrderItem.dao.find("select * from delivery_order_item where order_id = ?",id);
+		for (DeliveryOrderItem doi:dois) {
+			//清除单品表信息
+			long transfer_item_id = doi.getLong("transfer_item_id");
+			int amount = Integer.parseInt(doi.getStr("amount"));
+			TransferOrderItem toi =TransferOrderItem.dao.findById(transfer_item_id);
+			int complete_amount = Integer.parseInt(toi.getStr("complete_amount"));
+			int totalAmount = Integer.parseInt(toi.getStr("amount"));
+			
+			if(amount==totalAmount){
+				toi.set("complete_amount",null);
+			}else{
+				toi.set("complete_amount",complete_amount-amount);
+			}
+			toi.update();
+			
+			doi.delete();
+		}
+		
+		List<TransferOrderItem> tois = TransferOrderItem.dao.find("select * from transfer_order_item where delivery_id = ?",id);
+		for (TransferOrderItem toi:tois) {
+			toi.set("delivery_id", null);
+			toi.set("complete_amount", "已入库");
+			toi.update();
+		}
+		
+		//删除里程碑相关数据
+		List<DeliveryOrderMilestone> doms = DeliveryOrderMilestone.dao.find("select * from delivery_order_milestone where delivery_id = ?",id);
+		for (DeliveryOrderMilestone dom:doms) {
+			dom.delete();
+		}
+		
+		//删除配送字表(费用明细)
+		List<DeliveryOrderFinItem> dofis = DeliveryOrderFinItem.dao.find("select * from delivery_order_fin_item where order_id = ?",id);
+		for (DeliveryOrderFinItem dofi:dofis) {
+			dofi.delete();
+		}	
+	}
 }

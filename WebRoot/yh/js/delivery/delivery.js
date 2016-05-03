@@ -1512,29 +1512,66 @@ $(document).ready(function() {
 			}
 		}
 	},'json'); 
+    
+    
+    function getChargetype(){
+    	//判断修改后相应的计费方式修改
+    	var customer_id = $("#customer_id").val();
+    	var sp_id = $("#sp_id").val();
+    	if(customer_id != null && customer_id !="" && sp_id != null && sp_id !=""){
+    		//获取当前供应商客户的计费方式
+    		$.post("/serviceProvider/seachChargeType",{sp_id:sp_id,customer_id:customer_id},function(data){
+    			if(data.CHARGE_TYPE == null){
+    				//这里是当前客户和供应商没有数据维护的情况
+    				$("input[name='chargeType']").each(function(){
+    					if($(this).val() == 'perUnit'){
+    						$(this).prop('checked', true);
+    					}
+    				});
+    			}else{
+    				 
+    				$("input[name='chargeType']").each(function(){
+    					if($(this).val() == data.CHARGE_TYPE){
+    						$(this).prop('checked', true);
+    					}
+    				});
+    			}
+    		},'json');
+    	}
+    }
+
+
+	//撤销订单
+	$("#deleteBtn").on('click',function(){
+		var status = $('#deliveryOrder_status').text();     //单据状态
+		var audit_status = $('#audit_status').val();        //财务状态
+		var order_id = $("#delivery_id").val();             //单据ID
+		var cargoNature = $('#cargoNature').val();          //货品属性
+		if(!confirm("是否确认撤销此订单？"))
+			return;
+		if(order_id==""){
+			$.scojs_message('对不起，当前单据尚未保存，不能撤销', $.scojs_message.TYPE_ERROR);
+			return;
+		}else if(audit_status!='新建'&& audit_status!='已确认'){
+	    	$.scojs_message('对不起，当前单据已做了财务单据，不能撤销', $.scojs_message.TYPE_ERROR);
+		}else if(status=='已送达'){
+	    	$.scojs_message('对不起，当前单据已有下级单据(申请单。。。)，不能撤销', $.scojs_message.TYPE_ERROR);
+		}else{
+			$("#deleteBtn").attr('disabled',true);
+			$.post('/delivery/deleteOrder', {orderId:order_id,cargoNature:cargoNature}, function(data){ 
+	    		if(!data.success){
+	    			$("#deleteBtn").attr('disabled',false);
+	    			$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
+	    		}else{
+	    			$.scojs_message('撤销成功!,3秒后自动返回。。。', $.scojs_message.TYPE_OK);
+	    			setTimeout(function(){
+						location.href="/delivery";
+					}, 3000);
+	    		}
+	    	});
+		}
+	});
+    
 });
-function getChargetype(){
-	//判断修改后相应的计费方式修改
-	var customer_id = $("#customer_id").val();
-	var sp_id = $("#sp_id").val();
-	if(customer_id != null && customer_id !="" && sp_id != null && sp_id !=""){
-		//获取当前供应商客户的计费方式
-		$.post("/serviceProvider/seachChargeType",{sp_id:sp_id,customer_id:customer_id},function(data){
-			if(data.CHARGE_TYPE == null){
-				//这里是当前客户和供应商没有数据维护的情况
-				$("input[name='chargeType']").each(function(){
-					if($(this).val() == 'perUnit'){
-						$(this).prop('checked', true);
-					}
-				});
-			}else{
-				 
-				$("input[name='chargeType']").each(function(){
-					if($(this).val() == data.CHARGE_TYPE){
-						$(this).prop('checked', true);
-					}
-				});
-			}
-		},'json');
-	}
-}
+
+
