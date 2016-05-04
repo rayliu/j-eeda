@@ -467,6 +467,7 @@ public class WxController extends ApiController {
 	public void saveReturnOrderPic(){
 	    String return_order_id = getPara("return_order_id");
 	    String serverId = getPara("serverId");
+	    String photo_type = getPara("photo_type");
 	    ReturnOrder returnOrder = ReturnOrder.dao.findById(return_order_id);
 	    if(returnOrder != null){
 	        System.out.println("appId:" + PropKit.get("appId"));
@@ -484,7 +485,9 @@ public class WxController extends ApiController {
     	    OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
             orderAttachmentFile.set("order_id", return_order_id)
                     .set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN)
-                    .set("file_path", fileName).save();
+                    .set("file_path", fileName)
+                    .set("photo_type", photo_type)
+                    .save();
     	    renderText("OK");
 	    }else{
 	        renderText("FAIL");

@@ -78,7 +78,13 @@ $(document).ready(function() {
 					    isShowProgressTips: 1, // 默认为1，显示进度提示
 					    success: function (res) {
 					        var serverId = res.serverId; // 返回图片的服务器端ID
-					        $.post('/wx/saveReturnOrderPic',{serverId:serverId, return_order_id: $('#returnId').val()},function(data){
+					        $.post('/wx/saveReturnOrderPic', 
+					        	{
+					        		serverId:serverId, 
+					        		return_order_id: $('#returnId').val(), 
+					        		photo_type: $('#photo_type_input').val()
+					        	},
+					        	function(data){
 					        	if(data == "OK"){
 					        		$('#uploadDesc').empty().append("<p>图片上传成功!</p>").show();
 					        	}else{
