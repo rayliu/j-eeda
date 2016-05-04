@@ -684,7 +684,7 @@ public class WxController extends ApiController {
 				+ " and tor.office_id in (select office_id from user_office where user_name='"+userRec.getStr("user_name")+"') "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"')"
 				+ " ";
-		List<Record> re = Db.find(sql);
+		List<Record> re = Db.find("select * from ("+sql+") A order by A.disabled,A.status ");
 		renderJson(re);
 	}	
 }
