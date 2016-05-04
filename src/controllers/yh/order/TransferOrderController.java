@@ -1064,6 +1064,17 @@ public class TransferOrderController extends Controller {
 
 		renderJson(resultMap);
 	}
+	
+	
+	//查询地址（省份-城市）
+	public void searchLocation() {
+		String code = getPara("location");
+		if("".equals(code) || code==null)
+			return;
+		Record re = Db.findFirst("select get_loc_full_name('"+code+"') as toRoute");
+		renderJson(re);
+	}
+	
 
 	// 根据客户查出location
 	public void searchLocationFrom() {

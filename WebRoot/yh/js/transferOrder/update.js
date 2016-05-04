@@ -4,10 +4,9 @@ $(document).ready(function() {
         document.title = Transfer.orderNo +' | '+document.title;
     }
 	
-	
-	//通过路线吧供应商带过来
-	$("#route_from_INPUT,#route_to_INPUT,#customerMessage").on('blur',function(){
-		var route_from = $("#route_from").val();
+	//通过路线  和可以  获取供应商信息
+    var addressToSp = function(){
+    	var route_from = $("#route_from").val();
 		var route_to = $("#route_to").val();
 		var customer_id = $("#customer_id").val();
 		if(route_from=!'' && route_to!='' && customer_id!=''){
@@ -46,6 +45,12 @@ $(document).ready(function() {
 				}
 			});
 		}
+    }
+	
+	
+	//通过路线吧供应商带过来
+	$("#route_to_INPUT,#customerMessage").on('blur',function(){
+		addressToSp();
 	});
 		
 	if(Transfer.orderNo){
@@ -436,11 +441,22 @@ $(document).ready(function() {
             }
         }
 		
-		searchAllLocation();
+		//searchAllLocation();
+		route_from($(this).attr('location'));
 		
         $('#customerList').hide();
     }); 
 
+	
+	var route_from = function(lacation){
+		$.post('/transferOrder/searchLocation',{location:lacation},function(data){
+			if(data){
+				$("#route_from").val(lacation);
+				$("#route_from_INPUT").val(data.TOROUTE);
+				addressToSp();
+			}
+		})
+	}
 	
 	
 	//获取供应商的list，选中信息在下方展示其他信息
@@ -1953,6 +1969,18 @@ $(document).ready(function() {
 		 }
 	 });
 	 
+	 //通过中转仓获取收货人信息
+	 var receiver = function(data){
+		 $("#receiving_unit").val(data.WAREHOUSE_NAME);
+		 $("#notify_contact_person").val(data.NOTIFY_NAME);
+		 $("#notify_address").val(data.WAREHOUSE_ADDRESS);
+		 $("#notify_phone").val(data.NOTIFY_MOBILE);
+		 
+		 route_to(data.LOCATION);
+		 
+	 }
+	 
+	 
 	 var findWarehouseForOffice = function(officeId){
 		 $.post('/transferOrder/searchAllWarehouse', {officeId: officeId},function(data){
 			 if(data.length > 0){
@@ -1963,11 +1991,13 @@ $(document).ready(function() {
 					 if(data[i].ID == hideWarehouseId){
 						 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");
 						 //$("#gateInSelect").val(data[i].ID);
+						 receiver(data[i]);
+
 					 }else{
 						 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+						 receiver(data[0]);
 					 }
 				 }
-				 
 			 }else{
 				 $("#gateInSelect").empty();
 			 }
@@ -2040,8 +2070,10 @@ $(document).ready(function() {
 					 if(data[i].ID == hideWarehouseId){
 						 gateOutSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");
 						 //$("#gateInSelect").val(data[i].ID);
+						 receiver(data[i]);
 					 }else{
 						 gateOutSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
+						 receiver(data[0]);
 					 }
 				 }
 				 
@@ -2633,62 +2665,34 @@ $(document).ready(function() {
 			}
     	},'json');
 	});
+	
+	
+	var route_to = function(lacation){
+		$.post('/transferOrder/searchLocation',{location:lacation},function(data){
+			if(data){
+				$("#route_to").val(lacation);
+				$("#route_to_INPUT").val(data.TOROUTE);
+				addressToSp();
+			}
+		})
+	}
+	
+
+
 
 	// 选中仓库触发事件
-	$("#gateInSelect").change(function(){
+	$("#gateInSelect").on('change',function(){
     	$.post('/transferOrder/selectWarehouse', {warehouseId:$(this).val()}, function(data){  
 		   
 			var hideProvince = data.location.PROVINCE;
 			var hideCity = data.location.CITY;
 			var hideDistrict = data.location.DISTRICT;
 			
-			$("#locationTo").val(data.warehouse.LOCATION);
-		    //获取全国省份
-		    $(function(){
-		     	var province = $("#mbProvinceTo");
-		     	$.post('/serviceProvider/province',function(data){
-		     		province.append("<option>--请选择省份--</option>");
-		     		for(var i = 0; i < data.length; i++){
-						if(data[i].NAME == hideProvince){
-							province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");		
-						}else{
-							province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-						}
-					}    		     		
-		     	},'json');
-		    });
-		    
-		    // 回显城市
-		    $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
-				if(data.length > 0){
-					var cmbCity =$("#cmbCityTo");
-					cmbCity.empty();
-					cmbCity.append("<option>--请选择城市--</option>");
-					for(var i = 0; i < data.length; i++){
-						if(data[i].NAME == hideCity){
-							cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-						}else{
-							cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-						}
-					}
-				}
-			},'json');
+			
+			//通过中转仓获取收货人信息
 
-		    // 回显区
-		    $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
-				if(data.length > 0){
-					var cmbArea =$("#cmbAreaTo");
-					cmbArea.empty();
-					cmbArea.append("<option>--请选择区(县)--</option>");
-					for(var i = 0; i < data.length; i++){
-						if(data[i].NAME == hideDistrict){
-							cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
-						}else{
-							cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
-						}
-					}
-				}
-			},'json');
+			receiver(data.warehouse);
+
     	}, 'json');
 	});
 
