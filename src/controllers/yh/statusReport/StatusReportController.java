@@ -702,6 +702,9 @@ public class StatusReportController extends Controller{
 		String endTime = getPara("endTime");
 		String route_to = getPara("route_to");
 		String serial_no = getPara("serial_no");
+		String receive = getPara("receive");
+		String noreceive = getPara("noreceive");
+		String inventory = getPara("inventory");
 		String sLimit = "";
 		
 		Map orderMap = new HashMap();
