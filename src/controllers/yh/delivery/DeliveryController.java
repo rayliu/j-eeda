@@ -1252,6 +1252,7 @@ public class DeliveryController extends Controller {
 		String orderDeliveryStamp  = getPara("order_delivery_stamp");
 		String transferOrderNo  = getPara("transferOrderNo").trim();
 		String receivingunit =getPara("receivingunit");
+		String remark =getPara("remark");
 		String[] idlist = getPara("localArr").split(",");
 		String[] idlist2 = getPara("localArr2").split(",");
 		String[] idlist4 = getPara("localArr3").split(",");
@@ -1306,6 +1307,7 @@ public class DeliveryController extends Controller {
 			deliveryOrder.set("order_no", orderNo)
 					.set("sp_id", spId)
 					.set("car_id", carId)
+					.set("remark", remark)
 					.set("deliveryMode", deliveryMode)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
@@ -1328,6 +1330,7 @@ public class DeliveryController extends Controller {
 				}
 				deliveryChangeOrder.set("order_no", orderNo+"-DB")//生成调拨的配送单
 				.set("sp_id", changeSpId)
+				.set("remark", remark)
 				.set("notify_party_id", party.get("id"))
 				.set("create_stamp", createDate)
 				.set("route_to", getPara("route_to"))
@@ -1556,6 +1559,7 @@ public class DeliveryController extends Controller {
 					.set("route_from", getPara("route_from"))
 					.set("priceType", getPara("chargeType"))
 					.set("receivingunit", receivingunit)
+					.set("remark", remark)
 					.set("warehouse_nature", warehouseNature)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
@@ -1595,6 +1599,7 @@ public class DeliveryController extends Controller {
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
+					.set("remark", remark)
 					.set("route_from", getPara("route_from"))
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", warehouseId)
@@ -1653,6 +1658,7 @@ public class DeliveryController extends Controller {
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", warehouseId)
 					.set("cargo_nature", cargoNature)
+					.set("remark", remark)
 					.set("warehouse_nature", warehouseNature)
 					.set("receivingunit", receivingunit)
 					.set("ref_no", sign_document_no)
