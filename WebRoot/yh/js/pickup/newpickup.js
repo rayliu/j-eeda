@@ -313,6 +313,7 @@ $(document).ready(function() {
 		},
         "aoColumns": [
             {"mDataProp": "ITEM_NO"},
+            {"mDataProp": "AMOUNT"},
     		{"mDataProp": null,
     			"fnRender": function(obj) {
     				var cargoNature = $("#transferCrgoNature").val();
