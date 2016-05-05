@@ -1985,17 +1985,20 @@ $(document).ready(function() {
 		 $.post('/transferOrder/searchAllWarehouse', {officeId: officeId},function(data){
 			 if(data.length > 0){
 				 var gateInSelect = $("#gateInSelect");
+				 var order_id = $('#order_id').val();
 				 gateInSelect.empty();
 				 var hideWarehouseId = $("#hideWarehouseId").val();
 				 for(var i=0; i<data.length; i++){
 					 if(data[i].ID == hideWarehouseId){
 						 gateInSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");
 						 //$("#gateInSelect").val(data[i].ID);
-						 receiver(data[i]);
+						 if(order_id=='')
+							 receiver(data[i]);
 
 					 }else{
 						 gateInSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
-						 receiver(data[0]);
+						 if(order_id=='')
+							 receiver(data[0]);
 					 }
 				 }
 			 }else{
@@ -2064,16 +2067,19 @@ $(document).ready(function() {
 		 $.post('/transferOrder/searchAllWarehouse', {officeId: officeId},function(data){
 			 if(data.length > 0){
 				 var gateOutSelect = $("#gateOutSelect");
+				 var order_id = $('#order_id').val();
 				 gateOutSelect.empty();
 				 var hideWarehouseId = $("#hideOutWarehouseId").val();
 				 for(var i=0; i<data.length; i++){
 					 if(data[i].ID == hideWarehouseId){
 						 gateOutSelect.append("<option value='"+data[i].ID+"' selected='selected'>"+data[i].WAREHOUSE_NAME+"</option>");
 						 //$("#gateInSelect").val(data[i].ID);
-						 receiver(data[i]);
+						 if(order_id=='')
+							 receiver(data[i]);
 					 }else{
 						 gateOutSelect.append("<option value='"+data[i].ID+"'>"+data[i].WAREHOUSE_NAME+"</option>");
-						 receiver(data[0]);
+						 if(order_id=='')
+						 	receiver(data[0]);
 					 }
 				 }
 				 
