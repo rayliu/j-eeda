@@ -282,7 +282,7 @@
 											        <p>未知错误</p>  
 											    </div> -->  
 											    <!-- 显示图片必须保证此权限点已存在 -->
-		                                    	<% if(shiro.hasPermission("ReturnOrder.imgoperation")){%>
+		                                    <% if(shiro.hasPermission("ReturnOrder.imgoperation")){%>
 		                                    		<input type="hidden" id="permission" value="permissionYes">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
 		                                    		<div style="margin-right: 10px;float:left;" >
@@ -291,9 +291,10 @@
 			                                    		<p>
 			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
 			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" > 删除 </a>
+                                                ${orderAttachmentFile.photo_type!''}
 			                                    		</p>
 		                                    		</div>
-   													<%}%> 
+   													              <%}%> 
 				                               	<%}else{%>
 				                               		<input type="hidden" id="permission" value="permissionNo">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
@@ -301,16 +302,19 @@
 			                                    		<div style="margin-right: 10px;float:left;" >
 				                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
 				                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;">
+                                                <p>
+                                                  ${orderAttachmentFile.photo_type!''}
+                                                </p>
 			                                    		</div>
 			                                    		<%}%>
-   													<%}%>
+   													              <%}%>
 				                               	<%}%>
-		                                    	
+
 		                                    </div>
 										</div>
-                                    </div>                              
+                                    </div>
                             	</div>
-                            	
+
                             	<div class="panel-heading">
 	                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop="static">
 	                                  <div class="modal-dialog">

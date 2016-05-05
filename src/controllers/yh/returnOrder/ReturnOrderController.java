@@ -70,7 +70,7 @@ public class ReturnOrderController extends Controller {
 	public void list() {		String order_no = getPara("order_no");
 		String tr_order_no = getPara("tr_order_no");
 		String de_order_no = getPara("de_order_no");
-		String stator = getPara("stator");
+
 		String status = getPara("status");
 		String time_one = getPara("time_one");
 		String time_two = getPara("time_two");
@@ -82,6 +82,7 @@ public class ReturnOrderController extends Controller {
 		String to_name = getPara("to_name");
 		String province = getPara("province");
 		String imgaudit = getPara("imgaudit");
+		String photo_type = getPara("photo_type");
 		String sign_no = getPara("sign_no");
 		String pageIndex = getPara("sEcho");
 		String q_begin = getPara("q_begin");
@@ -105,6 +106,9 @@ public class ReturnOrderController extends Controller {
         }
 		if (StringUtils.isNotEmpty(imgaudit)){
         	conditions+=" and UPPER(imgaudit) like '%"+imgaudit+"%'";
+        }
+		if (StringUtils.isNotEmpty(photo_type)){
+            conditions+=" and UPPER(photo_type) like '%"+photo_type+"%'";
         }
 		if (StringUtils.isNotEmpty(tr_order_no)){
         	conditions+=" and UPPER(transfer_order_no) like '%"+tr_order_no+"%'";
@@ -234,11 +238,31 @@ public class ReturnOrderController extends Controller {
 				+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id"
 				+ " WHERE doi.delivery_id = dor.id )"
 				+ " ) address, dor.order_no delivery_order_no, ifnull(ul.c_name, ul.user_name) creator_name,"
-				+ " ror.receipt_date, ror.transaction_status, ( SELECT CASE WHEN ( SELECT count(0) FROM order_attachment_file"
-				+ " WHERE order_type = 'RETURN' AND order_id = ror.id ) = 0 THEN '无图片'"
+				+ " ror.receipt_date, ror.transaction_status, "
+				+ "( SELECT CASE "
 				+ " WHEN ( SELECT count(0) FROM order_attachment_file"
-				+ " WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) and file_path is not null ) > 0 THEN '有图片待审核'"
-				+ " ELSE '有图片已审核' END ) imgaudit, dor.ref_no sign_no"
+				+ "    WHERE order_type = 'RETURN' AND order_id = ror.id ) = 0 "
+				+ "  THEN '无图片'"
+				+ " WHEN ( SELECT count(0) FROM order_attachment_file"
+				+ "    WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) and file_path is not null ) > 0 "
+				+ "  THEN '有图片待审核'"
+				+ " ELSE '有图片已审核' END "
+				+ ") imgaudit, "
+				+ "( SELECT CASE "
+                + " WHEN ( SELECT ("
+                + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')>0 "
+                + " && "
+                + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')=0) "
+                + "  THEN '回单签收'"
+                + " WHEN ( SELECT ("
+                + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')=0 "
+                + " && "
+                + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')>0) "
+                + "  THEN '现场安装'"
+                + " ELSE '' END "
+                + ") photo_type, "
+
+				+ " dor.ref_no sign_no"
 				+ " FROM return_order ror"
 				+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
@@ -321,7 +345,21 @@ public class ReturnOrderController extends Controller {
 					+ " WHERE order_type = 'RETURN' AND order_id = ror.id ) = 0 THEN '无图片'"
 					+ " WHEN ( SELECT count(0) FROM order_attachment_file"
 					+ " WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) and file_path is not null ) > 0 THEN '有图片待审核'"
-					+ " ELSE '有图片已审核' END ) imgaudit, dor.ref_no sign_no"
+					+ " ELSE '有图片已审核' END ) imgaudit,"
+					+ "( SELECT CASE "
+	                + " WHEN ( SELECT ("
+	                + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')>0 "
+	                + " && "
+	                + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')=0) "
+	                + "  THEN '回单签收'"
+	                + " WHEN ( SELECT ("
+	                + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')=0 "
+	                + " && "
+	                + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')>0) "
+	                + "  THEN '现场安装'"
+	                + " ELSE '' END "
+	                + ") photo_type, "
+					+ " dor.ref_no sign_no"
 					+ " FROM return_order ror"
 					+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 					+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
