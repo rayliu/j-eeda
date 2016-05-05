@@ -1687,4 +1687,31 @@ public class CostCheckOrderController extends Controller {
 			renderJson("{\"success\":false}");
 		}
 	}
+	
+	
+	public void updateOrderRemark(){
+		String order_type = getPara("order_type");
+		String remark = getPara("remark");
+		String order_id = getPara("order_id");
+		
+		if("order_id".equals(order_id)||order_id==null){
+			renderJson("{\"success\":false}");
+		}else{
+			if("配送".equals(order_type)){
+				DeliveryOrder dor  = DeliveryOrder.dao.findById(order_id);
+				dor.set("remark", remark).update();
+			}else if("提货".equals(order_type) || "零担".equals(order_type) ){
+				DepartOrder deo  = DepartOrder.dao.findById(order_id);
+				deo.set("remark", remark).update();
+			}else if("成本单".equals(order_type)){
+				ArapMiscCostOrder aco  = ArapMiscCostOrder.dao.findById(order_id);
+				aco.set("remark", remark).update();
+			}else {
+				InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(order_id);
+				insuranceOrder.set("remark", remark).update();
+			}
+			renderJson("{\"success\":true}");
+		}
+		
+	}
 }

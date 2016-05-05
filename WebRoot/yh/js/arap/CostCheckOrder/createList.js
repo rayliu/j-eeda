@@ -114,7 +114,7 @@ $(document).ready(function() {
                 	 return strcheck;
                 }
             },
-            {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px"},            	
+            {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px","class":"order_type"},            	
             {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
             {"mDataProp":"SERIAL_NO", "sWidth":"200px"},
             {"mDataProp":"REF_NO", "sWidth":"200px"},
@@ -184,7 +184,14 @@ $(document).ready(function() {
             {"mDataProp":"FROM_NAME", "sWidth":"150px"},   
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                                           
-            {"mDataProp":"REMARK", "sWidth":"150px"},
+            {"mDataProp":"REMARK", "sWidth":"150px",
+            	 "fnRender": function(obj) {
+            		 var remark = obj.aData.REMARK;
+            		 if(remark==null)
+            			 remark='';
+            		 return "<textarea style='' name='remark'/>"+remark+"</textarea>";
+            	 }
+            },
             {"mDataProp": null, 
                 "sWidth": "20px",                
                 "fnRender": function(obj) {
@@ -193,6 +200,22 @@ $(document).ready(function() {
             }            
         ]     
     });		
+    
+    //动态更改备注
+    $("#uncheckedCostCheck-table").on('blur', 'textarea', function(e){
+		e.preventDefault();
+		var order_type = $(this).parent().parent().attr('order_ty');
+		var remark = $(this).val();
+		var order_id = $(this).parent().parent().attr('ids');
+		$.post('/costCheckOrder/updateOrderRemark', {order_type:order_type,remark:remark,order_id:order_id}, function(data){
+			 if(data.success){
+	            $.scojs_message('备注给更新成功', $.scojs_message.TYPE_OK);
+	         }else{
+	            $.scojs_message('备注给更新失败', $.scojs_message.TYPE_ERROR);
+	         }
+	    },'json');
+		uncheckedCostCheckTable.fnDraw();
+	});
     
     
     $("#uncheckedCostCheck-table").on('click', '.finItemdel', function(e){
