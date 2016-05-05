@@ -31,7 +31,11 @@ $(document).ready(function() {
 				    		return "<a class='btn  btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+"入库确认"+"</a>";
 				    	}
 			    	}else{
-			    		return obj.aData.DEPART_STATUS;
+			    		if(obj.aData.DEPART_STATUS == '已入库'){
+			    			return "<a class='btn  btn-danger deleteInWarehouse' code='"+obj.aData.ID+"'>"+"撤销入库"+"</a>";
+			    		}else{
+			    			return "<a class='btn  btn-danger deleteReceipt' code='"+obj.aData.ID+"'>"+"撤销收货"+"</a>";
+			    		}
 			    	}
 			    }
 			},
@@ -153,6 +157,28 @@ $(document).ready(function() {
             return;
         }
     });
+    
+    
+  //撤销入库
+    $("#eeda-table").on('click', '.deleteInWarehouse', function(e){
+    	var order_id =$(this).attr("code");
+    	$(this).attr("disabled",true);
+    	if(confirm("确定撤销入库吗？")){
+    		$.post('/departOrder/deleteInWarehouse',{order_id:order_id},function(data){
+    			if(data.success){
+    				$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+    				detailTable.fnDraw(); 
+                }else{
+                	detailTable.fnDraw();
+                	$.scojs_message('撤销失败,可能存在下级单据(或单据为普货单据，暂不支持撤销)', $.scojs_message.TYPE_FAIL);
+                	$(this).attr("disabled",false);
+                }
+    		},'json');
+        } else {
+        	$(this).attr("disabled",false);
+            return;
+        }
+    });
 
     // 收货确认
     $("#eeda-table").on('click', '.confirmReceipt', function(e){
@@ -171,6 +197,31 @@ $(document).ready(function() {
                 }
         	});
         } else {
+        	$(this).attr("disabled",false);
+            return;
+        }
+    });
+    
+    
+ // 撤销收货
+    $("#eeda-table").on('click', '.deleteReceipt', function(e){
+    	$(this).attr("disabled",true);
+    	$.scojs_message('未开发完成！！！', $.scojs_message.TYPE_FALSE);
+    	return;
+    	var order_id =$(this).attr("code");
+    	if(confirm("确定撤销收货吗？")){	
+    		$.post('/transferOrderMilestone/deleteReceipt', { order_id:order_id}, function(data){    
+    			if(data.success){
+    				detailTable.fnDraw();
+    				$.scojs_message('已收货', $.scojs_message.TYPE_OK);	
+                }else{
+                	$(this).attr("disabled",false);
+                	$.scojs_message('收货失败,请联系后台管理员查询原因', $.scojs_message.TYPE_FALSE);
+                	$(this).attr("disabled",false);
+                }
+        	});
+        } else {
+        	$(this).attr("disabled",false);
             return;
         }
     });
