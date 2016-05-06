@@ -3037,13 +3037,6 @@ public class DepartOrderController extends Controller {
     }
 
     
-    //撤销收货
-    @Before(Tx.class)
-    public void deleteReceipt(){
-    	String order_id = getPara("order_id");
-    }
-    
-    
     //撤销入库
   	@Before(Tx.class)
   	public void deleteInWarehouse() {
@@ -3104,6 +3097,12 @@ public class DepartOrderController extends Controller {
   			long depart_id = toid.getLong("depart_id");
   			DepartOrder deo =  DepartOrder.dao.findById(depart_id);
   			deo.set("status", "运输在途").update();
+  			
+  			//更新运输单状态
+  			long transfer_id = toid.getLong("order_id");
+  			TransferOrder tor =  TransferOrder.dao.findById(transfer_id);
+  			tor.set("status", "处理中").update();
+
   		}
   		
   		//删除里程碑相关数据
@@ -3176,5 +3175,13 @@ public class DepartOrderController extends Controller {
   			dofi.delete();
   		}	
   	}
+  	
+    //撤销收货
+    @Before(Tx.class)
+    public void deleteReceipt(){
+    	String order_id = getPara("order_id");
+    	
+    	
+    }
 
 }
