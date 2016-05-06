@@ -212,11 +212,11 @@ $(document).ready(function() {
     	if(confirm("确定撤销收货吗？")){	
     		$.post('/transferOrderMilestone/deleteReceipt', { order_id:order_id}, function(data){    
     			if(data.success){
-    				detailTable.fnDraw();
-    				$.scojs_message('已收货', $.scojs_message.TYPE_OK);	
+    				$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+    				detailTable.fnDraw(); 
                 }else{
-                	$(this).attr("disabled",false);
-                	$.scojs_message('收货失败,请联系后台管理员查询原因', $.scojs_message.TYPE_FALSE);
+                	detailTable.fnDraw();
+                	$.scojs_message('撤销失败,可能存在下级单据(或单据为普货单据，暂不支持撤销)', $.scojs_message.TYPE_FAIL);
                 	$(this).attr("disabled",false);
                 }
         	});

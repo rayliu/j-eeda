@@ -24,7 +24,7 @@ $(document).ready(function() {
                 "bVisible":DeliveryOnTrip.isComplete,
                 "fnRender": function(obj) {   
                   if(obj.aData.STATUS=="已送达" || obj.aData.STATUS=="已签收"|| obj.aData.STATUS=="已完成"){
-                    return "已送达";
+                	  return "<a class='btn  btn-danger deleteDelivery' id='deleteBtn' code='"+obj.aData.ID+"'>撤销到达</a>";
                   }else if(obj.aData.STATUS=="已发车" || obj.aData.STATUS=="配送在途"){
                     return "<a class='btn  btn-primary confirmDelivery' id='arriveBtn' code='"+obj.aData.ID+"'>"+
                     "到达确认"+
@@ -95,7 +95,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.confirmDelivery', function(e){
     	var delivery_id =$(this).attr("code");
     	var $text = $(this).parent();
-    	var status = $(this).parent().parent().find('td')[1];
+    	var status = $(this).parent().parent().find('td')[2];
     	$text.find('#arriveBtn').attr('disabled',true);
     	if(confirm("到达确认 吗？")){
     		$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id},function(data){
@@ -103,11 +103,32 @@ $(document).ready(function() {
     			transferOrderMilestoneTbody.append("<tr><th>"+data.transferOrderMilestone.STATUS+"</th><th>"+data.transferOrderMilestone.LOCATION+"</th><th>"+data.username+"</th><th>"+data.transferOrderMilestone.CREATE_STAMP+"</th></tr>");
     			//detailTable.fnDraw(); 
     			$(status).html('已送达');
-    			$text.find('a').html('已送达');
+    			$text.html("<a class='btn  btn-danger deleteDelivery' id='deleteBtn' code='"+delivery_id+"'>撤销到达</a>");
     			
     		},'json');
         }else{
         	$text.find('#arriveBtn').attr('disabled',false);
+        }
+    });
+    
+    //撤销到达
+    $("#eeda-table").on('click', '.deleteDelivery', function(e){
+    	var delivery_id =$(this).attr("code");
+    	var $text = $(this).parent();
+    	var status = $(this).parent().parent().find('td')[2];
+    	$text.find('#deleteBtn').attr('disabled',true);
+    	if(confirm("确定撤销到达吗？")){
+    		$.post('/deliveryOrderMilestone/deleteReceipt',{delivery_id:delivery_id},function(data){
+    			if(data.success){
+    				$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
+        			$(status).html('配送在途');
+        			$text.html("<a class='btn  btn-primary confirmDelivery' id='arriveBtn' code='"+delivery_id+"'>到达确认</a>");
+    			}else{
+    				$.scojs_message('撤销失败，存在下级财务单据(或配送已发车)，不可撤销', $.scojs_message.TYPE_FALSE);
+    			}
+    		},'json');
+        }else{
+        	$text.find('#deleteBtn').attr('disabled',false);
         }
     });
     

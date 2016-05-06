@@ -22,6 +22,7 @@ import models.TransferOrderMilestone;
 import models.UserLogin;
 import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
+import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -701,4 +702,48 @@ public class DeliveryOrderMilestoneController extends Controller {
         renderJson(orderMap);
     }*/
     
+    @Before(Tx.class)
+    public void deleteReceipt(){
+    	String delivery_id = getPara("delivery_id");
+    	
+    	if("".equals(delivery_id)||delivery_id==null)
+			return;
+    	
+    	DeliveryOrder dor = DeliveryOrder.dao.findById(delivery_id);
+    	
+    	//检查是否有财务流转了（应付）
+    	String audit_status = dor.getStr("audit_status");
+    	if(!"新建".equals(audit_status) && !"已确认".equals(audit_status)){
+    		renderJson("{\"success\":false}");
+    		return ;
+    	}
+    	
+    	
+    	
+    	List<ReturnOrder> rors = ReturnOrder.dao.find("select * from return_order where delivery_order_id = ?",delivery_id);
+    	for(ReturnOrder ror : rors ){
+    		long return_id = ror.getLong("id");
+    		
+    		//检查是否有财务流转了（应收）
+    		String return_status = ror.getStr("transaction_status");
+    		if(!"新建".equals(return_status) && !"已确认".equals(return_status) && !"已签收".equals(return_status)){
+        		renderJson("{\"success\":false}");
+        		return ;
+        	}
+    		
+    		//删除回单字表
+    		List<ReturnOrderFinItem> rofis = ReturnOrderFinItem.dao.find("select * from return_order_fin_item where return_order_id = ?",return_id);
+    		for(ReturnOrderFinItem rofi: rofis){
+    			rofi.delete();
+    		}
+    		
+    		//删除回单主表
+    		ror.delete();
+    	}
+    	
+    	//更新配送单状态
+    	dor.set("status", "配送在途").update();
+    	
+    	renderJson("{\"success\":true}");
+    }  
 }

@@ -263,8 +263,6 @@ public class DeliveryController extends Controller {
 			status = " and ifnull(d.status,'') in ('配送在途','已发车')";
 		}else if(status.equals("finish")){
 			status = " and ifnull(d.status,'') in ('已完成','已送达','已签收')";
-		}else{
-			status = " and ifnull(d.status,'') not in ('新建','计划中')";
 		}
 
 		String sLimit = "";
