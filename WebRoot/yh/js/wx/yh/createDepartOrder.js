@@ -89,8 +89,10 @@ $(document).ready(function() {
 		var $arrival_time = $('#warn_arrival_time');
 		if(weigh!=''){
 			$weigh.hide();
+			$volume.hide();
 		}
 		if(volume!=''){
+			$weigh.hide();
 			$volume.hide();
 		}
 		if(pay!=''){
@@ -118,12 +120,9 @@ $(document).ready(function() {
 		var arrival_time = $('#arrival_time').val();
 		var $arrival_time = $('#warn_arrival_time');
 		
-		if(weigh==''){
-			$weigh.show();
-			returner+=1;
-		}
-		if(volume==''){
+		if(volume=='' && weigh==''){
 			$volume.show();
+			$weigh.show();
 			returner+=1;
 		}
 		if(pay==''){

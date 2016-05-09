@@ -184,8 +184,8 @@ public class departOrderController extends ApiController {
 		String car_type = getPara("car_type_input");
 		String ltl_price_type = getPara("ltl_price_type");
 		
-		String weight = getPara("weigh");
-		String volume = getPara("volume");
+		String weight = getPara("weigh")==""?"0":getPara("weigh");
+		String volume = getPara("volume")==""?"0":getPara("volume");
 		String pay = getPara("pay");
 		String booking_note_number = getPara("booking_note_number");
 		String arrival_time = getPara("arrival_time");
