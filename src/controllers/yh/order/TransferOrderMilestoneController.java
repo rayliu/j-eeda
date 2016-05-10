@@ -267,6 +267,13 @@ public class TransferOrderMilestoneController extends Controller {
         //修改发车单信息
         DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
         departOrder.set("status", "已收货").update();
+        
+        //更新单品详细表
+        List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where depart_id = ?",departOrderId);
+        for(TransferOrderItemDetail toid:toids){
+        	toid.set("status", "已收货").update();
+        }
+        
         for (Record record : transferOrderIds) {
         	//获取运输单ID
         	long transerOrderId = record.getLong("order_id");

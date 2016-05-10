@@ -163,6 +163,8 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.deleteInWarehouse', function(e){
     	var order_id =$(this).attr("code");
     	$(this).attr("disabled",true);
+    	$.scojs_message('开发中(暂不支持撤销)', $.scojs_message.TYPE_FAIL);
+    	return;
     	if(confirm("确定撤销入库吗？")){
     		$.post('/departOrder/deleteInWarehouse',{order_id:order_id},function(data){
     			if(data.success){
@@ -206,17 +208,17 @@ $(document).ready(function() {
  // 撤销收货
     $("#eeda-table").on('click', '.deleteReceipt', function(e){
     	$(this).attr("disabled",true);
-    	$.scojs_message('未开发完成！！！', $.scojs_message.TYPE_FALSE);
+    	$.scojs_message('开发中(暂不支持撤销)', $.scojs_message.TYPE_FAIL);
     	return;
     	var order_id =$(this).attr("code");
     	if(confirm("确定撤销收货吗？")){	
-    		$.post('/transferOrderMilestone/deleteReceipt', { order_id:order_id}, function(data){    
+    		$.post('/departOrder/deleteReceipt', { order_id:order_id}, function(data){    
     			if(data.success){
     				$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
     				detailTable.fnDraw(); 
                 }else{
                 	detailTable.fnDraw();
-                	$.scojs_message('撤销失败,可能存在下级单据(或单据为普货单据，暂不支持撤销)', $.scojs_message.TYPE_FAIL);
+                	$.scojs_message('撤销失败,可能存在下级单据)', $.scojs_message.TYPE_FAIL);
                 	$(this).attr("disabled",false);
                 }
         	});

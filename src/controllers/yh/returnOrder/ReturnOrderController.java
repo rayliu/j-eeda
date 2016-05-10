@@ -648,8 +648,10 @@ public class ReturnOrderController extends Controller {
 		} else {
 			DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ? ", returnOrder.getLong("transfer_order_id"));
 			DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.getLong("pickup_id"));
-			departOrder.set("sign_status", "已签收");
-			departOrder.update();
+			if(departOrder!=null){
+				departOrder.set("sign_status", "已签收");
+				departOrder.update();
+			}		
 		}
 		renderJson("{\"success\":true}");
 	}
