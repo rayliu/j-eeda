@@ -850,13 +850,7 @@
             }
 		},'json');
 	});
-	
 
-	
-	//撤销按钮显示
-	if($("#pickupId").val() != null && !$("#pickupId").val()==''){
-		  //$("#cancelBtn").attr('disabled', false);
-	}
 	
     
 //	// 判断货场是否选中
@@ -1493,14 +1487,29 @@
     
     //撤销调车单
     $("#cancelBtn").on('click',function(){
-    	$.post('/pickupOrder/cancelPickupOder', {pickupId:$("#pickupId").val()}, function(data){ 
+    	$("#cancelBtn").attr('disabled',true);
+    	var pickup_id = $("#pickupId").val();
+    	if(pickup_id==null || pickup_id=='')
+    	{
+    		$.scojs_message('对不起，当前单据为保存', $.scojs_message.TYPE_ERROR);
+    		return false;
+    	}
+    	
+    	if(!confirm("是否确认撤销此单据？")){
+    		$("#cancelBtn").attr('disabled',false);
+    		return false;
+    	}
+    	
+    	$.post('/pickupOrder/cancelPickupOder', {pickupId:pickup_id}, function(data){ 
     		if(!data.success){
     			$.scojs_message('对不起，当前单据(已入货场/已入库)或有下级单据(发车单/回单)，不能撤销', $.scojs_message.TYPE_ERROR);
     		}else{
-    			$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
     			$("#finishBtn").attr('disabled', true);
     			$("#saveTransferOrderBtn").attr('disabled', true);
-    			$("#cancelBtn").attr('disabled', true);
+    			$.scojs_message('撤销成功!,1秒后自动返回调车单列表。。。', $.scojs_message.TYPE_OK);
+    			setTimeout(function(){
+					location.href="/pickupOrder";
+				}, 1000);
     		}
     	});
     	
