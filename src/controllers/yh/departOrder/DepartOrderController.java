@@ -3091,6 +3091,7 @@ public class DepartOrderController extends Controller {
   		for (TransferOrderItemDetail toid:toids) {
   			toid.set("delivery_id", null);
   			toid.set("status", "已发车");
+  			toid.set("is_delivered", 0);
   			toid.update();
   			
   			//更新发车单状态
