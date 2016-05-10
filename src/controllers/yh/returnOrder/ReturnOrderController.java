@@ -621,6 +621,7 @@ public class ReturnOrderController extends Controller {
 	}*/
 
 	// 回单签收
+	@Before(Tx.class)
 	public void returnOrderReceipt() {
 		String id = getPara();
 		java.util.Date utilDate = new java.util.Date();
@@ -645,9 +646,9 @@ public class ReturnOrderController extends Controller {
 			doMilestone.set("delivery_id", deliveryId);
 			doMilestone.save();
 		} else {
-			DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer dor where dor.order_id = ? order by id desc limit 0,1", returnOrder.get("transfer_order_id"));
-			DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.get("depart_id"));
-			departOrder.set("sign_status", "已回单");
+			DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ? ", returnOrder.getLong("transfer_order_id"));
+			DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.getLong("pickup_id"));
+			departOrder.set("sign_status", "已签收");
 			departOrder.update();
 		}
 		renderJson("{\"success\":true}");
