@@ -33,7 +33,7 @@
 			$.scojs_message('单据未生成，无法撤销！', $.scojs_message.TYPE_FALSE);
 			return;
 		}
-		if(audit_status!='新建'){
+		if(audit_status!='新建'&& audit_status!='已确认'){
 			$.scojs_message('此单据已做了财务，无法撤销！', $.scojs_message.TYPE_FALSE);
 			return;
 		}
@@ -46,10 +46,10 @@
     			$("#deleteBtn").attr('disabled',false);
     			$.scojs_message('撤销失败', $.scojs_message.TYPE_ERROR);
     		}else{
-    			$.scojs_message('撤销成功!,3秒后自动返回运输单列表。。。', $.scojs_message.TYPE_OK);
+    			$.scojs_message('撤销成功!,1秒后自动返回发车单列表。。。', $.scojs_message.TYPE_OK);
     			setTimeout(function(){
 					location.href="/departOrder";
-				}, 3000);
+				}, 1000);
     		}
 		});
 		
