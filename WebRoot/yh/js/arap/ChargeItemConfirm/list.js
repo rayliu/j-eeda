@@ -36,7 +36,8 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
         		}},
-            {"mDataProp":"SERIAL_NO", "sWidth":"120px"}, 
+            {"mDataProp":"SERIAL_NO", "sWidth":"120px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"}, 
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TOTAL_AMOUNT==null){
@@ -71,8 +72,7 @@ $(document).ready(function() {
             }},
             {"mDataProp":"DEPART_TIME", "sWidth":"130px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
-            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"},        	
+            {"mDataProp":"DELIVERY_ORDER_NO", "sWidth":"120px"},        	
             {"mDataProp":null, "sWidth": "120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TRANSACTION_STATUS=='new'){
