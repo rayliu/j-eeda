@@ -163,8 +163,8 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.deleteInWarehouse', function(e){
     	var order_id =$(this).attr("code");
     	$(this).attr("disabled",true);
-    	$.scojs_message('开发中(暂不支持撤销)', $.scojs_message.TYPE_FAIL);
-    	return;
+//    	$.scojs_message('开发中(暂不支持撤销)', $.scojs_message.TYPE_FAIL);
+//    	return;
     	if(confirm("确定撤销入库吗？")){
     		$.post('/departOrder/deleteInWarehouse',{order_id:order_id},function(data){
     			if(data.success){
@@ -208,8 +208,8 @@ $(document).ready(function() {
  // 撤销收货
     $("#eeda-table").on('click', '.deleteReceipt', function(e){
     	$(this).attr("disabled",true);
-    	$.scojs_message('开发中(暂不支持撤销)', $.scojs_message.TYPE_FAIL);
-    	return;
+//    	$.scojs_message('开发中(暂不支持撤销)', $.scojs_message.TYPE_FAIL);
+//    	return;
     	var order_id =$(this).attr("code");
     	if(confirm("确定撤销收货吗？")){	
     		$.post('/departOrder/deleteReceipt', { order_id:order_id}, function(data){    
