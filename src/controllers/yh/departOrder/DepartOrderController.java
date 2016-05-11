@@ -3046,6 +3046,14 @@ public class DepartOrderController extends Controller {
   		if("".equals(depart_id)||depart_id==null)
   			return;
   		
+  		DepartOrder departOrder = DepartOrder.dao.findById(depart_id);
+        //判断是否存在下级财务单据（应付未对账）
+        String audit_status = departOrder.getStr("audit_status");
+        if(!"新建".equals(audit_status) && !"已确认".equals(audit_status)){
+        	renderJson("{\"success\":false}");
+			return;
+        }
+  		
   		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where depart_id = ?",depart_id);
   		if(toids.size()>0){
   			//先校验配送单是否已发车或下级单据
@@ -3190,6 +3198,7 @@ public class DepartOrderController extends Controller {
         }
 
         List<DepartTransferOrder> dts = DepartTransferOrder.dao.find("select order_id from depart_transfer where depart_id = ? ",order_id);
+        
         for (DepartTransferOrder dt : dts) {
         	long transfer_id = dt.getLong("order_id");
         	TransferOrder tor = TransferOrder.dao.findById(transfer_id);
@@ -3233,8 +3242,10 @@ public class DepartOrderController extends Controller {
     @Before(Tx.class)
     public boolean deleteReturnOrder(long transfer_id){
 		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id =?",transfer_id);
-		long return_id = returnOrder.getLong("id");
+		if(returnOrder == null)
+			return true;
 		
+		long return_id = returnOrder.getLong("id");
 		//校验是否有下级财务单据（应收）
 		String transaction_status = returnOrder.getStr("transaction_status");
 		if(!"新建".equals(transaction_status) && !"已签收".equals(transaction_status) && !"已确认".equals(transaction_status)){
@@ -3252,7 +3263,7 @@ public class DepartOrderController extends Controller {
     	return true;
     }
     
-    //撤销配送单(退货单)
+    //撤销配送单(退货单)一张配送单
     @Before(Tx.class)
     public boolean deleteDeliveryOrder(long transfer_id,String depart_id){
     	List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail "
@@ -3261,13 +3272,16 @@ public class DepartOrderController extends Controller {
     	//更新单品明细表
   		for (TransferOrderItemDetail toid:toids) {
   			//配送单ID
-  			delivery_id = toid.getLong("delivery_id");
-  			//校验配送单是否存在下级单据
-  			DeliveryOrder dor = DeliveryOrder.dao.findById(delivery_id);
-			String status = dor.getStr("status");
-			if(!"新建".equals(status)){
-				return false;
-			}
+  			if(toid.getLong("delivery_id") != null){
+  				delivery_id = toid.getLong("delivery_id");
+  				
+  				//校验配送单是否存在下级单据
+  	  			DeliveryOrder dor = DeliveryOrder.dao.findById(delivery_id);
+  				String status = dor.getStr("status");
+  				if(!"新建".equals(status)){
+  					return false;
+  				}
+  			}
   			
   			toid.set("delivery_id", null);
   			toid.set("status", "已发车");
