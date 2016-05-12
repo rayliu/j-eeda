@@ -3053,63 +3053,81 @@ public class DepartOrderController extends Controller {
         	renderJson("{\"success\":false}");
 			return;
         }
+        
+        List<DepartTransferOrder> dts = DepartTransferOrder.dao.find("select order_id from depart_transfer where depart_id = ? ",depart_id);
+        //先通过状态判断是否存在下级单据（ps:不可在校验状态的同时更新单据信息（这样可以避免多张运输单同时入库的情况））
+        for (DepartTransferOrder dt : dts) {
+        	long transfer_id = dt.getLong("order_id");
+        	TransferOrder tor = TransferOrder.dao.findById(transfer_id);
+        	
+        	List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail"
+        			+ " where depart_id = ? and order_id = ?",depart_id,transfer_id);
+        	for(TransferOrderItemDetail toid : toids){
+        		long delivery_id = 0;
+        		if(toid.getLong("delivery_id") != null){
+        			delivery_id = toid.getLong("delivery_id");
+        			
+        			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
+        			String delievry_status = deliveryOrder.getStr("status");
+      				if(!"新建".equals(delievry_status)){
+      					//有下级单据，不可撤销
+	  					renderJson("{\"success\":false}");
+	  					return;
+      				}
+        		}	
+        	}
+        	
+        	String cargo_nature = tor.getStr("cargo_nature");
+        	if("cargo".equals(cargo_nature)){
+        		DeliveryOrderItem doi = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where transfer_order_id = ?",transfer_id);
+        		if(doi != null){
+        			//有下级单据，不可撤销
+  					renderJson("{\"success\":false}");
+  					return;
+        		}
+        	}
+        }
+        
+        //校验完没有下级单据后，开始撤销相对应的单据信息
+        for (DepartTransferOrder dt : dts) {
+        	long transfer_id = dt.getLong("order_id");
+        	TransferOrder tor = TransferOrder.dao.findById(transfer_id);
+        	
+        	List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail"
+        			+ " where depart_id = ? and order_id = ?",depart_id,transfer_id);
+        	for(TransferOrderItemDetail toid : toids){
+        		long delivery_id = 0;
+        		if(toid.getLong("delivery_id") != null){
+        			delivery_id = toid.getLong("delivery_id");
+        			
+        			//更新单品明细表
+    	  			toid.set("delivery_id", null);
+    	  			toid.set("status", "已发车");
+    	  			toid.set("is_delivered", 0);
+    	  			toid.update();
+        			
+        			//删除对应的配送单
+  	  			    deleteATM(delivery_id);
+        		}	
+        	}
+        	
+        	//更新运输单状态
+  			tor.set("status", "处理中").update();
+        }
   		
-  		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where depart_id = ?",depart_id);
-  		if(toids.size()>0){
-  			//先校验配送单是否已发车或下级单据
-  			for(TransferOrderItemDetail toid :toids){
-  	  			if(toid.getLong("delivery_id") != null){
-  	  				DeliveryOrder dor = DeliveryOrder.dao.findById(toid.getLong("delivery_id"));
-  	  				String delievry_status = dor.getStr("status");
-	  				if(!"新建".equals(delievry_status)){
-	  					//有下级单据，不可撤销
-  	  					renderJson("{\"success\":false}");
-  	  					return;
-	  				}
-  	  			}	
-  			}
-  			
-  			for(TransferOrderItemDetail toid :toids){
-				//再次校验是否有下级单据
-  				long delivery_id = 0;
-  				if(toid.getLong("delivery_id") != null ){
-		  			delivery_id = toid.getLong("delivery_id");
-		  		}
-  				
-				String sql = "SELECT * FROM `return_order` where delivery_order_id =" + delivery_id;
-		  		List<Record> nextOrders = Db.find(sql);
-		  		if (nextOrders.size() != 0)
-		  			return;
-
-	  			//更新单品明细表
-	  			toid.set("delivery_id", null);
-	  			toid.set("status", "已发车");
-	  			toid.set("is_delivered", 0);
-	  			toid.update();
-	  			
-	  			//删除对应配送单
-	  			if(delivery_id > 0)
-	  				deleteATM(delivery_id);
-	  			
-	  			//更新运输单状态
-	  			long transfer_id = toid.getLong("order_id");
-	  			TransferOrder tor =  TransferOrder.dao.findById(transfer_id);
-	  			tor.set("status", "处理中").update();
-
-		  		
-  	  		}
-  		}
   		//更新发车单状态
-		DepartOrder deo =  DepartOrder.dao.findById(depart_id);
-		deo.set("status", "运输在途").update();	
+        departOrder.set("status", "运输在途");
+        departOrder.set("audit_status", "新建").update();	
 		
   		renderJson("{\"success\":true}");	
   	}
   	
   	
+  	
   	//ATM撤销
   	@Before(Tx.class)
   	public void deleteATM(long delivery_id){
+
   		//删除里程碑相关数据
   		List<DeliveryOrderMilestone> doms = DeliveryOrderMilestone.dao.find("select * from delivery_order_milestone where delivery_id = ?",delivery_id);
   		for (DeliveryOrderMilestone dom:doms) {
@@ -3134,55 +3152,7 @@ public class DepartOrderController extends Controller {
   	}
   	
   	
-  	//普货撤销
-  	@Before(Tx.class)
-  	public void deleteCargo(String id){
-  		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where delivery_id = ?",id);
-  		for (TransferOrderItemDetail toid:toids) {
-  			toid.set("delivery_id", null);
-  			toid.set("status", "已发车");
-  			toid.update();
-  		}
-  		
-  		//删除配送子表
-  		List<DeliveryOrderItem> dois = DeliveryOrderItem.dao.find("select * from delivery_order_item where order_id = ?",id);
-  		for (DeliveryOrderItem doi:dois) {
-  			//清除单品表信息
-  			long transfer_item_id = doi.getLong("transfer_item_id");
-  			int amount = Integer.parseInt(doi.getStr("amount"));
-  			TransferOrderItem toi =TransferOrderItem.dao.findById(transfer_item_id);
-  			int complete_amount = Integer.parseInt(toi.getStr("complete_amount"));
-  			int totalAmount = Integer.parseInt(toi.getStr("amount"));
-  			
-  			if(amount==totalAmount){
-  				toi.set("complete_amount",null);
-  			}else{
-  				toi.set("complete_amount",complete_amount-amount);
-  			}
-  			toi.update();
-  			
-  			doi.delete();
-  		}
-  		
-  		List<TransferOrderItem> tois = TransferOrderItem.dao.find("select * from transfer_order_item where delivery_id = ?",id);
-  		for (TransferOrderItem toi:tois) {
-  			toi.set("delivery_id", null);
-  			toi.set("complete_amount", "已入库");
-  			toi.update();
-  		}
-  		
-  		//删除里程碑相关数据
-  		List<DeliveryOrderMilestone> doms = DeliveryOrderMilestone.dao.find("select * from delivery_order_milestone where delivery_id = ?",id);
-  		for (DeliveryOrderMilestone dom:doms) {
-  			dom.delete();
-  		}
-  		
-  		//删除配送字表(费用明细)
-  		List<DeliveryOrderFinItem> dofis = DeliveryOrderFinItem.dao.find("select * from delivery_order_fin_item where order_id = ?",id);
-  		for (DeliveryOrderFinItem dofi:dofis) {
-  			dofi.delete();
-  		}	
-  	}
+  	
   	
     //撤销收货
     @Before(Tx.class)
@@ -3198,6 +3168,44 @@ public class DepartOrderController extends Controller {
         }
 
         List<DepartTransferOrder> dts = DepartTransferOrder.dao.find("select order_id from depart_transfer where depart_id = ? ",order_id);
+        //先通过状态校验是否存在下级单据
+        for (DepartTransferOrder dt : dts) {
+        	long transfer_id = dt.getLong("order_id");
+        	TransferOrder tor = TransferOrder.dao.findById(transfer_id);
+        	
+        	//判断此单据是否为退货单
+        	//是？（撤销对应的配送单）：（撤销对应的回单）
+        	String order_type = tor.getStr("order_type");
+        	if("cargoReturnOrder".equals(order_type)){
+        		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail "
+            			+ "where order_id = ? and depart_id = ?",transfer_id,order_id);
+            	long delivery_id = 0;
+            	//更新单品明细表
+          		for (TransferOrderItemDetail toid:toids) {
+          			//配送单ID
+          			if(toid.getLong("delivery_id") != null){
+          				delivery_id = toid.getLong("delivery_id");
+          				
+          				//校验配送单是否存在下级单据
+          	  			DeliveryOrder dor = DeliveryOrder.dao.findById(delivery_id);
+          				String status = dor.getStr("status");
+          				if(!"新建".equals(status)){
+          					renderJson("{\"success\":false}");
+             	 			return ;
+          				}
+          			}
+          		}
+        	} else {
+        		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id =?",transfer_id);
+        		//校验是否有下级财务单据（应收）
+        		String transaction_status = returnOrder.getStr("transaction_status");
+        		if(!"新建".equals(transaction_status) && !"已签收".equals(transaction_status) && !"已确认".equals(transaction_status)){
+        			renderJson("{\"success\":false}");
+     	 			return ;
+        		}
+        	}
+        }
+        
         
         for (DepartTransferOrder dt : dts) {
         	long transfer_id = dt.getLong("order_id");
@@ -3246,12 +3254,7 @@ public class DepartOrderController extends Controller {
 			return true;
 		
 		long return_id = returnOrder.getLong("id");
-		//校验是否有下级财务单据（应收）
-		String transaction_status = returnOrder.getStr("transaction_status");
-		if(!"新建".equals(transaction_status) && !"已签收".equals(transaction_status) && !"已确认".equals(transaction_status)){
-			return false;
-		}
-		
+
 		//删除相关回单应收应付数据
 		List<ReturnOrderFinItem> rofis = ReturnOrderFinItem.dao.find("select * from return_order_fin_item where return_order_id = ?",return_id);
 		for(ReturnOrderFinItem rofi:rofis){
@@ -3274,13 +3277,6 @@ public class DepartOrderController extends Controller {
   			//配送单ID
   			if(toid.getLong("delivery_id") != null){
   				delivery_id = toid.getLong("delivery_id");
-  				
-  				//校验配送单是否存在下级单据
-  	  			DeliveryOrder dor = DeliveryOrder.dao.findById(delivery_id);
-  				String status = dor.getStr("status");
-  				if(!"新建".equals(status)){
-  					return false;
-  				}
   			}
   			
   			toid.set("delivery_id", null);
@@ -3291,10 +3287,6 @@ public class DepartOrderController extends Controller {
   		
   		if(delivery_id>0){
 			DeliveryOrder dor = DeliveryOrder.dao.findById(delivery_id);
-			String status = dor.getStr("status");
-			if(!"新建".equals(status)){
-				return false;
-			}
 			
 		    //删除里程碑相关数据
 	  		List<DeliveryOrderMilestone> doms = DeliveryOrderMilestone.dao.find("select * from delivery_order_milestone where delivery_id = ?",delivery_id);
@@ -3317,8 +3309,58 @@ public class DepartOrderController extends Controller {
 	  		//删除主单据（配送单）
 	  		dor.delete();
 		}
-  		
   		return true;
     }
 
+    
+  //普货撤销
+  	@Before(Tx.class)
+  	public void deleteCargo(String id){
+  		List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where delivery_id = ?",id);
+  		for (TransferOrderItemDetail toid:toids) {
+  			toid.set("delivery_id", null);
+  			toid.set("status", "已发车");
+  			toid.update();
+  		}
+  		
+  		//删除配送子表
+  		List<DeliveryOrderItem> dois = DeliveryOrderItem.dao.find("select * from delivery_order_item where order_id = ?",id);
+  		for (DeliveryOrderItem doi:dois) {
+  			//清除单品表信息
+  			long transfer_item_id = doi.getLong("transfer_item_id");
+  			int amount = Integer.parseInt(doi.getStr("amount"));
+  			TransferOrderItem toi =TransferOrderItem.dao.findById(transfer_item_id);
+  			int complete_amount = Integer.parseInt(toi.getStr("complete_amount"));
+  			int totalAmount = Integer.parseInt(toi.getStr("amount"));
+  			
+  			if(amount==totalAmount){
+  				toi.set("complete_amount",null);
+  			}else{
+  				toi.set("complete_amount",complete_amount-amount);
+  			}
+  			toi.update();
+  			
+  			doi.delete();
+  		}
+  		
+  		List<TransferOrderItem> tois = TransferOrderItem.dao.find("select * from transfer_order_item where delivery_id = ?",id);
+  		for (TransferOrderItem toi:tois) {
+  			toi.set("delivery_id", null);
+  			toi.set("complete_amount", "已入库");
+  			toi.update();
+  		}
+  		
+  		//删除里程碑相关数据
+  		List<DeliveryOrderMilestone> doms = DeliveryOrderMilestone.dao.find("select * from delivery_order_milestone where delivery_id = ?",id);
+  		for (DeliveryOrderMilestone dom:doms) {
+  			dom.delete();
+  		}
+  		
+  		//删除配送字表(费用明细)
+  		List<DeliveryOrderFinItem> dofis = DeliveryOrderFinItem.dao.find("select * from delivery_order_fin_item where order_id = ?",id);
+  		for (DeliveryOrderFinItem dofi:dofis) {
+  			dofi.delete();
+  		}	
+  	}
+    
 }
