@@ -58,8 +58,8 @@ $(document).ready(function() {
             		}else if(DEPART_STATUS != null){
             			if(DEPART_STATUS == "新建"){
             				status = "新建发车";
-            			}else{
-            				status = "已发车";
+            			}else {
+            				status = DEPART_STATUS;
             			}
             		}else if(PICK_STATUS != null){
             			if(PICK_STATUS == "新建"){
