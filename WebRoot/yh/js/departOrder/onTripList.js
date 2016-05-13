@@ -90,6 +90,11 @@ $(document).ready(function() {
                 	}                	
                 }
             },
+            {"mDataProp":null,
+            	"sWidth": "70px", "fnRender": function(obj) {
+            		return '详情'+"<a id='edit_detail' depart_id="+obj.aData.ID+" data-target='#itemDetail' data-toggle='modal'><i class='fa fa-edit fa-fw'></i></a>";
+            	}
+    		},
             {"mDataProp":"PLANNING_TIME",
             	"sWidth": "70px"},
             {"mDataProp":"DEPARTURE_TIME",
@@ -135,6 +140,33 @@ $(document).ready(function() {
             {"mDataProp":"REMARK"}                
         ]  
     });	
+    
+    var itemDetailTable = $('#itemDetail-table').dataTable({
+        "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+        "bServerSide": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/departOrder/getItemDetail",
+        "aoColumns": [
+            {"mDataProp":"ID"},
+            {"mDataProp":"ITEM_NO"},
+            {"mDataProp":"SERIAL_NO"}                
+        ]  
+    });	
+    
+    
+    
+    $("#eeda-table").on('click', '#edit_detail', function(e){
+    	e.preventDefault();	
+    	var depart_id = $(this).attr("depart_id");
+    	itemDetailTable.fnSettings().sAjaxSource = "/departOrder/getItemDetail?depart_id="+depart_id;
+    	itemDetailTable.fnDraw();
+    });
    
     //入库的确认
     $("#eeda-table").on('click', '.confirmInWarehouse', function(e){
