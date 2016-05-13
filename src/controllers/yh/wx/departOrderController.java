@@ -192,7 +192,7 @@ public class departOrderController extends ApiController {
 		String pickupOrderNo = getPara("pickupOrder");
 		String transferIds = getPara("transferIds");  //运单IDs
 		String trans_pickups = getPara("trans_pickups");  //运单IDs
-		
+		String transfer_type = null;
 		DepartOrder dp = new DepartOrder();
 		/*		//过去调车单信息
 		DepartOrder pickupOrder = DepartOrder.dao.findFirst("select * from depart_order where depart_no = '"+pickupOrderNo+"'");
@@ -208,12 +208,13 @@ public class departOrderController extends ApiController {
 				return;
 			}	
 		}*/
-		
+
 		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
 		long userId = userRec.getLong("id");
 		//创建发车单
 		dp.set("charge_type", charge_type)
 				.set("route_from", route_from)
+				.set("transfer_type", "零担")
 				.set("route_to", route_to)
 				.set("ltl_price_type", ltl_price_type)
 				.set("car_type", car_type)
