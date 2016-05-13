@@ -127,6 +127,7 @@ public class DepartOrderController extends Controller {
 		String customer = getPara("customer");
 		String booking_note_number = getPara("booking_note_number");
 		String costchebox = getPara("costchebox");
+		String transfer_type = getPara("transfer_type");
 
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -159,6 +160,9 @@ public class DepartOrderController extends Controller {
         }
         if (StringUtils.isNotEmpty(customer)){
         	conditions+=" and customer like '%"+customer+"%'";
+        }
+        if (StringUtils.isNotEmpty(transfer_type)){
+        	conditions+=" and trip_type like '%"+transfer_type+"%'";
         }
         if (StringUtils.isNotEmpty(start)){
         	conditions+=" and route_from like '%"+start+"%'";
@@ -375,16 +379,16 @@ public class DepartOrderController extends Controller {
 					+ sLimit;
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
+				beginTime = "2010-1-1";
 			}
 			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
+				endTime = "2037-12-31";
 			}
 			if (planBeginTime == null || "".equals(planBeginTime)) {
-				planBeginTime = "1-1-1";
+				planBeginTime = "2010-1-1";
 			}
 			if (planEndTime == null || "".equals(planEndTime)) {
-				planEndTime = "9999-12-31";
+				planEndTime = "2037-12-31";
 			}
 			sqlTotal = "select count(distinct deo.id) total"
 					+ " from depart_order deo "
@@ -428,7 +432,7 @@ public class DepartOrderController extends Controller {
                     + " or"
                     + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                     + ")"
-					+ " and deo.arrival_time between '"
+					+ " and (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) between '"
 					+ planBeginTime
 					+ "' "
 					+ "and '"
@@ -494,7 +498,7 @@ public class DepartOrderController extends Controller {
                     + " or"
                     + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                     + ")"
-					+ " and deo.arrival_time between '"
+					+ " and (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) between '"
 					+ planBeginTime
 					+ "' "
 					+ "and '"
@@ -3363,4 +3367,26 @@ public class DepartOrderController extends Controller {
   		}	
   	}
     
+  	
+  	public void getItemDetail(){
+  		String depart_id = getPara("depart_id");
+  		String sLimit = "";
+  		String pageIndex = getPara("sEcho");
+  		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+  		
+  		String sql = " select toid.id,toid.item_no,toid.serial_no from transfer_order_item_detail toid "
+  				+ " LEFT JOIN depart_order deo on deo.id = toid.depart_id where deo.id = "+depart_id;
+  		Record total = Db.findFirst("select count(1) total from ("+sql+") A");
+  		List<Record> re = Db.find(sql+sLimit);
+  		Map Map = new HashMap();
+  		Map.put("sEcho", pageIndex);
+        Map.put("iTotalRecords", total.get("total"));
+        Map.put("iTotalDisplayRecords", total.get("total"));
+        Map.put("aaData", re);
+        renderJson(Map);
+  	}
 }

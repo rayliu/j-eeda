@@ -69,8 +69,9 @@ function refreshData(){
 	var beginTime = $("#beginTime_filter").val();
 	var endTime = $("#endTime_filter").val();
 	var planBeginTime = $("#beginTime_filter1").val();
-	var planEndTime = $("#endTime_filter1").val();
+	var planEndTime = $("#endTime_filter1").val();transfer_type
 	var customer = $("#customer_filter").val();
+	var transfer_type = $("#transfer_type").val();
 	var booking_note_number = $("#booking_note_number").val();
 	var costchebox = $("input[type='checkbox']:checked").val();
 	if(costchebox!='zero'){
@@ -82,6 +83,7 @@ function refreshData(){
 										+"&departNo="+departNo_filter
 										+"&status="+status
 										+"&sp="+sp
+										+"&transfer_type="+transfer_type
 										+"&beginTime="+beginTime
 										+"&endTime="+endTime
 										+"&planBeginTime="+planBeginTime
