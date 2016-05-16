@@ -146,6 +146,7 @@
                                         <tr>
                                             <th>发车单号</th>
                                             <th>运输单号</th>
+                                            <th>单品信息</th>
                                             <th>计划时间</th>
                                             <th>发车网点</th>
                                             <th>运输方式</th>
@@ -171,6 +172,36 @@
                                 </table>
                             </div>
                             <!-- /.table-responsive -->
+                            
+                            <div class="modal fade" id="itemDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								  <div class="modal-dialog">
+								    <div class="modal-content">
+								      <div class="modal-header">单品详情 </div>
+								      <div class="modal-body">
+								      		<input id="milestoneDepartId" type="hidden" name="milestoneDepartId" />
+											<div class="row">
+											</div>
+											<div class="table-responsive">                                        
+			                           		<table class="table table-striped table-bordered table-hover" id="itemDetail-table" >
+			                                    <thead>
+			                                        <tr>
+			                            				<th>运输单号</th>
+			                                            <th>单品型号</th>
+			                                            <th>序列号</th>
+			                                            <th>数量</th>
+			                                        </tr>
+			                                    </thead>
+		                                   	 	<tbody>
+		                                        </tbody>
+                                			</table>
+                                        </div>
+								        </div>
+								        <div class="modal-footer">
+								            <button type="button" class="btn  btn-primary" data-dismiss="modal">返回</button>
+								        </div>
+								    </div><!-- /.modal-content -->
+								  </div><!-- /.modal-dialog -->
+								</div><!-- /.modal -->
                             
                         </div>
                         <!-- /.panel-body -->
