@@ -278,7 +278,7 @@ public class DeliveryController extends Controller {
 		String sqlTotal = "";
 		
 
-		String sql = " select DISTINCT d.*,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time," 
+		String sql = " select d.id,d.status,d.create_stamp ,d.order_no,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time," 
 				+ " ("
 				+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 				+ " from delivery_order_item doi "
@@ -313,17 +313,13 @@ public class DeliveryController extends Controller {
 				+ status
 				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
 				+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-				+ " order by d.create_stamp desc" + sLimit;
+				+ " group by d.id order by d.create_stamp desc" + sLimit;
 
 		List<Record> depart = null;
 		if (transferorderNo == null && deliveryNo == null && customer == null
 				&& sp == null && beginTime == null && endTime == null && deliveryOffice==null) {
-			sqlTotal ="select count(*) total from (select distinct d.*,o.office_name,"
-					+ "c.abbr as customer,"
-					+ "c2.company_name as c2,"
-					+ ""
-					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
-					+ "from delivery_order d "
+			sqlTotal ="select count(1) total from (select d.id"
+					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "			
@@ -336,7 +332,8 @@ public class DeliveryController extends Controller {
 					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') "
 					+" AND ifnull(d.create_stamp,'') BETWEEN '1-1-1'AND '9999-12-31'"
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " group by d.id) as delivery_view ";
 			depart = Db.find(sql);
 		} else {
 			if (beginTime == null || "".equals(beginTime)) {
@@ -345,13 +342,8 @@ public class DeliveryController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			sqlTotal ="select count(*) total from (select distinct d.*,o.office_name,"
-					+ "c.abbr as customer,"
-					+ "c2.company_name as c2,"
-					+ ""
-					+ "(select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
-					//+ "(select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
-					+ "from delivery_order d "
+			sqlTotal ="select count(1) total from (select d.id "
+					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
 					+ " left join party p2 on d.sp_id = p2.id "			
@@ -380,8 +372,9 @@ public class DeliveryController extends Controller {
 					+ "' and '"
 					+ endTime + "' "
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')) as delivery_view ";
-			String sql_seach = "select distinct d.*,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " group by d.id) as delivery_view ";
+			String sql_seach = " select d.id,d.status,d.create_stamp,d.order_no ,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 					+ " from delivery_order_item doi "
@@ -434,7 +427,7 @@ public class DeliveryController extends Controller {
 					+ "' and '"
 					+ endTime + "'"
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')order by d.create_stamp desc" + sLimit;
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by d.id order by d.create_stamp desc" + sLimit;
 			depart = Db.find(sql_seach);
 		}
 		Record rec = Db.findFirst(sqlTotal);
