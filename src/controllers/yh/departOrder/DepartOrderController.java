@@ -3378,8 +3378,29 @@ public class DepartOrderController extends Controller {
 					+ getPara("iDisplayLength");
 		}
   		
-  		String sql = " select toid.id,toid.item_no,toid.serial_no from transfer_order_item_detail toid "
-  				+ " LEFT JOIN depart_order deo on deo.id = toid.depart_id where deo.id = "+depart_id;
+  		String sql = " "//有单品
+  				+ " select tor.order_no,toid.item_no,toid.serial_no, 1 amount from transfer_order_item_detail toid "
+  				+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id"
+  				+ " LEFT JOIN depart_order deo on deo.id = toid.depart_id where deo.id = "+depart_id
+  				+ " and (tor.cargo_nature = 'ATM' "
+  				+ " or (tor.cargo_nature = 'cargo' and tor.cargo_nature_detail='cargoNatureDetailYes'))"
+  				+ " union all" //普货(无单品)
+  				+ " select tor.order_no,toi.item_no,null serial_no,dt.amount from transfer_order_item toi"
+  				+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id"
+  				+ " LEFT JOIN depart_transfer dt on dt.order_item_id = toi.id"
+  				+ " LEFT JOIN depart_pickup dp on dp.pickup_id = dt.pickup_id and dp.order_id = toi.order_id "
+  				+ " WHERE"
+  				+ " dp.depart_id = "+depart_id
+  				+ " and (tor.cargo_nature = 'cargo' and tor.cargo_nature_detail='cargoNatureDetailNo')"
+  				+ " GROUP BY toi.id "
+  				+ " union all "   //外包
+  				+ " select tor.order_no,toi.item_no,null serial_no,toi.amount from transfer_order_item toi"
+  				+ " LEFT JOIN depart_transfer dt on dt.order_id = toi.order_id"
+  				+ " LEFT JOIN transfer_order tor on tor.id = dt.order_id"
+  				+ " WHERE"
+  				+ " dt.depart_id= "+depart_id
+  				+ " and tor.cargo_nature = 'cargo' and tor.operation_type = 'out_source' "
+  				+ " GROUP BY toi.id" ;
   		Record total = Db.findFirst("select count(1) total from ("+sql+") A");
   		List<Record> re = Db.find(sql+sLimit);
   		Map Map = new HashMap();

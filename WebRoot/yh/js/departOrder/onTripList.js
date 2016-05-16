@@ -153,9 +153,10 @@ $(document).ready(function() {
         },
         "sAjaxSource": "/departOrder/getItemDetail",
         "aoColumns": [
-            {"mDataProp":"ID"},
+            {"mDataProp":"ORDER_NO"},
             {"mDataProp":"ITEM_NO"},
-            {"mDataProp":"SERIAL_NO"}                
+            {"mDataProp":"SERIAL_NO"},
+            {"mDataProp":"AMOUNT"}        
         ]  
     });	
     
