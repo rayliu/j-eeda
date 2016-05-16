@@ -296,9 +296,10 @@ $(document).ready(function() {
 			}
 		}
 		else{
+			var num = $.inArray($(this).attr('id'),ids)
 			ids.splice($.inArray($(this).attr('id'),ids),1);
 			change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
-			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+			orderNos.splice(num,1);
 			if(spType.length != 0){
 				spType.splice($(this).parent().siblings('.spname')[0].innerHTML, 1);
 			}
@@ -335,6 +336,7 @@ $(document).ready(function() {
 			//amount=parseFloat(a);
 			$("#amount").html(parseFloat(xj_sum).toFixed(2));
 			//j_amount.splice($.inArray($(this).attr('id'),j_amount),1);
+			var num = $.inArray($(this).attr('id'),ids);
 			if(ids.length != 0){
 				ids.splice($.inArray($(this).attr('id'),ids),1);
 				change_amount.splice($.inArray($(this).attr('change_amount'),change_amount),1);
@@ -344,7 +346,7 @@ $(document).ready(function() {
 				}
 			}
 			if(orderNos.length != 0){
-				orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
+				orderNos.splice(num,1);
 				$("#checkedOrderNo").val(orderNos);
 			}
 		}
