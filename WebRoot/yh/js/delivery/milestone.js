@@ -73,12 +73,12 @@ $(document).ready(function() {
                 	
                 }
             },
-            {"mDataProp":"OFFICE_NAME","sWidth":"70px"},
+            {"mDataProp":"OFFICE_NAME","sWidth":"120px"},
             {"mDataProp":"CUSTOMER","sWidth":"70px"},
             {"mDataProp":"SERIAL_NO","sWidth":"90px"},
             {"mDataProp":"ITEM_NO","sWidth":"100px"},
             {"mDataProp":"PIECES","sWidth":"70px"},
-            {"mDataProp":"C2","sWidth":"70px"},
+            {"mDataProp":"C2","sWidth":"150px"},
             {"mDataProp":"CREATE_STAMP","sWidth":"95px",
                 "fnRender":function(obj){
                     var create_stamp=obj.aData.CREATE_STAMP;
