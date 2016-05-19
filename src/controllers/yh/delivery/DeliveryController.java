@@ -187,7 +187,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN office o ON o.id = d.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " left join return_order ror on ror.delivery_order_id = d.id  and ror.transaction_status is not null " ;
-			String sql = "select * from(SELECT toi.item_no item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w1.warehouse_name,w.warehouse_name) warehouse_name, "
+			String sql = "select * from(SELECT ifnull(trid.item_no,toi.item_no) item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w1.warehouse_name,w.warehouse_name) warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
