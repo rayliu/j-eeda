@@ -115,11 +115,11 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"BUSINESS_TYPE", "sWidth":"80px","class":"order_type"},            	
-            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"200px"},
-            {"mDataProp":"SERIAL_NO", "sWidth":"200px"},
-            {"mDataProp":"REF_NO", "sWidth":"200px"},
-            {"mDataProp":"TO_NAME", "sWidth":"130px"},
-            {"mDataProp":"PLANNING_TIME", "sWidth":"140px"},
+            {"mDataProp":"BOOKING_NOTE_NUMBER", "sWidth":"100px"},
+            {"mDataProp":"SERIAL_NO", "sWidth":"80px"},
+            {"mDataProp":"REF_NO", "sWidth":"80px"},
+            {"mDataProp":"TO_NAME", "sWidth":"80px"},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
             {"mDataProp":"AMOUNT", "sWidth":"40px"},
             {"mDataProp":"PAY_AMOUNT", "sWidth":"60px"},
             {"mDataProp":"CHANGE_AMOUNT","sWidth":"60px",
@@ -143,29 +143,26 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"OFFICE_NAME", "sWidth":"90px"}, 
-            {"mDataProp":"SPNAME","sClass":"spname", "sWidth":"200px"},
+            {"mDataProp":"SPNAME","sClass":"spname", "sWidth":"120px"},
             {"mDataProp":"CUSTOMER_NAME", "sWidth":"120px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"ORDER_NO", "sWidth":"210px", 
-                    "fnRender": function(obj) {
-                      var order_no = obj.aData.ORDER_NO;
-                      var suborder_no=order_no.substring(order_no.length-2,order_no.length);
-                      if(suborder_no=='DB'){
-                        return order_no;
-                      }else{
-                          return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
-                      }
-                    }
-                },
-            {"mDataProp":"RECEIVINGUNIT", "sWidth":"130px"},
-            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"200px"},
-            {"mDataProp":"CREATE_STAMP", "sWidth":"180px"}, 
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"80px"},
+            {"mDataProp":"REMARK", "sWidth":"150px",
+           	 "fnRender": function(obj) {
+           		 var remark = obj.aData.REMARK;
+           		 if(remark==null)
+           			 remark='';
+           		 return "<textarea style='' name='remark'/>"+remark+"</textarea>";
+           	 }
+           },
+            
+            {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
+            {"mDataProp":"CREATE_STAMP", "sWidth":"100px"}, 
             {"mDataProp":"RETURN_ORDER_COLLECTION", "sWidth":"90px"},  
 		    {"mDataProp":null, "sWidth":"90px",
                 "fnRender": function(obj) {
                     return "未收款";
             }},
-            {"mDataProp":null, "sWidth": "160px", 
+            {"mDataProp":null, "sWidth": "80px", 
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -181,17 +178,21 @@ $(document).ready(function() {
                     return obj.aData.STATUS;
                 }
             },                        
-            {"mDataProp":"FROM_NAME", "sWidth":"150px"},   
+            {"mDataProp":"FROM_NAME", "sWidth":"80px"},   
             {"mDataProp":"VOLUME", "sWidth":"50px"},                        
             {"mDataProp":"WEIGHT", "sWidth":"40px"},                                           
-            {"mDataProp":"REMARK", "sWidth":"150px",
-            	 "fnRender": function(obj) {
-            		 var remark = obj.aData.REMARK;
-            		 if(remark==null)
-            			 remark='';
-            		 return "<textarea style='' name='remark'/>"+remark+"</textarea>";
-            	 }
+            {"mDataProp":"ORDER_NO", "sWidth":"80px", 
+                "fnRender": function(obj) {
+                  var order_no = obj.aData.ORDER_NO;
+                  var suborder_no=order_no.substring(order_no.length-2,order_no.length);
+                  if(suborder_no=='DB'){
+                    return order_no;
+                  }else{
+                      return eeda.getUrlByNo(obj.aData.ID, obj.aData.ORDER_NO);
+                  }
+                }
             },
+        {"mDataProp":"RECEIVINGUNIT", "sWidth":"130px"},
             {"mDataProp": null, 
                 "sWidth": "20px",                
                 "fnRender": function(obj) {
