@@ -539,7 +539,7 @@ public class ChargeCheckOrderController extends Controller {
 					+ " and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id))  like '%"
 					+ orderNo
 					+ "%' "
-					+ " and ifnull((select name from location where code = tor.route_from),(select name from location where code = tor2.route_from))  like '%"
+					+ " and ifnull((select name from location where code = tor.route_from),ifnull((select name from location where code = tor2.route_from),''))  like '%"
 					+ address + "%' ";
 			condition2 = " and c.abbr like '%"
 					+ customer
