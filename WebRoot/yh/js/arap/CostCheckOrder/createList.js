@@ -366,7 +366,6 @@ $(document).ready(function() {
 		var value = $(this).val();
 		if(value==0){      
 			$.scojs_message('调整金额失败,金额不能为0', $.scojs_message.TYPE_ERROR);
-			uncheckedCostCheckTable.fnDraw();
 			 return false; 
 		 }
 		 if(isNaN(value)){      
@@ -380,7 +379,6 @@ $(document).ready(function() {
                     $.scojs_message('调整金额失败', $.scojs_message.TYPE_ERROR);
                  }
 		    	},'json');
-			 uncheckedCostCheckTable.fnDraw();
 		 }
 	});
 	$("#checkedCostCheckOrder").click(function(){
