@@ -73,6 +73,14 @@ $(document).ready(function() {
                   }
               },
             {"mDataProp":"SERIAL_NO", "sWidth":"100px"},
+            {"mDataProp":"REMARK", "sWidth":"150px",
+             	 "fnRender": function(obj) {
+             		 var remark = obj.aData.REMARK;
+             		 if(remark==null)
+             			 remark='';
+             		 return "<textarea style='' name='remark'/>"+remark+"</textarea>";
+             	 }
+             },
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"140px"},
             {"mDataProp":"AMOUNT", "sWidth":"55px"},
@@ -170,10 +178,26 @@ $(document).ready(function() {
             		}
             	}
             }, 
-            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"},
-            {"mDataProp":"REMARK", "sWidth":"150px"}                         
+            {"mDataProp":"OFFICE_NAME", "sWidth":"80px"}                       
         ]      
     });	
+    
+    
+    //动态更改备注
+    $("#costConfirem-table").on('blur', 'textarea', function(e){
+		e.preventDefault();
+		var order_type = $(this).parent().parent().attr('order_ty');
+		var remark = $(this).val();
+		var order_id = $(this).parent().parent().attr('ids');
+		$.post('/costCheckOrder/updateOrderRemark', {order_type:order_type,remark:remark,order_id:order_id}, function(data){
+			 if(data.success){
+	            $.scojs_message('备注给更新成功', $.scojs_message.TYPE_OK);
+	         }else{
+	            $.scojs_message('备注给更新失败', $.scojs_message.TYPE_ERROR);
+	         }
+	    },'json');
+		uncheckedCostCheckTable.fnDraw();
+	});
      
     $('#costConfirem-table').on('blur', 'input:text', function(e){
       e.preventDefault();
