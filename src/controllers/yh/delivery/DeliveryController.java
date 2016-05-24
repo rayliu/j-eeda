@@ -169,7 +169,7 @@ public class DeliveryController extends Controller {
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 					+ " AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
 					+ " AND d.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
-					+ " GROUP BY d.id ) A ";
+					+ " GROUP BY d.id  ";
 			String sqlTotal = "SELECT count(1) total from (select count(1) total"
 					+ " FROM delivery_order d"
 					+ " LEFT JOIN party p ON d.customer_id = p.id"
@@ -235,9 +235,9 @@ public class DeliveryController extends Controller {
 	        if(colName.length()>0){
 	        	orderByStr = " order by A."+colName+" "+sortBy;
 	        }
-	        Record rec = Db.findFirst(sqlTotal+condition);
+	        Record rec = Db.findFirst(sqlTotal+condition+ " ) A ");
 			logger.debug("total records:" + rec.getLong("total"));
-			List<Record> transferOrders = Db.find(sql + condition + orderByStr + sLimit);
+			List<Record> transferOrders = Db.find(sql + condition + sLimit + " ) A " + orderByStr);
 
 			transferOrderListMap.put("sEcho", pageIndex);
 			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
