@@ -16,8 +16,7 @@ import models.yh.profile.CustomizeField;
 public class OrderNoGenerator {
 	
 	
-	private static String count = "00000";
-	private static String dateValue = "20110101";
+	private static volatile String count = "00000";
 	//如果服务器重启了，当前的序列号就从数据库找到最后的号码，然后接着计数
 	//TODO：如果需要按每张单的前缀来生成序列号，可以多加一个Map来记录
 	
@@ -68,7 +67,7 @@ public class OrderNoGenerator {
 	/**
 	 * 返回当天的订单数+1
 	 */
-	private static String getNo(String s) {
+	private static synchronized String getNo(String s) {
 		String rs = s;
 		int i = Integer.parseInt(rs);
 		i += 1;
