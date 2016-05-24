@@ -331,7 +331,7 @@ public class MainController extends Controller {
                 +"      left join location lt on lt.code = tor.route_to"
                 +"      left join office o on o.location = tor.route_to"
                 +"      left join user_office uo on o.id = uo.office_id and uo.user_name = '"+currentUser.getPrincipal()+"'"
-                +"    where tor.status not in ('新建', '已签收', '已入库' ,'已收货','配送中', '取消', '部分配送中', '手动删除', '已投保', '部分已签收')"
+                +"    where tor.status not in ('新建', '已签收', '已入库' ,'已收货','配送中', '取消', '部分配送中', '手动删除', '部分已签收','已完成')"
                 +"    group by tor.id) B"
                 +" 	  where "
                 +" 	  province IN ( SELECT l.pcode FROM user_office uo  "
