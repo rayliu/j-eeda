@@ -35,6 +35,7 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -145,27 +146,32 @@ public class DeliveryController extends Controller {
 			if(office_filter!=null&&!"".equals(office_filter)){
 				condition +=" AND ifnull(o.office_name,'') like'%"+ office_filter.trim()+ "%'";;
 			}
-			if ((beginTime_filter != null && !"".equals(beginTime_filter))||(endTime_filter != null && !"".equals(endTime_filter))) {
-        		if (beginTime_filter == null || "".equals(beginTime_filter)) {
-        			beginTime_filter = "1970-01-01";
-    			}
-        		
-    			if (endTime_filter == null || "".equals(endTime_filter)) {
-    				endTime_filter = "2037-12-31";
-    			}
-    			condition += " and d.create_stamp between '"+ beginTime_filter+ "' and '" + endTime_filter + "' ";
+			
+			if (!StringUtils.isNotEmpty(beginTime_filter)){
+				beginTime_filter = "2000-01-01";
 			}
-			if ((plan_beginTime_filter != null && !"".equals(beginTime_filter))||(plan_endTime_filter != null && !"".equals(plan_endTime_filter))) {
-        		if (plan_beginTime_filter == null || "".equals(plan_beginTime_filter)) {
-        			plan_beginTime_filter = "1970-01-01";
-    			}
-        		
-    			if (plan_endTime_filter == null || "".equals(plan_endTime_filter)) {
-    				endTime_filter = "2037-12-31";
-    			}
-    			condition += " and tor.planning_time between '"+ plan_beginTime_filter+ "' and '" + plan_endTime_filter + "' ";
+			if (StringUtils.isNotEmpty(endTime_filter)){
+				endTime_filter += " 23:59:59";
+			}else{
+				endTime_filter = "2037-12-31";
 			}
-			condition += " and d.create_stamp BETWEEN '1970-01-01' AND '2037-12-31'"
+			condition += " and d.create_stamp between '"+ beginTime_filter+ "' and '" + endTime_filter + "' ";
+			
+			
+			if(StringUtils.isNotEmpty(plan_beginTime_filter) || StringUtils.isNotEmpty(plan_endTime_filter)){
+				if (!StringUtils.isNotEmpty(plan_beginTime_filter)){
+					plan_beginTime_filter = "2000-01-01";
+				}
+				if (StringUtils.isNotEmpty(plan_endTime_filter)){
+					plan_endTime_filter+= " 23:23:59";
+				}else{
+					plan_endTime_filter = "2037-12-31";
+				}
+				condition += " and tor.planning_time between '"+ plan_beginTime_filter+ "' and '" + plan_endTime_filter + "' ";
+			}
+			
+			
+			condition += ""
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
 					+ " AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
 					+ " AND d.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"

@@ -204,10 +204,10 @@ $(document).ready(function() {
     	var status_filter = $("#status_filter").val();
       	var customer_filter = $("#customer_filter").val();    	
       	var sp_filter = $("#sp_filter").val();
-      	var beginTime_filter = $("#beginTime_filter").val();
-      	var endTime_filter = $("#endTime_filter").val();
-      	var plan_beginTime_filter = $("#plan_beginTime_filter").val();
-      	var plan_endTime_filter = $("#plan_endTime_filter").val();
+      	var beginTime_filter = $("#create_stamp_begin_time").val();
+      	var endTime_filter = $("#create_stamp_end_time").val();
+      	var plan_beginTime_filter = $("#planning_stamp_begin_time").val();
+      	var plan_endTime_filter = $("#planning_stamp_end_time").val();
       	var warehouse = $("#warehouse").val();
       	var serial_no = $("#serial_no").val();
       	var delivery_no = $("#delivery_no").val();

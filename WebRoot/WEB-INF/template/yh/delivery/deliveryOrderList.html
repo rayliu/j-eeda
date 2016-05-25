@@ -48,27 +48,11 @@
                                             <label class="search-label">运输单</label>
                                             <input type="text" class="form-control search-control address_filter" id="transfer_filter">
                                         </div>
-                                        <div class="form-group">
-                                            <div id="datetimepicker" class="input-append date "> 
-                                                <label class="search-label">创建开始时间</label> 
-                                                <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </div>
-                                        </div>
-                                         <div class="form-group">
-                                            <div id="datetimepicker3" class="input-append date "> 
-                                                <label class="search-label">计划开始时间</label> 
-                                                <input id="plan_beginTime_filter" class="form-control search-control  plan_beginTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="search-label">配送地址</label>
-                                            <input type="text" class="form-control search-control address_filter" name="address_filter" id="address_filter">
+                                        <div class="form-group">   
+	                                            <%include("/yh/component/form/inputDateQueryField.html", {id:'create_stamp', label:'单据创建时间', value:''}){} %>
+                                        </div>   
+                                        <div class="form-group">   
+	                                         <%include("/yh/component/form/inputDateQueryField.html", {id:'planning_stamp', label:'运输计划时间', value:''}){} %>
                                         </div>
                                     </div>
                                     <!-- end of col-lg-6-->
@@ -83,27 +67,13 @@
                                             <input type="text" class="form-control search-control sp_filter" id="sp_filter" placeholder="请选择或者输入供应商">
                                         	<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;"></ul>
                                         </div>
-    	                                  <div class="form-group">                                                    
-                                            <span id="datetimepicker2" class="input-append date search-control "> 
-                                                <label class="search-label">创建结束时间</label> 
-                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </span>
-                                        </div>
-                                        <div class="form-group">                                                    
-                                            <span id="datetimepicker4" class="input-append date search-control "> 
-                                                <label class="search-label">计划结束时间</label> 
-                                                <input id="plan_endTime_filter" class="form-control search-control plan_endTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </span>
-                                        </div>
                                         <div class="form-group">
                                             <label class="search-label">中转仓</label>
                                             <select id="deliveryWarehouse" name=deliveryWarehouse class="form-control search-control warehouse_filter"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="search-label">配送地址</label>
+                                            <input type="text" class="form-control search-control address_filter" name="address_filter" id="address_filter">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -132,6 +102,7 @@
                                             <select id="deliveryOffice" name="deliveryOffice" class="form-control search-control office_filter"></select>
                                         </div>
                                     </div>
+                                    
                                     <!-- end of col-lg-6-->
                                     </div><!-- end of row-->
                                     <div class="row">
