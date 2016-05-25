@@ -399,6 +399,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         long delivery_id = getParaToLong("delivery_id");
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "已完成");
+        deliveryOrder.set("arrive_stamp", new Date());
         deliveryOrder.update();
 
         Map<String, Object> map = new HashMap<String, Object>();

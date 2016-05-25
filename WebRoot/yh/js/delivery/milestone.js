@@ -282,11 +282,16 @@ $(document).ready(function() {
       var sp = $("#sp_filter").val();
       var beginTime = $("#beginTime_filter").val();
       var endTime = $("#endTime_filter").val();
+      var arrive_stamp_begin_time = $("#arrive_stamp_begin_time").val();
+      var arrive_stamp_end_time = $("#arrive_stamp_end_time").val();
       var status  = $("#status").val();
       var serial_no  = $("#serial_no").val();
       var deliveryOffice  = $("#deliveryOffice").val();
       detailTable.fnSettings().oFeatures.bServerSide = true;
-      detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status+"&serial_no="+serial_no+"&deliveryOffice="+deliveryOffice;
+      detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo
+                                           +"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status
+                                           +"&serial_no="+serial_no+"&deliveryOffice="+deliveryOffice
+                                           +"&arrive_stamp_begin_time="+arrive_stamp_begin_time+"&arrive_stamp_end_time="+arrive_stamp_end_time;
       detailTable.fnDraw();
     }
 	

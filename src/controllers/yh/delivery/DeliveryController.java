@@ -290,6 +290,8 @@ public class DeliveryController extends Controller {
 		String sp = getPara("sp");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
+		String arrive_stamp_begin_time = getPara("arrive_stamp_begin_time");
+		String arrive_stamp_end_time = getPara("arrive_end_begin_time");
 		String status = getPara("status")==null?"": getPara("status");
 		String deliveryOffice = getPara("deliveryOffice");
 		String serial_no = getPara("serial_no")==null?"":getPara("serial_no");
@@ -308,51 +310,57 @@ public class DeliveryController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-
-		String sqlTotal = "";
 		
+		String conditions = " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光')" +status ;
+		if(StringUtils.isNotEmpty(arrive_stamp_begin_time) || StringUtils.isNotEmpty(arrive_stamp_end_time)){
+			if (!StringUtils.isNotEmpty(arrive_stamp_begin_time)){
+				arrive_stamp_begin_time = "2000-01-01";
+			}
+			if (StringUtils.isNotEmpty(arrive_stamp_end_time)){
+				arrive_stamp_end_time+= " 23:23:59";
+			}else{
+				arrive_stamp_end_time = "2037-12-31";
+			}
+			conditions += " and d.arrive_stamp between '"+ arrive_stamp_begin_time+ "' and '" + arrive_stamp_end_time + "' ";
+		}
 
-		String sql = " select d.id,d.status,d.create_stamp ,d.order_no,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time," 
-				+ " ("
-				+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
-				+ " from delivery_order_item doi "
-				+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
-				+ " WHERE doi.delivery_id = d.id"
-				+ " ) item_no,"
-				+ " ("
-				+ "  select sum(doi.amount) from delivery_order_item doi "
-				+ " WHERE doi.delivery_id = d.id"
-				+ " ) pieces,"
-				+ " c.abbr as customer,"
-				+ " c2.company_name as c2,"
-				+ " ("
-				+ "  select group_concat("
-				+ " 			DISTINCT toid.serial_no SEPARATOR ' '"
-				+ " 	)  from delivery_order_item doi "
-				+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
-				+ " WHERE doi.delivery_id = d.id"
-				+ " ) serial_no,"
-				+ " (select group_concat(distinct doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
-				+ " from delivery_order d "
-				+ " left join party p on d.customer_id = p.id "
-				+ " left join contact c on p.contact_id = c.id "
-				+ " left join party p2 on d.sp_id = p2.id "			
-				+ " left join contact c2 on p2.contact_id = c2.id "
-				+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
-				+ " left join warehouse w on d.from_warehouse_id = w.id "
-				+ " left join office o on o.id= d.office_id "
-				+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
-				+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-				+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' "
-				+ status
-				+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
-				+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-				+ " group by d.id order by d.create_stamp desc" + sLimit;
-
-		List<Record> depart = null;
-		if (transferorderNo == null && deliveryNo == null && customer == null
-				&& sp == null && beginTime == null && endTime == null && deliveryOffice==null) {
-			sqlTotal ="select count(1) total from (select d.id"
+		if(StringUtils.isNotEmpty(beginTime) || StringUtils.isNotEmpty(endTime)){
+			if (!StringUtils.isNotEmpty(beginTime)){
+				beginTime = "2000-01-01";
+			}
+			if (StringUtils.isNotEmpty(endTime)){
+				endTime+= " 23:23:59";
+			}else{
+				endTime = "2037-12-31";
+			}
+			conditions += " and d.create_stamp between '"+ arrive_stamp_begin_time+ "' and '" + endTime + "' ";
+		}
+		
+		if (StringUtils.isNotEmpty(deliveryNo)){
+			conditions += " and ifnull(d.order_no,'') like '%"+ deliveryNo.trim()+ "%' ";
+		}
+		
+		if (StringUtils.isNotEmpty(customer)){
+			conditions += " and ifnull(c.abbr,'') like '%"+ customer.trim()+ "%' ";
+		}
+		
+		if (StringUtils.isNotEmpty(transferorderNo)){
+			conditions += " and ifnull(dt2.transfer_no,'') like '%"+ transferorderNo.trim()+ "%' ";
+		}
+		
+		if (StringUtils.isNotEmpty(sp)){
+			conditions += " and ifnull(c2.abbr,'') like '%"+ sp.trim()+ "%' ";
+		}
+		
+		if (StringUtils.isNotEmpty(serial_no)){
+			conditions += " and ifnull(trid.serial_no,'') like '%"+ serial_no.trim()+ "%' ";
+		}
+		
+		if (StringUtils.isNotEmpty(deliveryOffice)){
+			conditions += " and ifnull(o.office_name,'') like '%"+ deliveryOffice.trim()+ "%' ";
+		}
+		
+		String sqlTotal ="select count(1) total from (select d.id "
 					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
 					+ " left join contact c on p.contact_id = c.id "
@@ -363,52 +371,11 @@ public class DeliveryController extends Controller {
 					+ " left join office o on o.id= d.office_id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') "
-					+" AND ifnull(d.create_stamp,'') BETWEEN '1-1-1'AND '9999-12-31'"
+					+ conditions
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ " group by d.id) as delivery_view ";
-			depart = Db.find(sql);
-		} else {
-			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "1-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "9999-12-31";
-			}
-			sqlTotal ="select count(1) total from (select d.id "
-					+ " from delivery_order d "
-					+ " left join party p on d.customer_id = p.id "
-					+ " left join contact c on p.contact_id = c.id "
-					+ " left join party p2 on d.sp_id = p2.id "			
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " LEFT JOIN delivery_order_item dt2 ON dt2.delivery_id = d.id"
-					+ " left join warehouse w on d.from_warehouse_id = w.id "
-					+ " left join office o on o.id= d.office_id "
-					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
-					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') and ifnull(d.order_no,'') like '%"
-					+ deliveryNo.trim()
-					+ "%' and ifnull(c.abbr,'') like '%"
-					+ customer.trim()
-					+ "%' "
-					+ status
-					+ " and ifnull(dt2.transfer_no,'') like '%"
-					+ transferorderNo.trim()
-					+ "%' and ifnull(c2.abbr,'') like'%"
-					+ sp.trim()
-					+ "%' and ifnull(trid.serial_no,'') like'%"
-					+ serial_no.trim()
-					+ "%' and ifnull(o.office_name,'') like'%"
-					+ deliveryOffice.trim()
-					+ "%' and d.create_stamp between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime + "' "
-					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
-					+ " group by d.id) as delivery_view ";
-			String sql_seach = " select d.id,d.status,d.create_stamp,d.order_no ,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
+		String sql_seach = " select d.id,d.status,d.create_stamp,d.order_no ,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 					+ " from delivery_order_item doi "
@@ -441,31 +408,13 @@ public class DeliveryController extends Controller {
 					+ " left join office o on o.id= d.office_id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
-					+ " where  !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01')AND ifnull(c.abbr, '') = '江苏国光') AND ifnull(d.create_stamp, '') BETWEEN '1-1-1'AND '9999-12-31' and ifnull(d.order_no,'') like '%"
-					+ deliveryNo.trim()
-					+ "%' and ifnull(c.abbr,'') like '%"
-					+ customer.trim()
-					+ "%' "
-					+ status
-					+ " and ifnull(dt2.transfer_no,'') like '%"
-					+ transferorderNo.trim()
-					+ "%' and ifnull(c2.abbr,'') like'%"
-					+ sp.trim()
-					+ "%' and ifnull(trid.serial_no,'') like'%"
-					+ serial_no.trim()
-					+ "%' and ifnull(o.office_name,'') like'%"
-					+ deliveryOffice.trim()
-					+ "%'"
-					+ " and d.create_stamp between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime + "'"
+					+ conditions
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by d.id order by d.create_stamp desc" + sLimit;
-			depart = Db.find(sql_seach);
-		}
+			
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
+		List<Record> depart = Db.find(sql_seach);
 		
 		Map map = new HashMap();
 		map.put("sEcho", pageIndex);

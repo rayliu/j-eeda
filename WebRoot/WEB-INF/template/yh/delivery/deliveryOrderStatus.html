@@ -33,7 +33,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div id="datetimepicker" class="input-append date "> 
-                                            <label class="search-label">开始时间</label> 
+                                            <label class="search-label">单据创建时间</label> 
                                             <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
                                             <span class="add-on">  
                                                 <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
@@ -83,6 +83,9 @@
                                      <div class="form-group">
                                             <label class="search-label">网点</label>
                                             <select id="deliveryOffice" name="deliveryOffice" class="form-control search-control office_filter"></select>
+                                     </div>
+                                     <div class="form-group">   
+	                                      <%include("/yh/component/form/inputDateQueryField.html", {id:'arrive_stamp', label:'配送发车时间', value:''}){} %>
                                      </div>
                                 </div>
                                 <!-- end of col-lg-6-->
