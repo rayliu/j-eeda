@@ -208,6 +208,12 @@ $(document).ready(function() {
       	var endTime_filter = $("#create_stamp_end_time").val();
       	var plan_beginTime_filter = $("#planning_stamp_begin_time").val();
       	var plan_endTime_filter = $("#planning_stamp_end_time").val();
+      	
+      	var business_stamp_begin_time = $("#business_stamp_begin_time").val();
+      	var business_stamp_end_time = $("#business_stamp_end_time").val();
+      	var depart_stamp_begin_time = $("#depart_stamp_begin_time").val();
+      	var depart_stamp_end_time = $("#depart_stamp_end_time").val();
+      	
       	var warehouse = $("#warehouse").val();
       	var serial_no = $("#serial_no").val();
       	var delivery_no = $("#delivery_no").val();
@@ -215,7 +221,13 @@ $(document).ready(function() {
       	var office_filter = $("#deliveryOffice").val();
       	var warehouse_filter = $("#deliveryWarehouse").val();
         dataTable.fnSettings().oFeatures.bServerSide = true;
-      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter+"&plan_endTime_filter="+plan_endTime_filter+"&office_filter="+office_filter+"&address_filter="+address_filter+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter+"&warehouse_filter="+warehouse_filter+"&beginTime_filter="+beginTime_filter+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no;
+      	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter
+										      	+"&plan_endTime_filter="+plan_endTime_filter+"&office_filter="+office_filter+"&address_filter="+address_filter
+										      	+"&transfer_filter="+transfer_filter+"&status_filter="+status_filter+"&customer_filter="+customer_filter
+										      	+"&sp_filter="+sp_filter+"&warehouse_filter="+warehouse_filter+"&beginTime_filter="+beginTime_filter
+										      	+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no
+										      	+"&business_stamp_begin_time="+business_stamp_begin_time+"&business_stamp_end_time="+business_stamp_end_time
+										      	+"&depart_stamp_begin_time="+depart_stamp_begin_time+"&depart_stamp_end_time="+depart_stamp_end_time;
       	dataTable.fnDraw();
     };
 

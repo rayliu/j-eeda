@@ -95,6 +95,11 @@ public class DeliveryController extends Controller {
 		String delivery_no = getPara("delivery_no");
 		String address_filter = getPara("address_filter");
 		String warehouse_filter = getPara("warehouse_filter");
+		String business_stamp_begin_time = getPara("business_stamp_begin_time");
+		String business_stamp_end_time = getPara("business_stamp_end_time");
+		String depart_stamp_begin_time = getPara("depart_stamp_begin_time");
+		String depart_stamp_end_time = getPara("depart_stamp_end_time");
+	
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
 		
@@ -170,6 +175,29 @@ public class DeliveryController extends Controller {
 				condition += " and tor.planning_time between '"+ plan_beginTime_filter+ "' and '" + plan_endTime_filter + "' ";
 			}
 			
+			if(StringUtils.isNotEmpty(business_stamp_begin_time) || StringUtils.isNotEmpty(business_stamp_end_time)){
+				if (!StringUtils.isNotEmpty(business_stamp_begin_time)){
+					business_stamp_begin_time = "2000-01-01";
+				}
+				if (StringUtils.isNotEmpty(business_stamp_end_time)){
+					business_stamp_end_time+= " 23:23:59";
+				}else{
+					business_stamp_end_time = "2037-12-31";
+				}
+				condition += " and d.business_stamp between '"+ business_stamp_begin_time+ "' and '" + business_stamp_end_time + "' ";
+			}
+			
+			if(StringUtils.isNotEmpty(depart_stamp_begin_time) || StringUtils.isNotEmpty(depart_stamp_end_time)){
+				if (!StringUtils.isNotEmpty(depart_stamp_begin_time)){
+					depart_stamp_begin_time = "2000-01-01";
+				}
+				if (StringUtils.isNotEmpty(depart_stamp_end_time)){
+					depart_stamp_end_time+= " 23:23:59";
+				}else{
+					depart_stamp_end_time = "2037-12-31";
+				}
+				condition += " and d.depart_stamp between '"+ depart_stamp_begin_time+ "' and '" + depart_stamp_end_time + "' ";
+			}
 			
 			condition += ""
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') AND ifnull(c.abbr, '') = '江苏国光')"
