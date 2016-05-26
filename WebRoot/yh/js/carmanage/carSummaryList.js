@@ -2,6 +2,8 @@ $(document).ready(function() {
 	document.title = '行车单查询 | '+document.title;
 	$('#menu_carmanage').addClass('active').find('ul').addClass('in');
 	
+    
+	
 	var pickupIds = [];
 	var orderTypes = [];
 	var checkedTest = [];
@@ -249,6 +251,55 @@ $(document).ready(function() {
         }
     };
     loadConditions();
+    
+    //全选事件
+    $("input[name='allCheck']").click(function(){
+    	$("input[name='order_check_box']").each(function () {  
+    		var ids = $(this).val();
+    		var date = $(this).parent().siblings('.CREATE_STAMP')[0].innerHTML;
+    		var car_no = $(this).parent().siblings('.CAR_NO')[0].innerHTML;
+    		var order_type = $(this).attr("order_type");
+    		var self = this;
+    		var orderChecked = $("input[name='allCheck']").prop('checked');
+    		if(orderChecked){
+    			if(pickupIds.length>0){
+    				if(carNo[0] == car_no ){
+   					 	if(createStamp[0] == date){
+   						    checkedTest.push("S"+$(this).val());
+   			    			pickupIds.push(ids);
+   							orderTypes.push(order_type);
+   							carNo.push(car_no);
+   							createStamp.push(date);
+   					 	}else{
+   					 		$.scojs_message('请选择出车日期为同一天的调车单!', $.scojs_message.TYPE_ERROR);
+   					 			return false;
+   					 	}	
+    				}else{
+    					$.scojs_message('请选择同一车辆!', $.scojs_message.TYPE_ERROR);
+   							return false;
+    				}
+    			}else{
+    				checkedTest.push("S"+$(this).val());
+	    			pickupIds.push(ids);
+					orderTypes.push(order_type);
+					carNo.push(car_no);
+					createStamp.push(date);
+					$("#saveBtn").attr('disabled', false);
+    			}  
+    		}else{
+    			var num = pickupIds.indexOf($(this).val());
+				checkedTest.splice(checkedTest.indexOf("S"+$(this).val()), 1); 
+				pickupIds.splice(num, 1); 
+				orderTypes.splice(num, 1); 
+				carNo.splice(num, 1);
+				createStamp.splice(num, 1);
+				$("#saveBtn").attr('disabled', true);
+    		}
+    		self.checked = orderChecked;
+        });  
+    });
+    
+    
 	// 选中或取消事件
 	$("#unDispose_table").on('click', '.checkedOrUnchecked', function(){
 		if($(this).prop("checked") == true){
@@ -258,24 +309,16 @@ $(document).ready(function() {
 				var dataFrom = createStamp[0].split("-");
 				if(carNo[0] == $(this).parent().siblings('.CAR_NO')[0].innerHTML && $(this).parent().siblings('.CAR_NO')[0].innerHTML != ''){
 					if(dataFrom[0] == dataTo[0] && dataFrom[1] == dataTo[1] && dataFrom[2] == dataTo[2]){
-						/*var num = unDisposePickuoIds.indexOf(checkedTest[checkedTest.length-1]);
-						var select = "S"+$(this).val();
-						if(select == unDisposePickuoIds[num-1] || select == unDisposePickuoIds[num+1]){*/
 							checkedTest.push("S"+$(this).val());
 							pickupIds.push($(this).val());
 							orderTypes.push($(this).attr("order_type"));
-						/*}else{
-							//alert("请选择连续性出车日期的调车单!");
-							$.scojs_message('请选择连续性出车日期的调车单!', $.scojs_message.TYPE_ERROR);
-							return false;
-						}*/
+							carNo.push($(this).parent().siblings('.CAR_NO')[0].innerHTML);
+							createStamp.push($(this).parent().siblings('.CREATE_STAMP')[0].innerHTML);
 					}else{
-						//alert("请选择出车日期为同一个月的调车单!");
 						$.scojs_message('请选择出车日期为同一天的调车单!', $.scojs_message.TYPE_ERROR);
 						return false;
 					}
 				}else{
-					//alert("请选择同一车辆!");
 					$.scojs_message('请选择同一车辆!', $.scojs_message.TYPE_ERROR);
 					return false;
 				}
@@ -289,20 +332,15 @@ $(document).ready(function() {
 			}
 		}else{
 			if(checkedTest.length != 0){
-				if(checkedTest.indexOf("S"+$(this).val()) == 0 || checkedTest.indexOf("S"+$(this).val()) ==checkedTest.length-1){
-					checkedTest.splice(checkedTest.indexOf("S"+$(this).val()), 1); 
-					pickupIds.splice(pickupIds.indexOf($(this).val()), 1); 
-					orderTypes.splice(orderTypes.indexOf($(this).attr("order_type")), 1); 
-					carNo.splice($(this).parent().siblings('.CAR_NO')[0].innerHTML, 1);
-					createStamp.splice($(this).parent().siblings('.CREATE_STAMP')[0].innerHTML, 1);
-					if(checkedTest.length == 0)
-						$("#saveBtn").attr('disabled', true);
-				}
-				else{
-					//alert("按连续性要求，您只能取消开头或最后的调车单！");
-					$.scojs_message('按连续性要求，您只能取消开头或最后的调车单', $.scojs_message.TYPE_ERROR);
-					$(this).prop("checked",true);
-				}
+				var num = pickupIds.indexOf($(this).val());
+				checkedTest.splice(checkedTest.indexOf("S"+$(this).val()), 1); 
+				pickupIds.splice(num, 1); 
+				orderTypes.splice(num, 1); 
+				carNo.splice(num, 1);
+				createStamp.splice(num, 1);
+				if(checkedTest.length == 0)
+					$("#saveBtn").attr('disabled', true);
+
 			}else{
 				$("#saveBtn").attr('disabled', true);
 			}
