@@ -462,6 +462,39 @@ $(document).ready(function() {
     var isID = [$("#orderIds").val().split(",")];
     var addIds = [$("#orderIds").val()];
     var orderNos = [$("#orderNos").val()];
+    
+    //全选事件
+    $(" input[name='allCheck']").click(function(){
+    	$("#addcheckedCostCheck-table input[name='order_check_box']").each(function () {  
+    		var changeamount=$("#debitAmount").html();
+        	var totalamount=$("#total_amount").val();
+    		var self = this;
+    		var orderChecked = $("input[name='allCheck']").prop('checked');
+    		if(orderChecked){
+    			if(!self.checked){
+    				addIds.push($(self).attr('id'));
+            		orderNos.push($(self).attr('order_no'));
+            		$("#orderIds").val(addIds);
+            		$("#orderNos").val(orderNos);
+            		var value2 = $(self).attr('changeamount');
+            		$("#debitAmount").html(parseFloat(changeamount )+parseFloat(value2));
+            		$("#total_amount").val(parseFloat(totalamount )+parseFloat(value2));
+    			}
+    		}else{
+    			var num = $.inArray($(self).attr('id'),addIds);
+    			addIds.splice(num,1);
+    			$("#orderIds").val(addIds);
+    			orderNos.splice(num,1);
+    			$("#orderNos").val(orderNos);
+	    		var value2 = $(self).attr('changeamount');
+	    		$("#debitAmount").html(parseFloat(changeamount )-parseFloat(value2));
+	    		$("#total_amount").val(parseFloat(totalamount )-parseFloat(value2));
+    		}
+    		self.checked = orderChecked;
+        });  
+    });
+    
+    
     $("#addcheckedCostCheck-table").on('click', '.checkedOrUnchecked', function(e){
     	var changeamount=$("#debitAmount").html();
     	var totalamount=$("#total_amount").val();
@@ -485,16 +518,13 @@ $(document).ready(function() {
     		var value2 = $(this).attr('changeamount');
     		$("#debitAmount").html(parseFloat(changeamount )+parseFloat(value2));
     		$("#total_amount").val(parseFloat(totalamount )+parseFloat(value2));
-    	}
-    	else{
-    			addIds.splice($.inArray($(this).attr('id'),addIds),1);
-    			$("#orderIds").val(addIds);
-    			isID[0].splice($.inArray($(this).attr('id'),isID[0]),1);
-    			orderNos.splice($.inArray($(this).attr('order_no'),orderNos),1);
-    			$("#orderNos").val(orderNos);
-
-
-    		
+    	} else{ 
+		    var num = $.inArray($(this).attr('id'),addIds);
+			addIds.splice(num,1);
+			$("#orderIds").val(addIds);
+			isID[0].splice(num,1);
+			orderNos.splice(num,1);
+			$("#orderNos").val(orderNos);
     		var value2 = $(this).attr('changeamount');
     		$("#debitAmount").html(parseFloat(changeamount )-parseFloat(value2));
     		$("#total_amount").val(parseFloat(totalamount )-parseFloat(value2));
