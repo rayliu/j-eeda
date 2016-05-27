@@ -149,6 +149,8 @@ public class PickupOrderController extends Controller {
         String departNo = getPara("departNo");
         String beginTime = getPara("beginTime");
         String endTime = getPara("endTime");
+        String planningBeginTime = getPara("planningBeginTime");
+        String planningEndTime = getPara("planningEndTime");
         String take = getPara("take");
         String status = getPara("status");
         String office = getPara("office");
@@ -164,7 +166,7 @@ public class PickupOrderController extends Controller {
         }
         String sql = "";
         String sqlTotal = "";
-        if ((orderNo == null || "".equals(orderNo)) && (departNo == null || "".equals(departNo)) && (beginTime == null || "".equals(beginTime))
+        if (StringUtils.isEmpty(planningBeginTime)&& StringUtils.isEmpty(planningEndTime) && (orderNo == null || "".equals(orderNo)) && (departNo == null || "".equals(departNo)) && (beginTime == null || "".equals(beginTime))
         		&& (endTime == null || "".equals(endTime)) &&  (take == null || "".equals(take)) && 
 				 (status == null || "".equals(status)) && (office == null || "".equals(office)) && (sp_filter == null || "".equals(sp_filter))&&  customerId == null ) {
             sqlTotal = "select count(distinct dor.id) total "
@@ -191,6 +193,7 @@ public class PickupOrderController extends Controller {
             		+ " round((select sum(ifnull(weight,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmweight,"
             		+ " (select group_concat( distinct dt.transfer_order_no separator '<br/>')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no,"
             		+ " (select group_concat(distinct c1.abbr separator '<br/>') from depart_transfer dt left join transfer_order t_o on t_o.id = dt.order_id left join party p1 on t_o.customer_id = p1.id left join contact c1 on p1.contact_id = c1.id where dt.pickup_id = dor.id) customernames,  "
+            		+ " group_concat( cast(t_o.planning_time as char) SEPARATOR '<br/>' ) planning_time, "
             		+ " c2.abbr sp_name, "
             		+ " (select sum(amount) from pickup_order_fin_item where pickup_order_id=dor.id and status is not null) cost_amount"
             		+ " from depart_order dor "
@@ -208,11 +211,21 @@ public class PickupOrderController extends Controller {
                     + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " group by dor.id ";
         } else {
-            if (beginTime == null || "".equals(beginTime)) {
-                beginTime = "1-1-1";
+            if (StringUtils.isEmpty(beginTime)) {
+                beginTime = "2000-1-1";
             }
-            if (endTime == null || "".equals(endTime)) {
-                endTime = "9999-12-31";
+            if (StringUtils.isEmpty(endTime)) {
+                endTime = "2037-12-31";
+            }else{
+            	endTime += " 23:59:59";
+            }
+            if (StringUtils.isEmpty(planningBeginTime)) {
+            	planningBeginTime = "2000-1-1";
+            }
+            if (StringUtils.isEmpty(planningEndTime)) {
+            	planningEndTime = "2037-12-31";
+            }else{
+            	planningEndTime += " 23:59:59";
             }
             sqlTotal = "select count(distinct dor.id) total "
             		+ " from depart_order dor "
@@ -232,6 +245,7 @@ public class PickupOrderController extends Controller {
             		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter.trim() + "%' "
             		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo.trim() + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
+    				+ " and ifnull(t_o.planning_time,'') between '" + planningBeginTime + "' and '" + planningEndTime+ "' "
 					+ " and ifnull(dor.status,'') like '%"+status+ "%' "
 					+ " and ifnull(o.office_name,'') like '%"+office.trim()+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "
@@ -248,6 +262,7 @@ public class PickupOrderController extends Controller {
             		+ " round((select sum(ifnull(weight,0)) from transfer_order_item_detail where pickup_id = dor.id),2) atmweight,"
             		+ " (select group_concat( distinct dt.transfer_order_no separator '<br/>')  from depart_transfer dt where pickup_id = dor.id)  as transfer_order_no,  "
             		+ " (select group_concat(distinct c1.abbr separator '<br/>') from depart_transfer dt left join transfer_order t_o on t_o.id = dt.order_id left join party p1 on t_o.customer_id = p1.id left join contact c1 on p1.contact_id = c1.id where dt.pickup_id = dor.id) customernames , "
+            		+ " group_concat( cast(t_o.planning_time as char) SEPARATOR '<br/>' ) planning_time, "
             		+ " c2.abbr sp_name, "
             		+ " (select sum(amount) from pickup_order_fin_item where pickup_order_id=dor.id and status is not null) cost_amount"
             		+ " from depart_order dor "
@@ -267,6 +282,7 @@ public class PickupOrderController extends Controller {
             		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter.trim() + "%' "
             		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo.trim() + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
+    				+ " and ifnull(t_o.planning_time,'') between '" + planningBeginTime + "' and '" + planningEndTime+ "' "
 					+ " and ifnull(dor.status,'') like '%"+status+ "%' "
 					+ " and ifnull(o.office_name,'') like '%"+office.trim()+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "

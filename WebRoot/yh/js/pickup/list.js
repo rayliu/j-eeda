@@ -30,6 +30,7 @@
     			}
 		    }, 
             {"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"80px"},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
             {"mDataProp":"OFFICE_NAME", "sWidth":"70px"},
 		    {"mDataProp":"STATUS", "sWidth":"60px"},
 		    {"mDataProp":"PICKUP_MODE", "sWidth":"90px",
@@ -97,11 +98,15 @@
     	var customer_filter =$("#customer_filter").val();
     	var orderNo = $("#orderNo_filter").val();
 		var departNo_filter = $("#departNo_filter").val();
-		var beginTime = $("#beginTime_filter").val();
-		var endTime = $("#endTime_filter").val();
+		var beginTime = $("#turnout_time_begin_time").val();
+		var endTime = $("#turnout_time_end_time").val();
+		var planningBeginTime = $("#planning_time_begin_time").val();
+		var planningEndTime = $("#planning_time_end_time").val();
 
 		pickupOrder.fnSettings().oFeatures.bServerSide = true;
-		pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime+"&carNo="+carNo+"&take="+take+"&status="+status+"&office="+office+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter;
+		pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime+"&carNo="+carNo+"&take="+take+"&status="+status
+		                                      +"&office="+office+"&customer_filter="+customer_filter+"&sp_filter="+sp_filter
+		                                      +"&planningBeginTime="+planningBeginTime+"&planningEndTime="+planningEndTime;
 		pickupOrder.fnDraw();
     };
 
