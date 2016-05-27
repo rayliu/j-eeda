@@ -78,6 +78,8 @@ $(document).ready(function() {
             {"mDataProp":"SERIAL_NO","sWidth":"90px"},
             {"mDataProp":"ITEM_NO","sWidth":"100px"},
             {"mDataProp":"PIECES","sWidth":"70px"},
+            {"mDataProp":"ROUTE_FROM","sWidth":"70px"},
+            {"mDataProp":"ROUTE_TO","sWidth":"70px"},
             {"mDataProp":"C2","sWidth":"150px"},
             {"mDataProp":"CREATE_STAMP","sWidth":"95px",
                 "fnRender":function(obj){
@@ -280,6 +282,8 @@ $(document).ready(function() {
       var customer = $("#customer_filter").val();
       var transferorderNo = $("#transferorderNo_filter").val();
       var sp = $("#sp_filter").val();
+      var route_from = $("#route_from").val();
+      var route_to = $("#route_to").val();
       var beginTime = $("#beginTime_filter").val();
       var endTime = $("#endTime_filter").val();
       var arrive_stamp_begin_time = $("#arrive_stamp_begin_time").val();
@@ -291,6 +295,7 @@ $(document).ready(function() {
       detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo
                                            +"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status
                                            +"&serial_no="+serial_no+"&deliveryOffice="+deliveryOffice
+                                           +"&route_from="+route_from+"&route_to="+route_to
                                            +"&arrive_stamp_begin_time="+arrive_stamp_begin_time+"&arrive_stamp_end_time="+arrive_stamp_end_time;
       detailTable.fnDraw();
     }

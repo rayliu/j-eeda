@@ -288,6 +288,8 @@ public class DeliveryController extends Controller {
 		String deliveryNo = getPara("deliveryNo");
 		String customer = getPara("customer");
 		String sp = getPara("sp");
+		String route_to = getPara("route_to");
+		String route_from = getPara("route_from");
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String arrive_stamp_begin_time = getPara("arrive_stamp_begin_time");
@@ -360,6 +362,14 @@ public class DeliveryController extends Controller {
 			conditions += " and ifnull(o.office_name,'') like '%"+ deliveryOffice.trim()+ "%' ";
 		}
 		
+		if (StringUtils.isNotEmpty(route_to)){
+			conditions += " and ifnull((select name from location where code = d.route_to),'') like '%"+ route_to.trim()+ "%' ";
+		}
+		
+		if (StringUtils.isNotEmpty(route_from)){
+			conditions += " and ifnull((select name from location where code = d.route_from ),'') like '%"+ route_from.trim()+ "%' ";
+		}
+		
 		String sqlTotal ="select count(1) total from (select d.id "
 					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
@@ -375,7 +385,10 @@ public class DeliveryController extends Controller {
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
 					+ " group by d.id) as delivery_view ";
-		String sql_seach = " select d.id,d.status,d.create_stamp,d.order_no ,o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
+		String sql_seach = " select d.id,d.status,d.create_stamp,d.order_no ,"
+					+ " (select name from location where code = d.route_from ) route_from, "
+					+ " (select name from location where code = d.route_to) route_to,"
+					+ " o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
 					+ " from delivery_order_item doi "
