@@ -721,12 +721,6 @@ $(document).ready(function() {
 			return false;
 		}
         var depart_date =$('#depart_date').val();
-
-        if(depart_date == ""){
-            alert("请输发车时间");
-            return false;
-        }
-
 		$.post('/deliveryOrderMilestone/departureConfirmation',{delivery_id:delivery_id,code:code,locationTo:locationTo,priceType:priceType,
 			warehouseId:warehouseId,customerId:customerId,transferItemIds:transferItemIds,
 			productIds:productIds,shippingNumbers:shippingNumbers,cargoNature:cargoNature,

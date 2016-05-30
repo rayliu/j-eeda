@@ -24,6 +24,7 @@ import models.yh.contract.Contract;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -80,10 +81,16 @@ public class DeliveryOrderMilestoneController extends Controller {
 		String[] transferItemId =  getPara("transferItemIds").split(",");
 		String[] productId =  getPara("productIds").split(",");
 		String[] shippingNumber =  getPara("shippingNumbers").split(",");
+		String depart_date = getPara("depart_date");
     	
         Long delivery_id = Long.parseLong(getPara("delivery_id"));
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "配送在途");
+        if(StringUtils.isNotEmpty(depart_date)){
+			deliveryOrder.set("depart_stamp", depart_date);
+		}else{
+			deliveryOrder.set("depart_stamp", new Date());
+		}
         deliveryOrder.update();
         DeliveryOrder deliveryOrder1 = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));//调拨仓库
         if(deliveryOrder1!=null){

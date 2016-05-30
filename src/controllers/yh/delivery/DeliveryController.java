@@ -1725,9 +1725,15 @@ public class DeliveryController extends Controller {
 	public void departureConfirmation() {
 
 		Long delivery_id = Long.parseLong(getPara("deliveryid"));
+	    String depart_date = getPara("depart_date");
 		System.out.println(delivery_id);
 		DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
 		deliveryOrder.set("status", "配送在途");
+		if(StringUtils.isNotEmpty(depart_date)){
+			deliveryOrder.set("depart_stamp", depart_date);
+		}else{
+			deliveryOrder.set("depart_stamp", new Date());
+		}
 		deliveryOrder.update();
 		
 		/*//货品属性：一站式普通货品，还有普通货品配送没做

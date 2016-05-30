@@ -344,10 +344,9 @@
 		                                            </span>
 		                                        </div>
 		                                        <div class="form-group">
-		                                        	<% var default_date = strutil.formatDate(date(),'yyyy-MM-dd');
-		                                        	%>
+		                                        	
 		                                        	<%include("/yh/component/form/dateInputField.html",
-		                                        		{id:'depart_date', label:'发车时间:', value: deliveryOrder.depart_stamp!default_date}){} %>
+		                                        		{id:'depart_date', label:'发车时间:', value: deliveryOrder.depart_stamp!''}){} %>
 		                                        </div>
 		                                        <div class="form-group">
 		                                            <label>客户现场及需求确认</label>
