@@ -541,6 +541,7 @@ public class DepartOrderController extends Controller {
 
 	// 修改发车单页面
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_UPDATE})
+	@Before(Tx.class)
 	public void edit() {
         createToken(DEPART_ORDER_TOKEN);
         
@@ -1008,6 +1009,7 @@ public class DepartOrderController extends Controller {
 		renderJson(transferOrderListMap);
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
+	@Before(Tx.class)
 	public void createDepartOrder() {
 	    createToken(this.DEPART_ORDER_TOKEN);
 		String list = this.getPara("localArr");
@@ -1372,6 +1374,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 如果是整车发车单需要更新运输单的信息
+	@Before(Tx.class)
 	private void transferOrderForRouteSp(DepartOrder dp) {
 		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
 				.find("select * from depart_transfer where depart_id = ?",
@@ -1386,6 +1389,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 更新运输单的供应商
+	@Before(Tx.class)
 	private void updateTransferOrderSp(DepartOrder dp) {
 		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
 				.find("select * from depart_transfer where depart_id = ?",
@@ -1399,6 +1403,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 保存发车里程碑
+	@Before(Tx.class)
 	private void saveDepartOrderMilestone(DepartOrder pickupOrder) {
 		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 		transferOrderMilestone.set("status", "新建");
@@ -1418,6 +1423,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 更新中间表
+	@Before(Tx.class)
 	private void updateDepartTransfer(DepartOrder pickupOrder, String orderId,
 			String checkedDetail, String uncheckedDetailId) {
 		if (checkedDetail != null && !"".equals(checkedDetail)) {
@@ -1471,7 +1477,7 @@ public class DepartOrderController extends Controller {
 		}
 	}
 
-
+	@Before(Tx.class)
 	public void saveupdatestate() {
 		String depart_id = getPara("depart_id");// 发车单id
 		String order_state = getPara("order_state");// 状态
@@ -1818,6 +1824,8 @@ public class DepartOrderController extends Controller {
 
 		saveFinItem(departOrder, now, departOrderFinItem, users);
 	}
+	
+	@Before(Tx.class)
 	private void saveFinItem(DepartOrder departOrder, java.sql.Timestamp now,
 			DepartOrderFinItem departOrderFinItem, UserLogin users) {
 		departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
@@ -1885,6 +1893,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 发车单删除
+	@Before(Tx.class)
 	public void cancel() {
 		String id = getPara();
 		String sql = "select * from depart_transfer  where depart_id =" + id
@@ -1990,6 +1999,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 同步运输单状态里程碑
+	@Before(Tx.class)
 	public void transferOrderstatus(String de_or, String status, String location) {
 		int depart_id = Integer.parseInt(de_or);
 		List<DepartTransferOrder> dep = DepartTransferOrder.dao
@@ -2150,11 +2160,13 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 修改运输单仓库
+	@Before(Tx.class)
 	public void updateWarehouse(String depart_id, String house_id) {
 		int de_id = Integer.parseInt(depart_id);
 	}
 
 	// 外包运输单更新
+	@Before(Tx.class)
 	public void transferonTrip() {
 		Map<String, String> customizeField = getCustomFile.getInstance()
 				.getCustomizeFile(this);
@@ -2363,6 +2375,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 从发车单货品计算货品数量
+	@Before(Tx.class)
 	public double productAmount(String depart_id, String item_id) {
 		int de_id = Integer.parseInt(depart_id);
 		int it_id = Integer.parseInt(item_id);
@@ -2386,6 +2399,7 @@ public class DepartOrderController extends Controller {
 	}
 
 	// 产品入库
+	@Before(Tx.class)
 	public static void productInWarehouse(String departId) {
 		if (!"".equals(departId) && departId != null) {
 			String orderIds = "";
@@ -2745,6 +2759,7 @@ public class DepartOrderController extends Controller {
 		renderJson("{\"success\":true}");
 	}
 	// 删除应付
+	@Before(Tx.class)
 	public void finItemdel() {
 		String id = getPara();
 		DepartOrderFinItem.dao.deleteById(id);
