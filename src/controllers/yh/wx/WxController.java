@@ -54,6 +54,7 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.JsTicketApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 
+import controllers.yh.order.TransferOrderMilestoneController;
 import controllers.yh.util.EedaHttpKit;
 
 public class WxController extends ApiController {
@@ -555,24 +556,28 @@ public class WxController extends ApiController {
 		//单号不为空时
 		if(orderNo != null && !"".equals(orderNo)){
 			//单号可能为序列号/签收单号/运输单号
-		    String sql ="select * from(select ro.id, ifnull(toid.serial_no,'') serial_no,IfNULL(dor.ref_no,'') ref_no,IfNULL(tor.order_no,'') to_order_no,IfNULL(tor.customer_order_no,'') customer_order_no,ro.order_no, toid.order_id, toid.delivery_id,c.abbr,c.id cid from transfer_order_item_detail toid"
+		    String sql ="select * from(select ifnull(ro.id,ro2.id) id, ifnull(toid.serial_no,'') serial_no, "
+		    		+ " ifnull(dor.status,dep.`STATUS`) status,"
+		    		+ "	dor.status del_status,"
+		    		+ " dep.id depart_id,dep.`STATUS` dep_status,"
+		    		+ "	IfNULL(dor.ref_no,'') ref_no ,"
+		    		+ " IfNULL(tor.order_no,'') to_order_no,IfNULL(tor.customer_order_no,'') customer_order_no ,"
+		    		+ " ifnull(ro.order_no,ro2.order_no) order_no, toid.order_id, toid.delivery_id,c.abbr,c.id cid "
+		    		+ " from transfer_order_item_detail toid"
 		            + " left join return_order ro on toid.order_id=ro.transfer_order_id "
+		            + " LEFT JOIN return_order ro2 ON toid.delivery_id = ro2.delivery_order_id"
 		            + " left join delivery_order dor on dor.id = toid.delivery_id"
 		            + " left join transfer_order tor on tor.id = toid.order_id"
+		            + "	LEFT JOIN depart_order dep on dep.id = toid.depart_id" 
 		            + " left join party p on p.id=ro.customer_id"
 		            + " left join contact c on c.id=p.contact_id"
-		            + " union "
-		           + "select ro.id, ifnull(toid.serial_no,'') serial_no,IfNULL(dor.ref_no,'') ref_no,IfNULL(tor.order_no,'') to_order_no,IfNULL(tor.customer_order_no,'') customer_order_no,ro.order_no, toid.order_id, toid.delivery_id,c.abbr,c.id cid from transfer_order_item_detail toid"
-		            + " left join return_order ro on toid.delivery_id=ro.delivery_order_id "
-		            + " left join delivery_order dor on dor.id = toid.delivery_id"
-		            + " left join transfer_order tor on tor.id = toid.order_id"
-		            + " left join party p on p.id=ro.customer_id"
-		            + " left join contact c on c.id=p.contact_id"
-		            + ") A"
-		           + " where A.order_no is not null and ("
-		               + "A.serial_no = '"+orderNo+"'"
-		               + " or A.ref_no = '"+orderNo+"'"
-		               + " or A.to_order_no = '"+orderNo+"')";
+		            + " ) A"
+		            + " where ("
+	                + " A.serial_no = '"+orderNo+"'"
+	                + " or A.ref_no = '"+orderNo+"'"
+	                + " or A.to_order_no = '"+orderNo+"') "
+	                + " and (A.del_status not in('新建','计划中') "
+	                + " and A.dep_status not in('新建'))";
 		    if(!"-1".equals(customer)){
 		    	sql += " and A.cid='"+customer+"'";
 		    }

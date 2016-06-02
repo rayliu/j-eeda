@@ -403,6 +403,8 @@ public class DeliveryOrderMilestoneController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_COMPLETED})
     @Before(Tx.class)
     public void receipt() {
+    	String order_type = getPara("order_type");
+    	long return_id = 0;
         long delivery_id = getParaToLong("delivery_id");
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
         deliveryOrder.set("status", "已完成");
@@ -468,7 +470,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     	            returnOrder.set("create_date", createDate);
     	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
     	            returnOrder.save();
-    	            
+    	            return_id = returnOrder.getLong("id");
     	            ReturnOrderController roController = new ReturnOrderController(); 
     	            //把运输单的应收带到回单中
     	            roController.tansferIncomeFinItemToReturnFinItem(returnOrder, delivery_id, transferOrderId);
@@ -497,7 +499,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 returnOrder.set("create_date", createDate);
                 returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
                 returnOrder.save();
-                
+                return_id = returnOrder.getLong("id");
                 // 生成应收
                 //ATM
                 //if("ATM".equals(deliveryOrder.get("cargo_nature"))){
@@ -508,7 +510,11 @@ public class DeliveryOrderMilestoneController extends Controller {
                 //}
             }
         }
-        renderJson(map);
+        if("wx".equals(order_type)){
+        	renderJson(return_id);
+        }else{
+        	renderJson(map);
+        }
     }
 
 	

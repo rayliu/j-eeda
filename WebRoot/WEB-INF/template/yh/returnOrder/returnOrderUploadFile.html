@@ -17,13 +17,18 @@
           <div class="weui_cell">
               <div class="weui_cell_hd"><label class="weui_label">单号</label></div>
               <div class="weui_cell_bd weui_cell_primary">
-                  <input class="weui_input" type="text" id="orderNo" name='orderNo' value="${orderNo!''}" AUTOCOMPLETE="off" placeholder="请输入序列号/签收单号/运输单号">
+                  <input class="weui_input" type="text" id="orderNo" name='orderNo' value="${orderNo!''}" placeholder="请输入序列号/签收单号/运输单号">
               </div>
           </div>
       </form>
       
         <h3 id="menu-image1"></h3>
         <input type="hidden" id="returnId" name='returnId' value="" />
+        <input type="hidden" id="order_status" name='order_status'/>
+        <input type="hidden" id="depart_id" name='depart_id'/>
+        <input type="hidden" id="dep_status" name='dep_status'/>
+        <input type="hidden" id="delivery_id" name='delivery_id'/>
+        <input type="hidden" id="del_status" name='del_status'/>
         <button class="weui_btn weui_btn_primary" id="searchNo">查询</button>
         <div class="weui_cell weui_cell_select weui_select_after" id="customer" style="display:none">
             <div class="weui_cell_hd">

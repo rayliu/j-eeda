@@ -254,6 +254,8 @@ public class TransferOrderMilestoneController extends Controller {
      */
     @Before(Tx.class)
     public void receipt() {
+    	String order_type = getPara("order_type");
+    	long return_id = 0;
         Long departOrderId = Long.parseLong(getPara("departOrderId"));
         //通过发车单获取运输单ID
         List<Record> transferOrderIds = Db.find("select order_id from depart_transfer where depart_id = ? ;",departOrderId);
@@ -354,7 +356,7 @@ public class TransferOrderMilestoneController extends Controller {
         			transferOrder.set("status", "已完成").update();
         			//生成回单
         			if(!"cargoReturnOrder".equals(transferOrder.getStr("order_type"))){
-        				createReturnOrder(transferOrder);
+        				return_id = createReturnOrder(transferOrder);
         			}
         		}else{
         			transferOrderMilestone.set("status", "部分已收货");
@@ -377,7 +379,7 @@ public class TransferOrderMilestoneController extends Controller {
     				transferOrder.set("status", "已完成").update();
     				transferOrderMilestone.set("status", "已收货");
     				//生成回单
-    				createReturnOrder(transferOrder);
+    				return_id = createReturnOrder(transferOrder);
     			}else{
     				transferOrderMilestone.set("status", "部分已收货");
     			}
@@ -402,13 +404,18 @@ public class TransferOrderMilestoneController extends Controller {
           
            
 		}
-        renderJson("{\"success\":true}");
+        if("wx".equals(order_type)){
+        	renderJson(return_id);
+        }else{
+        	renderJson("{\"success\":true}");
+        }
     }
     
     
     //自动生成回单
-    public void createReturnOrder(TransferOrder transfer){
+    public long createReturnOrder(TransferOrder transfer){
     	Record re  = Db.findFirst("select count(*) total from return_order ror where transfer_order_id = ?",transfer.getLong("id"));
+    	long return_id = 0;
     	if(re.getLong("total")==0){
     		String orderNo = OrderNoGenerator.getNextOrderNo("HD");
             ReturnOrder returnOrder = new ReturnOrder();
@@ -418,6 +425,7 @@ public class TransferOrderMilestoneController extends Controller {
             .set("creator", LoginUserController.getLoginUserId(this))
             .set("create_date", new Date())
             .set("transfer_order_id", transfer.getLong("id")).save();
+            return_id = returnOrder.getLong("id");
             
             ReturnOrderController roController= new ReturnOrderController(); 
             //把运输单的应收带到回单中
@@ -428,6 +436,7 @@ public class TransferOrderMilestoneController extends Controller {
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + LoginUserController.getLoginUserName(this) + "'");
             roController.calculateChargeByCustomer(transfer, returnOrder.getLong("id"), users);
     	}
+    	return return_id;
     }
 
    

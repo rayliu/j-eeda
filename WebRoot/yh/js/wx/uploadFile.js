@@ -3,6 +3,9 @@ $(document).ready(function() {
 	$('#orderNo').focus();
 	
 	$("#searchNo").click(function(){
+		if($('#orderNo').val()=='')
+			return;
+		
 		$("#customer").hide();
 		$("#customerNo").text("");
 		$("#transferOrderNo").text("");
@@ -20,6 +23,12 @@ $(document).ready(function() {
 				$("#uploadBtn").attr("disabled", false);
 				$("#uploadDesc").text("");
 				$('#returnId').val(returnId);
+				$('#order_status').val(data[0].STATUS);
+				$('#depart_id').val(data[0].DEPART_ID);
+				$('#dep_status').val(data[0].DEP_STATUS);
+				$('#delivery_id').val(data[0].DELIVERY_ID);
+				$('#order_status').val(data[0].DEL_STATUS);
+				
 				$("#customerNo").text(data[0].CUSTOMER_ORDER_NO);
 				$("#transferOrderNo").text(data[0].TO_ORDER_NO);
 				$("#refNo").text(data[0].REF_NO);
@@ -36,7 +45,7 @@ $(document).ready(function() {
 				$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
 				$("#uploadBtn").attr("disabled", true);
 			}else{
-				$('#orderDesc').text('未找到对应有效的回单号码');
+				$('#orderDesc').text('未找到对应有效单据');
 				$('#returnId').val("");
 				$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
 				$("#uploadBtn").attr("disabled", true);
@@ -57,13 +66,16 @@ $(document).ready(function() {
 			refreshData(customer);
 		}
 	}); 
+	
 	//保存图片
     $("#uploadBtn").click(function(e){
-    	if($('#returnId').val() == ''){
-    		$('#orderDesc').text('请先查找对应有效的回单号码');
-    		$('#orderDesc').show();
-    		return;
-    	}
+    	var order_status = $('#order_status').val();
+    	var return_id = $('#returnId').val();
+    	var depart_id = $('#depart_id').val();
+        var	dep_status = $('#dep_status').val();
+    	var delivery_id = $('#delivery_id').val();
+    	var del_status = $('#del_status').val();
+
     	wx.chooseImage({
 		    count: 1, // 默认9
 		    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
@@ -73,30 +85,55 @@ $(document).ready(function() {
 		        if(localIds){
 		        	var localId = localIds[0];
 
-		        	wx.uploadImage({
-					    localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
-					    isShowProgressTips: 1, // 默认为1，显示进度提示
-					    success: function (res) {
-					        var serverId = res.serverId; // 返回图片的服务器端ID
-					        $.post('/wx/saveReturnOrderPic', 
-					        	{
-					        		serverId:serverId, 
-					        		return_order_id: $('#returnId').val(), 
-					        		photo_type: $('#photo_type_input').val()
-					        	},
-					        	function(data){
-					        	if(data == "OK"){
-					        		$('#uploadDesc').empty().append("<p>图片上传成功!</p>").show();
-					        	}else{
-					        		$('#uploadDesc').empty().append("<p>图片上传失败!</p>").show();
-					        	}
-					        });
-					    }
-					});
+		        	if(return_id == ''){
+		        		if(order_status == "运输在途"){
+		        			$.post('/transferOrderMilestone/receipt',{departOrderId:depart_id,order_type:'wx'},function(data){
+		            			if(data>0){
+		            				uploadPhoto(return_id);
+		            			}
+		            		})
+		        		}else if(order_status == "配送在途"){
+		        			$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id,order_type:'wx'},function(data){
+		        				if(data>0){
+		            				uploadPhoto(return_id);
+		            			}
+		            		})
+		        		}	
+		        	}else{
+		        		uploadPhoto(return_id);
+		        	}
 		        }
 		    }
 		});
     });
+    
+    
+    //上传图片
+    var uploadPhoto = function(return_id){
+    	wx.uploadImage({
+		    localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
+		    isShowProgressTips: 1, // 默认为1，显示进度提示
+		    success: function (res) {
+		        var serverId = res.serverId; // 返回图片的服务器端ID
+		        $.post('/wx/saveReturnOrderPic', 
+		        	{
+		        		serverId:serverId, 
+		        		return_order_id: return_id, 
+		        		photo_type: $('#photo_type_input').val()
+		        	},
+		        	function(data){
+		        	if(data == "OK"){
+		        		$('#uploadDesc').empty().append("<p>图片上传成功!</p>").show();
+		        	}else{
+		        		$('#uploadDesc').empty().append("<p>图片上传失败!</p>").show();
+		        	}
+		        });
+		    }
+		});
+    }
+    
+    
+    
 	//获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
 		var inputStr = $('#customerMessage').val();
