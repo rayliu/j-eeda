@@ -208,14 +208,12 @@
       }
       //自动提交改为手动提交
       $("#save").click(function(){
-    	  $("#save").attr("disabled",true);
-    	  
-    	  /*$.post("/serviceProvider/check",$("#customerForm").serialize(),function(data){
-    		  
-    	  });*/
-    	 if(!$("#customerForm").valid()){
+    	  if(!$("#customerForm").valid()){
     		  return false;
     	 }
+    	  
+    	  $("#save").attr("disabled",true);
+    	 
     	 $.post("/serviceProvider/save", $("#customerForm").serialize(),function(data){
     		if(data=='abbrError'){
     			$.scojs_message('供应商简称已存在', $.scojs_message.TYPE_ERROR);
