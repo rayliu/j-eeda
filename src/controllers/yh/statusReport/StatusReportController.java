@@ -712,9 +712,7 @@ public class StatusReportController extends Controller{
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
 		}
-		//List<FinItem> payName = FinItem.dao.find("select name,code from fin_item where type = '应付';");
-		//List<FinItem> incomeName = FinItem.dao.find("select name,code from fin_item where type = '应收';");
-				
+	
 				// 获取总条数
 				String totalSql = "SELECT count(0) total from (SELECT c.id cid,"
 						+"		(case   when (select l.id from location l  "
@@ -735,20 +733,8 @@ public class StatusReportController extends Controller{
 		                +" 		where l2.code = tor.route_to)"
 		                +" 		end"
 		                +" 		) province, "
-						+ " c.abbr,(SELECT	dor.order_no FROM delivery_order dor	WHERE	dor.id = toid.delivery_id) deliveryno,tor.order_no transferno,toid.serial_no,tor.planning_time, l1. NAME route_from,l2. NAME route_to,toid.pieces,round(toid.weight, 2) weight,round(toid.volume, 2) volume,"
-						+ " round(ifnull((SELECT sum(pofi.amount) FROM pickup_order_fin_item pofi	LEFT JOIN depart_order d_o ON d_o.id = pofi.pickup_order_id	LEFT JOIN depart_transfer dt ON dt.pickup_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = pofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
-						+ " AND pofi.fin_item_id != 7 AND d_o.combine_type = 'PICKUP') / (SELECT count(0)	FROM transfer_order_item_detail	WHERE	pickup_id = toid.pickup_id),0),2) yf_pickup,"
-						+ " round(ifnull((SELECT sum(dofi.amount)	FROM depart_order_fin_item dofi	LEFT JOIN depart_order d_o ON d_o.id = dofi.depart_order_id LEFT JOIN depart_transfer dt ON dt.depart_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
-						+ " AND d_o.combine_type = 'DEPART')/(SELECT count(0) FROM	transfer_order_item_detail WHERE depart_id = toid.depart_id),0),2) yf_depart,"
-						+ " round(ifnull((SELECT(sum(ifi.insurance_amount) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
-						+ " WHERE	i_o.id = tor.insurance_id	AND fi.type = '应付'),0),2) yf_insurance,"
-						+ " round(ifnull((SELECT(sum(ifi.insurance_amount) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
-						+ " WHERE	i_o.id = tor.insurance_id	AND fi.type = '应收'),0),2) ys_insurance,"
-						+ " round(ifnull((SELECT sum(dofi1.amount)FROM delivery_order d_o	LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id	WHERE	d_o.id = toid.delivery_id	AND fi.type = '应付')/(SELECT	count(0) FROM	transfer_order_item_detail"
-						+ " WHERE	delivery_id = toid.delivery_id),0),2) delivery,"
-						+ " ifnull((SELECT ifnull(sum(rof.amount), 0)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id WHERE dor.id = toid.delivery_id),(SELECT ifnull(sum(rof1.amount), 0) FROM	return_order_fin_item rof1"
-						+ " LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE	ror.transfer_order_id = toid.order_id)) return_amount "
-						+ " FROM transfer_order_item_detail toid"
+						+ " tor.order_no transferno,toid.serial_no,tor.planning_time"
+		                + " FROM transfer_order_item_detail toid"
 						+ " LEFT JOIN transfer_order tor ON tor.id = toid.order_id"
 						+ " LEFT JOIN party p ON p.id = tor.customer_id"
 						+ " LEFT JOIN contact c ON c.id = p.contact_id"
@@ -757,7 +743,6 @@ public class StatusReportController extends Controller{
 						+ " WHERE tor.cargo_nature = 'ATM'"
 						+ " UNION"
 						+ " SELECT c.id cid,"
-						+ ""
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -776,18 +761,7 @@ public class StatusReportController extends Controller{
 		                +" 		where l2.code = tor.route_to)"
 		                +" 		end"
 		                +" 		) province, "
-						+ ""
-						+ " c.abbr,(SELECT d_o.order_no FROM	delivery_order d_o LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id WHERE doi.transfer_order_id = tor.id) deliveryno,tor.order_no transferno,'' serial_no,tor.planning_time,l1. NAME route_from,l2. NAME route_to,"
-						+ " (SELECT ifnull(sum(amount), 0)	FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) pieces,(SELECT IFNULL(round(sum(weight),2), 0)FROM transfer_order_item toi WHERE toi.order_id = tor.id) weight,(SELECT ifnull(round(sum(volume),2), 0)FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) volume,"
-						+ " ROUND(IFNULL(sum((SELECT sum(amount)/(SELECT count(*)	FROM depart_transfer dof WHERE dof.pickup_id = dor1.id)	FROM	pickup_order_fin_item pof	LEFT JOIN depart_order dor1 ON dor1.id = pof.pickup_order_id WHERE dor1.id = dtr.pickup_id	AND pof.fin_item_id != 7)),	0),2) dddd,"
-						+ " ROUND(ifnull(sum((SELECT sum(IFNULL(amount, 0))/(SELECT	count(*) FROM depart_transfer dof	WHERE	dof.depart_id = dor1.id) FROM	depart_order_fin_item dof	LEFT JOIN depart_order dor1 ON dor1.id = dof.depart_order_id WHERE dor1.id = dtr.depart_id AND dof.fin_item_id != 7)),0),2) asd,"
-						+ " round(ifnull((SELECT sum(ifi.insurance_amount) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应付')/(SELECT	COUNT(*) FROM	insurance_order i"
-						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) yf_insurance,"
-						+ " round(ifnull((SELECT sum(ifi.insurance_amount) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应收')/(SELECT	COUNT(*) FROM	insurance_order i"
-						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) ys_insurance,"
-						+ " round((SELECT	ifnull(sum(dofi1.amount), 0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id AND fi.type = '应付'),2) delivery,"
-						+ " ifnull((SELECT ifnull(sum(rof.amount), 0)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id"
-						+ " WHERE	doi.transfer_order_id = tor.id),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id)) return_amount"
+						+ " tor.order_no transferno,'' serial_no,tor.planning_time"
 						+ " FROM transfer_order tor"
 						+ " LEFT JOIN depart_transfer dtr ON dtr.order_id = tor.id"
 						+ " LEFT JOIN party p ON p.id = tor.customer_id"
