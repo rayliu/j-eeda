@@ -1556,6 +1556,11 @@ public class DeliveryController extends Controller {
 					.set("ref_no", sign_document_no);
 			if("warehouseNatureYes".equals(warehouseNature)){
 				deliveryOrder.set("change_warehouse_id", gateInSelect);
+				Record re = Db.findById("warehouse", gateInSelect);
+				if(re != null){
+					long off_id = re.getLong("office_id");
+					deliveryOrder.set("office_id", off_id);
+				}
 			}else{
 				deliveryOrder.set("change_warehouse_id", null);
 			}
