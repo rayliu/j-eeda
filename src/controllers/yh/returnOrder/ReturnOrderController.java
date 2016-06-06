@@ -504,9 +504,9 @@ public class ReturnOrderController extends Controller {
 			setAttr("locationTo", locationTo);
 		}
 		
-		List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "' and photo_type != '现场照片';");
+		List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "' and ifnull(photo_type,'') != '现场照片';");
 		setAttr("OrderAttachmentFileList", OrderAttachmentFileList);
-		List<OrderAttachmentFile> OrderAttachmentFileList2 = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "' and photo_type = '现场照片';");
+		List<OrderAttachmentFile> OrderAttachmentFileList2 = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "' and ifnull(photo_type,'') = '现场照片';");
 		setAttr("OrderAttachmentFileList2", OrderAttachmentFileList2);
 		setAttr("returnOrder", returnOrder);
 		UserLogin userLogin = UserLogin.dao
