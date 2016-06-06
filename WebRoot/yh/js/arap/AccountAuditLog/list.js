@@ -57,7 +57,8 @@ $(document).ready(function() {
             			return obj.aData.CHARGE_AMOUNT;
             	}  
             },   
-            {"mDataProp":"PAYEE_NAME_IN"},
+            {"mDataProp":"CHARGE_UNIT"},
+            {"mDataProp":"CHARGE_NAME"},
             {"mDataProp":"COST_AMOUNT",
             	"fnRender": function(obj) {
             		if(obj.aData.COST_AMOUNT!=null)
@@ -66,7 +67,8 @@ $(document).ready(function() {
             			return obj.aData.COST_AMOUNT;
             	}  
             },     
-            {"mDataProp":"PAYEE_NAME_OUT"},
+            {"mDataProp":"COST_UNIT"},
+            {"mDataProp":"COST_NAME"},
             {"mDataProp":"BANK_NAME"},
             {"mDataProp":"CREATE_DATE"},
             {"mDataProp":"USER_NAME"}

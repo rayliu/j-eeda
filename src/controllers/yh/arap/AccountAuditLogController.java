@@ -104,17 +104,8 @@ public class AccountAuditLogController extends Controller {
         
         String sql = "";
         if(true){
-        	sql = " select * from (select aaal.*,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
-        			+ " (CASE"
-					+ " WHEN aaal.source_order = '应付开票申请单' THEN"
-					+ " (SELECT IFNULL(payee_name,payee_unit) FROM arap_cost_invoice_application_order WHERE id = aaal.invoice_order_id)"
-					+ " WHEN aaal.source_order = '转账单'"
-					+ " THEN(SELECT fa.bank_person FROM transfer_accounts_order tao LEFT JOIN fin_account fa on fa.id= tao.bank_in WHERE tao.id = aaal.invoice_order_id) else ''end) payee_name_in,"
-					+ " (CASE"
-					+ " WHEN aaal.source_order = '应收开票申请单' THEN"
-					+ " (SELECT IFNULL(payee_name,payee_unit) FROM arap_charge_invoice_application_order WHERE id = aaal.invoice_order_id)"
-					+ " WHEN aaal.source_order = '转账单' THEN"
-					+ " (SELECT fa.bank_person FROM transfer_accounts_order tao LEFT JOIN fin_account fa on fa.id= tao.bank_out WHERE tao.id = aaal.invoice_order_id) else '' end) payee_name_out,"
+        	sql = " select * from (select aaal.*,c.abbr cost_unit,c2.abbr charge_unit,aci.order_no invoice_order_no,ifnull(ul.c_name, ul.user_name) user_name, fa.bank_name,"
+        			+ " acoia.payee_name cost_name,achia.payee_name charge_name,"
         			+ " (CASE "
         			+ " WHEN aaal.source_order = '手工收入单' "
         			+ " THEN ( SELECT group_concat( DISTINCT amco.order_no SEPARATOR '<br/>' ) FROM arap_misc_charge_order amco LEFT JOIN arap_charge_receive_confirm_order_detail acr on acr.misc_charge_order_id = amco.id where acr.order_id = aaal.invoice_order_id)"
@@ -150,6 +141,14 @@ public class AccountAuditLogController extends Controller {
         			+ " left join arap_charge_invoice aci on aci.id = aaal.invoice_order_id and aaal.source_order='应付开票申请单'"
         			+ " left join transfer_accounts_order tao ON tao.id = aaal.invoice_order_id and aaal.source_order='转账单' "
         			+ " left join fin_account fa on aaal.account_id = fa.id "
+        			+ "	LEFT JOIN arap_cost_invoice_application_order acoia on acoia.id = aaal.invoice_order_id "
+        			+ " AND aaal.payment_type = 'COST' "
+        			+ " LEFT JOIN arap_charge_invoice_application_order achia on achia.id = aaal.invoice_order_id "
+        			+ " AND aaal.payment_type = 'CHARGE' "
+        			+ " LEFT JOIN party p on p.id = acoia.payee_id "
+        			+ " LEFT JOIN contact c on c.id = p.contact_id "
+        			+ " LEFT JOIN party p2 on p2.id = achia.payee_id "
+        			+ " LEFT JOIN contact c2 on c2.id = p2.contact_id"
         			+ " ) A where 1 = 1 ";        	
         }
 
