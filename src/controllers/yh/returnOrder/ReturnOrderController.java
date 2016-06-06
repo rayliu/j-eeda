@@ -504,8 +504,10 @@ public class ReturnOrderController extends Controller {
 			setAttr("locationTo", locationTo);
 		}
 		
-		List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "';");
+		List<OrderAttachmentFile> OrderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "' and photo_type != '现场照片';");
 		setAttr("OrderAttachmentFileList", OrderAttachmentFileList);
+		List<OrderAttachmentFile> OrderAttachmentFileList2 = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("id") + "' and order_type = '" + OrderAttachmentFile.OTFRT_TYPE_RETURN + "' and photo_type = '现场照片';");
+		setAttr("OrderAttachmentFileList2", OrderAttachmentFileList2);
 		setAttr("returnOrder", returnOrder);
 		UserLogin userLogin = UserLogin.dao
 				.findById(returnOrder.get("creator"));
@@ -1566,11 +1568,17 @@ public class ReturnOrderController extends Controller {
     	String id = getPara("return_id");
     	String permission = getPara("permission");
     	List<UploadFile> returnImg = getFiles("img");
+    	String type = getPara("type");
     	//List<UploadFile> returnImg = getFiles("return_img");
     	//List<UploadFile> returnImg = getFiles();
     	Map<String,Object> resultMap = new HashMap<String,Object>();
     	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
     	boolean result = true;
+    	if("return".equals(type)){
+    		type = "回单照片";
+    	}else{
+    		type = "现场照片";
+    	}
     	
 		if(returnOrder != null){
 	    	//for (int i = 0; i < uploadFiles.size(); i++) {
@@ -1581,8 +1589,11 @@ public class ReturnOrderController extends Controller {
 	    		String suffix = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
 	    		if("gif".equals(suffix) || "jpeg".equals(suffix) || "png".equals(suffix) || "jpg".equals(suffix)){
         			OrderAttachmentFile orderAttachmentFile = new OrderAttachmentFile();
-        			//orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", uploadFiles.get(0).getFileName()).save();
-        			orderAttachmentFile.set("order_id", id).set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN).set("file_path", returnImg.get(0).getFileName()).save();
+        			orderAttachmentFile.set("order_id", id);
+        			orderAttachmentFile.set("photo_type", type);
+        			orderAttachmentFile.set("order_type", orderAttachmentFile.OTFRT_TYPE_RETURN);
+        			orderAttachmentFile.set("file_path", returnImg.get(0).getFileName());
+        			orderAttachmentFile.save();
 	    		}else{
 	    			result = false;
 	    			break;
@@ -1593,9 +1604,9 @@ public class ReturnOrderController extends Controller {
 			List<OrderAttachmentFile> orderAttachmentFileList = null;
 			resultMap.put("result", "true");
 			if(permission.equals("permissionYes"))
-				orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "';");
+				orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "' and photo_type = '"+type+"';");
 			else
-				orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "' and audit = true;");
+				orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + id + "' and audit = true and photo_type = '"+type+"';");
 	    	resultMap.put("cause", orderAttachmentFileList);
 		}else{
 			resultMap.put("result", "false");
@@ -1606,13 +1617,14 @@ public class ReturnOrderController extends Controller {
     }
     //删除图片
     public void delPictureById(){
+    	String type = getPara("type");
     	String permission = getPara("permission");
     	OrderAttachmentFile.dao.deleteById(getPara("picture_id"));
     	List<OrderAttachmentFile> orderAttachmentFileList = null;
 		if(permission.equals("permissionYes"))
-			orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "';");
+			orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "' and photo_type = '"+type+"';");
 		else
-			orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "' and audit = true;");
+			orderAttachmentFileList = OrderAttachmentFile.dao.find("select * from order_attachment_file where order_id = '" + getPara("return_id") + "' and audit = true and photo_type = '"+type+"';");
     	renderJson(orderAttachmentFileList);
     }
     

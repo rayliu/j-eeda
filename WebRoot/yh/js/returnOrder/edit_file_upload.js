@@ -1,11 +1,20 @@
 $(document).ready(function() {
 	var uploadImgWidth;
 	var uploadImgHeight;
+	 
+	var photo_type = null;
+	$('#fileupload,#fileuploadA').click(function(){
+			photo_type = $(this).attr('photo_type');
+			upload(photo_type);
+		}
+	);
 	
-	$('#fileupload').fileupload({
+	
+	var upload =function(photo_type){
+		$('#fileupload,#fileuploadA').fileupload({
 		autoUpload: true, //自选择后自动上传图片
      	disableImageResize: false,
-	    url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val(),
+	    url: '/returnOrder/saveFile?return_id='+$("#returnId").val()+'&permission='+$("#permission").val()+"&type="+photo_type,
 	    validation: {allowedExtensions: ['jpeg', 'jpg', 'png' ,'gif']},
 	    dataType: 'json',
 	    imageMaxWidth: 1200,
@@ -18,6 +27,10 @@ $(document).ready(function() {
 		    		$.scojs_message('上传成功,审核通过后将显示图像', $.scojs_message.TYPE_OK);
 		    		//console.log("data.result.cause:"+data.result.cause);
 		    		var showPictures = $("#showPictures");
+		    		if(photo_type == 'locale'){
+		    			showPictures= $("#showPictures2");
+		    		}
+		    		 
 		    		var permission = $("#permission").val();
 		    		if(permission == "permissionYes"){
 		    			showPictures.empty().append('<input type="hidden" id="permission" value="permissionYes">');
@@ -25,7 +38,7 @@ $(document).ready(function() {
 		    				var aText = "待审核";
 		    				if(value.AUDIT == 1 || value.AUDIT == true)
 		    					aText = "已审核";
-		    				showPictures.append('<div style="margin-right: 10px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="img-thumbnail" style="height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'" > ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
+		    				showPictures.append('<div style="margin-right: 10px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="img-thumbnail" style="height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'" > ' + aText + ' </a><a class="picture_del" photo_type="'+value.PHOTO_TYPE+'" picture_id="'+value.ID+'" > 删除 </a><span>'+value.PHOTO_TYPE+'</span></p></div>');
 		                });
 		    		}else{
 		    			showPictures.empty().append('<input type="hidden" id="permission" value="permissionNo">');
@@ -51,9 +64,5 @@ $(document).ready(function() {
         }
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
-
-
-	
-	
-	
-});//end of ready
+	}
+})

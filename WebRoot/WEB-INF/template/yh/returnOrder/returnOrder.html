@@ -41,7 +41,8 @@
                                 <li class="active"><a href="#basic" data-toggle="tab" id = "chargeCheckOrderbasic">基本信息</a></li>
                                
                                 <li class=""><a href="#arap" data-toggle="tab" id = "returnOrderPayment">应收</a></li>
-                           		<li class=""><a href="#sign" data-toggle="tab" id = "signPicture">签收图片</a></li> 
+                           		<li class=""><a href="#sign" data-toggle="tab" id = "signPicture">回单签收图片</a></li>
+                           		<li class=""><a href="#spotsignA" data-toggle="tab" id = "signPictureA">现场签收图片</a></li>  
                             </ul>
 
                             <!-- Tab panes -->
@@ -256,48 +257,84 @@
                                         	<input type="hidden" id="files" name="files" value="${files!''}">
 									  		<div class="col-lg-12" style="clear:both;">
 									  			<div class="form-group"> 
-										  			<!-- <input id="savefile" type="button" class="btn  btn-primary" value="上传图片" aria-describedby="helpBlock">
-										  			<span id="helpBlock" class="help-block">(图片格式为：gif,jpeg,png,jpg)</span>
-		                                        	<form method="POST" id="fileForm" enctype="multipart/form-data">
-		                                        		<img src="" id="return_img" name="return_img" alt="" style="display: none;">
-		                                            	<input type="hidden" id="return_id" name="return_id" value="${returnOrder.id!''}">
-		                                                <input type="file" id="fileupload" name="fileupload" accept="image/*" style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px;">
-		                                                <div id="canvasDiv">  
-      													</div> 
-		                                            </form >
-	                                            	<input id="fileToUpload" type="file" name="fileToUpload" accept="image/*" multiple> 
-	                                            	<button class="ui-btn ui-icon-add ui-corner-all" id="imgUploadBtn">压缩上传</button> -->
-
-						                            <span class="btn btn-success fileinput-button">
+										  		  <span class="btn btn-success fileinput-button">
 						                                <i class="glyphicon glyphicon-plus"></i>
 						                                <span>选择图片</span>
 						                                <!-- The file input field used as target for the file upload widget -->
-						                                <input id="fileupload" type="file" name="files[]" multiple="">
+						                                <input id="fileupload" type="file" photo_type="return" name="files[]" multiple="">
 						                            </span>                                                
 												    <br>
 	                                            </div>
 	                                    	</div>
 		                                    <div class="col-lg-12" style="clear:both;" id="showPictures">
-      											<!-- <div data-role="popup" id="info_pop" class="ui-content" data-theme="d" style='font-weight:bold;font-size:14px; z-index: 999; background-color: white;'>  
-											        <p>未知错误</p>  
-											    </div> -->  
+      								
 											    <!-- 显示图片必须保证此权限点已存在 -->
 		                                    <% if(shiro.hasPermission("ReturnOrder.imgoperation")){%>
 		                                    		<input type="hidden" id="permission" value="permissionYes">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
+				                               		
 		                                    		<div style="margin-right: 10px;float:left;" >
-			                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:135px;height:180px;"> -->
 			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;">
 			                                    		<p>
-			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
-			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" > 删除 </a>
-                                                ${orderAttachmentFile.photo_type!''}
+			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" photo_type="${orderAttachmentFile.photo_type!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
+			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" photo_type="${orderAttachmentFile.photo_type!''}"> 删除 </a>
+                                                            <span>${orderAttachmentFile.photo_type!''}</span>
 			                                    		</p>
 		                                    		</div>
    													              <%}%> 
 				                               	<%}else{%>
 				                               		<input type="hidden" id="permission" value="permissionNo">
 				                               		<%for(orderAttachmentFile in OrderAttachmentFileList){ %>
+				                               			<%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true){%>
+			                                    		<div style="margin-right: 10px;float:left;" >
+				                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->
+				                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;">
+                                                <p>
+                                                  ${orderAttachmentFile.photo_type!''}
+                                                </p>
+			                                    		</div>
+			                                    		<%}%>
+   													              <%}%>
+				                               	<%}%>
+
+		                                    </div>
+										</div>
+                                    </div>
+                            	</div>
+                            	
+                            	<!-- 现场图片 -->
+                            	 <div class="tab-pane fade" id="spotsignA">
+                                    <div class="panel-body">  <!-- 样式 -->           
+                                        <div class="row">
+                                        	<input type="hidden" id="files" name="files" value="${files!''}">
+									  		<div class="col-lg-12" style="clear:both;">
+									  			<div class="form-group"><!-- 样式 --> 
+										  		  <span class="btn btn-success fileinput-button"><!-- 样式 --> 
+						                                <i class="glyphicon glyphicon-plus"></i><!-- 样式 -->
+						                                <span>选择图片</span>
+						                                <!-- The file input field used as target for the file upload widget -->
+						                                <input id="fileuploadA" type="file"  photo_type="locale" name="files[]" multiple="">
+						                            </span>                                                
+												    <br>
+	                                            </div>
+	                                    	</div>
+		                                    <div class="col-lg-12" style="clear:both;" id="showPictures2"><!-- 样式 -->
+      										 <% if(shiro.hasPermission("ReturnOrder.imgoperation")){%>
+		                                    		<input type="hidden" id="permission" value="permissionYes">
+				                               		<%for(orderAttachmentFile in OrderAttachmentFileList2){ %>
+		                                    		<div style="margin-right: 10px;float:left;" >
+			                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:135px;height:180px;"> -->
+			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;">
+			                                    		<p>
+			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
+			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" photo_type="${orderAttachmentFile.photo_type!''}" > 删除 </a>
+                                                ${orderAttachmentFile.photo_type!''}
+			                                    		</p>
+		                                    		</div>
+   													              <%}%> 
+				                               	<%}else{%>
+				                               		<input type="hidden" id="permission" value="permissionNo">
+				                               		<%for(orderAttachmentFile in OrderAttachmentFileList2){ %>
 				                               			<%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true){%>
 			                                    		<div style="margin-right: 10px;float:left;" >
 				                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:180px;height:180px;"> -->

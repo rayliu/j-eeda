@@ -672,13 +672,17 @@ $(document).ready(function() {
     
     
 	// 删除图片
-	$("#showPictures").on('click', '.picture_del', function(e){
+	$("#showPictures,#showPictures2").on('click', '.picture_del', function(e){
 		if(confirm("确定删除吗？")){
 			var return_id = $("#returnId").val();
 			var picture_id = $(this).attr("picture_id");
+			var photo_type = $(this).attr("photo_type");
 			var permission = $("#permission").val();
-			$.post('/returnOrder/delPictureById', {picture_id:picture_id,return_id:return_id,permission:permission}, function(data){
-        		var showPictures = $("#showPictures");
+			$.post('/returnOrder/delPictureById', {picture_id:picture_id,type:photo_type,return_id:return_id,permission:permission}, function(data){
+				var showPictures = $("#showPictures");
+	    		if(photo_type == '现场照片'){
+	    			showPictures= $("#showPictures2");
+	    		}
         		var permission = $("#permission").val();
         		if(permission == "permissionYes"){
         			showPictures.empty().append('<input type="hidden" id="permission" value="permissionYes">');
@@ -686,7 +690,7 @@ $(document).ready(function() {
                     	var aText = "待审核";
         				if(value.AUDIT == 1 || value.AUDIT == true)
         					aText = "已审核";
-                        showPictures.append('<div style="margin-right: 10px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="img-thumbnail" style="height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> ' + aText + ' </a><a class="picture_del" picture_id="'+value.ID+'" > 删除 </a></p></div>');
+                        showPictures.append('<div style="margin-right: 10px;float:left;" ><img src="/upload/img/'+value.FILE_PATH+'" alt="" class="img-thumbnail" style="height:180px;"><p><a class="picture_audit" picture_id="'+value.ID+'"> ' + aText + ' </a><a class="picture_del" photo_type="'+value.PHOTO_TYPE+'" picture_id="'+value.ID+'" > 删除 </a><span>'+value.PHOTO_TYPE+'</span></p></div>');
                     });
         		}else{
         			showPictures.empty().append('<input type="hidden" id="permission" value="permissionNo">');
