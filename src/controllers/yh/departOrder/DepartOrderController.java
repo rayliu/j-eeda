@@ -355,7 +355,9 @@ public class DepartOrderController extends Controller {
 					+ " (SELECT	ifnull(location, '')	FROM	transfer_order_milestone tom, depart_order deo where tom.depart_id = deo.id ORDER BY	tom.id DESC LIMIT 0,1) location, "
 					+ " (SELECT ifnull(exception_record, '') FROM transfer_order_milestone tom LEFT JOIN depart_order deo on tom.depart_id = deo.id ORDER BY tom.id DESC LIMIT 0,1) exception_record, "
 					+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id,  "
-					+ " deo.transfer_type as trip_type"
+					+ " deo.transfer_type as trip_type, "
+					+ " w.office_id route_to_office_id, "
+					+ " wo.office_name route_to_office_name"
 					+ " from depart_order deo "
 					+ " left join carinfo c on deo.carinfo_id = c.id "
 					+ " left join depart_transfer dt on dt.depart_id = deo.id "
@@ -367,6 +369,8 @@ public class DepartOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
+					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
+                    + " LEFT JOIN office wo ON wo.id = w.office_id"
 					+ " where  (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车' or ifnull(deo.status,'') = '运输在途')  and combine_type = '"
 					+ DepartOrder.COMBINE_TYPE_DEPART
 					+ "'  and o.id in (select office_id from user_office where user_name='"
@@ -403,6 +407,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
 					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
+					+ " LEFT JOIN office wo ON wo.id = w.office_id"
 					+ " left join transfer_order tr  on tr.id = dt.order_id"
 					+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
 					+ "ifnull(deo.status,'') like '%"
@@ -414,9 +419,9 @@ public class DepartOrderController extends Controller {
 					+ sp
 					+ "%' and ifnull(tr.order_no,'') like '%"
 					+ orderNo
-					+ "%' and ifnull(o.office_name,'') like '%"
+					+ "%' and ifnull(wo.id,'') = "
 					+ office
-					+ "%' and ifnull(l1.name,'') like '%"
+					+ " and ifnull(l1.name,'') like '%"
 					+ start
 					+ "%' and ifnull(l2.name,'') like '%"
 					+ end
@@ -458,7 +463,9 @@ public class DepartOrderController extends Controller {
 					+ " (SELECT	ifnull(location, '')	FROM	transfer_order_milestone tom, depart_order deo where tom.depart_id = deo.id ORDER BY	tom.id DESC LIMIT 0,1) location, "
 					+ " (SELECT ifnull(exception_record, '') FROM transfer_order_milestone tom LEFT JOIN depart_order deo on tom.depart_id = deo.id ORDER BY tom.id DESC LIMIT 0,1) exception_record, "
 					+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id,  "
-					+ " deo.transfer_type as trip_type"
+					+ " deo.transfer_type as trip_type,"
+					+ " w.office_id route_to_office_id, "
+                    + " wo.office_name route_to_office_name"
 					+ " from depart_order deo "
 					+ " left join carinfo c on deo.carinfo_id = c.id "
 					+ " left join depart_transfer dt on dt.depart_id = deo.id "
@@ -471,6 +478,7 @@ public class DepartOrderController extends Controller {
 					+ " left join location l1 on deo.route_from = l1.code "
 					+ " left join location l2 on deo.route_to =l2.code "
 					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
+					+ " LEFT JOIN office wo ON wo.id = w.office_id"
 					+ " left join transfer_order tr  on tr.id = dt.order_id"
 					+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' "
 					+ " and ifnull(deo.status,'') like '%"
@@ -479,9 +487,9 @@ public class DepartOrderController extends Controller {
 					+ departNo
 					+ "%' and ifnull(tr.order_no,'') like '%"
 					+ orderNo
-					+ "%' and ifnull(o.office_name,'') like '%"
+					+ "%' and ifnull(wo.id,'') = "
 					+ office
-					+ "%' and ifnull(l1.name,'') like '%"
+					+ " and ifnull(l1.name,'') like '%"
 					+ start
 					+ "%' and ifnull(l2.name,'') like '%"
 					+ end

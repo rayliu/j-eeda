@@ -39,7 +39,7 @@ $(document).ready(function() {
 			    	}
 			    }
 			},
-            {"mDataProp":"OFFICE_NAME","sWidth": "80px"},        
+            {"mDataProp":"ROUTE_TO_OFFICE_NAME","sWidth": "80px"},        
             {"mDataProp":null,
             	"sWidth": "100px",
             	"fnRender": function(obj) {
@@ -465,7 +465,7 @@ $(document).ready(function() {
 		 officeSelect.append("<option ></option>");
 		
 		 for(var i=0; i<data.length; i++){
-			 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
+			 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
 		 }
 		
 	 }
