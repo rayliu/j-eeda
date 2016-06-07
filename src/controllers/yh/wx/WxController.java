@@ -37,6 +37,7 @@ import org.apache.http.util.EntityUtils;
 
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
 import com.google.gson.Gson;
@@ -59,7 +60,7 @@ import controllers.yh.util.EedaHttpKit;
 
 public class WxController extends ApiController {
 	private Logger logger = Logger.getLogger(WxController.class);
-	
+	Subject currentUser = SecurityUtils.getSubject();
 	private static String getMediaUrl = "http://file.api.weixin.qq.com/cgi-bin/media/get";
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
@@ -286,7 +287,11 @@ public class WxController extends ApiController {
         String redirect = getPara("redirect");
         
         UserLogin user = UserLogin.dao.findFirst("select * from user_login where user_name=? and password=?", user_name, pwd);
+         
         if(user != null){
+        	UsernamePasswordToken token = new UsernamePasswordToken(user_name, pwd);
+            token.setRememberMe(true);
+            currentUser.getSession().setTimeout(-1000L);
             user.set("wechat_openid", openid).update();
             redirect(redirect+"?openid="+openid);
         }else{
