@@ -326,7 +326,7 @@
 			                                    		<!-- <img src="/upload/fileupload/${orderAttachmentFile.FILE_PATH!''}" alt="" class="imgSign" style="width:135px;height:180px;"> -->
 			                                    		<img src="/upload/img/${orderAttachmentFile.FILE_PATH!''}" alt="" class="img-thumbnail" style="height:180px;">
 			                                    		<p>
-			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" ><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
+			                                    			<a class="picture_audit" picture_id="${orderAttachmentFile.ID!''}" photo_type="${orderAttachmentFile.photo_type!''}"><%if(orderAttachmentFile.AUDIT == 1 || orderAttachmentFile.AUDIT == true ){%> 已审核 <%}else{%> 待审核 <%}%></a>
 			                                    			<a class="picture_del" picture_id="${orderAttachmentFile.ID!''}" photo_type="${orderAttachmentFile.photo_type!''}" > 删除 </a>
                                                 ${orderAttachmentFile.photo_type!''}
 			                                    		</p>

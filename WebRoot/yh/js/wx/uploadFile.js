@@ -75,6 +75,7 @@ $(document).ready(function() {
         var	dep_status = $('#dep_status').val();
     	var delivery_id = $('#delivery_id').val();
     	var del_status = $('#del_status').val();
+    	var userId = $('#userId').val();
 
     	wx.chooseImage({
 		    count: 1, // 默认9
@@ -87,13 +88,13 @@ $(document).ready(function() {
 
 		        	if(return_id == ''){
 		        		if(order_status == "运输在途"){
-		        			$.post('/transferOrderMilestone/receipt',{departOrderId:depart_id,order_type:'wx'},function(data){
+		        			$.post('/transferOrderMilestone/receipt',{departOrderId:depart_id,userId:userId,order_type:'wx'},function(data){
 		            			if(data>0){
 		            				uploadPhoto(return_id,localId);
 		            			}
 		            		})
 		        		}else if(order_status == "配送在途"){
-		        			$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id,order_type:'wx'},function(data){
+		        			$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id,userId:userId,order_type:'wx'},function(data){
 		        				if(data>0){
 		            				uploadPhoto(return_id,localId);
 		            			}
