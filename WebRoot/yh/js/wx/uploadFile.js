@@ -89,14 +89,14 @@ $(document).ready(function() {
 		        	if(return_id == ''){
 		        		if(order_status == "运输在途"){
 		        			$.post('/transferOrderMilestone/receipt',{departOrderId:depart_id,userId:userId,order_type:'wx'},function(data){
-		            			if(data>0){
-		            				uploadPhoto(return_id,localId);
+		            			if(data > 0){
+		            				uploadPhoto(data,localId);
 		            			}
 		            		})
 		        		}else if(order_status == "配送在途"){
 		        			$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id,userId:userId,order_type:'wx'},function(data){
 		        				if(data>0){
-		            				uploadPhoto(return_id,localId);
+		            				uploadPhoto(data,localId);
 		            			}
 		            		})
 		        		}	
