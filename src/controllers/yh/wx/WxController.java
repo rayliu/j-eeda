@@ -311,6 +311,7 @@ public class WxController extends ApiController {
     	    Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
     	    if(userRec != null){
     	        setAttr("openid", openid);
+    	        setAttr("userId",userRec.getLong("id"));
     	        setPageAttr("/wx/fileUpload");
     	        render("/yh/returnOrder/returnOrderUploadFile.html");
     	    }else{

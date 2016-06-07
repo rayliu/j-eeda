@@ -703,7 +703,7 @@ $(document).ready(function() {
 	});	
 	
 	// 审核图片
-	$("#showPictures").on('click', '.picture_audit', function(e){
+	$("#showPictures,#showPictures2").on('click', '.picture_audit', function(e){
 		var auditVar = $(this);
 		var aText = $.trim(auditVar.text());
 		if(aText == "待审核")
@@ -723,7 +723,7 @@ $(document).ready(function() {
 	});	
 	
 	//图片放大
-	$("#showPictures").on('click', '.img-thumbnail', function(e){
+	$("#showPictures,#showPictures2").on('click', '.img-thumbnail', function(e){
 		var imgAdd = $(this).attr("src");
 		$("#lgImgDiv").empty().append("<img id='focusphoto' src='"+imgAdd+"' />"); 
 		var temp = new Image();

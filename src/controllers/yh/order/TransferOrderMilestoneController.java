@@ -20,6 +20,7 @@ import models.UserLogin;
 import models.Warehouse;
 import models.yh.delivery.DeliveryOrder;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -255,6 +256,7 @@ public class TransferOrderMilestoneController extends Controller {
     @Before(Tx.class)
     public void receipt() {
     	String order_type = getPara("order_type");
+    	String userId = getPara("userId");
     	long return_id = 0;
         Long departOrderId = Long.parseLong(getPara("departOrderId"));
         //通过发车单获取运输单ID
@@ -262,8 +264,9 @@ public class TransferOrderMilestoneController extends Controller {
         
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-        String name = (String) currentUser.getPrincipal();
-        List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+        if(StringUtils.isEmpty(userId))
+        	userId =  LoginUserController.getLoginUserId(this).toString();
+        UserLogin users = UserLogin.dao.findById(userId);
         //判断当前直送的模式，是入中转仓还是直接发送给客户工厂，如果是入中转仓，增加库存
         DepartOrderController.productInWarehouse(getPara("departOrderId"));
         //修改发车单信息
@@ -290,7 +293,7 @@ public class TransferOrderMilestoneController extends Controller {
 		        Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id"));
 				deliveryOrder.set("order_no", orderNo)
 				.set("customer_id", transferOrder.get("customer_id"))
-				.set("create_stamp", sqlDate).set("create_by", users.get(0).get("id")).set("status", "新建")
+				.set("create_stamp", sqlDate).set("create_by", userId).set("status", "新建")
 				.set("route_from",transferOrder.get("route_to"))
 				.set("route_to",transferOrder.get("route_to"))
 				.set("pricetype", getPara("chargeType"))
@@ -304,7 +307,7 @@ public class TransferOrderMilestoneController extends Controller {
 				if(warehouse!=null){
 					deliveryOrder.set("sp_id", warehouse.get("sp_id")).set("office_id", warehouse.get("office_id"));
 				}else{
-					deliveryOrder.set("office_id", users.get(0).get("office_id"));
+					deliveryOrder.set("office_id", users.get("office_id"));
 				}if(transferorderitemdetail!=null){
 					deliveryOrder.set("notify_party_id", transferorderitemdetail.get(0).getLong("notify_party_id"));
 				}
@@ -386,7 +389,7 @@ public class TransferOrderMilestoneController extends Controller {
             }
         	
 			//设置回单客户信息，必须是同一个客户
-            transferOrderMilestone.set("create_by", users.get(0).get("id"))
+            transferOrderMilestone.set("create_by", userId)
             .set("location", "")
             .set("create_stamp", sqlDate)
             .set("order_id", transerOrderId)
@@ -395,7 +398,7 @@ public class TransferOrderMilestoneController extends Controller {
 
             transferOrderMilestone = new TransferOrderMilestone();
             transferOrderMilestone.set("status", "已收货")
-            .set("create_by", users.get(0).get("id"))
+            .set("create_by", userId)
             .set("location", "")
             .set("create_stamp", sqlDate)
             .set("depart_id", departOrderId)

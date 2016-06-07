@@ -404,6 +404,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     @Before(Tx.class)
     public void receipt() {
     	String order_type = getPara("order_type");
+    	String userId = getPara("userId");
     	long return_id = 0;
         long delivery_id = getParaToLong("delivery_id");
         DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(delivery_id);
@@ -414,7 +415,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         Map<String, Object> map = new HashMap<String, Object>();
         DeliveryOrderMilestone transferOrderMilestone = new DeliveryOrderMilestone();
         transferOrderMilestone.set("status", "已送达");
-        Long userId = LoginUserController.getLoginUserId(this);
+        if(StringUtils.isEmpty(userId))
+        	userId = LoginUserController.getLoginUserId(this).toString();
         transferOrderMilestone.set("create_by", userId);
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
@@ -466,7 +468,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     	            returnOrder.set("transfer_order_id", transferOrderId);
     	            returnOrder.set("order_type", "应收");
     	            returnOrder.set("transaction_status", "新建");
-    	            returnOrder.set("creator", LoginUserController.getLoginUserId(this));
+    	            returnOrder.set("creator", userId);
     	            returnOrder.set("create_date", createDate);
     	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
     	            returnOrder.save();
@@ -478,7 +480,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     	            TransferOrder order = TransferOrder.dao.findById(transferOrderId);
     	            if(!order.getBoolean("no_contract_revenue")){
     	            	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
-    	            	roController.calculateChargeGeneral(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
+    	            	roController.calculateChargeGeneral(Long.parseLong(userId), deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
     	            }
     			//}
             }else{
@@ -505,7 +507,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 //if("ATM".equals(deliveryOrder.get("cargo_nature"))){
         	        ReturnOrderController roController= new ReturnOrderController();
         	        List<Record> transferOrderItemDetailList = Db.find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", delivery_id);
-        	        roController.calculateCharge(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
+        	        roController.calculateCharge(Long.parseLong(userId), deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
         	        
                 //}
             }
