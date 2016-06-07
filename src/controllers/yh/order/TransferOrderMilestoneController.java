@@ -576,6 +576,7 @@ public class TransferOrderMilestoneController extends Controller {
     				.set("cargo_nature", transferOrder.get("cargo_nature"))
     				.set("priceType", departOrder1.get("charge_type"))
     				.set("deliveryMode", "out_source")
+    				.set("ref_no",transferOrder.getStr("sign_in_no"))
     				.set("warehouse_nature", "warehouseNatureNo")
     				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
     				.set("audit_status", "新建").set("sign_status", "未回单");

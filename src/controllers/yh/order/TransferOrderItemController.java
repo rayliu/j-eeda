@@ -35,6 +35,7 @@ public class TransferOrderItemController extends Controller {
         Map transferOrderListMap = null;
         String trandferOrderId = getPara("order_id");
         String productId = getPara("product_id");
+        
         if (trandferOrderId == null || "".equals(trandferOrderId)) {
             trandferOrderId = "-1";
         }
@@ -60,6 +61,7 @@ public class TransferOrderItemController extends Controller {
         transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
         transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
         transferOrderListMap.put("aaData", transferOrders);
+       
         renderJson(transferOrderListMap);
     }
 
@@ -105,6 +107,7 @@ public class TransferOrderItemController extends Controller {
         String width = getPara("width");
         String height = getPara("height");
         String weight = getPara("weight");
+        
         Long productId = item.getLong("product_id");
         if (productId == null || "".equals(productId)) {
             if (!"".equals(item_no) && item_no != null) {
@@ -128,7 +131,7 @@ public class TransferOrderItemController extends Controller {
             } else if (!"".equals(weight) && weight != null) {
                 item.set("weight", weight).update();
                 returnValue = weight;
-            } else if (!"".equals(amount) && amount != null) {
+            }else if (!"".equals(amount) && amount != null) {
                 if (amount != null && !"".equals(amount)) {
             		if("cargo".equals(transferOrder.get("cargo_nature"))){
                 		if("cargoNatureDetailYes".equals(transferOrder.get("cargo_nature_detail"))){

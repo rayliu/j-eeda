@@ -115,7 +115,7 @@ $(document).ready(function() {
 		$("input[name='chargeType']").each(function(){
 			if(chargeType == $(this).val()){
 				//零担
-				if(chargeType == "perCargo"){
+				if(chargeType == ""){
 					//隐藏车辆信息
 					$("#carInfomation").hide();					
 					$(this).prop('checked', true);
@@ -2122,7 +2122,10 @@ $(document).ready(function() {
 			if($(this).val() == "arrangementOrder"){
 				 $("#gateOutDiv").show();
 				 $("#direct_model").hide();
-			 }
+			}else if($(this).val() == "movesOrder"){
+				 $("#sign_in_no_div").show();
+				
+			}
 		}
 		
 	 });
@@ -2896,3 +2899,15 @@ function getChargetype(){
 		},'json');
 	}
 }
+
+$('[name=orderType]').change(function(){
+	var orderType = $(this).val();
+	
+	if(orderType=='movesOrder'){
+		$("#sign_in_no_div").show();
+		
+	}else{
+		$("#sign_in_no_div").hide();
+	}
+	
+});

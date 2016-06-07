@@ -550,6 +550,7 @@ public class TransferOrderController extends Controller {
 		String customerId = getPara("customer_id");
 		String spId = getPara("sp_id");
 		String from_warehouse_id = getPara("gateOutSelect");
+		String sign_in_no = getPara("sign_in_no");
 		boolean costCheckBox = "on".equals(getPara("costCheckBox"));
 		boolean revenueCheckBox = "on".equals(getPara("revenueCheckBox"));
 
@@ -559,6 +560,9 @@ public class TransferOrderController extends Controller {
 			transferOrder = new TransferOrder();
 			if (!"".equals(spId) && spId != null) {
 				transferOrder.set("sp_id", spId);
+			}
+			if(!"".equals(sign_in_no) && sign_in_no !=null){
+				transferOrder.set("sign_in_no", sign_in_no);
 			}
 			transferOrder.set("customer_id", customerId);
 			transferOrder.set("status", getPara("status"));
@@ -663,7 +667,8 @@ public class TransferOrderController extends Controller {
 			transferOrder.set("receiving_phone", getPara("notify_phone"));
 			transferOrder.set("no_contract_revenue", revenueCheckBox);
 			transferOrder.set("no_contract_cost", costCheckBox);
-
+			transferOrder.set("sign_in_no", sign_in_no);
+	
 			if (getParaToDate("planning_time") != null) {
 				transferOrder.set("planning_time", getPara("planning_time"));
 			}
