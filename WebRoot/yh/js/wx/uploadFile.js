@@ -89,18 +89,18 @@ $(document).ready(function() {
 		        		if(order_status == "运输在途"){
 		        			$.post('/transferOrderMilestone/receipt',{departOrderId:depart_id,order_type:'wx'},function(data){
 		            			if(data>0){
-		            				uploadPhoto(return_id);
+		            				uploadPhoto(return_id,localId);
 		            			}
 		            		})
 		        		}else if(order_status == "配送在途"){
 		        			$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id,order_type:'wx'},function(data){
 		        				if(data>0){
-		            				uploadPhoto(return_id);
+		            				uploadPhoto(return_id,localId);
 		            			}
 		            		})
 		        		}	
 		        	}else{
-		        		uploadPhoto(return_id);
+		        		uploadPhoto(return_id,localId);
 		        	}
 		        }
 		    }
@@ -109,7 +109,7 @@ $(document).ready(function() {
     
     
     //上传图片
-    var uploadPhoto = function(return_id){
+    var uploadPhoto = function(return_id,localId){
     	wx.uploadImage({
 		    localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
 		    isShowProgressTips: 1, // 默认为1，显示进度提示
