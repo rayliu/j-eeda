@@ -80,7 +80,7 @@
         /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
         { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
         { "mDataProp": "OFFICE_NAME","sWidth":"100px" },
-        { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
+        { "mDataProp": "BUSINESS_STAMP","sWidth":"120px" },
         { "mDataProp": "CREATE_DATE","sWidth":"100px"},
         { "mDataProp": "TRANSACTION_STATUS","sWidth":"40px",
             "fnRender": function(obj) {
@@ -135,6 +135,7 @@
             { "mDataProp": "ADDRESS","sWidth":"120px"},
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
             { "mDataProp": "OFFICE_NAME","sWidth":"100px" },
+            { "mDataProp": "BUSINESS_STAMP","sWidth":"120px" },
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
             { "mDataProp": "CREATE_DATE","sWidth":"140px" },
             { "mDataProp": "PLANNING_TIME","sWidth":"140px" },
@@ -336,13 +337,16 @@
       var q_begin =$("#q_begin_date").val();
       var q_end =$("#q_end_date").val();
       var officeSelect = $("#officeSelect").val();
+      var delivery_date_begin_time = $("#delivery_date_begin_time").val();
+      var delivery_date_end_time = $("#delivery_date_end_time").val();
+     
       if(clickTabId == "createTab"){
         createDataTable.fnSettings().oFeatures.bServerSide = true;
-        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&photo_type="+photo_type;
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&photo_type="+photo_type+"&delivery_date_begin_time="+delivery_date_begin_time+"&delivery_date_end_time="+delivery_date_end_time;
         createDataTable.fnDraw();
       }else{
         finishDataTable.fnSettings().oFeatures.bServerSide = true;
-        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&q_begin="+q_begin+"&q_end="+q_end+"&photo_type="+photo_type;
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&q_begin="+q_begin+"&q_end="+q_end+"&photo_type="+photo_type+"&delivery_date_begin_time="+delivery_date_begin_time+"&delivery_date_end_time="+delivery_date_end_time;
         finishDataTable.fnDraw();
       }
       saveConditions();

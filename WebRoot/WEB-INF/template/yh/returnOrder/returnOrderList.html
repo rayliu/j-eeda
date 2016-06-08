@@ -46,7 +46,19 @@
                                     </div>
                                     <div class="form-group">
                                     	<label class="search-label">配送网点</label>
-										<select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>                                    </div>
+										<select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>                                    
+									</div>
+<!-- 									<div class="form-group"> -->
+<!--                                     	<label class="search-label">配送发车时间</label> -->
+<!-- 										<select id="depart_time" class="form-control search-control" ></select>                                     -->
+<!-- 									</div> -->
+									
+		                            <%include("/yh/component/form/inputDateQueryField.html", 
+		                                                {   id:'delivery_date', 
+		                                                    label:'配送发车时间', 
+		                                                    value:''
+		                                                }){}%>
+                        			   
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -170,6 +182,7 @@
 					                                           <!--  <th>提货日期</th> -->
 					                                            <th>配送单号</th>
 					                                            <th>配送网点</th>
+					                                            <th>配送发车时间</th>
 					                                            <th>回单创建人</th>                                   
 					                                            <th>到达时间</th> 
 					                                            <th>状态</th>
@@ -211,6 +224,7 @@
 					                                            <th>地址</th>
 					                                            <th>配送单号</th>
 					                                            <th>配送网点</th>
+					                                            <th>配送发车时间</th>
 					                                            <th>回单创建人</th>
 					                                            <th>到达时间</th>                                    
 					                                            <th>计划时间</th> 

@@ -86,6 +86,8 @@ public class ReturnOrderController extends Controller {
 		String photo_type = getPara("photo_type");
 		String sign_no = getPara("sign_no");
 		String officeSelect = getPara("officeSelect");
+		String delivery_date_begin_time = getPara("delivery_date_begin_time");
+		String delivery_date_end_time = getPara("delivery_date_end_time");
 		String q_begin = getPara("q_begin");
 		String q_end = getPara("q_end");
 		
@@ -166,6 +168,18 @@ public class ReturnOrderController extends Controller {
         }
         conditions += time_one + time_two;
         
+        
+        if(StringUtils.isNotEmpty(delivery_date_begin_time) || StringUtils.isNotEmpty(delivery_date_end_time)){
+			if (!StringUtils.isNotEmpty(delivery_date_begin_time)){
+				delivery_date_begin_time = "2000-01-01";
+			}
+			if (StringUtils.isNotEmpty(delivery_date_end_time)){
+				delivery_date_end_time+= " 23:23:59";
+			}else{
+				delivery_date_end_time = "2037-12-31";
+			}
+			conditions += " and business_stamp between '"+ delivery_date_begin_time+ "' and '" + delivery_date_end_time + "' ";
+		}
         
         if (StringUtils.isNotEmpty(q_begin)){
         	q_begin = " and receipt_date between'"+q_begin+"'";
@@ -272,7 +286,8 @@ public class ReturnOrderController extends Controller {
 
 				+ " dor.ref_no sign_no,"
 				+ " dor.office_id,"
-				+ " o.office_name"
+				+ " o.office_name,"
+				+ " dor.business_stamp"
 				+ " FROM return_order ror"
 				+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
@@ -372,7 +387,8 @@ public class ReturnOrderController extends Controller {
 	                + ") photo_type, "
 					+ " dor.ref_no sign_no," 
 	                + " dor.office_id,"
-					+ " o.office_name"
+					+ " o.office_name,"
+					+ " dor.business_stamp"
 					+ " FROM return_order ror"
 					+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 					+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
