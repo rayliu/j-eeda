@@ -564,10 +564,19 @@ public class WxController extends ApiController {
 		if(orderNo != null && !"".equals(orderNo)){
 			//单号可能为序列号/签收单号/运输单号
 		    String sql ="select * from(select ifnull(ro.id,ro2.id) id, ifnull(toid.serial_no,'') serial_no, "
-		    		+ " ifnull(dor.status,dep.`STATUS`) status,"
+		    		+ " (case when (ro.id is not null or ro2.id is not null) "
+		    		+ " then ifnull(ro.transaction_status,ro2.transaction_status)"
+		    		+ " when (ro.id is null and ro2.id is null and dor.status = '配送在途')"
+		    		+ " then dor.status"
+		    		+ " when (ro.id is null and ro2.id is null and dep.status = '运输在途' and tor.arrival_mode='delivery')"
+		    		+ " then dep.status"
+		    		+ " else"
+		    		+ " null"
+		    		+ " end"
+		    		+ " ) status,"
 		    		+ "	dor.status del_status,"
 		    		+ " dep.id depart_id,dep.`STATUS` dep_status,"
-		    		+ "	IfNULL(dor.ref_no,'') ref_no ,"
+		    		+ "	IfNULL(dor.ref_no,'') ref_no ,tor.arrival_mode,"
 		    		+ " IfNULL(tor.order_no,'') to_order_no,IfNULL(tor.customer_order_no,'') customer_order_no ,"
 		    		+ " ifnull(ro.order_no,ro2.order_no) order_no, toid.order_id, toid.delivery_id,c.abbr,c.id cid "
 		    		+ " from transfer_order_item_detail toid"
@@ -583,9 +592,7 @@ public class WxController extends ApiController {
 	                + " A.serial_no = '"+orderNo+"'"
 	                + " or A.ref_no = '"+orderNo+"'"
 	                + " or A.to_order_no = '"+orderNo+"') "
-	                + " and A.id is not null"
-	                + " and (A.del_status not in('新建','计划中') "
-	                + " and A.dep_status not in('新建'))";
+	                + " and A.status is not null";
 		    if(!"-1".equals(customer)){
 		    	sql += " and A.cid='"+customer+"'";
 		    }

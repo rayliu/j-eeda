@@ -90,12 +90,14 @@ $(document).ready(function() {
 		        		if(order_status == "运输在途"){
 		        			$.post('/transferOrderMilestone/receipt',{departOrderId:depart_id,userId:userId,order_type:'wx'},function(data){
 		            			if(data > 0){
+		            				$('#returnId').val(data);
 		            				uploadPhoto(data,localId);
 		            			}
 		            		})
 		        		}else if(order_status == "配送在途"){
 		        			$.post('/deliveryOrderMilestone/receipt',{delivery_id:delivery_id,userId:userId,order_type:'wx'},function(data){
 		        				if(data>0){
+		        					$('#returnId').val(data);
 		            				uploadPhoto(data,localId);
 		            			}
 		            		})
@@ -125,6 +127,7 @@ $(document).ready(function() {
 		        	function(data){
 		        	if(data == "OK"){
 		        		$('#uploadDesc').empty().append("<p>图片上传成功!</p>").show();
+		        		refreshData(-1);
 		        	}else{
 		        		$('#uploadDesc').empty().append("<p>图片上传失败!</p>").show();
 		        	}
