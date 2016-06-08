@@ -67,7 +67,8 @@ public class ReturnOrderController extends Controller {
 	}
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_LIST})
-	public void list() {		String order_no = getPara("order_no");
+	public void list() {
+		String order_no = getPara("order_no");
 		String tr_order_no = getPara("tr_order_no");
 		String de_order_no = getPara("de_order_no");
 
@@ -84,9 +85,13 @@ public class ReturnOrderController extends Controller {
 		String imgaudit = getPara("imgaudit");
 		String photo_type = getPara("photo_type");
 		String sign_no = getPara("sign_no");
-		String pageIndex = getPara("sEcho");
+		String officeSelect = getPara("officeSelect");
 		String q_begin = getPara("q_begin");
 		String q_end = getPara("q_end");
+		
+		
+		String pageIndex = getPara("sEcho");
+		
 		String sLimit = "";
 		String sqlTotal = "";
 		String sql = "";
@@ -145,6 +150,9 @@ public class ReturnOrderController extends Controller {
         }
         if (StringUtils.isNotEmpty(transfer_type)){
         	conditions+=" and UPPER(transfer_type) like '%"+transfer_type+"%'";
+        }
+        if(StringUtils.isNotEmpty(officeSelect)){
+        	conditions+=" and office_id = '" + officeSelect+"'";
         }
         if (StringUtils.isNotEmpty(time_one)){
         	time_one = " and planning_time between'"+time_one+"'";
@@ -262,10 +270,13 @@ public class ReturnOrderController extends Controller {
                 + " ELSE '' END "
                 + ") photo_type, "
 
-				+ " dor.ref_no sign_no"
+				+ " dor.ref_no sign_no,"
+				+ " dor.office_id,"
+				+ " o.office_name"
 				+ " FROM return_order ror"
 				+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
+				+ " LEFT JOIN office o ON dor.office_id = o.id "
 				+ " LEFT JOIN party p ON p.id = dor.notify_party_id"
 				+ " LEFT JOIN contact c ON c.id = p.contact_id"
 				+ " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"
@@ -359,10 +370,13 @@ public class ReturnOrderController extends Controller {
 	                + "  THEN '现场安装'"
 	                + " ELSE '' END "
 	                + ") photo_type, "
-					+ " dor.ref_no sign_no"
+					+ " dor.ref_no sign_no," 
+	                + " dor.office_id,"
+					+ " o.office_name"
 					+ " FROM return_order ror"
 					+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 					+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
+					+ " LEFT JOIN office o ON dor.office_id = o.id "
 					+ " LEFT JOIN party p ON p.id = dor.notify_party_id"
 					+ " LEFT JOIN contact c ON c.id = p.contact_id"
 					+ " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"

@@ -4,7 +4,7 @@
 	var clickTabId = "createTab";
 	
 	//条件查询
-  $("#return_type, #transfer_type, #order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no").on('keyup', function (e) {    	 	
+  $("#return_type, #transfer_type, #order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no","#officeSelect").on('keyup', function (e) {    	 	
   	
     var code = e.which; // recommended to use e.which, it's normalized across browsers
     if(code==13)e.preventDefault();
@@ -79,6 +79,7 @@
         { "mDataProp": "ADDRESS","sWidth":"120px"}, 
         /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
         { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
+        { "mDataProp": "OFFICE_NAME","sWidth":"100px" },
         { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
         { "mDataProp": "CREATE_DATE","sWidth":"100px"},
         { "mDataProp": "TRANSACTION_STATUS","sWidth":"40px",
@@ -133,6 +134,7 @@
             { "mDataProp": "TO_NAME","sWidth":"120px"},
             { "mDataProp": "ADDRESS","sWidth":"120px"},
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
+            { "mDataProp": "OFFICE_NAME","sWidth":"100px" },
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
             { "mDataProp": "CREATE_DATE","sWidth":"140px" },
             { "mDataProp": "PLANNING_TIME","sWidth":"140px" },
@@ -311,6 +313,7 @@
           $("#warehouse").val(conditions.warehouse);
           $("#to_name").val(conditions.to_name);
           $("#province").val(conditions.province);
+          
       }
   };
 
@@ -332,13 +335,14 @@
       var photo_type =$("#photo_type").val();
       var q_begin =$("#q_begin_date").val();
       var q_end =$("#q_end_date").val();
+      var officeSelect = $("#officeSelect").val();
       if(clickTabId == "createTab"){
         createDataTable.fnSettings().oFeatures.bServerSide = true;
-        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&photo_type="+photo_type;
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&photo_type="+photo_type;
         createDataTable.fnDraw();
       }else{
         finishDataTable.fnSettings().oFeatures.bServerSide = true;
-        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&q_begin="+q_begin+"&q_end="+q_end+"&photo_type="+photo_type;
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&q_begin="+q_begin+"&q_end="+q_end+"&photo_type="+photo_type;
         finishDataTable.fnDraw();
       }
       saveConditions();
@@ -347,3 +351,17 @@
   loadConditions(); 
  
 });
+ 
+ //获取所有的网点
+ $.post('/transferOrder/searchPartOffice',function(data){
+	 if(data.length > 0){
+		 var officeSelect = $("#officeSelect");
+		 officeSelect.empty();
+		 officeSelect.append("<option ></option>");
+		
+		 for(var i=0; i<data.length; i++){
+			 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+		 }
+		
+	 }
+ },'json');

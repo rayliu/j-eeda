@@ -25,17 +25,17 @@
                                         <input type="text" class="form-control search-control address_filter" id="tr_order_no">
                                     </div>
                                     <div class="form-group">
-                                        <label class="search-label">订单类型</label>
-                                        <select id="transfer_type" class="form-control search-control status_filter">
-                                                <option value=""></option>
-                                                <option value="销售订单">销售订单</option>
-                                                <option value="补货订单">补货订单</option>
-                                                <option value="调拨订单">调拨订单</option>
-                                                <option value="退货订单">退货订单</option>
-                                                <option value="出库运输单">出库运输单</option>
-                                                <option value="移机单">移机单</option>                                           
-                                        </select>
-                                    </div>
+                                        <label class="search-label">订单类型</label> <select id="transfer_type"
+											class="form-control search-control status_filter">
+											<option value=""></option>
+											<option value="销售订单">销售订单</option>
+											<option value="补货订单">补货订单</option>
+											<option value="调拨订单">调拨订单</option>
+											<option value="退货订单">退货订单</option>
+											<option value="出库运输单">出库运输单</option>
+											<option value="移机单">移机单</option>
+										</select>
+									</div>
                                     <div class="form-group">
                                         <label class="search-label">序列号</label>
                                         <input type="text" class="form-control search-control" id="serial_no">
@@ -44,6 +44,9 @@
                                         <label class="search-label">省份</label>
                                         <input type="text" class="form-control search-control" id="province">
                                     </div>
+                                    <div class="form-group">
+                                    	<label class="search-label">配送网点</label>
+										<select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>                                    </div>
                                 </div>
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -97,7 +100,7 @@
                                         <label class="search-label">配送单号</label>
                                         <input type="text" class="form-control search-control customer_filter" id="de_order_no">
                                     </div>
-                                    <div class="form-group">                                                    
+                                    <div class="form-group">                                                     
                                         <span id="datetimepicker2" class="input-append date search-control "> 
                                             <label class="search-label">~</label> 
                                             <input id="time_two" class="form-control search-control endTime_filter" type="text">
@@ -166,6 +169,7 @@
 					                                            <th>运输单地址</th>
 					                                           <!--  <th>提货日期</th> -->
 					                                            <th>配送单号</th>
+					                                            <th>配送网点</th>
 					                                            <th>回单创建人</th>                                   
 					                                            <th>到达时间</th> 
 					                                            <th>状态</th>
@@ -206,6 +210,7 @@
 					                                            <th>目的城市</th>
 					                                            <th>地址</th>
 					                                            <th>配送单号</th>
+					                                            <th>配送网点</th>
 					                                            <th>回单创建人</th>
 					                                            <th>到达时间</th>                                    
 					                                            <th>计划时间</th> 
