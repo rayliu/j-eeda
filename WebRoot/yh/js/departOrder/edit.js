@@ -730,6 +730,7 @@
      	                	paymenttable.fnSettings().sAjaxSource = "/departOrder/accountPayable/"+$("#departOrderId").val();
      	                	paymenttable.fnDraw(); 
      	                	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+     	                	$("#saveDepartOrderBtn").attr('disabled',false);
      	                	$("#deleteBtn").attr("disabled",false);
      	                });
     		    	    
@@ -783,6 +784,7 @@
     	    /*--------------------------------------------------------------------*/
     	    //编辑保存
     	    $("#saveDepartOrderBtn").click(function(e){
+    	    	$("#saveDepartOrderBtn").attr('disabled',true);
     	    	var priceType = $("input[name='priceType']:checked").val();
     	    	e.preventDefault();
 			   	clickSaveDepartOrder(e);
@@ -830,6 +832,7 @@
 	        					$("#milestoneDepartId").val(data.ID);
                                 contactUrl("edit?id",data.ID);
 	        		    	    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	        		    	    $("#saveDepartOrderBtn").attr('disabled',false);
 	        				}else{
 	        					$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
 	        				}
