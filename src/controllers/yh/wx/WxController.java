@@ -571,7 +571,7 @@ public class WxController extends ApiController {
 		    		+ " IfNULL(tor.order_no,'') to_order_no,IfNULL(tor.customer_order_no,'') customer_order_no ,"
 		    		+ " ifnull(ro.order_no,ro2.order_no) order_no, toid.order_id, toid.delivery_id,c.abbr,c.id cid "
 		    		+ " from transfer_order_item_detail toid"
-		            + " left join return_order ro on toid.order_id=ro.transfer_order_id "
+		            + " left join return_order ro on toid.order_id=ro.transfer_order_id"
 		            + " LEFT JOIN return_order ro2 ON toid.delivery_id = ro2.delivery_order_id"
 		            + " left join delivery_order dor on dor.id = toid.delivery_id"
 		            + " left join transfer_order tor on tor.id = toid.order_id"
@@ -583,6 +583,7 @@ public class WxController extends ApiController {
 	                + " A.serial_no = '"+orderNo+"'"
 	                + " or A.ref_no = '"+orderNo+"'"
 	                + " or A.to_order_no = '"+orderNo+"') "
+	                + " and A.id is not null"
 	                + " and (A.del_status not in('新建','计划中') "
 	                + " and A.dep_status not in('新建'))";
 		    if(!"-1".equals(customer)){
