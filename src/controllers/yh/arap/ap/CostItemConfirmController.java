@@ -113,15 +113,7 @@ public class CostItemConfirmController extends Controller {
         		+ " group_concat(distinct(SELECT CAST(tor.planning_time AS CHAR) FROM transfer_order tor WHERE tor.id = doi.transfer_order_id GROUP BY tor.id) SEPARATOR '\r\n') planning_time,"
         		+ " oe.office_name office_name,"
         		+ " c1.abbr cname,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='运输费') as transport_cost,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='搬运费') as carry_cost,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='上楼费') as climb_cost,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='保险费') as insurance_cost,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='提货费') as take_cost,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='安装费') as anzhuang_cost,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='仓储费') as cangchu_cost,"
-//        		+ " (select sum(dofi.amount) from delivery_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.order_id = dor.id and fi.name='其他费用') as other_cost"
-				+ " 0 AS transport_cost,"
+        		+ " 0 AS transport_cost,"
 				+ " 0 AS carry_cost,"
 				+ " 0 AS climb_cost,"
 				+ " 0 AS insurance_cost,"
@@ -164,7 +156,6 @@ public class CostItemConfirmController extends Controller {
 				+ " THEN ( SELECT sum(toi.amount) FROM "
 				+ "	depart_order dpr2 LEFT JOIN depart_transfer dt on dt.depart_id = dpr2.id LEFT JOIN transfer_order_item toi on toi.order_id = dt.order_id "
 				+ "	where dpr2.id = dpr.id ) END ) amount,"
-				//+ " (select count(*) from transfer_order_item_detail where depart_id =dpr.id ) as amount,"
 				+ " round((select count(id) * volume as volume from transfer_order_item_detail where depart_id =dpr.id),2) volume,"
 				+ " round((select count(id) * weight as weight from transfer_order_item_detail where depart_id =dpr.id),2) weight,"
 				+ " DATE(dpr.create_stamp) create_stamp,"
@@ -182,14 +173,6 @@ public class CostItemConfirmController extends Controller {
 				+ " group_concat( distinct(select cast(tor.planning_time AS CHAR) from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') planning_time,"
 				+ " oe.office_name office_name,"
 				+ " c1.abbr cname,"
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='运输费' and fi.type = '应付') transport_cost, "
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='搬运费' and fi.type = '应付') carry_cost,"
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='上楼费' and fi.type = '应付') climb_cost,"
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='保险费' and fi.type = '应付') insurance_cost,"
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='提货费' and fi.type = '应付') take_cost, "
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='安装费' and fi.type = '应付') anzhuang_cost,"
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='仓储费' and fi.type = '应付') cangchu_cost,"
-//				+ " (select sum(dofi.amount) from depart_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where depart_order_id = dpr.id and fi.name='其他费用' and fi.type = '应付') other_cost"
 				+ " 0 AS transport_cost,"
 				+ " 0 AS carry_cost,"
 				+ " 0 AS climb_cost,"
@@ -203,9 +186,7 @@ public class CostItemConfirmController extends Controller {
 				+ " left join transfer_order tor on tor.id = dtr.order_id "
 				+ " left join party p1 on tor.customer_id = p1.id"
 				+ " left join contact c1 on p1.contact_id = c1.id"
-//				+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ "	left join depart_order_fin_item dofi on dofi.depart_order_id = dpr.id "
-//				+ " left join product prod on toi.product_id = prod.id "
 				+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
 				+ " LEFT JOIN warehouse w ON w.id = tor.warehouse_id"
 				+ " left join office oe on oe.id = tor.office_id"
@@ -229,7 +210,6 @@ public class CostItemConfirmController extends Controller {
 				+ " WHERE  toid.pickup_id = dpr.id ) WHEN tor.cargo_nature = 'cargo' THEN ( SELECT sum(toi.amount) FROM "
 				+ " depart_order dpr2 LEFT JOIN depart_transfer dt on dt.pickup_id = dpr2.id LEFT JOIN transfer_order_item toi on toi.order_id = dt.order_id "
 				+ " where dpr2.id = dpr.id ) END ) amount,"
-				//+ " (select count(id) from transfer_order_item_detail where pickup_id = pofi.pickup_order_id)as amount,"
 				+ " round((SELECT sum(volume)	FROM transfer_order_item_detail	WHERE	pickup_id = dtr.pickup_id),2) volume,"
 				+ " round((SELECT	sum(weight)	FROM transfer_order_item_detail	WHERE pickup_id = dtr.pickup_id ),2) weight,"
 				+ " DATE(dpr.create_stamp) create_stamp, ifnull(ul.c_name, ul.user_name) creator,tor.customer_order_no customer_order_no,"
@@ -246,14 +226,6 @@ public class CostItemConfirmController extends Controller {
 				+ " group_concat(distinct(select cast(tor.planning_time AS CHAR) from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') planning_time,"
 				+ " oe.office_name office_name,"
 				+ " c1.abbr cname,"
-//				+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='运输费') as transport_cost,"
-//        		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='搬运费') as carry_cost,"
-//        		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='上楼费') as climb_cost,"
-//        		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='保险费') as insurance_cost,"
-//				+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='提货费') as take_cost,"
-//        		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='安装费') as anzhuang_cost,"
-//        		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='仓储费') as cangchu_cost,"
-//        		+ " (select sum(pofi.amount) from pickup_order_fin_item pofi left join fin_item fi on fi.id = pofi.fin_item_id where pofi.pickup_order_id = dpr.id and fi.name='其他费用') as other_cost"
 				+ " 0 AS transport_cost,"
 				+ " 0 AS carry_cost,"
 	            + " 0 AS climb_cost,"
@@ -267,10 +239,6 @@ public class CostItemConfirmController extends Controller {
 				+ " left join transfer_order tor on tor.id = dtr.order_id "
 				+ " left join party p1 on tor.customer_id = p1.id"
 				+ " left join contact c1 on p1.contact_id = c1.id"
-//				+ " left join transfer_order_item toi on toi.order_id = tor.id "
-//				+ " left join transfer_order_item_detail toid on toid.order_id = tor.id "
-//				+ " left join product prod on toi.product_id = prod.id "
-				//+ " left join pickup_order_fin_item pofi on pofi.pickup_order_id = dtr.pickup_id"
 				+ " left join user_login ul on ul.id = dpr.create_by left join party p on p.id = dpr.sp_id left join contact c on c.id = p.contact_id "
 				+ " LEFT JOIN warehouse w ON w.id = tor.warehouse_id"
 				+ " left join office oe on oe.id = tor.office_id "
@@ -290,9 +258,6 @@ public class CostItemConfirmController extends Controller {
         		+ " ifnull((SELECT NAME FROM location WHERE CODE = tor.route_to),"
         		+ " (SELECT NAME FROM location WHERE CODE = tor.route_to)) route_to,"
 				+ " '' receivingunit, c.abbr spname,"
-//				+ " (select sum(toi.amount) from transfer_order_item toi where toi.order_id in(select tro.id from transfer_order tro where tro.insurance_id  = ior.id )) amount,"
-//				+ " (select round(sum(ifnull(prod.volume,toi.volume)*amount),2) from transfer_order_item toi left join product prod on toi.product_id = prod.id  where toi.order_id in(select tro.id from transfer_order tro where tro.insurance_id  = ior.id )) volume,"
-//				+ " (select round(sum(ifnull(prod.weight,toi.weight)*amount),2) from transfer_order_item toi left join product prod on toi.product_id = prod.id  where toi.order_id in(select tro.id from transfer_order tro where tro.insurance_id  = ior.id )) weight,"
 				+ " 0 amount,"
 				+ " 0 volume,"
 				+ " 0 weight,"
@@ -324,7 +289,6 @@ public class CostItemConfirmController extends Controller {
 				+ " left join transfer_order tor on ior.id = tor.insurance_id "
 				+ " left join party p1 on tor.customer_id = p1.id"
 				+ " left join contact c1 on p1.contact_id = c1.id"
-				//+ " left join transfer_order_item toi on toi.order_id = tor.id "
 				+ " left join user_login ul on ul.id = ior.create_by"
 				+ " left join party p on ior.insurance_id = p.id "
 				+ " left join contact c on p.contact_id = c.id "
@@ -430,15 +394,12 @@ public class CostItemConfirmController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         
-        long sTime = Calendar.getInstance().getTimeInMillis();
-        
         String orderByStr = " order by A.depart_time desc ";
         if(colName.length()>0){
         	orderByStr = " order by A."+colName+" "+sortBy;
         }
         List<Record> BillingOrders = Db.find(sql + condition + orderByStr + sLimit);
-        long eTime = Calendar.getInstance().getTimeInMillis();
-        logger.debug("time cost:" + (eTime-sTime));
+System.out.println("开始："+sql + condition + orderByStr + sLimit);
         
         Map BillingOrderListMap = new HashMap();
         BillingOrderListMap.put("sEcho", pageIndex);

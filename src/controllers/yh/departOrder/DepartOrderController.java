@@ -321,203 +321,125 @@ public class DepartOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		if (orderNo == null && departNo == null && status == null && sp == null
-				&& beginTime == null && endTime == null && office == null
-				&& start == null && end == null && customer == null
-				&& planBeginTime == null && planEndTime == null) {
-			sqlTotal = "select count(distinct deo.id) total from depart_order deo "
-					+ " left join depart_transfer dt on dt.depart_id = deo.id "
-					+ " left join transfer_order t on t.id = dt.order_id "
-					+ " left join office o on o.id = t.office_id "
-					+ " where (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车' or ifnull(deo.status,'') = '运输在途') and combine_type = '"
-					+ DepartOrder.COMBINE_TYPE_DEPART
-					+ "' and o.id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and deo.status!='手动删除' and t.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal() + "')";
-
-			sql = "select deo.id,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
-					+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
-					+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
-					+ " (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS planning_time,"
-					+ " ((case when t.operation_type != 'out_source'"
-					+ " then (SELECT ifnull(sum(dt.amount),0) FROM depart_transfer dt LEFT JOIN transfer_order tor on tor.id = dt.order_id LEFT JOIN depart_pickup dp on dp.pickup_id = dt.pickup_id "
-					+ " WHERE dp.depart_id = deo.id and tor.cargo_nature = 'cargo' and tor.id = t.id)"
-					+ " else"
-					+ " (select sum(amount) from transfer_order_item toi where toi.order_id = t.id)"
-					+ " end) "
-					+ " + (SELECT count(0) FROM transfer_order_item_detail toid "
-					+ " left join transfer_order tor on toid.order_id = tor.id WHERE toid.depart_id = deo.id and tor.cargo_nature = 'ATM')) amount, "
-					+ " (SELECT	tr.arrival_mode	FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id  LIMIT 0,1) arrival_mode, "
-					+ " (SELECT	group_concat(tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS transfer_order_no, "
-					+ " (SELECT	group_concat(	tr.customer_order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS customer_order_no,"
-					+ " (SELECT	ifnull(location, '')	FROM	transfer_order_milestone tom, depart_order deo where tom.depart_id = deo.id ORDER BY	tom.id DESC LIMIT 0,1) location, "
-					+ " (SELECT ifnull(exception_record, '') FROM transfer_order_milestone tom LEFT JOIN depart_order deo on tom.depart_id = deo.id ORDER BY tom.id DESC LIMIT 0,1) exception_record, "
-					+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id,  "
-					+ " deo.transfer_type as trip_type, "
-					+ " w.office_id route_to_office_id, "
-					+ " wo.office_name route_to_office_name"
-					+ " from depart_order deo "
-					+ " left join carinfo c on deo.carinfo_id = c.id "
-					+ " left join depart_transfer dt on dt.depart_id = deo.id "
-					+ " left join transfer_order t on t.id = dt.order_id "
-					+ " left join office o on o.id = t.office_id "
-					+ " left join party p1 on t.customer_id = p1.id "
-					+ " left join party p2 on deo.sp_id = p2.id "
-					+ " left join contact c1 on p1.contact_id = c1.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join location l1 on deo.route_from = l1.code "
-					+ " left join location l2 on deo.route_to =l2.code "
-					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
-                    + " LEFT JOIN office wo ON wo.id = w.office_id"
-					+ " where  (ifnull(deo.status,'') = '已发车' or ifnull(deo.status,'') = '部分已发车' or ifnull(deo.status,'') = '运输在途')  and combine_type = '"
-					+ DepartOrder.COMBINE_TYPE_DEPART
-					+ "'  and o.id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " and deo.status!='手动删除' and t.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " group by deo.id order by deo.create_stamp desc "
-					+ sLimit;
-		} else {
-			if (beginTime == null || "".equals(beginTime)) {
-				beginTime = "2010-1-1";
-			}
-			if (endTime == null || "".equals(endTime)) {
-				endTime = "2037-12-31";
-			}
-			if (planBeginTime == null || "".equals(planBeginTime)) {
-				planBeginTime = "2010-1-1";
-			}
-			if (planEndTime == null || "".equals(planEndTime)) {
-				planEndTime = "2037-12-31";
-			}
-			sqlTotal = "select count(distinct deo.id) total"
-					+ " from depart_order deo "
-					+ " left join carinfo c on deo.carinfo_id = c.id "
-					+ " left join depart_transfer dt on dt.depart_id = deo.id "
-					+ " left join transfer_order t on t.id = dt.order_id "
-					+ " left join office o on o.id = t.office_id "
-					+ " left join party p1 on t.customer_id = p1.id "
-					+ " left join party p2 on deo.sp_id = p2.id "
-					+ " left join contact c1 on p1.contact_id = c1.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join location l1 on deo.route_from = l1.code "
-					+ " left join location l2 on deo.route_to =l2.code "
-					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
-					+ " LEFT JOIN office wo ON wo.id = w.office_id"
-					+ " left join transfer_order tr  on tr.id = dt.order_id"
-					+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
-					+ "ifnull(deo.status,'') like '%"
-					+ status
-					+ "%' and "
-					+ "ifnull(deo.depart_no,'') like '%"
-					+ departNo
-					+ "%' and ifnull(c2.abbr,'')  like '%"
-					+ sp
-					+ "%' and ifnull(tr.order_no,'') like '%"
-					+ orderNo
-					+ "%' and ifnull(wo.id,'') = "
-					+ office
-					+ " and ifnull(l1.name,'') like '%"
-					+ start
-					+ "%' and ifnull(l2.name,'') like '%"
-					+ end
-					+ "%' and ifnull(c1.abbr,'') like '%"
-					+ customer
-					+ "%' and deo.departure_time between '"
-					+ beginTime
-					+ "' "
-					+ "and '"
-					+ endTime
-					+ "'  AND ("
-                    + "o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
-                    + " or"
-                    + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
-                    + ")"
-					+ " and (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) between '"
-					+ planBeginTime
-					+ "' "
-					+ "and '"
-					+ planEndTime
-					+ "'"
-					+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal() + "')";
-
-			sql = "select deo.id,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
-					+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
-					+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
-					+ " (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS planning_time,"
-					+ " ((case when t.operation_type != 'out_source'"
-					+ " then (SELECT ifnull(sum(dt.amount),0) FROM depart_transfer dt LEFT JOIN transfer_order tor on tor.id = dt.order_id LEFT JOIN depart_pickup dp on dp.pickup_id = dt.pickup_id "
-					+ " WHERE dp.depart_id = deo.id and tor.cargo_nature = 'cargo' and tor.id = t.id)"
-					+ " else"
-					+ " (select sum(amount) from transfer_order_item toi where toi.order_id = t.id)"
-					+ " end) "
-					+ "+ (SELECT count(0) FROM transfer_order_item_detail toid, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toid.order_id = tor.id and toid.depart_id = deo.id and tor.cargo_nature = 'ATM')) amount, "
-					+ " (SELECT	tr.arrival_mode	FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id  LIMIT 0,1) arrival_mode, "
-					+ " (SELECT	group_concat(tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS transfer_order_no, "
-					+ " (SELECT	group_concat(	tr.customer_order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS customer_order_no,"
-					+ " (SELECT	ifnull(location, '')	FROM	transfer_order_milestone tom, depart_order deo where tom.depart_id = deo.id ORDER BY	tom.id DESC LIMIT 0,1) location, "
-					+ " (SELECT ifnull(exception_record, '') FROM transfer_order_milestone tom LEFT JOIN depart_order deo on tom.depart_id = deo.id ORDER BY tom.id DESC LIMIT 0,1) exception_record, "
-					+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id,  "
-					+ " deo.transfer_type as trip_type,"
-					+ " w.office_id route_to_office_id, "
-                    + " wo.office_name route_to_office_name"
-					+ " from depart_order deo "
-					+ " left join carinfo c on deo.carinfo_id = c.id "
-					+ " left join depart_transfer dt on dt.depart_id = deo.id "
-					+ " left join transfer_order t on t.id = dt.order_id "
-					+ " left join office o on o.id = t.office_id "
-					+ " left join party p1 on t.customer_id = p1.id "
-					+ " left join party p2 on deo.sp_id = p2.id "
-					+ " left join contact c1 on p1.contact_id = c1.id "
-					+ " left join contact c2 on p2.contact_id = c2.id "
-					+ " left join location l1 on deo.route_from = l1.code "
-					+ " left join location l2 on deo.route_to =l2.code "
-					+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
-					+ " LEFT JOIN office wo ON wo.id = w.office_id"
-					+ " left join transfer_order tr  on tr.id = dt.order_id"
-					+ "  where deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' "
-					+ " and ifnull(deo.status,'') like '%"
-					+ status
-					+ "%' and ifnull(deo.depart_no,'') like '%"
-					+ departNo
-					+ "%' and ifnull(tr.order_no,'') like '%"
-					+ orderNo
-					+ "%' and ifnull(wo.id,'') = "
-					+ office
-					+ " and ifnull(l1.name,'') like '%"
-					+ start
-					+ "%' and ifnull(l2.name,'') like '%"
-					+ end
-					+ "%' and ifnull(c2.abbr,'') like '%"
-					+ sp
-					+ "%' and ifnull(c1.abbr,'') like '%"
-					+ customer
-					+ "%' and deo.departure_time between '"
-					+ beginTime
-					+ "' and '"
-					+ endTime
-					+ "'  AND ("
-                    + "o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
-                    + " or"
-                    + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
-                    + ")"
-					+ " and (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) between '"
-					+ planBeginTime
-					+ "' "
-					+ "and '"
-					+ planEndTime
-					+ "'"
-					+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
-					+ " group by deo.id order by deo.create_stamp desc "
-					+ sLimit;
+		
+		String conditions = " where 1 = 1 ";
+		if(StringUtils.isNotEmpty(orderNo)){
+			conditions += " and ifnull(tr.order_no,'') like '%" + orderNo + "%'"; 
 		}
+		if(StringUtils.isNotEmpty(departNo)){
+			conditions += " and ifnull(deo.depart_no,'') like '%" + departNo + "%'"; 
+		}
+		if(StringUtils.isNotEmpty(status)){
+			conditions += " and ifnull(deo.status,'') like '%" + status + "%'"; 
+		}
+		if(StringUtils.isNotEmpty(sp)){
+			conditions += " and ifnull(c2.abbr,'') like '%" + sp + "%'"; 
+		}
+		if(StringUtils.isNotEmpty(office)){
+			conditions += " and ifnull(wo.id,'') = '" + office + "'"; 
+		}
+		if(StringUtils.isNotEmpty(start)){
+			conditions += " and ifnull(l1.name,'') like '%" + start + "%'"; 
+		}
+		if(StringUtils.isNotEmpty(end)){
+			conditions += " and ifnull(l2.name,'') like '%" + end + "%'"; 
+		}
+		if(StringUtils.isNotEmpty(customer)){
+			conditions += " and ifnull(c1.abbr,'') like '%" + customer + "%'"; 
+		}
+		
+		if(StringUtils.isEmpty(beginTime)){
+			beginTime = "2000-01-01";
+		}
+		if(StringUtils.isEmpty(endTime)){
+			endTime = "2037-12-31";
+		}else{
+			endTime += " 23:59:59";
+		}
+		conditions += " and deo.departure_time between '" + beginTime + "' and '" + endTime + "'"; 
+		
+		if(StringUtils.isEmpty(planBeginTime)){
+			planBeginTime = "2000-01-01";
+		}
+		if(StringUtils.isEmpty(planEndTime)){
+			planEndTime = "2037-12-31";
+		}else{
+			planEndTime += " 23:59:59";
+		}
+		conditions += " and (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n')"
+				+ " FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id)"
+				+ " between '" + planBeginTime + "' and '" + planEndTime + "'"; 
+
+	
+		sqlTotal = "select count(distinct deo.id) total"
+				+ " from depart_order deo "
+				+ " left join carinfo c on deo.carinfo_id = c.id "
+				+ " left join depart_transfer dt on dt.depart_id = deo.id "
+				+ " left join transfer_order t on t.id = dt.order_id "
+				+ " left join office o on o.id = t.office_id "
+				+ " left join party p1 on t.customer_id = p1.id "
+				+ " left join party p2 on deo.sp_id = p2.id "
+				+ " left join contact c1 on p1.contact_id = c1.id "
+				+ " left join contact c2 on p2.contact_id = c2.id "
+				+ " left join location l1 on deo.route_from = l1.code "
+				+ " left join location l2 on deo.route_to =l2.code "
+				+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
+				+ " LEFT JOIN office wo ON wo.id = w.office_id"
+				+ " left join transfer_order tr  on tr.id = dt.order_id"
+				+ conditions
+				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
+				+ " ( o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
+                + " or"
+                + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
+                + " )"
+				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal() + "')";
+
+		sql = "select deo.id,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
+				+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
+				+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
+				+ " (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS planning_time,"
+				+ " ((case when t.operation_type != 'out_source'"
+				+ " then (SELECT ifnull(sum(dt.amount),0) FROM depart_transfer dt LEFT JOIN transfer_order tor on tor.id = dt.order_id LEFT JOIN depart_pickup dp on dp.pickup_id = dt.pickup_id "
+				+ " WHERE dp.depart_id = deo.id and tor.cargo_nature = 'cargo' and tor.id = t.id)"
+				+ " else"
+				+ " (select sum(amount) from transfer_order_item toi where toi.order_id = t.id)"
+				+ " end) "
+				+ "+ (SELECT count(0) FROM transfer_order_item_detail toid, depart_transfer dt, transfer_order tor WHERE dt.depart_id = deo.id and dt.order_id = tor.id and toid.order_id = tor.id and toid.depart_id = deo.id and tor.cargo_nature = 'ATM')) amount, "
+				+ " (SELECT	tr.arrival_mode	FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id  LIMIT 0,1) arrival_mode, "
+				+ " (SELECT	group_concat(tr.order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS transfer_order_no, "
+				+ " (SELECT	group_concat(	tr.customer_order_no SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS customer_order_no,"
+				+ " (SELECT	ifnull(location, '')	FROM	transfer_order_milestone tom, depart_order deo where tom.depart_id = deo.id ORDER BY	tom.id DESC LIMIT 0,1) location, "
+				+ " (SELECT ifnull(exception_record, '') FROM transfer_order_milestone tom LEFT JOIN depart_order deo on tom.depart_id = deo.id ORDER BY tom.id DESC LIMIT 0,1) exception_record, "
+				+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id,  "
+				+ " deo.transfer_type as trip_type,"
+				+ " w.office_id route_to_office_id, "
+                + " wo.office_name route_to_office_name"
+				+ " from depart_order deo "
+				+ " left join carinfo c on deo.carinfo_id = c.id "
+				+ " left join depart_transfer dt on dt.depart_id = deo.id "
+				+ " left join transfer_order t on t.id = dt.order_id "
+				+ " left join office o on o.id = t.office_id "
+				+ " left join party p1 on t.customer_id = p1.id "
+				+ " left join party p2 on deo.sp_id = p2.id "
+				+ " left join contact c1 on p1.contact_id = c1.id "
+				+ " left join contact c2 on p2.contact_id = c2.id "
+				+ " left join location l1 on deo.route_from = l1.code "
+				+ " left join location l2 on deo.route_to =l2.code "
+				+ " LEFT JOIN warehouse w ON w.location = deo.route_to"
+				+ " LEFT JOIN office wo ON wo.id = w.office_id"
+				+ " left join transfer_order tr  on tr.id = dt.order_id"
+				+ conditions
+				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
+				+ " ( o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
+                + " or"
+                + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
+                + " )"
+				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal() + "')"
+				+ " group by deo.id order by deo.create_stamp desc "
+				+ sLimit;
+		
 		Record rec = Db.findFirst(sqlTotal);
 		long startMi = Calendar.getInstance().getTimeInMillis();
 		List<Record> departOrders = Db.find(sql);
