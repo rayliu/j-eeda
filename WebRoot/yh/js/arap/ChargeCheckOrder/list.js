@@ -79,6 +79,7 @@ $(document).ready(function() {
 		var transferOrderNo = $("#transferOrderNo_filter").val();
 		var refNo = $("#refNo_filter").val();
 		var serialNo = $("#serialNo_filter").val();
+		var customerNo2 = $("#customerNo_filter2").val();
 		datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/list?orderNo="+orderNo
 															+"&beginTime="+beginTime
 															+"&endTime="+endTime
@@ -89,6 +90,7 @@ $(document).ready(function() {
 															+"&transferOrderNo="+transferOrderNo
 															+"&refNo="+refNo
 															+"&serialNo="+serialNo
+															+"&customerNo2="+customerNo2
 															+"&office="+office;
 		datatable.fnDraw();
     });
@@ -129,7 +131,7 @@ $(document).ready(function() {
         $("#select_companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-        refreshList();
+       // refreshList();
     });
    
      //获取供应商的list，选中信息在下方展示其他信息
@@ -217,7 +219,7 @@ $(document).ready(function() {
        		}
        		pageSpAddress.append(address);
                $('#spList').hide();
-               refreshList();
+              // refreshList();
                
            });
         $('#datetimepickerK').datetimepicker({  

@@ -296,6 +296,7 @@ $(document).ready(function() {
 		var planningEndTime = $("#endTime_filter1").val();
 		var orderNo = $("#orderNo_filter").val();
 		var customerNo = $("#customerNo_filter").val();
+		var serialNo2 = $("#serialNo_filter2").val();
 		var address = $("#address_filter").val();
 		var status = $("#shouru_filter").val();
 		$("#allCheck").attr("checked",false);
@@ -304,6 +305,7 @@ $(document).ready(function() {
 															+"&endTime="+endTime
 															+"&orderNo="+orderNo
 															+"&customerNo="+customerNo
+															+"&serialNo2="+serialNo2
 															+"&address="+address
 															+"&planningBeginTime="+planningBeginTime
 															+"&planningEndTime="+planningEndTime
@@ -312,7 +314,7 @@ $(document).ready(function() {
     };
    
     
-    $('#customer_filter,#beginTime_filter,#endTime_filter,#beginTime_filter1,#endTime_filter1,#orderNo_filter,#customerNo_filter,#address_filter').on( 'keyup', function () {
+    $('#customer_filter,#beginTime_filter,#endTime_filter,#beginTime_filter1,#endTime_filter1,#orderNo_filter,#customerNo_filter,#serialNo_filter2,#address_filter').on( 'keyup', function () {
     	refreshCreate();
 	} );
     $('#shouru_filter').on( 'change', function () {

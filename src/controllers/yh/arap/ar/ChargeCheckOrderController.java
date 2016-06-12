@@ -386,6 +386,7 @@ public class ChargeCheckOrderController extends Controller {
 		String planningEndTime = getPara("planningEndTime");
 		String orderNo = getPara("orderNo");
 		String customerNo = getPara("customerNo");
+		String serialNo = getPara("serialNo2");
 		String address = getPara("address");
 		String ref_no = getPara("ref_no");
 		String customer_no = getPara("customer_no");// 添加单据的客户名称
@@ -492,7 +493,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " WHERE amco. STATUS = '已确认' ";
 		sql3 = " ) order by planning_time desc ";
 		if (customer == null && beginTime == null && endTime == null
-				&& orderNo == null && customerNo == null && address == null
+				&& orderNo == null && customerNo == null && serialNo==null && address == null
 				&& planningBeginTime == null && planningEndTime == null) {
 			condition = " ";
 			if (ispage != null) {
@@ -540,10 +541,21 @@ public class ChargeCheckOrderController extends Controller {
 					+ orderNo
 					+ "%' "
 					+ " and ifnull((select name from location where code = tor.route_from),ifnull((select name from location where code = tor2.route_from),''))  like '%"
-					+ address + "%' ";
+					+ address + "%' "
+					+ " and ( CASE "
+					+ " WHEN ror.delivery_order_id IS NOT NULL THEN "
+					+ " (  SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR  '<br/>' )"
+					+ " FROM transfer_order_item_detail toid "
+					+ " WHERE toid.delivery_id = dvr.id ) "
+					+ " ELSE "
+					+ " ( SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR  '<br/>' )"
+					+ " FROM transfer_order_item_detail toid "
+					+ " WHERE toid.order_id = tor.id ) END ) like '%"
+					+ serialNo
+					+ "%'";
 			condition2 = " and c.abbr like '%"
 					+ customer
-					+ "%' and (SELECT GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '')FROM arap_misc_charge_order_item amcoi WHERE amcoi.misc_order_id = amco.id) like '%"
+					+ "%' and (SELECT GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '') FROM arap_misc_charge_order_item amcoi WHERE amcoi.misc_order_id = amco.id) like '%"
 					+ customerNo + "%'";
 		}
 		sqlTotal = "select count(1) total from (" + sql + condition + sql2
@@ -963,6 +975,7 @@ public class ChargeCheckOrderController extends Controller {
 		String transferOrderNo = getPara("transferOrderNo");
 		String refNo = getPara("refNo");
 		String serialNo = getPara("serialNo");
+		String customerNo2 = getPara("customerNo2");
 		String sqlTotal = "";
 		
 		
@@ -1036,7 +1049,18 @@ public class ChargeCheckOrderController extends Controller {
 				+ " ror.id = aci.ref_order_id ),(SELECT GROUP_CONCAT(DISTINCT toid.serial_no SEPARATOR ' ') from transfer_order_item_detail toid"
 				+ " LEFT JOIN return_order ror on ror.transfer_order_id  = toid.order_id"
 				+ " where "
-				+ " ror.id = aci.ref_order_id)) end SEPARATOR ' ') serial_no "
+				+ " ror.id = aci.ref_order_id)) end SEPARATOR ' ') serial_no,"
+
+				+ " GROUP_CONCAT(CASE WHEN aci.ref_order_type = '回单' "
+				+ " THEN ifnull((SELECT GROUP_CONCAT(DISTINCT tor.customer_order_no SEPARATOR ' ' )FROM transfer_order tor"
+				+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id "
+				+ " LEFT JOIN return_order ror ON ror.delivery_order_id = doi.delivery_id "
+				+ " WHERE "
+				+ " ror.id = aci.ref_order_id),(SELECT GROUP_CONCAT(DISTINCT tor.customer_order_no SEPARATOR ' ')FROM transfer_order tor "
+				+ " LEFT JOIN return_order ror ON ror.transfer_order_id = tor.id "
+				+ " WHERE "
+				+ " ror.id = aci.ref_order_id))END SEPARATOR ' ') customer_order_no "
+					
 				+ " from arap_charge_order aao "
 				+ " LEFT JOIN arap_charge_item aci on aci.charge_order_id = aao.id"
 				+ " left join party p on p.id = aao.payee_id "
@@ -1111,6 +1135,9 @@ public class ChargeCheckOrderController extends Controller {
 		}
 		if (StringUtils.isNotEmpty(serialNo)){
 			conditions += " and ifnull(serial_no,'') like '%" + serialNo+"%' ";
+		}
+		if (StringUtils.isNotEmpty(customerNo2)){
+			conditions += " and ifnull(customer_order_no,'') like '%" + customerNo2+"%' ";
 		}
 		if (StringUtils.isNotEmpty(beginTime)){
         	beginTime = " and create_stamp between'"+beginTime+"'";

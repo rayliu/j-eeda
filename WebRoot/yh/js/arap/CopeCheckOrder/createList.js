@@ -120,11 +120,12 @@ $(document).ready(function() {
         var status = $("#status_filter").val();
         var address = $("#address_filter").val();
         var customer = $("#customer_filter").val();
+        var serialNo = $("#serialNo_filter2").val();
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
         var officeName = $("#officeName_filter").val();
-        transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName;
+        transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&officeName="+officeName+"&serialNo="+serialNo;
         transferOrder.fnDraw();
     } );
     
