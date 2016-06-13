@@ -290,7 +290,7 @@ public class WxController extends ApiController {
          
         if(user != null){
         	UsernamePasswordToken token = new UsernamePasswordToken(user_name, pwd);
-            token.setRememberMe(true);
+            //token.setRememberMe(true);
             currentUser.login(token);
             //currentUser.getSession().setTimeout(-1000L);
             user.set("wechat_openid", openid).update();
@@ -300,6 +300,17 @@ public class WxController extends ApiController {
             setAttr("openid", openid);
             setAttr("redirect", redirect);
             render("/yh/wx/login.html");
+        }
+    }
+    
+    public void relogin(Record user){
+    	if (!currentUser.isAuthenticated()) {
+    		String user_name = user.getStr("user_name");
+    		String password = user.getStr("password");
+    		if(user != null){
+            	UsernamePasswordToken token = new UsernamePasswordToken(user_name, password);
+            	currentUser.login(token);
+    		}
         }
     }
     
@@ -314,17 +325,18 @@ public class WxController extends ApiController {
     	    //第二步：通过code换取网页授权access_token
     	    openid = getOpenId(code);
 	    }   
-    	    Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
-    	    if(userRec != null){
-    	        setAttr("openid", openid);
-    	        setAttr("userId",userRec.getLong("id"));
-    	        setPageAttr("/wx/fileUpload");
-    	        render("/yh/returnOrder/returnOrderUploadFile.html");
-    	    }else{
-    	        setAttr("openid", openid);
-    	        setAttr("redirect", "fileUpload");
-    	        render("/yh/wx/login.html");
-    	    }
+	    Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+	    if(userRec != null){
+	        setAttr("openid", openid);
+	        setAttr("userId",userRec.getLong("id"));
+	        setPageAttr("/wx/fileUpload");
+	        render("/yh/returnOrder/returnOrderUploadFile.html");
+	    }else{
+	    	relogin(userRec);
+	        setAttr("openid", openid);
+	        setAttr("redirect", "fileUpload");
+	        render("/yh/wx/login.html");
+	    }
 	    
 	}
 	
@@ -345,6 +357,7 @@ public class WxController extends ApiController {
             setPageAttr("/wx/queryStatus");
             render("/yh/wx/queryStatus.html");
         }else{
+        	relogin(userRec);
             setAttr("openid", openid);
             setAttr("redirect", "queryStatus");
             render("/yh/wx/login.html");
@@ -673,6 +686,7 @@ public class WxController extends ApiController {
         	setPageAttr("/wx/searchPickupOrder");
             render("/yh/wx/yh/searchPickupOrder.html");
         }else{
+        	relogin(userRec);
         	setAttr("openid", openid);
             setAttr("redirect", "searchPickupOrder");
             render("/yh/wx/login.html");
