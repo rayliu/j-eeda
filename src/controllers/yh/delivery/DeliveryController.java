@@ -293,7 +293,7 @@ public class DeliveryController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String arrive_stamp_begin_time = getPara("arrive_stamp_begin_time");
-		String arrive_stamp_end_time = getPara("arrive_end_end_time");
+		String arrive_stamp_end_time = getPara("arrive_stamp_end_time");
 		String status = getPara("status")==null?"": getPara("status");
 		String deliveryOffice = getPara("deliveryOffice");
 		String serial_no = getPara("serial_no")==null?"":getPara("serial_no");
