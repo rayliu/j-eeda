@@ -327,12 +327,12 @@ public class WxController extends ApiController {
 	    }   
 	    Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
 	    if(userRec != null){
+	    	relogin(userRec);
 	        setAttr("openid", openid);
 	        setAttr("userId",userRec.getLong("id"));
 	        setPageAttr("/wx/fileUpload");
 	        render("/yh/returnOrder/returnOrderUploadFile.html");
 	    }else{
-	    	relogin(userRec);
 	        setAttr("openid", openid);
 	        setAttr("redirect", "fileUpload");
 	        render("/yh/wx/login.html");
@@ -353,11 +353,11 @@ public class WxController extends ApiController {
         }
         Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
         if(userRec != null){
+        	relogin(userRec);
             setAttr("orderNo", getPara());
             setPageAttr("/wx/queryStatus");
             render("/yh/wx/queryStatus.html");
         }else{
-        	relogin(userRec);
             setAttr("openid", openid);
             setAttr("redirect", "queryStatus");
             render("/yh/wx/login.html");
@@ -682,11 +682,11 @@ public class WxController extends ApiController {
         Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
         
         if(userRec != null){
+        	relogin(userRec);
         	setAttr("openid", openid);
         	setPageAttr("/wx/searchPickupOrder");
             render("/yh/wx/yh/searchPickupOrder.html");
         }else{
-        	relogin(userRec);
         	setAttr("openid", openid);
             setAttr("redirect", "searchPickupOrder");
             render("/yh/wx/login.html");
