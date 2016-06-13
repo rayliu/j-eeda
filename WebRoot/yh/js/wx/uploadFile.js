@@ -126,17 +126,29 @@ $(document).ready(function() {
 		        	},
 		        	function(data){
 		        	if(data == "OK"){
-		        		$('#uploadDesc').empty().append("<p>图片上传成功!</p>").show();
-		        		refreshData(-1);
+		        	   var $toast = $('#toast');
+	        	       if ($toast.css('display') != 'none') {
+	        	           return;
+	        	       }
+	        	       $toast.show();
+	        	       setTimeout(function () {
+	        	           $toast.hide();
+	        	           refreshData(-1);
+	        	       }, 2000);   
 		        	}else{
-		        		$('#uploadDesc').empty().append("<p>图片上传失败!</p>").show();
+		        	   var $toast = $('#error');
+	        	       if ($toast.css('display') != 'none') {
+	        	           return;
+	        	       }
+	        	       $toast.show();
+	        	       setTimeout(function () {
+	        	           $toast.hide();
+	        	       }, 2000);
 		        	}
 		        });
 		    }
 		});
     }
-    
-    
     
 	//获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
