@@ -293,7 +293,7 @@ public class DeliveryController extends Controller {
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");
 		String arrive_stamp_begin_time = getPara("arrive_stamp_begin_time");
-		String arrive_stamp_end_time = getPara("arrive_end_begin_time");
+		String arrive_stamp_end_time = getPara("arrive_end_end_time");
 		String status = getPara("status")==null?"": getPara("status");
 		String deliveryOffice = getPara("deliveryOffice");
 		String serial_no = getPara("serial_no")==null?"":getPara("serial_no");
@@ -409,7 +409,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
 					+ " WHERE doi.delivery_id = d.id"
 					+ " ) serial_no,"
-					+ " (select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no "
+					+ " (select group_concat(doi.transfer_no separator '\r\n') from delivery_order_item doi where delivery_id = d.id) as transfer_order_no ,arrive_stamp"
 					//+ " (select location from delivery_order_milestone dom where delivery_id = d.id order by id desc limit 0,1) location "
 					+ " from delivery_order d "
 					+ " left join party p on d.customer_id = p.id "
@@ -492,6 +492,7 @@ public class DeliveryController extends Controller {
 	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_UPDATE})
 	public void edit() {
 		String id = getPara("id");
+		
 		//System.out.println(id);
 		List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select * from transfer_order_item toi"
 				+ " where delivery_id = ? ",id);	

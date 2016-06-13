@@ -89,8 +89,8 @@ $(document).ready(function() {
                 }
             },
             {"mDataProp":"PLANNING_TIME","sWidth":"95px"},
-            {"mDataProp":"TRANSFER_ORDER_NO"}          
-            
+            {"mDataProp":"TRANSFER_ORDER_NO"},         
+            {"mDataProp":"ARRIVE_STAMP","sWidth":"100px"} 
         ]  
     });	
     //签收完成
@@ -316,7 +316,7 @@ $(document).ready(function() {
         pickerPosition: "bottom-left"
     }).on('changeDate', function(ev){
     	$(".bootstrap-datetimepicker-widget").hide();
-        $('#endTime_filter').trigger('keyup');
+        $('#').trigger('keyup');
     });
    /* var date = new Date();
     
