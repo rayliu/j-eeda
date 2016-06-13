@@ -290,9 +290,9 @@ public class WxController extends ApiController {
          
         if(user != null){
         	UsernamePasswordToken token = new UsernamePasswordToken(user_name, pwd);
-            //token.setRememberMe(true);
+            token.setRememberMe(true);
             currentUser.login(token);
-            currentUser.getSession().setTimeout(-1000L);
+            //currentUser.getSession().setTimeout(-1000L);
             user.set("wechat_openid", openid).update();
             redirect(redirect+"?openid="+openid);
         }else{
