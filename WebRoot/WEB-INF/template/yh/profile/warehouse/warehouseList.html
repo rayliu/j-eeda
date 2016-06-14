@@ -39,9 +39,25 @@
                                         <input type="text" class="form-control search-control warehouseAddress_filter" id="warehouseAddress_filter" value="">
                                     </div>
                                 </div>
+                                 <div class="col-lg-4">
+		                            <%include("/yh/component/form/inputSpField.html", 
+		                                {
+		                                    id:'sp_id', 
+		                                    label:'供应商', 
+		                                    value:order.sp_id!'',
+		                                    display_value: order.sp_name!''
+		                                }){} %>
+                        		</div>
                                 <!-- end of col-lg-6-->
                             </div><!-- end of row-->                            
-                            </form>
+                         </form>
+                         <div class="col-lg-12">
+		                        <div class="form-group">
+		                            <div class="controls">
+		                              <button id="queryBtn" type="button" class="btn btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查询</button>
+		                            </div>
+		                        </div>    
+		                </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div class="table-responsive">
@@ -54,6 +70,7 @@
                                             <th>仓库所在地</th>
                                             <th>详细地址</th>
                                             <th>仓库描述</th>
+                                            <th>供应商</th>
                                             <th></th>
                                         </tr>
                                     </thead>

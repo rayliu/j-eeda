@@ -31,6 +31,7 @@ $(document).ready(function() {
             {"mDataProp":"DNAME"},       	
             {"mDataProp":"WAREHOUSE_ADDRESS"},        	
             {"mDataProp":"WAREHOUSE_DESC"},
+            {"mDataProp":"COMPANY_NAME"},
             { 
                 "mDataProp": null, 
                 "sWidth": "8%",
@@ -64,17 +65,13 @@ $(document).ready(function() {
 	      ],      
     });	
     
-    $('#warehouseName_filter').on( 'keyup click', function () {
+
+    $("#queryBtn").on('click', function () {
     	var warehouseName = $("#warehouseName_filter").val();
     	var warehouseAddress = $("#warehouseAddress_filter").val();
-    	warehouseTab.fnSettings().sAjaxSource = "/warehouse/list?warehouseName="+warehouseName+"&warehouseAddress="+warehouseAddress;
+    	var spId = $('#sp_id').val();
+    	
+    	warehouseTab.fnSettings().sAjaxSource = "/warehouse/list?warehouseName="+warehouseName+"&warehouseAddress="+warehouseAddress+"&spId="+spId;
     	warehouseTab.fnDraw(); 
     });
-    
-    $('#warehouseAddress_filter').on( 'keyup click', function () {
-    	var warehouseName = $("#warehouseName_filter").val();
-    	var warehouseAddress = $("#warehouseAddress_filter").val();
-    	warehouseTab.fnSettings().sAjaxSource = "/warehouse/list?warehouseName="+warehouseName+"&warehouseAddress="+warehouseAddress;
-    	warehouseTab.fnDraw(); 
-    }); 
 } );

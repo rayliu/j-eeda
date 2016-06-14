@@ -26,6 +26,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import org.apache.commons.lang.StringUtils;
 
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
@@ -49,62 +50,53 @@ public class WarehouseController extends Controller{
 		Map warehouseListMap = null;
 		String warehouseName = getPara("warehouseName");
 		String warehouseAddress = getPara("warehouseAddress");
+		String spId = getPara("spId");
 		
-		if(warehouseName == null && warehouseAddress == null){
-			String sLimit = "";
-			String pageIndex = getPara("sEcho");
-			if (getPara("iDisplayStart") != null
-					&& getPara("iDisplayLength") != null) {
-				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-						+ getPara("iDisplayLength");
-			}			
-			String sqlTotal = "select count(1) total from warehouse w left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")";
-			Record rec = Db.findFirst(sqlTotal);
-			logger.debug("total records:" + rec.getLong("total"));
-	
-			String sql = "select w.*, lc.name dname from warehouse w"
-							+ " left join location lc on w.location = lc.code "
-							+ " left join office o on o.id = w.office_id where (o.id = " + parentID + " or o.belong_office = " + parentID +")"
-							+ " order by w.id desc "
-							+ sLimit;
-	
-			List<Record> warehouses = Db.find(sql);
-	
-			warehouseListMap = new HashMap();
-			warehouseListMap.put("sEcho", pageIndex);
-			warehouseListMap.put("iTotalRecords", rec.getLong("total"));
-			warehouseListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-	
-			warehouseListMap.put("aaData", warehouses);
-		}else{
-			String sLimit = "";
-			String pageIndex = getPara("sEcho");
-			if (getPara("iDisplayStart") != null
-					&& getPara("iDisplayLength") != null) {
-				sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
-						+ getPara("iDisplayLength");
-			}
-			String sqlTotal = "select count(1) total from warehouse w left join office o on o.id = w.office_id where w.warehouse_name like '%"+warehouseName+"%' and w.warehouse_address like '%"+warehouseAddress+"%' and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
-			Record rec = Db.findFirst(sqlTotal);
-			logger.debug("total records:" + rec.getLong("total"));
-	
-			String sql = "select w.*,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=w.location) dname,lc.name from warehouse w"
-							+ " left join location lc on w.location = lc.code"
-							+ "  left join office o on o.id = w.office_id"
-							+ "  where w.warehouse_name like '%"+warehouseName+"%' and w.warehouse_address like '%"+warehouseAddress+"%' "
-							+ "  and (o.id = " + parentID + " or o.belong_office = " + parentID +")"
-							+ "order by w.id desc "
-							+ sLimit;
-	
-			List<Record> warehouses = Db.find(sql);
-	
-			warehouseListMap = new HashMap();
-			warehouseListMap.put("sEcho", pageIndex);
-			warehouseListMap.put("iTotalRecords", rec.getLong("total"));
-			warehouseListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-	
-			warehouseListMap.put("aaData", warehouses);
+		String conditions = " where 1 = 1";
+		if(warehouseName != null && !"".equals(warehouseName)){
+			conditions += " and w.warehouse_name like '%"+warehouseName+"%'";
 		}
+		
+		if(warehouseAddress != null && !"".equals(warehouseAddress)){
+			conditions += " and w.warehouse_address like '%"+warehouseAddress+"%'";	
+		}
+		
+		if(spId != null && !"".equals(spId)){
+			conditions += " and w.sp_id = '"+spId+"'";
+		}
+		
+		String sLimit = "";
+		String pageIndex = getPara("sEcho");
+		if (getPara("iDisplayStart") != null
+				&& getPara("iDisplayLength") != null) {
+			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
+					+ getPara("iDisplayLength");
+		}
+		String sqlTotal = "select count(1) total from warehouse w left join office o on o.id = w.office_id LEFT JOIN  party p ON w.sp_id = p.id "
+							+" LEFT JOIN contact c ON p.contact_id = c.id "
+							+ conditions
+							+ " and (o.id = " + parentID + " or o.belong_office = " + parentID +")";
+		Record rec = Db.findFirst(sqlTotal);
+		logger.debug("total records:" + rec.getLong("total"));
+
+		String sql = "select w.*,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=w.location) dname,lc.name ,company_name from warehouse w"
+						+ "	LEFT JOIN  party p ON w.sp_id = p.id "
+						+ "	LEFT JOIN contact c ON p.contact_id = c.id "
+						+ " left join location lc on w.location = lc.code"
+						+ "  left join office o on o.id = w.office_id"
+						+ conditions
+						+ "  and (o.id = " + parentID + " or o.belong_office = " + parentID +")"
+						+ " order by w.id desc "
+						+ sLimit;
+	
+		List<Record> warehouses = Db.find(sql);
+
+		warehouseListMap = new HashMap();
+		warehouseListMap.put("sEcho", pageIndex);
+		warehouseListMap.put("iTotalRecords", rec.getLong("total"));
+		warehouseListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		warehouseListMap.put("aaData", warehouses);
 		renderJson(warehouseListMap);
 	}
 	
