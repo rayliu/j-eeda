@@ -542,7 +542,7 @@ public class ChargeCheckOrderController extends Controller {
 					+ "%' "
 					+ " and ifnull((select name from location where code = tor.route_from),ifnull((select name from location where code = tor2.route_from),''))  like '%"
 					+ address + "%' "
-					+ " and ( CASE "
+					+ " and ifnull( CASE "
 					+ " WHEN ror.delivery_order_id IS NOT NULL THEN "
 					+ " (  SELECT group_concat( DISTINCT ifnull(toid.serial_no,'')  SEPARATOR  '<br/>' )"
 					+ " FROM transfer_order_item_detail toid "
@@ -550,7 +550,7 @@ public class ChargeCheckOrderController extends Controller {
 					+ " ELSE "
 					+ " ( SELECT group_concat( DISTINCT ifnull(toid.serial_no,'')  SEPARATOR  '<br/>' )"
 					+ " FROM transfer_order_item_detail toid "
-					+ " WHERE toid.order_id = tor.id ) END ) like '%"
+					+ " WHERE toid.order_id = tor.id ) END ,'') like '%"
 					+ serialNo
 					+ "%'";
 			condition2 = " and c.abbr like '%"
