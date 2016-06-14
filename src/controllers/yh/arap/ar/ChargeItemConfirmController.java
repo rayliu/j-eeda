@@ -355,15 +355,17 @@ public class ChargeItemConfirmController extends Controller {
 		String returnOrderIds = getPara("returnOrderIds");
 		String[] returnOrderArr = returnOrderIds.split(",");
 		String[] ordernoArr = orderno.split(",");
+		ArapMiscChargeOrder arapmiscchargeorder = null;
+		ReturnOrder returnOrder = null;
 		for (int i = 0; i < returnOrderArr.length; i++) {
 			if ("回单".equals(ordernoArr[i])) {
-				ReturnOrder returnOrder = ReturnOrder.dao
+				returnOrder = ReturnOrder.dao
 						.findById(returnOrderArr[i]);
 				returnOrder.set("transaction_status", "已确认");
 				returnOrder.update();
 			}
 			if ("收入单".equals(ordernoArr[i])) {
-				ArapMiscChargeOrder arapmiscchargeorder = ArapMiscChargeOrder.dao
+				arapmiscchargeorder = ArapMiscChargeOrder.dao
 						.findById(returnOrderArr[i]);
 				arapmiscchargeorder.set("STATUS", "已确认");
 				arapmiscchargeorder.update();
