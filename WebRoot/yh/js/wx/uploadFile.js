@@ -122,7 +122,10 @@ $(document).ready(function() {
 		        	{
 		        		serverId:serverId, 
 		        		return_order_id: return_id, 
-		        		photo_type: $('#photo_type_input').val()
+		        		
+		        		photo_type: $('[name=optionsRadios]:checked').val()
+		        		
+		        		
 		        	},
 		        	function(data){
 		        	if(data == "OK"){
@@ -213,6 +216,7 @@ $(document).ready(function() {
     		$("#distributionDiv").hide();
     });
 	
-	
+
+   
 });
 
