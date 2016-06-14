@@ -544,11 +544,11 @@ public class ChargeCheckOrderController extends Controller {
 					+ address + "%' "
 					+ " and ( CASE "
 					+ " WHEN ror.delivery_order_id IS NOT NULL THEN "
-					+ " (  SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR  '<br/>' )"
+					+ " (  SELECT group_concat( DISTINCT ifnull(toid.serial_no,'')  SEPARATOR  '<br/>' )"
 					+ " FROM transfer_order_item_detail toid "
 					+ " WHERE toid.delivery_id = dvr.id ) "
 					+ " ELSE "
-					+ " ( SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR  '<br/>' )"
+					+ " ( SELECT group_concat( DISTINCT ifnull(toid.serial_no,'')  SEPARATOR  '<br/>' )"
 					+ " FROM transfer_order_item_detail toid "
 					+ " WHERE toid.order_id = tor.id ) END ) like '%"
 					+ serialNo
