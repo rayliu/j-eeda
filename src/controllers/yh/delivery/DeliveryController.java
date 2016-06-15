@@ -1285,9 +1285,7 @@ public class DeliveryController extends Controller {
 		if (deliveryOrder == null) {
 			deliveryOrder = new DeliveryOrder();
 			DeliveryOrder deliveryChangeOrder = new DeliveryOrder();
-			Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
-			if(warehouse!=null)
-			    deliveryOrder.set("office_id", warehouse.get("office_id"));
+			
 			if(!warehouseId.equals("")&& warehouseId!=null){
 				deliveryOrder.set("from_warehouse_id", warehouseId);
 			}
@@ -1311,7 +1309,15 @@ public class DeliveryController extends Controller {
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
-			if("warehouseNatureYes".equals(warehouseNature)){
+			/*
+			 * 调拨单的创建（配送单新建状态做调拨）
+			 */
+			if("warehouseNatureYes".equals(warehouseNature)){      
+				if(StringUtils.isNotEmpty(warehouseId)){
+					Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
+					if(warehouse!=null)
+						deliveryChangeOrder.set("office_id", warehouse.get("office_id"));
+				}
 				if(!warehouseId.equals("")&& warehouseId!=null){
 					deliveryChangeOrder.set("from_warehouse_id", warehouseId);
 				}
@@ -1322,15 +1328,15 @@ public class DeliveryController extends Controller {
 				.set("sp_id", changeSpId)
 				.set("remark", remark)
 				.set("notify_party_id", party.get("id"))
-				.set("create_stamp", createDate)
+				.set("create_stamp", new Date())
 				.set("route_to", getPara("route_to"))
 				.set("route_from", getPara("route_from"))
 				.set("pricetype", getPara("chargeType"))
-				.set("from_warehouse_id", warehouseId)
 				.set("cargo_nature", cargoNature)
-				.set("warehouse_nature", warehouseNature)
+				.set("warehouse_nature", "warehouseNatureNo")
 				.set("receivingunit", receivingunit)
 				.set("ref_no", sign_document_no)
+				.set("create_by", LoginUserController.getLoginUserId(this))
 				.set("client_requirement", getPara("client_requirement"))
 				.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 				.set("customer_delivery_no",getPara("customerDelveryNo"));
@@ -1381,6 +1387,10 @@ public class DeliveryController extends Controller {
 			deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
 			deliveryOrder.save();
 			
+			
+			/*
+			 * 非空白配送单
+			 */
 			if(!"Y".equals(isNullOrder)){
 				if("cargo".equals(cargoNature)){
 					TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
@@ -1441,8 +1451,10 @@ public class DeliveryController extends Controller {
 						transferOrderItemDetail.update();
 					}
 				}
-			}else{
-				//***********************新建空白配送单  保存货品明细
+		}else{
+				/*
+				 * 新建空白配送单  保存货品明细
+				 */
 				 String tail = getPara("JsonDetail").substring(0, getPara("JsonDetail").length()-1);
 				 String[] array = tail.split("&,");
 		 		 for(int i = 0 ;i < array.length; i++){	 
@@ -1474,7 +1486,10 @@ public class DeliveryController extends Controller {
 		 		.set("office_id", ul.getLong("office_id")).update();
 			}
 			saveDeliveryOrderMilestone(deliveryOrder);
-		} else {                                        //*********************配送单id不为空
+		} else {
+			/*
+			 * 配送单更新
+			 */
 			if("Y".equals(deliveryOrder.getStr("isNullOrder")) ) {
 				//***********************新建空白配送单  更新货品明细
 				 if(!getPara("JsonDetail").equals("")){
@@ -1556,12 +1571,7 @@ public class DeliveryController extends Controller {
 					.set("customer_delivery_no", getPara("customerDelveryNo"))
 					.set("ref_no", sign_document_no);
 			if("warehouseNatureYes".equals(warehouseNature)){
-				deliveryOrder.set("change_warehouse_id", gateInSelect);
-				Record re = Db.findById("warehouse", gateInSelect);
-				if(re != null){
-					long off_id = re.getLong("office_id");
-					deliveryOrder.set("office_id", off_id);
-				}
+				deliveryOrder.set("change_warehouse_id", gateInSelect);  	
 			}else{
 				deliveryOrder.set("change_warehouse_id", null);
 			}
@@ -1583,7 +1593,7 @@ public class DeliveryController extends Controller {
 			}
 			if(!"".equals(depart_date) && depart_date!= null)
 			    deliveryOrder.set("depart_stamp", depart_date);
-			if("warehouseNatureYes".equals(warehouseNature)){
+			if("warehouseNatureYes".equals(warehouseNature)){  //******************调拨
 				if(deliveryOrder.get("delivery_id")==null){
 					deliveryChangeOrder = new DeliveryOrder();
 					if(!customerId.equals("")&& customerId!=null){
@@ -1599,12 +1609,20 @@ public class DeliveryController extends Controller {
 					.set("pricetype", getPara("chargeType"))
 					.set("from_warehouse_id", warehouseId)
 					.set("cargo_nature", cargoNature)
-					.set("warehouse_nature", warehouseNature)
+					.set("warehouse_nature", "warehouseNatureNo")
 					.set("receivingunit", receivingunit)
 					.set("ref_no", sign_document_no)
+					.set("create_by", LoginUserController.getLoginUserId(this))
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
+					
+					if(StringUtils.isNotEmpty(warehouseId)){
+						Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",gateInSelect); 
+						if(warehouse!=null)
+							deliveryChangeOrder.set("office_id", warehouse.get("office_id"));
+					}
+					
 					if (notifyId == null || notifyId.equals("")) {
 						deliveryChangeOrder.set("notify_party_id", party.get("id"));
 					} else {
@@ -1640,7 +1658,7 @@ public class DeliveryController extends Controller {
 						.set("product_number",deliveryOrder1.get("product_number"));
 						deliveryItem.save();
 					}
-				} else{
+				} else{     //******************非调拨
 					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
 					if(!customerId.equals("")&& customerId!=null){
 						deliveryChangeOrder.set("customer_id", customerId);
@@ -1654,12 +1672,17 @@ public class DeliveryController extends Controller {
 					.set("from_warehouse_id", warehouseId)
 					.set("cargo_nature", cargoNature)
 					.set("remark", remark)
-					.set("warehouse_nature", warehouseNature)
+					.set("warehouse_nature", "warehouseNatureNo")
 					.set("receivingunit", receivingunit)
 					.set("ref_no", sign_document_no)
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
+					if(StringUtils.isNotEmpty(warehouseId)){
+						Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
+						if(warehouse!=null)
+							deliveryChangeOrder.set("office_id", warehouse.get("office_id"));
+					}
 					if (notifyId == null || notifyId.equals("")) {
 						deliveryChangeOrder.set("notify_party_id", party.get("id"));
 					} else {
