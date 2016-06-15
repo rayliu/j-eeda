@@ -598,7 +598,7 @@ public class WxController extends ApiController {
 		            + " left join delivery_order dor on dor.id = toid.delivery_id"
 		            + " left join transfer_order tor on tor.id = toid.order_id"
 		            + "	LEFT JOIN depart_order dep on dep.id = toid.depart_id" 
-		            + " left join party p on p.id=ro.customer_id"
+		            + " left join party p on p.id = ifnull(ifnull(ro.customer_id,ro2.customer_id),dor.customer_id)"
 		            + " left join contact c on c.id=p.contact_id"
 		            + " ) A"
 		            + " where ("
