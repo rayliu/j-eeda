@@ -518,7 +518,6 @@ $(document).ready(function() {
     	console.log(this);
     	var inputId  = $(this).attr('id');
     	if(inputId=='warehouseNature1'){
-    		//$("#gateInSelect").hide();
     		$("#gateInDiv").hide();
     	}else{
     		$("#gateInDiv").show();
@@ -535,6 +534,7 @@ $(document).ready(function() {
 	});
 	var saveDelivery = function(){
 	////货品明细的构造
+		 $("#saveBtn").attr("disabled", true)
 		 $('#deletedIds').val(deletedIds);
 		 deletedIds = [];
 		 var tableRows = $("#itemList-table tr");
@@ -611,6 +611,12 @@ $(document).ready(function() {
         		}
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+            	if(data.STATUS=='已完成'){
+            		//$("#saveBtn").attr("disabled", true);
+            		$("#ConfirmationBtn").attr("disabled", true);
+            	}else{
+                    $("#saveBtn").attr("disabled", false);
+            	}
             	
             	if($('#isNullOrder').val()=='Y'){
 	            	feeTable.fnSettings().oFeatures.bServerSide = true;
@@ -622,7 +628,6 @@ $(document).ready(function() {
             }else{
                 alert('数据保存失败。');
             }
-            $("#saveBtn").attr("disabled", false);
          },'json');
             
 	 };
@@ -631,6 +636,15 @@ $(document).ready(function() {
         // 阻止a 的默认响应行为，不需要跳转
 		// var itemId = $("#item_id").val();
 		e.preventDefault();
+		//校验是否为调拨配送
+		var warehouseNature = $('[name=warehouseNature]:checked').val();
+		if(warehouseNature == 'warehouseNatureYes'){
+			if(!$('#deliveryForm').valid())
+				return false;
+			if(!confirm('是否确认调拨')){
+				return false;
+			}
+		}
 		saveDelivery();
     });
 	// 回显配送方式

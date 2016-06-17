@@ -221,7 +221,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN office o ON o.id = d.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " left join return_order ror on ror.delivery_order_id = d.id  and ror.transaction_status is not null " ;
-			String sql = "select * from(SELECT ifnull(trid.item_no,toi.item_no) item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w1.warehouse_name,w.warehouse_name) warehouse_name, "
+			String sql = "select * from(SELECT ifnull(trid.item_no,toi.item_no) item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w.warehouse_name,w1.warehouse_name) warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -580,10 +580,10 @@ public class DeliveryController extends Controller {
 						+ tOrder.get("car_id") + "'");
 		// 调拨供应商
 		if(tOrder.get("delivery_id")!=null){
-			DeliveryOrder deliveryOrder= DeliveryOrder.dao.findById(tOrder.get("delivery_id"));
+			//DeliveryOrder deliveryOrder= DeliveryOrder.dao.findById(tOrder.get("delivery_id"));
 			Party spChange = Party.dao
 					.findFirst("select *,p.id as spid from party p,contact c where p.id ='"
-							+ deliveryOrder.get("sp_id") + "'and p.contact_id = c.id");
+							+ tOrder.getLong("sp_id") + "'and p.contact_id = c.id");
 			setAttr("spChange", spChange);
 		}
 		// 收货人信息
@@ -603,14 +603,23 @@ public class DeliveryController extends Controller {
  		}
 		
 		//RDC
+		Warehouse  warehouse = null;
 		Long from_warehouse_id = tOrder.getLong("from_warehouse_id");
+
 		if(from_warehouse_id!=null){
-			Warehouse warehouse = Warehouse.dao
+			warehouse = Warehouse.dao
 					.findById(tOrder.get("from_warehouse_id"));
-			Office office =  Office.dao.findById(warehouse.get("office_id"));
 			setAttr("warehouse", warehouse);
+		}
+		
+		long office_id = tOrder.getLong("office_id");
+		if(office_id>0){
+			Office office = Office.dao.findById(office_id);
 			setAttr("office", office);
 		}
+		
+		setAttr("warehouse", warehouse);
+		
 		//RDC
 		Warehouse changeWarehouse = Warehouse.dao.findById(tOrder.get("change_warehouse_id"));
 		if(changeWarehouse!=null){
@@ -1312,7 +1321,7 @@ public class DeliveryController extends Controller {
 			/*
 			 * 调拨单的创建（配送单新建状态做调拨）
 			 */
-			if("warehouseNatureYes".equals(warehouseNature)){      
+			if("warehouseNatureYes".equals(warehouseNature)){   
 				if(StringUtils.isNotEmpty(warehouseId)){
 					Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
 					if(warehouse!=null)
@@ -1325,7 +1334,7 @@ public class DeliveryController extends Controller {
 					deliveryOrder.set("customer_id", customerId);
 				}
 				deliveryChangeOrder.set("order_no", orderNo+"-DB")//生成调拨的配送单
-				.set("sp_id", changeSpId)
+				.set("sp_id", spId)
 				.set("remark", remark)
 				.set("notify_party_id", party.get("id"))
 				.set("create_stamp", new Date())
@@ -1358,8 +1367,18 @@ public class DeliveryController extends Controller {
 				if("cargo".equals(cargoNature)){
 					deliveryChangeOrder.set("delivery_plan_type", "untreated");
 				}
-				deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
+				//deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
 				deliveryChangeOrder.save();
+				
+				//当调拨时，更新原始配送单状态
+				deliveryOrder.set("status", "已完成");
+				deliveryOrder.set("sp_id", changeSpId);
+				
+				//更新单品明细表（把调拨后的ID赋给明细表的配送单ID，方便回单的生成 ）
+				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.get("id")+"'");
+				if(toid != null){
+					toid.set("delivery_id", deliveryChangeOrder.getLong("id")).update();
+				}
 			}
 			if (notifyId == null || notifyId.equals("")) {
 				deliveryOrder.set("notify_party_id", party.get("id"));
@@ -1367,12 +1386,12 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("notify_party_id", notifyId);
 			}
 			
-			if(!"".equals(businessStamp) && businessStamp != null){
-				deliveryOrder.set("business_stamp", businessStamp);
-				deliveryOrder.set("status", "计划中");
-			}else{
-				deliveryOrder.set("status", "新建");
-			}
+//			if(!"".equals(businessStamp) && businessStamp != null){
+//				deliveryOrder.set("business_stamp", businessStamp);
+//				deliveryOrder.set("status", "计划中");
+//			}else{
+//				deliveryOrder.set("status", "新建");
+//			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
 			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)
@@ -1385,6 +1404,7 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("delivery_plan_type", "untreated");
 			}
 			deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
+			
 			deliveryOrder.save();
 			
 			
@@ -1570,8 +1590,16 @@ public class DeliveryController extends Controller {
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no", getPara("customerDelveryNo"))
 					.set("ref_no", sign_document_no);
+			if(!"".equals(businessStamp) && businessStamp != null){
+				deliveryOrder.set("business_stamp", businessStamp);
+				if("新建".equals(deliveryOrder.get("status"))){
+					deliveryOrder.set("status", "计划中");
+				}
+			}
 			if("warehouseNatureYes".equals(warehouseNature)){
 				deliveryOrder.set("change_warehouse_id", gateInSelect);  	
+				deliveryOrder.set("status", "已完成");
+				deliveryOrder.set("sp_id", changeSpId);
 			}else{
 				deliveryOrder.set("change_warehouse_id", null);
 			}
@@ -1579,12 +1607,6 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("notify_party_id", party.get("id"));
             else{
             	deliveryOrder.set("notify_party_id", getPara("notify_id"));
-			}
-			if(!"".equals(businessStamp) && businessStamp != null){
-				deliveryOrder.set("business_stamp", businessStamp);
-				if("新建".equals(deliveryOrder.get("status"))){
-					deliveryOrder.set("status", "计划中");
-				}
 			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
@@ -1600,14 +1622,14 @@ public class DeliveryController extends Controller {
 						deliveryChangeOrder.set("customer_id", customerId);
 					}
 					deliveryChangeOrder.set("order_no",deliveryOrder.get("order_no")+"-DB")//生成调拨的配送单
-					.set("sp_id", changeSpId)
+					.set("sp_id", spId)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
 					.set("remark", remark)
 					.set("route_from", getPara("route_from"))
 					.set("pricetype", getPara("chargeType"))
-					.set("from_warehouse_id", warehouseId)
+					.set("from_warehouse_id", gateInSelect)
 					.set("cargo_nature", cargoNature)
 					.set("warehouse_nature", "warehouseNatureNo")
 					.set("receivingunit", receivingunit)
@@ -1630,7 +1652,7 @@ public class DeliveryController extends Controller {
 					}
 					if(!"".equals(businessStamp) && businessStamp != null){
 						deliveryChangeOrder.set("business_stamp", businessStamp);
-						deliveryChangeOrder.set("status", "新建");
+						deliveryChangeOrder.set("status", "计划中");
 					}
 					if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 						deliveryChangeOrder.set("client_order_stamp", clientOrderStamp);
@@ -1643,7 +1665,7 @@ public class DeliveryController extends Controller {
 					if("cargo".equals(cargoNature)){
 						deliveryChangeOrder.set("delivery_plan_type", "untreated");
 					}
-					deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
+					//deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
 					deliveryChangeOrder.save();
 					List<DeliveryOrderItem> deliveryOrderItem=DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryOrder.get("id"));
 					for(DeliveryOrderItem deliveryOrder1:deliveryOrderItem){
@@ -1658,12 +1680,12 @@ public class DeliveryController extends Controller {
 						.set("product_number",deliveryOrder1.get("product_number"));
 						deliveryItem.save();
 					}
-				} else{     //******************非调拨
+				} else{        
 					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
 					if(!customerId.equals("")&& customerId!=null){
 						deliveryChangeOrder.set("customer_id", customerId);
 					}
-					deliveryChangeOrder.set("sp_id", changeSpId)
+					deliveryChangeOrder.set("sp_id", spId)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
@@ -1679,7 +1701,7 @@ public class DeliveryController extends Controller {
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
 					if(StringUtils.isNotEmpty(warehouseId)){
-						Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
+						Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",gateInSelect); 
 						if(warehouse!=null)
 							deliveryChangeOrder.set("office_id", warehouse.get("office_id"));
 					}
@@ -1707,7 +1729,13 @@ public class DeliveryController extends Controller {
 					deliveryChangeOrder.update();
 				}
 				deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
-			} else{
+				
+				//更新单品明细表（把调拨后的ID赋给明细表的配送单ID，方便回单的生成 ）
+				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.get("id")+"'");
+				if(toid != null){
+					toid.set("delivery_id", deliveryChangeOrder.getLong("id")).update();
+				}
+			} else{             //----------------非调拨
 				if(deliveryOrder.get("delivery_id")!=null){
 					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
 					DeliveryOrderFinItem deliveryOrderFinItem= DeliveryOrderFinItem.dao.findFirst("SELECT * from delivery_order_fin_item where order_id=?",deliveryChangeOrder.get("id"));
