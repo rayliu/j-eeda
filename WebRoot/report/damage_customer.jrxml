@@ -36,10 +36,10 @@
 		<defaultValueExpression><![CDATA[$P{damageType}.equals("customer")?"货损赔付单":"货损索赔单"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="selfName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{damageType}.equals("customer")?"赔付单位:":"索赔单位:"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$P{damageType}.equals("customer")?"赔付单位：":"索赔单位："]]></defaultValueExpression>
 	</parameter>
 	<parameter name="3plName" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{damageType}.equals("customer")?"货主单位:":"责任单位:"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$P{damageType}.equals("customer")?"货主单位：":"责任单位："]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
@@ -161,9 +161,9 @@ where dor.order_no=$P{order_no}]]>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="146" splitType="Stretch">
+		<band height="148" splitType="Stretch">
 			<staticText>
-				<reportElement x="37" y="1" width="68" height="30" uuid="63e62a62-641c-446b-ad87-81a0c7fc3a7c"/>
+				<reportElement x="23" y="1" width="82" height="30" uuid="63e62a62-641c-446b-ad87-81a0c7fc3a7c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -177,7 +177,7 @@ where dor.order_no=$P{order_no}]]>
 				<text><![CDATA[事故时间：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="275" y="0" width="61" height="31" uuid="129981ba-f1e8-4a22-ad4f-6ec4df089497"/>
+				<reportElement x="275" y="0" width="72" height="31" uuid="129981ba-f1e8-4a22-ad4f-6ec4df089497"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -191,7 +191,7 @@ where dor.order_no=$P{order_no}]]>
 				<text><![CDATA[业务单号：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="336" y="31" width="171" height="30" uuid="ec100109-da1d-4024-b3be-923a0943ba30"/>
+				<reportElement x="347" y="31" width="171" height="30" uuid="ec100109-da1d-4024-b3be-923a0943ba30"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -205,7 +205,7 @@ where dor.order_no=$P{order_no}]]>
 				<textFieldExpression><![CDATA[$F{order_type}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="336" y="1" width="171" height="30" uuid="8e244145-52d5-4f72-84eb-889e31168b27"/>
+				<reportElement x="347" y="1" width="171" height="30" uuid="8e244145-52d5-4f72-84eb-889e31168b27"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -226,7 +226,7 @@ where dor.order_no=$P{order_no}]]>
 				<textFieldExpression><![CDATA[$F{accident_desc}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="37" y="61" width="68" height="30" uuid="97a550a2-263a-4286-abfd-1cc5551d8024"/>
+				<reportElement x="23" y="61" width="82" height="30" uuid="97a550a2-263a-4286-abfd-1cc5551d8024"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -247,7 +247,7 @@ where dor.order_no=$P{order_no}]]>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="37" y="91" width="68" height="30" uuid="f6af71f2-a07a-418a-a9aa-9387a1b41703"/>
+				<reportElement x="23" y="91" width="82" height="30" uuid="f6af71f2-a07a-418a-a9aa-9387a1b41703"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -261,16 +261,16 @@ where dor.order_no=$P{order_no}]]>
 				<text><![CDATA[源鸿物流]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="37" y="31" width="68" height="30" uuid="dcf878f1-6e89-4480-bc22-c2ca816ac8fe"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="23" y="31" width="82" height="30" uuid="dcf878f1-6e89-4480-bc22-c2ca816ac8fe"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{selfName}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="275" y="31" width="61" height="30" uuid="155855c1-9262-43ac-bc5c-1f8c62e1ae1b"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="275" y="31" width="72" height="30" uuid="155855c1-9262-43ac-bc5c-1f8c62e1ae1b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{3plName}]]></textFieldExpression>
