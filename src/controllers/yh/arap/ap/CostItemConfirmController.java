@@ -138,7 +138,7 @@ public class CostItemConfirmController extends Controller {
 				+ " left join user_login ul on dor.create_by = ul.id "
 				+ " left join warehouse w on dor.from_warehouse_id = w.id "
 				+ " left join office oe on w.office_id = oe.id "
-				+ " where ror.transaction_status != '新建' and unix_timestamp(dor.appointment_stamp) > unix_timestamp('2015-06-01 10:34:36') and  dor.audit_status='新建'and (dor.status !='新建' or dor.status !='计划中' or dor.status != '初始化') and p.party_type='SERVICE_PROVIDER' "
+				+ " where ifnull(ror.transaction_status,'') != '新建' and dor.status in ('已完成','已送达') and unix_timestamp(dor.appointment_stamp) > unix_timestamp('2015-06-01 10:34:36') and  dor.audit_status='新建' and (dor.status !='新建' or dor.status !='计划中' or dor.status != '初始化') and p.party_type='SERVICE_PROVIDER' "
 				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
 		        + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"') "
 		        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
