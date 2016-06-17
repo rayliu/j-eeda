@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="damage_customer_subreport1" language="groovy" pageWidth="552" pageHeight="802" columnWidth="552" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="fabd9a34-3be7-4b60-8549-d7a3722b5571">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="damage_customer_subreport1" language="groovy" pageWidth="802" pageHeight="552" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="fabd9a34-3be7-4b60-8549-d7a3722b5571">
 	<property name="ireport.zoom" value="1.3310000000000004"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="76"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
@@ -25,7 +25,22 @@
 	</style>
 	<parameter name="order_id" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select * from damage_order_fin_item where type='cost' and order_id=$P{order_id}]]>
+		<![CDATA[SELECT
+     damage_order_fin_item.`id` AS id,
+     damage_order_fin_item.`order_id` AS order_id,
+     damage_order_fin_item.`type` AS type,
+     damage_order_fin_item.`status` AS status,
+     ifnull(damage_order_fin_item.`fin_item`, '')  AS fin_item,
+     damage_order_fin_item.`amount` AS amount,
+     damage_order_fin_item.`party_type` AS party_type,
+     damage_order_fin_item.`party_name` AS party_name,
+     damage_order_fin_item.`fin_method` AS fin_method,
+     ifnull(damage_order_fin_item.`remark`, '')  AS remark
+FROM
+     `damage_order_fin_item` damage_order_fin_item
+WHERE
+     type = 'cost'
+     and order_id = $P{order_id}]]>
 	</queryString>
 	<field name="id" class="java.lang.Long">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -63,7 +78,7 @@
 	<title>
 		<band height="28" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="552" height="28" uuid="28c39e1f-2bee-4ee8-a49e-33611a6717bb"/>
+				<reportElement x="0" y="0" width="802" height="28" uuid="28c39e1f-2bee-4ee8-a49e-33611a6717bb"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -91,37 +106,37 @@
 				<text><![CDATA[金额]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="184" y="0" width="92" height="20" uuid="ab29e4e4-f788-43e5-9b47-a132ab625acc"/>
+				<reportElement style="table_TD" x="184" y="0" width="149" height="20" uuid="ab29e4e4-f788-43e5-9b47-a132ab625acc"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[收款方]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="276" y="0" width="92" height="20" uuid="bcfb7f60-e784-49d9-bac1-d9b2cb2bed17"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
-				</textElement>
-				<text><![CDATA[客户名称]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_TD" x="368" y="0" width="92" height="20" uuid="a85bc810-bf44-461d-b04d-075426bbb439"/>
+				<reportElement style="table_TD" x="467" y="0" width="92" height="20" uuid="a85bc810-bf44-461d-b04d-075426bbb439"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[付款方式]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="460" y="0" width="92" height="20" uuid="acf56ce1-17af-4c5d-8ce9-d0894ed58de6"/>
+				<reportElement style="table_TD" x="559" y="0" width="242" height="20" uuid="acf56ce1-17af-4c5d-8ce9-d0894ed58de6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[备注]]></text>
 			</staticText>
+			<staticText>
+				<reportElement style="table_TD" x="333" y="0" width="134" height="21" uuid="bcfb7f60-e784-49d9-bac1-d9b2cb2bed17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[客户名称]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="28" splitType="Stretch">
+		<band height="32" splitType="Stretch">
 			<textField>
 				<reportElement style="table_TD" x="0" y="-1" width="92" height="29" uuid="13984186-5998-4624-858b-35f62bea52be"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -137,28 +152,28 @@
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" x="184" y="-1" width="92" height="29" uuid="a7e865df-5b77-4fef-9f64-4114f945287a"/>
+				<reportElement style="table_TD" x="184" y="-1" width="149" height="29" uuid="a7e865df-5b77-4fef-9f64-4114f945287a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{party_type}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" x="276" y="-1" width="92" height="29" uuid="c6c310d2-88ba-426c-bb2e-51a4b9bfd79f"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{party_name}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" x="368" y="-1" width="92" height="29" uuid="b4b10b44-6415-4ba8-a64f-5cd3aa0ac454"/>
+				<reportElement style="table_TD" x="467" y="-1" width="92" height="29" uuid="b4b10b44-6415-4ba8-a64f-5cd3aa0ac454"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fin_method}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement style="table_TD" x="333" y="-1" width="134" height="29" uuid="c6c310d2-88ba-426c-bb2e-51a4b9bfd79f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{party_name}]]></textFieldExpression>
+			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" x="460" y="-1" width="92" height="29" uuid="77beae7e-477e-4c53-9e60-5feffc375d5a"/>
+				<reportElement style="table_TD" x="559" y="-1" width="242" height="29" uuid="77beae7e-477e-4c53-9e60-5feffc375d5a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体"/>
 				</textElement>

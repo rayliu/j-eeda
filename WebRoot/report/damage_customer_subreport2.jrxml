@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="damage_customer_subreport2" language="groovy" pageWidth="552" pageHeight="802" columnWidth="552" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="969511f7-13d2-485e-8475-a02db4cb5d7f">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="damage_customer_subreport2" language="groovy" pageWidth="802" pageHeight="552" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="969511f7-13d2-485e-8475-a02db4cb5d7f">
 	<property name="ireport.zoom" value="1.2100000000000002"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -92,7 +92,7 @@ where
 				<text><![CDATA[产品型号]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="414" y="0" width="138" height="20" uuid="3645b116-79c6-467d-bd54-1e2b34944707"/>
+				<reportElement style="table_TD" x="414" y="0" width="388" height="20" uuid="3645b116-79c6-467d-bd54-1e2b34944707"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
@@ -124,7 +124,7 @@ where
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" x="414" y="-1" width="138" height="33" uuid="e7020459-3b42-4e83-95e5-b989b7fd1292"/>
+				<reportElement style="table_TD" x="414" y="-1" width="388" height="33" uuid="e7020459-3b42-4e83-95e5-b989b7fd1292"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
