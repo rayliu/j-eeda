@@ -41,6 +41,9 @@
 	<parameter name="3plName" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{damageType}.equals("customer")?"货主单位：":"责任单位："]]></defaultValueExpression>
 	</parameter>
+	<parameter name="money_type" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{damageType}.equals("customer")?"赔付金额：":"索赔金额："]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT
 	dor.id as id,
@@ -164,7 +167,7 @@ where dor.order_no=$P{order_no}]]>
 		<band height="148" splitType="Stretch">
 			<staticText>
 				<reportElement x="23" y="1" width="82" height="30" uuid="63e62a62-641c-446b-ad87-81a0c7fc3a7c"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[单据类型：]]></text>
@@ -227,7 +230,7 @@ where dor.order_no=$P{order_no}]]>
 			</textField>
 			<staticText>
 				<reportElement x="23" y="61" width="82" height="30" uuid="97a550a2-263a-4286-abfd-1cc5551d8024"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[事故描述：]]></text>
@@ -247,13 +250,6 @@ where dor.order_no=$P{order_no}]]>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="23" y="91" width="82" height="30" uuid="f6af71f2-a07a-418a-a9aa-9387a1b41703"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
-				</textElement>
-				<text><![CDATA[赔付金额：]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="105" y="31" width="170" height="30" uuid="01cefc8c-6730-42b2-a4bc-6a6d1010483e"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
@@ -262,9 +258,8 @@ where dor.order_no=$P{order_no}]]>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="23" y="31" width="82" height="30" uuid="dcf878f1-6e89-4480-bc22-c2ca816ac8fe"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
-					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{selfName}]]></textFieldExpression>
 			</textField>
@@ -274,6 +269,13 @@ where dor.order_no=$P{order_no}]]>
 					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{3plName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="23" y="91" width="82" height="30" uuid="79e9aec6-fd0c-42a1-8967-d7a628e52c8e"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" size="12" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{money_type}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
