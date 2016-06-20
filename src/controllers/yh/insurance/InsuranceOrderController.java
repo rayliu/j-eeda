@@ -455,7 +455,7 @@ public class InsuranceOrderController extends Controller {
                             insuranceFinItem.set("amount", prodoctInsuranceAmount);
                             if(party!= null){
                                 insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
-                                if(insurance.getDouble("insurance_rate") != null){
+                                if(insurance != null){
                                     double insuranceRates = insurance.getDouble("insurance_rate");
                                     double productAmount = transferOrderItem.getDouble("amount");
                                     BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
@@ -469,7 +469,7 @@ public class InsuranceOrderController extends Controller {
                                 insuranceFinItem.set("amount", prodoctInsuranceAmount);
                                 if(party!= null){
                                     insuranceFinItem.set("income_rate", party.getDouble("insurance_rates"));
-                                    if(insurance.getDouble("insurance_rate") != null){
+                                    if(insurance != null){
                                         double insuranceRates = insurance.getDouble("insurance_rate");
                                         double productAmount = transferOrderItem.getDouble("amount");
                                         BigDecimal b = new BigDecimal(prodoctInsuranceAmount * productAmount * insuranceRates);
