@@ -667,6 +667,7 @@ public class ReturnOrderController extends Controller {
 			DeliveryOrderMilestone doMilestone = new DeliveryOrderMilestone();
 			doMilestone.set("status", "已签收");
 			String name = (String) currentUser.getPrincipal();
+			
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
@@ -674,13 +675,21 @@ public class ReturnOrderController extends Controller {
 			doMilestone.set("location", "");
 			utilDate = new java.util.Date();
 			sqlDate = new java.sql.Timestamp(utilDate.getTime());
-			doMilestone.set("create_stamp", sqlDate);
+			doMilestone.set("create_stamp", sqlDate); 
 			doMilestone.set("delivery_id", deliveryId);
 			doMilestone.save();
+			
+			//更新配送当回单状态
+			DeliveryOrder deliveryOrder	= DeliveryOrder.dao.findById(deliveryId);
+			if(deliveryOrder != null){
+				deliveryOrder.set("sign_status","已签收");
+				deliveryOrder.update();
+			}
 		} else {
 			DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ? ", returnOrder.getLong("transfer_order_id"));
 			DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.getLong("pickup_id"));
 			if(departOrder!=null){
+				
 				departOrder.set("sign_status", "已签收");
 				departOrder.update();
 			}		
