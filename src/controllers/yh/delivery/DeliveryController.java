@@ -612,8 +612,8 @@ public class DeliveryController extends Controller {
 			setAttr("warehouse", warehouse);
 		}
 		
-		long office_id = tOrder.getLong("office_id");
-		if(office_id>0){
+		Long office_id = tOrder.get("office_id");
+		if(office_id!=null){
 			Office office = Office.dao.findById(office_id);
 			setAttr("office", office);
 		}
@@ -813,8 +813,11 @@ public class DeliveryController extends Controller {
 		
 		Warehouse warehouse = Warehouse.dao
 				.findById(tOrder.get("warehouse_id"));
+		String routeFrom = null;
+		if(warehouse==null){
+			routeFrom = office.get("location");
+		}
 		
-		String routeFrom = office.get("location");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
 			List<Location> provinces = Location.dao
@@ -1315,12 +1318,21 @@ public class DeliveryController extends Controller {
 					.set("warehouse_nature", warehouseNature)
 					.set("receivingunit", receivingunit)
 					.set("ref_no", sign_document_no)
+					.set("create_by", LoginUserController.getLoginUserId(this))
 					.set("client_requirement", getPara("client_requirement"))
 					.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 					.set("customer_delivery_no",getPara("customerDelveryNo"));
 			/*
 			 * 调拨单的创建（配送单新建状态做调拨）
 			 */
+			if(!"".equals(businessStamp) && businessStamp != null){
+				deliveryOrder.set("business_stamp", businessStamp);
+				deliveryOrder.set("status", "计划中");
+			}else{
+				deliveryOrder.set("status", "新建");
+			}
+			
+			
 			if("warehouseNatureYes".equals(warehouseNature)){   
 				if(StringUtils.isNotEmpty(warehouseId)){
 					Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
@@ -1385,13 +1397,11 @@ public class DeliveryController extends Controller {
 			} else {
 				deliveryOrder.set("notify_party_id", notifyId);
 			}
-			
-//			if(!"".equals(businessStamp) && businessStamp != null){
-//				deliveryOrder.set("business_stamp", businessStamp);
-//				deliveryOrder.set("status", "计划中");
-//			}else{
-//				deliveryOrder.set("status", "新建");
-//			}
+			if(StringUtils.isNotEmpty(warehouseId)){
+				Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
+				if(warehouse!=null)
+					deliveryOrder.set("office_id", warehouse.get("office_id"));
+			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
 			if(!"".equals(orderDeliveryStamp) && orderDeliveryStamp != null)

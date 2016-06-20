@@ -573,22 +573,27 @@ $(document).ready(function() {
 		var modeDelvery=$("input[name='modeDelvery']:checked").val();
 		if(sp_id == ""&&modeDelvery=="out_source"){
 			alert("请选择有效的供应商");
+			$("#saveBtn").attr("disabled", false);
 			return false;
 		}
 		if(car_id == ""&&modeDelvery=="own"){
 			alert("请选择有效的司机");
+			$("#saveBtn").attr("disabled", false);
 			return false;
 		}
 		if(mbProvinceTo == "--请选择省份--" || mbProvinceTo == ""){
 			alert("请输入目的地省份");
+			$("#saveBtn").attr("disabled", false);
 			return false;
 		}
 		if(cmbCityTo == "--请选择城市--" || cmbCityTo == ""){
 			alert("请输入目的地城市");
+			$("#saveBtn").attr("disabled", false);
 			return false;
 		}
 		if(business_stamp == ""){
 			alert("请输入业务要求配送时间");
+			$("#saveBtn").attr("disabled", false);
 			return false;
 		}
 		$("#receivingunit").val($("#notify_address").val());
@@ -596,7 +601,6 @@ $(document).ready(function() {
 			alert("请输入目的地区（县）");
 			return false;
 		}*/
-		$("#saveBtn").attr("disabled", true);
         // 异步向后台提交数据
         $.post('/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
             console.log(data);
