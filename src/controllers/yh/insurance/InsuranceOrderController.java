@@ -576,8 +576,8 @@ public class InsuranceOrderController extends Controller {
 						+ " left join insurance_fin_item ifi on ifi.transfer_order_item_id = toi.id"
 						+ " left join party p on p.id = tor.customer_id"
 						+ " left join contact c on c.id = p.contact_id"
-						+ " where tor.insurance_id = "+insuranceOrderId+" group by tor.id";
-		
+						+ " where tor.insurance_id = "+insuranceOrderId+" group by tor.id"
+						+  sLimit;
 		List<Record> orders = Db.find(sql);
 		
 		orderMap.put("sEcho", pageIndex);
