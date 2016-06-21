@@ -261,9 +261,26 @@ public class MainController extends Controller {
         Map orderMap = new HashMap();
         String pageIndex = getPara("sEcho");
         String sLimit = "";
+        String transport = getPara("transport");
+        String distribution = getPara("distribution");
+        	System.out.println(transport);
+        	System.out.println(distribution);
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+      
+        if("true".equals(transport) && "false".equals(distribution)){
+        	String sql ="";
+        	System.out.println("1");
+        }else if("false".equals(transport) && "false".equals(distribution)){
+        	System.out.println("2");
+        }else if("true".equals(transport) && "true".equals(distribution)){
+        	System.out.println("3");
+        }else if("false".equals(transport) && "true".equals(distribution)){
+        	System.out.println("4");
+        }
+        	
+        
         
         Calendar pastDay = Calendar.getInstance();
         pastDay.add(Calendar.DAY_OF_WEEK, -5);
@@ -271,8 +288,8 @@ public class MainController extends Controller {
                 +"     'PS' type, dor.id, dor.order_no, cast(dor.business_stamp as char) business_stamp, "
                 +"     (select group_concat(serial_no separator ',') from transfer_order_item_detail toid where toid.delivery_id = dor.id) serial_no,"
                 +"     status, dor.route_from, lf.name from_name, dor.route_to, lt.name to_name, "
-                +" 	   ifnull(GROUP_CONCAT(cast(o.id as char)),(select GROUP_CONCAT(cast(o.id as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = dor.route_from)) office_id,"
-                +"     ifnull(GROUP_CONCAT(cast(o.office_name as char)),(select GROUP_CONCAT(cast(o.office_name as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = dor.route_from)) office_name,"
+              //+" 	   ifnull(GROUP_CONCAT(cast(o.id as char)),(select GROUP_CONCAT(cast(o.id as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = dor.route_from)) office_id,"
+              //+"     ifnull(GROUP_CONCAT(cast(o.office_name as char)),(select GROUP_CONCAT(cast(o.office_name as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = dor.route_from)) office_name,"
                 +"		(case   when (select l.id from location l  "
                 +" 		LEFT JOIN location l2 on l2.code = l.pcode "
                 +" 		where l.code = dor.route_from and l2.pcode = 1) is null"
@@ -304,8 +321,8 @@ public class MainController extends Controller {
                 +" union"
                 +"    select 'YS' type, tor.id, tor.order_no, '' business_stamp, '' serial_no, group_concat(distinct tor.status separator ',') status, "
                 +"    tor.route_from, lf.name from_name, tor.route_to, lt.name to_name, "
-                +"    ifnull(GROUP_CONCAT(cast(o.id as char)),(select GROUP_CONCAT(cast(o.id as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = tor.route_to)) office_id, "
-                +"    ifnull(GROUP_CONCAT(cast(o.office_name as char)),(select GROUP_CONCAT(cast(o.office_name as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = tor.route_to)) office_name,"
+                //+"    ifnull(GROUP_CONCAT(cast(o.id as char)),(select GROUP_CONCAT(cast(o.id as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = tor.route_to)) office_id, "
+                //+"    ifnull(GROUP_CONCAT(cast(o.office_name as char)),(select GROUP_CONCAT(cast(o.office_name as char)) from office o LEFT JOIN location l on l.pcode = o.location where l.code = tor.route_to)) office_name,"
                 +"		(case   when (select l.id from location l  "
                 +" 		LEFT JOIN location l2 on l2.code = l.pcode "
                 +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -339,6 +356,7 @@ public class MainController extends Controller {
                 +" 	  LEFT JOIN location l on l.`code` = o.location"
                 +" 	  WHERE"
                 +" 	  user_name = '" + currentUser.getPrincipal() +"')";
+              //. +    "";
 //                + "office_id in (select office_id from user_office where user_name = '" + currentUser.getPrincipal() +"')";
         
         Record rec = Db.findFirst("select count(1) total from (" + sql + ") A");

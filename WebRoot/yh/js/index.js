@@ -1,6 +1,8 @@
 $(document).ready(function () {
     document.title = '管理看板 | ' + document.title;
-
+    
+   
+	
     console.log("当前选择：" + $("input[name='optionsRadiosInline'][checked]").val());
 
     var todoListTable = $('#todo_list_table').dataTable({
@@ -69,6 +71,20 @@ $(document).ready(function () {
 		// deliveryOrderTypeTbody.fnDraw();
 	}); 
 	
+		
+		
+		
+			
+	 $('#transport_box , #distribution_box' ).click(function(){
+		
+		var transport = $('#transport_box').prop("checked");
+		var distribution = $('#distribution_box').prop("checked");
+		
+			 todoListTable.fnSettings().sAjaxSource = "/getTodoList?transport="+transport+"&distribution="+distribution;
+			 todoListTable.fnDraw();
+		
+	});
 	
+
 	
 });
