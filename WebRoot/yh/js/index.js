@@ -42,7 +42,7 @@ $(document).ready(function () {
                     		}else
                     			date = obj.aData.BUSINESS_STAMP;
                     	}
-                        return " 该配送单业务要求配送时间为：" + date  + ", 请安排配送。序列号："+obj.aData.SERIAL_NO;
+                        return " 该配送单业务要求配送时间为：" + date  + ", 请安排配送。序列号："+(obj.aData.SERIAL_NO==null?'（空）':obj.aData.SERIAL_NO);
                     }else{
                         return " 该运输单为运输在途，请安排收货。";
                     }
@@ -62,29 +62,20 @@ $(document).ready(function () {
 			$("#insuranceTotal").empty().text(data.insuranceTotal);
 		});
 	};
+
 	findAllCount($("input[name='optionsRadiosInline'][checked]").val());
 	//切换查询
 	$("input[name='optionsRadiosInline']").change(function() {
 		findAllCount($(this).val());
-		
 		// deliveryOrderTypeTbody.fnSettings().sAjaxSource = "/delivery/findDeliveryOrderType?pointInTime="+$(this).val();
 		// deliveryOrderTypeTbody.fnDraw();
 	}); 
-	
-		
-		
-		
-			
-	 $('#transport_box , #distribution_box' ).click(function(){
-		
+
+	$('#transport_box , #distribution_box' ).click(function(){
 		var transport = $('#transport_box').prop("checked");
 		var distribution = $('#distribution_box').prop("checked");
-		
-			 todoListTable.fnSettings().sAjaxSource = "/getTodoList?transport="+transport+"&distribution="+distribution;
-			 todoListTable.fnDraw();
-		
+	    todoListTable.fnSettings().sAjaxSource = "/getTodoList?transport="+transport+"&distribution="+distribution;
+	    todoListTable.fnDraw();
 	});
-	
 
-	
 });

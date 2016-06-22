@@ -938,8 +938,8 @@ public class PickupOrderController extends Controller {
  		}
  		
  		//2.校验调车单是否存在下级单据
- 		DepartTransferOrder dpOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where pickup_id = ?",pickupId);
- 		if(dpOrder != null){
+ 		DepartPickupOrder dpOrder = DepartPickupOrder.dao.findFirst("select * from depart_pickup where pickup_id = ?",pickupId);
+ 		if(dpOrder == null){
  			//ATM正常提货（非直送）撤销
  			deleteOrder(pickupId);
  			
