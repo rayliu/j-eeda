@@ -87,6 +87,7 @@
     	var str_JSON = JSON.stringify(array);
     	console.log(str_JSON);
     	$("#detailJson").val(str_JSON);
+    	
     };
     
     
@@ -97,12 +98,13 @@
 	$("#saveBtn").on('click',function(){
 		$("#saveBtn").attr("disabled", true);
 		$("#printBtn").attr("disabled", true);
-	
+		
 		orderjson();
 	
 		if($("#payment_method").val()=='transfers'){
 			if($("#deposit_bank").val()=='' && $("#bank_no").val()==''&& $("#account_name").val()==''){
 				$.scojs_message('转账的信息不能为空', $.scojs_message.TYPE_FALSE);
+				$("#saveBtn").attr("disabled", false);
 				return false;
 			}
 		}
@@ -151,12 +153,12 @@
 	  $("#checkBtn").on('click',function(){
 		  	$("#checkBtn").attr("disabled", true);
 		  	$("#saveBtn").attr("disabled", true);
-		  	
+		  	$("#confirmBtn").attr("disabled", false);
 		  	orderjson();
 		  	
 			$.get("/chargePreInvoiceOrder/checkStatus", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val()}, function(data){
 				if(data.ID>0){
-					$("#check_name").val();
+					$("#check_name").val(data.CHECK_NAME);
 					$("#check_stamp").val(data.CHECK_STAMP);
 					$("#status").val(data.STATUS);
 					$.scojs_message('复核成功', $.scojs_message.TYPE_OK);
@@ -209,9 +211,29 @@
 		  	}
 		});
 	  
-	  
+	  var engraved_bank = function() {
+		  var receive_type = $("#receive_type").val();
+		  var receive_bank = $("#receive_bank").val();
+			if (receive_type == 'transfers' ) {
+				if (receive_bank == '' || receive_bank == null) {
+					$.scojs_message('支付银行不能为空',
+							$.scojs_message.TYPE_FALSE);
+					return false;
+				}else{
+					
+					return true;
+				}
+			}else{
+				return true;
+			}
+		};
+		
 	  //确认
 	  $("#confirmBtn").on('click',function(){
+		 
+		  if(!engraved_bank())
+		    	 return false;
+		  
 		  	$("#confirmBtn").attr("disabled", true);
 		  	orderjson();
 			$.get("/chargePreInvoiceOrder/confirmOrder", {application_id:$('#application_id').val(),detailJson:$('#detailJson').val(),receive_time:$('#receive_time').val(),receive_type:$('#receive_type').val(),receive_bank:$('#receive_bank').val()}, function(data){
@@ -279,9 +301,17 @@
 
     var payment = function(){
     	if($('#payment_method').val()=='transfers'){
+    		$('#receive_type').val('transfers');
+
+    		$('#pay_type').val('transfers');
+    		receiveType();
     		$("#transfers_massage").show();
     	}else if($('#payment_method').val()=='cash'){
+    		$('#receive_type').val('cash');
     		$("#transfers_massage").hide();
+    		
+    		$('#pay_type').val('cash');
+    		receiveType();
     	}
     }; 	
     
@@ -325,7 +355,6 @@
 		$("#printBtn").attr('disabled',false);
 		$("#deleteBtn").attr("disabled", true);
 	}
-	
 
     //回显
     //收款类型
@@ -349,4 +378,13 @@
     	$('#payment_method').val('cash');
     	payment();
     }
+    
+    if($('#status').val()!='已付款' && $('#status').val()!='已付款确认' ){
+    	if($('#payment_method').val()=='transfers'){
+	    	$('#receive_type').val('transfers');
+	    	receiveType();
+	    }
+    }
+   
+    
 });

@@ -1574,7 +1574,11 @@ public class CostPreInvoiceOrderController extends Controller {
 						arapInOutMiscOrder.set("pay_status", "已复核").update();
 				}			
 			}
-			renderJson(arapCostInvoiceApplication);
+			
+			Record r = arapCostInvoiceApplication.toRecord();
+			String check_name = LoginUserController.getUserNameById(arapCostInvoiceApplication.getLong("check_by").toString());
+			r.set("check_name", check_name);
+			renderJson(r);
 	    }
 		
 		//退回

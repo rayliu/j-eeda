@@ -995,7 +995,10 @@ public class ChargePreInvoiceOrderController extends Controller {
 					arapInOutMiscOrder.set("charge_status", "已复核").update();
 			}
 		}
-	     renderJson(arapChargeInvoiceApplication);
+		Record r = arapChargeInvoiceApplication.toRecord();
+		String check_name = LoginUserController.getUserNameById(arapChargeInvoiceApplication.getLong("check_by").toString());
+		r.set("check_name", check_name);
+		renderJson(r);
     }
 	
 	//退回
