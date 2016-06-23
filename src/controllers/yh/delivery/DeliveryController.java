@@ -1408,6 +1408,11 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("order_delivery_stamp", orderDeliveryStamp);
             if(!"".equals(depart_date) && depart_date!= null)
                 deliveryOrder.set("depart_stamp", depart_date);
+            else{
+            	if("warehouseNatureYes".equals(warehouseNature)){
+            		deliveryOrder.set("depart_stamp", new Date());
+            	}
+            }
 			deliveryOrder.set("audit_status", "新建");
 			deliveryOrder.set("sign_status", "未回单");
 			if("cargo".equals(cargoNature)){
@@ -1625,6 +1630,11 @@ public class DeliveryController extends Controller {
 			}
 			if(!"".equals(depart_date) && depart_date!= null)
 			    deliveryOrder.set("depart_stamp", depart_date);
+			else{
+            	if("warehouseNatureYes".equals(warehouseNature)){
+            		deliveryOrder.set("depart_stamp", new Date());
+            	}
+            }
 			if("warehouseNatureYes".equals(warehouseNature)){  //******************调拨
 				if(deliveryOrder.get("delivery_id")==null){
 					deliveryChangeOrder = new DeliveryOrder();
