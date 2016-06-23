@@ -108,6 +108,7 @@ $(document).ready(function() {
 			if(data.ID>0){
 				$("#chargeCheckOrderId").val(data.ID);
 				$("#chargeAmount")[0].innerHTML = data.CHARGE_AMOUNT;
+				$("#total_amount").text(data.CHARGE_AMOUNT);
 				$('#auditBtn').attr('disabled', false);
 				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 				contactUrl("edit?id",data.ID);
