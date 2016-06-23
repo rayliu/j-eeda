@@ -58,15 +58,15 @@ $(document).ready(function() {
               	  }
               	  else{
                       if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
-                          return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                          return "<input type='text' style='width:60px' class='cls' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                           
                       }
                       else {
                         if(obj.aData.PAY_AMOUNT!=null){
-                          return "<input type='text' style='width:60px' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
+                          return "<input type='text' style='width:60px' class='cls' name='change_amount' value='"+obj.aData.PAY_AMOUNT+"'/>";
                         }
                         else{
-                          return "<input type='text' style='width:60px' name='change_amount' value='0'/>";
+                          return "<input type='text' style='width:60px' class='cls' name='change_amount' value='0'/>";
                         }
                       }
               	  }
@@ -327,4 +327,12 @@ $(document).ready(function() {
       // $('#order_type_filter,#arrivaltime,#order_status_filter').on( 'change', function () {
       //   	refreshData();
      	// } );
+      
+      $("#costConfirem-table").on('keydown', 'input:text', function(e){
+   	   var key = e.which;
+    	  if (key == 13) {
+    		 $(this).parent().parent().next().find('.cls').focus();
+    	  }
+      });
+      
 } );

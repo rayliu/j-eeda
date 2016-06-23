@@ -51,10 +51,10 @@ $(document).ready(function() {
             {"mDataProp":"CHANGE_AMOUNT", "sWidth":"120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.CHANGE_AMOUNT!=null&&obj.aData.ORDER_TP=='回单'){
-                        return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                        return "<input type='text' class='cls' style='width:60px' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                     }
                     else if(obj.aData.CHANGE_AMOUNT==null&&obj.aData.ORDER_TP=='回单'){
-                    	return "<input type='text' style='width:60px' name='change_amount' id='change' value='"+obj.aData.TOTAL_AMOUNT+"'/>";
+                    	return "<input type='text' class='cls' style='width:60px' name='change_amount' id='change' value='"+obj.aData.TOTAL_AMOUNT+"'/>";
                     }
                     else{
                     	return obj.aData.TOTAL_AMOUNT;
@@ -301,6 +301,11 @@ $(document).ready(function() {
        };
        loadConditions();
        
+       $("#chargeConfirem-table").on('keydown', 'input:text', function(e){
+    	   var key = e.which;
+     	  if (key == 13) {
+     		 $(this).parent().parent().next().find('.cls').focus();
+     	  }
+       });
        
-  
 } );
