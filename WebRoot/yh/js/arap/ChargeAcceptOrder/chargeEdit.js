@@ -227,7 +227,7 @@
 				return true;
 			}
 		};
-		
+	
 	  //确认
 	  $("#confirmBtn").on('click',function(){
 		 
@@ -307,8 +307,11 @@
     		receiveType();
     		$("#transfers_massage").show();
     	}else if($('#payment_method').val()=='cash'){
-    		$('#receive_type').val('cash');
+    		$("#deposit_bank").val('');
+    		$("#bank_no").val('');
+    		$("#account_name").val('');
     		$("#transfers_massage").hide();
+
     		
     		$('#pay_type').val('cash');
     		receiveType();
@@ -364,12 +367,16 @@
     $('#invoice_type').val($('#invoice_type_show').val());
     
     ////收款方式（收款确认）回显控制
-    if($('#receive_type_show').val()!=''){
-    	$('#receive_type').val($('#receive_type_show').val()); 
-    }
+    if($('#receive_type_show').val()==''){
+    	
+   	 $('#receive_type').val('cash');
+   }else{
+   	
+   	 $('#receive_type').val($('#receive_type_show').val());
+   }
     receiveType();
     
-    
+   
     //收款银行回显
     $('#receive_bank').val($('#receive_banks').val());
     if($('#deposit_bank').val()!='' || $('#bank_no').val()!='' || $('#account_name').val()!=''){
@@ -379,10 +386,13 @@
     	payment();
     }
     
-    if($('#status').val()!='已付款' && $('#status').val()!='已付款确认' ){
+    if($('#status').val()!='已收款' && $('#status').val()!='已收款确认' ){
     	if($('#payment_method').val()=='transfers'){
+    		
 	    	$('#receive_type').val('transfers');
 	    	receiveType();
+	    }else{
+	    	
 	    }
     }
    
