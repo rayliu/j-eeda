@@ -77,7 +77,14 @@ public class ReportController extends Controller {
 		String order_no = getPara("order_no").trim();
 		String damageType = getPara("damageType").trim();
 		String unit = getPara("unit").trim();
-		String fileName = "report/damage_customer.jasper";
+		String fileName = "";
+		if("customer".equals(damageType)){
+		    fileName = "report/damage_customer.jasper";
+		}else if("supplier".equals(damageType)){
+		    fileName = "report/damage_order_supplier.jasper";
+		}else{
+		    fileName = "report/damage_order_insur.jasper";
+		}
 		String outFileName = "download/货损记录单"+damageType;
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
