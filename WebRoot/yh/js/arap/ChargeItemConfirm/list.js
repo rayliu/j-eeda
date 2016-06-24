@@ -113,7 +113,7 @@ $(document).ready(function() {
         ]      
     });	
     
-    $("#chargeConfiremBtn").click(function(e){
+    $("#chargeConfiremBtn").click(function(e){//确认
         e.preventDefault();
     	var trArr=[];
     	var orderNoArr=[];
@@ -129,7 +129,8 @@ $(document).ready(function() {
         $.post("/chargeConfiremList/chargeConfiremReturnOrder", {returnOrderIds:returnOrderIds,orderno:orderno}, function(data){
         	if(data.success){
         		chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list";
-        		chargeConfiremTable.fnDraw(); 
+        		//chargeConfiremTable.fnDraw(); 
+        		refreshCreateList(); 
         	}
         },'json');
     });
@@ -237,7 +238,7 @@ $(document).ready(function() {
     	   //refreshCreateList();
        });
        
-       $('#searchBtn').on('click',function(){
+       $('#searchBtn').on('click',function(){//查询
     	   refreshCreateList();  
        });
        
@@ -261,28 +262,26 @@ $(document).ready(function() {
            $('#endTime_filter').trigger('keyup');
        });
        
-       
+       //设置回显查询条件
        var saveConditions=function(){
            var conditions={
-           	customer : $('#customer_filter').val()//申请单号
-//               orderNo : $("#orderNo").val(),//业务单号
-//               status : $("#status2").val(),
-//               sp : $("#sp_id_input").val(),
-//               beginTime : $("#begin_date").val(),
-//               endTime : $("#end_date").val(),
-//               check_begin_date : $("#check_begin_date").val(),
-//               check_end_date : $("#check_end_date").val(),
-//               confirmBeginTime : $("#confirmBegin_date").val(),
-//               confirmEndTime : $("#confirmEnd_date").val(),
-//               insurance : $("#insurance").val()
+           	customer : $('#customer_filter').val(),//客户单号
+           	serial_no:$("#serial_no").val(),
+           	transfer_Order_filter:$('#transfer_Order_filter').val(),
+           	beginTime_filter:$('#beginTime_filter').val(),
+           	start_filter:$('#start_filter').val(),
+           	orderNo_filter:$('#orderNo_filter').val(),
+           	endTime_filter:$('#endTime_filter').val(),
+           	customerNo_filter:$('#customerNo_filter').val(),
+           	ref_no:$('#ref_no').val(),
            };
-           if(!!window.localStorage){//查询条件处理
+           if(!!window.localStorage){//查询条件处理 本地储存
                localStorage.setItem("query_chargeItemConfirm", JSON.stringify(conditions));
            }
        };
        
        
-       //未申请界面
+       //回显查询条件
        var loadConditions=function(){
            if(!!window.localStorage){//查询条件处理
                var query_json = localStorage.getItem('query_chargeItemConfirm');
@@ -292,20 +291,28 @@ $(document).ready(function() {
                var conditions = JSON.parse(query_json);
 
                $("#customer_filter").val(conditions.customer);//单号
-//               $("#status_filter1").val(conditions.status);
-//               //var customer = $("#customer_filter").val();
-//               $("#sp_filter1").val(conditions.sp);
-//               $("#beginTime_filter2").val(conditions.beginTime);
-//               $("#endTime_filter2").val(conditions.endTime);
+               $("#serial_no").val(conditions.serial_no);
+               $('#transfer_Order_filter').val(conditions.transfer_Order_filter);
+               $('#beginTime_filter').val(conditions.beginTime_filter);
+               $('#start_filter').val(conditions.start_filter);
+               $('#orderNo_filter').val(conditions.orderNo_filter);
+               $('#endTime_filter').val(conditions.endTime_filter);
+               $('#customerNo_filter').val(conditions.customerNo_filter);
+               $('#ref_no').val(conditions.ref_no);
            }
        };
        loadConditions();
        
-       $("#chargeConfirem-table").on('keydown', 'input:text', function(e){
+       $("#chargeConfirem-table").on('keydown', 'input:text', function(e){//回车换行
     	   var key = e.which;
      	  if (key == 13) {
      		 $(this).parent().parent().next().find('.cls').focus();
      	  }
        });
        
+       $(function(){
+    	   if($("#top_form input").val()!=null){  //刷新页面
+    		   refreshCreateList();
+    	   }
+       });
 } );

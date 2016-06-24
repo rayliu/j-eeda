@@ -311,7 +311,7 @@ $(document).ready(function() {
     													+"&arrivaltime="+arrivaltime
     													+"&serial_no="+serial_no
     													+"&sign_no="+sign_no;
-    	
+    			saveConditions();
     		  costConfiremTable.fnDraw();
        };
        
@@ -328,11 +328,63 @@ $(document).ready(function() {
       //   	refreshData();
      	// } );
       
-      $("#costConfirem-table").on('keydown', 'input:text', function(e){
+      $("#costConfirem-table").on('keydown', 'input:text', function(e){//回车换行
    	   var key = e.which;
     	  if (key == 13) {
     		 $(this).parent().parent().next().find('.cls').focus();
     	  }
       });
       
+      var saveConditions = function(){//回显查询
+    	 var condition = {
+    			  orderNo_filter:$('#orderNo_filter').val(),
+    			  order_type_filter:$('#order_type_filter').val(),
+    			  route_from:$('#route_from').val(),
+    			  plantime:$('#plantime').val(),
+    			  sp_id:$('#sp_id_input').val(),
+    			  operation_number:$('#operation_number').val(),
+    			  route_to:$('#route_to').val(),
+    			  arrivaltime:$('#arrivaltime').val(),
+    			  customer_id:$('#customer_id_input').val(),
+    			  booking_note_number:$('#booking_note_number').val(),
+    			  order_status_filter:$('#order_status_filter').val(),
+    			  serial_no:$('#serial_no').val(),
+    			  beginTime_filter:$('#beginTime_filter').val(),
+    			  endTime_filter:$('#endTime_filter').val(),
+    			  sign_no: $('#sign_no').val(),
+    	  };	
+    	  if(!!window.localStorage){
+    		  localStorage.setItem("query_costItemConfirm", JSON.stringify(condition)); 
+    	  }
+      };
+      
+      var loadCondition = function(){//回显查询
+    	 
+    	  if(!!window.localStorage){
+    		 
+    		  var query_json = localStorage.getItem('query_costItemConfirm');
+    		  if(!query_json)
+    			 return;
+    		 
+    		  var condition = JSON.parse(query_json);
+    		  $('#orderNo_filter').val(condition.orderNo_filter);
+    		  $('#order_type_filter').val(condition.order_type_filter);
+    		  $('#route_from').val(condition.route_from);
+    		  $('#plantime').val(condition.plantime);
+    		  $('#sp_id_input').val(condition.sp_id);
+    		  $('#operation_number').val(condition.operation_number);
+    		  $('#route_to').val(condition.route_to);
+    		  $('#arrivaltime').val(condition.arrivaltime);
+    		  $('#customer_id_input').val(condition.customer_id);
+    		  $('#booking_note_number').val(condition.booking_note_number);
+    		  $('#order_status_filter').val(condition.order_status_filter);
+    		  $('#serial_no').val(condition.serial_no);
+    		  $('#beginTime_filter').val(condition.beginTime_filter);
+    		  $('#endTime_filter').val(condition.endTime_filter);
+    		  $('#sign_no').val(condition.sign_no);
+    		  
+    		  
+    	  }
+      };
+      loadCondition();
 } );
