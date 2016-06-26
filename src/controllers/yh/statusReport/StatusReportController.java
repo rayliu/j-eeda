@@ -794,9 +794,9 @@ public class StatusReportController extends Controller{
 		                +" 		) province, "
 						+ " c.abbr,concat((SELECT dor.order_no FROM delivery_order dor WHERE dor.id = toid.delivery_id ),'<br/>',ifnull((SELECT dor.order_no FROM delivery_order dor WHERE dor.id = toid.delivery_refused_id),'')) deliveryno,tor.order_no transferno,tor.STATUS,'' ORDER_TYPE ,toid.serial_no,tor.planning_time,	l1. NAME route_from,	l2. NAME route_to,toid.pieces,round(toid.weight, 2) weight,round(toid.volume, 2) volume,"
 						+ " round(ifnull((SELECT IFNULL(sum(pofi.amount),0) FROM pickup_order_fin_item pofi	LEFT JOIN depart_order d_o ON d_o.id = pofi.pickup_order_id	LEFT JOIN depart_transfer dt ON dt.pickup_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = pofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
-						+ " AND pofi.fin_item_id != 7 and d_o.audit_status='对账已确认' AND d_o.combine_type = 'PICKUP') / (SELECT count(0)	FROM transfer_order_item_detail	WHERE	pickup_id = toid.pickup_id),0),2) yf_pickup,"
+						+ " and pofi.pickup_order_id = toid.pickup_id AND pofi.fin_item_id != 7 and d_o.audit_status='对账已确认' AND d_o.combine_type = 'PICKUP') / (SELECT count(0)	FROM transfer_order_item_detail	WHERE	pickup_id = toid.pickup_id),0),2) yf_pickup,"
 						+ " round(ifnull((SELECT IFNULL(sum(dofi.amount),0)	FROM depart_order_fin_item dofi	LEFT JOIN depart_order d_o ON d_o.id = dofi.depart_order_id LEFT JOIN depart_transfer dt ON dt.depart_id = d_o.id	LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id	WHERE	dt.order_id = tor.id AND fi.type = '应付'"
-						+ " and d_o.audit_status='对账已确认' AND d_o.combine_type = 'DEPART')/(SELECT count(0) FROM	transfer_order_item_detail WHERE depart_id = toid.depart_id),0),2) yf_depart,"
+						+ " and dofi.depart_order_id = toid.depart_id and d_o.audit_status='对账已确认' AND d_o.combine_type = 'DEPART')/(SELECT count(0) FROM	transfer_order_item_detail WHERE depart_id = toid.depart_id),0),2) yf_depart,"
 						+ " round(ifnull((SELECT(sum(IFNULL(ifi.insurance_amount,0)) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
 						+ " WHERE	i_o.id = tor.insurance_id and i_o.audit_status='对账已确认' AND fi.type = '应付'),0),2) yf_insurance,"
 						+ " round(ifnull((SELECT(sum(IFNULL(ifi.insurance_amount,0)) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
@@ -872,6 +872,9 @@ public class StatusReportController extends Controller{
 					if(!"".equals(orderNo)){
 						condition +=" and ifnull(transferno,'') like '%" + orderNo + "%' ";
 					}
+//					if(!"".equals(receive)){
+//						condition +=" and ifnull(ys_sum,'') > 0 ";
+//					}
 					if(!"".equals(route_to)){
 						condition +=" and ifnull(province,'') like '%" + route_to + "%' ";
 					}
