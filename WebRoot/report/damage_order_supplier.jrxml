@@ -156,7 +156,7 @@ where dor.order_no=$P{order_no}]]>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="148" splitType="Stretch">
+		<band height="138" splitType="Stretch">
 			<staticText>
 				<reportElement x="23" y="1" width="82" height="30" uuid="63e62a62-641c-446b-ad87-81a0c7fc3a7c"/>
 				<textElement verticalAlignment="Middle">
@@ -274,7 +274,7 @@ where dor.order_no=$P{order_no}]]>
 	<detail>
 		<band height="100" splitType="Stretch">
 			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="3" y="0" width="799" height="100" uuid="ccbdffb2-48da-4dd1-969a-53c2ec2a3772"/>
+				<reportElement stretchType="RelativeToBandHeight" x="3" y="0" width="799" height="100" isRemoveLineWhenBlank="true" uuid="ccbdffb2-48da-4dd1-969a-53c2ec2a3772"/>
 				<subreportParameter name="order_id">
 					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 				</subreportParameter>

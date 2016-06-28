@@ -28,8 +28,8 @@
 	</parameter>
 	<parameter name="order_no" class="java.lang.String"/>
 	<parameter name="damageType" class="java.lang.String"/>
-	<parameter name="unit" class="java.lang.String"/>
-	<parameter name="unitType" class="java.lang.String">
+	<parameter name="unit" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="unitType" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[($P{damageType}=="supplier"||$P{damageType}=="insurance")?"索赔单位：":"赔款单位："]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Title" class="java.lang.String" isForPrompting="false">
@@ -48,6 +48,7 @@
 		<![CDATA[SELECT
 	dor.id as id,
 	dor.order_no,
+	ifnull(ul.c_name, ul.user_name) create_name,
 	ifnull(dor.order_type, '') as order_type,
 	ifnull(dor.accident_type,'') as accident_type,
 	ifnull(dor.accident_desc,'') as accident_desc,
@@ -63,6 +64,7 @@ LEFT JOIN party p on p.id= dor.customer_id
 LEFT JOIN contact c on  c.id=p.contact_id
 LEFT JOIN party p1 on p1.id= dor.sp_id
 LEFT JOIN contact c1 on  c1.id=p1.contact_id
+LEFT JOIN user_login ul on ul.id = dor.creator
 where dor.order_no=$P{order_no}]]>
 	</queryString>
 	<field name="id" class="java.lang.Long">
@@ -97,6 +99,7 @@ where dor.order_no=$P{order_no}]]>
 	</field>
 	<field name="amount" class="java.lang.Double"/>
 	<field name="sp_name" class="java.lang.String"/>
+	<field name="create_name" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -164,7 +167,7 @@ where dor.order_no=$P{order_no}]]>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="148" splitType="Stretch">
+		<band height="138" splitType="Stretch">
 			<staticText>
 				<reportElement x="23" y="1" width="82" height="30" uuid="63e62a62-641c-446b-ad87-81a0c7fc3a7c"/>
 				<textElement verticalAlignment="Middle">
@@ -281,8 +284,8 @@ where dor.order_no=$P{order_no}]]>
 	</columnHeader>
 	<detail>
 		<band height="100" splitType="Stretch">
-			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="3" y="0" width="799" height="100" uuid="ccbdffb2-48da-4dd1-969a-53c2ec2a3772"/>
+			<subreport runToBottom="false">
+				<reportElement stretchType="RelativeToBandHeight" x="3" y="0" width="799" height="100" isRemoveLineWhenBlank="true" uuid="ccbdffb2-48da-4dd1-969a-53c2ec2a3772"/>
 				<subreportParameter name="order_id">
 					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -292,26 +295,15 @@ where dor.order_no=$P{order_no}]]>
 		</band>
 		<band height="100" splitType="Immediate">
 			<subreport runToBottom="true">
-				<reportElement x="3" y="0" width="799" height="100" isRemoveLineWhenBlank="true" uuid="760ef24d-ba35-4c1c-8bec-d8e12beb5958">
-					<printWhenExpression><![CDATA[new Boolean($P{damageType}=="customer")]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToBandHeight" x="3" y="0" width="799" height="100" isRemoveLineWhenBlank="true" uuid="760ef24d-ba35-4c1c-8bec-d8e12beb5958"/>
+				<subreportParameter name="create_name">
+					<subreportParameterExpression><![CDATA[$F{create_name}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="order_id">
 					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "damage_customer_subreport1.jasper"]]></subreportExpression>
-			</subreport>
-		</band>
-		<band height="100" splitType="Immediate">
-			<subreport>
-				<reportElement x="3" y="0" width="799" height="100" uuid="f01743ea-8336-429f-bebc-83999f63baca">
-					<printWhenExpression><![CDATA[new Boolean($P{damageType}=="supplier"||$P{damageType}=="insurance")]]></printWhenExpression>
-				</reportElement>
-				<subreportParameter name="order_id">
-					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "damage_customer_subreport3.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
