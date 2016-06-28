@@ -294,7 +294,7 @@ where dor.order_no=$P{order_no}]]>
 			</subreport>
 		</band>
 		<band height="100" splitType="Immediate">
-			<subreport runToBottom="true">
+			<subreport runToBottom="false">
 				<reportElement stretchType="RelativeToBandHeight" x="3" y="0" width="799" height="100" isRemoveLineWhenBlank="true" uuid="760ef24d-ba35-4c1c-8bec-d8e12beb5958"/>
 				<subreportParameter name="create_name">
 					<subreportParameterExpression><![CDATA[$F{create_name}]]></subreportParameterExpression>
