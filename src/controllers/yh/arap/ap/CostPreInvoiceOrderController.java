@@ -1289,7 +1289,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " left join contact c on c.id = p.contact_id "
 					    + " WHERE dor.id in(" + hs_id +")"
 					    +   cname
-					    + " group by dofi.party_name ";
+					    + " group by dor.customer_id,dor.id ";
 			}else{
 				//Record re = Db.findFirst("select ");
 				
@@ -1443,7 +1443,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " left join party p on p.id = dor.customer_id "
 					    + " left join contact c on c.id = p.contact_id "
 					    + " where caor.order_type = '货损单'"
-					    + " GROUP BY caor.application_order_id"
+					    + " GROUP BY caor.application_order_id,caor.cost_order_id "
 						+ " ) A where app_id ="+application_id ;
 			}
 			
