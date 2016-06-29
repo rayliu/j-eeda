@@ -1289,7 +1289,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					    + " left join contact c on c.id = p.contact_id "
 					    + " WHERE dor.id in(" + hs_id +")"
 					    +   cname
-					    + " group by dor.customer_id,dor.id ";
+					    + " group by dofi.party_name,dor.id ";
 			}else{
 				//Record re = Db.findFirst("select ");
 				

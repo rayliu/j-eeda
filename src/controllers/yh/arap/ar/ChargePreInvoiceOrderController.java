@@ -660,7 +660,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 				    + " left join contact c3 on c3.id = p3.contact_id "
 				    + " WHERE dor.id in(" + hs_id +")"
 				    +   cname
-				    + " group by dofi.party_name ";
+				    + " group by dofi.party_name ,dor.id ";
 
 		}else{
 			sql = " select *  from (SELECT aco.id,aco.payee_id,payee payee_name,aco.order_no, '应收对账单' order_type, aco.STATUS, aco.remark, aco.create_stamp,"
@@ -768,7 +768,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 				    + " left join contact c3 on c3.id = p3.contact_id "
 				    
 				    + " where caor.order_type = '货损单'"
-				    + " GROUP BY caor.application_order_id"
+				    + " GROUP BY caor.application_order_id,caor.charge_order_id "
 					+ " ) A where app_id ="+application_id ;	    
 		}
 		
