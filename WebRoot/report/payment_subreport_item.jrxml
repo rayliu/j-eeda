@@ -30,103 +30,124 @@
 	<parameter name="approval_name" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
-    (select group_concat(distinct (ref_order_no)  separator '\r\n' ) from arap_cost_item where cost_order_id = aco.id) as service_type,
-    aco.order_no as order_no,
-    aco.create_stamp as create_stamp,
-    aco.begin_time as confirm_stamp,
-    round(aco.total_amount,3) as total_amount,
-    round((
+	(
 		SELECT
-			caor.pay_amount this_pay
+			group_concat(
+				DISTINCT (ref_order_no) SEPARATOR '\r\n'
+			)
 		FROM
-			cost_application_order_rel caor
+			arap_cost_item
 		WHERE
-			caor.cost_order_id = aco.id
-		AND caor.application_order_id = appl_order.id
-                       AND caor.order_type = '对账单'
-	),3)as cost_amount,
-    round((
-		aco.cost_amount - (
+			cost_order_id = aco.id
+	) AS service_type,
+	aco.order_no AS order_no,
+	aco.create_stamp AS create_stamp,
+	aco.begin_time AS confirm_stamp,
+	round(aco.total_amount, 3) AS total_amount,
+	round(
+		(
 			SELECT
-				ifnull(sum(caor.pay_amount), 0) total_pay
+				caor.pay_amount this_pay
 			FROM
 				cost_application_order_rel caor
 			WHERE
 				caor.cost_order_id = aco.id
+			AND caor.application_order_id = appl_order.id
 			AND caor.order_type = '对账单'
-		)
-	),3) as cost_balance
-    from
-    arap_cost_order aco
+		),
+		3
+	) AS cost_amount,
+	round(
+		(
+			aco.cost_amount - (
+				SELECT
+					ifnull(sum(caor.pay_amount), 0) total_pay
+				FROM
+					cost_application_order_rel caor
+				WHERE
+					caor.cost_order_id = aco.id
+				AND caor.order_type = '对账单'
+			)
+		),
+		3
+	) AS cost_balance
+FROM
+	arap_cost_order aco
 LEFT JOIN cost_application_order_rel caor ON aco.id = caor.cost_order_id
 LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
-where  appl_order.id = $P{order_id}
-and caor.order_type='对账单'
-union
-SELECT
-    '预付单' as service_type,
-    appo.order_no as order_no,
-    appo.create_date as create_stamp,
-    appo.create_date as confirm_stamp,
-    appo.total_amount as total_amount,
-(
+WHERE
+	appl_order.id = $P{order_id}
+AND caor.order_type = '对账单'
+UNION
+	SELECT
+		'预付单' AS service_type,
+		appo.order_no AS order_no,
+		appo.create_date AS create_stamp,
+		appo.create_date AS confirm_stamp,
+		appo.total_amount AS total_amount,
+		(
+			SELECT
+				sum(caor.pay_amount)
+			FROM
+				cost_application_order_rel caor
+			WHERE
+				caor.application_order_id = appl_order.id
+			AND caor.order_type = '预付单'
+		) cost_amount,
+		(
+			appo.total_amount - (
+				SELECT
+					sum(caor.pay_amount) total_pay
+				FROM
+					cost_application_order_rel caor
+				WHERE
+					caor.cost_order_id = appo.id
+				AND caor.order_type = '预付单'
+			)
+		) cost_balance
+	FROM
+		arap_pre_pay_order appo
+	LEFT JOIN cost_application_order_rel caor ON appo.id = caor.cost_order_id
+	LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
+	WHERE
+		appl_order.id = $P{order_id}
+	AND caor.order_type = '预付单'
+	UNION
 		SELECT
-			sum(caor.pay_amount)
-		FROM
-			cost_application_order_rel caor
-		WHERE
-			caor.application_order_id = appl_order.id
-		AND caor.order_type = '预付单'
-	) cost_amount,
-(appo.total_amount-(
+			'行车单' AS service_type,
+			cso.order_no AS order_no,
+			cso.create_data AS create_stamp,
+			cso.create_data AS confirm_stamp,
+			cso.actual_payment_amount AS total_amount,
+			(
+				SELECT
+					ifnull(sum(caor.pay_amount), 0)
+				FROM
+					cost_application_order_rel caor
+				WHERE
+					caor.application_order_id = appl_order.id
+				AND caor.cost_order_id = cso.id
+				AND caor.order_type = '行车单'
+			) cost_amount,
+			(
+				cso.actual_payment_amount - (
 					SELECT
-						sum(caor.pay_amount) total_pay
+						ifnull(sum(caor.pay_amount), 0)
 					FROM
 						cost_application_order_rel caor
 					WHERE
-						caor.cost_order_id = appo.id
-					AND caor.order_type = '预付单'
-)) cost_balance
-    from
-    arap_pre_pay_order appo
-LEFT JOIN cost_application_order_rel caor ON appo.id = caor.cost_order_id
-LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
-where  appl_order.id = $P{order_id}
-and caor.order_type='预付单'
-union
-SELECT
-		'行车单' AS service_type,
-		cso.order_no AS order_no,
-		cso.create_data AS create_stamp,
-		cso.create_data AS confirm_stamp,
-		cso.actual_payment_amount AS total_amount,
-		(
-							SELECT
-								ifnull(sum(caor.pay_amount), 0)
-							FROM
-								cost_application_order_rel caor
-							WHERE
-								caor.application_order_id = appl_order.id
-							AND caor.cost_order_id = cso.id
-							AND caor.order_type = '行车单'
-						) cost_amount,
-		(
-							cso.actual_payment_amount - (
-								SELECT
-									ifnull(sum(caor.pay_amount), 0)
-								FROM
-									cost_application_order_rel caor
-								WHERE
-									caor.cost_order_id = cso.id
-								AND caor.order_type = '行车单'
-							)
+						caor.cost_order_id = cso.id
+					AND caor.order_type = '行车单'
+				)
 			) cost_balance
-	FROM
-		car_summary_order cso
-	LEFT JOIN cost_application_order_rel caor ON cso.id = caor.cost_order_id
-	LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
-	WHERE appl_order.id = $P{order_id} and caor.order_type = '行车单'
-UNION
+		FROM
+			car_summary_order cso
+		LEFT JOIN cost_application_order_rel caor ON cso.id = caor.cost_order_id
+		LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
+		WHERE
+			appl_order.id = $P{order_id}
+		AND caor.order_type = '行车单'
+		UNION
 			SELECT
 				'成本单' AS service_type,
 				amco.order_no AS order_no,
@@ -143,30 +164,32 @@ UNION
 					AND caor.cost_order_id = amco.id
 					AND caor.order_type = '成本单'
 				) cost_amount,
-		(
-						amco.total_amount - (
-							SELECT
-								ifnull(sum(caor.pay_amount), 0)
-							FROM
-								cost_application_order_rel caor
-							WHERE
-								caor.cost_order_id = amco.id
-							AND caor.order_type = '成本单'
-						)
-		) cost_balance
-	FROM
-		arap_misc_cost_order amco
-	LEFT JOIN cost_application_order_rel caor ON amco.id = caor.cost_order_id
-	LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
-	WHERE appl_order.id = $P{order_id} and caor.order_type = '成本单'
-union
-SELECT
-		'报销单' AS service_type,
-		ror.order_no AS order_no,
-		ror.create_stamp AS create_stamp,
-		ror.create_stamp AS confirm_stamp,
-		ror.amount AS total_amount,
-		(
+				(
+					amco.total_amount - (
+						SELECT
+							ifnull(sum(caor.pay_amount), 0)
+						FROM
+							cost_application_order_rel caor
+						WHERE
+							caor.cost_order_id = amco.id
+						AND caor.order_type = '成本单'
+					)
+				) cost_balance
+			FROM
+				arap_misc_cost_order amco
+			LEFT JOIN cost_application_order_rel caor ON amco.id = caor.cost_order_id
+			LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
+			WHERE
+				appl_order.id = $P{order_id}
+			AND caor.order_type = '成本单'
+			UNION
+				SELECT
+					'报销单' AS service_type,
+					ror.order_no AS order_no,
+					ror.create_stamp AS create_stamp,
+					ror.create_stamp AS confirm_stamp,
+					ror.amount AS total_amount,
+					(
 						SELECT
 							ifnull(sum(caor.pay_amount), 0)
 						FROM
@@ -175,8 +198,8 @@ SELECT
 							caor.application_order_id = appl_order.id
 						AND caor.cost_order_id = ror.id
 						AND caor.order_type = '报销单'
-		) cost_amount,
-		(
+					) cost_amount,
+					(
 						ror.amount - (
 							SELECT
 								ifnull(sum(caor.pay_amount), 0)
@@ -186,12 +209,60 @@ SELECT
 								caor.cost_order_id = ror.id
 							AND caor.order_type = '报销单'
 						)
-		) cost_balance
-	FROM
-		reimbursement_order ror
-	LEFT JOIN cost_application_order_rel caor ON ror.id = caor.cost_order_id
-	LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
-	WHERE appl_order.id = $P{order_id} and  caor.order_type = '报销单']]>
+					) cost_balance
+				FROM
+					reimbursement_order ror
+				LEFT JOIN cost_application_order_rel caor ON ror.id = caor.cost_order_id
+				LEFT JOIN arap_cost_invoice_application_order appl_order ON caor.application_order_id = appl_order.id
+				WHERE
+					appl_order.id = $P{order_id}
+				AND caor.order_type = '报销单'
+				UNION
+					SELECT
+						'货损单' service_type,
+						dor.order_no,
+						dor.create_date create_stamp,
+						dor.create_date confirm_stamp,
+						sum(ifnull(dofi.amount, 0)) cost_amount,
+						(
+							SELECT
+								ifnull(sum(caor.pay_amount), 0)
+							FROM
+								cost_application_order_rel caor
+							WHERE
+								caor.cost_order_id = dor.id
+							AND caor.application_order_id = aciao.id
+							AND caor.order_type = '货损单'
+						) pay_amount,
+						(
+							sum(ifnull(dofi.amount, 0)) - (
+								SELECT
+									ifnull(sum(caor.pay_amount), 0)
+								FROM
+									cost_application_order_rel caor
+								WHERE
+									caor.cost_order_id = dor.id
+								AND caor.order_type = '货损单'
+								AND dofi.party_name = caor.payee_unit
+							)
+						) cost_balance
+					FROM
+						damage_order dor
+					LEFT JOIN cost_application_order_rel caor ON caor.cost_order_id = dor.id
+					LEFT JOIN damage_order_fin_item dofi ON dofi.order_id = dor.id
+					AND dofi.party_name = caor.payee_unit
+					AND dofi. STATUS = '已确认'
+					AND dofi.type = 'cost'
+					LEFT JOIN arap_cost_invoice_application_order aciao ON aciao.id = caor.application_order_id
+					LEFT JOIN user_login ul ON ul.id = dor.creator
+					LEFT JOIN party p ON p.id = dor.customer_id
+					LEFT JOIN contact c ON c.id = p.contact_id
+					WHERE
+						caor.order_type = '货损单'
+					AND aciao.id = $P{order_id}
+					GROUP BY
+						caor.application_order_id,
+						caor.cost_order_id]]>
 	</queryString>
 	<field name="service_type" class="java.lang.String"/>
 	<field name="order_no" class="java.lang.String">
