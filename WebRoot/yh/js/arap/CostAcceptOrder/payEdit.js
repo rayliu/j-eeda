@@ -37,14 +37,14 @@
     		{"mDataProp":"COST_AMOUNT","sWidth": "100px",
     			"fnRender": function(obj) {
 					total = total + parseFloat(obj.aData.COST_AMOUNT) ;
-					$("#total").html(total);
+					$("#total").html(total.toFixed(2));
 					return obj.aData.COST_AMOUNT;
     			}
     		},
     		{"mDataProp":"YUFU_AMOUNT","sWidth": "100px","sClass":'yufu_amount',
     			"fnRender": function(obj) {
 					nopay = nopay + parseFloat(obj.aData.YUFU_AMOUNT) ;
-					$("#nopay").html(nopay);
+					$("#nopay").html(nopay.toFixed(2));
 					return obj.aData.YUFU_AMOUNT;
     			}
     		},
@@ -52,8 +52,8 @@
     			"fnRender": function(obj) {
 					if($('#application_id').val()==''){
 						pay = pay + parseFloat(obj.aData.YUFU_AMOUNT) ;
-						$("#pay").html(pay);
-						$("#pay_amount").val(pay);
+						$("#pay").html(pay.toFixed(2));
+						$("#pay_amount").val(pay.toFixed(2));
 						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+obj.aData.YUFU_AMOUNT+"'>";
 					}
 					else{
@@ -61,8 +61,8 @@
 	    					obj.aData.PAY_AMOUNT = obj.aData.YUFU_AMOUNT;
 	    				}
 						pay = pay + parseFloat(obj.aData.PAY_AMOUNT) ;
-						$("#pay").html(pay);
-						$("#pay_amount").val(pay);
+						$("#pay").html(pay.toFixed(2));
+						$("#pay_amount").val(pay.toFixed(2));
 						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+obj.aData.PAY_AMOUNT+"'>";
 					}
     			}
@@ -87,7 +87,7 @@
     		array.push(obj);
     	});
     	
-    	$("#total_amount").val(sum);
+    	$("#total_amount").val(sum.toFixed(2));
     	var str_JSON = JSON.stringify(array);
     	$("#detailJson").val(str_JSON);
     };
@@ -304,8 +304,8 @@
 				});
 			}
 	    });		
-		$("#pay").html(value);
-		$("#pay_amount").val(value);
+		$("#pay").html(value.toFixed(2));
+		$("#pay_amount").val(value.toFixed(2));
 	});	
     
  
