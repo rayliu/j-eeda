@@ -15,6 +15,7 @@ import models.DepartOrder;
 import models.DepartOrderFinItem;
 import models.InsuranceFinItem;
 import models.InsuranceOrder;
+import models.Office;
 import models.Party;
 import models.PickupOrderFinItem;
 import models.TransferOrder;
@@ -895,6 +896,16 @@ public class CostCheckOrderController extends Controller {
 		String ispage = getPara("ispage");
 		
 		String user_name = currentUser.getPrincipal().toString();
+        List<Record> uo = Db.find("select * from user_office where user_name =?",user_name);
+        String is_delivery = "Y";
+        for(Record record :uo){
+        	long office_id = record.getLong("office_id");
+        	Office office = Office.dao.findById(office_id);
+        	String office_type = office.getStr("type");
+        	if(!"配送中心RDC".equals(office_type)){
+        		is_delivery = "N";
+        	}
+        }
 		
 		String sqlTotal = "";
 		String sql = " select * from (select distinct dor.id,dofi.id did,IFNULL(c2.address,IFNULL(toid.notify_party_company,'')) receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,"
@@ -976,7 +987,9 @@ public class CostCheckOrderController extends Controller {
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+				+ " and '"+is_delivery+"' = 'N'"
 				+ " group by dpr.id"
+				
 				+ " union "
 				+ " select distinct dpr.id,dofi.id did,(CASE tor.arrival_mode WHEN 'gateIn' THEN w.warehouse_name WHEN 'delivery' THEN tor.receiving_address WHEN 'deliveryToFactory' THEN tor.receiving_address "
 				+ " WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END)  receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name ,tor.planning_time ,dpr.depart_no order_no,dpr.status,"
@@ -1017,7 +1030,9 @@ public class CostCheckOrderController extends Controller {
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
                 + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
                 + "      or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
-				+ " group by dpr.id"
+                + " and '"+is_delivery+"' = 'N'"
+                + " group by dpr.id"
+                
 				+ " union "
 				+ " select distinct ior.id,ifi.id did,NULL as receivingunit, tor.route_from ,lo.name from_name ,tor.route_to ,lo2.name to_name ,tor.planning_time ,ior.order_no order_no,ior.status,"
 				+ " con.id sp_id, con.abbr spname,c_c.abbr customer_name,sum(toi.amount) amount,round(sum(ifnull(prod.volume,toi.volume)),2) volume,round(sum(ifnull(prod.weight,toi.weight)),2) weight,ior.create_stamp create_stamp,ul.user_name creator,"
@@ -1049,7 +1064,9 @@ public class CostCheckOrderController extends Controller {
 				+ " where ior.audit_status='已确认' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
                 + " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
-			    + " group by ior.id"
+			    + " and '"+is_delivery+"' = 'N'"
+                + " group by ior.id"
+			    
 				+ " union "
 				+ " SELECT DISTINCT amco.id,amcoi.id did,NULL as receivingunit,amco.route_from,l. NAME route_name,"
 				+ " amco.route_to,l1. NAME to_name,NULL AS planning_time,"
