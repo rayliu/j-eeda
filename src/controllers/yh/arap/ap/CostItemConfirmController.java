@@ -10,6 +10,7 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.InsuranceOrder;
+import models.Office;
 import models.Party;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.delivery.DeliveryOrder;
@@ -87,6 +88,16 @@ public class CostItemConfirmController extends Controller {
         String sign_no = getPara("sign_no");
        
         String user_name = currentUser.getPrincipal().toString();
+        List<Record> uo = Db.find("select * from user_office where user_name =?",user_name);
+        String is_delivery = "Y";
+        for(Record record :uo){
+        	long office_id = record.getLong("office_id");
+        	Office office = Office.dao.findById(office_id);
+        	String office_type = office.getStr("type");
+        	if(!"配送中心RDC".equals(office_type)){
+        		is_delivery = "N";
+        	}
+        }
         
         String sqlTotal = "";
         String sql = "select cast(planning_time as CHAR) planning_time1, A.* from (select distinct dor.id,"
@@ -197,8 +208,10 @@ public class CostItemConfirmController extends Controller {
 				+ " and p.party_type='SERVICE_PROVIDER' and dpr.status in('已收货','已入库')"
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
-				        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+				+ " and '"+is_delivery+"' = 'N'"
 				+ " group by dpr.id"
+				
 				+ " union "
 				+ " select distinct dpr.id,"
 				+ " dpr.depart_no order_no,"
@@ -249,8 +262,10 @@ public class CostItemConfirmController extends Controller {
 				+ " and p.party_type='SERVICE_PROVIDER' and dpr.combine_type='PICKUP' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
                 + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
-                + "      or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+                + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+				+ " and '"+is_delivery+"' = 'N'"
 				+ " group by dpr.id"
+				
 				+ " union "
 				+ " select distinct ior.id,"
 				+ " ior.order_no order_no,"
@@ -298,7 +313,9 @@ public class CostItemConfirmController extends Controller {
 				+ " where unix_timestamp(ior.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and ior.audit_status='新建' and p.party_type = 'INSURANCE_PARTY' and ifit.id is not null "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
+				+ " and '"+is_delivery+"' = 'N'"
 				+ "group by ior.id "
+				
 				+ " union "
 				+ " SELECT DISTINCT	amco.id,amco.order_no, amco.STATUS, l.name route_from,"
 				+ " l1.name route_to,'' receivingunit,c.abbr spname,NULL as amount,NULL as volume,NULL as weight,"
