@@ -3,6 +3,7 @@ package controllers.yh.arap.ap;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -420,22 +422,32 @@ System.out.println("开始："+sql + condition + orderByStr + sLimit);
     		if("提货".equals(orderNoArr[i])){
     			DepartOrder pickupOrder = DepartOrder.dao.findById(idArr[i]);
     			pickupOrder.set("audit_status", "已确认");
+    			pickupOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
+    			pickupOrder.set("confirm_stamp", new Date());
     			pickupOrder.update();
     		}else if("零担".equals(orderNoArr[i]) || "整车".equals(orderNoArr[i])){
     			DepartOrder departOrder = DepartOrder.dao.findById(idArr[i]);
     			departOrder.set("audit_status", "已确认");
+    			departOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
+    			departOrder.set("confirm_stamp", new Date());
     			departOrder.update();
     		}else if("配送".equals(orderNoArr[i])){
     			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(idArr[i]);
     			deliveryOrder.set("audit_status", "已确认");
+    			deliveryOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
+    			deliveryOrder.set("confirm_stamp", new Date());
     			deliveryOrder.update();
     		}else if("成本单".equals(orderNoArr[i])){
     			ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao.findById(idArr[i]);
     			arapmisccostOrder.set("audit_status", "已确认");
+    			arapmisccostOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
+    			arapmisccostOrder.set("confirm_stamp", new Date());
     			arapmisccostOrder.update();
     		}else{
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(idArr[i]);
     			insuranceOrder.set("audit_status", "已确认");
+    			insuranceOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
+    			insuranceOrder.set("confirm_stamp", new Date());
     			insuranceOrder.update();
     		}
     	}

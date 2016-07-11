@@ -238,20 +238,38 @@ $(document).ready(function() {
 
     $("#costConfiremBtn").click(function(e){
         e.preventDefault();
+        $("#costConfiremBtn").attr("disabled",true);
+        
     	var idArr=[];
     	var orderNoArr=[];    	
         $("input[name='order_check_box']").each(function(){
-        	if($(this).prop('checked') == true){
+        	if($(this).prop('checked') == true && $(this).prop('disabled') == false){
         		idArr.push($(this).attr('id'));
         		orderNoArr.push($(this).attr('order_no'));
+        		$(this).attr("disabled",true);
         	}
-        });     
+        });  
+        
+        if(idArr.length==0){
+        	$.scojs_message('请选择单据', $.scojs_message.TYPE_TYPE_ERROR);
+        	$("#costConfiremBtn").attr("disabled",false);
+        	return false;
+        }
+        
+        if(!confirm('是否确认'+idArr.length+'份单据')){
+        	$("#costConfiremBtn").attr("disabled",false);
+        	return false;
+        }
         console.log(idArr);
         var ids = idArr.join(",");
         var orderNos = orderNoArr.join(",");
         $.post("/costConfirmList/costConfiremReturnOrder", {ids:ids, orderNos:orderNos}, function(data){
         	if(data.success){
-        		refreshData();
+        		$("#costConfiremBtn").attr("disabled",false);
+        		//refreshData();
+        		$.scojs_message('单据确认成功', $.scojs_message.TYPE_OK);
+        	}else{
+        		alert('确认失败，请联系管理员进行优化');
         	}
         },'json');
     });

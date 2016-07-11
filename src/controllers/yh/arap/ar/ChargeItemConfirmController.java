@@ -26,6 +26,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.util.PermissionConstant;
 
 @RequiresAuthentication
@@ -362,12 +363,17 @@ public class ChargeItemConfirmController extends Controller {
 				returnOrder = ReturnOrder.dao
 						.findById(returnOrderArr[i]);
 				returnOrder.set("transaction_status", "已确认");
+				returnOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
+				returnOrder.set("confirm_stamp", new Date());
+				
 				returnOrder.update();
 			}
 			if ("收入单".equals(ordernoArr[i])) {
 				arapmiscchargeorder = ArapMiscChargeOrder.dao
 						.findById(returnOrderArr[i]);
 				arapmiscchargeorder.set("STATUS", "已确认");
+				arapmiscchargeorder.set("confirm_by", LoginUserController.getLoginUserId(this));
+				arapmiscchargeorder.set("confirm_stamp", new Date());
 				arapmiscchargeorder.update();
 			}
 		}

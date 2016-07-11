@@ -115,22 +115,41 @@ $(document).ready(function() {
     
     $("#chargeConfiremBtn").click(function(e){//确认
         e.preventDefault();
+        $("#chargeConfiremBtn").attr("disabled",true);
+        
     	var trArr=[];
     	var orderNoArr=[];
         $("input[name='order_check_box']").each(function(){
-        	if($(this).prop('checked') == true){
+        	if($(this).prop('checked') == true && $(this).prop('disabled') == false){
         		trArr.push($(this).val());
         		orderNoArr.push($(this).attr('order_type'));
+        		$(this).attr("disabled",true);
         	}
         });     
+        
+        if(trArr.length==0){
+        	$.scojs_message('请选择单据', $.scojs_message.TYPE_TYPE_ERROR);
+        	$("#chargeConfiremBtn").attr("disabled",false);
+        	return false;
+        }
+        
+        if(!confirm('是否确认'+trArr.length+'份单据')){
+        	$("#chargeConfiremBtn").attr("disabled",false);
+        	return false;
+        }
+        
         console.log(trArr);
         var returnOrderIds = trArr.join(",");
         var orderno=orderNoArr.join(",");
         $.post("/chargeConfiremList/chargeConfiremReturnOrder", {returnOrderIds:returnOrderIds,orderno:orderno}, function(data){
         	if(data.success){
-        		chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list";
+        		//chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list";
         		//chargeConfiremTable.fnDraw(); 
-        		refreshCreateList(); 
+        		//refreshCreateList(); 
+        		$("#chargeConfiremBtn").attr("disabled",false);
+        		$.scojs_message('单据确认成功', $.scojs_message.TYPE_OK);
+        	}else{
+        		alert('确认失败，请联系管理员进行优化');
         	}
         },'json');
     });
