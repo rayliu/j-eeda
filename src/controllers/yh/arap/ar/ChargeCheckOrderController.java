@@ -479,6 +479,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
 				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
+				+ " ul.c_name confirm_by, amco.confirm_stamp,"
 				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
 				+ " null address,null planning_time,"
 				+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
@@ -490,6 +491,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " FROM arap_misc_charge_order amco"
 				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
 				+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
+				+ " LEFT JOIN user_login ul ON ul.id = amco.confirm_by"
 				+ " WHERE amco. STATUS = '已确认' ";
 		sql3 = " ) order by planning_time desc ";
 		if (customer == null && beginTime == null && endTime == null
