@@ -193,12 +193,14 @@ $(document).ready(function() {
                 }
             },
         {"mDataProp":"RECEIVINGUNIT", "sWidth":"130px"},
-            {"mDataProp": null, 
-                "sWidth": "20px",                
-                "fnRender": function(obj) {
-                	return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' order_type='"+obj.aData.BUSINESS_TYPE+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
-                }
-            }            
+        {"mDataProp":"CONFIRM_BY","sWidth":"100px"},	
+        {"mDataProp":"CONFIRM_STAMP","sWidth":"100px"},
+        {"mDataProp": null, 
+            "sWidth": "20px",                
+            "fnRender": function(obj) {
+            	return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' order_type='"+obj.aData.BUSINESS_TYPE+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+            }
+        }            
         ]     
     });		
     
