@@ -241,12 +241,14 @@ $(document).ready(function() {
         $("#costConfiremBtn").attr("disabled",true);
         
     	var idArr=[];
-    	var orderNoArr=[];    	
+    	var orderNoArr=[];    
+    	var $checked = [];
         $("input[name='order_check_box']").each(function(){
         	if($(this).prop('checked') == true && $(this).prop('disabled') == false){
         		idArr.push($(this).attr('id'));
         		orderNoArr.push($(this).attr('order_no'));
-        		$(this).attr("disabled",true);
+        		$(this).prop('disabled',true);
+        		$checked.push($(this));
         	}
         });  
         
@@ -258,6 +260,9 @@ $(document).ready(function() {
         
         if(!confirm('是否确认'+idArr.length+'份单据')){
         	$("#costConfiremBtn").attr("disabled",false);
+        	for(var i = 0;i<$checked.length;i++){
+        		$checked[i].attr("disabled",false);
+        	}
         	return false;
         }
         console.log(idArr);
@@ -267,6 +272,10 @@ $(document).ready(function() {
         	if(data.success){
         		$("#costConfiremBtn").attr("disabled",false);
         		//refreshData();
+        		
+        		for(var i = 0;i<$checked.length;i++){
+            		$checked[i].parent().parent().hide();
+            	}
         		$.scojs_message('单据确认成功', $.scojs_message.TYPE_OK);
         	}else{
         		alert('确认失败，请联系管理员进行优化');
