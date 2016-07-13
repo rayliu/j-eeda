@@ -135,13 +135,13 @@ $(document).ready(function() {
         	return false;
         }
         
-        if(!confirm('是否确认'+trArr.length+'份单据')){
+/*        if(!confirm('是否确认'+trArr.length+'份单据')){
         	$("#chargeConfiremBtn").attr("disabled",false);
         	for(var i = 0;i<$checked.length;i++){
         		$checked[i].attr("disabled",false);
         	}
         	return false;
-        }
+        }*/
         
         console.log(trArr);
         var returnOrderIds = trArr.join(",");
