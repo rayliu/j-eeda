@@ -1333,7 +1333,10 @@ public class DeliveryController extends Controller {
 			}
 			
 			
-			if("warehouseNatureYes".equals(warehouseNature)){   
+			if("warehouseNatureYes".equals(warehouseNature)){  
+				//更新原来配送单单号
+				deliveryOrder.set("order_no", deliveryOrder.getStr("order_no")+"-DB");
+				
 				if(StringUtils.isNotEmpty(warehouseId)){
 					Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
 					if(warehouse!=null)
@@ -1345,7 +1348,7 @@ public class DeliveryController extends Controller {
 				if(!customerId.equals("")&& customerId!=null){
 					deliveryOrder.set("customer_id", customerId);
 				}
-				deliveryChangeOrder.set("order_no", orderNo+"-DB")//生成调拨的配送单
+				deliveryChangeOrder.set("order_no", orderNo)//生成调拨的配送单
 				.set("sp_id", spId)
 				.set("remark", remark)
 				.set("notify_party_id", party.get("id"))
@@ -1641,7 +1644,7 @@ public class DeliveryController extends Controller {
 					if(!customerId.equals("")&& customerId!=null){
 						deliveryChangeOrder.set("customer_id", customerId);
 					}
-					deliveryChangeOrder.set("order_no",deliveryOrder.get("order_no")+"-DB")//生成调拨的配送单
+					deliveryChangeOrder.set("order_no",deliveryOrder.get("order_no"))//生成调拨的配送单
 					.set("sp_id", spId)
 					.set("notify_party_id", party.get("id"))
 					.set("create_stamp", createDate)
@@ -1748,6 +1751,8 @@ public class DeliveryController extends Controller {
 					}
 					deliveryChangeOrder.update();
 				}
+				//更新原来配送单单号
+				deliveryOrder.set("order_no", deliveryOrder.getStr("order_no")+"-DB");
 				deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
 				
 				//更新单品明细表（把调拨后的ID赋给明细表的配送单ID，方便回单的生成 ）
