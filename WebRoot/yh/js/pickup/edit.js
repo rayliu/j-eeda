@@ -79,43 +79,11 @@
         	driver_name: {required: true},
         	driver_phone: {required: true}
         },
-        messages : {	             
+        messages : {	
         }
     });
-			
-	 // 列出所有的司机
-	 /*red*/
-	 /*$('#driverMessage').on('keyup click', function(){
- 		var inputStr = $('#driverMessage').val();
- 		//var inputStr = $('#carNoMessage').val();
-		//获取到inputiD，判断是否为空
-		if(inputId==null){
-			inputId="pickupMode1";
-		}
-		//定义一个TYPE变量，用来作为车辆的条件
-		var party_type ;
-		if(inputId=="pickupMode1"){
-			party_type = "DRIVER";
-		}else{
-			party_type = "SP_DRIVER";
-		}
- 		
- 		$.get('/transferOrder/searchAllDriver', {input:inputStr, partyType:party_type}, function(data){
- 			var driverList = $("#driverList");
- 			driverList.empty();
- 			for(var i = 0; i < data.length; i++)
- 			{
- 				driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].PID+"' phone='"+data[i].PHONE+"' contact_person='"+data[i].CONTACT_PERSON+"' > "+data[i].CONTACT_PERSON+" "+data[i].PHONE+"</a></li>");
- 			}
- 		},'json');
- 		
- 		$("#driverList").css({ 
-         	left:$(this).position().left+"px", 
-         	top:$(this).position().top+32+"px" 
-        }); 
-        $('#driverList').show();
-	 });*/
-	  	
+	
+
  	 // 选中司机
  	 $('#driverList').on('mousedown', '.fromLocationItem', function(e){	
  		 $("#driver_id").val($(this).attr('pid'));
@@ -703,6 +671,13 @@
 		  $("#paymentDiv").show();
 		  $("#pickupOrderPayment").show();
 		  $("#show_follow_name").hide();
+		  if(inputId=='pickupMode3'){
+			  validate = $('#pickupOrderForm').validate({
+					        rules: {
+					        	turnout_time: {required: true}
+					        }
+					    });
+		  }
 	  } 
   	});
     
