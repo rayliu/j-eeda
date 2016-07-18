@@ -674,7 +674,8 @@
 		  if(inputId=='pickupMode3'){
 			  validate = $('#pickupOrderForm').validate({
 					        rules: {
-					        	turnout_time: {required: true}
+					        	driver_name: {required: false},
+					        	driver_phone: {required: false}
 					        }
 					    });
 		  }
