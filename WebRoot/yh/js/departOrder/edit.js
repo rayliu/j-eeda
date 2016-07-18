@@ -712,6 +712,7 @@
     	    	}
     	    	
     	    	if($('#booking_note_number').val() == ''){
+    	    		$("#saveDepartOrderBtn").attr("disabled",false);
     	    		$.scojs_message('托运单号不能为空', $.scojs_message.TYPE_WARN);
     	    		return;
     	    	}
@@ -816,7 +817,8 @@
     	        var item_detail=$("#item_detail").val();
     	 	    var departOrderId = $("#departOrderId").val();
     	 	    if($('#booking_note_number').val() == ''){
-   	    		$.scojs_message('托运单号不能为空', $.scojs_message.TYPE_WARN);
+    	 	    	$("#saveDepartOrderBtn").attr("disabled",false);
+    	 	    	$.scojs_message('托运单号不能为空', $.scojs_message.TYPE_WARN);
    	    			return;
    	    	    } 
     			if("chargeCheckOrderbasic" == parentId){
