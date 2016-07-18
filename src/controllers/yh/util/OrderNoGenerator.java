@@ -17,21 +17,21 @@ public class OrderNoGenerator {
 	
 	
 	private static volatile String count = "00000";
+	private static String dateValue = "20110101";
 	//如果服务器重启了，当前的序列号就从数据库找到最后的号码，然后接着计数
 	//TODO：如果需要按每张单的前缀来生成序列号，可以多加一个Map来记录
 	
 	public synchronized static String getNextOrderNo(String orderPrefix) {
-		//if("00000".equals(count)){
+		if("00000".equals(count)){
 			initCountFromDB();
-		//}
-//		long No = 0;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String nowdate = sdf.format(new Date());
-//		No = Long.parseLong(nowdate);
-//		if (!(String.valueOf(No)).equals(dateValue)) {
-//			count = "00000";
-//			dateValue = String.valueOf(No);
-//		}
+	    //日期不同, 则从新计数
+        if(!nowdate.equals(dateValue)){
+            dateValue=nowdate;
+            count = "00000";
+        }
 		
 		String orderNo = orderPrefix +nowdate+ getNo(count);
 		
@@ -52,16 +52,11 @@ public class OrderNoGenerator {
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			String nowdate = sdf.format(new Date());
+			dateValue = nowdate;
 			if(ymd.equals(nowdate)){//如果年月日 =今天， 获取流水号
 				count = StringUtils.right(previousNo, 5); // 获取流水号
 			}
-		}else{
-			cf = new CustomizeField();
-			cf.set("order_type", "latestOrderNo");
-			cf.set("field_code", "2011010100001");
-			cf.save();
 		}
-        
 	}
 
 	/**
