@@ -72,16 +72,11 @@
 	 var pickupOrderId = $("#pickupOrderId").val();
 	 var parentId = "chargeCheckOrderbasic";
     //from表单验证
-	var validate = $('#pickupOrderForm').validate({
+	 $('#pickupOrderForm').validate({
         rules: {
-        	turnout_time: {required: true},
-        	//car_no: {required: true},
-        	driver_name: {required: true},
-        	driver_phone: {required: true}
-        },
-        messages : {	
+        	turnout_time: {required: true}
         }
-    });
+     });
 	
 
  	 // 选中司机
@@ -672,12 +667,8 @@
 		  $("#pickupOrderPayment").show();
 		  $("#show_follow_name").hide();
 		  if(inputId=='pickupMode3'){
-			  validate = $('#pickupOrderForm').validate({
-					        rules: {
-					        	driver_name: {required: false},
-					        	driver_phone: {required: false}
-					        }
-					    });
+		      $('[name=driver_name]').attr('required',false); 	  
+		      $('[name=driver_phone]').attr('required',false); 	  
 		  }
 	  } 
   	});

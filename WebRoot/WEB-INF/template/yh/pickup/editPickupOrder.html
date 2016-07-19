@@ -103,7 +103,7 @@
                                         <div class="form-group">
 											<label>司机<span style="color:red"> *</span></label>
 											<input type="hidden" id="carInfoDriverMessage" value="${carinfo.driver!''}">
-									        <input type="text" name="driver_name" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
+									        <input type="text" name="driver_name" required class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
 									        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
 											</ul> 
 										</div>  
@@ -115,7 +115,7 @@
 										</div>            
                                         <div class="form-group">
                                         	<label>电话<span style="color:red"> *</span></label>
-                                        	<input id="carInfoDriverPhone" value="${carinfo.phone!''}" type="hidden">
+                                        	<input id="carInfoDriverPhone" required value="${carinfo.phone!''}" type="hidden">
                                         	<input type="text" class="form-control" id="driver_phone" value="${driverContact.phone!''}"  name="driver_phone">
                                         </div>
                                  		<div class="form-group">
