@@ -449,10 +449,6 @@ public class ChargeCheckOrderController extends Controller {
 				+ " ,(select rofi.amount from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收' and fi.name = '超里程费') super_mileage_amount"
 				+ " ,(select round(sum(rofi.amount),2) from return_order_fin_item rofi left join fin_item fi on rofi.fin_item_id = fi.id where fi.name = '保险费' and rofi.return_order_id = ror.id) insurance_amount,"
 				+ " ifnull((select sum(rofi.amount) from return_order_fin_item rofi left join fin_item fi on fi.id = rofi.fin_item_id where rofi.return_order_id = ror.id and fi.type = '应收'),0) as charge_total_amount ,"
-				/*
-				 * +
-				 * " ifnull((select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor.id order by dtr.turnout_time asc limit 0,1), (select dtr.departure_time from depart_transfer dt left join depart_order dtr on dtr.id = dt.depart_id where ifnull(dt.depart_id, 0) > 0 and dt.order_id = tor2.id order by dtr.turnout_time asc limit 0,1)) departure_time"
-				 */
 				+ " null sp,"
 				+ " ( CASE "
 				+ " WHEN ror.delivery_order_id IS NOT NULL THEN "
@@ -489,8 +485,10 @@ public class ChargeCheckOrderController extends Controller {
 				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,amco.total_amount charge_total_amount , "
 				+ " c1.abbr sp,null serial_no "
 				+ " FROM arap_misc_charge_order amco"
-				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
-				+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
+				+"    LEFT JOIN party p ON p.id = amco.customer_id"
+				+"    LEFT JOIN contact c ON c.id = p.contact_id"
+				+"    LEFT JOIN party p1 ON p1.id = amco.sp_id"
+				+"    LEFT JOIN contact c1 ON c1.id = p1.contact_id"
 				+ " LEFT JOIN user_login ul ON ul.id = amco.confirm_by"
 				+ " WHERE amco. STATUS = '已确认' ";
 		sql3 = " ) order by planning_time desc ";
