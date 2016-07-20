@@ -85,19 +85,18 @@ $(document).ready(function() {
 		                        "</a> ";
                 	}
                 	if(isDel){
-                		if(obj.aData.C_IS_STOP != true){
-		                    str += "<a class='btn btn-danger  btn-sm' href='"+urlSource3+""+obj.aData.CID+"'>"+
-		                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
-		                         "停用"+
-		                         "</a>";
-                		
-	               	}else{
-	               		str +="<a class='btn btn-success' href='"+urlSource3+""+obj.aData.CID+"'>"+
-			                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
-			                         "启用"+
-			                     "</a>";
-	               	}
-            	}
+                		if(obj.aData.C_IS_STOP == 1){
+                			str +="<a class='btn btn-success' href='"+urlSource3+""+obj.aData.CID+"'>"+
+	                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                         "启用"+
+	                         "</a>";
+		               	}else{
+		               		str += "<a class='btn btn-danger  btn-sm' href='"+urlSource3+""+obj.aData.CID+"'>"+
+	                         "<i class='fa fa-trash-o fa-fw'></i>"+ 
+	                         "停用"+
+	                         "</a>";
+		               	}
+                	}
                 	return str +="</nobr>";     
                 }
             }                         

@@ -263,7 +263,7 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentId + ")"
+                    .find("select *,c.id as cid,c.is_stop as c_is_stop from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='DELIVERY_SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentId + ")"
                             + "and c.name like '%"
                             + contractName_filter
                             + "%' and ifnull(c1.contact_person,'') like '%"
