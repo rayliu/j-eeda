@@ -556,7 +556,7 @@ public class ContractController extends Controller {
 		List<Record> locationList = Collections.EMPTY_LIST;
 		if (input.trim().length() > 0) {
 			locationList = Db
-					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
+					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where  ifnull(p.is_stop,0) != 1 and p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and (c.company_name like '%"
 							+ input
@@ -581,7 +581,7 @@ public class ContractController extends Controller {
 					.find("select p.id, c.abbr,c.postal_code,c.contact_person,c.email,c.phone,c.address,c.company_name, p.id AS pid from party p "
 							+ " LEFT JOIN contact c on p.contact_id = c.id "
 							+ " LEFT JOIN office o on o.id = p.office_id"
-							+ " where p.contact_id = c.id and p.party_type = '"
+							+ " where ifnull(p.is_stop,0) != 1 and p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
 							parentID, parentID);
