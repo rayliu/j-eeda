@@ -1,11 +1,15 @@
 $(document).ready(function() {
 	document.title = '应收明细确认 | '+document.title;
     $('#menu_charge').addClass('active').find('ul').addClass('in');
+    
     $("input[name='allCheck']").click(function(){
     	$("input[name='order_check_box']").each(function () {  
             this.checked = !this.checked;  
          });  
 
+    });
+    $('#resetBtn').click(function(e){
+        $("#top_form")[0].reset();
     });
 	  //datatable, 动态处理
     var chargeConfiremTable = $('#chargeConfirem-table').dataTable({
