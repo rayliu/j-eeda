@@ -24,7 +24,7 @@ public class DbUtils {
 
         for (Entry<String, String[]> entry : paraMap.entrySet()) {
             String key = entry.getKey();
-            String filterValue = entry.getValue()[0];
+            String filterValue = entry.getValue()[0].trim();
             
             if(StringUtils.isNotEmpty(filterValue) && !"undefined".equals(filterValue)){
             	logger.debug(key + ":" + filterValue);

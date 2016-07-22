@@ -42,7 +42,7 @@ public class AccountAuditLogController extends Controller {
     	String beginTime = getPara("beginTime");
     	String endTime = getPara("beginTime");
     	String sourceOrder = getPara("source_order");
-    	String orderNo = getPara("orderNo");
+    	String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
     	String begin = getPara("begin");
     	String end = getPara("end");
     	String bankName = getPara("bankName");

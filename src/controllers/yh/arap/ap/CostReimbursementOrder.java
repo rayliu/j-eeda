@@ -121,9 +121,9 @@ public class CostReimbursementOrder extends Controller {
 	}
 	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_LIST})
 	public void reimbursementList(){
-		String orderNo = getPara("orderNo");
-		String status = getPara("status");
-		String accountName = getPara("accountName");
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+		String status = getPara("status")==null?"":getPara("status").trim();
+		String accountName = getPara("accountName")==null?"":getPara("accountName").trim();
 		String sortColIndex = getPara("iSortCol_0");
 	    String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_"+sortColIndex);

@@ -81,24 +81,24 @@ public class DeliveryController extends Controller {
 	// 配送单list
 	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
 	public void deliveryList() {
-		String orderNo_filter = getPara("orderNo_filter");
-		String transfer_filter = getPara("transfer_filter");
-		String status_filter = getPara("status_filter");
-		String customer_filter = getPara("customer_filter");
-		String sp_filter = getPara("sp_filter");
-		String beginTime_filter = getPara("beginTime_filter");
-		String endTime_filter = getPara("endTime_filter");
-		String plan_beginTime_filter = getPara("plan_beginTime_filter");
-		String plan_endTime_filter = getPara("plan_endTime_filter");
-		String office_filter = getPara("office_filter");
-		String serial_no = getPara("serial_no");
-		String delivery_no = getPara("delivery_no");
-		String address_filter = getPara("address_filter");
-		String warehouse_filter = getPara("warehouse_filter");
-		String business_stamp_begin_time = getPara("business_stamp_begin_time");
-		String business_stamp_end_time = getPara("business_stamp_end_time");
-		String depart_stamp_begin_time = getPara("depart_stamp_begin_time");
-		String depart_stamp_end_time = getPara("depart_stamp_end_time");
+		String orderNo_filter = getPara("orderNo_filter").trim();
+		String transfer_filter = getPara("transfer_filter").trim();
+		String status_filter = getPara("status_filter").trim();
+		String customer_filter = getPara("customer_filter").trim();
+		String sp_filter = getPara("sp_filter").trim();
+		String beginTime_filter = getPara("beginTime_filter").trim();
+		String endTime_filter = getPara("endTime_filter").trim();
+		String plan_beginTime_filter = getPara("plan_beginTime_filter").trim();
+		String plan_endTime_filter = getPara("plan_endTime_filter").trim();
+		String office_filter = getPara("office_filter").trim();
+		String serial_no = getPara("serial_no").trim();
+		String delivery_no = getPara("delivery_no").trim();
+		String address_filter = getPara("address_filter").trim();
+		String warehouse_filter = getPara("warehouse_filter").trim();
+		String business_stamp_begin_time = getPara("business_stamp_begin_time").trim();
+		String business_stamp_end_time = getPara("business_stamp_end_time").trim();
+		String depart_stamp_begin_time = getPara("depart_stamp_begin_time").trim();
+		String depart_stamp_end_time = getPara("depart_stamp_end_time").trim();
 	
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -284,19 +284,19 @@ public class DeliveryController extends Controller {
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
 	public void deliveryMilestone() {
-		String transferorderNo = getPara("transferorderNo");
-		String deliveryNo = getPara("deliveryNo");
-		String customer = getPara("customer");
-		String sp = getPara("sp");
-		String route_to = getPara("route_to");
-		String route_from = getPara("route_from");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String arrive_stamp_begin_time = getPara("arrive_stamp_begin_time");
-		String arrive_stamp_end_time = getPara("arrive_stamp_end_time");
-		String status = getPara("status")==null?"": getPara("status");
-		String deliveryOffice = getPara("deliveryOffice");
-		String serial_no = getPara("serial_no")==null?"":getPara("serial_no");
+		String transferorderNo = getPara("transferorderNo")==null?"":getPara("transferorderNo").trim();
+		String deliveryNo = getPara("deliveryNo")==null?"":getPara("deliveryNo").trim();
+		String customer = getPara("customer")==null?"":getPara("customer").trim();
+		String sp = getPara("sp")==null?"":getPara("sp").trim();
+		String route_to = getPara("route_to")==null?"":getPara("route_to").trim();
+		String route_from = getPara("route_from")==null?"":getPara("route_from").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+		String arrive_stamp_begin_time = getPara("arrive_stamp_begin_time")==null?"":getPara("arrive_stamp_begin_time").trim();
+		String arrive_stamp_end_time = getPara("arrive_stamp_end_time")==null?"":getPara("arrive_stamp_end_time").trim();
+		String status = getPara("status")==null?"": getPara("status").trim();
+		String deliveryOffice = getPara("transferorderNo")==null?"":getPara("deliveryOffice").trim();
+		String serial_no = getPara("serial_no")==null?"":getPara("serial_no").trim();
 		if(status.equals("onTrip")){
 			status = " and ifnull(d.status,'') in ('配送在途','已发车')";
 		}else if(status.equals("finish")){
@@ -339,35 +339,35 @@ public class DeliveryController extends Controller {
 		}
 		
 		if (StringUtils.isNotEmpty(deliveryNo)){
-			conditions += " and ifnull(d.order_no,'') like '%"+ deliveryNo.trim()+ "%' ";
+			conditions += " and ifnull(d.order_no,'') like '%"+ deliveryNo+ "%' ";
 		}
 		
 		if (StringUtils.isNotEmpty(customer)){
-			conditions += " and ifnull(c.abbr,'') like '%"+ customer.trim()+ "%' ";
+			conditions += " and ifnull(c.abbr,'') like '%"+ customer+ "%' ";
 		}
 		
 		if (StringUtils.isNotEmpty(transferorderNo)){
-			conditions += " and ifnull(dt2.transfer_no,'') like '%"+ transferorderNo.trim()+ "%' ";
+			conditions += " and ifnull(dt2.transfer_no,'') like '%"+ transferorderNo+ "%' ";
 		}
 		
 		if (StringUtils.isNotEmpty(sp)){
-			conditions += " and ifnull(c2.abbr,'') like '%"+ sp.trim()+ "%' ";
+			conditions += " and ifnull(c2.abbr,'') like '%"+ sp+ "%' ";
 		}
 		
 		if (StringUtils.isNotEmpty(serial_no)){
-			conditions += " and ifnull(trid.serial_no,'') like '%"+ serial_no.trim()+ "%' ";
+			conditions += " and ifnull(trid.serial_no,'') like '%"+ serial_no+ "%' ";
 		}
 		
 		if (StringUtils.isNotEmpty(deliveryOffice)){
-			conditions += " and ifnull(o.office_name,'') like '%"+ deliveryOffice.trim()+ "%' ";
+			conditions += " and ifnull(o.office_name,'') like '%"+ deliveryOffice+ "%' ";
 		}
 		
 		if (StringUtils.isNotEmpty(route_to)){
-			conditions += " and ifnull((select name from location where code = d.route_to),'') like '%"+ route_to.trim()+ "%' ";
+			conditions += " and ifnull((select name from location where code = d.route_to),'') like '%"+ route_to+ "%' ";
 		}
 		
 		if (StringUtils.isNotEmpty(route_from)){
-			conditions += " and ifnull((select name from location where code = d.route_from ),'') like '%"+ route_from.trim()+ "%' ";
+			conditions += " and ifnull((select name from location where code = d.route_from ),'') like '%"+ route_from+ "%' ";
 		}
 		
 		String sqlTotal ="select count(1) total from (select d.id "

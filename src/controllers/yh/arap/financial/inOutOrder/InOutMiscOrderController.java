@@ -56,10 +56,10 @@ public class InOutMiscOrderController extends Controller {
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_IMO_LIST })
 	public void list() {
-		String order_no = getPara("order_no");
-		String biz_type = getPara("biz_type");
-		String charge_unit = getPara("charge_unit");
-		String pay_unit = getPara("pay_unit");
+		String order_no = getPara("order_no")==null?"":getPara("order_no").trim();
+		String biz_type = getPara("biz_type")==null?"":getPara("biz_type").trim();
+		String charge_unit = getPara("charge_unit")==null?"":getPara("charge_unit").trim();
+		String pay_unit = getPara("pay_unit")==null?"":getPara("pay_unit").trim();
 		
 		String beginTime = getPara("beginTime");
 		String endTime = getPara("endTime");

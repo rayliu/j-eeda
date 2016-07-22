@@ -43,19 +43,19 @@ public class ReturnTransferController extends Controller{
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_TO_LIST})
 	public void list() {		
 		Map transferOrderListMap = null;
-		String orderNo = getPara("orderNo");
-		String status = getPara("status");
-		String address = getPara("address");
-		String customer = getPara("customer");
-		String sp = getPara("sp");
-		String officeName = getPara("officeName");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String order_type=getPara("order_type");
+		String orderNo = getPara("orderNo").trim();
+		String status = getPara("status").trim();
+		String address = getPara("address").trim();
+		String customer = getPara("customer").trim();
+		String sp = getPara("sp").trim();
+		String officeName = getPara("officeName").trim();
+		String beginTime = getPara("beginTime").trim();
+		String endTime = getPara("endTime").trim();
+		String order_type=getPara("order_type").trim();
 	
-		String plantime=getPara("plantime");
-		String arrivarltime=getPara("arrivarltime");
-		String customer_order_no=getPara("customer_order_no");
+		String plantime=getPara("plantime").trim();
+		String arrivarltime=getPara("arrivarltime").trim();
+		String customer_order_no=getPara("customer_order_no").trim();
 		
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -116,13 +116,13 @@ public class ReturnTransferController extends Controller{
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " where t.status !='取消' and t.order_type = 'cargoReturnOrder' "
-					+ " and t.order_no like '%"+ orderNo.trim() 
-					+ "%' and t.status like '%" + status.trim()
-					+ "%' and t.address like '%" + address.trim()
-					+ "%' and c1.abbr like '%" + customer.trim()
-					+ "%' and ifnull(c2.abbr,'') like '%" + sp.trim()
-					+ "%' and ifnull(o.office_name,'')  like '%" + officeName.trim()
-					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no.trim()
+					+ " and t.order_no like '%"+ orderNo
+					+ "%' and t.status like '%" + status
+					+ "%' and t.address like '%" + address
+					+ "%' and c1.abbr like '%" + customer
+					+ "%' and ifnull(c2.abbr,'') like '%" + sp
+					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
+					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
 					+ "%' and t.create_stamp between '" + beginTime + "' and '" + endTime + "'  "
@@ -147,13 +147,13 @@ public class ReturnTransferController extends Controller{
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
 					+ " where t.status !='取消' and t.order_type = 'cargoReturnOrder'"
-					+ " and t.order_no like '%" + orderNo.trim()
-					+ "%' and t.status like '%" + status.trim()
-					+ "%' and t.address like '%" + address.trim()
-					+ "%' and c1.abbr like '%" + customer.trim()
-					+ "%' and ifnull(c2.abbr,'') like '%" + sp.trim()
-					+ "%' and ifnull(o.office_name,'')  like '%" + officeName.trim()
-					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no.trim()
+					+ " and t.order_no like '%" + orderNo
+					+ "%' and t.status like '%" + status
+					+ "%' and t.address like '%" + address
+					+ "%' and c1.abbr like '%" + customer
+					+ "%' and ifnull(c2.abbr,'') like '%" + sp
+					+ "%' and ifnull(o.office_name,'')  like '%" + officeName
+					+ "%' and ifnull(t.customer_order_no,'') like '%" + customer_order_no
 					+ "%' and ifnull(t.planning_time,'') like '%" + plantime
 					+ "%' and ifnull(t.arrival_time,'') like '%" + arrivarltime
 					+ "%' and t.create_stamp between '" + beginTime

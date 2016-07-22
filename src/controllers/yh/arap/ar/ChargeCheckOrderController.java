@@ -379,19 +379,19 @@ public class ChargeCheckOrderController extends Controller {
 		}
 
 		// 获取数据
-		String customer = getPara("customer");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String planningBeginTime = getPara("planningBeginTime");
-		String planningEndTime = getPara("planningEndTime");
-		String orderNo = getPara("orderNo");
-		String customerNo = getPara("customerNo");
-		String serialNo = getPara("serialNo2");
-		String address = getPara("address");
-		String ref_no = getPara("ref_no");
-		String customer_no = getPara("customer_no");// 添加单据的客户名称
-		String ispage = getPara("ispage");
-		String status = getPara("status");
+		String customer = getPara("customer")==null?"":getPara("customer").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+		String planningBeginTime = getPara("planningBeginTime")==null?"":getPara("planningBeginTime").trim();
+		String planningEndTime = getPara("planningEndTime")==null?"":getPara("planningEndTime").trim();
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+		String customerNo = getPara("customerNo")==null?"":getPara("customerNo").trim();
+		String serialNo = getPara("serialNo2")==null?"":getPara("serialNo2").trim();
+		String address = getPara("address")==null?"":getPara("address").trim();
+		String ref_no = getPara("ref_no")==null?"":getPara("ref_no").trim();
+		String customer_no = getPara("customer_no")==null?"":getPara("customer_no").trim();// 添加单据的客户名称
+		String ispage = getPara("ispage")==null?"":getPara("ispage").trim();
+		String status = getPara("status")==null?"":getPara("status").trim();
 
 		String colsLength = getPara("iColumns");
 		String fieldsWhere = "AND (";
@@ -964,18 +964,18 @@ public class ChargeCheckOrderController extends Controller {
 	public void list() {
 		
 
-		String orderNo = getPara("orderNo");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String status = getPara("status");
-		String customer = getPara("customer");
-		String sp = getPara("sp");
-		String tihuo = getPara("tihuo");
-		String office = getPara("office");
-		String transferOrderNo = getPara("transferOrderNo");
-		String refNo = getPara("refNo");
-		String serialNo = getPara("serialNo");
-		String customerNo2 = getPara("customerNo2");
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+		String status = getPara("status")==null?"":getPara("status").trim();
+		String customer = getPara("customer")==null?"":getPara("customer").trim();
+		String sp = getPara("sp")==null?"":getPara("sp").trim();
+		String tihuo = getPara("tihuo")==null?"":getPara("tihuo").trim();
+		String office = getPara("office")==null?"":getPara("office").trim();
+		String transferOrderNo = getPara("transferOrderNo")==null?"":getPara("transferOrderNo").trim();
+		String refNo = getPara("refNo")==null?"":getPara("refNo").trim();
+		String serialNo = getPara("serialNo")==null?"":getPara("serialNo").trim();
+		String customerNo2 = getPara("customerNo2")==null?"":getPara("customerNo2").trim();
 		String sqlTotal = "";
 		
 		

@@ -69,13 +69,13 @@ public class CostMiscOrderController extends Controller {
     }
 
     public void list() {
-    	String sp = getPara("sp");
-        String customer = getPara("companyName");
-        String spName = getPara("spName");
-        String beginTime = getPara("beginTime");
-        String endTime = getPara("endTime");
-        String orderNo = getPara("orderNo");
-        String status = getPara("status");
+    	String sp = getPara("sp")==null?"":getPara("sp").trim();
+        String customer = getPara("companyName")==null?"":getPara("companyName").trim();
+        String spName = getPara("spName")==null?"":getPara("spName").trim();
+        String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+        String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+        String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+        String status = getPara("status")==null?"":getPara("status").trim();
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {

@@ -108,12 +108,12 @@ public class ContractController extends Controller {
     // 客户合同列表
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_LIST})
     public void customerList() {
-        String contractName_filter = getPara("contractName_filter");
-        String contactPerson_filter = getPara("contactPerson_filter");
-        String periodFrom_filter = getPara("periodFrom_filter");
-        String companyName_filter = getPara("companyName_filter");
-        String phone_filter = getPara("phone_filter");
-        String periodTo_filter = getPara("periodTo_filter");
+        String contractName_filter = getPara("contractName_filter")==null?"":getPara("contractName_filter").trim();
+        String contactPerson_filter = getPara("contactPerson_filter")==null?"":getPara("contactPerson_filter").trim();
+        String periodFrom_filter = getPara("periodFrom_filter")==null?"":getPara("periodFrom_filter").trim();
+        String companyName_filter = getPara("companyName_filter")==null?"":getPara("companyName_filter").trim();
+        String phone_filter = getPara("phone_filter")==null?"":getPara("phone_filter").trim();
+        String periodTo_filter = getPara("periodTo_filter")==null?"":getPara("periodTo_filter").trim();
       
         //查询当前用户的父类公司的id
         ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
@@ -202,11 +202,11 @@ public class ContractController extends Controller {
     // 配送供应商合同列表
     public void deliveryspList() {
     	
-        String contractName_filter = getPara("contractName_filter");
-        String contactPerson_filter = getPara("contactPerson_filter");
+        String contractName_filter = getPara("contractName_filter")==null?"":getPara("contractName_filter").trim();
+        String contactPerson_filter = getPara("contactPerson_filter")==null?"":getPara("contactPerson_filter").trim();
         String periodFrom_filter = getPara("periodFrom_filter");
         String companyName_filter = getPara("companyName_filter");
-        String phone_filter = getPara("phone_filter");
+        String phone_filter = getPara("phone_filter")==null?"":getPara("phone_filter").trim();
         String periodTo_filter = getPara("periodTo_filter");
         //查询当前用户所属网点
         
@@ -287,11 +287,11 @@ public class ContractController extends Controller {
     // 干线供应商合同列表
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CP_LIST})
     public void spList() {
-        String contractName_filter = getPara("contractName_filter");
-        String contactPerson_filter = getPara("contactPerson_filter");
+        String contractName_filter = getPara("contractName_filter")==null?"":getPara("contractName_filter").trim();
+        String contactPerson_filter = getPara("contactPerson_filter")==null?"":getPara("contactPerson_filter").trim();
         String periodFrom_filter = getPara("periodFrom_filter");
         String companyName_filter = getPara("companyName_filter");
-        String phone_filter = getPara("phone_filter");
+        String phone_filter = getPara("phone_filter")==null?"":getPara("phone_filter").trim();
         String periodTo_filter = getPara("periodTo_filter");
 
      

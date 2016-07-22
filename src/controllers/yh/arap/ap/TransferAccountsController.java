@@ -58,7 +58,7 @@ public class TransferAccountsController extends Controller {
 	}
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_TA_LIST })
 	public void list(){
-		String orderNo =getPara("orderNo");
+		String orderNo =getPara("orderNo")==null?"":getPara("orderNo").trim();
 		String transfer_method =getPara("transfer_method");
 		String sLimit = "";
         String pageIndex = getPara("sEcho");

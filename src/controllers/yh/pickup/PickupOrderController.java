@@ -145,20 +145,20 @@ public class PickupOrderController extends Controller {
     // 拼车单列表
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void pickuplist() {
-        String orderNo = getPara("orderNo");
-        String departNo = getPara("departNo");
-        String beginTime = getPara("beginTime");
-        String endTime = getPara("endTime");
-        String planningBeginTime = getPara("planningBeginTime");
-        String planningEndTime = getPara("planningEndTime");
-        String take = getPara("take");
-        String status = getPara("status");
-        String office = getPara("office");
-        String customerId = getPara("customer_filter");
-        String sp_filter = getPara("sp_filter");
-        String sortColIndex = getPara("iSortCol_0");
-		String sortBy = getPara("sSortDir_0");
-		String colName = getPara("mDataProp_"+sortColIndex);
+        String orderNo = getPara("orderNo").trim();
+        String departNo = getPara("departNo").trim();
+        String beginTime = getPara("beginTime").trim();
+        String endTime = getPara("endTime").trim();
+        String planningBeginTime = getPara("planningBeginTime").trim();
+        String planningEndTime = getPara("planningEndTime").trim();
+        String take = getPara("take").trim();
+        String status = getPara("status").trim();
+        String office = getPara("office").trim();
+        String customerId = getPara("customer_filter").trim();
+        String sp_filter = getPara("sp_filter").trim();
+        String sortColIndex = getPara("iSortCol_0").trim();
+		String sortBy = getPara("sSortDir_0").trim();
+		String colName = getPara("mDataProp_"+sortColIndex).trim();
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -241,15 +241,15 @@ public class PickupOrderController extends Controller {
                     + " LEFT JOIN party p2 on p2.id = dor.sp_id "
                     + " LEFT JOIN contact c2 on c2.id = p2.id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
-            		+ " and ifnull(depart_no,'') like '%"+ departNo.trim() + "%' "
-            		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter.trim() + "%' "
-            		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo.trim() + "%' "
+            		+ " and ifnull(depart_no,'') like '%"+ departNo + "%' "
+            		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter + "%' "
+            		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
     				+ " and ifnull(t_o.planning_time,'') between '" + planningBeginTime + "' and '" + planningEndTime+ "' "
 					+ " and ifnull(dor.status,'') like '%"+status+ "%' "
-					+ " and ifnull(o.office_name,'') like '%"+office.trim()+ "%' "
+					+ " and ifnull(o.office_name,'') like '%"+office+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "
-					+ " and c1.abbr like '%" + customerId.trim() + "%'"
+					+ " and c1.abbr like '%" + customerId + "%'"
                     + " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 
@@ -278,15 +278,15 @@ public class PickupOrderController extends Controller {
                     + " LEFT JOIN party p2 on p2.id = dor.sp_id "
                     + " LEFT JOIN contact c2 on c2.id = p2.id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
-            		+ " and ifnull(depart_no,'') like '%"+ departNo.trim() + "%' "
-            		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter.trim() + "%' "
-            		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo.trim() + "%' "
+            		+ " and ifnull(depart_no,'') like '%"+ departNo + "%' "
+            		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter + "%' "
+            		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
     				+ " and ifnull(t_o.planning_time,'') between '" + planningBeginTime + "' and '" + planningEndTime+ "' "
 					+ " and ifnull(dor.status,'') like '%"+status+ "%' "
-					+ " and ifnull(o.office_name,'') like '%"+office.trim()+ "%' "
+					+ " and ifnull(o.office_name,'') like '%"+office+ "%' "
 					+ " and ifnull(dor.pickup_mode,'') like '%"+take+ "%' "
-					+ " and c1.abbr like '%" + customerId.trim() + "%'"
+					+ " and c1.abbr like '%" + customerId + "%'"
 					+ " and dor.status!='手动删除' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
             		+ " and t_o.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
             		+ " group by dor.id ";

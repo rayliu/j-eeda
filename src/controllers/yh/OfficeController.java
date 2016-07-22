@@ -192,10 +192,10 @@ public class OfficeController extends Controller {
         /*
          * Paging
          */
-    	String address=getPara("address");
-    	String person=getPara("person");
-    	String name=getPara("name");
-    	String type=getPara("type");
+    	String address=getPara("address")==null?"":getPara("address").trim();
+    	String person=getPara("person")==null?"":getPara("person").trim();
+    	String name=getPara("name")==null?"":getPara("name").trim();
+    	String type=getPara("type")==null?"":getPara("type").trim();
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null

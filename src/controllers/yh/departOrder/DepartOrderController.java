@@ -113,21 +113,21 @@ public class DepartOrderController extends Controller {
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
 	public void list() {
-		String orderNo = getPara("orderNo");
-		String departNo = getPara("departNo");
-		String status = getPara("status");
-		String sp = getPara("sp");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String planBeginTime = getPara("planBeginTime");
-		String planEndTime = getPara("planEndTime");
-		String office = getPara("office");
-		String start = getPara("start");
-		String destination = getPara("destination");
-		String customer = getPara("customer");
-		String booking_note_number = getPara("booking_note_number");
-		String costchebox = getPara("costchebox");
-		String transfer_type = getPara("transfer_type");
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+		String departNo = getPara("departNo")==null?"":getPara("departNo").trim();
+		String status = getPara("status")==null?"":getPara("status").trim();
+		String sp = getPara("sp")==null?"":getPara("sp").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+		String planBeginTime = getPara("planBeginTime")==null?"":getPara("planBeginTime").trim();
+		String planEndTime = getPara("planEndTime")==null?"":getPara("planEndTime").trim();
+		String office = getPara("office")==null?"":getPara("office").trim();
+		String start = getPara("start")==null?"":getPara("start").trim();
+		String destination = getPara("destination")==null?"":getPara("destination").trim();
+		String customer = getPara("customer")==null?"":getPara("customer").trim();
+		String booking_note_number = getPara("booking_note_number")==null?"":getPara("booking_note_number").trim();
+		String costchebox = getPara("costchebox")==null?"":getPara("costchebox").trim();
+		String transfer_type = getPara("transfer_type")==null?"":getPara("transfer_type").trim();
 
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -298,23 +298,23 @@ public class DepartOrderController extends Controller {
 	// 发车单在途列表
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
 	public void onTripList() {
-		String orderNo = getPara("orderNo");
-		String departNo = getPara("departNo");
-		String status = getPara("status");
-		String sp = getPara("sp");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+		String departNo = getPara("departNo")==null?"":getPara("departNo").trim();
+		String status = getPara("status")==null?"":getPara("status").trim();
+		String sp = getPara("sp")==null?"":getPara("sp").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
 		String sLimit = "";
-		String pageIndex = getPara("sEcho");
+		String pageIndex = getPara("sEcho")==null?"":getPara("sEcho");
 		String sql = "";
 		String sqlTotal = "";
 
-		String office = getPara("office");
-		String start = getPara("start");
-		String end = getPara("end");
-		String customer = getPara("customer");
-		String planBeginTime = getPara("planBeginTime");
-		String planEndTime = getPara("planEndTime");
+		String office = getPara("office")==null?"":getPara("office").trim();
+		String start = getPara("start")==null?"":getPara("start").trim();
+		String end = getPara("end")==null?"":getPara("end").trim();
+		String customer = getPara("customer")==null?"":getPara("customer").trim();
+		String planBeginTime = getPara("planBeginTime")==null?"":getPara("planBeginTime").trim();
+		String planEndTime = getPara("planEndTime")==null?"":getPara("planEndTime").trim();
 
 		if (getPara("iDisplayStart") != null
 				&& getPara("iDisplayLength") != null) {

@@ -49,11 +49,11 @@ public class ChargeAcceptOrderController extends Controller {
     // billing order 列表
     public void list() {
         String sLimit = "";
-        String status = getPara("status")==null?"":getPara("status");
-        String orderNo_filter = getPara("orderNo_filter")==null?"":getPara("orderNo_filter");
-        String customer_filter = getPara("customer_filter")==null?"":getPara("customer_filter");
-        String beginTime = getPara("beginTime_filter")==null?"":getPara("beginTime_filter");
-        String endTime = getPara("endTime_filter")==null?"":getPara("endTime_filter");
+        String status = getPara("status")==null?"":getPara("status").trim();
+        String orderNo_filter = getPara("orderNo_filter")==null?"":getPara("orderNo_filter").trim();
+        String customer_filter = getPara("customer_filter")==null?"":getPara("customer_filter").trim();
+        String beginTime = getPara("beginTime_filter")==null?"":getPara("beginTime_filter").trim();
+        String endTime = getPara("endTime_filter")==null?"":getPara("endTime_filter").trim();
         String status2 = "";
         String status3 = "";
         String status4 = "";       
@@ -236,12 +236,12 @@ public class ChargeAcceptOrderController extends Controller {
     public void applicationList() {
         String sLimit = "";
         String pageIndex = getPara("sEcho");
-        String cname = getPara("cname")!=null?getPara("cname"):"";
-        String beginTime = getPara("beginTime")!=null?getPara("beginTime"):"";
-        String endTime = getPara("endTime")!=null?getPara("endTime"):"";
-        String orderNo = getPara("orderNo")!=null?getPara("orderNo"):"";
-        String applictionOrderNo = getPara("applicationOrderNo")!=null?getPara("applicationOrderNo"):"";
-        String status = getPara("status")!=null?getPara("status"):"";
+        String cname = getPara("cname")!=null?getPara("cname").trim():"";
+        String beginTime = getPara("beginTime")!=null?getPara("beginTime").trim():"";
+        String endTime = getPara("endTime")!=null?getPara("endTime").trim():"";
+        String orderNo = getPara("orderNo")!=null?getPara("orderNo").trim():"";
+        String applictionOrderNo = getPara("applicationOrderNo")!=null?getPara("applicationOrderNo").trim():"";
+        String status = getPara("status")!=null?getPara("status").trim():"";
 		
 //		String sortColIndex = getPara("iSortCol_0");
 //		String sortBy = getPara("sSortDir_0");

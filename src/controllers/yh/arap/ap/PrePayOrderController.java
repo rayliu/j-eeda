@@ -48,10 +48,10 @@ public class PrePayOrderController extends Controller {
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_PrePayOrder_LIST })
 	public void list() {
-		String spName = getPara("spName");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String orderNo = getPara("orderNo");
+		String spName = getPara("spName")==null?"":getPara("spName").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime");
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
 		// String status = getPara("status");
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");

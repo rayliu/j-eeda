@@ -57,11 +57,11 @@ public class CarSummaryController extends Controller {
 	public void untreatedCarManageList(){
 		
 		Map orderMap = null;
-		String status = getPara("status");
-		String driver = getPara("driver");
-		String car_no = getPara("car_no");
-		String transferOrderNo = getPara("transferOrderNo");
-		String turnout_time = getPara("create_stamp");
+		String status = getPara("status")==null?"":getPara("status").trim();
+		String driver = getPara("driver")==null?"":getPara("driver").trim();
+		String car_no = getPara("car_no")==null?"":getPara("car_no").trim();
+		String transferOrderNo = getPara("transferOrderNo")==null?"":getPara("transferOrderNo").trim();
+		String turnout_time = getPara("create_stamp")==null?"":getPara("create_stamp").trim();
 		
 		String sLimit = "";
         String pageIndex = getPara("sEcho");

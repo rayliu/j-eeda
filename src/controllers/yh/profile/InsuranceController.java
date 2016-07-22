@@ -41,9 +41,9 @@ public class InsuranceController extends Controller{
 	}
 	
 	public void list(){
-		String name = getPara("customerName");
-		String person = getPara("person");
-		String address = getPara("address");
+		String name = getPara("customerName")==null?"":getPara("customerName").trim();
+		String person = getPara("person")==null?"":getPara("person").trim();
+		String address = getPara("address")==null?"":getPara("address").trim();
 		
 		String sLimit = "";
         String pageIndex = getPara("sEcho");

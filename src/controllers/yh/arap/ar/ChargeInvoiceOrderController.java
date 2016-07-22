@@ -151,12 +151,12 @@ public class ChargeInvoiceOrderController extends Controller {
         
         
         //TODO 网点没做,状态过滤没做
-        String companyName = getPara("companyName");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String orderNo = getPara("orderNo");
+        String companyName = getPara("companyName")==null?"":getPara("companyName").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
 		//String status = getPara("status");
-		String office = getPara("office");
+		String office = getPara("office")==null?"":getPara("office").trim();
 
 		String sql = " select '对账单' order_type,aco.id,aco.order_no,aco.`STATUS`,aco.charge_amount total_amount,aco.remark,aco.create_stamp,c.abbr cname,"
 				+ " ul.c_name create_by,c1.abbr sp,aco.begin_time check_stamp"

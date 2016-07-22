@@ -184,13 +184,13 @@ public class InsuranceOrderController extends Controller {
     // billing order 列表
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_IO_LIST})
     public void list() {
-    	String orderNo = getPara("orderNo");
-    	String departNo = getPara("departNo");
-    	String beginTime = getPara("beginTime");
-    	String endTime = getPara("endTime");
-    	String planningBeginTime = getPara("planningBeginTime");
-    	String planningEndTime = getPara("planningEndTime");
-    	String customer = getPara("customer");
+    	String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+    	String departNo = getPara("departNo")==null?"":getPara("departNo").trim();
+    	String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+    	String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+    	String planningBeginTime = getPara("planningBeginTime")==null?"":getPara("planningBeginTime").trim();
+    	String planningEndTime = getPara("planningEndTime")==null?"":getPara("planningEndTime").trim();
+    	String customer = getPara("customer")==null?"":getPara("customer").trim();
     	
         String sLimit = "";
         String pageIndex = getPara("sEcho");

@@ -302,10 +302,10 @@ public class CostCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
-		String orderNo = getPara("order_no");
-		String sp = getPara("sp");
-		String status = getPara("status");
-		String serial_no = getPara("serial_no")== null ? "" : getPara("serial_no");
+		String orderNo = getPara("order_no")==null?"":getPara("order_no").trim();
+		String sp = getPara("sp")==null?"":getPara("sp").trim();
+		String status = getPara("status")==null?"":getPara("status").trim();
+		String serial_no = getPara("serial_no")== null ? "" : getPara("serial_no").trim();
 		if("".equals(serial_no)){
 			serial_no="''";
 		}else{
@@ -882,17 +882,16 @@ public class CostCheckOrderController extends Controller {
 		String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_" + sortColIndex);
-		String booking_id = getPara("booking_id");
-		;
-		String orderNo = getPara("orderNo");
-		String serial_no = getPara("serial_no");
-		String sp_id2 = getPara("sp_id2");
-		String no = getPara("no");
-		String sp_no = getPara("sp_no");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
-		String type = getPara("type");
-		String status = getPara("status");
+		String booking_id = getPara("booking_id")==null?"":getPara("booking_id").trim();
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+		String serial_no = getPara("serial_no")==null?"":getPara("serial_no").trim();
+		String sp_id2 = getPara("sp_id2")==null?"":getPara("sp_id2").trim();
+		String no = getPara("no")==null?"":getPara("no").trim();
+		String sp_no = getPara("sp_no")==null?"":getPara("sp_no").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
+		String type = getPara("type")==null?"":getPara("type").trim();
+		String status = getPara("status")==null?"":getPara("status").trim();
 		String ispage = getPara("ispage");
 		
 		String user_name = currentUser.getPrincipal().toString();

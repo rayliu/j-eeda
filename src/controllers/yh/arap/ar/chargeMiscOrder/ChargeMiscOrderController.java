@@ -61,12 +61,13 @@ public class ChargeMiscOrderController extends Controller {
 	}
 
 	public void list() {
-		String orderNo = getPara("orderNo");
-		String type = getPara("type");
-		String customer = getPara("customer");
-		String sp = getPara("sp");
-		String beginTime = getPara("beginTime");
-		String endTime = getPara("endTime");
+		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
+		String type = getPara("type")==null?"":getPara("type").trim();
+		String customer = getPara("customer")==null?"":getPara("customer").trim();
+		String sp = getPara("sp")==null?"":getPara("sp").trim();
+		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String endTime = getPara("endTime")==null?"":getPara("endTime");
+		
 		String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_"+sortColIndex);

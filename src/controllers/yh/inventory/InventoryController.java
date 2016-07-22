@@ -123,12 +123,12 @@ public class InventoryController extends Controller {
     // 库存list
     //@RequiresPermissions(value = {PermissionConstant.PERMSSION_II_LIST})
     public void stocklist() {
-        String customerId = getPara("customerId");
-        String warehouseId = getPara("warehouseId");
-        String officeId = getPara("officeId");
-        String itemId = getPara("itemId");
-        String beginTime = getPara("starDate");
-        String endTime = getPara("endDate");
+        String customerId = getPara("customerId")==null?"":getPara("customerId").trim();
+        String warehouseId = getPara("warehouseId")==null?"":getPara("warehouseId").trim();
+        String officeId = getPara("officeId")==null?"":getPara("officeId").trim();
+        String itemId = getPara("itemId")==null?"":getPara("itemId").trim();
+        String beginTime = getPara("starDate")==null?"":getPara("starDate").trim();
+        String endTime = getPara("endDate")==null?"":getPara("endDate").trim();
         
         if ((customerId == null && warehouseId == null && officeId == null) || ( "".equals(customerId) && "".equals(warehouseId) && "".equals(officeId))) {
         	List<Record> rec = Db.find("select * from product where id = -1");

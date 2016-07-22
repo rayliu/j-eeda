@@ -46,12 +46,12 @@ public class ServiceProviderController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_P_LIST})
     public void list() {
-        String company_name = getPara("COMPANY_NAME");
-        String contact_person = getPara("CONTACT_PERSON");
-        String receipt = getPara("RECEIPT");
-        String abbr = getPara("ABBR");
-        String address = getPara("ADDRESS");
-        String location = getPara("LOCATION");
+        String company_name = getPara("COMPANY_NAME")==null?"":getPara("COMPANY_NAME").trim();
+        String contact_person = getPara("CONTACT_PERSON")==null?"":getPara("CONTACT_PERSON").trim();
+        String receipt = getPara("RECEIPT")==null?"":getPara("RECEIPT").trim();
+        String abbr = getPara("ABBR")==null?"":getPara("ABBR").trim();
+        String address = getPara("ADDRESS")==null?"":getPara("ADDRESS").trim();
+        String location = getPara("LOCATION")==null?"":getPara("LOCATION").trim();
         
         
         Long parentID = pom.getParentOfficeId();

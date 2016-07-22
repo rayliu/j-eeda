@@ -68,28 +68,28 @@ public class ReturnOrderController extends Controller {
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_LIST})
 	public void list() {
-		String order_no = getPara("order_no");
-		String tr_order_no = getPara("tr_order_no");
-		String de_order_no = getPara("de_order_no");
+		String order_no = getPara("order_no")==null?"":getPara("order_no").trim();
+		String tr_order_no = getPara("tr_order_no")==null?"":getPara("tr_order_no").trim();
+		String de_order_no = getPara("de_order_no")==null?"":getPara("de_order_no").trim();
 
-		String status = getPara("status");
-		String time_one = getPara("time_one");
-		String time_two = getPara("time_two");
-		String customer = getPara("customer");
-		String return_type = getPara("return_type");
-		String transfer_type = getPara("transfer_type");
-		String warehouse = getPara("warehouse");
-		String serial_no = getPara("serial_no");
-		String to_name = getPara("to_name");
-		String province = getPara("province");
-		String imgaudit = getPara("imgaudit");
-		String photo_type = getPara("photo_type");
-		String sign_no = getPara("sign_no");
-		String officeSelect = getPara("officeSelect");
-		String delivery_date_begin_time = getPara("delivery_date_begin_time");
-		String delivery_date_end_time = getPara("delivery_date_end_time");
-		String q_begin = getPara("q_begin");
-		String q_end = getPara("q_end");
+		String status = getPara("status")==null?"":getPara("status").trim();
+		String time_one = getPara("time_one")==null?"":getPara("time_one").trim();
+		String time_two = getPara("time_two")==null?"":getPara("time_two").trim();
+		String customer = getPara("customer")==null?"":getPara("customer").trim();
+		String return_type = getPara("return_type")==null?"":getPara("return_type").trim();
+		String transfer_type = getPara("transfer_type")==null?"":getPara("transfer_type").trim();
+		String warehouse = getPara("warehouse")==null?"":getPara("warehouse").trim();
+		String serial_no = getPara("serial_no")==null?"":getPara("serial_no").trim();
+		String to_name = getPara("to_name")==null?"":getPara("to_name").trim();
+		String province = getPara("province")==null?"":getPara("province").trim();
+		String imgaudit = getPara("imgaudit")==null?"":getPara("imgaudit").trim();
+		String photo_type = getPara("photo_type")==null?"":getPara("photo_type").trim();
+		String sign_no = getPara("sign_no")==null?"":getPara("sign_no").trim();
+		String officeSelect = getPara("officeSelect")==null?"":getPara("officeSelect").trim();
+		String delivery_date_begin_time = getPara("delivery_date_begin_time")==null?"":getPara("delivery_date_begin_time").trim();
+		String delivery_date_end_time = getPara("delivery_date_end_time")==null?"":getPara("delivery_date_end_time").trim();
+		String q_begin = getPara("q_begin")==null?"":getPara("q_begin").trim();
+		String q_end = getPara("q_end")==null?"":getPara("q_end").trim();
 		
 		
 		String pageIndex = getPara("sEcho");
