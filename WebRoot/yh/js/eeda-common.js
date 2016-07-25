@@ -160,7 +160,11 @@ var refreshUrl=function(url){
       return Object.prototype.toString.apply(number) === ['object String'];
    }
  
-
+ eeda.checkLogin = function(data){
+    if(data && data.indexOf("忘记密码")>0){
+      location.href="/";
+    }
+ }
 
  window.onunload=function(){
     //页面刷新时调用，这里需要判断是否当前单据是否有更新，提示用户先保存
