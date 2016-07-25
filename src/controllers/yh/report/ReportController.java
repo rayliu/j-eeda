@@ -422,6 +422,6 @@ public class ReportController extends Controller {
 		buffer.append(",");
         zipOut.close(); 
         renderText(buffer.toString());
-	    }
+	}
 		
 }

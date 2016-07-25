@@ -2,7 +2,8 @@
 	 document.title = '回单查询 | '+document.title;
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 	var clickTabId = "createTab";
-	
+
+  
 	//条件查询
   $("#return_type, #transfer_type, #order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no","#officeSelect").on('keyup', function (e) {    	 	
   	
@@ -317,7 +318,7 @@
           
       }
   };
-
+  
   var findData = function(){
       var order_no = $("#order_no").val();
       var serial_no = $("#serial_no").val();
@@ -351,6 +352,55 @@
       }
       saveConditions();
     };
+
+  $('#downloadBtn').click(function(){
+      var customer_filter=$('#customer_filter').val();
+       if(!customer_filter){
+          $.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
+          return;
+       }
+       var photo_type =$('#photo_type').val();
+       if(!photo_type){
+          $.scojs_message('请选择图片类型', $.scojs_message.TYPE_ERROR);
+          return;
+       }
+       var q_begin_date =$('#q_begin_date').val();
+       var q_end_date =$('#q_end_date').val();
+       if(!q_begin_date || !q_end_date){
+          $.scojs_message('请选择签收时间', $.scojs_message.TYPE_ERROR);
+          return;
+       }
+
+      var order_no = $("#order_no").val();
+      var serial_no = $("#serial_no").val();
+      var warehouse = $("#warehouse").val();
+      var return_type = $("#return_type").val();
+      var tr_order_no = $("#tr_order_no").val();
+      var de_order_no = $("#de_order_no").val();
+      var sign_no = $("#sign_no").val();
+      var time_one = $("#time_one").val();
+      var time_two = $("#time_two").val();
+      var inputStr =$("#customer_filter").val();
+      var transfer_type =$("#transfer_type").val();
+      var to_name =$("#to_name").val();
+      var province =$("#province").val();
+      var imgaudit =$("#imgaudit").val();
+      var photo_type =$("#photo_type").val();
+      var q_begin =$("#q_begin_date").val();
+      var q_end =$("#q_end_date").val();
+      var officeSelect = $("#officeSelect").val();
+      var delivery_date_begin_time = $("#delivery_date_begin_time").val();
+      var delivery_date_end_time = $("#delivery_date_end_time").val();
+        $.post("returnOrder/download?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&q_begin="+q_begin+"&q_end="+q_end+"&photo_type="+photo_type+"&delivery_date_begin_time="+delivery_date_begin_time+"&delivery_date_end_time="+delivery_date_end_time,
+            function(data){
+              //保存成功后，刷新列表
+              console.log('test:'+data);
+              if(data)
+                 window.open(data);
+              else
+                $.scojs_message('下载失败', $.scojs_message.TYPE_ERROR);
+        });
+  });
 
   loadConditions(); 
  

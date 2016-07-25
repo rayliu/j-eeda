@@ -243,11 +243,11 @@ $(document).ready(function() {
 		        	   $.scojs_message('签收成功', $.scojs_message.TYPE_OK);
 		        	   $("#status span").html("已签收");
 		           }else{
-		               alert('签收失败！');
+		               $.scojs_message('签收失败！', $.scojs_message.TYPE_ERROR);
 		           }
 		        },'json');
 			}else{
-				alert('数据保存失败。');
+				$.scojs_message('数据保存失败。', $.scojs_message.TYPE_ERROR);
 			}
 		},'json');
 		

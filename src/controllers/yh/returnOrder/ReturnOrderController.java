@@ -3,6 +3,10 @@ package controllers.yh.returnOrder;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
@@ -40,6 +45,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipOutputStream;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
@@ -50,6 +57,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.util.FileUtil;
 import controllers.yh.util.LocationUtil;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
@@ -1737,5 +1745,270 @@ public class ReturnOrderController extends Controller {
 			transferOrderItemDetail.update();
 		}
 		 renderJson("{\"success\":true}");
+   }
+   
+   public void download() throws IOException{
+       String order_no = getPara("order_no")==null?"":getPara("order_no").trim();
+       String tr_order_no = getPara("tr_order_no")==null?"":getPara("tr_order_no").trim();
+       String de_order_no = getPara("de_order_no")==null?"":getPara("de_order_no").trim();
+
+       String status = getPara("status")==null?"":getPara("status").trim();
+       String time_one = getPara("time_one")==null?"":getPara("time_one").trim();
+       String time_two = getPara("time_two")==null?"":getPara("time_two").trim();
+       String customer = getPara("customer")==null?"":getPara("customer").trim();
+       String return_type = getPara("return_type")==null?"":getPara("return_type").trim();
+       String transfer_type = getPara("transfer_type")==null?"":getPara("transfer_type").trim();
+       String warehouse = getPara("warehouse")==null?"":getPara("warehouse").trim();
+       String serial_no = getPara("serial_no")==null?"":getPara("serial_no").trim();
+       String to_name = getPara("to_name")==null?"":getPara("to_name").trim();
+       String province = getPara("province")==null?"":getPara("province").trim();
+       String imgaudit = getPara("imgaudit")==null?"":getPara("imgaudit").trim();
+       String photo_type = getPara("photo_type")==null?"":getPara("photo_type").trim();
+       String sign_no = getPara("sign_no")==null?"":getPara("sign_no").trim();
+       String officeSelect = getPara("officeSelect")==null?"":getPara("officeSelect").trim();
+       String delivery_date_begin_time = getPara("delivery_date_begin_time")==null?"":getPara("delivery_date_begin_time").trim();
+       String delivery_date_end_time = getPara("delivery_date_end_time")==null?"":getPara("delivery_date_end_time").trim();
+       String q_begin = getPara("q_begin")==null?"":getPara("q_begin").trim();
+       String q_end = getPara("q_end")==null?"":getPara("q_end").trim();
+
+       
+       String sql = "";
+       String sortColIndex = getPara("iSortCol_0");
+       String sortBy = getPara("sSortDir_0");
+       String colName = getPara("mDataProp_"+sortColIndex);
+       Map orderMap = new HashMap();
+
+       String conditions=" where 1=1 ";
+       if (StringUtils.isNotEmpty(order_no)){
+           conditions+=" and UPPER(order_no) like '%"+order_no+"%'";
+       }
+       if (StringUtils.isNotEmpty(imgaudit)){
+           conditions+=" and UPPER(imgaudit) like '%"+imgaudit+"%'";
+       }
+       if (StringUtils.isNotEmpty(photo_type)){
+           conditions+=" and UPPER(photo_type) like '%"+photo_type+"%'";
+       }
+       if (StringUtils.isNotEmpty(tr_order_no)){
+           conditions+=" and UPPER(transfer_order_no) like '%"+tr_order_no+"%'";
+       }
+       if (StringUtils.isNotEmpty(de_order_no)){
+           conditions+=" and UPPER(delivery_order_no) like '%"+de_order_no+"%'";
+       }
+       if (StringUtils.isNotEmpty(status)){
+           conditions+=" and UPPER(transaction_status) in(" + status+")";
+       }   
+       if (StringUtils.isNotEmpty(sign_no)){
+           conditions+=" and UPPER(sign_no) like '%"+sign_no+"%'";
+       }
+       if (StringUtils.isNotEmpty(serial_no)){
+           conditions+=" and UPPER(serial_no) like '%"+serial_no+"%'";
+       }
+       if (StringUtils.isNotEmpty(customer)){
+           conditions+=" and UPPER(cname) like '%"+customer+"%'";
+       }
+       if (StringUtils.isNotEmpty(return_type)){
+           conditions+=" and UPPER(return_type) like '%"+return_type+"%'";
+       }
+       if (StringUtils.isNotEmpty(warehouse)){
+           conditions+=" and UPPER(warehouse_name) like '%"+warehouse+"%'";
+       }
+       if (StringUtils.isNotEmpty(province)){
+           conditions+=" and UPPER(province) like '%"+province+"%'";
+       }
+       if (StringUtils.isNotEmpty(to_name)){
+           conditions+=" and UPPER(to_name) like '%"+to_name+"%'";
+       }
+       if (StringUtils.isNotEmpty(return_type)){
+           conditions+=" and UPPER(return_type) like '%"+return_type+"%'";
+       }
+       if (StringUtils.isNotEmpty(transfer_type)){
+           conditions+=" and UPPER(transfer_type) like '%"+transfer_type+"%'";
+       }
+       if(StringUtils.isNotEmpty(officeSelect)){
+           conditions+=" and office_id = '" + officeSelect+"'";
+       }
+//       if (StringUtils.isNotEmpty(time_one)){
+//           time_one = " and planning_time between'"+time_one+"'";
+//       }else{
+//           time_one =" and planning_time between '2000-1-1'";
+//       }
+//       if (StringUtils.isNotEmpty(time_two)){
+//           time_two =" and '"+time_two+"'";
+//       }else{
+//           time_two =" and '2050-1-1'";
+//       }
+//       conditions += time_one + time_two;
+       
+       
+       if(StringUtils.isNotEmpty(delivery_date_begin_time) || StringUtils.isNotEmpty(delivery_date_end_time)){
+           if (!StringUtils.isNotEmpty(delivery_date_begin_time)){
+               delivery_date_begin_time = "2000-01-01";
+           }
+           if (StringUtils.isNotEmpty(delivery_date_end_time)){
+               delivery_date_end_time+= " 23:23:59";
+           }else{
+               delivery_date_end_time = "2037-12-31";
+           }
+           conditions += " and business_stamp between '"+ delivery_date_begin_time+ "' and '" + delivery_date_end_time + "' ";
+       }
+       
+       if (StringUtils.isNotEmpty(q_begin)){
+           q_begin = " and receipt_date between'"+q_begin+"'";
+       }else{
+           q_begin =" and receipt_date between '2000-1-1'";
+       }
+       if (StringUtils.isNotEmpty(q_end)){
+           q_end =" and '"+q_end+"'";
+       }else{
+           q_end =" and '2050-1-1'";
+       }
+       if(!status.equals("'新建'"))
+           conditions += q_begin + q_end;
+       
+       conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
+       // 获取当前页的数据
+       sql = " SELECT ror.id, ror.order_no, af.file_path, ror.customer_id,'' create_date,'' remark ,"
+                   + " '' transfer_type,"
+                   + " '' planning_time,"
+                   + " ( CASE"
+                   + " WHEN ror.delivery_order_id IS NOT NULL "
+                   + " THEN ( SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '<br/>' )"
+                   + " FROM transfer_order_item_detail toid"
+                   + " WHERE toid.delivery_id = dor.id )"
+                   + " ELSE ( SELECT group_concat( DISTINCT toid.serial_no SEPARATOR '<br/>' )"
+                   + " FROM transfer_order_item_detail toid"
+                   + " WHERE toid.order_id = tor.id ) END "
+                   + " ) serial_no,"
+                   + " ( CASE"
+                   + " WHEN ror.delivery_order_id IS NOT NULL THEN"
+                   + " ( SELECT group_concat( toid.item_no SEPARATOR '<br/>' )"
+                   + " FROM transfer_order_item_detail toid"
+                   + " WHERE toid.delivery_id = dor.id )"
+                   + " ELSE ( SELECT group_concat( toi.item_no SEPARATOR '<br/>' )"
+                   + " FROM transfer_order_item toi "
+                   + " WHERE toi.order_id = ror.transfer_order_id ) END ) item_no,"
+                   + " ifnull( c.contact_person, tor.receiving_name ) receipt_person,"
+                   + " ifnull( c.phone, tor.receiving_phone ) receipt_phone,"
+                   + " ifnull( (c.company_name), tor.receiving_unit ) receiving_unit,"
+                   + " ifnull( c.address, tor.receiving_address ) receipt_address,"
+                   + " ifnull( w.warehouse_name, w1.warehouse_name ) warehouse_name,"
+                   + " ifnull(( SELECT sum(amount) FROM delivery_order_item doi "
+                   + " WHERE doi.delivery_id = dor.id ), "
+                   + " (SELECT sum(amount) FROM transfer_order_item "
+                   + " WHERE order_id = tor.id) ) a_amount,  c2.abbr cname,"
+                   + " ifnull( tor.order_no, "
+                   + " ( SELECT group_concat( DISTINCT CAST(tor.order_no AS CHAR) SEPARATOR '<br/>' )"
+                   + " FROM transfer_order tor"
+                   + " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id"
+                   + " WHERE doi.delivery_id = dor.id )"
+                   + " ) transfer_order_no,"
+                   + " lo. NAME from_name, lo2. NAME to_name,"
+                   + " ifnull( ( SELECT NAME FROM location WHERE CODE = lo2.pcode AND pcode = 1 ),"
+                   + " ( SELECT l. NAME FROM location l"
+                   + " LEFT JOIN location lo3 ON lo3.pcode = l. CODE"
+                   + "  WHERE lo3. CODE = lo2.pcode AND l.pcode = 1 )"
+                   + " ) province,"
+                   + " ifnull( tor.address, ( SELECT group_concat( DISTINCT CAST(tor.address AS CHAR) SEPARATOR '<br/>' )"
+                   + " FROM transfer_order tor"
+                   + " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tor.id"
+                   + " WHERE doi.delivery_id = dor.id )"
+                   + " ) address, dor.order_no delivery_order_no, ifnull(ul.c_name, ul.user_name) creator_name,"
+                   + " ror.receipt_date, ror.transaction_status, ( SELECT CASE WHEN ( SELECT count(0) FROM order_attachment_file"
+                   + " WHERE order_type = 'RETURN' AND order_id = ror.id ) = 0 THEN '无图片'"
+                   + " WHEN ( SELECT count(0) FROM order_attachment_file"
+                   + " WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) and file_path is not null ) > 0 THEN '有图片待审核'"
+                   + " ELSE '有图片已审核' END ) imgaudit,"
+                   + "( SELECT CASE "
+                   + " WHEN ( SELECT ("
+                   + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')>0 "
+                   + " && "
+                   + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')=0) "
+                   + "  THEN '回单签收'"
+                   + " WHEN ( SELECT ("
+                   + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')=0 "
+                   + " && "
+                   + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')>0) "
+                   + "  THEN '现场安装'"
+                   + " ELSE '' END "
+                   + ") photo_type, "
+                   + " dor.ref_no sign_no," 
+                   + " dor.office_id,"
+                   + " o.office_name,"
+                   + " dor.business_stamp"
+                   + " FROM return_order ror"
+                   + " left join order_attachment_file af on ror.id = af.order_id and af.order_type='RETURN' "
+                   + " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
+                   + " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
+                   + " LEFT JOIN office o ON dor.office_id = o.id "
+                   + " LEFT JOIN party p ON p.id = dor.notify_party_id"
+                   + " LEFT JOIN contact c ON c.id = p.contact_id"
+                   + " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"
+                   + " LEFT JOIN warehouse w1 ON ifnull( dor.change_warehouse_id, dor.from_warehouse_id ) = w1.id"
+                   + " LEFT JOIN party p2 ON p2.id = ror.customer_id"
+                   + " LEFT JOIN contact c2 ON c2.id =p2.id"
+                   + " LEFT JOIN location lo ON lo. CODE = ifnull(tor.route_from, dor.route_from )"
+                   + " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
+                   + " LEFT JOIN user_login ul ON ul.id = ror.creator " ;
+
+       String orderByStr = " order by planning_time asc ";
+       if(colName!=null && colName.length()>0){
+           orderByStr = " order by A."+colName+" "+sortBy;
+       }   
+       
+       List<Record> orders = Db.find(" SELECT  *  from(" + sql + ") A" + conditions + orderByStr);    
+       logger.debug("total = "+orders.size());
+       if(orders.size()>0){
+           String contextPath = getRequest( ).getSession().getServletContext().getRealPath("/");
+           String uuid = UUID.randomUUID().toString().substring(0, 4);
+           (new File(contextPath +"/download/"+uuid+"_return_pics")).mkdirs();//创建临时目录
+           
+           for (Record record : orders) {
+               String serialNo= record.getStr("serial_no");
+               String type= record.getStr("photo_type");
+               String fileName = record.getStr("file_path");
+               
+               String filePostFix = fileName.substring(fileName.indexOf("."));
+               File sourceFile = new File(contextPath +"/upload/img/"+ fileName);
+               File targetFile = new File(contextPath +"/download/"+uuid+"_return_pics/"+ serialNo+"_"+type+"_"+record.getLong("id")+filePostFix);
+               FileUtil.copyFile(sourceFile, targetFile);
+           }
+           String zipFileName = zipOutput(uuid+"_return_pics");
+           FileUtil.del(contextPath +"/download/"+uuid+"_return_pics");//删除临时目录
+           
+           renderText(zipFileName);
+       }
+   }
+   
+   private String zipOutput(String folder_name) throws IOException {
+       String contextPath = getRequest( ).getSession().getServletContext().getRealPath("/");
+       String path = contextPath+"/download/";;
+//       String folder_name = "return_pics";
+        // 要被压缩的文件夹  
+       File file = new File(path+folder_name);  
+       File zipFile = new File(path+folder_name + ".zip");   
+       ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(  
+               zipFile));  
+       zipOut.setEncoding("GBK"); 
+       if(file.isDirectory()){  
+          InputStream input = null; 
+          File[] files = file.listFiles();  
+           for(int i = 0; i < files.length; ++i){  
+               input = new FileInputStream(files[i]);  
+               zipOut.putNextEntry(new ZipEntry(file.getName()  
+                       + File.separator + files[i].getName()));  
+               int temp = 0;  
+               while((temp = input.read()) != -1){  
+                   zipOut.write(temp);  
+               }  
+               input.close();  
+           }
+       }  
+       StringBuffer buffer = new StringBuffer();
+       String strFile=zipFile.getPath();
+       buffer.append(strFile.substring(strFile.indexOf("download")-1));
+//       buffer.append(",");
+       zipOut.close(); 
+       logger.debug(buffer.toString());
+       return buffer.toString();
    }
 }
