@@ -465,17 +465,7 @@
 	    $('#payee_unit').attr("readonly","readonly");
 	    $('#payee_name').attr("readonly","readonly");
  	}
-    ////付款方式（付款确认）回显控制
-    if($('#pay_type_show').val()==''){
-    	 $('#pay_type').val('cash');
-    }else{
-    	 $('#pay_type').val($('#pay_type_show').val());
-    }
-    payType();
-    
-    
-    //付款银行回显
-    $('#pay_bank').val($('#pay_banks').val());
+
     
     if($('#deposit_bank').val()!='' || $('#bank_no').val()!='' || $('#account_name').val()!=''){
     	$('#payment_method').val('transfers');
@@ -483,6 +473,15 @@
     	$('#payment_method').val('cash');
     	payment();
     }
+    
+    ////付款方式（付款确认）回显控制
+    if($('#pay_type_show').val()==''){
+    	 $('#pay_type').val('cash');
+    }else{
+    	 $('#pay_type').val($('#pay_type_show').val());
+    }
+    payType();
+    $('#pay_bank').val($('#pay_banks').val());
     
     if($('#status').val()!='已付款' && $('#status').val()!='已付款确认' ){
     	if($('#payment_method').val()=='transfers'){
