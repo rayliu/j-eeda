@@ -389,7 +389,7 @@
       var to_name =$("#to_name").val();
       var province =$("#province").val();
       var imgaudit =$("#imgaudit").val();
-      var photo_type =$('#photo_type_radio input[name=sign]').val();
+      var photo_type =$('#photo_type_radio input[name=sign]:checked').val();
       var q_begin =$("#q_begin_date").val();
       var q_end =$("#q_end_date").val();
       var officeSelect = $("#officeSelect").val();
