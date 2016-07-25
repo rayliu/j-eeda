@@ -416,7 +416,7 @@ $(document).ready(function() {
             if(!query_to)
                 return;
 
-            var conditions = JSON.parse(localStorage.getItem('query_to'));
+            var conditions = JSON.parse(query_to);
             $("#order_type_filter").val(conditions.order_type);
             $("#plantime").val(conditions.plantime);
             $("#arrivaltime").val(conditions.arrivarltime);

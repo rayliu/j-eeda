@@ -1,6 +1,55 @@
 
 $(document).ready(function() {
     $('#menu_cost').addClass('active').find('ul').addClass('in');
+    
+   
+
+    $("#resetBtn").click(function(){
+        $('#returnOrderSearchForm')[0].reset();
+        saveConditions();
+    });
+    
+    //保存查询条件
+    var saveConditions=function(){
+        var conditions={
+	         booking_id : $("#booking_id").val(),
+	    	 orderNo : $("#orderNo_filter").val(),
+	    	 sp : $("#sp_id_input").val(),
+	         sp_id2 : $("#sp_id").val(),
+	    	 no : $("#no").val(),
+	    	 beginTime : $("#beginTime_filter").val(),
+	    	 endTime : $("#endTime_filter").val(),
+	    	 type : $("#order_type_filter").val(),
+	    	 status : $("#order_status_filter").val(),
+	    	 serial_no : $("#serial_no").val()
+        };
+        if(!!window.localStorage){//查询条件处理
+            localStorage.setItem("CostCheckOrderQueryCondition", JSON.stringify(conditions));
+        }
+    };
+    
+    //回填查询条件
+    var loadConditions=function(){
+        if(!!window.localStorage){//查询条件处理
+            var query_to = localStorage.getItem('CostCheckOrderQueryCondition');
+            if(!query_to)
+                return;
+
+            var conditions = JSON.parse(query_to);
+             $("#booking_id").val(conditions.booking_id);
+	    	 $("#orderNo_filter").val(conditions.orderNo);
+	    	 $("#sp_id_input").val(conditions.sp);
+	         $("#sp_id").val(conditions.sp_id2);
+	    	 $("#no").val(conditions.no);
+	    	 $("#beginTime_filter").val(conditions.beginTime);
+	    	 $("#endTime_filter").val(conditions.endTime);
+	    	 $("#order_type_filter").val(conditions.type);
+	    	 $("#order_status_filter").val(conditions.status);
+	    	 $("#serial_no").val(conditions.serial_no);
+        }
+    };
+    loadConditions();
+    
     var ids = [];
     var orderNos = [];
     var change_amount = [];
@@ -88,7 +137,7 @@ $(document).ready(function() {
 			$(nRow).attr('order_ty', aData.BUSINESS_TYPE);
 			return nRow;
 		},
-        "sAjaxSource": "/costCheckOrder/unSelectedList",
+        //"sAjaxSource": "/costCheckOrder/unSelectedList",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px", "bSortable": false,
                 "fnRender": function(obj) {
@@ -245,7 +294,7 @@ $(document).ready(function() {
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
     	"iDisplayLength": 25,
     	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-    	//"bServerSide": true,
+    	"bServerSide": false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
@@ -413,7 +462,6 @@ $(document).ready(function() {
     	// 没选中供应商，焦点离开，隐藏列表
     	$('#sp_id_input').on('blur', function(){
      		$('#sp_id_list').hide();
-            refreshCreateList();
      	});
 
     	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
@@ -424,13 +472,6 @@ $(document).ready(function() {
     	$('#sp_id_list').on('mousedown', function(){
     		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     	});
-
-    	// 选中供应商
-    	$('#sp_id_list').on('mousedown', '.fromLocationItem', function(e){
-            refreshCreateList();
-            
-    });
-    	
 
 
     $('#createBtn').click(function(e){
@@ -483,6 +524,8 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter').trigger('keyup');
     });
+    
+    
     var refreshCreateList = function() {
     	var booking_id = $("#booking_id").val();
     	var orderNo = $("#orderNo_filter").val();
@@ -504,14 +547,14 @@ $(document).ready(function() {
     	                                                +"&booking_id="+booking_id
     													+"&serial_no="+serial_no;
     	uncheckedCostCheckTable.fnDraw();
-    	
-    	
+    	saveConditions();
     };
-    $("#orderNo_filter,#booking_id,#no,#beginTime_filter,#endTime_filter,#serial_no").on('keyup',function(){
+    
+    $("#searchBtn").click(function(){
     	refreshCreateList();
     });
-    $("#order_type_filter,#order_status_filter").on('change',function(){
-    	
-    	refreshCreateList();
-    });
-} );
+    
+    refreshCreateList();
+    
+
+});

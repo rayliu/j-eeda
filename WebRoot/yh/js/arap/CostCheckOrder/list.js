@@ -3,7 +3,42 @@ $(document).ready(function() {
 	document.title = '应付对账单查询 | '+document.title;
 
     $('#menu_cost').addClass('active').find('ul').addClass('in');
-    var datatable=$('#costCheckList-table').dataTable({
+    
+    $("#resetBtn1").click(function(){
+        $('#costCheckOrderItemForm')[0].reset();
+        saveConditions();
+    });
+    
+    //保存查询条件
+    var saveConditions=function(){
+        var conditions={
+            order_no : $("#order_no").val(),
+          	status : $("#status_filter").val(),
+        	sp : $("#sp_id1_input").val(),
+        	serial_no : $("#serial_no_filter").val()
+        };
+        if(!!window.localStorage){//查询条件处理
+            localStorage.setItem("CostCheckOrderQueryCondition1", JSON.stringify(conditions));
+        }
+    };
+    
+    //回填查询条件
+    var loadConditions=function(){
+        if(!!window.localStorage){//查询条件处理
+            var query_to = localStorage.getItem('CostCheckOrderQueryCondition1');
+            if(!query_to)
+                return;
+
+            var conditions = JSON.parse(query_to);
+            $("#order_no").val(conditions.order_no);
+          	$("#status_filter").val(conditions.status);
+        	$("#sp_id1_input").val(conditions.sp);
+        	$("#serial_no_filter").val(conditions.serial_no);
+        }
+    };
+    loadConditions();
+    
+    var datatableAA=$('#costCheckList-table').dataTable({
         "bProcessing": true, 
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -96,10 +131,6 @@ $(document).ready(function() {
        		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
        	});
 
-       	// 选中供应商
-       	$('#sp_id1_list').on('mousedown', function(e){
-               refreshList();
-           });
         $('#datetimepicker3').datetimepicker({  
             format: 'yyyy-MM-dd',  
             language: 'zh-CN',
@@ -120,23 +151,24 @@ $(document).ready(function() {
             $(".bootstrap-datetimepicker-widget").hide();
             $('#jieshu_filter').trigger('keyup');
         });
-        var refreshList = function(){
+        
+        //查询
+        var refreshData = function(){
         	var order_no = $("#order_no").val();
           	var status = $("#status_filter").val();
         	var sp = $("#sp_id1_input").val();
         	var serial_no = $("#serial_no_filter").val();
-        	datatable.fnSettings().sAjaxSource = "/costCheckOrder/list?order_no="+order_no
+        	datatableAA.fnSettings().sAjaxSource = "/costCheckOrder/list?order_no="+order_no
                                 +"&status="+status
                                 +"&sp="+sp
                                 +"&serial_no="+serial_no;
-        	datatable.fnDraw();
+        	datatableAA.fnDraw();
+        	saveConditions();
         };
-
-        $("#order_no, #sp_id1_input,  #customer_filter, #serial_no_filter").on('keyup',function(){
-        	refreshList();
+        
+        $("#searchBtn1").click(function(){
+            refreshData();
         });
-
-        $("#status_filter").on('change',function(){
-          refreshList();
-        });
-} );
+        
+        //refreshData();
+});
