@@ -1786,7 +1786,7 @@ public class ReturnOrderController extends Controller {
            conditions+=" and UPPER(imgaudit) like '%"+imgaudit+"%'";
        }
        if (StringUtils.isNotEmpty(photo_type)){
-           conditions+=" and UPPER(photo_type) like '%"+photo_type+"%'";
+           conditions+=" and photo_type = '"+photo_type+"'";
        }
        if (StringUtils.isNotEmpty(tr_order_no)){
            conditions+=" and UPPER(transfer_order_no) like '%"+tr_order_no+"%'";
@@ -1865,7 +1865,8 @@ public class ReturnOrderController extends Controller {
        if(!status.equals("'新建'"))
            conditions += q_begin + q_end;
        
-       conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
+       conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" 
+               + currentUser.getPrincipal() + "'"+") and file_path is not null";
        // 获取当前页的数据
        sql = " SELECT ror.id, ror.order_no, af.file_path, ror.customer_id,'' create_date,'' remark ,"
                    + " '' transfer_type,"
@@ -1918,25 +1919,13 @@ public class ReturnOrderController extends Controller {
                    + " WHEN ( SELECT count(0) FROM order_attachment_file"
                    + " WHERE order_type = 'RETURN' AND order_id = ror.id AND (audit = 0 OR audit IS NULL) and file_path is not null ) > 0 THEN '有图片待审核'"
                    + " ELSE '有图片已审核' END ) imgaudit,"
-                   + "( SELECT CASE "
-                   + " WHEN ( SELECT ("
-                   + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')>0 "
-                   + " && "
-                   + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')=0) "
-                   + "  THEN '回单签收'"
-                   + " WHEN ( SELECT ("
-                   + "     SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='回单签收')=0 "
-                   + " && "
-                   + " (SELECT count(0) FROM order_attachment_file  WHERE order_type = 'RETURN' AND order_id = ror.id and photo_type='现场安装')>0) "
-                   + "  THEN '现场安装'"
-                   + " ELSE '' END "
-                   + ") photo_type, "
+                   + " af.photo_type, "
                    + " dor.ref_no sign_no," 
                    + " dor.office_id,"
                    + " o.office_name,"
                    + " dor.business_stamp"
                    + " FROM return_order ror"
-                   + " left join order_attachment_file af on ror.id = af.order_id and af.order_type='RETURN' "
+                   + " left join order_attachment_file af on ror.id = af.order_id and af.order_type='RETURN'"
                    + " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
                    + " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
                    + " LEFT JOIN office o ON dor.office_id = o.id "
@@ -1950,10 +1939,7 @@ public class ReturnOrderController extends Controller {
                    + " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
                    + " LEFT JOIN user_login ul ON ul.id = ror.creator " ;
 
-       String orderByStr = " order by planning_time asc ";
-       if(colName!=null && colName.length()>0){
-           orderByStr = " order by A."+colName+" "+sortBy;
-       }   
+       String orderByStr = " order by id asc ";
        
        List<Record> orders = Db.find(" SELECT  *  from(" + sql + ") A" + conditions + orderByStr);    
        logger.debug("total = "+orders.size());
@@ -1976,6 +1962,8 @@ public class ReturnOrderController extends Controller {
            FileUtil.del(contextPath +"/download/"+uuid+"_return_pics");//删除临时目录
            
            renderText(zipFileName);
+       }else{
+           renderText("noFile");
        }
    }
    
