@@ -142,7 +142,8 @@ $(document).ready(function() {
             },  
             {"mDataProp":"PAYEE_NAME", "sWidth":"100px",
             	"sClass": "payee_name"},
-            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"60px",
+            	
+            {"mDataProp":"PAYMENT_METHOD",  "sWidth":"80px",
                 "fnRender": function(obj) {
                     if(obj.aData.PAYMENT_METHOD == 'cash')
                         return '现金';
@@ -152,6 +153,17 @@ $(document).ready(function() {
                     	return obj.aData.PAYMENT_METHOD;
                 }
             },
+            {"mDataProp":"PAY_TYPE",  "sWidth":"80px",
+            	"fnRender": function(obj) {
+            		if(obj.aData.PAY_TYPE == 'cash')
+            			return '现金';
+            		else if(obj.aData.PAY_TYPE == 'transfers')
+            			return '转账';
+            		else
+            			return obj.aData.PAY_TYPE;
+            	}
+            },
+            
             {"mDataProp":"CREATE_TIME", "sWidth":"60px",
         		"fnRender":function(obj){
     				var create_stamp=obj.aData.CREATE_TIME;
@@ -690,7 +702,7 @@ $(document).ready(function() {
             +"&check_begin_date="+check_begin_date+"&check_end_date="+check_end_date
             +"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime
             +"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo
-            +"&sp="+sp+"&insurance="+insurance;;
+            +"&sp="+sp+"&insurance="+insurance;
 
         applicationTab.fnDraw(); 
     };

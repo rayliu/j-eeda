@@ -317,7 +317,6 @@ public class CostAcceptOrderController extends Controller {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
       
-        //String statusStr = " ('已复核')";
         if(status.equals("未复核")){
         	status = "'新建','已审批'";
         }else if(status.equals("已复核")){
@@ -384,7 +383,7 @@ public class CostAcceptOrderController extends Controller {
         }
         
         String sql = "select * from(select aci.id, aci.order_no application_order_no,'申请单' as order_type,aci.payee_id,"
-        		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time,aci.check_stamp check_time,aci.confirm_stamp confirm_time ,aci.remark,"
+        		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time,aci.check_stamp check_time,aci.confirm_stamp confirm_time,aci.pay_type,aci.remark,"
                 + " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount,"
                 + " GROUP_CONCAT( "
                 + " case "
