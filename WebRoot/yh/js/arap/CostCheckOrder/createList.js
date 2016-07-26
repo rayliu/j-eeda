@@ -404,10 +404,20 @@ $(document).ready(function() {
 		}
 	});
 	
+
+	
 	$('#saveBtn').click(function(e){
         e.preventDefault();
-        $('#createForm').submit();
+        $('#uncheckedCostCheck-table input[type="checkbox"]:checked').each(function(){
+    		var change_amo = $(this).attr('change_amount');
+    		if(change_amo=='0'){
+    			if(confirm("您勾选的单据其中包含了金额为0的单据,是否继续创建？")){
+    				$('#createForm').submit();
+        		}
+    		}
+    	})
     });
+	
 	$("#uncheckedCostCheck-table").on('blur', 'input:text', function(e){
 		e.preventDefault();
 		var paymentId = $(this).parent().parent().attr("id");
