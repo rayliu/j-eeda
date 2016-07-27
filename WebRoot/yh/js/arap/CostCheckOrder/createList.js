@@ -404,18 +404,28 @@ $(document).ready(function() {
 		}
 	});
 	
-
-	
+	//检查勾选的单据是否有金额为0的
+	var flag=0;
+	var confirmChecked = function(){
+			    $('#uncheckedCostCheck-table input[type="checkbox"]:checked').each(function(){
+			    		var change_amo = $(this).attr('change_amount');
+			    		if(change_amo=='0'){
+			    			flag++;
+			    		}
+			    		return flag;
+				})
+	}
 	$('#saveBtn').click(function(e){
         e.preventDefault();
-        $('#uncheckedCostCheck-table input[type="checkbox"]:checked').each(function(){
-    		var change_amo = $(this).attr('change_amount');
-    		if(change_amo=='0'){
-    			if(confirm("您勾选的单据其中包含了金额为0的单据,是否继续创建？")){
-    				$('#createForm').submit();
-        		}
-    		}
-    	})
+        confirmChecked();
+    	if(flag>0){
+		    	if(confirm("您勾选的单据其中包含了金额为0的单据,是否继续创建？")){
+					$('#createForm').submit();
+				}
+    	}else{
+    		$('#createForm').submit();
+    	}
+    	
     });
 	
 	$("#uncheckedCostCheck-table").on('blur', 'input:text', function(e){
