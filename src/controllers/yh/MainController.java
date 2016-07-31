@@ -112,11 +112,14 @@ public class MainController extends Controller {
             
             //查询当前用户权限，并且将其设置到会话当中
             setPermissionToSession();	
-
             String savedRequestUrl = this.getSessionAttr(ShiroKit.getSavedRequestKey());
             if(savedRequestUrl!=null){
             	setSessionAttr(ShiroKit.getSavedRequestKey(), null);
-            	redirect(savedRequestUrl);
+            	int index = savedRequestUrl.indexOf("/edit");
+            	if(index>0){
+            	    savedRequestUrl = savedRequestUrl.substring(0, index);
+            	}
+            	redirect(savedRequestUrl, true);
             }else{
             	String officeConfig="select oc.index_page_path from office_config oc "
             			+ " where oc.office_id =?";
