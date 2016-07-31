@@ -1959,7 +1959,7 @@ public class ReturnOrderController extends Controller {
                FileUtil.copyFile(sourceFile, targetFile);
            }
            String zipFileName = zipOutput(uuid+"_return_pics");
-           FileUtil.del(contextPath +"/download/"+uuid+"_return_pics");//删除临时目录
+//           FileUtil.del(contextPath +"/download/"+uuid+"_return_pics");//TODO: 删除临时目录, 这里有多线程问题
            
            renderText(zipFileName);
        }else{
