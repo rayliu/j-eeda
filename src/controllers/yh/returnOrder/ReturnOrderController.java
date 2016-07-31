@@ -1868,7 +1868,7 @@ public class ReturnOrderController extends Controller {
        conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" 
                + currentUser.getPrincipal() + "'"+") and file_path is not null";
        // 获取当前页的数据
-       sql = " SELECT ror.id, ror.order_no, af.file_path, ror.customer_id,'' create_date,'' remark ,"
+       sql = " SELECT ror.id, ror.order_no, af.id file_id, af.file_path, ror.customer_id,'' create_date,'' remark ,"
                    + " '' transfer_type,"
                    + " '' planning_time,"
                    + " ( CASE"
@@ -1954,12 +1954,13 @@ public class ReturnOrderController extends Controller {
                String fileName = record.getStr("file_path");
                
                String filePostFix = fileName.substring(fileName.indexOf("."));
+               logger.debug("copying file: "+ contextPath +"/upload/img/"+ fileName);
                File sourceFile = new File(contextPath +"/upload/img/"+ fileName);
-               File targetFile = new File(contextPath +"/download/"+uuid+"_return_pics/"+ serialNo+"_"+type+"_"+record.getLong("id")+filePostFix);
+               File targetFile = new File(contextPath +"/download/"+uuid+"_return_pics/"+ serialNo+"_"+type+"_"+record.getLong("file_id")+filePostFix);
                FileUtil.copyFile(sourceFile, targetFile);
            }
            String zipFileName = zipOutput(uuid+"_return_pics");
-//           FileUtil.del(contextPath +"/download/"+uuid+"_return_pics");//TODO: 删除临时目录, 这里有多线程问题
+//           FileUtil.del(contextPath +"/download/"+uuid+"_return_pics");//TODO: 删除临时目录
            
            renderText(zipFileName);
        }else{
@@ -1980,6 +1981,7 @@ public class ReturnOrderController extends Controller {
        if(file.isDirectory()){  
           InputStream input = null; 
           File[] files = file.listFiles();  
+          logger.debug("folder files length: "+ files.length);
            for(int i = 0; i < files.length; ++i){  
                input = new FileInputStream(files[i]);  
                zipOut.putNextEntry(new ZipEntry(file.getName()  
