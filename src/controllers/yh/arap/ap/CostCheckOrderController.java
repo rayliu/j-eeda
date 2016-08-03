@@ -1270,6 +1270,17 @@ public class CostCheckOrderController extends Controller {
 			sLimit = " LIMIT " + getPara("iDisplayStart") + ", "
 					+ getPara("iDisplayLength");
 		}
+		
+		//升降序
+    	String sortColIndex = getPara("iSortCol_0");
+		String sortBy = getPara("sSortDir_0");
+		String colName = getPara("mDataProp_"+sortColIndex);
+		
+		String orderByStr = " order by A.planning_time desc ";
+        if(colName.length()>0){
+        	orderByStr = " order by A."+colName+" "+sortBy;
+        }
+        
 		String searchSql = "select distinct dor.id,dofi.id did,dor.order_no order_no,dor.status,c.abbr spname,c1.abbr customer_name,IFNULL(c2.address,IFNULL(toid.notify_party_company,'')) receivingunit,(select count(*) from delivery_order_item doit where doit.delivery_id = dor.id) amount,ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,dor.create_stamp create_stamp,ul.user_name creator,"
 				+ "	'配送' business_type,'' booking_note_number,"
 				+ " ifnull((SELECT NAME FROM location WHERE CODE = dor.route_from),'') route_from,ifnull((SELECT NAME FROM location WHERE CODE = dor.route_to),'') route_to,"
@@ -1384,7 +1395,7 @@ public class CostCheckOrderController extends Controller {
 		String sql = searchSql + sLimit;
 
 		logger.debug("sql:" + sql);
-		List<Record> BillingOrders = Db.find(sql);
+		List<Record> BillingOrders = Db.find("select * from ("+sql+") A  "+orderByStr);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
