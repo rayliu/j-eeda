@@ -234,6 +234,20 @@ public class CostCheckOrderController extends Controller {
 		UserLogin ul = UserLogin.dao.findById(users.get(0).get("id"));
 		setAttr("create_name", ul.get("c_name"));
 		setAttr("status", "new");
+		//网点权限
+		String user_name = currentUser.getPrincipal().toString();
+        List<Record> uo = Db.find("select * from user_office where user_name =?",user_name);
+        String is_office = "Y";
+        for(Record record :uo){
+        	long office_id = record.getLong("office_id");
+        	Office office = Office.dao.findById(office_id);
+        	String office_type = office.getStr("type");
+        	if(!"配送中心RDC".equals(office_type)){
+        		is_office = "N";
+        	}
+        }
+		setAttr("is_office", is_office);
+		
 		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
 	}
 
@@ -568,6 +582,19 @@ public class CostCheckOrderController extends Controller {
 					.toString());
 			setAttr("sp", contact);
 		}
+		
+		String user_name = currentUser.getPrincipal().toString();
+        List<Record> uo = Db.find("select * from user_office where user_name =?",user_name);
+        String is_office = "Y";
+        for(Record record :uo){
+        	long office_id = record.getLong("office_id");
+        	Office office = Office.dao.findById(office_id);
+        	String office_type = office.getStr("type");
+        	if(!"配送中心RDC".equals(office_type)){
+        		is_office = "N";
+        	}
+        }
+		setAttr("is_office", is_office);
 
 		UserLogin create_user = UserLogin.dao.findById(arapAuditOrder
 				.get("create_by"));

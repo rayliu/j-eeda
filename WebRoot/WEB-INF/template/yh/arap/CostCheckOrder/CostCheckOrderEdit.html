@@ -285,9 +285,12 @@
                                 <div class=".tooltip-demo">
                                     <hr/>
                                 	<a style="display:none" id ="style"><i class='fa fa-check'></i></a>
-                                    <button id="saveCostCheckOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                  
-                                    <button id="auditBtn" type="button" disabled="true" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button>
+                                    <button id="saveCostCheckOrderBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button> 
                                     <%
+							             if(is_office!='Y'){  
+							         %>                           
+                                    <button id="auditBtn" type="button" disabled="true" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button>
+                                    <% }
 							             if(is_pdf=='Y'){  
 							         %>
 							         <button id="printBtn"  type="button" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">打印</button>
