@@ -145,8 +145,10 @@ public class departOrderController extends ApiController {
 				+ " end) chargeType,"
 				+ " c_c.company_name customer_name,"
 				+ " c.company_name FROM `customer_route_provider` cr"
-				+ " LEFT JOIN contact c on c.id = cr.sp_id"
-				+ " LEFT JOIN contact c_c on c_c.id = cr.customer_id"
+				+ " LEFT JOIN party p on p.id = cr.sp_id"
+				+ " LEFT JOIN contact c on c.id = p.contact_id"
+				+ " LEFT JOIN party p2 on p2.id = cr.customer_id"
+				+ " LEFT JOIN contact c_c on c_c.id = p2.contact_id"
 				+ " LEFT JOIN location l_t on l_t.code = cr.location_to"
 				+ " LEFT JOIN location l_f on l_f.code = cr.location_from"
 				+ " where cr.customer_id = "+customer_id+" and cr.location_from ='"+route_from+"' and cr.location_to = '"+ route_to + "'");
@@ -164,7 +166,8 @@ public class departOrderController extends ApiController {
 				+ " else '计件'"
 				+ " end) chargeType,"
 				+ " c_c.company_name customer_name from transfer_order tor"
-				+ " LEFT JOIN contact c_c on c_c.id = tor.customer_id"
+				+ " LEFT JOIN party p on p.id = tor.customer_id"
+				+ " LEFT JOIN contact c_c on c_c.id = p.contact_id"
 				+ " LEFT JOIN location l_t on l_t.code = tor.route_to"
 				+ " LEFT JOIN location l_f on l_f.code = tor.route_from"
 				+ " where tor.id="+array[0]);
