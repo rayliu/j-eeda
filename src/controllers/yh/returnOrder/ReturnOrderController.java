@@ -406,7 +406,7 @@ public class ReturnOrderController extends Controller {
 					+ " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"
 					+ " LEFT JOIN warehouse w1 ON ifnull( dor.change_warehouse_id, dor.from_warehouse_id ) = w1.id"
 					+ " LEFT JOIN party p2 ON p2.id = ror.customer_id"
-					+ " LEFT JOIN contact c2 ON c2.id =p2.id"
+					+ " LEFT JOIN contact c2 ON c2.id =p2.contact_id"
 					+ " LEFT JOIN location lo ON lo. CODE = ifnull(tor.route_from, dor.route_from )"
 					+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
 					+ " LEFT JOIN user_login ul ON ul.id = ror.creator " ;
