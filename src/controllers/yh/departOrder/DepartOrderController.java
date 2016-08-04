@@ -2897,9 +2897,17 @@ public class DepartOrderController extends Controller {
                     + " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and depart_id = "+departOrderId+") atmamount,"
                      + " (case "
                      + " when tor.operation_type != 'out_source'"
-                     + " then (SELECT ifnull(sum(dt.amount), 0) FROM depart_transfer dt LEFT JOIN transfer_order tor1 ON tor1.id = dt.order_id"
-                     + " LEFT JOIN depart_pickup dp ON dp.pickup_id = dt.pickup_id WHERE dp.depart_id =  "+departOrderId
-                     + " AND  tor1.cargo_nature = 'cargo' and dt.order_item_id = toi.id AND tor1.id = tor.id)"
+                     + " then ( "
+                     + " select dt.amount from depart_order deo "
+                     + " LEFT JOIN depart_pickup dpi on dpi.depart_id = deo.id"
+                     + " LEFT JOIN depart_transfer dt on dt.pickup_id = dpi.pickup_id"
+                     + " where deo.id = "+departOrderId
+                     + " and tor.id = dt.order_id"
+                     + "  GROUP BY toi.id "
+                     //+ " SELECT ifnull(sum(dt.amount), 0) FROM depart_transfer dt LEFT JOIN transfer_order tor1 ON tor1.id = dt.order_id"
+                     //+ " LEFT JOIN depart_pickup dp ON dp.pickup_id = dt.pickup_id WHERE dp.depart_id =  "+departOrderId
+                     //+ " AND  tor1.cargo_nature = 'cargo' and dt.order_item_id = toi.id AND tor1.id = tor.id"
+                     + " )"
                      + " else"
                      + " toi.amount"
                      + " end"
