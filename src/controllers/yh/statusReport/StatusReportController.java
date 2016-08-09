@@ -297,7 +297,7 @@ public class StatusReportController extends Controller{
 						+ " left join delivery_order dor on dor.id = toid.delivery_id"
 						+ " left join return_order ro on ro.delivery_order_id = dor.id"
 						+ " left join warehouse w on w.id = tor.warehouse_id"
-						+ " where tor.cargo_nature_detail = 'cargoNatureDetailYes' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+						+ " where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 						+ " and tor.customer_id in  (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 				
 		String sql = "select toid.id, toid.serial_no,item_no,c.abbr customer,toid.notify_party_company,tor.status transfer_status,pkdo.status pick_status,dedo.status depart_status,ro.transaction_status,"
@@ -315,7 +315,7 @@ public class StatusReportController extends Controller{
 						+ " left join delivery_order dor on dor.id = toid.delivery_id"
 						+ " left join return_order ro on ro.delivery_order_id = dor.id"
 						+ " left join warehouse w on w.id = tor.warehouse_id"
-						+ " where tor.cargo_nature_detail = 'cargoNatureDetailYes' and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+						+ " where tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
 						+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
 							
 			//有序列号时
