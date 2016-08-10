@@ -10,11 +10,11 @@
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/departOrder/list",
+//        "sAjaxSource": "/departOrder/list",
         "aoColumns": [   
             { 
                 "mDataProp": null, "sWidth":"70px",
@@ -114,6 +114,7 @@ function refreshData(){
 	}else{
 		costchebox = '0';
 	}
+	dataTable.fnSettings().oFeatures.bServerSide = true;
 	dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo
 										+"&departNo="+departNo_filter
 										+"&status="+status
