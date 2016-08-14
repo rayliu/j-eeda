@@ -202,44 +202,7 @@
     	clickTabId = e.target.getAttribute("id");
     });
 
-    $('#customer_filter').on('keyup click', function(){
-        var inputStr = $('#customer_filter').val();
-        
-        $.get("/customerContract/search", {locationName:inputStr}, function(data){
-            //console.log(data);
-            var companyList =$("#companyList");
-            companyList.empty();
-            for(var i = 0; i < data.length; i++)
-            {
-                companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
-            }
-            if(data.length>0)
-                companyList.show();
-            
-        },'json');
-   
-    });
-
-	$('#companyList').on('click', '.fromLocationItem', function(e){        
-       $('#customer_filter').val($(this).text());
-       $("#companyList").hide();
-       var companyId = $(this).attr('partyId');
-       $('#customerId').val(companyId);
-	});
-	// 没选中客户，焦点离开，隐藏列表
-	$('#customer_filter').on('blur', function(){
-		$('#companyList').hide();
-	});
-
-	//当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
-	$('#companyList').on('blur', function(){
-		$('#companyList').hide();
-	});
-
-	$('#companyList').on('mousedown', function(){
-		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
-	});
-   
+  
   //开始-时间按钮
   $('#datetimepicker').datetimepicker({  
 	    format: 'yyyy-MM-dd',  
@@ -281,7 +244,8 @@
           de_order_no:$("#de_order_no").val(),
           time_one:$("#time_one").val(),
           time_two : $("#time_two").val(),
-          customer : $("#customer_filter").val(),
+          customer : $("#customer_id").val(),
+          customer_name : $("#customer_id_input").val(),
           serial_no: $("#serial_no").val(),
           sign_no: $("#sign_no").val(),
           return_type: $("#return_type").val(),
@@ -307,7 +271,8 @@
           $("#de_order_no").val(conditions.de_order_no);
           $("#time_one").val(conditions.time_one);
           $("#time_two").val(conditions.time_two);
-          $("#customer_filter").val(conditions.customer);
+          $("#customer_id").val(conditions.customer);
+          $("#customer_id_input").val(conditions.customer_name);
           $("#serial_no").val(conditions.serial_no);
           $("#sign_no").val(conditions.sign_no);
           $("#return_type").val(conditions.return_type);
@@ -320,6 +285,11 @@
   };
   
   var findData = function(){
+      var customer_filter=$('#customer_id_input').val();
+       if(!customer_filter){
+          $.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
+          return;
+       }
       var order_no = $("#order_no").val();
       var serial_no = $("#serial_no").val();
       var warehouse = $("#warehouse").val();
@@ -329,7 +299,7 @@
       var sign_no = $("#sign_no").val();
       var time_one = $("#time_one").val();
       var time_two = $("#time_two").val();
-      var inputStr =$("#customer_filter").val();
+      var inputStr =$("#customer_id").val();
       var transfer_type =$("#transfer_type").val();
       var to_name =$("#to_name").val();
       var province =$("#province").val();
@@ -354,7 +324,7 @@
     };
 
   $('#downloadBtn').click(function(){
-      var customer_filter=$('#customer_filter').val();
+      var customer_filter=$('#customer_id_input').val();
        if(!customer_filter){
           $.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
           return;
@@ -384,7 +354,7 @@
       var sign_no = $("#sign_no").val();
       var time_one = $("#time_one").val();
       var time_two = $("#time_two").val();
-      var inputStr =$("#customer_filter").val();
+      var inputStr =$("#customer_id").val();
       var transfer_type =$("#transfer_type").val();
       var to_name =$("#to_name").val();
       var province =$("#province").val();

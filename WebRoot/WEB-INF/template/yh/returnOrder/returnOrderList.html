@@ -62,11 +62,13 @@
                         			   
                                 </div>
                                 <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="search-label">客户名称</label>
-                                        <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择客户">
-                                       	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 43%; left: 33%;"></ul>
-                                    </div>
+                                    <%include("/yh/component/form/inputCustomerField.html", 
+                                        {
+                                            id:'customer_id', 
+                                            label:'客户名称',
+                                            required: 'required',
+                                            value: ''
+                                        }){} %>
                                     <div class="form-group">                                        
                                         <div id="datetimepicker" class="input-append date "> 
                                             <label class="search-label">计划时间</label> 

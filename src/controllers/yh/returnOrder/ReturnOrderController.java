@@ -116,9 +116,7 @@ public class ReturnOrderController extends Controller {
 		
 
 		String conditions=" where 1=1 ";
-		if (StringUtils.isNotEmpty(order_no)){
-        	conditions+=" and UPPER(order_no) like '%"+order_no+"%'";
-        }
+		
 		if (StringUtils.isNotEmpty(imgaudit)){
         	conditions+=" and UPPER(imgaudit) like '%"+imgaudit+"%'";
         }
@@ -131,18 +129,14 @@ public class ReturnOrderController extends Controller {
 		if (StringUtils.isNotEmpty(de_order_no)){
         	conditions+=" and UPPER(delivery_order_no) like '%"+de_order_no+"%'";
         }
-        if (StringUtils.isNotEmpty(status)){
-        	conditions+=" and UPPER(transaction_status) in(" + status+")";
-        }   
+         
         if (StringUtils.isNotEmpty(sign_no)){
         	conditions+=" and UPPER(sign_no) like '%"+sign_no+"%'";
         }
         if (StringUtils.isNotEmpty(serial_no)){
         	conditions+=" and UPPER(serial_no) like '%"+serial_no+"%'";
         }
-        if (StringUtils.isNotEmpty(customer)){
-        	conditions+=" and UPPER(cname) like '%"+customer+"%'";
-        }
+        
         if (StringUtils.isNotEmpty(return_type)){
         	conditions+=" and UPPER(return_type) like '%"+return_type+"%'";
         }
@@ -409,15 +403,23 @@ public class ReturnOrderController extends Controller {
 					+ " LEFT JOIN contact c2 ON c2.id =p2.contact_id"
 					+ " LEFT JOIN location lo ON lo. CODE = ifnull(tor.route_from, dor.route_from )"
 					+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
-					+ " LEFT JOIN user_login ul ON ul.id = ror.creator " ;
-
+					+ " LEFT JOIN user_login ul ON ul.id = ror.creator where 1=1 " ;
+	    if (StringUtils.isNotEmpty(order_no)){
+	        sql+=" and UPPER(ror.order_no) like '%"+order_no+"%'";
+        }
+	    if (StringUtils.isNotEmpty(status)){
+	        sql+=" and UPPER(ror.transaction_status) in(" + status+")";
+        }  
+	    if (StringUtils.isNotEmpty(customer)){
+	        sql+=" and ror.customer_id ="+customer;
+        }
 		String orderByStr = " order by planning_time asc ";
         if(colName!=null && colName.length()>0){
         	orderByStr = " order by A."+colName+" "+sortBy;
         }	
 			
 		// 获取总条数
-		sqlTotal = "select count(1) total from ( SELECT  *  from ("+ totalSql+") A " + conditions+ ") B";
+		sqlTotal = "select count(1) total from ( SELECT  *  from ("+ sql+") A " + conditions+ ") B";
 		Record rec = Db.findFirst(sqlTotal);
 		
 		
