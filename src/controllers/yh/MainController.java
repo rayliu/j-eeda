@@ -337,7 +337,7 @@ public class MainController extends Controller {
                 +"    where dor.status in ('运输在途','已发车')"
                 +"    group by tor.id";
         
-        String sql = " select * from ("+psSql+" union "+ysSql+") B";
+        String sql = " select * from (("+psSql+") union ("+ysSql+")) B  ";
         
         if("true".equals(transport) && "false".equals(distribution)){
             sql = " select * from ("+ysSql+") B";
@@ -350,7 +350,7 @@ public class MainController extends Controller {
                 +"    LEFT JOIN office o on o.id = uo.office_id "
                 +"    LEFT JOIN location l on l.`code` = o.location"
                 +"    WHERE"
-                +"    user_name = '" + currentUser.getPrincipal() +"')";
+                +"    user_name = '" + currentUser.getPrincipal() +"') ORDER BY type, id DESC";
         
         Record rec = Db.findFirst("select count(1) total from (" + sql + ") A");
         
