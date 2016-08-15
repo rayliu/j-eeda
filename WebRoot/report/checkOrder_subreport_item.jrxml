@@ -37,7 +37,7 @@
 		r_f.`name` as route_from,
 		r_t.`name` as route_to,
 		'配送' as service_type,
-		(select count(*) from delivery_order_item doit where doit.delivery_id = dor.id) as quantity,
+		(select sum(amount) from delivery_order_item doit where doit.delivery_id = dor.id) as quantity,
 		IFNULL(
 		dor.receivingunit,
 		IFNULL(
