@@ -1,6 +1,7 @@
  $(document).ready(function() {
 	 document.title = '发车单查询 | '+document.title;
 	$('#menu_assign').addClass('active').find('ul').addClass('in');
+	    
 	var dataTable =$('#dataTables-example').dataTable({
 		"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
 		"bFilter": false, //不需要默认的搜索框
@@ -90,7 +91,8 @@
     	 itemDetailTable.fnSettings().sAjaxSource = "/departOrder/getItemDetail?depart_id="+depart_id;
     	 itemDetailTable.fnDraw();
      });
-	
+	 
+
 	
 	
 function refreshData(){
@@ -134,9 +136,18 @@ function refreshData(){
 }
 
 $('#query').on('click', function () {
-	refreshData();
+	if(findData()!=false){
+	   refreshData();
+	}
 });
 
+var findData = function(){
+	var customer_filter=$('#customer_filter').val();
+	if(!customer_filter){
+	   $.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
+	   return false;
+	}	
+}
 
 $.post('/transferOrder/searchPartOffice',function(data){
 	 if(data.length > 0){

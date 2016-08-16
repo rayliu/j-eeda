@@ -158,8 +158,14 @@ public class DepartOrderController extends Controller {
         if (StringUtils.isNotEmpty(office)){
         	conditions+=" and office_name like '%"+office+"%'";
         }
+        
+        String condition = "";
         if (StringUtils.isNotEmpty(customer)){
-        	conditions+=" and customer like '%"+customer+"%'";
+        	condition = " and ("
+        			+ " SELECT GROUP_CONCAT( DISTINCT c.abbr SEPARATOR '' ) "
+        			+ " FROM transfer_order tor LEFT JOIN depart_transfer dt ON dt.order_id = tor.id "
+        			+ " LEFT JOIN party p ON p.id = tor.customer_id LEFT JOIN contact c ON c.id = p.contact_id "
+        			+ " WHERE dt.depart_id = deo.id ) like '%"+customer+"%'";
         }
         if (StringUtils.isNotEmpty(transfer_type)){
         	conditions+=" and trip_type like '%"+transfer_type+"%'";
@@ -240,7 +246,8 @@ public class DepartOrderController extends Controller {
 				+ " left join location l1 on l1.code = deo.route_from"
 				+ " left join location l2 on l2.code = deo.route_to "
 				+ " where "
-				+ " deo.status!='手动删除' and deo.combine_type='DEPART' ";
+				+ " deo.status!='手动删除' and deo.combine_type='DEPART' "
+				+ condition;
         
 		sql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,deo.arrival_time arrival_time,deo.remark remark,ifnull(deo.driver, c.driver) contact_person,ifnull(deo.phone, c.phone) phone,c.car_no,c.cartype,c.length,ifnull(u.c_name,u.user_name) user_name,"
 				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.office_id SEPARATOR '\r\n' ) "
@@ -284,7 +291,8 @@ public class DepartOrderController extends Controller {
 				+ " left join location l1 on l1.code = deo.route_from"
 				+ " left join location l2 on l2.code = deo.route_to "
 				+ " where "
-				+ " deo.status!='手动删除' and deo.combine_type='DEPART' ";
+				+ " deo.status!='手动删除' and deo.combine_type='DEPART' "
+				+ condition;
 				
 
 		Record rec = Db.findFirst("select count(1) total from (select * from (" + totalSql+ ") A " + conditions +" ) B");
