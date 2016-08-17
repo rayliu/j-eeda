@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="checkOrder_subreport_item" language="groovy" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="260e40d5-dc30-467f-97e2-8f3420a6c940">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="193"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
@@ -106,13 +106,19 @@ union
 		aci.ref_order_id,
 		aci.cost_order_id,
 	  doer.depart_no as order_no,
-		doer.departure_time  as create_date,
+		doer.create_stamp   as create_date,
 		doer.booking_note_number as sp_order_no,
 		c.abbr as customer_name,
 		r_f.`name` as route_from,
 		r_t.`name` as route_to,
 		'提货' as service_type,
-		(select sum(amount) from transfer_order_item where order_id in (select order_id from depart_transfer dtp where dtp.depart_id = doer.id )) as quantity,
+		(SELECT
+sum(amount)
+FROM
+depart_transfer
+WHERE
+pickup_id = doer.id
+and order_id = t.id) as quantity,
 		doer.address as address,
 		ifnull((select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付' and ifnull(dofi.cost_source,'')!='对账调整金额'),0) as amount,
 		ifnull((select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),0) as confirm_amount,
@@ -120,7 +126,7 @@ union
 	from
 		arap_cost_item aci
 	left join depart_order doer on doer.id = aci.ref_order_id
-	left join depart_transfer dt on dt.depart_id = doer.id
+	left join depart_transfer dt on dt.pickup_id  = doer.id
 	left join transfer_order t on t.id = dt.order_id
 	left join party p on t.customer_id = p.id
 	left join contact c on p.contact_id = c.id
@@ -129,6 +135,7 @@ union
 	where
 		aci.cost_order_id = $P{order_id}
 		and aci.ref_order_no='提货'
+group by doer.id
 union
 	select
 		aci.ref_order_no,
