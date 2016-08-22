@@ -134,6 +134,11 @@ $(document).ready(function() {
     	var noreceive = $("[name=noreceive]").prop('checked');
     	var inventory = $("[name=inventory]").prop('checked');
     	
+    	if(customer_id == ''){
+    		$.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
+    		return false;
+    	}
+    	
 		statusTable.fnSettings().oFeatures.bServerSide = true;
 		statusTable.fnSettings()._iDisplayStart = 0;
     	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&order_no="+order_no

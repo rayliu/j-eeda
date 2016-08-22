@@ -707,6 +707,45 @@ public class StatusReportController extends Controller{
 		String inventory = getPara("inventory");
 		String sLimit = "";
 		
+		String condition = "";
+		String conditions = "";
+		if(orderNo != null || customerId != null || beginTime != null|| endTime != null ){
+			String time ="";
+			if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
+				time = "1970-01-01";
+			}
+    		if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1970-01-01";
+			}
+    		
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "2037-12-31";
+			}
+			conditions =" where 1=1";
+			if(!"".equals(customerId)){
+				condition +=" and tor.customer_id ="+ customerId + " ";
+			}
+			if(!"".equals(orderNo)){
+				conditions +=" and ifnull(transferno,'') like '%" + orderNo + "%' ";
+			}
+			if(!"".equals(route_to)){
+				conditions +=" and ifnull(province,'') like '%" + route_to + "%' ";
+			}
+			if(!"".equals(serial_no)){
+				conditions +=" and ifnull(serial_no,'') like '%" + serial_no + "%' ";
+			}
+			if ((beginTime != null && !"".equals(beginTime))||(endTime != null && !"".equals(endTime))) {
+        		if (beginTime == null || "".equals(beginTime)) {
+    				beginTime = "1970-01-01";
+    			}
+        		
+    			if (endTime == null || "".equals(endTime)) {
+    				endTime = "2037-12-31";
+    			}
+    			conditions += " and ifnull(planning_time,'1970-01-01') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+			}
+		}
+		
 		Map orderMap = new HashMap();
 		String pageIndex = getPara("sEcho");
 		if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -714,7 +753,7 @@ public class StatusReportController extends Controller{
 		}
 	
 				// 获取总条数
-				String totalSql = "SELECT count(0) total from (SELECT c.id cid,"
+				String totalSql = "SELECT count(0) total from (SELECT tor.customer_id cid,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -740,9 +779,10 @@ public class StatusReportController extends Controller{
 						+ " LEFT JOIN contact c ON c.id = p.contact_id"
 						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
 						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
-						+ " WHERE tor.cargo_nature = 'ATM'"
+						+ " WHERE tor.cargo_nature = 'ATM' "
+						+ condition
 						+ " UNION"
-						+ " SELECT c.id cid,"
+						+ " SELECT tor.customer_id cid,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -768,12 +808,14 @@ public class StatusReportController extends Controller{
 						+ " LEFT JOIN contact c ON c.id = p.contact_id"
 						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
 						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
-						+ " WHERE tor.cargo_nature = 'cargo' GROUP BY	tor.id) a";
+						+ " WHERE tor.cargo_nature = 'cargo' "
+						+ condition
+						+ " GROUP BY	tor.id"
+						+ " ) a";
 						
 					
 				String sql = "SELECT *,round((yf_pickup+yf_depart+yf_insurance+delivery),2) yf_sum,round((ys_insurance+return_amount),2) ys_sum,round(((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery)),2)yz_amount,round(ifnull((((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery))/(ys_insurance+return_amount)),0),2) maolilv from "
-						+ " (SELECT c.id cid,"
-						+ ""
+						+ " (SELECT tor.customer_id cid,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -812,8 +854,9 @@ public class StatusReportController extends Controller{
 						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
 						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
 						+ " WHERE tor.cargo_nature = 'ATM'"
+						+ condition
 						+ " UNION all"
-						+ " SELECT c.id cid,"
+						+ " SELECT tor.customer_id cid,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -832,7 +875,6 @@ public class StatusReportController extends Controller{
 		                +" 		where l2.code = tor.route_to)"
 		                +" 		end"
 		                +" 		) province, "
-						+ ""
 						+ " c.abbr,(SELECT	d_o.order_no FROM	delivery_order d_o LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id WHERE doi.transfer_order_id = tor.id) deliveryno,tor.order_no transferno,tor.STATUS,'' ORDER_TYPE,'' serial_no,tor.planning_time,l1. NAME route_from,l2. NAME route_to,"
 						+ " (SELECT ifnull(sum(amount), 0)	FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) pieces,(SELECT	IFNULL(sum(weight), 0)FROM transfer_order_item toi WHERE toi.order_id = tor.id) weight,(SELECT ifnull(sum(volume), 0)FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) volume,"
 						+ " ROUND(IFNULL(sum((SELECT IFNULL(sum(amount),0)/(SELECT count(*)	FROM depart_transfer dof WHERE dof.pickup_id = dor1.id)	FROM	pickup_order_fin_item pof	LEFT JOIN depart_order dor1 ON dor1.id = pof.pickup_order_id WHERE dor1.id = dtr.pickup_id and dor1.audit_status='对账已确认' AND pof.fin_item_id != 7)),	0),2) yf_pickup,"
@@ -850,64 +892,19 @@ public class StatusReportController extends Controller{
 						+ " LEFT JOIN contact c ON c.id = p.contact_id"
 						+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
 						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
-						+ " WHERE tor.cargo_nature = 'cargo' GROUP BY	tor.id) a";
+						+ " WHERE tor.cargo_nature = 'cargo' "
+						+ condition
+						+ " GROUP BY	tor.id) a";
 						
-				String condition = "";
-				if(orderNo != null || customerId != null || beginTime != null|| endTime != null){
-					String time ="";
-					if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
-						time = "1970-01-01";
-					}
-		    		if (beginTime == null || "".equals(beginTime)) {
-						beginTime = "1970-01-01";
-					}
-		    		
-					if (endTime == null || "".equals(endTime)) {
-						endTime = "2037-12-31";
-					}
-					condition =" where 1=1";
-					if(!"".equals(customerId)){
-						condition +=" and ifnull(cid,'') ="+ customerId + " ";
-					}
-					if(!"".equals(orderNo)){
-						condition +=" and ifnull(transferno,'') like '%" + orderNo + "%' ";
-					}
-//					if(!"".equals(receive)){
-//						condition +=" and ifnull(ys_sum,'') > 0 ";
-//					}
-					if(!"".equals(route_to)){
-						condition +=" and ifnull(province,'') like '%" + route_to + "%' ";
-					}
-					if(!"".equals(serial_no)){
-						condition +=" and ifnull(serial_no,'') like '%" + serial_no + "%' ";
-					}
-					if ((beginTime != null && !"".equals(beginTime))||(endTime != null && !"".equals(endTime))) {
-		        		if (beginTime == null || "".equals(beginTime)) {
-		    				beginTime = "1970-01-01";
-		    			}
-		        		
-		    			if (endTime == null || "".equals(endTime)) {
-		    				endTime = "2037-12-31";
-		    			}
-		    			condition += " and ifnull(planning_time,'1970-01-01') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
-					}
-				}
+				
 				
 				// 获取总条数
-				Record rec = Db.findFirst(totalSql + condition);
-				logger.debug("total records:" + rec.getLong("total"));
+				Record rec = Db.findFirst(totalSql + conditions);
 				// 获取当前页的数据
-				List<Record> orders =Db.find(sql+ condition +" order by planning_time desc" + sLimit);
-				StringBuffer resultData = new StringBuffer();
-				resultData.append("[");
-				for (Record record : orders) {
-					resultData.append(record.toJson()+",");
+				if("true".equals(receive)){
+					conditions +=" and round((ys_insurance + return_amount), 2 ) > 0";
 				}
-				resultData.delete(resultData.length()-1, resultData.length());
-				resultData.append("]");
-				System.out.println("data:"+resultData.toString());
-				
-				
+				List<Record> orders =Db.find(sql+ conditions +" order by planning_time desc" + sLimit);
 				orderMap.put("sEcho", pageIndex);
 				orderMap.put("iTotalRecords", rec.getLong("total"));
 				orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
