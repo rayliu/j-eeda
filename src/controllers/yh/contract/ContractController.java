@@ -518,7 +518,7 @@ public class ContractController extends Controller {
         }
         
         List<Record> locationList = Collections.EMPTY_LIST;
-        String sql = "select c.id, c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' "
+        String sql = "select p.id, c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' "
         		+ " and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
         			
         if (customerName.trim().length() > 0) {
