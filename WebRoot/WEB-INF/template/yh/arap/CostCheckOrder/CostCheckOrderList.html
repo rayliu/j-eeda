@@ -125,14 +125,12 @@
 									                        <form id="createForm" action="/costCheckOrder/create" method="post">
 									                            <input id='checkedOrderId' name='ids' type="hidden">
 									                            <input id='checkedOrderNo' name='orderNos' type="hidden">
-									                            <div class="col-lg-6">
+									                            <div class="col-lg-12">
 									                                <div class="form-group">
 									                                    <div class="controls">
 									                                      <button id="saveBtn" disabled="true" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建对账单</button>
-									                                    
+																		  <button id="deleteAllBtn"  type="button" style="float:right" class="btn  btn-danger">批量撤回</button>
 									                                    </div>
-									                                    
-									                                    
 											                        </div>    
 									                            </div>    
 									                        </form> 
@@ -330,9 +328,10 @@
 
 <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
-<script src="/yh/js/arap/CostCheckOrder/list.js"></script>
-<script src="/yh/js/arap/CostCheckOrder/createList.js"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/eeda-common.js"></script>
+
+<script src="/yh/js/arap/CostCheckOrder/list.js"></script>
+<script src="/yh/js/arap/CostCheckOrder/createList.js"></script>

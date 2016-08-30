@@ -3,6 +3,7 @@ package controllers.yh.arap.ap;
 import interceptor.SetAttrLoginUserInterceptor;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.google.gson.Gson;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
@@ -1633,31 +1635,39 @@ public class CostCheckOrderController extends Controller {
 	}
 
 	public void delete() {
-		String id = getPara("id");
-		String order_type = getPara("order_type");
-		if ("提货".equals(order_type)) {
-			DepartOrder pickupOrder = DepartOrder.dao.findById(id);
-			pickupOrder.set("audit_status", "新建");
-			pickupOrder.update();
-		} else if ("零担".equals(order_type) || "整车".equals(order_type)) {
-			DepartOrder departOrder = DepartOrder.dao.findById(id);
-			departOrder.set("audit_status", "新建");
-			departOrder.update();
-		} else if ("配送".equals(order_type)) {
-			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(id);
-			deliveryOrder.set("audit_status", "新建");
-			deliveryOrder.update();
-		} else if ("成本单".equals(order_type)) {
-			ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao
-					.findById(id);
-			arapmisccostOrder.set("audit_status", "新建");
-			arapmisccostOrder.update();
-		} else {
-			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
-			insuranceOrder.set("audit_status", "新建");
-			insuranceOrder.update();
-		}
-
+		String jsonStr=getPara("jsonStr");
+       	Gson gson = new Gson();  
+        Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
+		
+        List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("jsonArray");
+        
+        for(Map<String, String> li:itemList){
+        	String id = (String) li.get("id");
+    		String order_type =(String) li.get("order_type");
+    		
+    		if ("提货".equals(order_type)) {
+    			DepartOrder pickupOrder = DepartOrder.dao.findById(id);
+    			pickupOrder.set("audit_status", "新建");
+    			pickupOrder.update();
+    		} else if ("零担".equals(order_type) || "整车".equals(order_type)) {
+    			DepartOrder departOrder = DepartOrder.dao.findById(id);
+    			departOrder.set("audit_status", "新建");
+    			departOrder.update();
+    		} else if ("配送".equals(order_type)) {
+    			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(id);
+    			deliveryOrder.set("audit_status", "新建");
+    			deliveryOrder.update();
+    		} else if ("成本单".equals(order_type)) {
+    			ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao
+    					.findById(id);
+    			arapmisccostOrder.set("audit_status", "新建");
+    			arapmisccostOrder.update();
+    		} else {
+    			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
+    			insuranceOrder.set("audit_status", "新建");
+    			insuranceOrder.update();
+    		}
+        }
 		renderJson("{\"success\":true}");
 	}
 

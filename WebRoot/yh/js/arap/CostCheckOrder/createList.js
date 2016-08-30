@@ -1,8 +1,6 @@
 
 $(document).ready(function() {
     $('#menu_cost').addClass('active').find('ul').addClass('in');
-    
-   
 
     $("#resetBtn").click(function(){
         $('#returnOrderSearchForm')[0].reset();
@@ -27,6 +25,47 @@ $(document).ready(function() {
             localStorage.setItem("CostCheckOrderQueryCondition", JSON.stringify(conditions));
         }
     };
+    
+    
+    //批量撤销功能
+    $('#deleteAllBtn').on('click',function(e){
+    	var self= this;
+    	$(self).prop('disabled',true);
+    	var jsonj = {};
+    	var jsonArray = [];
+    	var $checked = [];
+    	$('#uncheckedCostCheck-table input[name="order_check_box"]').each(function(){
+    		var check = $(this).prop('checked');
+    		if(check){
+    			var id = $(this).attr('id');
+    			var order_type = $(this).parent().parent().attr('order_ty');
+    			var jsonStr = {};
+    			jsonStr.id = id;
+    			jsonStr.order_type = order_type;
+    			jsonArray.push(jsonStr);
+    			$checked.push($(this));
+    		}
+    	})
+    	jsonj.jsonArray= jsonArray;
+    	if(jsonArray.length<1){
+    		$.scojs_message('请勾选您要撤回的单据', $.scojs_message.TYPE_ERROR);
+    		$(self).prop('disabled',false);
+    		return false;
+    	}
+    	
+    	$.post('/costCheckOrder/delete',{jsonStr:JSON.stringify(jsonj)},function(data){
+    		if(data.success){
+    			$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
+    			
+    			for(var i = 0;i<$checked.length;i++){
+            		$checked[i].parent().parent().hide();
+            	}
+    		}else{
+    			$.scojs_message('撤回失败', $.scojs_message.TYPE_ERROR);
+    		}
+    		$(self).prop('disabled',false);
+    	})
+    })
     
     //回填查询条件
     var loadConditions=function(){
@@ -272,12 +311,21 @@ $(document).ready(function() {
     
     $("#uncheckedCostCheck-table").on('click', '.finItemdel', function(e){
 		e.preventDefault();
+		var self = this;
 		var id = $(this).attr('code');
 		var order_type = $(this).attr('order_type');
-		$.get('/costCheckOrder/delete',{id:id,order_type:order_type},function(data){
+		var jsonj = {}
+		var jsonArray = [];
+		var jsonStr = {};
+		jsonStr.id = id;
+		jsonStr.order_type = order_type;
+		jsonArray.push(jsonStr);
+		jsonj.jsonArray = jsonArray;
+		
+		$.get('/costCheckOrder/delete',{jsonStr:JSON.stringify(jsonj)},function(data){
 			if(data.success){
 				$.scojs_message('撤销成功', $.scojs_message.TYPE_OK);
-				uncheckedCostCheckTable.fnDraw();
+				$(self).parent().parent().hide();
 			}else{
 				$.scojs_message('撤销成功', $.scojs_message.TYPE_ERROR);
 			}
