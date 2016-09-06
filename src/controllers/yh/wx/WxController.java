@@ -368,7 +368,9 @@ public class WxController extends ApiController {
     public void queryStatusJson() {
         String orderNo = getPara("orderNo").toUpperCase();
         String openid = getPara("openid");
+        System.out.println("openid:"+openid);
         Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
+        System.out.println("微信登录对应的用户:"+userRec.getStr("user_name"));
         //String sql = "";
         // if("YS".equals(orderNo.substring(0,2))){
         String sql1 = "select "
