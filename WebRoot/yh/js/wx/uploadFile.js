@@ -48,7 +48,7 @@ $(document).ready(function() {
 				selectCustomer.empty();
 				selectCustomer.append("<option value='-1'></option>");
 				$.each(data,function(n,value) {
-					selectCustomer.append("<option value='"+value.CID+",'>"+value.ABBR+";"+value.SERIAL_NO+"</option>");
+					selectCustomer.append("<option value='"+value.CID+","+value.SERIAL_NO+"'>"+value.ABBR+";"+value.SERIAL_NO+"</option>");
 			    });  
 				$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
 				$("#uploadBtn").attr("disabled", true);
