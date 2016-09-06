@@ -359,6 +359,7 @@ public class WxController extends ApiController {
             render("/yh/wx/queryStatus.html");
         }else{
             setAttr("openid", openid);
+            System.out.println("进来时的openid:"+openid);
             setAttr("redirect", "queryStatus");
             render("/yh/wx/login.html");
         }
@@ -601,10 +602,7 @@ public class WxController extends ApiController {
 	    if(StringUtils.isNotEmpty(customer_id)){
 	    	conditions += " and A.cid='"+customer_id+"' ";
 	    }
-		
-		
-		//单号不为空时
-		if(order_no != null && !"".equals(order_no)){
+
 			//单号可能为序列号/签收单号/运输单号
 		    String sql ="select * from(select ifnull(ro.id,ro2.id) id, ifnull(toid.serial_no,'') serial_no, "
 		    		+ " (case when (ro.id is not null or ro2.id is not null) "
@@ -640,7 +638,6 @@ public class WxController extends ApiController {
 			}else{
 			    renderJson(new Record());
 			}
-		}
 	}
 	
 	public void findOrderNo(){
