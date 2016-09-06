@@ -354,6 +354,8 @@ public class WxController extends ApiController {
         Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
         if(userRec != null){
         	relogin(userRec);
+        	setAttr("openid", openid);
+            System.out.println("进来时的openid:"+openid);
             setAttr("orderNo", getPara());
             setPageAttr("/wx/queryStatus");
             render("/yh/wx/queryStatus.html");
