@@ -17,7 +17,21 @@
           <div class="weui_cell">
               <div class="weui_cell_hd"><label class="weui_label">单号</label></div>
               <div class="weui_cell_bd weui_cell_primary">
-                  <input class="weui_input" type="text" id="orderNo" name='orderNo' value="${orderNo!''}" placeholder="请输入序列号/签收单号/运输单号">
+                  <input class="weui_input" style="text-align:right"  type="text" id="orderNo" name='orderNo' value="${orderNo!''}" placeholder="请输入运输单号">
+              </div>
+          </div>
+          
+          <div class="weui_cell">
+              <div class="weui_cell_hd"><label class="weui_label">序列号</label></div>
+              <div class="weui_cell_bd weui_cell_primary">
+                  <input class="weui_input" style="text-align:right" type="text" id="serial_no" name='serial_no' placeholder="请输入序列号">
+              </div>
+          </div>
+          
+          <div class="weui_cell">
+              <div class="weui_cell_hd"><label class="weui_label">签收号</label></div>
+              <div class="weui_cell_bd weui_cell_primary">
+                  <input class="weui_input" style="text-align:right" type="text" id="ref_no" name='ref_no' placeholder="请输入签收单据号">
               </div>
           </div>
       </form>
@@ -138,5 +152,5 @@
 </script>
 
 <!-- 某些型号android 不加Version,js文件会不刷新-->
-<script src="/yh/js/wx/uploadFile.js?Version=4"></script>
+<script src="/yh/js/wx/uploadFile.js?Version=5"></script>
 </html>

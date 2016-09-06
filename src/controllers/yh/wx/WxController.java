@@ -571,10 +571,38 @@ public class WxController extends ApiController {
 	
 	//查找回单
 	public void findReturnOrder() {
-		String orderNo = getPara("orderNo").toUpperCase();
-		String customer = getPara("customer").toUpperCase();
+		String order_no = getPara("order_no").toUpperCase();
+		String serial_no = getPara("serial_no");
+		String ref_no = getPara("ref_no");
+		String customer = getPara("customer");
+		String[] customerAttr = customer.split(",");
+		String customer_id = "";
+		if(customerAttr.length==1 && "-1".equals(customer)){
+			customer_id = null;
+		}else{
+			customer_id = customerAttr[0];
+			if(customerAttr.length>1)
+				serial_no = customerAttr[1];
+		}
+		
+		
+		String conditions = "";
+		if(StringUtils.isNotEmpty(order_no)){
+			conditions += " and A.to_order_no = '"+order_no+"' ";
+		}
+		if(StringUtils.isNotEmpty(serial_no)){
+			conditions += " and A.serial_no = '"+serial_no+"' ";
+		}
+		if(StringUtils.isNotEmpty(ref_no)){
+			conditions += " and A.ref_no = '"+ref_no+"' ";
+		}
+	    if(StringUtils.isNotEmpty(customer_id)){
+	    	conditions += " and A.cid='"+customer_id+"' ";
+	    }
+		
+		
 		//单号不为空时
-		if(orderNo != null && !"".equals(orderNo)){
+		if(order_no != null && !"".equals(order_no)){
 			//单号可能为序列号/签收单号/运输单号
 		    String sql ="select * from(select ifnull(ro.id,ro2.id) id, ifnull(toid.serial_no,'') serial_no, "
 		    		+ " (case when (ro.id is not null or ro2.id is not null) "
@@ -601,14 +629,9 @@ public class WxController extends ApiController {
 		            + " left join party p on p.id = ifnull(ifnull(ro.customer_id,ro2.customer_id),dor.customer_id)"
 		            + " left join contact c on c.id=p.contact_id"
 		            + " ) A"
-		            + " where ("
-	                + " A.serial_no = '"+orderNo+"'"
-	                + " or A.ref_no = '"+orderNo+"'"
-	                + " or A.to_order_no = '"+orderNo+"') "
-	                + " and A.status is not null";
-		    if(!"-1".equals(customer)){
-		    	sql += " and A.cid='"+customer+"'";
-		    }
+		            + " where A.status is not null "
+		            + conditions ;
+
 			List<Record> list = Db.find(sql);
 			if(list.size() > 0){
 			    renderJson(list);

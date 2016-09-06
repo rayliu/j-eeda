@@ -2,8 +2,13 @@ $(document).ready(function() {
 	
 	$('#orderNo').focus();
 	
+	
+	
 	$("#searchNo").click(function(){
-		if($('#orderNo').val()=='')
+		var order_no = $('#orderNo').val().trim();
+		var serial_no = $('#serial_no').val().trim();
+		var ref_no = $('#ref_no').val().trim();
+		if(order_no==''&& serial_no=='' && ref_no=='')
 			return;
 		
 		$("#customer").hide();
@@ -14,9 +19,12 @@ $(document).ready(function() {
 		$("#returnOrderNo").text("");
         refreshData(-1);
     });
+	
 	var refreshData=function(customer){  
-		var orderNo=$("#orderNo").val();
-		$.post('/wx/findReturnOrder',{orderNo:orderNo,customer:customer}, function(data){
+		var order_no = $('#orderNo').val().trim();
+		var serial_no = $('#serial_no').val().trim();
+		var ref_no = $('#ref_no').val().trim();
+		$.post('/wx/findReturnOrder',{order_no:order_no , serial_no:serial_no ,ref_no:ref_no,customer:customer}, function(data){
 			if(data.length ==1){
 				var returnId = data[0].ID;
 				$("#uploadBtn").attr("class", "weui_btn weui_btn_primary");
@@ -40,7 +48,7 @@ $(document).ready(function() {
 				selectCustomer.empty();
 				selectCustomer.append("<option value='-1'></option>");
 				$.each(data,function(n,value) {
-					selectCustomer.append("<option value='"+value.CID+"'>"+value.ABBR+"</option>");
+					selectCustomer.append("<option value='"+value.CID+",'>"+value.ABBR+";"+value.SERIAL_NO+"</option>");
 			    });  
 				$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
 				$("#uploadBtn").attr("disabled", true);
@@ -55,7 +63,7 @@ $(document).ready(function() {
 	    },'json');
 	};
 	$('#selectCustomer').change(function(){ 
-		var customer=$("#selectCustomer").val();
+		var customer=$("#selectCustomer").val().trim();;
 		if(customer=="-1"){
 			$('#orderDesc').hide();
 			$("#uploadBtn").attr("class", "weui_btn weui_btn_disabled");
