@@ -117,8 +117,7 @@ sum(amount)
 FROM
 depart_transfer
 WHERE
-pickup_id = doer.id
-and order_id = t.id) as quantity,
+pickup_id = doer.id) as quantity,
 		doer.address as address,
 		ifnull((select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付' and ifnull(dofi.cost_source,'')!='对账调整金额'),0) as amount,
 		ifnull((select sum(amount) from pickup_order_fin_item dofi left join fin_item fi on fi.id = dofi.fin_item_id where dofi.pickup_order_id = doer.id and fi.type = '应付'),0) as confirm_amount,
