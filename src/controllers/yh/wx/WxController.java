@@ -614,7 +614,10 @@ public class WxController extends ApiController {
 	    }
 
 			//单号可能为序列号/签收单号/运输单号
-		    String sql ="select * from(select ifnull(ro.id,ro2.id) id, ifnull(toid.serial_no,'') serial_no, "
+		    String sql ="select * from(select ifnull(ro.id,ro2.id) id,"
+		    		+ " (select count(1) from order_attachment_file "
+		    		+ " where order_id =  ifnull(ro.id, ro2.id)) upload_flag,"
+		    		+ " ifnull(toid.serial_no,'') serial_no, "
 		    		+ " (case when (ro.id is not null or ro2.id is not null) "
 		    		+ " then ifnull(ro.transaction_status,ro2.transaction_status)"
 		    		+ " when (ro.id is null and ro2.id is null and dor.status = '配送在途')"

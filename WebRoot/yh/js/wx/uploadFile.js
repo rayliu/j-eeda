@@ -42,6 +42,7 @@ $(document).ready(function() {
 				$("#refNo").text(data[0].REF_NO);
 				$("#serialNo").text(data[0].SERIAL_NO);
 				$("#returnOrderNo").text(data[0].ORDER_NO);
+				$("#upload_flag").text(data[0].UPLOAD_FLAG);
 			}else if(data.length >1) {
 				$("#customer").show()
 				var selectCustomer =$("#selectCustomer");
