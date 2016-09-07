@@ -35,6 +35,26 @@
       <button class="weui_btn weui_btn_primary" id="searchNo">查询</button>
     </div>
     <div style="margin-top: 10px;">
+    	<div class="weui_cells">
+    		  <div class="weui_cell">
+                  <div class="weui_cell_bd weui_cell_primary">
+                      <p>客户</p>
+                  </div>
+                  <div class="weui_cell_ft" id="customer"></div>
+              </div>
+              <div class="weui_cell">
+                  <div class="weui_cell_bd weui_cell_primary">
+                      <p>始发城市</p>
+                  </div>
+                  <div class="weui_cell_ft" id="route_from"></div>
+              </div>
+              <div class="weui_cell">
+                  <div class="weui_cell_bd weui_cell_primary">
+                      <p>目的城市</p>
+                  </div>
+                  <div class="weui_cell_ft" id="route_to"></div>
+              </div>
+    	</div>
         <div class="weui_cells" id="massage">    
         </div>
     </div>
@@ -87,6 +107,6 @@
   });
 </script>
 
-<script src="/yh/js/wx/queryStatus.js?Version=2"></script>
+<script src="/yh/js/wx/queryStatus.js?Version=3"></script>
 <!-- 某些型号android 不加Version,js文件会不刷新-->
 </html>

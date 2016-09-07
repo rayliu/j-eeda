@@ -376,7 +376,7 @@ public class WxController extends ApiController {
         System.out.println("微信登录对应的用户:"+userRec.getStr("user_name"));
         //String sql = "";
         // if("YS".equals(orderNo.substring(0,2))){
-        String sql1 = "select "
+        String sql1 = " select c.abbr customer,l_f.name route_from,l_t.name route_to,"
         	 		+ " (CONCAT('订单成功接收','-',cast(tor.create_stamp as char)) "
         	 		+ " ) transfer_order, "
         	 		+ " (select (select if((max(dor_pi.create_stamp)=dor_pi.create_stamp),concat((select if(dor_pi.status='新建','提货计划中','已提货')),'-',cast(dor_pi.create_stamp as char)),''))  "
@@ -404,11 +404,15 @@ public class WxController extends ApiController {
         	 		+ " where doi.transfer_order_id = tor.id) "
         	 		+ " ) return_order"
         	 		+ " from transfer_order tor "
+        	 		+ " LEFT JOIN location l_f on l_f.code = tor.route_from  "
+        			+ " LEFT JOIN location l_t on l_t.code = tor.route_to"
+        			+ " LEFT JOIN party p on p.id = tor.customer_id"
+        			+ " left join contact c on c.id = p.contact_id"
         	 		+ " where tor.customer_order_no ='"+ orderNo +"'"
             		+ " and tor.office_id in (select office_id from user_office where user_name='"+userRec.getStr("user_name")+"') "
             		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"') " ;
         // }else{
-        String sql2 = "select  "
+        String sql2 = " select c.abbr customer,l_f.name route_from,l_t.name route_to,"
         			+ " (select CONCAT('订单成功接收','-',cast(tor.create_stamp as char)) from transfer_order tor  "
         			+ " where tor.id = toid.order_id"
         			+ " ) transfer_order,"
@@ -427,6 +431,10 @@ public class WxController extends ApiController {
         			+ " ) return_order "
         			+ " from transfer_order_item_detail toid"
         			+ " left join transfer_order tor on tor.id = toid.order_id  "
+        			+ " LEFT JOIN location l_f on l_f.code = tor.route_from  "
+        			+ " LEFT JOIN location l_t on l_t.code = tor.route_to"
+        			+ " LEFT JOIN party p on p.id = tor.customer_id"
+        			+ " left join contact c on c.id = p.contact_id"
         			+ " where serial_no = '"+orderNo+"'"
         			+ " and tor.office_id in (select office_id from user_office where user_name='"+userRec.getStr("user_name")+"') "
             		+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+userRec.getStr("user_name")+"') " ;

@@ -29,6 +29,13 @@ $(document).ready(function() {
 					var DEPART_ORDER_NO = da.DEPART_ORDER;
 					var DELIVERY_ORDER_NO = da.DELIVERY_ORDER;
 					var RETURN_ORDER_NO = da.RETURN_ORDER;
+					var CUSTOMER = da.CUSTOMER;
+					var ROUTE_FROM = da.ROUTE_FROM;
+					var ROUTE_TO = da.ROUTE_TO;
+					
+					$('#customer').text(CUSTOMER);
+					$('#route_from').text(ROUTE_FROM);
+					$('#route_to').text(ROUTE_TO);
 					if(RETURN_ORDER_NO)
 						$('#massage').append('<label class="weui_cell weui_check_label" style="padding: 0px 15px;">'
 								
