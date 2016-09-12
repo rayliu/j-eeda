@@ -398,7 +398,8 @@ public class CustomerController extends Controller {
     public void getCustomerRoute(){
         String id = getPara("route_id");
         String sql = "select rp.*, get_loc_full_name(rp.location_from) location_from_name, get_loc_full_name(rp.location_to) location_to_name, sp.abbr sp_name from customer_route_provider rp"
-                +" left join contact sp on rp.sp_id = sp.id"
+        		+ " left join party p on p.id = rp.sp_id"
+                +" left join contact sp on sp.id = p.contact_id"
                 +" where rp.id = ?";
         Record route = Db.findFirst(sql, id);
         renderJson(route);
@@ -414,8 +415,8 @@ public class CustomerController extends Controller {
         String sql = "select rp.*, l1.name location_from_name, l2.name location_to_name, sp.abbr sp_name from customer_route_provider rp"
                 +" left join location l1 on rp.location_from = l1.code"
                 +" left join location l2 on rp.location_to = l2.code"
-                +" left join party p on rp.sp_id = p.id"
-                +" left join contact sp on rp.id = p.contact_id"
+                +" left join party p on  p.id = rp.sp_id"
+                +" left join contact sp on sp.id = p.contact_id"
                 +" where customer_id = ?";
         
         String totalSql = "select count(1) total from (" + sql + ") A";
