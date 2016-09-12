@@ -414,7 +414,8 @@ public class CustomerController extends Controller {
         String sql = "select rp.*, l1.name location_from_name, l2.name location_to_name, sp.abbr sp_name from customer_route_provider rp"
                 +" left join location l1 on rp.location_from = l1.code"
                 +" left join location l2 on rp.location_to = l2.code"
-                +" left join contact sp on rp.sp_id = sp.id"
+                +" left join party p on rp.sp_id = p.id"
+                +" left join contact sp on rp.id = p.contact_id"
                 +" where customer_id = ?";
         
         String totalSql = "select count(1) total from (" + sql + ") A";
