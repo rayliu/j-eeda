@@ -340,8 +340,10 @@ public class ChargeCheckOrderController extends Controller {
 				+ " ifnull(amco.total_amount,0) charge_total_amount,"
 				+ " amco.total_amount change_amount,c1.abbr sp"
 				+ " FROM arap_misc_charge_order amco"
-				+ " LEFT JOIN contact c ON c.id = amco.customer_id"
-				+ " LEFT JOIN contact c1 ON c1.id = amco.sp_id"
+				+ " LEFT JOIN party p ON p.id = amco.customer_id"
+				+ " LEFT JOIN contact c ON c.id = p.contact_id"
+				+ " LEFT JOIN party p1 ON p1.id = amco.sp_id"
+				+ " LEFT JOIN contact c1 ON c1.id = p1.contact_id"
 				+ " WHERE amco.id in (" + miscOrderIds + ")" + " )  ";
 		String itemSql = "";
 		if (returnOrderIds.length() > 0 && miscOrderIds.length() > 0) {
@@ -1066,7 +1068,8 @@ public class ChargeCheckOrderController extends Controller {
 				+ " LEFT JOIN arap_charge_item aci on aci.charge_order_id = aao.id"
 				+ " left join party p on p.id = aao.payee_id "
 				+ " left join contact c on c.id = p.contact_id"
-				+ " left join contact c1 on c1.id = aao.sp_id"
+				+ " left join party p1 on p1.id = aao.sp_id"
+				+ " left join contact c1 on c1.id = p1.contact_id"
 				+ " left join user_login usl on usl.id=aao.create_by "
 				+ "	group by aao.id ";
 		
