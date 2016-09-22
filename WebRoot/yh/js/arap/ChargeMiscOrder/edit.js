@@ -168,7 +168,7 @@ $(document).ready(function() {
 				if(company_name == null){
 					company_name='';
 				}
-				spList.append("<li><a tabindex='-1' spId='"+data[i].ID+"' class='fromLo'>"+company_name+" </a></li>");
+				spList.append("<li><a tabindex='-1' spId='"+data[i].PID+"' class='fromLo'>"+company_name+" </a></li>");
 			}
 		},'json');
 		
