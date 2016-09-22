@@ -161,6 +161,7 @@ $(document).ready(function() {
             { "data": "PARTY_TYPE",
                 "render": function ( data, type, full, meta ) {
                     var show = '<select class="form-control search-control partyType">'
+                    	+'<option ></option>'
                         +'<option >客户</option>'
                         +'<option >收货人</option>'
                         +'<option >其他</option>'
@@ -213,13 +214,28 @@ $(document).ready(function() {
     	var party_name = $(this).parent().parent().find('td').eq(5).find('input');
     	party_name.val('');
     	if(party_type == '客户'){
-    		party_name.val($('#customer_id').parent().find('input').val());
+    		var customer_name = $('#customer_id').parent().find('input').val();
+    		if(customer_name==''){
+    			$(this).val('');
+    			$.scojs_message('客户信息不能为空！！！', $.scojs_message.TYPE_FALSE);
+    		}
+    		party_name.val(customer_name);
     		party_name.attr('disabled',true);
     	}else if(party_type == '供应商'){
-    		party_name.val($('#sp_id').parent().find('input').val());
+    		var sp_name = $('#sp_id').parent().find('input').val();
+    		if(sp_name==''){
+    			$(this).val('');
+    			$.scojs_message('供应商信息不能为空！！！', $.scojs_message.TYPE_FALSE);
+    		}
+    		party_name.val(sp_name);
     		party_name.attr('disabled',true);
     	}else if(party_type == '保险公司'){
-    		party_name.val($('#insurance_id').parent().find('input').val());
+    		var insurance_name = $('#insurance_id').parent().find('input').val();
+    		if(insurance_name==''){
+    			$(this).val('');
+    			$.scojs_message('保险公司信息不能为空！！！', $.scojs_message.TYPE_FALSE);
+    		}
+    		party_name.val(insurance_name);
     		party_name.attr('disabled',true);
     	}else{
     		party_name.attr('disabled',false);
