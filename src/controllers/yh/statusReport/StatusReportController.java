@@ -110,7 +110,7 @@ public class StatusReportController extends Controller{
 				+ " where dor.combine_type='DEPART' and dor.id = dt.depart_id)"
 				+ "  SEPARATOR '<br/>') depart_order_no"
 				+ " ,"
-				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(cast(deo.id as char),':',deo.order_no ,'+',deo.`STATUS`,'/财务：',dor.`audit_status` ) "
+				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(cast(deo.id as char),':',deo.order_no ,'+',deo.`STATUS`,'/财务：',deo.`audit_status` ) "
 				+ " FROM delivery_order deo "
 				+ " WHERE deo.id = doi.delivery_id ) SEPARATOR '<br/>') delivery_order_no"
 				+ " ,"
