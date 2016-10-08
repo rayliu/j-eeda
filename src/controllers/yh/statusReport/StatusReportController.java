@@ -845,7 +845,18 @@ public class StatusReportController extends Controller{
 						+ " round(ifnull(((SELECT IFNULL(sum(dofi1.amount), 0) FROM delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE d_o.id = toid.delivery_id AND d_o.audit_status = '对账已确认' AND fi.type = '应付') / (SELECT count(0) FROM transfer_order_item_detail WHERE delivery_id = toid.delivery_id))+ "
 						+ " ifnull((SELECT IFNULL(sum(dofi1.amount), 0) FROM delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE d_o.id = toid.delivery_refused_id AND d_o.audit_status = '对账已确认' AND fi.type = '应付') / (SELECT count(0) FROM transfer_order_item_detail WHERE delivery_refused_id = toid.delivery_refused_id),0),0),2) delivery,"
 						+ " ifnull((SELECT sum(rof.amount) FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id WHERE dor.id = toid.delivery_id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),"
-						+ " (SELECT ifnull(sum(rof1.amount), 0) FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE	ror.transfer_order_id = toid.order_id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount "
+						+ " (SELECT ifnull(sum(rof1.amount), 0) FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE	ror.transfer_order_id = toid.order_id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount ,"
+						+ " ifnull( "
+						+ " ( SELECT ror.transaction_status FROM  return_order ror "
+						+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
+						+ " WHERE ror.transaction_status ),"
+						+ " ( SELECT ror.transaction_status"
+						+ " FROM return_order ror "
+						+ " WHERE ror.transfer_order_id = toid.order_id ) ) return_status,"
+						+ " ( SELECT dep.status FROM depart_order dep"
+						+ " WHERE dep.id = toid.depart_id) depart_status,"
+						+ " ( SELECT dor.status FROM delivery_order dor"
+						+ " WHERE dor.id = toid.delivery_id) delivery_status"
 						+ " FROM transfer_order_item_detail toid"
 						+ " LEFT JOIN transfer_order tor ON tor.id = toid.order_id"
 						+ " LEFT JOIN party p ON p.id = tor.customer_id"
@@ -854,7 +865,7 @@ public class StatusReportController extends Controller{
 						+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
 						+ " WHERE tor.cargo_nature = 'ATM'"
 						+ condition
-						+ " UNION all"
+						+ " UNION"
 						+ " SELECT tor.customer_id cid,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
@@ -884,7 +895,16 @@ public class StatusReportController extends Controller{
 						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) ys_insurance,"
 						+ " round((SELECT	IFNULL(sum(dofi1.amount),0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id and d_o.audit_status='对账已确认' AND  fi.type = '应付'),2) delivery,"
 						+ " ifnull((SELECT sum(rof.amount)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id"
-						+ " WHERE doi.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount"
+						+ " WHERE doi.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount,"
+						+ " ( SELECT ror.transaction_status"
+						+ " FROM return_order ror "
+						+ " WHERE ror.transfer_order_id = tor.id) return_status,"
+						+ " (select dep.status from depart_order dep"
+						+ " left join depart_transfer dt on dt.depart_id = dep.id"
+						+ " where dt.order_id = tor.id) depart_status,"
+						+ " (select dor.status from delivery_order dor"
+						+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
+						+ " where doi.transfer_order_id = tor.id) delivery_status"
 						+ " FROM transfer_order tor"
 						+ " LEFT JOIN depart_transfer dtr ON dtr.order_id = tor.id"
 						+ " LEFT JOIN party p ON p.id = tor.customer_id"
@@ -903,6 +923,15 @@ public class StatusReportController extends Controller{
 				if("true".equals(receive)){
 					conditions +=" and round((ys_insurance + return_amount), 2 ) > 0";
 				}
+				
+				if("true".equals(noreceive)){
+					conditions +=" and return_status!='新建' and return_status is not null and  round((ys_insurance + return_amount), 2 ) = 0";
+				}
+				
+				if("true".equals(inventory)){
+					conditions +=" and status = '已入库' or status = '部分已入库' or (status = '处理中' and delivery_status is null and depart_status ='已入库')";
+				}
+				
 				List<Record> orders =Db.find(sql+ conditions +" order by planning_time desc" + sLimit);
 				orderMap.put("sEcho", pageIndex);
 				orderMap.put("iTotalRecords", rec.getLong("total"));
