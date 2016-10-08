@@ -411,13 +411,14 @@ public class CustomerController extends Controller {
         String length = getPara("length");
         
         String customer_id = getPara("customer_id");
+        String route_to = getPara("route_to")==null?"":getPara("route_to");
         
         String sql = "select rp.*, l1.name location_from_name, l2.name location_to_name, sp.abbr sp_name from customer_route_provider rp"
                 +" left join location l1 on rp.location_from = l1.code"
                 +" left join location l2 on rp.location_to = l2.code"
                 +" left join party p on  p.id = rp.sp_id"
                 +" left join contact sp on sp.id = p.contact_id"
-                +" where customer_id = ?";
+                +" where customer_id = ? and l2.name like '%"+route_to+"%'";
         
         String totalSql = "select count(1) total from (" + sql + ") A";
         
