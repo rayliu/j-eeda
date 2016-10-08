@@ -64,7 +64,7 @@ public class DepartOrderController extends Controller {
 	private static final String DEPART_ORDER_TOKEN="depart_order_token";
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
 	public void index() {
-		render("/yh/departOrder/departOrderList.html");
+		render("/yh/departOrder/departorderlist.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
 	public void onTrip() {
@@ -282,7 +282,22 @@ public class DepartOrderController extends Controller {
 				+ " LEFT JOIN depart_transfer dt on dt.order_id = tor.id"
 				+ " WHERE dt.depart_id = deo.id ) AS planning_time,"
 				+ " (select ifnull(sum(dofi.amount), 0) from depart_order_fin_item dofi LEFT JOIN fin_item fi on fi.id = dofi.fin_item_id where dofi.depart_order_id = deo.id and fi.type= '应付' ) total_cost,"
-				+ " deo.transfer_type as trip_type"
+				+ " deo.transfer_type as trip_type,"
+				+ " ifnull((SELECT count(toid.id) FROM "
+				+ " transfer_order_item_detail toid"
+				+ " LEFT JOIN transfer_order tor ON tor.id = toid.order_id"
+				+ " LEFT JOIN depart_order deo1 ON deo1.id = toid.depart_id"
+				+ " WHERE"
+				+ " deo1.id = deo.id AND ( tor.cargo_nature = 'ATM' OR ( tor.cargo_nature = 'cargo'"
+				+ " AND tor.cargo_nature_detail = 'cargoNatureDetailYes' )"
+				+ " )),"
+				+ " (SELECT count(toi.id) FROM transfer_order_item toi"
+				+ " LEFT JOIN transfer_order tor ON tor.id = toi.order_id"
+				+ " LEFT JOIN depart_transfer dt ON dt.order_item_id = toi.id"
+				+ " LEFT JOIN depart_pickup dp ON dp.pickup_id = dt.pickup_id AND dp.order_id = toi.order_id"
+				+ " WHERE (dp.depart_id = deo.id or (dt.depart_id = deo.id AND tor.operation_type = 'out_source' ))"
+				+ " and tor.cargo_nature = 'cargo' and tor.cargo_nature_detail = 'cargoNatureDetailNo' )"
+				+ " ) amount"
 				+ " from depart_order deo"
 				+ " left join carinfo c on deo.carinfo_id = c.id"
 				+ " left join party p on deo.sp_id = p.id"

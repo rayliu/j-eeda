@@ -43,6 +43,7 @@
             	}},
             {"mDataProp":"DEPART_STATUS"},
             {"mDataProp":"CUSTOMER", "sWidth":"160px"},
+            {"mDataProp":"AMOUNT"},
             {"mDataProp":null,
             	"fnRender":function(obj){
             		if(obj.aData.TOTAL_COST == '0' ){
