@@ -520,7 +520,7 @@ public class PickupOrderController extends Controller {
         	 sql = " SELECT * FROM(select toi.id,ifnull(toi.item_name, pd.item_name) item_name,tor.planning_time,ifnull(toi.item_no, pd.item_no) item_no,"
              		 + " round(ifnull(pd.volume, 0),2) volume,round(ifnull(pd.weight, 0),2) weight,tor.cargo_nature,c.abbr customer,tor.order_no,toi.remark,"
              		 + " ifnull((select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and"+ pickup_type +" = '"+pickId+"'), 0) atmamount,"
-                     + " ifnull((select ifnull(dt.amount, 0)  from depart_transfer dt where dt.order_item_id = toi.id and dt.pickup_id = '"+pickId+"'), 0) cargoamount,"
+                     + " ifnull((select ifnull(dt.amount, 0)  from depart_transfer dt where dt.order_id = tor.id and dt.pickup_id = '"+pickId+"'), 0) cargoamount,"
                      + " round(ifnull((select (ifnull(pdd.volume, 0) * ifnull(dt.amount, 0))  from depart_transfer dt left join transfer_order_item toii on toii.id = dt.order_item_id "
                      + " left join product pdd ON pdd.id = toii.product_id where dt.order_item_id = toi.id and dt.pickup_id = '"+pickId+"'), 0),2) cargovolume,"
                      + " round(ifnull((select (ifnull(pdd.weight, 0) * ifnull(dt.amount, 0))  from depart_transfer dt left join transfer_order_item toii on toii.id = dt.order_item_id"

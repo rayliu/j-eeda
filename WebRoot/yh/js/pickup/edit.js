@@ -189,11 +189,11 @@
              { "mDataProp": "ITEM_NAME"},
              { "mDataProp": null,
             	 "fnRender": function(obj) {   
-            		 if(obj.aData.CARGO_NATURE == "ATM"){
-            			 return obj.aData.ATMAMOUNT;
-            		 }else{
+//            		 if(obj.aData.CARGO_NATURE == "ATM"){
+//            			 return obj.aData.ATMAMOUNT;
+//            		 }else{
             			 return obj.aData.CARGOAMOUNT;
-            		 }
+//            		 }
                  }
              },
              { "mDataProp": null,
