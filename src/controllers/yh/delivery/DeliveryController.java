@@ -706,6 +706,7 @@ public class DeliveryController extends Controller {
 		String productIds = getPara("productIds");
 		String shippingNumbers = getPara("shippingNumbers");
 		String cargoNature = getPara("cargoNature");
+		String transfer_no = getPara("transfer_no");
 //		//客户ID
 //		Record record = Db.findFirst("SELECT tor.customer_id FROM transfer_order tor LEFT JOIN transfer_order_item toi on toi.order_id = tor.id where toi.id in (?)",transferItemIds);
 //		Long customerId = record.getLong("customer_id");
@@ -717,7 +718,8 @@ public class DeliveryController extends Controller {
 			setAttr("customer", party);
 		}
 		
-		Warehouse warehouse = Warehouse.dao.findById(warehouseId);
+		TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no =?",transfer_no);
+		Warehouse warehouse = Warehouse.dao.findById(order.getLong("warehouse_id"));
 		//rdc
 		if(warehouse != null){
 			Office office =  Office.dao.findById(warehouse.get("office_id"));

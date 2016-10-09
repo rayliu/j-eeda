@@ -22,6 +22,7 @@ $(document).ready(function() {
     	var shippingNumbers = [];*/
 		var productIds = null;
     	var transferItemIds = null;
+    	var order_no = null;
     	var shippingNumbers = null;
     	var result = true;
     	$("#eeda-table2 tr:not(:first)").each(function(){
@@ -41,10 +42,11 @@ $(document).ready(function() {
         		productIds = $(this).val(); //货品id
         		shippingNumbers = $(this).parent().parent().find("td>input[name='amount']").val();
         		transferItemIds = $(this).parent().parent().attr("id");
+        		order_no = $(this).parent().parent().attr("order_no");
         	});
     	}); 
     	if(result){
-    		
+    		$("#transfer_no").val(order_no);
         	$("#productIds").val(productIds);
         	$("#shippingNumbers").val(shippingNumbers);
         	$("#transferItemIds").val(transferItemIds);
@@ -68,6 +70,7 @@ $(document).ready(function() {
     	},
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.TID);
+			$(nRow).attr('order_no', aData.ORDER_NO);
 			return nRow;
 		},
         "sAjaxSource": "/delivery/searchTransfer",
