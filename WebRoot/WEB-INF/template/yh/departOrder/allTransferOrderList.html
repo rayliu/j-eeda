@@ -75,14 +75,9 @@
                                         <label class="search-label">始发城市</label>
                                         <input type="text" id="routeFrom_filter" class="form-control search-control routeFrom_filter">
                                     </div>
-                                    <div class="form-group">                                        
-                                        <div class="input-append date " id="datetimepicker"> 
-                                            <label class="search-label">开始时间</label> 
-                                            <input type="text" class="form-control search-control  beginTime_filter" id="beginTime_filter">
-                                            <span class="add-on">  
-                                                <i data-date-icon="icon-calendar" data-time-icon="icon-time" class="fa fa-calendar icon-calendar"></i>  
-                                            </span>  
-                                        </div>
+                                    <div class="form-group">   
+	                                    <%include("/yh/component/form/inputDateQueryField.html", 
+	                                    {id:'planning_time', label:'计划时间', value:''}){} %>
                                     </div>
                                 </div>
                                 <!-- end of col-lg-6-->
@@ -96,16 +91,7 @@
                                         <label class="search-label">目的地城市</label>
                                         <input type="text" id="routeTo_filter" class="form-control search-control routeTo_filter">
                                     </div>
-                                    <div class="form-group">                                                    
-                                        <span class="input-append date search-control " id="datetimepicker2"> 
-                                            <label class="search-label">结束时间</label> 
-                                            <input type="text" class="form-control search-control endTime_filter" id="endTime_filter">
-                                            <span class="add-on">  
-                                                <i data-date-icon="icon-calendar" data-time-icon="icon-time" class="fa fa-calendar icon-calendar"></i>  
-                                            </span>  
-                                        </span>
-                                    </div>
-                                    <!--  下单时间<input type="text" class="beginTime_filter" id="beginTime_filter"> - 到达时间<input type="text" class="endTime_filter" id="endTime_filter" -->
+                                   
                                 </div>
                                 <div class="col-lg-4">
                                 	<div class="form-group">

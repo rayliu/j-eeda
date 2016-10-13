@@ -247,8 +247,8 @@ $(document).ready(function() {
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
     	var customer = $("#customer_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
+    	var beginTime = $("#planning_time_begin_time").val();
+    	var endTime = $("#planning_time_end_time").val();
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
     	datatable.fnSettings().sAjaxSource = "/departOrder/createTransferOrderList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;

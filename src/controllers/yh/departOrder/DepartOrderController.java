@@ -710,9 +710,9 @@ public class DepartOrderController extends Controller {
         	conditions+=" and UPPER(doaddress) like '%"+address+"%'";
         }
         if (StringUtils.isNotEmpty(beginTime)){
-        	beginTime = " and create_stamp between'"+beginTime+"'";
+        	beginTime = " and planning_time between'"+beginTime+"'";
         }else{
-        	beginTime =" and create_stamp between '1970-1-1'";
+        	beginTime =" and planning_time between '1970-1-1'";
         }
         if (StringUtils.isNotEmpty(endTime)){
         	endTime =" and '"+endTime+"'";
