@@ -84,6 +84,7 @@ public class CostItemConfirmController extends Controller {
         String route_from =getPara("route_from");
         String route_to=getPara("route_to");
         String customer_name = getPara("customer_name");
+        String customer_id = getPara("customer_id");
         String serial_no=getPara("serial_no");
         String sign_no = getPara("sign_no");
        
@@ -155,6 +156,7 @@ public class CostItemConfirmController extends Controller {
 				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
 		        + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"') "
 		        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+		        + "	and tor.customer_id = '"+customer_id+"'"
 				+ " group by dor.id "
 				+ " union"
 				+ " select distinct dpr.id,"
@@ -210,6 +212,7 @@ public class CostItemConfirmController extends Controller {
 				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
+				+ "	and tor.customer_id = '"+customer_id+"'"
 				+ " group by dpr.id"
 				
 				+ " union "
@@ -264,6 +267,7 @@ public class CostItemConfirmController extends Controller {
                 + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
                 + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
+				+ "	and tor.customer_id = '"+customer_id+"'"
 				+ " group by dpr.id"
 				
 				+ " union "
@@ -314,6 +318,7 @@ public class CostItemConfirmController extends Controller {
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 				+ " and '"+is_delivery+"' = 'N'"
+				+ "	and tor.customer_id = '"+customer_id+"'"
 				+ "group by ior.id "
 				
 				+ " union "
@@ -369,6 +374,7 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN office o ON o.id=amco.office_id"
 				+ " where amco.audit_status = '新建' and amco.type = 'biz' and amco.total_amount!=0"
 				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
+				+ "	and amco.customer_id = '"+customer_id+"'"
 				+ " GROUP BY amco.id) as A ";
         String condition = "";
       
@@ -397,7 +403,6 @@ public class CostItemConfirmController extends Controller {
         			+ " and ifnull(route_to,'') like '%" + route_to + "%'"
         			+ " and ifnull(booking_note_number,'') like '%" + booking_note_number + "%'"
         			+ " and ifnull(planning_time, '1970-01-01') between '" + plantime + "' and '" + arrivaltime + " 23:59:59' "
-        	        + " and ifnull(cname,'') like '%" + customer_name + "%'"
         	        + " and ifnull(status, '') != '手动删除'";
         	if (StringUtils.isNotEmpty(serial_no)){
         		condition += " and serial_no like '%" + serial_no + "%'";

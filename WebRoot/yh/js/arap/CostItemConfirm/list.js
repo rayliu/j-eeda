@@ -316,11 +316,18 @@ $(document).ready(function() {
     		var booking_note_number = $("#booking_note_number").val();
     		var route_from =$("#route_from").val();
     		var route_to = $("#route_to").val();
+    		var customer_id = $("#customer_id").val();
     		var customer_name = $("#customer_id_input").val();
     		var plantime = $("#plantime").val();
     		var arrivaltime = $("#arrivaltime").val();
     		var serial_no = $("#serial_no").val();
     		var sign_no = $("#sign_no").val();
+    		
+    		if(customer_id==''){
+    			$.scojs_message('请选择客户', $.scojs_message.TYPE_FAIL);
+    			return false;
+    		}
+    		
 
         costConfiremTable.fnSettings().oFeatures.bServerSide = true;
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
@@ -333,6 +340,7 @@ $(document).ready(function() {
 											    		+"&booking_note_number="+booking_note_number
 							                            +"&route_from="+route_from
 							                            +"&route_to="+route_to
+							                            +"&customer_id="+customer_id
 							                            +"&customer_name="+customer_name
     													+"&plantime="+plantime
     													+"&arrivaltime="+arrivaltime
@@ -372,7 +380,8 @@ $(document).ready(function() {
     			  operation_number:$('#operation_number').val(),
     			  route_to:$('#route_to').val(),
     			  arrivaltime:$('#arrivaltime').val(),
-    			  customer_id:$('#customer_id_input').val(),
+    			  customer_id_input:$('#customer_id_input').val(),
+    			  customer_id:$('#customer_id').val(),
     			  booking_note_number:$('#booking_note_number').val(),
     			  order_status_filter:$('#order_status_filter').val(),
     			  serial_no:$('#serial_no').val(),
@@ -402,7 +411,8 @@ $(document).ready(function() {
     		  $('#operation_number').val(condition.operation_number);
     		  $('#route_to').val(condition.route_to);
     		  $('#arrivaltime').val(condition.arrivaltime);
-    		  $('#customer_id_input').val(condition.customer_id);
+    		  $('#customer_id_input').val(condition.customer_id_input);
+    		  $('#customer_id').val(condition.customer_id);
     		  $('#booking_note_number').val(condition.booking_note_number);
     		  $('#order_status_filter').val(condition.order_status_filter);
     		  $('#serial_no').val(condition.serial_no);
