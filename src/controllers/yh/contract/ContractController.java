@@ -590,8 +590,9 @@ public class ContractController extends Controller {
         // 不能查所有
         if (locationName.trim().length() > 0) {
             List<Record> locationList = Db
-                    .find("select *,p.id as pid from party p,contact c,office o where p.contact_id = c.id and o.id = p.office_id  and (p.is_stop is null or p.is_stop = 0) and p.party_type = 'SERVICE_PROVIDER' and c.company_name like ?",
-                            "%" + locationName + "% and (o.id = " + currentId + " or o.belong_office  = " + parentID + ")");
+                    .find("select *,p.id as pid from party p,contact c,office o where p.contact_id = c.id and o.id = p.office_id  "
+                    		+ "and (p.is_stop is null or p.is_stop = 0) and p.party_type = 'SERVICE_PROVIDER' and (c.company_name like "
+                    		+ "'%" + locationName + "%' or c.abbr like '%" + locationName + "%') and (o.id = " + currentId + " or o.belong_office  = " + parentID + ")");
             renderJson(locationList);
         } else {
             List<Record> locationList = Db
