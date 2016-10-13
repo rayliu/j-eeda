@@ -84,17 +84,7 @@ public class ContractController extends Controller {
 							+ type
 							+ "' and (company_name like '%"
 							+ input
-							+ "%' or contact_person like '%"
-							+ input
-							+ "%' or email like '%"
-							+ input
-							+ "%' or mobile like '%"
-							+ input
-							+ "%' or phone like '%"
-							+ input
-							+ "%' or address like '%"
-							+ input
-							+ "%' or postal_code like '%"
+							+ "%' or c.abbr like '%"
 							+ input
 							+ "%') and (o.id = " + pom.getCurrentOfficeId() + " or  o.belong_office = " + parentID + ")");
 		} else {
