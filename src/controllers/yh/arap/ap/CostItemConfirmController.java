@@ -100,6 +100,13 @@ public class CostItemConfirmController extends Controller {
         	}
         }
         
+        String customer_con = "";
+        String customer_con2 = "";
+        if(StringUtils.isNotEmpty(customer_id)){
+        	customer_con = " and tor.customer_id = '"+customer_id+"'";
+        	customer_con2 = " and amco.customer_id = '"+customer_id+"'";
+        }
+        
         String sqlTotal = "";
         String sql = "select cast(planning_time as CHAR) planning_time1, A.* from (select distinct dor.id,"
         		+ " dor.order_no order_no,"
@@ -156,7 +163,9 @@ public class CostItemConfirmController extends Controller {
 				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
 		        + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"') "
 		        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
-		        + "	and tor.customer_id = '"+customer_id+"'"
+		        + customer_con
+    			+ " and c.abbr like '%" + sp + "%' "
+    			+ " and ifnull(dor.order_no,'') like '%" + no + "%' "
 				+ " group by dor.id "
 				+ " union"
 				+ " select distinct dpr.id,"
@@ -212,7 +221,9 @@ public class CostItemConfirmController extends Controller {
 				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
-				+ "	and tor.customer_id = '"+customer_id+"'"
+				+ customer_con
+				+ " and c.abbr like '%" + sp + "%' "
+				+ " and ifnull(dpr.depart_no,'') like '%" + no + "%' "
 				+ " group by dpr.id"
 				
 				+ " union "
@@ -267,7 +278,9 @@ public class CostItemConfirmController extends Controller {
                 + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
                 + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
-				+ "	and tor.customer_id = '"+customer_id+"'"
+				+ customer_con
+				+ " and c.abbr like '%" + sp + "%' "
+				+ " and ifnull(dpr.depart_no,'') like '%" + no + "%' "
 				+ " group by dpr.id"
 				
 				+ " union "
@@ -318,7 +331,9 @@ public class CostItemConfirmController extends Controller {
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 				+ " and '"+is_delivery+"' = 'N'"
-				+ "	and tor.customer_id = '"+customer_id+"'"
+				+ customer_con
+				+ " and c.abbr like '%" + sp + "%' "
+				+ " and ifnull(ior.order_no,'') like '%" + no + "%' "
 				+ "group by ior.id "
 				
 				+ " union "
@@ -374,11 +389,13 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN office o ON o.id=amco.office_id"
 				+ " where amco.audit_status = '新建' and amco.type = 'biz' and amco.total_amount!=0"
 				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
-				+ "	and amco.customer_id = '"+customer_id+"'"
+				+ customer_con2
+				+ " and c.abbr like '%" + sp + "%' "
+				+ " and ifnull(amco.order_no,'') like '%" + no + "%' "
 				+ " GROUP BY amco.id) as A ";
         String condition = "";
       
-        if(orderNo != null || sp != null || no != null || beginTime != null
+        if(  orderNo !=null || beginTime != null
         	|| endTime !=null || status != null || type != null){
         	if (beginTime == null || "".equals(beginTime)) {
 				beginTime = "1970-01-01";
@@ -393,10 +410,8 @@ public class CostItemConfirmController extends Controller {
 				arrivaltime = "2037-12-31";
 			}
 			 
-        	condition =  " where ifnull(order_no,'') like '%" + no + "%' "
-        			+ " and ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
+        	condition =  " where ifnull(transfer_order_no,'') like '%" + orderNo + "%' "
         			+ " and ifnull(status,'') like '%" + status + "%' "
-        			+ " and ifnull(spname,'') like '%" + sp + "%' "
         			+ " and ifnull(depart_time, '1970-01-01') between '" + beginTime + "' and '" + endTime + " 23:59:59' "
         			+ " and ifnull(business_type,'') like '%" + type + "%'"
         			+ " and ifnull(route_from,'') like '%" + route_from + "%'"

@@ -306,30 +306,24 @@ $(document).ready(function() {
         });
         
        var refreshData = function(){
-        	var orderNo = $('#orderNo_filter').val();
-    		var sp = $("#sp_id_input").val();
-    		var no = $("#operation_number").val();
-    		var beginTime = $("#beginTime_filter").val();
-    		var endTime = $("#endTime_filter").val();
-    		var status = $("#order_status_filter").val();
-    		var type = $("#order_type_filter").val();
-    		var booking_note_number = $("#booking_note_number").val();
-    		var route_from =$("#route_from").val();
-    		var route_to = $("#route_to").val();
-    		var customer_id = $("#customer_id").val();
-    		var customer_name = $("#customer_id_input").val();
-    		var plantime = $("#plantime").val();
-    		var arrivaltime = $("#arrivaltime").val();
-    		var serial_no = $("#serial_no").val();
-    		var sign_no = $("#sign_no").val();
+        	var orderNo = $('#orderNo_filter').val().trim();
+    		var sp = $("#sp_id_input").val().trim();
+    		var no = $("#operation_number").val().trim();
+    		var beginTime = $("#beginTime_filter").val().trim();
+    		var endTime = $("#endTime_filter").val().trim();
+    		var status = $("#order_status_filter").val().trim();
+    		var type = $("#order_type_filter").val().trim();
+    		var booking_note_number = $("#booking_note_number").val().trim();
+    		var route_from =$("#route_from").val().trim();
+    		var route_to = $("#route_to").val().trim();
+    		var customer_id = $("#customer_id").val().trim();
+    		var customer_name = $("#customer_id_input").val().trim();
+    		var plantime = $("#plantime").val().trim();
+    		var arrivaltime = $("#arrivaltime").val().trim();
+    		var serial_no = $("#serial_no").val().trim();
+    		var sign_no = $("#sign_no").val().trim();
     		
-    		if(customer_id==''){
-    			$.scojs_message('请选择客户', $.scojs_message.TYPE_FAIL);
-    			return false;
-    		}
-    		
-
-        costConfiremTable.fnSettings().oFeatures.bServerSide = true;
+    		costConfiremTable.fnSettings().oFeatures.bServerSide = true;
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo
                               							+"&sp="+sp
 											    		+"&no="+no
@@ -419,8 +413,6 @@ $(document).ready(function() {
     		  $('#beginTime_filter').val(condition.beginTime_filter);
     		  $('#endTime_filter').val(condition.endTime_filter);
     		  $('#sign_no').val(condition.sign_no);
-    		  
-    		  
     	  }
       };
       loadCondition();
