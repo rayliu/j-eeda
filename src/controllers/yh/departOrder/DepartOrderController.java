@@ -64,7 +64,7 @@ public class DepartOrderController extends Controller {
 	private static final String DEPART_ORDER_TOKEN="depart_order_token";
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
 	public void index() {
-		render("/yh/departOrder/departorderlist.html");
+		render("/yh/departOrder/departorderList.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
 	public void onTrip() {
