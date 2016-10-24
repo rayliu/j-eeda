@@ -907,7 +907,7 @@ public class ChargeCheckOrderController extends Controller {
 							+ " SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 							+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 							+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
-							+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
+							+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,null,null,"
 							+ " NULL creator_name,NULL transfer_order_no,null planning_time,null serial_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
 							+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
 							+ " 	from arap_misc_charge_order_item amcoi "

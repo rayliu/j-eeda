@@ -799,7 +799,7 @@ $(document).ready(function() {
 
             addChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?ref_no="+ref_no
                                                             +"&ispage="+ispage
-                                                            +"&customer_no="+customer_no;
+                                                            +"&customer="+customer_no;
             addChargeCheckTable.fnDraw();
         };
         
