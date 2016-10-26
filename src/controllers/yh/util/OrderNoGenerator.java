@@ -5,6 +5,9 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.jfinal.aop.Before;
+import com.jfinal.plugin.activerecord.tx.Tx;
+
 import models.DepartOrder;
 import models.yh.profile.CustomizeField;
 
@@ -20,7 +23,7 @@ public class OrderNoGenerator {
 	private static String dateValue = "20110101";
 	//如果服务器重启了，当前的序列号就从数据库找到最后的号码，然后接着计数
 	//TODO：如果需要按每张单的前缀来生成序列号，可以多加一个Map来记录
-	
+	@Before(Tx.class)
 	public synchronized static String getNextOrderNo(String orderPrefix) {
 		if("00000".equals(count)){
 			initCountFromDB();

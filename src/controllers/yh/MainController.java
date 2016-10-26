@@ -45,6 +45,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.eeda.ModuleController;
 import controllers.yh.util.EedaCommonHandler;
+import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.getCurrentPermission;
 
@@ -430,5 +431,15 @@ public class MainController extends Controller {
         Enumeration<String>  paraNames= getParaNames();
         Map map= EedaCommonHandler.searchOrder(paraNames, getRequest());
         renderJson(map);
+    }
+    
+    public void testNo(){
+        for (int i = 0; i < 100; i++) {
+            System.out.println(OrderNoGenerator.getNextOrderNo("YS"));
+        }
+        for (int i = 0; i < 100; i++) {
+            System.out.println(OrderNoGenerator.getNextOrderNo("CB"));
+        }
+        renderJson();
     }
 }
