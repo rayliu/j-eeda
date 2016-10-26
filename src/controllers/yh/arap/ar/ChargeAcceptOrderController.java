@@ -165,7 +165,7 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " when dofi.party_type ='客户'"
           	    + " then c.abbr "
           	    + " when dofi.party_type ='供应商'"
-        	    + " then c2.abbr "
+        	    + " then c2.company_name "
         	    + " when dofi.party_type ='保险公司'"
           	    + " then c3.abbr "
           	    + " else "
