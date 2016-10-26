@@ -3,13 +3,11 @@ package controllers.yh.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import models.yh.profile.CustomizeField;
+
 import org.apache.commons.lang.StringUtils;
 
-import com.jfinal.aop.Before;
-import com.jfinal.plugin.activerecord.tx.Tx;
-
-import models.DepartOrder;
-import models.yh.profile.CustomizeField;
+import com.jfinal.log.Logger;
 
 /**
  * generate Order number
@@ -17,14 +15,15 @@ import models.yh.profile.CustomizeField;
  * All use one counter
  */
 public class OrderNoGenerator {
-	
+    private static Logger logger = Logger.getLogger(OrderNoGenerator.class);
 	
 	private static volatile String count = "00000";
 	private static String dateValue = "20110101";
+	
+	public final static Byte[] locks = new Byte[0];  
 	//如果服务器重启了，当前的序列号就从数据库找到最后的号码，然后接着计数
 	//TODO：如果需要按每张单的前缀来生成序列号，可以多加一个Map来记录
-	@Before(Tx.class)
-	public synchronized static String getNextOrderNo(String orderPrefix) {
+	public static String getNextOrderNo(String orderPrefix) {
 		if("00000".equals(count)){
 			initCountFromDB();
 		}
@@ -35,12 +34,15 @@ public class OrderNoGenerator {
             dateValue=nowdate;
             count = "00000";
         }
-		
-		String orderNo = orderPrefix +nowdate+ getNo(count);
-		
-		CustomizeField cf = CustomizeField.dao.findFirst("select * from customize_field where order_type='latestOrderNo'");
-		if(cf!=null){
-			cf.set("field_code", orderNo).update();
+        String orderNo="";
+        synchronized (locks){	
+            orderNo = orderPrefix +nowdate+ getNo(count);
+            
+            CustomizeField cf = CustomizeField.dao.findFirst("select * from customize_field where order_type='latestOrderNo'");
+            if(cf!=null){
+		        logger.debug("orderNo:"+orderNo);
+		        cf.set("field_code", orderNo).update();
+	        }
 		}
 		return orderNo;
 	}

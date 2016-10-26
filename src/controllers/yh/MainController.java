@@ -435,11 +435,9 @@ public class MainController extends Controller {
     
     public void testNo(){
         for (int i = 0; i < 100; i++) {
-            System.out.println(OrderNoGenerator.getNextOrderNo("YS"));
+            OrderNoGenerator.getNextOrderNo("YS");
         }
-        for (int i = 0; i < 100; i++) {
-            System.out.println(OrderNoGenerator.getNextOrderNo("CB"));
-        }
+       
         renderJson();
     }
 }
