@@ -136,12 +136,29 @@ $(document).ready(function() {
 		},'json');
 	});
 
+    //处理中文输入法, 没完成前不触发查询
+    var cpLock = false;
+    $('#customer_filter, #sp_filter').on('compositionstart', function () {
+        cpLock = true;
+    });
+    $('#customer_filter, #sp_filter').on('compositionend', function () {
+        cpLock = false;
+    });
+
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(event){
+        if(cpLock)
+            return;
+
         var me = this;
         var inputStr = $('#customer_filter').val();
         var companyList =$("#companyList");
+
+        
         $.get("/customerContract/search", {customerName:inputStr}, function(data){
+            if(inputStr!=$('#customer_filter').val()){//查询条件与当前输入值不相等，返回
+                return;
+            }
             companyList.empty();
             for(var i = 0; i < data.length; i++)
                 companyList.append("<li><a tabindex='-1' class='fromLocationItem' post_code='"+data[i].POSTAL_CODE+"' contact_person='"+data[i].CONTACT_PERSON+"' email='"+data[i].EMAIL+"' phone='"+data[i].PHONE+"' partyId='"+data[i].PID+"' address='"+data[i].ADDRESS+"', company_name='"+data[i].COMPANY_NAME+"', >"+data[i].ABBR+"</a></li>");
@@ -179,15 +196,19 @@ $(document).ready(function() {
 
     //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('input click', function(){
+    $('#sp_filter').on('keyup click', function(){
     	var me = this;
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
+        if(cpLock)
+            return;
 
 		$.get('/customerContract/searchSp', {spName:inputStr}, function(data){
+           
 			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
 				return;
 			}
+
 			spList.empty();
 			for(var i = 0; i < data.length; i++){
 				var abbr = data[i].ABBR;
