@@ -225,8 +225,12 @@ public class ServiceProviderController extends Controller {
         		parentID = parentOffice.getLong("id");
         	}*/
             contact = new Contact();
+            contact.set("receiver", getPara("receiver"));
+            contact.set("bank_no", getPara("bank_no"));
+            contact.set("bank_name", getPara("bank_name"));
             setContact(contact);
             contact.save();
+            
             party = new Party();
             party.set("party_type", Party.PARTY_TYPE_SERVICE_PROVIDER);
             party.set("contact_id", contact.getLong("id"));
@@ -238,6 +242,8 @@ public class ServiceProviderController extends Controller {
             party.set("charge_type", getPara("chargeType"));
             party.set("office_id", pom.getCurrentOfficeId());
             party.save();
+            
+            
 
         }
      
