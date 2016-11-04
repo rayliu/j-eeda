@@ -11,6 +11,13 @@ $(document).ready(function() {
 		if(order_no==''&& serial_no=='' && ref_no=='')
 			return;
 		
+		//加载中
+		var $loadingToast = $('#loadingToast');
+        if ($loadingToast.css('display') != 'none') {
+            return;
+        }
+        $loadingToast.show();
+		
 		$("#customer").hide();
 		$("#customerNo").text("");
 		$("#transferOrderNo").text("");
@@ -61,6 +68,8 @@ $(document).ready(function() {
 				$("#customer").hide();
 			}
 			$('#orderDesc').show();
+			
+			$('#loadingToast').hide();
 	    },'json');
 	};
 	$('#selectCustomer').change(function(){ 
@@ -138,6 +147,7 @@ $(document).ready(function() {
 		        	},
 		        	function(data){
 		        	if(data == "OK"){
+		        	   refreshData(-1);
 		        	   var $toast = $('#toast');
 	        	       if ($toast.css('display') != 'none') {
 	        	           return;
@@ -145,7 +155,6 @@ $(document).ready(function() {
 	        	       $toast.show();
 	        	       setTimeout(function () {
 	        	           $toast.hide();
-	        	           refreshData(-1);
 	        	       }, 2000);   
 		        	}else{
 		        	   var $toast = $('#error');

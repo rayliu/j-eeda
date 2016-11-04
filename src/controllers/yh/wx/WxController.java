@@ -601,16 +601,16 @@ public class WxController extends ApiController {
 		
 		String conditions = "";
 		if(StringUtils.isNotEmpty(order_no)){
-			conditions += " and A.to_order_no = '"+order_no+"' ";
+			conditions += " and tor.order_no = '"+order_no+"' ";
 		}
 		if(StringUtils.isNotEmpty(serial_no)){
-			conditions += " and A.serial_no = '"+serial_no+"' ";
+			conditions += " and toid.serial_no = '"+serial_no+"' ";
 		}
 		if(StringUtils.isNotEmpty(ref_no)){
-			conditions += " and A.ref_no = '"+ref_no+"' ";
+			conditions += " and dor.ref_no = '"+ref_no+"' ";
 		}
 	    if(StringUtils.isNotEmpty(customer_id)){
-	    	conditions += " and A.cid='"+customer_id+"' ";
+	    	conditions += " and p.id='"+customer_id+"' ";
 	    }
 
 			//单号可能为序列号/签收单号/运输单号
@@ -641,9 +641,11 @@ public class WxController extends ApiController {
 		            + "	LEFT JOIN depart_order dep on dep.id = toid.depart_id" 
 		            + " left join party p on p.id = ifnull(ifnull(ro.customer_id,ro2.customer_id),dor.customer_id)"
 		            + " left join contact c on c.id=p.contact_id"
+		            + "	where 1 = 1 "
+		            + conditions 
 		            + " ) A"
-		            + " where A.status is not null "
-		            + conditions ;
+		            + " where A.status is not null ";
+		            
 
 			List<Record> list = Db.find(sql);
 			if(list.size() > 0){
