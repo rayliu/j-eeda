@@ -51,6 +51,7 @@ $(document).ready(function() {
             		 
             	}
             },
+            {"mDataProp":"BOOKING_NOTE_NUMBER","sWidth": "80px"},    
             {"mDataProp":null,
             	"sWidth": "90px",
                 "fnRender": function(obj) {
@@ -306,6 +307,7 @@ $(document).ready(function() {
 	var searchMassage = function(){
 		var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();
+    	var booking_note_number =$("#booking_note_number").val();
     	var end =$("#end_filter").val();
     	var customer =$("#customer_filter").val();
     	var orderNo = $("#orderNo_filter").val();
@@ -320,6 +322,7 @@ $(document).ready(function() {
 											+"&departNo="+departNo_filter
 											+"&status="+status
 											+"&sp="+sp
+											+"&booking_note_number="+booking_note_number
 											+"&beginTime="+beginTime
 											+"&endTime="+endTime
 											+"&planBeginTime="+planBeginTime

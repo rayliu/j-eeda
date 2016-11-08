@@ -328,6 +328,7 @@ public class DepartOrderController extends Controller {
 		String status = getPara("status")==null?"":getPara("status").trim();
 		String sp = getPara("sp")==null?"":getPara("sp").trim();
 		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
+		String booking_note_number = getPara("booking_note_number")==null?"":getPara("booking_note_number").trim();
 		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
 		String sLimit = "";
 		String pageIndex = getPara("sEcho")==null?"":getPara("sEcho");
@@ -350,6 +351,9 @@ public class DepartOrderController extends Controller {
 		String conditions = " where 1 = 1 ";
 		if(StringUtils.isNotEmpty(orderNo)){
 			conditions += " and ifnull(tr.order_no,'') like '%" + orderNo + "%'"; 
+		}
+		if(StringUtils.isNotEmpty(booking_note_number)){
+			conditions += " and ifnull(deo.booking_note_number,'') like '%" + booking_note_number + "%'"; 
 		}
 		if(StringUtils.isNotEmpty(departNo)){
 			conditions += " and ifnull(deo.depart_no,'') like '%" + departNo + "%'"; 
@@ -420,7 +424,7 @@ public class DepartOrderController extends Controller {
 				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
 				+ currentUser.getPrincipal() + "')";
 
-		sql = "select deo.id,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
+		sql = "select deo.id,deo.booking_note_number,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
 				+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
 				+ " deo.arrival_time plan_time, t.arrival_time arrival_time, deo.remark, "
 				+ " (SELECT	group_concat(CAST(tr.planning_time AS char) SEPARATOR '\r\n') FROM transfer_order tr, depart_transfer dt where dt.depart_id = deo.id and tr.id = dt.order_id) AS planning_time,"
