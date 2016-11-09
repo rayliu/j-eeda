@@ -49,36 +49,12 @@
                                                 <option value="movesOrder">移机单</option>                                                 
                                             </select>
                                         </div>
-                                        <div class="form-group">                                        
-                                            <div id="datetimepicker" class="input-append date "> 
-                                                <label class="search-label">开始时间</label> 
-                                                <input id="beginTime_filter" class="form-control search-control beginTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </div>
-                                        </div>
-                                        <div class="form-group">                                                    
-                                            <span id="plandatetimepicker" class="input-append date search-control "> 
-                                                <label class="search-label">计划时间</label> 
-                                                <input id="plantime" class="form-control search-control beginTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </span>
-                                        </div>  
-                                        <div class="form-group">
-                                            <label class="search-label">营运方式</label>
-                                            <select id="operation_type_filter" class="form-control search-control operation_type_filter">
-                                                <option value=""></option>
-                                                <option value="own">自营</option>
-                                                <option value="out_source">外包</option>                                               
-                                            </select>
-                                        </div> 
-                                        <div class="form-group">
-                                            <button id="searchBtn" class="btn  btn-primary" type="button">查询</button>
-                                            <button id="resetBtn" class="btn  btn-default" type="button">清空条件</button>
-                                        </div> 
+                                        <div class="form-group">   
+                                         	<%include("/yh/component/form/inputDateQueryField.html", {id:'create_time', label:'创建时间', value:''}){} %>
+                                    	</div>
+                                        <div class="form-group">   
+                                         	<%include("/yh/component/form/inputDateQueryField.html", {id:'planning_time', label:'计划时间', value:''}){} %>
+                                   		</div> 
                                     </div>
                                     <!-- end of col-lg-6-->
                                     <div class="col-lg-4">
@@ -94,29 +70,20 @@
                                         	<ul id='spList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 											</ul>
                                         </div>
-                                        <div class="form-group">                                                    
-                                            <span id="datetimepicker2" class="input-append date search-control "> 
-                                                <label class="search-label">结束时间</label> 
-                                                <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </span>
-                                        </div>
-                                        <div class="form-group">                                                    
-                                            <span id="arrivaldatetimepicker" class="input-append date search-control "> 
-                                                <label class="search-label">计划截止时间</label> 
-                                                <input id="arrivaltime" class="form-control search-control endTime_filter" type="text">
-                                                <span class="add-on">  
-                                                    <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                                </span>  
-                                            </span>
-                                        </div>
+                                        
                                         <%include("/yh/component/form/inputField.html", 
                                                                 {   id: 'to_route', 
                                                                     label: '目的城市', 
                                                                     value: ''
                                                                 }){}%>
+                                        <div class="form-group">
+                                            <label class="search-label">营运方式</label>
+                                            <select id="operation_type_filter" class="form-control search-control operation_type_filter">
+                                                <option value=""></option>
+                                                <option value="own">自营</option>
+                                                <option value="out_source">外包</option>                                               
+                                            </select>
+                                        </div> 
                                     </div>
                                     <!-- end of col-lg-6-->
                                     <div class="col-lg-4">
@@ -156,9 +123,11 @@
                                     </div>
                                     <!-- end of col-lg-6-->
                                 </div><!-- end of row-->
-
-                            
                             </form>
+                            <div class="form-group">
+                                <button id="searchBtn" class="btn  btn-primary" type="button">查询</button>
+                                <button id="resetBtn" class="btn  btn-default" type="button">清空条件</button>
+                            </div> 
                             <div class="table-responsive">
                                 <br/>
                                 <table class="table table-striped table-bordered table-hover" id="eeda-table" style="width: 2200px;">

@@ -383,16 +383,16 @@ $(document).ready(function() {
     var saveConditions=function(){
         var conditions={
             order_type:$("#order_type_filter").val(),
-            plantime :$("#plantime").val(),
-            arrivarltime:$("#arrivaltime").val(),
+            plantime :$("#planning_time_begin_time").val(),
+            arrivarltime:$("#planning_time_end_time").val(),
             customer_order_no:$("#order_no_filter").val(),
             orderNo : $("#orderNo_filter").val(),
             status : $("#status_filter").val(),
             address : $("#address_filter").val(),
             customer : $("#customer_filter").val(),
             sp : $("#sp_filter").val(),
-            beginTime : $("#beginTime_filter").val(),
-            endTime : $("#endTime_filter").val(),
+            beginTime : $("#create_time_begin_time").val(),
+            endTime : $("#create_time_end_time").val(),
             officeName : $("#officeSelect").val(),
             operation_type : $("#operation_type_filter").val(),
             to_route : $("#to_route").val()
@@ -404,16 +404,16 @@ $(document).ready(function() {
 
     var refreshData=function(){
         var order_type=$("#order_type_filter").val();
-        var plantime=$("#plantime").val();
-        var arrivarltime=$("#arrivaltime").val();
+        var plantime=$("#planning_time_begin_time").val();
+        var arrivarltime=$("#planning_time_end_time").val();
         var customer_order_no=$("#order_no_filter").val();
         var orderNo = $("#orderNo_filter").val();
         var status = $("#status_filter").val();
         var address = $("#address_filter").val();
         var customer = $("#customer_filter").val();
         var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime_filter").val();
-        var endTime = $("#endTime_filter").val();
+        var beginTime = $("#create_time_begin_time").val();
+        var endTime = $("#create_time_end_time").val();
         var officeName = $("#officeSelect").val();
         var operation_type = $("#operation_type_filter").val();
         var to_route = $("#to_route").val();
@@ -439,16 +439,16 @@ $(document).ready(function() {
 
             var conditions = JSON.parse(query_to);
             $("#order_type_filter").val(conditions.order_type);
-            $("#plantime").val(conditions.plantime);
-            $("#arrivaltime").val(conditions.arrivarltime);
+            $("#planning_time_begin_time").val(conditions.plantime);
+            $("#planning_time_end_time").val(conditions.arrivarltime);
             $("#order_no_filter").val(conditions.customer_order_no);
             $("#orderNo_filter").val(conditions.orderNo);
             $("#status_filter").val(conditions.status);
             $("#address_filter").val(conditions.address);
             $("#customer_filter").val(conditions.customer);
             $("#sp_filter").val(conditions.sp);
-            $("#beginTime_filter").val(conditions.beginTime);
-            $("#endTime_filter").val(conditions.endTime);
+            $("#create_time_begin_time").val(conditions.beginTime);
+            $("#create_time_end_time").val(conditions.endTime);
             $("#officeSelect").val(conditions.officeName);
             $("#operation_type_filter").val(conditions.operation_type);
             $("#to_route").val(conditions.to_route);

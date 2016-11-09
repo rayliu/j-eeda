@@ -156,6 +156,8 @@ public class TransferOrderController extends Controller {
 			}
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
+			}else{
+				endTime = endTime+" 23:59:59";
 			}
 
 			if (plantime == null || "".equals(plantime)) {
@@ -163,6 +165,8 @@ public class TransferOrderController extends Controller {
 			}
 			if (arrivarltime == null || "".equals(arrivarltime)) {
 				arrivarltime = "9999-12-31";
+			}else{
+				arrivarltime = arrivarltime+" 23:59:59";
 			}
 
 			String sLimit = "";
