@@ -104,10 +104,10 @@ function refreshData(){
 	var departNo_filter = $("#departNo_filter").val();
 	var status = $("#status_filter").val();
 	var sp = $("#sp_filter_input").val();
-	var beginTime = $("#beginTime_filter").val();
-	var endTime = $("#endTime_filter").val();
-	var planBeginTime = $("#beginTime_filter1").val();
-	var planEndTime = $("#endTime_filter1").val();transfer_type
+	var beginTime = $("#create_stamp_begin_time").val();
+	var endTime = $("#create_stamp_end_time").val();
+	var planBeginTime = $("#planning_stamp_begin_time").val();
+	var planEndTime = $("#planning_stamp_end_time").val();
 	var customer = $("#customer_filter").val();
 	var transfer_type = $("#transfer_type").val();
 	var booking_note_number = $("#booking_note_number").val();

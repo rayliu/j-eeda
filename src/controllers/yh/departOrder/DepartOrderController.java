@@ -186,7 +186,7 @@ public class DepartOrderController extends Controller {
         	beginTime =" and create_stamp between '2000-1-1'";
         }
         if (StringUtils.isNotEmpty(endTime)){
-        	endTime =" and '"+endTime+"'";
+        	endTime =" and '"+endTime+" 23:59:59'";
         }else{
         	endTime =" and '3000-1-1'";
         }
@@ -197,7 +197,7 @@ public class DepartOrderController extends Controller {
         	planBeginTime =" and planning_time between '2000-1-1'";
         }
         if (StringUtils.isNotEmpty(planEndTime)){
-        	planEndTime =" and '"+planEndTime+"'";
+        	planEndTime =" and '"+planEndTime+" 23:59:59'";
         }else{
         	planEndTime =" and '3000-1-1'";
         }
