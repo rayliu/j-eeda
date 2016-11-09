@@ -27,6 +27,10 @@
                             <form role="form" style="margin: 0 15px;">
                             <div class="row search_panel">
                                 <div class="col-lg-4">
+                                	<div class="form-group">
+                                        <label class="search-label">运输单号</label>
+                                        <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter">
+                                    </div>
                                     <div class="form-group">
                                         <label class="search-label">发车单号</label>
                                         <input type="text" class="form-control search-control orderNo_filter" id="departNo_filter" value="">
@@ -45,80 +49,44 @@
                                         <label class="search-label">到达网点</label>
                                         <select id="officeSelect" class="form-control search-control officeName_filter" name="officeSelect"></select>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="search-label">始发城市</label>
-                                        <input type="text" class="form-control search-control orderNo_filter" id="start_filter">
-                                    </div>
                                 </div>
                                 <!-- end of col-lg-6-->
                                 <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label class="search-label">运输单号</label>
-                                        <input type="text" class="form-control search-control orderNo_filter" id="orderNo_filter">
-                                    </div>
+                                    
                                     <div class="form-group">
                                         <label class="search-label">客户</label>
                                         <input type="text" class="form-control search-control customer_filter" id="customer_filter" placeholder="请选择客户">
                                         <ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default" style="top: 46%; left: 33%;"></ul>
                                     </div>
                                     <div class="form-group">
-                                        <label class="search-label">供应商</label>
-                                        <input type="text" class="form-control search-control sp_filter" id="sp_filter">
-                                        <ul style="top: 35%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" id="cpnameList"></ul>
+                                        <label class="search-label">客户订单号</label>
+                                        <input type="text" class="form-control search-control cus_order_no" id="cus_order_no">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="search-label">始发城市</label>
+                                        <input type="text" class="form-control search-control orderNo_filter" id="start_filter">
                                     </div>
                                     <div class="form-group">
                                         <label class="search-label">目的城市</label>
                                         <input type="text" class="form-control search-control orderNo_filter" id="end_filter">
                                     </div>
+                                </div>
+                                <div class="col-lg-4">
+                                	<div class="form-group">
+                                        <label class="search-label">供应商</label>
+                                        <input type="text" class="form-control search-control sp_filter" id="sp_filter">
+                                        <ul style="top: 35%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" id="cpnameList"></ul>
+                                    </div>
                                     <div class="form-group">
                                         <label class="search-label">托运单号</label>
                                         <input type="text" class="form-control search-control orderNo_filter" id="booking_note_number">
                                     </div>
-                                </div>
-                                <div class="col-lg-4"> 
-                                    <div class="form-group">                                        
-                                        <div id="datetimepicker" class="input-append date "> 
-                                            <label class="search-label">发车开始时间</label> 
-                                            <input id="beginTime_filter" class="form-control search-control  beginTime_filter" type="text">
-                                            <span class="add-on">  
-                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                            </span>  
-                                        </div>
-                                    </div>    
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">                                                    
-                                        <span id="datetimepicker2" class="input-append date search-control "> 
-                                            <label class="search-label">发车结束时间</label> 
-                                            <input id="endTime_filter" class="form-control search-control endTime_filter" type="text">
-                                            <span class="add-on">  
-                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                            </span>  
-                                        </span>
+                                    <div class="form-group">   
+                                         <%include("/yh/component/form/inputDateQueryField.html", {id:'departure_time', label:'发车时间', value:''}){} %>
                                     </div>
-                                </div>
-                                
-                                 <div class="col-lg-4">
-                                    <div class="form-group">                                                    
-                                        <span id="datetimepicker3" class="input-append date search-control "> 
-                                            <label class="search-label">计划开始时间</label> 
-                                            <input id="planBeginTime" class="form-control search-control planBeginTime" type="text">
-                                            <span class="add-on">  
-                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                            </span>  
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="form-group">                                                    
-                                        <span id="datetimepicker4" class="input-append date search-control "> 
-                                            <label class="search-label">计划结束时间</label> 
-                                            <input id="planEndTime" class="form-control search-control planEndTime" type="text">
-                                            <span class="add-on">  
-                                                <i class="fa fa-calendar" data-time-icon="icon-time" data-date-icon="icon-calendar"></i>  
-                                            </span>  
-                                        </span>
-                                    </div>
+                                    <div class="form-group">   
+                                     <%include("/yh/component/form/inputDateQueryField.html", {id:'planning_time', label:'计划时间', value:''}){} %>
+                                	</div>
                                 </div>
                                 
                             </div><!-- end of row-->

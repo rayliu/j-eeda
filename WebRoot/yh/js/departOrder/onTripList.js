@@ -308,16 +308,17 @@ $(document).ready(function() {
 		var office =$("#officeSelect").val();
     	var start =$("#start_filter").val();
     	var booking_note_number =$("#booking_note_number").val();
+    	var cus_order_no =$("#cus_order_no").val();
     	var end =$("#end_filter").val();
     	var customer =$("#customer_filter").val();
     	var orderNo = $("#orderNo_filter").val();
     	var departNo_filter = $("#departNo_filter").val();
     	var status = $("#status_filter").val();
     	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var planBeginTime = $("#planBeginTime").val();
-    	var planEndTime = $("#planEndTime").val();
+    	var beginTime = $("#departure_time_begin_time").val();
+    	var endTime = $("#departure_time_end_time").val();
+    	var planBeginTime = $("#planning_time_begin_time").val();
+    	var planEndTime = $("#planning_time_end_time").val();
     	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
 											+"&departNo="+departNo_filter
 											+"&status="+status
@@ -327,8 +328,9 @@ $(document).ready(function() {
 											+"&endTime="+endTime
 											+"&planBeginTime="+planBeginTime
 											+"&planEndTime="+planEndTime
-											+"&office="+office
+											+"&office="+office 
 											+"&start="+start
+											+"&cus_order_no="+cus_order_no
 											+"&end="+end
 											+"&customer="+customer;
 	};

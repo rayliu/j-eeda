@@ -329,6 +329,7 @@ public class DepartOrderController extends Controller {
 		String sp = getPara("sp")==null?"":getPara("sp").trim();
 		String beginTime = getPara("beginTime")==null?"":getPara("beginTime").trim();
 		String booking_note_number = getPara("booking_note_number")==null?"":getPara("booking_note_number").trim();
+		String cus_order_no = getPara("cus_order_no")==null?"":getPara("cus_order_no").trim();
 		String endTime = getPara("endTime")==null?"":getPara("endTime").trim();
 		String sLimit = "";
 		String pageIndex = getPara("sEcho")==null?"":getPara("sEcho");
@@ -351,6 +352,9 @@ public class DepartOrderController extends Controller {
 		String conditions = " where 1 = 1 ";
 		if(StringUtils.isNotEmpty(orderNo)){
 			conditions += " and ifnull(tr.order_no,'') like '%" + orderNo + "%'"; 
+		}
+		if(StringUtils.isNotEmpty(cus_order_no)){
+			conditions += " and ifnull(tr.customer_order_no,'') like '%" + cus_order_no + "%'"; 
 		}
 		if(StringUtils.isNotEmpty(booking_note_number)){
 			conditions += " and ifnull(deo.booking_note_number,'') like '%" + booking_note_number + "%'"; 
