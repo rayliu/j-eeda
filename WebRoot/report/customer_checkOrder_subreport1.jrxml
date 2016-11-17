@@ -113,9 +113,9 @@ amco.order_no  order_no,
 null planning_time,
 '' receipt_address,
 '' item_name,
-'0' amount,
-'0' volume,
-'0' weight,
+'0.0' amount,
+'0.0' volume,
+'0.0' weight,
 amco.total_amount total_amount,
 amco.total_amount change_amount,
 '' remark,
@@ -135,7 +135,7 @@ and aci.ref_order_type='收入单']]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="to_name" class="java.lang.String"/>
-	<field name="planning_time" class="java.sql.Timestamp">
+	<field name="planning_time" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="receipt_address" class="java.lang.String"/>
@@ -168,7 +168,7 @@ and aci.ref_order_type='收入单']]>
 		<initialValueExpression><![CDATA[1]]></initialValueExpression>
 	</variable>
 	<variable name="sum_amount" class="java.lang.Double" incrementType="Report" calculation="Sum">
-		<variableExpression><![CDATA[new Double($F{amount}.doubleValue()+$V{sum_amount}.doubleValue())]]></variableExpression>
+		<variableExpression><![CDATA[$F{amount}+$V{sum_amount}.doubleValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.lang.Double(0.0)]]></initialValueExpression>
 	</variable>
 	<variable name="sum_change_amount" class="java.lang.Double" incrementType="Report" calculation="Sum">
@@ -176,11 +176,11 @@ and aci.ref_order_type='收入单']]>
 		<initialValueExpression><![CDATA[new java.lang.Double(0.0)]]></initialValueExpression>
 	</variable>
 	<variable name="sum_weight" class="java.lang.Double" incrementType="Report" calculation="Sum">
-		<variableExpression><![CDATA[new Double($F{weight}.doubleValue()+$V{sum_weight}.doubleValue())]]></variableExpression>
+		<variableExpression><![CDATA[$F{weight}+$V{sum_weight}.doubleValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.lang.Double(0.0)]]></initialValueExpression>
 	</variable>
 	<variable name="sum_volume" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[new Double($F{volume}.doubleValue()+$V{sum_volume}.doubleValue())]]></variableExpression>
+		<variableExpression><![CDATA[$F{volume}+$V{sum_volume}.doubleValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[new java.lang.Double(0.0)]]></initialValueExpression>
 	</variable>
 	<variable name="sum_total_amount" class="java.lang.Double" incrementType="Report" calculation="Sum">

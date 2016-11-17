@@ -134,7 +134,7 @@ where aao.order_no=$P{order_no}]]>
 				<text><![CDATA[页  次：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="285" y="9" width="221" height="71" uuid="080d536e-880f-4cba-a937-493ca93e7acf"/>
+				<reportElement x="277" y="4" width="221" height="71" uuid="080d536e-880f-4cba-a937-493ca93e7acf"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="黑体" size="24" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
