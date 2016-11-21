@@ -32,10 +32,9 @@ r_o.order_no,
 		tor2.customer_order_no
 	) customer_order_no,
 	ifnull(lo2. NAME,'') to_name,
-IFNULL(tor.planning_time,'')  planning_time,
-ifnull(
-						c4.address,
-						tor.receiving_address
+IFNULL(tor.planning_time,tor2.planning_time)  planning_time,
+ifnull(ifnull(tor.receiving_address,tor2.receiving_address),
+						c4.address
 					) receipt_address,
             (
 							SELECT group_concat(DISTINCT ifnull(p.item_name, ifnull(toi.item_name,'')) SEPARATOR '')
@@ -43,7 +42,7 @@ ifnull(
 								transfer_order_item toi
 							LEFT JOIN product p ON p.id = toi.product_id
 							WHERE
-								toi.order_id =tor.id
+						toi.order_id =ifnull(tor.id,tor2.id)
 						) item_name,
        ((
 				SELECT
@@ -60,7 +59,7 @@ ifnull(
 					transfer_order_item toi
 				WHERE
 					toi.order_id = tor.id
-			))amount,
+			)) amount,
        (SELECT
 					ROUND(IFNULL(sum(toi.volume),0),2)
 				FROM
@@ -103,7 +102,7 @@ LEFT JOIN location lo2 ON ifnull(tor.route_to, tor2.route_to) = lo2. CODE
 LEFT JOIN party p4 ON p4.id = d_o.notify_party_id
 LEFT JOIN contact c4 ON c4.id = p4.contact_id
 left join user_login ul on ul.id = aco.create_by
-where aci.charge_order_id=$P{order_id}
+where aci.charge_order_id=448
 and aci.ref_order_type='回单'
 UNION
 SELECT
@@ -113,9 +112,9 @@ amco.order_no  order_no,
 null planning_time,
 '' receipt_address,
 '' item_name,
-'0.0' amount,
-'0.0' volume,
-'0.0' weight,
+'0' amount,
+'0' volume,
+'0' weight,
 amco.total_amount total_amount,
 amco.total_amount change_amount,
 '' remark,
@@ -126,7 +125,8 @@ LEFT JOIN arap_charge_order aco on aco.id =aci.charge_order_id
 LEFT JOIN arap_misc_charge_order amco ON amco.id = aci.ref_order_id
 left join user_login ul on ul.id = aco.create_by
 where aci.charge_order_id=$P{order_id}
-and aci.ref_order_type='收入单']]>
+and aci.ref_order_type='收入单'
+]]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -238,7 +238,7 @@ and aci.ref_order_type='收入单']]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[始发地]]></text>
+				<text><![CDATA[目的地]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="table_TD" x="110" y="0" width="95" height="20" uuid="fb1ac9ca-e987-4a09-8d88-f58476a76140"/>
