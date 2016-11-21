@@ -197,7 +197,7 @@ where aao.order_no=$P{order_no}]]>
 	<detail>
 		<band height="60" splitType="Stretch">
 			<subreport>
-				<reportElement x="0" y="0" width="802" height="60" uuid="ae86599b-8890-4277-a2a6-9ec22bcdba24"/>
+				<reportElement x="-15" y="0" width="802" height="60" uuid="ae86599b-8890-4277-a2a6-9ec22bcdba24"/>
 				<subreportParameter name="order_id">
 					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 				</subreportParameter>
