@@ -8,11 +8,12 @@
                     	<% if(shiro.hasPermission("DeliveryOder.create")){%>
                         	<a class="btn  btn-primary" href="/delivery/add">新增出库配送单</a>
                         	<a class="btn  btn-primary" href="/delivery/create">新增空白配送单</a>
+                            <input id="fileUploadBtn" type="button" class="btn  btn-primary" value="导入配送单" size="30" />
+                            <input id="revisefileUploadBtn" type="button" class="btn  btn-primary" value="更新配送单" size="30" />
+                            <sub><a id="dowmload" href="javascript:void(0)" target='_blank'>下载导入模板</a></sub>
+                            <sub><a id="revisedowmload" href="javascript:void(0)" target='_blank'>下载更新模板</a></sub>
                     	<%}%>
-                    	<input id="fileUploadBtn" type="button" class="btn  btn-primary" value="导入配送单" size="30" />
-                    	<input id="revisefileUploadBtn" type="button" class="btn  btn-primary" value="更新配送单" size="30" />
-                    	<sub><a id="dowmload" href="javascript:void(0)" target='_blank'>下载导入模板</a></sub>
-                    	<sub><a id="revisedowmload" href="javascript:void(0)" target='_blank'>下载更新模板</a></sub>
+                    	
                         <form id="toFileUploadForm" method="post" action="/delivery/intoDeliveryOrder" enctype="multipart/form-data">
 						     <input type="file" id="toFileUpload" name="files[]" 
 						     style="position:absolute; filter:alpha(opacity=0); opacity:0; width:30px; " size="1" data-url="/delivery/importDeliveryOrder">
