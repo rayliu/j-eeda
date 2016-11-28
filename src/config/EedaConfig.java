@@ -1,6 +1,7 @@
 package config;
 
 import handler.UrlHanlder;
+import interceptor.ActionCostInterceptor;
 
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
@@ -554,7 +555,8 @@ public class EedaConfig extends JFinalConfig {
     		logger.debug("is_check_permission = Y");
          	me.add(new ShiroInterceptor());
     	}
-        //me.add(new SetAttrLoginUserInterceptor());
+//        me.add(new SetAttrLoginUserInterceptor());
+    	me.add(new ActionCostInterceptor());
     }
 
     @Override
