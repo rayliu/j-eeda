@@ -102,7 +102,7 @@ LEFT JOIN location lo2 ON ifnull(tor.route_to, tor2.route_to) = lo2. CODE
 LEFT JOIN party p4 ON p4.id = d_o.notify_party_id
 LEFT JOIN contact c4 ON c4.id = p4.contact_id
 left join user_login ul on ul.id = aco.create_by
-where aci.charge_order_id=448
+where aci.charge_order_id=$P{order_id}
 and aci.ref_order_type='回单'
 UNION
 SELECT
@@ -125,8 +125,7 @@ LEFT JOIN arap_charge_order aco on aco.id =aci.charge_order_id
 LEFT JOIN arap_misc_charge_order amco ON amco.id = aci.ref_order_id
 left join user_login ul on ul.id = aco.create_by
 where aci.charge_order_id=$P{order_id}
-and aci.ref_order_type='收入单'
-]]>
+and aci.ref_order_type='收入单']]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
