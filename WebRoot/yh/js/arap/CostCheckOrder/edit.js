@@ -151,7 +151,7 @@ $(document).ready(function() {
 			$(nRow).attr('order_ty', aData.BUSINESS_TYPE);
 			return nRow;
 		},
-        "sAjaxSource": "/costCheckOrder/costConfirmListById",
+        "sAjaxSource": "/costCheckOrder/costConfirmListById?costCheckId="+$("#costCheckOrderId").val(),
         "aoColumns": [ 
             {"mDataProp":"BUSINESS_TYPE"},
             {"mDataProp":"SPNAME","sWidth":"150px"},
@@ -228,7 +228,7 @@ $(document).ready(function() {
 				var orderIds=$("#orderIds").val();
 	    		$("#debitAmount").html(parseFloat(changeamount )-parseFloat(value2));
 	    		$("#total_amount").val(parseFloat(totalamount )-parseFloat(value2));
-				costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
+				costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckId="+costCheckOrderId;
 		    	costConfiremTable.fnDraw(); 
 		    	addcheckedCostCheck.fnDraw();
 			}else{
@@ -241,7 +241,12 @@ $(document).ready(function() {
     	var costCheckOrderId = $("#costCheckOrderId").val();
     	var orderNos = $("#orderNos").val();
     	var orderIds = $("#orderIds").val();
-    	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
+    	
+    	var params = '';
+    	if(!costCheckOrderId){
+    		params = "&orderNos="+orderNos+"&orderIds="+orderIds
+    	}
+    	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckId="+costCheckOrderId+params;
     	costConfiremTable.fnDraw(); 
     });
     
@@ -456,7 +461,13 @@ $(document).ready(function() {
     	var orderIds = $("#orderIds").val();
     	$('#addOrder').modal('hide');
     	$("#auditBtn").attr("disabled", true);
-    	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckOrderId="+costCheckOrderId+"&orderNos="+orderNos+"&orderIds="+orderIds;
+    	
+    	var params = '';
+    	if(!costCheckOrderId){
+    		params = "&orderNos="+orderNos+"&orderIds="+orderIds
+    	}
+    	
+    	costConfiremTable.fnSettings().sAjaxSource = "/costCheckOrder/costConfirmListById?costCheckId="+costCheckOrderId+params;
     	costConfiremTable.fnDraw(); 
     });
     

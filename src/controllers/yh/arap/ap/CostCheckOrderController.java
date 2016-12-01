@@ -29,6 +29,7 @@ import models.yh.arap.ArapMiscCostOrderItem;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -1207,6 +1208,8 @@ public class CostCheckOrderController extends Controller {
 	}
 
 	public void costConfirmListById() {
+		String costCheckId = getPara("costCheckId");
+		
 		String orderIds = getPara("orderIds");
 		String orderNos = getPara("orderNos");
 		String pickupId = "";
@@ -1214,13 +1217,8 @@ public class CostCheckOrderController extends Controller {
 		String deliveryId = "";
 		String insuranceId = "";
 		String arapmiscId = "";
-		if (orderIds == null || orderIds == "") {
-			pickupId = "-1";
-			departId = "-1";
-			deliveryId = "-1";
-			insuranceId = "-1";
-			arapmiscId = "-1";
-		} else {
+		
+		if(StringUtils.isEmpty(costCheckId) &&StringUtils.isNotEmpty(orderIds)&& StringUtils.isNotEmpty(orderNos)){
 			String[] orderIdsArr = orderIds.split(",");
 			String[] orderNoArr = orderNos.split(",");
 			for (int i = 0; i < orderIdsArr.length; i++) {
@@ -1237,33 +1235,57 @@ public class CostCheckOrderController extends Controller {
 					insuranceId += orderIdsArr[i] + ",";
 				}
 			}
-			if (pickupId != null && !"".equals(pickupId)) {
-				pickupId = pickupId.substring(0, pickupId.length() - 1);
-			} else {
-				pickupId = "-1";
-			}
-			if (departId != null && !"".equals(departId)) {
-				departId = departId.substring(0, departId.length() - 1);
-			} else {
-				departId = "-1";
-			}
-			if (deliveryId != null && !"".equals(deliveryId)) {
-				deliveryId = deliveryId.substring(0, deliveryId.length() - 1);
-			} else {
-				deliveryId = "-1";
-			}
-			if (arapmiscId != null && !"".equals(arapmiscId)) {
-				arapmiscId = arapmiscId.substring(0, arapmiscId.length() - 1);
-			} else {
-				arapmiscId = "-1";
-			}
-			if (insuranceId != null && !"".equals(insuranceId)) {
-				insuranceId = insuranceId
-						.substring(0, insuranceId.length() - 1);
-			} else {
-				insuranceId = "-1";
+		}else{
+			List<Record> reList = Db.find("select * from arap_cost_item where cost_order_id = ?",costCheckId);
+			for(Record re:reList){
+				String type = re.getStr("ref_order_no");
+				Long itemId = re.getLong("ref_order_id");
+				String d = ",";
+					
+				if ("提货".equals(type)) {
+					pickupId += itemId + d;
+				} else if ("零担".equals(type)) {
+					departId += itemId + d;
+				} else if ("配送".equals(type)) {
+					deliveryId += itemId + d;
+				} else if ("成本单".equals(type)) {
+					arapmiscId += itemId + d;
+				} else {
+					insuranceId += itemId + d;
+				}
 			}
 		}
+		
+		if(StringUtils.isEmpty(pickupId)){
+			pickupId = "-1";
+		}else{
+			pickupId.substring(0, pickupId.length() - 2);
+		}
+		
+		if(StringUtils.isEmpty(departId)){
+			departId = "-1";
+		}else{
+			departId = departId.substring(0, departId.length() - 1);
+		}
+		
+		if(StringUtils.isEmpty(deliveryId)){
+			deliveryId = "-1";
+		}else{
+			deliveryId = deliveryId.substring(0, deliveryId.length() - 1);
+		}
+		
+		if(StringUtils.isEmpty(arapmiscId)){
+			arapmiscId = "-1";
+		}else{
+			arapmiscId = arapmiscId.substring(0, arapmiscId.length() - 1);
+		}
+		
+		if(StringUtils.isEmpty(insuranceId)){
+			insuranceId = "-1";
+		}else{
+			insuranceId = insuranceId.substring(0, insuranceId.length() - 1);
+		}
+		
 
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
