@@ -1,11 +1,39 @@
 package config;
 
-import handler.UrlHanlder;
-import interceptor.ActionCostInterceptor;
-
 import java.lang.management.ManagementFactory;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+import org.bee.tl.ext.jfinal.BeetlRenderFactory;
+import org.h2.tools.Server;
+
+import com.jfinal.config.Constants;
+import com.jfinal.config.Handlers;
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.JFinalConfig;
+import com.jfinal.config.Plugins;
+import com.jfinal.config.Routes;
+import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
+import com.jfinal.ext.plugin.shiro.ShiroPlugin;
+import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
+import com.jfinal.plugin.activerecord.SqlReporter;
+import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
+import com.jfinal.plugin.c3p0.C3p0Plugin;
+import com.jfinal.weixin.eeda.WeixinApiController;
+import com.jfinal.weixin.eeda.WeixinMsgController;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
+
+import controllers.HomeController;
+import controllers.bz.gateOutOrder.BzGateOutOrderController;
+import controllers.bz.gateOutOrder.models.BzGateOutOrder;
+import controllers.bz.gateOutOrder.models.BzGateOutOrderItem;
+import controllers.eeda.ModuleController;
+import controllers.yh.customerQuery.CustomerQueryController;
+import controllers.yh.profile.DriverAssistantController;
+import controllers.yh.returnTransfer.ReturnTransferController;
+import handler.UrlHanlder;
+import interceptor.ActionCostInterceptor;
 import models.Account;
 import models.ArapAccountAuditLog;
 import models.ArapChargeApplicationInvoiceNo;
@@ -117,36 +145,6 @@ import models.yh.structure.Contentlet;
 import models.yh.structure.Field;
 import models.yh.structure.Structure;
 import models.yh.wx.WechatLocation;
-
-import org.apache.log4j.Logger;
-import org.bee.tl.ext.jfinal.BeetlRenderFactory;
-import org.h2.tools.Server;
-
-import com.jfinal.config.Constants;
-import com.jfinal.config.Handlers;
-import com.jfinal.config.Interceptors;
-import com.jfinal.config.JFinalConfig;
-import com.jfinal.config.Plugins;
-import com.jfinal.config.Routes;
-import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
-import com.jfinal.ext.plugin.shiro.ShiroPlugin;
-import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
-import com.jfinal.plugin.activerecord.SqlReporter;
-import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
-import com.jfinal.plugin.c3p0.C3p0Plugin;
-import com.jfinal.plugin.scheduler.SchedulerPlugin;
-import com.jfinal.weixin.eeda.WeixinApiController;
-import com.jfinal.weixin.eeda.WeixinMsgController;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
-
-import controllers.HomeController;
-import controllers.bz.gateOutOrder.BzGateOutOrderController;
-import controllers.bz.gateOutOrder.models.BzGateOutOrder;
-import controllers.bz.gateOutOrder.models.BzGateOutOrderItem;
-import controllers.eeda.ModuleController;
-import controllers.yh.profile.DriverAssistantController;
-import controllers.yh.returnTransfer.ReturnTransferController;
 
 public class EedaConfig extends JFinalConfig {
     private Logger logger = Logger.getLogger(EedaConfig.class);
@@ -344,6 +342,8 @@ public class EedaConfig extends JFinalConfig {
 		
 		me.add("/home", HomeController.class, contentPath);
 		me.add("/module", ModuleController.class, contentPath);
+		//客户查询模块
+		me.add("/customerQuery", CustomerQueryController.class, contentPath);
 		
 	}
 

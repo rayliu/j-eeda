@@ -1,0 +1,80 @@
+<div class="form-group">
+    <label class="search-label">${label!''}</label>
+    <input type="hidden" id="${id!''}" name="warehouseId" value=""> 
+    <input id="${id}_input" class="form-control search-control " placeholder="请输入仓库" value="${display_value!''}"> 
+    <ul id='${id}_list' class="pull-right dropdown-menu default dropdown-scroll" style="top: 17%; left: 2%;" role="menu">
+    </ul>
+                 </div>
+<input id="${id}" style="display: none;" name="${id}" value="${value!''}"/>
+<script>
+
+$(document).ready(function() {
+
+	//处理中文输入法, 没完成前不触发查询
+    var cpLock = false;
+    $('#${id}_input').on('compositionstart', function () {
+        cpLock = true;
+    });
+    $('#${id}_input').on('compositionend', function () {
+        cpLock = false;
+    });
+	//获取sp列表，自动填充
+	var spList =$("#${id}_list");
+	var inputField = $('#${id}_input');
+	var hiddenField = $('#${id}');
+	
+	//供应商查询
+    //获取供应商的list，选中信息在下方展示其他信息
+    inputField.on('keyup click', function(){
+    	if(cpLock)
+            return;
+    	var me = this;
+		var inputStr = inputField.val();
+		
+		$.get('/gateIn/findWarehouseById', {warehouseName: inputStr}, function(data){
+			if(inputStr!=inputField.val()){//查询条件与当前输入值不相等，返回
+				return;
+			}
+			spList.empty();
+			for(var i = 0; i < data.length; i++){
+				spList.append("<li><a tabindex='-1' class='fromLocationItem' partyId='"+data[i].ID+"' >"
+					+data[i].WAREHOUSE_NAME+"</a></li>");
+			}
+			spList.css({ 
+	        	left:$(me).position().left+"px", 
+	        	top:$(me).position().top+28+"px" 
+	        }); 
+			
+			spList.show();
+			
+		},'json');
+    });
+    
+    // 没选中供应商，焦点离开，隐藏列表
+	inputField.on('blur', function(){
+		if (inputField.val().trim().length ==0) {
+			hiddenField.val('');
+		};
+		spList.hide();
+ 	});
+
+	//当用户只点击了滚动条，没选供应商，再点击页面别的地方时，隐藏列表
+	spList.on('blur', function(){
+		spList.hide();
+ 	});
+
+	spList.on('mousedown', function(){
+		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+	});
+
+	// 选中供应商
+	spList.on('mousedown', '.fromLocationItem', function(e){
+		//console.log($('#spList').is(":focus"));
+		inputField.val($(this).text());
+		hiddenField.val($(this).attr('partyId'));
+		spList.hide();
+    });
+    
+	
+});
+</script>

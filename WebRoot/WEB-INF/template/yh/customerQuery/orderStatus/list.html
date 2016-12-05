@@ -1,0 +1,150 @@
+
+<%layout("/yh/layout.html"){%>
+<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet">
+<link href="/yh/js/plugins/datatables-1.10.9/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="btn-header panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-list fa-fw"></i> 客户订单状态查询                            
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            
+                            <div class="">  <!--  form row  -->
+                                <form id="orderForm">
+                                    <div class="row"><!--  第1行  -->
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputCustomerField.html", 
+                                                {
+                                                    id:'customer_id', 
+                                                    label:'客户名称', 
+                                                    value: ''
+                                                }){} %>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <label class="search-label">查询类型</label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="search_type" value="order_no" checked="checked">按订单号
+                                                </label>
+                                                <label class="radio-inline">
+                                                    <input type="radio" name="search_type" value="serial_no">按序列号
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="order_no_div" class="row"><!--  第1行  -->
+                                        <div class="col-lg-4"><!--  三列排版  -->
+                                            <%include("/yh/component/form/inputField.html", 
+                                                                {   id: 'order_no', 
+                                                                    label: '客户订单号', 
+                                                                    value: '',
+                                                                    required: 'required'
+                                                                }){}%>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                {
+                                                    id:'fnd', 
+                                                    label:'目的城市', 
+                                                    value: '',
+                                                    required: 'required'
+                                                }){} %>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputDateQueryField.html", 
+                                                {
+                                                    id:'plan_time', 
+                                                    label:'计划时间',
+                                                    value: '',
+                                                    required: 'required'
+                                                }){} %>
+                                        </div>
+                                    </div>
+
+                                    <div id="serial_no_div" class="row" style="display: none;"><!--  第2行  -->
+                                        <div class="col-lg-4">
+                                            <%include("/yh/component/form/inputField.html", 
+                                                            {   id:'serial_no', 
+                                                                label:'序列号', 
+                                                                value:''
+                                                                }){} %>
+                                        
+                                        </div>
+                                        
+                                    </div><!-- /.row-->
+
+                                </form>
+                            </div><!-- /.row -->
+
+                            <div class="form-group button-bar" >
+                                <button id="searchBtn" class="btn btn-primary btn-sm" type="button">查询</button>
+                                <button id="resetBtn" class="btn btn-default btn-sm" type="button">清空条件</button>
+                            </div> 
+                            
+                            <div id="order_no_table_div">
+                                <%include("/yh/component/form/detailTable.html", 
+                                {
+                                    id:'order_no_table', 
+                                    style: 'width: 1400px;',
+                                    headers:['订单号', 
+                                        '目的城市', 
+                                        '计划日期', 
+                                        '发货日期', 
+                                        '数量', 
+                                        '运输状态', 
+                                        '签收时间',
+                                        '回单状态', 
+                                        '收货地址'
+                                        ]
+                                }){} %>
+                            </div>
+                            <div id="serial_no_table_div" style="display: none;">
+                                <%include("/yh/component/form/detailTable.html", 
+                                {
+                                    id:'serial_no_table', 
+                                    style: 'width: 1400px;',
+                                    headers:['序列号', 
+                                        '产品型号', 
+                                        '件数', 
+                                        '目的城市', 
+                                        '配送地址', 
+                                        '收货人', 
+                                        '配送日期',
+                                        '配送状态', 
+                                        '回单状态',
+                                        '收货单位',
+                                        '收货地址',
+                                        '回单照片'
+                                        ]
+                                }){} %>
+                            </div>
+                            
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+          
+        </div><!-- end of  .page-wrapper-->
+
+<%}%>
+
+<!-- Page-Level Plugin Scripts - Tables -->
+<script src="/yh/js/plugins/datatables-1.10.9/js/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/datatables-1.10.9/js/dataTables.bootstrap.js"></script>
+
+
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+
+<script src="/yh/js/customerQuery/orderStatus/list.js"></script>
+

@@ -532,6 +532,18 @@
                         <!-- /.nav-second-level -->
                     </li>
                    <%}%>
+                     <li id="menu_customer_query">
+                        <a href="#"><i class="fa fa-table fa-fw"></i> 在线查询<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/customerQuery/orderStatus">订单状态查询</a>
+                            </li>
+                            <li>
+                                <a href="/customerQuery/inventory">库存查询</a>
+                            </li>
+                        </ul>
+
+
                    <% 
                    		var productIndexPermission = map.ProductIndex_list;
                    		var orderIndexPermission = map.OrderIndex_list;
