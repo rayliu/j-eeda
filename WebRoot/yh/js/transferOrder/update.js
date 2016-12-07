@@ -25,8 +25,8 @@ $(document).ready(function() {
 					 $("input[name='chargeType2']").each(function(){
 						if(chargeTypeRadio2 == $(this).val()){
 							$(this).prop('checked', true);
-					    }
-					 });
+				    }
+						 });
 					 //getChargetype();
 				}else{
 					$("#sp_id").val('');
@@ -760,6 +760,7 @@ $(document).ready(function() {
     
     
 	var order_id = $("#order_id").val();
+	var status = $("#status").val();
 	//datatable, 动态处理
     var itemDataTable = $('#itemTable').dataTable({
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -786,8 +787,14 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.ITEM_NO==null)
             			obj.aData.ITEM_NO='';
-            		var inputBox = "<input type='text' name='item_no' value='"+obj.aData.ITEM_NO+"' placeholder='至少输入两个字符查询'>";
-        			return inputBox;
+            		
+            		var disabled = '';
+            		if(status!='新建'){
+            			disabled = 'disabled';
+            		}
+            		var inputBox = "<input type='text' name='item_no' "+disabled+" value='"+obj.aData.ITEM_NO+"' placeholder='至少输入两个字符查询'>";
+            		
+            		return inputBox
                 }
         	},
             {
@@ -892,7 +899,12 @@ $(document).ready(function() {
             	"fnRender": function(obj) {
             		if(obj.aData.AMOUNT==null)
             			obj.aData.AMOUNT='';
-            		var inputBox = "<input type='text' name='amount' style='width:60px;' value='"+obj.aData.AMOUNT+"'>";
+            		
+            		var disabled = '';
+            		if(status!='新建'){
+            			disabled = 'disabled';
+            		}
+            		var inputBox = "<input type='text' "+disabled+" name='amount' style='width:60px;' value='"+obj.aData.AMOUNT+"'>";
         			return inputBox;
                 }
             }, 
@@ -965,10 +977,15 @@ $(document).ready(function() {
             	"sClass": "remark",              
                 "fnRender": function(obj) {
                 	if(Transfer.isUpdate){
-	                    return	"<a class='btn btn-success btn-xs dateilEdit' code='?id="+obj.aData.ID+"' title='单品编辑'>"+
+                		
+                		var disabled = '';
+                		if(status!='新建'){
+                			disabled = 'disabled';
+                		}
+	                    return	"<a class='btn btn-success btn-xs dateilEdit' "+disabled+" code='?id="+obj.aData.ID+"' title='单品编辑'>"+
 	                                "<i class='fa fa-edit fa-fw'></i>"+
 	                            "</a> "+
-	                            "<a class='btn btn-danger btn-xs deleteItem' code='?item_id="+obj.aData.ID+"' title='删除'>"+
+	                            "<a class='btn btn-danger btn-xs deleteItem' "+disabled+" code='?item_id="+obj.aData.ID+"' title='删除'>"+
 	                                "<i class='fa fa-trash-o fa-fw'></i>"+
 	                            "</a>";
                 	}
