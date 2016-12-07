@@ -616,10 +616,13 @@ public class PickupOrderController extends Controller {
             }else{
             	pickupOrder.set("pickup_type", "direct");
             	pickupOrder.set("is_direct_deliver", true);
-            	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
-            	transferOrder.set("receiving_address", con_address).update();
+            	
+            	for(int i = 0; i < orderids.length ; i++){
+            		TransferOrder transferOrder = TransferOrder.dao.findById(orderids[i]);
+                	transferOrder.set("receiving_address", con_address).update();
+            	}
+            	
             }
-            
             
 //                if (values.length == 1) {
 //                    for (int i = 0; i < values.length; i++) {

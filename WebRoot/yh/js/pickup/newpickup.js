@@ -534,12 +534,7 @@ $(document).ready(function() {
 					$.scojs_message('请选择同一网点的运输单', $.scojs_message.TYPE_FAIL);
 					return false;
 				}
-				if(flag=="derect"){
-					if(order_no[0] != cargo_nature){
-						$.scojs_message('只能选择一张订单', $.scojs_message.TYPE_FAIL);
-						return false;
-					}
-				}
+				
 				orderType.push(order_type);
 				officeType.push(office_name);
 			}else{
