@@ -177,23 +177,27 @@ public class TransferOrderItemDetailController extends Controller {
     	String detailId = getPara("detailId");
     	String name = getPara("name");
     	String value = getPara("value");
+    	String customer_id = getPara("customer_id");
 
+    	boolean flag = true;
     	if(detailId != null && !"".equals(detailId)){
     		TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailId);
-    		/*if(!"serial_no".equals(name) && !"pieces".equals(name) && !"remark".equals(name)){
-    			String pId = getPara("pId");
-    			if(pId != null && !"".equals(pId)){
-	    			Party party = Party.dao.findById(pId);
-	    			Contact contact = Contact.dao.findById(party.get("contact_id"));
-	    			contact.set(name, value);
-	    			contact.update();
-    			}    			
-    		}else{*/
+    		if("serial_no".equals(name)){
+    			TransferOrderItemDetail item = TransferOrderItemDetail.dao.findFirst("select toid.* from transfer_order_item_detail toid"
+    					+ " left join transfer_order tor on tor.id = toid.order_id "
+    					+ " where toid.serial_no = '"+value+"' and tor.customer_id = '"+customer_id+"'");
+    			if(item == null){
+    				detail.set(name, value);
+    				detail.update();
+    			}else{
+    				if(!detailId.equals(item.getLong("id").toString()))
+    					flag = false;
+    			}
+    		}else{
     			detail.set(name, value);
     			detail.update();
-    		//}
-	    	
+    		}
     	}
-        renderJson("{\"success\":true}");
+        renderJson("{\"success\":"+flag+"}");
     }
 }

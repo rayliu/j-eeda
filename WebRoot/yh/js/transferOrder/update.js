@@ -1637,15 +1637,17 @@ $(document).ready(function() {
 
 	$("#detailTable").on('blur', 'input', function(e){
 		e.preventDefault();
+		var customerId = $('#customerId').val();
 		var detailId = $(this).parent().parent().attr("id");
 		var pId = $(this).parent().parent().attr("notify_party_id");
 		var name = $(this).attr("name");
 		var value = $(this).val();
 		if(value != ""){
-			$.post('/transferOrderItemDetail/saveTransferOrderItemDetailByField', {detailId: detailId, pId: pId, name: name, value: value}, function(data){
+			$.post('/transferOrderItemDetail/saveTransferOrderItemDetailByField', {customer_id:customerId,detailId: detailId, pId: pId, name: name, value: value}, function(data){
 				if(data.success){
+					$.scojs_message('修改成功', $.scojs_message.TYPE_OK);
 				}else{
-					alert("修改失败!");
+					$.scojs_message('同一个客户的序列号不能重复录入', $.scojs_message.TYPE_ERROR);
 				}
 	    	},'json');
 		}
