@@ -19,6 +19,7 @@ $(document).ready(function() {
 	});	
 	var returnOrderId = $("#returnId").val();
 	var transferOrderId =$("#transferOrderId").val();
+	var cargoNature = $("#cargoNature").val();
 	//datatable, 动态处理
 	var transferOrder = $('#transferOrderTable').dataTable({
         "bFilter": false, //不需要默认的搜索框
@@ -41,7 +42,9 @@ $(document).ready(function() {
 				"mDataProp":null,            	
 				"sWidth": "80px",
 				"fnRender":function(obj){
-					var str = "<input type='text' name='serial_no' id='serial_no' value='"+obj.aData.SERIAL_NO+"'/>";
+					var str = '';
+					if(cargoNature == 'ATM')
+						str = "<input type='text' name='serial_no' id='serial_no' value='"+obj.aData.SERIAL_NO+"'/>";
             		return str;
 				}
 			},
