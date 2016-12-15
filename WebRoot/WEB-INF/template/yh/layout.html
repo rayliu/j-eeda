@@ -9,9 +9,9 @@
     <title>${SYS_CONFIG.system_title!''}</title>
     <% var logoPath=SYS_CONFIG.logo!'';
     if(logoPath==""){%>
-	<link rel="shortcut icon" href="/yh/img/eeda_logo.ico">
+	<link rel="shortcut icon" href="/yh/img/eeda_logo.png" type="image/png">
 	<%}else{%>
-	<link rel="shortcut icon" href="${SYS_CONFIG.logo!''}">
+	<link rel="shortcut icon" href="${SYS_CONFIG.logo!''}" type="image/x-icon">
 	<%}%>
     <!-- Core CSS - Include with every page -->
     <link href="/yh/css/bootstrap.min.css" rel="stylesheet">
