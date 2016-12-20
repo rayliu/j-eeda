@@ -13,6 +13,7 @@ import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.yh.profile.Contact;
+import models.yh.profile.CustomizeField;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -418,12 +419,20 @@ public class TransferOrderItemController extends Controller {
     // 保存货品同时保存单品
     private void saveTransferOrderDetail(TransferOrderItem item, Long productId, Double amount) {
         TransferOrderItemDetail transferOrderItemDetail = null;
+        CustomizeField re = CustomizeField.dao.findFirst("select * from customize_field where order_type = 'lastSerialNo'");
+        int last = Integer.parseInt(re.getStr("field_code"));
         if(amount > 0){
 	        if (productId == null || "".equals(productId)) {
 	            for (int i = 0; i < amount; i++) {
+	            	String serial = "CC"+(last+i+1);
+	            	Record toid = Db.findFirst("select * from transfer_order_item_detail where serial_no = ?",serial);
+	            	if(toid != null){
+	            		serial = serial+"A";
+	            	}
 	                transferOrderItemDetail = new TransferOrderItemDetail();
 	                transferOrderItemDetail.set("item_name", item.get("item_name"));
-	                transferOrderItemDetail.set("item_no", item.get("item_no"));
+	                transferOrderItemDetail.set("serial_no", serial);
+	                transferOrderItemDetail.set("item_no",item.get("item_no"));
 	                transferOrderItemDetail.set("volume", item.get("volume"));
 	                transferOrderItemDetail.set("weight", item.get("weight"));
 	                transferOrderItemDetail.set("pieces", "1");
@@ -431,6 +440,7 @@ public class TransferOrderItemController extends Controller {
 	                transferOrderItemDetail.set("order_id", item.get("order_id"));
 	                transferOrderItemDetail.save();
 	            }
+	            re.set("field_code", last+(amount.intValue())).update();
 	        } else {
 	            Product product = Product.dao.findById(productId);
 	            for (int i = 0; i < amount; i++) {
