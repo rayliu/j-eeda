@@ -43,6 +43,8 @@ $(document).ready(function() {
                         return '贷款利息';
                     }else if(data=='5'){
                         return '社保费';
+                    }else if(data=='6'){
+                        return '其它';
                     }
                     return '';
                 }
