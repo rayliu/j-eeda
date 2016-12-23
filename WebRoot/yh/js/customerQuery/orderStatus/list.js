@@ -21,7 +21,7 @@ $(document).ready(function() {
     });
     
 	 
-    var order_dataTable = $('#order_no_table').DataTable({
+    var dataTable = $('#orderStatus_table').DataTable({
         "processing": true,
         "searching": false,
         //"serverSide": true,
@@ -56,13 +56,41 @@ $(document).ready(function() {
             { "data": "REMARK"}
         ]
     });
+    
+    
+    var itemDetailTable = $('#itemDetail-table').dataTable({
+        "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
+        "bFilter": false, //不需要默认的搜索框
+        "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+        "bServerSide": true,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "sAjaxSource": "/departOrder/getItemDetail",
+        "aoColumns": [
+            {"mDataProp":"ORDER_NO"},
+            {"mDataProp":"ITEM_NO"},
+            {"mDataProp":"SERIAL_NO"},
+            {"mDataProp":"AMOUNT"}        
+        ]  
+    });	
+    
+    
+    
+    $("#eeda-table").on('click', '#edit_detail', function(e){
+    	e.preventDefault();	
+    	var depart_id = $(this).attr("depart_id");
+    	itemDetailTable.fnSettings().sAjaxSource = "/departOrder/getItemDetail?depart_id="+depart_id;
+    	itemDetailTable.fnDraw();
+    });
 
     var serial_dataTable = $('#serial_no_table').DataTable({
         "processing": true,
         "searching": false,
         //"serverSide": true,
         "scrollX": true,
-        //"scrollY": "300px",
         "scrollCollapse": true,
         "autoWidth": false,
         "language": {
@@ -107,7 +135,7 @@ $(document).ready(function() {
         var customer_id=$("#customer_id").val();
         var sp_id=$("#sp_id").val();
         
-        var order_type = $("#order_type").val();
+        var search_type = $("#search_type").val();
         var biz_order_no = $('#biz_order_no').val();
         var process_status = $('#process_status').val();
 
