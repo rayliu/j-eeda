@@ -153,7 +153,8 @@ public class CostAcceptOrderController extends Controller {
         
 
         String sql = "select * from( SELECT ro.id, ro.order_no,'报销单' as order_type,ro.payment_type as payment_method,ro.account_name as payee_name,null as account_id,"
-        		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,ro.remark,"
+        		+ " ro.STATUS,null as invoice_no,ro.create_stamp create_time,"
+        		+ " (select GROUP_CONCAT(remark SEPARATOR '<br/>')  from reimbursement_order_fin_item where order_id = ro.id GROUP BY ro.id) remark,"
         		+ " ro.amount total_amount,"
         		+ " ro.amount as application_amount ,"
         		+ " ( SELECT ifnull(sum(caor.pay_amount),0) FROM cost_application_order_rel caor "  //已付未付
