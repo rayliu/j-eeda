@@ -1259,7 +1259,7 @@ public class CostCheckOrderController extends Controller {
 		if(StringUtils.isEmpty(pickupId)){
 			pickupId = "-1";
 		}else{
-			pickupId.substring(0, pickupId.length() - 1);
+			pickupId = pickupId.substring(0, pickupId.length() - 1);
 		}
 		
 		if(StringUtils.isEmpty(departId)){
