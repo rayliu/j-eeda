@@ -678,18 +678,31 @@ public class PickupOrderController extends Controller {
     			String cargoItemId = (String)map.get("cargoItemId");  //itemId
     			String detail_ids = (String)map.get("detail_ids");
     			
-    			//更新ATM detail表pickup_ID
-    			String[] detailIds = detail_ids.split(",");
-                if(!detail_ids.equals("") && detail_ids != null){
-    	            for (int i = 0; i < detailIds.length; i++) {
-    					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailIds[i]);
-    					if("twice_pickup".equals(address_type)){
-    						detail.set("twice_pickup_id",pickupOrder.get("id")).update();
-                    	}else{
-                    		detail.set("pickup_id",pickupOrder.get("id")).update();
-                    	}
-    	            }
-                }
+    			if(StringUtils.isNotEmpty(getPara("flag"))){
+    				if("derect".equals(getPara("flag"))){
+        				List<Record> res = Db.find("select id from transfer_order_item_detail where order_id = ?",orderId);
+        				for(Record re :res){
+        					long detailid = re.getLong("id");
+        					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailid);
+        					detail.set("pickup_id",pickupOrder.get("id")).update();
+        				}
+        			}
+    			}else{
+    				//更新ATM detail表pickup_ID
+        			String[] detailIds = detail_ids.split(",");
+                    if(!detail_ids.equals("") && detail_ids != null){
+        	            for (int i = 0; i < detailIds.length; i++) {
+        					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailIds[i]);
+        					if("twice_pickup".equals(address_type)){
+        						detail.set("twice_pickup_id",pickupOrder.get("id")).update();
+                        	}else{
+                        		detail.set("pickup_id",pickupOrder.get("id")).update();
+                        	}
+        	            }
+                    }
+    			}
+    			
+    			
     			
     			//ATM单品
                 if(order_type.equals("ATM")){
@@ -966,7 +979,11 @@ public class PickupOrderController extends Controller {
     		long transfer_id = dt.getLong("order_id");
     		
     		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id =?",transfer_id);
-    		long return_id = returnOrder.getLong("id");
+    		long return_id = 0;
+    		if(returnOrder != null)
+    			return_id = returnOrder.getLong("id");
+    		else
+    			return true;
     		
     		//校验是否有下级财务单据（应收）
     		String transaction_status = returnOrder.getStr("transaction_status");
