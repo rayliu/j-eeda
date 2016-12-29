@@ -92,6 +92,7 @@ UNION
 				cost_application_order_rel caor
 			WHERE
 				caor.application_order_id = appl_order.id
+and caor.cost_order_id = appo.id
 			AND caor.order_type = '预付单'
 		) cost_amount,
 		(
@@ -102,6 +103,7 @@ UNION
 					cost_application_order_rel caor
 				WHERE
 					caor.cost_order_id = appo.id
+and caor.cost_order_id = appo.id
 				AND caor.order_type = '预付单'
 			)
 		) cost_balance
