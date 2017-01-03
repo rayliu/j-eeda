@@ -442,6 +442,7 @@ $(document).ready(function() {
     
     $('#searchBtn').on( 'click', function () {
     	var orderNo = $("#orderNo_filter").val();
+    	var item_no = $("#item_no").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
     	var customer = $("#customer_filter").val();
@@ -450,7 +451,8 @@ $(document).ready(function() {
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
     	var orderType = $("#orderType_filter").val();
-    	pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType;
+    	pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer
+    	+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType+"&item_no="+item_no;
     	pickupOrder.fnDraw(); 
     } );
  

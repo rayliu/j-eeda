@@ -318,6 +318,7 @@ public class PickupOrderController extends Controller {
         Map transferOrderListMap = null;
         String flag = getPara("flag");
         String orderNo = getPara("orderNo");
+        String item_no = getPara("item_no");
         String status = getPara("status");
         String address = getPara("address");
         String customer = getPara("customer");
@@ -371,6 +372,9 @@ public class PickupOrderController extends Controller {
         }
         if (StringUtils.isNotEmpty(address)){
         	conditions+=" and address like '%"+address+"%'";
+        }
+        if (StringUtils.isNotEmpty(item_no)){
+        	conditions+=" and item_no like '%"+item_no+"%'";
         }
         if (StringUtils.isNotEmpty(orderType)){
         	conditions+=" and order_type like '%"+orderType+"%'";
