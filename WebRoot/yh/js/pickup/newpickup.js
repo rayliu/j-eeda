@@ -149,6 +149,11 @@ $(document).ready(function() {
             	"sClass": "planning_time"
             },
             { 
+            	"mDataProp": "ITEM_NO",
+                "sWidth": "90px",
+            	"sClass": "item_no"
+            },
+            { 
                 "mDataProp": null, "sWidth": "60px",
                 "sClass": "total_amount",
                 "fnRender": function(obj) {
