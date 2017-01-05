@@ -39,6 +39,8 @@ import org.apache.shiro.subject.Subject;
 import com.google.gson.Gson;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
+import com.jfinal.kit.StringKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -977,6 +979,7 @@ public class CostCheckOrderController extends Controller {
 				+ " left join location lo2 on lo2.code = dor.route_to "
 				+ " left join office oe on oe.id = w.office_id "
 				+ " where dor.audit_status='已确认' "
+				+ (StrKit.isBlank(sp_id2)?"":" and dor.sp_id ="+sp_id2)
 				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
 		        + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 		        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
@@ -1021,6 +1024,7 @@ public class CostCheckOrderController extends Controller {
 				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
+				+ (StrKit.isBlank(sp_id2)?"":" and dpr.sp_id ="+sp_id2)
 				+ " group by dpr.id"
 				
 				+ " union "
@@ -1062,11 +1066,13 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN warehouse w on w.id=tor.warehouse_id"
 				+ " left join location lo on lo.code = dpr.route_from "
 				+ " left join location lo2 on lo2.code = dpr.route_to "
-				+ " left join office oe on oe.id = tor.office_id where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' "
+				+ " left join office oe on oe.id = tor.office_id "
+				+ " where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
                 + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
                 + "      or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
                 + " and '"+is_delivery+"' = 'N'"
+                + (StrKit.isBlank(sp_id2)?"":" and dpr.sp_id ="+sp_id2)
                 + " group by dpr.id"
                 
 				+ " union "
@@ -1102,7 +1108,8 @@ public class CostCheckOrderController extends Controller {
 				+ " where ior.audit_status='已确认' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
                 + " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
-			    + " and '"+is_delivery+"' = 'N'"
+			    + " and '"+is_delivery+"' = 'N' "
+                + (StrKit.isBlank(sp_id2)?"":" and tor.sp_id ="+sp_id2)
                 + " group by ior.id"
 			    
 				+ " union "
@@ -1131,6 +1138,7 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN location l ON amco.route_from = l. CODE"
 				+ " LEFT JOIN location l1 ON amco.route_to = l1. CODE"
 				+ " WHERE amco.audit_status = '已确认'"
+				+ (StrKit.isBlank(sp_id2)?"":" and amco.sp_id ="+sp_id2)
 				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 				+ " GROUP BY amco.id) as A ";
 		String condition = "";
@@ -1146,9 +1154,9 @@ public class CostCheckOrderController extends Controller {
 
 			} else {
 				condition = " where 1=1 ";
-				if (!"".equals(sp_id2) && sp_id2 != null) {
-					condition += " and sp_id = '" + sp_id2 + "' ";
-				}
+//				if (!"".equals(sp_id2) && sp_id2 != null) {
+//					condition += " and sp_id = '" + sp_id2 + "' ";
+//				}
 				if (!"".equals(orderNo) && orderNo != null) {
 					condition += " and ifnull(transfer_order_no,'') like '%"
 							+ orderNo + "%' ";

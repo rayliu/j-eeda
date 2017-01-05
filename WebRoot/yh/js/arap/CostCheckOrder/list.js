@@ -44,11 +44,11 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costCheckOrder/list",
+        //"sAjaxSource": "/costCheckOrder/list",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
@@ -158,6 +158,8 @@ $(document).ready(function() {
           	var status = $("#status_filter").val();
         	var sp = $("#sp_id1_input").val();
         	var serial_no = $("#serial_no_filter").val();
+
+          datatableAA.fnSettings().oFeatures.bServerSide = true;
         	datatableAA.fnSettings().sAjaxSource = "/costCheckOrder/list?order_no="+order_no
                                 +"&status="+status
                                 +"&sp="+sp

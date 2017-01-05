@@ -166,8 +166,8 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
-    	  "oLanguage": {
+        "bServerSide": false,
+    	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
@@ -605,6 +605,7 @@ $(document).ready(function() {
     	var type = $("#order_type_filter").val();
     	var status = $("#order_status_filter").val();
     	var serial_no = $("#serial_no").val();
+        uncheckedCostCheckTable.fnSettings().oFeatures.bServerSide = true;
     	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/unSelectedList?sp_id2="+sp_id2
 														+"&beginTime="+beginTime
 														+"&endTime="+endTime
@@ -619,10 +620,15 @@ $(document).ready(function() {
     };
     
     $("#searchBtn").click(function(){
+        var sp_id2 = $("#sp_id").val();
+        if(sp_id2.length==0 ){
+            $.scojs_message('请选择一个供应商.', $.scojs_message.TYPE_ERROR);
+            return;
+        }
     	refreshCreateList();
     });
     
-    refreshCreateList();
+    //refreshCreateList();
     
 
 });
