@@ -665,45 +665,49 @@ public class ReturnOrderController extends Controller {
 	// 回单签收
 	@Before(Tx.class)
 	public void returnOrderReceipt() {
-		String id = getPara();
+		String id = getPara("id");
+		String[] array = id.split(",");
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
 		
-		ReturnOrder returnOrder = ReturnOrder.dao.findById(id);		
-		returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).update();
-		
-		Long deliveryId = returnOrder.get("delivery_order_id");
-		if (deliveryId != null && !"".equals(deliveryId)) {
-			DeliveryOrderMilestone doMilestone = new DeliveryOrderMilestone();
-			doMilestone.set("status", "已签收");
-			String name = (String) currentUser.getPrincipal();
+		for(int i=0;i<array.length;i++){
+			ReturnOrder returnOrder = ReturnOrder.dao.findById(array[i]);		
+			returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).update();
 			
-			List<UserLogin> users = UserLogin.dao
-					.find("select * from user_login where user_name='" + name
-							+ "'");
-			doMilestone.set("create_by", users.get(0).get("id"));
-			doMilestone.set("location", "");
-			utilDate = new java.util.Date();
-			sqlDate = new java.sql.Timestamp(utilDate.getTime());
-			doMilestone.set("create_stamp", sqlDate); 
-			doMilestone.set("delivery_id", deliveryId);
-			doMilestone.save();
-			
-			//更新配送当回单状态
-			DeliveryOrder deliveryOrder	= DeliveryOrder.dao.findById(deliveryId);
-			if(deliveryOrder != null){
-				deliveryOrder.set("sign_status","已签收");
-				deliveryOrder.update();
-			}
-		} else {
-			DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ? ", returnOrder.getLong("transfer_order_id"));
-			DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.getLong("pickup_id"));
-			if(departOrder!=null){
+			Long deliveryId = returnOrder.get("delivery_order_id");
+			if (deliveryId != null && !"".equals(deliveryId)) {
+				DeliveryOrderMilestone doMilestone = new DeliveryOrderMilestone();
+				doMilestone.set("status", "已签收");
+				String name = (String) currentUser.getPrincipal();
 				
-				departOrder.set("sign_status", "已签收");
-				departOrder.update();
-			}		
+				List<UserLogin> users = UserLogin.dao
+						.find("select * from user_login where user_name='" + name
+								+ "'");
+				doMilestone.set("create_by", users.get(0).get("id"));
+				doMilestone.set("location", "");
+				utilDate = new java.util.Date();
+				sqlDate = new java.sql.Timestamp(utilDate.getTime());
+				doMilestone.set("create_stamp", sqlDate); 
+				doMilestone.set("delivery_id", deliveryId);
+				doMilestone.save();
+				
+				//更新配送当回单状态
+				DeliveryOrder deliveryOrder	= DeliveryOrder.dao.findById(deliveryId);
+				if(deliveryOrder != null){
+					deliveryOrder.set("sign_status","已签收");
+					deliveryOrder.update();
+				}
+			} else {
+				DepartTransferOrder departTransferOrder = DepartTransferOrder.dao.findFirst("select * from depart_transfer where order_id = ? ", returnOrder.getLong("transfer_order_id"));
+				DepartOrder departOrder = DepartOrder.dao.findById(departTransferOrder.getLong("pickup_id"));
+				if(departOrder!=null){
+					
+					departOrder.set("sign_status", "已签收");
+					departOrder.update();
+				}		
+			}
 		}
+		
 		renderJson("{\"success\":true}");
 	}
 	//计算ATM合同费用

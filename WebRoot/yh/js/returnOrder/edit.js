@@ -240,7 +240,7 @@ $(document).ready(function() {
 	     	   $("#returnOrderRefused").attr("disabled", true);
 		        //异步向后台提交数据
 				var id = $("#returnId").val();
-				$.post('/returnOrder/returnOrderReceipt/'+id,function(data){
+				$.post('/returnOrder/returnOrderReceipt?id='+id,function(data){
 		           //保存成功后，刷新列表
 		           if(data.success){
 		        	   $.scojs_message('签收成功', $.scojs_message.TYPE_OK);

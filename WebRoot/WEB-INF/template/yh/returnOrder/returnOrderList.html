@@ -146,6 +146,7 @@
                                 <button id="searchBtn" class="btn btn-primary" type="button">查询</button> 
                                 <button id="resetBtn" class="btn btn-default" type="button">清空条件</button>
                                 <button id="downloadBtn" class="btn btn-default" type="button">下载图片</button>
+                                <button id="confirmBtn" class="btn btn-primary" type="button">签收</button> 
                             </div> 
                          </form>
                          
@@ -166,6 +167,7 @@
 					                                <table class="table table-striped table-bordered table-hover" id="example" style="width: 2200px;">
 					                                    <thead>
 					                                        <tr>
+					                                        	<th><input type="checkbox" name="checkAll" id="checkAll"></th>
 					                                            <th>回单编号</th>
 					                                            <th>回单类型</th>
 					                                            <th>订单类型</th>
@@ -301,4 +303,4 @@
 	Return.isComplete = ${returnOrderComplete};
 </script>
 <script src="/yh/js/eeda-common.js"></script>
-<script src="/yh/js/returnOrder/list.js"></script>
+<script src="/yh/js/returnOrder/list.js?v=1"></script>

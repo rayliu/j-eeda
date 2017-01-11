@@ -3,6 +3,50 @@
 	$('#menu_return').addClass('active').find('ul').addClass('in');
 	var clickTabId = "createTab";
 
+	
+	$("input[name='checkAll']").click(function(){
+		var checked = true;
+		if(!$(this).prop('checked')){
+			checked = false;
+			//$('#confirmBtn').attr('disabled',true);
+		}else{
+			//$('#confirmBtn').attr('disabled',false);
+		}
+		
+    	$("input[name='order_check_box']").each(function () {  
+            this.checked = checked;  
+         });  
+    });
+	
+	
+	$('#confirmBtn').on('click',function(){
+		var self = this;
+		$(self).attr("disabled",true);
+        
+    	var trArr=[];
+        $("input[name='order_check_box']").each(function(){
+        	if($(this).prop('checked') == true){
+        		trArr.push($(this).attr("id"));
+        		$(this).attr("disabled",true);
+        	}
+        });     
+        
+        if(trArr.length==0){
+        	$.scojs_message('请勾选要签收的单据', $.scojs_message.TYPE_TYPE_ERROR);
+        	return false;
+        }
+        
+        $.post('returnOrder/returnOrderReceipt',{id:trArr.toString()},function(data){
+        	if(data){
+        		$.scojs_message('签收成功', $.scojs_message.TYPE_OK);
+        		$(self).attr("disabled",false);
+        	}
+        }).fail(function(){
+        	$.scojs_message('签收失败', $.scojs_message.TYPE_ERROR);
+        	$(self).attr("disabled",false);
+        });
+	});
+	
   
 	//条件查询
   $("#return_type, #transfer_type, #order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no","#officeSelect").on('keyup', function (e) {    	 	
@@ -51,8 +95,17 @@
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
         //"sAjaxSource": "/returnOrder/list?status=新建",
    			"aoColumns": [
+			{ "mDataProp": null, "sWidth":"10px", "bSortable": false,
+			    "fnRender": function(obj) {
+			      return '<input type="checkbox" name="order_check_box" id="'+obj.aData.ID+'" order_no="'+obj.aData.BUSINESS_TYPE+'">';	
+			    }
+			},
    			{ "mDataProp": "ORDER_NO",
    				"sWidth":"100px",
             	"fnRender": function(obj) {
