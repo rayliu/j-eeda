@@ -178,20 +178,25 @@ public class TransferOrderItemDetailController extends Controller {
     	String name = getPara("name");
     	String value = getPara("value");
     	String customer_id = getPara("customer_id");
+    	String orderType = getPara("orderType");
 
     	boolean flag = true;
     	if(detailId != null && !"".equals(detailId)){
     		TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailId);
     		if("serial_no".equals(name)){
-    			TransferOrderItemDetail item = TransferOrderItemDetail.dao.findFirst("select toid.* from transfer_order_item_detail toid"
-    					+ " left join transfer_order tor on tor.id = toid.order_id "
-    					+ " where toid.serial_no = '"+value+"' and tor.customer_id = '"+customer_id+"'");
-    			if(item == null){
+    			if("salesOrder".equals(orderType)){
+    				TransferOrderItemDetail item = TransferOrderItemDetail.dao.findFirst("select toid.* from transfer_order_item_detail toid"
+        					+ " left join transfer_order tor on tor.id = toid.order_id "
+        					+ " where toid.serial_no = '"+value+"' and tor.customer_id = '"+customer_id+"'");
+        			if(item == null){
+        				
+        			}else{
+        				if(!detailId.equals(item.getLong("id").toString()))
+        					flag = false;
+        			}
+    			}else{
     				detail.set(name, value);
     				detail.update();
-    			}else{
-    				if(!detailId.equals(item.getLong("id").toString()))
-    					flag = false;
     			}
     		}else{
     			detail.set(name, value);

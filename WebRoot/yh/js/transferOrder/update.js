@@ -1641,9 +1641,10 @@ $(document).ready(function() {
 		var detailId = $(this).parent().parent().attr("id");
 		var pId = $(this).parent().parent().attr("notify_party_id");
 		var name = $(this).attr("name");
+		var orderType = $('[name=orderType]:checked').val();
 		var value = $(this).val();
 		if(value != ""){
-			$.post('/transferOrderItemDetail/saveTransferOrderItemDetailByField', {customer_id:customerId,detailId: detailId, pId: pId, name: name, value: value}, function(data){
+			$.post('/transferOrderItemDetail/saveTransferOrderItemDetailByField', {orderType:orderType,customer_id:customerId,detailId: detailId, pId: pId, name: name, value: value}, function(data){
 				if(data.success){
 					$.scojs_message('修改成功', $.scojs_message.TYPE_OK);
 				}else{
