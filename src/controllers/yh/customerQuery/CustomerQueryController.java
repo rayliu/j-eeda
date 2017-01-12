@@ -103,6 +103,7 @@ public class CustomerQueryController extends Controller {
 				+ " SELECT count(1) total"
 				+ " FROM "
 				+ " 	transfer_order tor "
+				+ " LEFT JOIN location l_t ON l_t. CODE = tor.route_to "
 				+ conditions;
 		
 		
