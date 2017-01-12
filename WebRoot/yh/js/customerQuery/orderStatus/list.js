@@ -24,36 +24,26 @@ $(document).ready(function() {
     var dataTable = $('#orderStatus_table').DataTable({
         "processing": true,
         "searching": false,
-        //"serverSide": true,
+        "serverSide": true,
+        "responsive": true,
         "scrollX": true,
-        //"scrollY": "300px",
-        "scrollCollapse": true,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+        "scrollCollapse": false,
         "autoWidth": false,
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        //"ajax": "/damageOrder/list",
+        "ajax": "/customerQuery/orderStatusSearch",
         "columns": [
-            { "data": "ORDER_NO", 
-                "render": function ( data, type, full, meta ) {
-                    return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
-                }
-            },
-            { "data": "CUSTOMER_NAME"},
-            { "data": "SP_NAME"},
-            { "data": "ORDER_TYPE"}, 
-            { "data": "BIZ_ORDER_NO"}, 
-            { "data": "PROCESS_STATUS"}, 
-            { "data": "ACCIDENT_TYPE"}, 
-            { "data": "ACCIDENT_DESC"}, 
-            { "data": "ACCIDENT_DATE",
-                "render": function ( data, type, full, meta ) {
-                    if(data)
-                        return data.substr(0,10);
-                    return '';
-                }
-            }, 
-            { "data": "REMARK"}
+            { "data": "CUSTOMER_ORDER_NO"},
+            { "data": "ROUTE_TO"},
+            { "data": "PLANNING_TIME"},
+            { "data": "DEPARTURE_TIME"}, 
+            { "data": "AMOUNT"}, 
+            { "data": "TRANSFER_STATUS"}, 
+            { "data": "SIGNIN_TIME"}, 
+            { "data": "RETURN_STATUS"}, 
+            { "data": "DELIVERY_ADDRESS"}
         ]
     });
     
@@ -68,7 +58,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/departOrder/getItemDetail",
+        "sAjaxSource": "/customerQuery/orderSerialNoSearch",
         "aoColumns": [
             {"mDataProp":"ORDER_NO"},
             {"mDataProp":"ITEM_NO"},
@@ -89,35 +79,27 @@ $(document).ready(function() {
     var serial_dataTable = $('#serial_no_table').DataTable({
         "processing": true,
         "searching": false,
-        //"serverSide": true,
+        "serverSide": true,
         "scrollX": true,
         "scrollCollapse": true,
         "autoWidth": false,
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        //"ajax": "/damageOrder/list",
+        "ajax": "/customerQuery/orderSerialNoSearch",
         "columns": [
-            { "data": "ORDER_NO", 
-                "render": function ( data, type, full, meta ) {
-                    return "<a href='/damageOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
-                }
-            },
-            { "data": "CUSTOMER_NAME"},
-            { "data": "SP_NAME"},
-            { "data": "ORDER_TYPE"}, 
-            { "data": "BIZ_ORDER_NO"}, 
-            { "data": "PROCESS_STATUS"}, 
-            { "data": "ACCIDENT_TYPE"}, 
-            { "data": "ACCIDENT_DESC"}, 
-            { "data": "ACCIDENT_DATE",
-                "render": function ( data, type, full, meta ) {
-                    if(data)
-                        return data.substr(0,10);
-                    return '';
-                }
-            }, 
-            { "data": "REMARK"}
+            { "data": "SERIAL_NO"},
+            { "data": "ITEM_NO"},
+            { "data": "AMOUNT"},
+            { "data": "ROUTE_TO"}, 
+            { "data": "DELIVERY_ADDRESS"}, 
+            { "data": "NOTIFY_PARTY_NAME"}, 
+            { "data": "DELIVERY_TIME"}, 
+            { "data": "DELIVERY_STATUS"}, 
+            { "data": "RETURN_STATUS" }, 
+            { "data": "RETURN_UNIT" }, 
+            { "data": "RECEIVE_ADDRESS" }, 
+            { "data": "RECEIVE_ADDRESS"}
         ]
     });
     
@@ -126,42 +108,43 @@ $(document).ready(function() {
     });
 
     $('#searchBtn').click(function(){
+    	 
         var search_type = $("input[name=search_type]:checked").val();
-        searchData(search_type); 
+        if(search_type=='order_no'){
+        	searchData(); 
+        }else{
+        	searchSerailData(); 
+        }
     })
 
    var searchData=function(){
-        var orderNo = $("#order_no").val();
+        var customer_order_no = $("#customer_order_no").val();
         var customer_id=$("#customer_id").val();
-        var sp_id=$("#sp_id").val();
+        var route_to= $("#route_to").val();
         
         var search_type = $("#search_type").val();
-        var biz_order_no = $('#biz_order_no').val();
-        var process_status = $('#process_status').val();
-
-        var accident_type = $('#accident_type').val();
-
-        var beginTime = $("#start_date").val();
-        var endTime = $("#end_date").val();
+       
+        var beginTime = $("#plan_time_begin_time").val();
+        var endTime = $("#plan_time_end_time").val();
         
-        /*  
-            查询规则：参数对应DB字段名
-            *_no like
-            *_id =
-            *_status =
-            时间字段需成双定义  *_begin_time *_end_time   between
-        */
         var url = "/customerQuery/orderStatusSearch?search_type="+search_type
-             +"&order_no="+orderNo
+             +"&customer_order_no="+customer_order_no
              +"&customer_id="+customer_id
-             +"&sp_id="+sp_id
-             +"&biz_order_no="+biz_order_no
-             +"&process_status="+process_status
-             +"&accident_type="+accident_type
-             +"&accident_date_begin_time="+beginTime
-             +"&accident_date_end_time="+endTime;
+             +"&route_to="+route_to
+             +"&begin_time="+beginTime
+             +"&end_time="+endTime;
 
         dataTable.ajax.url(url).load();
+    };
+    
+    var searchSerailData=function(){
+        var customer_id=$("#customer_id").val();
+        var serial_no=$("#serial_no").val();
+        
+        var url = "/customerQuery/orderSerialNoSearch?serial_no="+serial_no
+             +"&customer_id="+customer_id;
+
+        serial_dataTable.ajax.url(url).load();
     };
     
 

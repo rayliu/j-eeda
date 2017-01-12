@@ -64,17 +64,12 @@ public class CustomerQueryController extends Controller {
     }
     
     public void orderStatusSearch() {
-    	List<Record> offices = Db.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')");
-		
     	String search_type = getPara("search_type");
-		String order_no = getPara("order_no");
+		String customer_order_no = getPara("customer_order_no");
 		String customer_id = getPara("customer_id");
-		String sp_id = getPara("sp_id");
-		String biz_order_no = getPara("biz_order_no");
-		String process_status = getPara("process_status");
-		String accident_type = getPara("accident_type");
-		String accident_date_begin_time = getPara("accident_date_begin_time");
-		String accident_date_end_time = getPara("accident_date_end_time");
+		String route_to = getPara("route_to");
+		String begin_time = getPara("begin_time");
+		String end_time = getPara("end_time");
 		
 		String sLimit = "";
         String pageIndex = getPara("draw");
@@ -83,26 +78,102 @@ public class CustomerQueryController extends Controller {
         }
         
 		String conditions="  where 1=1 ";
-		if (StringUtils.isNotEmpty(order_no)){                                           //运输单
-			conditions += " and UPPER(tor.order_no) like '%"+order_no.toUpperCase()+"%'";
+		if (StringUtils.isNotEmpty(customer_order_no)){                                         
+			conditions += " and UPPER(tor.customer_order_no) like '%"+customer_order_no.toUpperCase()+"%'";
 		}
-		if (StringUtils.isNotEmpty(customer_id)){                                            //-- 应收对账单
-			conditions += " and UPPER(deo.ref_no) like '%"+customer_id.toUpperCase()+"%'";
+		if (StringUtils.isNotEmpty(customer_id)){                                           
+			conditions += " and tor.customer_id = '"+customer_id+"'";
 		}
+		if (StringUtils.isNotEmpty(route_to)){                                           
+			conditions += " and l_t. NAME like '%"+route_to+"%'";
+		}
+		
+		if (StringUtils.isEmpty(begin_time)){                                           
+			begin_time = "2000-01-01";
+		}
+		if (StringUtils.isNotEmpty(end_time)){                                           
+			end_time = end_time+" 23:59:59";
+		}else{
+			end_time = "2037-01-01";
+		}
+		conditions += " and tor.planning_time between '"+begin_time+"' and '"+end_time+"'";
 		
 		conditions += " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+		String totalsql = ""
+				+ " SELECT count(1) total"
+				+ " FROM "
+				+ " 	transfer_order tor "
+				+ conditions;
 		
-		String sql = "select toi.id,w.id warehouse_id,w.warehouse_name,toi.item_no,toi.item_name,toi.amount,toi.unit from transfer_order_item toi "
-				+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id  "
-				+ " LEFT JOIN warehouse w on w.id = tor.warehouse_id "
-				+ " where tor.warehouse_id is not null";
+		
+		String sql = " SELECT "
+				+ " 	tor.order_no, "
+				+ " 	tor.customer_order_no, "
+				+ " 	l_t. NAME route_to, "
+				+ " 	tor.planning_time, "
+				+ " 	(select GROUP_CONCAT(cast(dor.departure_time as char) SEPARATOR '<br/>') from depart_order dor "
+				+ " 		LEFT JOIN depart_transfer dt on dt.depart_id = dor.id  "
+				+ " 	where dt.order_id = tor.id) departure_time, "
+				+ " 	sum(toi.amount) amount, "
+				+ " 	(case  "
+				+ " when tor.`STATUS`='新建' "
+				+ " then tor.`STATUS` "
+				+ " when tor.`STATUS` = '处理中' "
+				+ " then ( "
+				+ " 	if((select GROUP_CONCAT(dor.id SEPARATOR '<br/>') from depart_order dor "
+				+ " 		LEFT JOIN depart_transfer dt on dt.depart_id = dor.id  "
+				+ " 	where dt.order_id = tor.id ) is not null,'在途','已提货')  "
+				+ " 	) "
+				+ " ELSE "
+				+ " if(tor.arrival_mode='delivery','已到达','已到中转仓')  "
+				+ " end "
+				+ " ) transfer_status, "
+				+ " (case  "
+				+ " when tor.arrival_mode='delivery' "
+				+ " then (select GROUP_CONCAT(cast(receipt_date as char) SEPARATOR '<br/>') from return_order where transfer_order_id = tor.id) "
+				+ " else  "
+				+ " (select GROUP_CONCAT(cast(ror.receipt_date as char) SEPARATOR '<br/>') from delivery_order dor "
+				+ " LEFT JOIN delivery_order_item doi on doi.delivery_id = dor.id "
+				+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
+				+ " 	where doi.transfer_order_id = tor.id "
+				+ " 	) "
+				+ " end "
+				+ "  ) signIn_time, "
+				+ " (case  "
+				+ " when tor.arrival_mode='delivery' "
+				+ " then (select GROUP_CONCAT(if(transaction_status='新建','回单在途','已回收') SEPARATOR '<br/>') from return_order where transfer_order_id = tor.id)" 
+				+ " else  "
+				+ " (select GROUP_CONCAT(if(ror.transaction_status='新建','回单在途','已回收') SEPARATOR '<br/>') from delivery_order dor "
+				+ " LEFT JOIN delivery_order_item doi on doi.delivery_id = dor.id "
+				+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
+				+ " where doi.transfer_order_id = tor.id and ror.id is not null"
+				+ " ) "
+				+ " end "
+				+ "  ) return_status, "
+				+ " (case  "
+				+ " when tor.arrival_mode='delivery' "
+				+ " then tor.receiving_address "
+				+ " else  "
+				+ " (select GROUP_CONCAT(ifnull(c.address,dor.receivingunit) SEPARATOR '<br/>') from delivery_order dor "
+				+ " LEFT JOIN party p on p.id = dor.notify_party_id "
+				+ " LEFT JOIN contact c on c.id = p.contact_id "
+				+ " LEFT JOIN delivery_order_item doi on doi.delivery_id = dor.id "
+				+ " where doi.transfer_order_id = tor.id "
+				+ " 	) "
+				+ " end "
+				+ "  ) delivery_address "
+				+ "  "
+				+ " FROM "
+				+ " 	transfer_order tor "
+				+ " LEFT JOIN location l_t ON l_t. CODE = tor.route_to "
+				+ " LEFT JOIN transfer_order_item toi on toi.order_id = tor.id "
+				+ conditions
+				+ " GROUP BY tor.id ";
 
-		 
-		 String sqlTotal = "select count(1) total from ("+sql+ conditions+") B";
-         Record rec = Db.findFirst(sqlTotal);
-         logger.debug("total records:" + rec.getLong("total"));
+		
+         Record rec = Db.findFirst(totalsql);
         
-         List<Record> BillingOrders = Db.find(sql+ conditions + sLimit);
+         List<Record> BillingOrders = Db.find(sql + sLimit);
 
          
          Map BillingOrderListMap = new HashMap();
@@ -113,6 +184,90 @@ public class CustomerQueryController extends Controller {
 
          renderJson(BillingOrderListMap);
     }
+    
+    
+    
+    
+    public void orderSerialNoSearch() {
+		String serial_no = getPara("serial_no");
+		String customer_id = getPara("customer_id");
+		String begin_time = getPara("begin_time");
+		String end_time = getPara("end_time");
+		
+		String sLimit = "";
+        String pageIndex = getPara("draw");
+        if (getPara("start") != null && getPara("length") != null) {
+            sLimit = " LIMIT " + getPara("start") + ", " + getPara("length");
+        }
+        
+		String conditions="  where 1=1 ";
+		if (StringUtils.isNotEmpty(serial_no)){                                         
+			conditions += " and UPPER(toid.serial_no) like '%"+serial_no.toUpperCase()+"%'";
+		}
+		if (StringUtils.isNotEmpty(customer_id)){                                           
+			conditions += " and tor.customer_id = '"+customer_id+"'";
+		}
+
+		
+		conditions += " and tor.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"')";
+		String totalsql = ""
+				+ " SELECT count(1) total"
+				+ " FROM "
+				+ " transfer_order_item_detail toid"
+				+ " left join transfer_order tor on tor.id = toid.order_id "
+				+ conditions;
+		
+		
+		String sql = ""
+				+ " select toid.serial_no,ifnull(toid.item_no,toid.item_name) item_no,toid.pieces amount ,"
+				+ " l_t.name route_to,toid.notify_party_company delivery_address,toid.notify_party_name,"
+				+ " dor.depart_stamp delivery_time,dor.status delivery_status,"
+				+ " (case "
+				+ " when tor.arrival_mode='delivery'"
+				+ " then (select GROUP_CONCAT(if(transaction_status='新建','回单在途','已回收') SEPARATOR '<br/>') from return_order where transfer_order_id = tor.id)" 
+				+ " else "
+				+ " (select GROUP_CONCAT(if(ror.transaction_status='新建','回单在途','已回收') SEPARATOR '<br/>') from return_order ror"
+				+ " 	where ror.delivery_order_id = toid.delivery_id"
+				+ " )"
+				+ " end"
+				+ "  ) return_status,"
+				+ " (case "
+				+ " when tor.arrival_mode='delivery'"
+				+ " then toid.receive_address"
+				+ " else "
+				+ " ifnull(dor.receivingunit,tor.receiving_unit)"
+				+ " end"
+				+ "  ) return_unit,"
+				+ " (case "
+				+ " when tor.arrival_mode='delivery'"
+				+ " then toid.notify_party_company"
+				+ " else "
+				+ " (select ifnull(c.abbr,ifnull(tor.receiving_address,toid.notify_party_company)) from party p "
+				+ " LEFT JOIN contact c on c.id = p.contact_id"
+				+ " where c.id = dor.notify_party_id)"
+				+ " end"
+				+ "  ) receive_address"
+				+ " from transfer_order_item_detail toid"
+				+ " LEFT JOIN delivery_order dor on dor.id = toid.delivery_id"
+				+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id"
+				+ " LEFT JOIN location l_t on l_t.code = tor.route_to"
+				+ conditions;
+
+		
+         Record rec = Db.findFirst(totalsql);
+        
+         List<Record> BillingOrders = Db.find(sql + sLimit);
+
+         
+         Map BillingOrderListMap = new HashMap();
+         BillingOrderListMap.put("draw", pageIndex);//显示第几页
+         BillingOrderListMap.put("recordsTotal", rec.getLong("total"));
+         BillingOrderListMap.put("recordsFiltered", rec.getLong("total"));
+         BillingOrderListMap.put("data", BillingOrders);
+
+         renderJson(BillingOrderListMap);
+    }
+    
 	
 	public void inventory() {
 		

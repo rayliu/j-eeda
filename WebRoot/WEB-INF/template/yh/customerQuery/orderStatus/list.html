@@ -40,7 +40,7 @@
                                     <div id="order_no_div" class="row"><!--  第1行  -->
                                         <div class="col-lg-4"><!--  三列排版  -->
                                             <%include("/yh/component/form/inputField.html", 
-                                                                {   id: 'order_no', 
+                                                                {   id: 'customer_order_no', 
                                                                     label: '客户订单号', 
                                                                     value: '',
                                                                     required: 'required'
@@ -49,7 +49,7 @@
                                         <div class="col-lg-4">
                                             <%include("/yh/component/form/inputField.html", 
                                                 {
-                                                    id:'fnd', 
+                                                    id:'route_to', 
                                                     label:'目的城市', 
                                                     value: '',
                                                     required: 'required'
@@ -90,7 +90,7 @@
                                 <%include("/yh/component/form/detailTable.html", 
                                 {
                                     id:'orderStatus_table', 
-                                    style: 'width: 1400px;',
+                                    style: 'width: 2200px;',
                                     headers:['订单号', 
                                         '目的城市', 
                                         '计划日期', 
@@ -107,7 +107,7 @@
                                 <%include("/yh/component/form/detailTable.html", 
                                 {
                                     id:'serial_no_table', 
-                                    style: 'width: 1400px;',
+                                    style: 'width: 2500px;',
                                     headers:['序列号', 
                                         '产品型号', 
                                         '件数', 
@@ -146,5 +146,5 @@
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 
-<script src="/yh/js/customerQuery/orderStatus/list.js"></script>
+<script src="/yh/js/customerQuery/orderStatus/list.js?V=1"></script>
 
