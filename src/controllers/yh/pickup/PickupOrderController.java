@@ -393,7 +393,7 @@ public class PickupOrderController extends Controller {
         	endTime =" and '3000-1-1'";
         }
         conditions += beginTime + endTime;
-        conditions += " and !(cargo_nature='ATM' and atmamount=0) and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        conditions += " and !( cargo_nature = 'ATM' AND atmamount = 0 )  and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"; 
 
         sql = "select tor.id,tor.office_id , tor.customer_id,tor.order_no,"
@@ -404,7 +404,7 @@ public class PickupOrderController extends Controller {
         		+ " tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
         		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
                 + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
-                + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0))- sum(ifnull(tori.twice_pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                 + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmamount,"
                 + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmvolume,"
                 + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmweight,"
@@ -419,7 +419,7 @@ public class PickupOrderController extends Controller {
                 + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
                 + " and tor.status not in('手动删除','取消')"
                 + " union"
-                + " select tor.id,tor.office_id , tor.customer_id,CONCAT(tor.order_no,'<br/>','(二次调拨)') order_no,"
+                + " select tor.id,tor.office_id , tor.customer_id,CONCAT(tor.order_no,'<br/>','(二次提货)') order_no,"
                 + " (select GROUP_CONCAT(ifnull(p.item_no,ifnull(toi.item_no,toi.item_name)) SEPARATOR '<br/>') "
         		+ " from transfer_order_item toi"
         		+ " LEFT JOIN product p on p.id = toi.product_id "
@@ -427,7 +427,7 @@ public class PickupOrderController extends Controller {
                 + " tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
         		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
                 + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
-                + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                + " (select sum(ifnull(tori.twice_pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                 + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmamount,"
                 + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmvolume,"
                 + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmweight,"
@@ -443,7 +443,7 @@ public class PickupOrderController extends Controller {
                 + " where tor. STATUS != '已完成' and tor.pickup_assign_status!= 'ALL' "
                 + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
                 + " and tor.status not in('手动删除','取消')"
-                + " and dor.`STATUS` = '已二次调拨'"
+                + " and dor.`STATUS` = '已二次提货'"
                 + " group by tor.id ";
 
             
@@ -641,44 +641,6 @@ public class PickupOrderController extends Controller {
             	
             }
             
-//                if (values.length == 1) {
-//                    for (int i = 0; i < values.length; i++) {
-//                        if ("yandCheckbox".equals(values[i])) {
-//                            pickupOrder.set("address", getPara("address"));
-//                            pickupOrder.set("warehouse_id", null);
-//                        }
-//                        if ("warehouseCheckbox".equals(values[i])) {
-//                        	
-//                        	if(gateInSelect == "" || gateInSelect == null){
-//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-//                        	}else{
-//                        		pickupOrder.set("warehouse_id", gateInSelect);
-//                        	}
-//                            pickupOrder.set("address", null);
-//                        }
-//                        if ("receiverCheckbox".equals(values[i])) {
-//                        	pickupOrder.set("is_direct_deliver", true);
-//                        	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
-//                        	transferOrder.set("receiving_address", con_address).update();
-//                        }else{
-//                        	pickupOrder.set("is_direct_deliver", false);
-//                        }
-//                    }
-//                } else {
-//                    for (int i = 0; i < values.length; i++) {
-//                        if ("yandCheckbox".equals(values[i])) {
-//                            pickupOrder.set("address", getPara("address"));
-//                        }
-//                        if ("warehouseCheckbox".equals(values[i])) {
-//                        	if(gateInSelect == "" || gateInSelect == null){
-//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-//                        	}else{
-//                        		pickupOrder.set("warehouse_id", gateInSelect);
-//                        	}
-//                        }
-//                    }
-//                }
-            
             pickupOrder.set("car_summary_type", "untreated");
             pickupOrder.save();
             
@@ -771,15 +733,29 @@ public class PickupOrderController extends Controller {
 						if(!"".equals(number[j].trim()) && Double.parseDouble(number[j]) != 0){
 							//更新字表调车数量
 							double pickupAmount = 0;
-							if(transferOrderItem.get("pickup_number") != null && !"".equals(transferOrderItem.get("pickup_number"))){
-								pickupAmount = transferOrderItem.getDouble("pickup_number");
+							
+							if("twice_pickup".equals(address_type)){  //二次提货
+								if(transferOrderItem.get("twice_pickup_number") != null && !"".equals(transferOrderItem.get("twice_pickup_number"))){
+									pickupAmount = transferOrderItem.getDouble("twice_pickup_number");
+								}
+								transferOrderItem.set("twice_pickup_number",pickupAmount + Double.parseDouble(number[j])).update();
+							}else{
+								if(transferOrderItem.get("pickup_number") != null && !"".equals(transferOrderItem.get("pickup_number"))){
+									pickupAmount = transferOrderItem.getDouble("pickup_number");
+								}
+								transferOrderItem.set("pickup_number",pickupAmount + Double.parseDouble(number[j])).update();
 							}
-							transferOrderItem.set("pickup_number",pickupAmount + Double.parseDouble(number[j])).update();
+							
 							
 							//从表
 							DepartTransferOrder departTransferOrder = new DepartTransferOrder();
 				            departTransferOrder.set("pickup_id", pickupOrder.get("id"));
 				            departTransferOrder.set("order_id", orderId);
+				            if("twice_pickup".equals(address_type)){  //二次提货
+				            	departTransferOrder.set("twice_pickup_flag","Y");
+				            	sumPickAmount += transferOrderItem.getDouble("twice_pickup_number");
+								sumTransferOrderItemAmount += transferOrderItem.getDouble("amount");
+				            }
 				            departTransferOrder.set("amount", number[j]);
 				            departTransferOrder.set("order_item_id", ItemId[j]);
 				            departTransferOrder.set("transfer_order_no", transferOrderCargo.getStr("order_no"));
@@ -792,7 +768,11 @@ public class PickupOrderController extends Controller {
 					
 					//更新运输单
 					if(sumPickAmount == sumTransferOrderItemAmount){
-						transferOrderCargo.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+						if("twice_pickup".equals(address_type)){  //二次提货
+							transferOrderCargo.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW);
+						}else{
+							transferOrderCargo.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_ALL);
+						}
 					}else{
 						transferOrderCargo.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_PARTIAL);
 					}
@@ -882,41 +862,7 @@ public class PickupOrderController extends Controller {
             	TransferOrder transferOrder = TransferOrder.dao.findById(orderids[0]);
             	transferOrder.set("receiving_address", con_address).update();
             }
-//            String[] values = getParaValues("checkbox");
-//            if (values != null) {
-//                if (values.length == 1) {
-//                    for (int i = 0; i < values.length; i++) {
-//                        if ("yandCheckbox".equals(values[i])) {
-//                            pickupOrder.set("address", getPara("address"));
-//                            pickupOrder.set("warehouse_id", null);
-//                        }
-//                        if ("warehouseCheckbox".equals(values[i])) {
-//                        	if(gateInSelect == "" || gateInSelect == null){
-//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-//                        	}else{
-//                        		pickupOrder.set("warehouse_id", gateInSelect);
-//                        	}
-//                            pickupOrder.set("address", null);
-//                        }
-//                    }
-//                } else {
-//                    for (int i = 0; i < values.length; i++) {
-//                        if ("yandCheckbox".equals(values[i])) {
-//                            pickupOrder.set("address", getPara("address"));
-//                        }
-//                        if ("warehouseCheckbox".equals(values[i])) {
-//                        	if(gateInSelect == "" || gateInSelect == null){
-//                        		pickupOrder.set("warehouse_id", replenishmentOrderId);
-//                        	}else{
-//                        		pickupOrder.set("warehouse_id", gateInSelect);
-//                        	}
-//                        }
-//                    }
-//                }
-//            } else {
-//                pickupOrder.set("address", null);
-//                pickupOrder.set("warehouse_id", null);
-//            }
+
             pickupOrder.update();
         }
         
@@ -1334,9 +1280,9 @@ public class PickupOrderController extends Controller {
 	            String pickup_status  = transferOrder.getStr("pickup_assign_status");
 	            if("twice_pickup".equals(pickup_type)){
 	            	if(pickup_status.equals("PARTIAL")){
-	            		milestone.set("status", "部分已二次调拨");
+	            		milestone.set("status", "部分已二次提货");
 	            	}else{
-	            		milestone.set("status", "已二次调拨");
+	            		milestone.set("status", "已二次提货");
 	            		transferOrder.set("pickup_assign_status", "NEW").update();
 	            	}
 	            }else{
@@ -1382,9 +1328,9 @@ public class PickupOrderController extends Controller {
 	        
 	        TransferOrderMilestone pickupMilestone = new TransferOrderMilestone();
 	        if("twice_pickup".equals(pickup_type)){
-	        	pickupMilestone.set("status", "已二次调拨");
+	        	pickupMilestone.set("status", "已二次提货");
 	        	//更新调车单状态
-                pickupOrder.set("status", "已二次调拨");
+                pickupOrder.set("status", "已二次提货");
             }else{
             	if ("movesOrder".equals(order_type) ||"salesOrder".equals(order_type) || "arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)) {//销售订单
             		if(!"warehouse".equals(pickup_type)){
@@ -2438,10 +2384,14 @@ public class PickupOrderController extends Controller {
     	Map orderMap = new HashMap();
     	String transferOrderId = getPara("order_id");
     	String pickup_type = getPara("pickup_type");
+    	String pickup_numer = "";
     	if("twice_pickup".equals(pickup_type)){
     		pickup_type = " and twice_pickup_id is not null";
+    		pickup_numer = "toi.twice_pickup_number pickup_number";
+    		
     	}else{
     		pickup_type = " and twice_pickup_id is null";
+    		pickup_numer = "(ifnull(toi.pickup_number,0)+ifnull(toi.twice_pickup_number,0)) pickup_number";
     	}
     	
     	if (transferOrderId == null || transferOrderId.equals("")) {
@@ -2461,7 +2411,7 @@ public class PickupOrderController extends Controller {
             		+ " where toi.order_id = " + transferOrderId;
             
             String sql = "select distinct toi.id, toi.product_id prod_id, tor.order_no, ifnull(p.item_no, toi.item_no) item_no, ifnull(p.item_name, toi.item_name) item_name,"
-            		+ " (select count(0) total from transfer_order_item_detail where item_id = toi.id  and pickup_id is null "+ pickup_type +") atmamount,toi.pickup_number,toi.amount,"
+            		+ " (select count(0) total from transfer_order_item_detail where item_id = toi.id  and pickup_id is null "+ pickup_type +") atmamount,"+pickup_numer+",toi.amount,"
     				+ " ifnull(p.unit, toi.unit) unit, round(toi.volume ,2) sum_volume, round(toi.sum_weight ,2) sum_weight, toi.remark from transfer_order_item toi"
             		+ " left join transfer_order tor on tor.id = toi.order_id"
             		+ " left join product p on p.id = toi.product_id"
@@ -2538,6 +2488,12 @@ public class PickupOrderController extends Controller {
     //按运输单查找所有普货货品数量
     public void findNumberByOrderId(){
     	String orderId = getPara("order_id");
+    	String twice = getPara("twice");
+    	String totalAmount = " group_concat( cast(toi.amount-ifnull(toi.pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
+    	if("二次提货".equals(twice)){
+    		totalAmount = " group_concat( cast(ifnull(toi.twice_pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
+    	}
+    	
     	Record serialNoList = null;
     	if(orderId != ""){
     		String sql = "SELECT group_concat( cast(toi.id AS CHAR) SEPARATOR ',' ) ids, "
@@ -2546,7 +2502,7 @@ public class PickupOrderController extends Controller {
     				+ " ( SELECT group_concat( toid.serial_no SEPARATOR ' ' ) FROM transfer_order_item_detail toid "
     				+ " WHERE toid.order_id = toi.order_id  and toid.pickup_id is null ) serial_nos, "
     				+ " group_concat( cast(toi.amount AS CHAR) SEPARATOR ',' ) amounts,"
-    				+ " group_concat( cast(toi.amount-ifnull(toi.pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts ,"
+    				+ totalAmount+","
     				+ " group_concat( cast( ifnull(toi.pickup_number, 0) AS CHAR "
     				+ " ) SEPARATOR ',' ) pickup_numbers FROM transfer_order_item toi "
     				+ " where order_id = '" + orderId + "';";

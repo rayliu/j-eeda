@@ -34,19 +34,19 @@
 	    	 $("#addressDiv").hide();
 	    	 $("#warehouseDiv").show();
 	     }else if(address_type=="twice_pickup"){
-	    	//普货不可以二次调拨控制
+	    	//普货不可以二次提货控制
     		 var cargo_nature = $('#cargo_nature').val();
-    		 if(cargo_nature=='cargo'){
-    			$("#address_type").val('yard');
-				$.scojs_message('普货没有二次调车业务', $.scojs_message.TYPE_FALSE);
-				
-				$("#warehouseDiv").hide();
-				$("#addressDiv").show();
-    		 }else{
+//    		 if(cargo_nature=='cargo'){
+//    			$("#address_type").val('yard');
+//				$.scojs_message('普货没有二次调车业务', $.scojs_message.TYPE_FALSE);
+//				
+//				$("#warehouseDiv").hide();
+//				$("#addressDiv").show();
+//    		 }else{
     			 $("#replenishmentOrderId").val("")
     	    	 $("#addressDiv").hide();
     	    	 $("#warehouseDiv").hide();
-    		 }
+//    		 }
 	     }
 	});
 	
@@ -801,7 +801,7 @@
                     		$.scojs_message('收货成功', $.scojs_message.TYPE_OK);
                     	}else if(data.PICKUP_TYPE=='twice_pickup'){
                     		$("#orderStatus").html(data.STATUS);
-                    		$.scojs_message('调拨成功', $.scojs_message.TYPE_OK);
+                    		$.scojs_message('提货一次成功', $.scojs_message.TYPE_OK);
                     	}else if(data.PICKUP_TYPE=='warehouse'){
                     		$("#orderStatus").html(data.STATUS);
                     		$.scojs_message('入库成功', $.scojs_message.TYPE_OK);
@@ -1350,7 +1350,7 @@
             			if(obj.aData.PICKUP_TYPE=='warehouse'){
             				return "中转仓";
             			}else if(obj.aData.PICKUP_TYPE=='twice_pickup'){
-            				return "二次调拨";
+            				return "二次提货";
             			}else{
             				return "货场";
             			}

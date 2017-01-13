@@ -372,7 +372,7 @@ public class TransferOrderMilestoneController extends Controller {
     				re = Db.findFirst("select sum(amount) yishou from (select dt.* from depart_pickup dp"
     						+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id"
     						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
-    						+ " where dor.STATUS = '已收货' and dt.order_id = ? group by dt.id ) A",transerOrderId);
+    						+ " where dor.STATUS = '已收货' and dt.order_id = ? and dt.twice_pickup_flag = 'N' group by dt.id ) A",transerOrderId);
     				pickupAmount = re.getDouble("yishou");   //运输单已收货的总数量	
     			}else{
     				pickupAmount = totalAmount; //外包（因无法多次发车，所以数量和总数量相同）
@@ -508,7 +508,7 @@ public class TransferOrderMilestoneController extends Controller {
     				re = Db.findFirst("select sum(amount) yishou from (select dt.* from depart_pickup dp"
     						+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id"
     						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
-    						+ " where dor.STATUS = '已入库' and dt.order_id = ? group by dt.id )A",transferId);
+    						+ " where dor.STATUS = '已入库' and dt.order_id = ? and dt.twice_pickup_flag = 'N'  group by dt.id )A",transferId);
     				havingTotal = re.getDouble("yishou")==null?0:re.getDouble("yishou");   //已入库（不包括这次）
     				re = Db.findFirst("select sum(ifnull(dt.amount,0)) amount from depart_pickup dp"
     						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"

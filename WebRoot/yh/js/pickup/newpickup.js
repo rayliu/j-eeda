@@ -28,7 +28,7 @@ $(document).ready(function() {
     var have_detail = "";
     //用于控制选择的数量变化
     var select_item_id = '';
-    //判断二次调拨
+    //判断二次提货
     var pickup_type = '';
     
     
@@ -131,13 +131,11 @@ $(document).ready(function() {
             		if(obj.aData.CARGO_NATURE =='cargo'){
             			val = "选择件数";
             		}
-	            	if(flag!='derect'){
-	            		if(obj.aData.TOTAL_AMOUNT>0){
+            		if(flag!='derect'){
+            			
 	            			var str1 = '<button type="button" name="selectDetailBtn" class="btn  btn-primary sm selectDetailBtn" data-toggle="modal" data-target="#myModal" cargoNature="'+obj.aData.CARGO_NATURE+'" value="'+obj.aData.ID+'">'+val+'</button>';
 	            			return obj.aData.ORDER_NO + str1;
-	            		}else{
-	            			return obj.aData.ORDER_NO;
-	            		}
+	            		
             		}else{
             			return obj.aData.ORDER_NO;
             		}
@@ -326,13 +324,19 @@ $(document).ready(function() {
     					return obj.aData.ATMAMOUNT;
     				}else{
     					var number = 0;
-    					if(obj.aData.PICKUP_NUMBER != null && obj.aData.PICKUP_NUMBER != ''){
-    						number = obj.aData.AMOUNT - obj.aData.PICKUP_NUMBER ;
+    					if(pickup_type=='twice_pickup'){
+    						number = obj.aData.PICKUP_NUMBER ;
     						amountsTest.push(number);
     					}else{
-    						number = obj.aData.AMOUNT * 1;
-    						amountsTest.push(number);
+    						if(obj.aData.PICKUP_NUMBER != null && obj.aData.PICKUP_NUMBER != ''){
+        						number = obj.aData.AMOUNT - obj.aData.PICKUP_NUMBER ;
+        						amountsTest.push(number);
+        					}else{
+        						number = obj.aData.AMOUNT * 1;
+        						amountsTest.push(number);
+        					}
     					}
+    					
     					if(number > 0){
     						if(have_detail == 'yes'){
     							return number;
@@ -414,7 +418,7 @@ $(document).ready(function() {
         var array = [];
         $("#ckeckedTransferOrderList tr").each(function (){
 
-        	
+        	debugger;
         	var obj={};
     		obj.id = $(this).attr("value");
     		obj.order_type = $(this).find("td").eq(7).text();
@@ -503,7 +507,8 @@ $(document).ready(function() {
 	// 选中或取消事件
 	$("#transferOrderList").on('click', '.checkedOrUnchecked', function(){
 		var ckeckedTransferOrderList = $("#ckeckedTransferOrderList");
-		var order_no = $(this).parent().siblings('.order_no')[0].textContent.substr(0, 15);			
+		var order_no = $(this).parent().siblings('.order_no')[0].textContent.substr(0, 15);		
+		var twice = $(this).parent().siblings('.order_no')[0].textContent.substr(16, 4);	
 		var operation_type = $(this).parent().siblings('.operation_type')[0].textContent;		
 		var route_from = $(this).parent().siblings('.route_from')[0].textContent;		
 		var route_to = $(this).parent().siblings('.route_to')[0].textContent;		
@@ -523,7 +528,7 @@ $(document).ready(function() {
 		var value = $(this).val();
 		
 		pickup_type = '';
-    	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次调拨")>0){
+    	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次提货")>0){
     		pickup_type ='twice_pickup';
     	};
 		
@@ -575,7 +580,7 @@ $(document).ready(function() {
 							+address+"</td><td>"+pickup_mode+"</td><td>"+arrival_mode+"</td><td>"+status+"</td><td>"+cname+"</td><td>"+office_name+"</td><td>"+create_stamp+"</td><td>"+assign_status+"</td></tr>");
 				},'json');
 			}else{
-				$.get("/pickupOrder/findNumberByOrderId", {order_id:value}, function(data){
+				$.get("/pickupOrder/findNumberByOrderId", {order_id:value,twice:twice}, function(data){
 					var amount = data.AMOUNTS;      //总数量
 					var ids = data.IDS;
 					var detail_ids = data.DETAIL_IDS;
@@ -683,7 +688,7 @@ $(document).ready(function() {
     	var cargo_nature = $(this).attr("cargoNature");
     	pickup_type = '';
     	var orderNo = $(this).parent().text();
-    	if(orderNo.indexOf("二次调拨")>0){
+    	if(orderNo.indexOf("二次提货")>0){
     		pickup_type ='twice_pickup';
     	};
     	//判断为修改运输单单品的时候，取出原有的单品id集合、单品序列号
@@ -763,7 +768,7 @@ $(document).ready(function() {
 		}
     	$("input[type='checkbox'][class='checkedOrUnchecked']").each(function(){
     		var this_pickup_type = '';
-        	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次调拨")>0){
+        	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次提货")>0){
         		this_pickup_type ='twice_pickup';
         	};
     		//当运输单没有选中时，已选列表不存在此数据
