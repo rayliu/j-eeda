@@ -40,9 +40,9 @@ $(document).ready(function() {
 	$("#finish_car_mileage,#start_car_mileage").on('blur', function(e){
 		var isAudit = $("#isAudit").val();
 		if(isAudit == "no"){
-			var finish = $("#finish_car_mileage").val();
-			var start =  $("#start_car_mileage").val();
-			if(finish != "" && finish != 0){
+			var finish = parseFloat($("#finish_car_mileage").val());
+			var start =  parseFloat($("#start_car_mileage").val());
+			if(finish > 0){
 				if(finish > start){
 					$("#month_car_run_mileage").val(finish-start);
 				}else{
