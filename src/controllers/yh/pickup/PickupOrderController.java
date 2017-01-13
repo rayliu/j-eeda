@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DeliveryOrderItem;
 import models.DepartOrder;
 import models.DepartOrderFinItem;
 import models.DepartPickupOrder;
@@ -26,7 +27,9 @@ import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 import models.TransferOrderMilestone;
 import models.UserLogin;
+import models.Warehouse;
 import models.yh.contract.Contract;
+import models.yh.delivery.DeliveryOrder;
 import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
@@ -1338,14 +1341,26 @@ public class PickupOrderController extends Controller {
 	            	}
 	            }else{
 	            	if ("movesOrder".equals(order_type) ||"salesOrder".equals(order_type) || "arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)) {//销售订单
-		            	if(pickup_status.equals("PARTIAL")){
-		            		milestone.set("status", "部分已入货场");	
+		            	if(!"warehouse".equals(pickup_type)){
+		            		if(pickup_status.equals("PARTIAL")){
+			            		milestone.set("status", "部分已入货场");	
+			            	}else{
+			            		milestone.set("status", "已入货场");
+			            	}
+		                    if("arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)){
+		                    	SubtractInventory(pickupOrder,transferOrder);
+		                    } 
 		            	}else{
-		            		milestone.set("status", "已入货场");
+		            		if(pickup_status.equals("PARTIAL")){
+			            		milestone.set("status", "部分已入库");
+			            	}else{
+			            		milestone.set("status", "已入库");
+			            		transferOrder.set("status", "已完成").update();
+			            	}
+		            		
+		            		createDeliveryOrder(transferOrder,pickupOrderId);
 		            	}
-	                    if("arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)){
-	                    	SubtractInventory(pickupOrder,transferOrder);
-	                    } 
+	            		
 		            } else if ("replenishmentOrder".equals(order_type)) {  //补货
 		            	if(pickup_status.equals("PARTIAL")){
 		            		milestone.set("status", "部分已入库");
@@ -1372,9 +1387,16 @@ public class PickupOrderController extends Controller {
                 pickupOrder.set("status", "已二次调拨");
             }else{
             	if ("movesOrder".equals(order_type) ||"salesOrder".equals(order_type) || "arrangementOrder".equals(order_type) || "cargoReturnOrder".equals(order_type)) {//销售订单
-    	        	pickupMilestone.set("status", "已入货场");
-    	        	//更新调车单状态
-                    pickupOrder.set("status", "已入货场");
+            		if(!"warehouse".equals(pickup_type)){
+            			pickupMilestone.set("status", "已入货场");
+        	        	//更新调车单状态
+                        pickupOrder.set("status", "已入货场");
+            		}else{ 
+            			pickupMilestone.set("status", "已入库");
+        	        	//更新调车单状态
+                        pickupOrder.set("status", "已入库");
+            		}
+            		
                 } else if ("replenishmentOrder".equals(order_type)) {  //补货
                 	pickupMilestone.set("status", "已入库");
                 	//更新调车单状态
@@ -1482,6 +1504,61 @@ public class PickupOrderController extends Controller {
             }
         }
         renderJson(pickupOrder);
+    }
+    
+    
+    
+    @Before(Tx.class)
+    public void createDeliveryOrder(TransferOrder transferOrder,String pickup_id){
+    	Party party=Party.dao.findById(transferOrder.get("customer_id"));
+    	DepartOrder departOrder1= DepartOrder.dao.findById(pickup_id);
+    	if("Y".equals(party.get("is_auto_ps"))){
+    		List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = "+transferOrder.get("id")+" and pickup_id ="+ pickup_id);
+    		for (TransferOrderItemDetail transferdetail:transferorderitemdetail) {
+    			if(transferdetail.getLong("delivery_id")==null){
+    				DeliveryOrder deliveryOrder = null;
+            		String orderNo = OrderNoGenerator.getNextOrderNo("PS");
+            		Date createDate = Calendar.getInstance().getTime();
+            		String name = (String) currentUser.getPrincipal();
+            		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
+            		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id")); 
+            		deliveryOrder = new DeliveryOrder();
+            		deliveryOrder.set("order_no", orderNo)
+    				.set("customer_id", transferOrder.get("customer_id"))
+    				.set("notify_party_id", transferdetail.getLong("notify_party_id"))
+    				.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
+    				.set("route_from",transferOrder.get("route_to"))
+    				.set("route_to",transferOrder.get("route_to"))
+    				.set("pricetype", getPara("chargeType"))
+    				.set("office_id", warehouse.get("office_id"))
+    				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
+    				.set("cargo_nature", transferOrder.get("cargo_nature"))
+    				.set("priceType", departOrder1.get("charge_type"))
+    				.set("deliveryMode", "out_source")
+    				.set("ref_no",transferOrder.getStr("sign_in_no"))
+    				.set("warehouse_nature", "warehouseNatureNo")
+    				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
+    				.set("audit_status", "新建").set("sign_status", "未回单");
+            		if(warehouse!=null){
+            			deliveryOrder.set("sp_id", warehouse.get("sp_id"));
+            		}
+            		deliveryOrder.save();
+    				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+    				deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+    				.set("transfer_order_id",transferOrder.get("id"))
+    				.set("transfer_no",transferOrder.get("order_no"))
+    				.set("transfer_item_detail_id",transferdetail.getLong("id"))
+    				.set("amount", 1);
+    				deliveryOrderItem.save();
+    				//在单品中设置delivery_id
+    				TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+    						.findById(transferdetail.getLong("id"));
+    				transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
+    				transferOrderItemDetail.set("is_delivered", true);
+    				transferOrderItemDetail.update();
+    			}
+    		}
+    	}
     }
     
     
