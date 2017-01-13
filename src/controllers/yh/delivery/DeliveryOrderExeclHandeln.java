@@ -657,8 +657,11 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					}
 					}
 					if (content.get(j).get("预约送货时间") != null) {
-					dbDataFormat.parse(content.get(j).get("预约送货时间"));
-					deliveryorder.set("order_delivery_stamp", content.get(j).get("预约送货时间"));
+						dbDataFormat.parse(content.get(j).get("预约送货时间"));
+						deliveryorder.set("order_delivery_stamp", content.get(j).get("预约送货时间"));
+					}
+					if (content.get(j).get("签收单据号") != null) {
+						deliveryorder.set("ref_no",content.get(j).get("签收单据号").trim());
 					}
 					if (content.get(j).get("配送发车时间") != null) {
 						dbDataFormat.parse(content.get(j).get("配送发车时间"));
