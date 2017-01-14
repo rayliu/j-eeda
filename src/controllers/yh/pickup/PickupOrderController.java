@@ -404,7 +404,7 @@ public class PickupOrderController extends Controller {
         		+ " tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
         		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
                 + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
-                + " (select sum(tori.amount) - sum(ifnull(tori.pickup_number,0))- sum(ifnull(tori.twice_pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                + " (select sum(tori.amount - ifnull(tori.pickup_number,0)- tori.have_twice_pickup) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                 + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmamount,"
                 + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmvolume,"
                 + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is null) atmweight,"
@@ -739,11 +739,16 @@ public class PickupOrderController extends Controller {
 									pickupAmount = transferOrderItem.getDouble("twice_pickup_number");
 								}
 								transferOrderItem.set("twice_pickup_number",pickupAmount + Double.parseDouble(number[j])).update();
+								transferOrderItem.set("have_twice_pickup",pickupAmount + Double.parseDouble(number[j])).update();
 							}else{
 								if(transferOrderItem.get("pickup_number") != null && !"".equals(transferOrderItem.get("pickup_number"))){
 									pickupAmount = transferOrderItem.getDouble("pickup_number");
 								}
 								transferOrderItem.set("pickup_number",pickupAmount + Double.parseDouble(number[j])).update();
+								if(transferOrderItem.getDouble("have_twice_pickup")>0){
+									transferOrderItem.set("have_twice_pickup",transferOrderItem.getDouble("have_twice_pickup")-Double.parseDouble(number[j])).update();
+								}
+								
 							}
 							
 							
@@ -2489,7 +2494,7 @@ public class PickupOrderController extends Controller {
     public void findNumberByOrderId(){
     	String orderId = getPara("order_id");
     	String twice = getPara("twice");
-    	String totalAmount = " group_concat( cast(toi.amount-ifnull(toi.pickup_number,0)-ifnull(toi.twice_pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
+    	String totalAmount = " group_concat( cast(toi.amount-ifnull(toi.pickup_number,0)-ifnull(toi.have_twice_pickup,0) AS CHAR) SEPARATOR ',' ) total_amounts";
     	if("二次提货".equals(twice)){
     		totalAmount = " group_concat( cast(ifnull(toi.twice_pickup_number,0)-ifnull(toi.pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
     	}
