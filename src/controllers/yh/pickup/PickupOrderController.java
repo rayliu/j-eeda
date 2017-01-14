@@ -393,7 +393,7 @@ public class PickupOrderController extends Controller {
         	endTime =" and '3000-1-1'";
         }
         conditions += beginTime + endTime;
-        conditions += " and !( cargo_nature = 'ATM' AND atmamount = 0 )  and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+        conditions += " and !( cargo_nature = 'ATM' AND atmamount = 0 ) and !( cargo_nature = 'cargo' AND total_amount <= 0 )  and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"; 
 
         sql = "select tor.id,tor.office_id , tor.customer_id,tor.order_no,"
@@ -427,7 +427,7 @@ public class PickupOrderController extends Controller {
                 + " tor.operation_type,tor.cargo_nature,tor.order_type,tor.planning_time,tor.cargo_nature_detail,"
         		+ " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.volume, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_volume,"
                 + " round((select sum((ifnull(toi.amount, 0) - ifnull(toi.pickup_number,0)) * ifnull(p.weight, 0)) from transfer_order_item toi left join product p ON p.id = toi.product_id where toi.order_id = tor.id),2) total_weight,"
-                + " (select sum(ifnull(tori.twice_pickup_number,0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
+                + " (select sum(ifnull(tori.twice_pickup_number,0)-ifnull(tori.pickup_number, 0)) from transfer_order_item tori where tori.order_id = tor.id) as total_amount,"
                 + " (select count(0) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmamount,"
                 + " (select round(sum(volume),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmvolume,"
                 + " (select round(sum(weight),2) total from transfer_order_item_detail where order_id = tor.id  and pickup_id is null and twice_pickup_id is not null) atmweight,"
@@ -2489,9 +2489,9 @@ public class PickupOrderController extends Controller {
     public void findNumberByOrderId(){
     	String orderId = getPara("order_id");
     	String twice = getPara("twice");
-    	String totalAmount = " group_concat( cast(toi.amount-ifnull(toi.pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
+    	String totalAmount = " group_concat( cast(toi.amount-ifnull(toi.pickup_number,0)-ifnull(toi.twice_pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
     	if("二次提货".equals(twice)){
-    		totalAmount = " group_concat( cast(ifnull(toi.twice_pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
+    		totalAmount = " group_concat( cast(ifnull(toi.twice_pickup_number,0)-ifnull(toi.pickup_number,0) AS CHAR) SEPARATOR ',' ) total_amounts";
     	}
     	
     	Record serialNoList = null;
