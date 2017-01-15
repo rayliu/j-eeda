@@ -739,7 +739,7 @@ public class PickupOrderController extends Controller {
 									pickupAmount = transferOrderItem.getDouble("twice_pickup_number");
 								}
 								transferOrderItem.set("twice_pickup_number",pickupAmount + Double.parseDouble(number[j])).update();
-								transferOrderItem.set("have_twice_pickup",pickupAmount + Double.parseDouble(number[j])).update();
+								transferOrderItem.set("have_twice_pickup",transferOrderItem.getDouble("have_twice_pickup") + Double.parseDouble(number[j])).update();
 							}else{
 								if(transferOrderItem.get("pickup_number") != null && !"".equals(transferOrderItem.get("pickup_number"))){
 									pickupAmount = transferOrderItem.getDouble("pickup_number");
