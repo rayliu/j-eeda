@@ -118,6 +118,7 @@
    			{ "mDataProp": "RETURN_TYPE","sWidth":"65px" },
    			{ "mDataProp": "TRANSFER_TYPE","sWidth":"65px" },
    			{ "mDataProp": "PLANNING_TIME","sWidth":"100px" },
+   			{ "mDataProp": "SIGN_NO","sWidth":"100px" },
    			{ "mDataProp": "SERIAL_NO","sWidth":"60px"},
    			{ "mDataProp": "ITEM_NO","sWidth":"80px"},
    			{ "mDataProp": "RECEIPT_PERSON","sWidth":"60px"},
