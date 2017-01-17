@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,14 +84,16 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 		List<Record> titleList = Db
 				.find("select execl_title from execl_title where execl_type = '"
 						+ execlType + "';");
+		
+		Set<String> set = new HashSet<String>(Arrays.asList(title));
 		if (titleList != null) {
 			for (Record record : titleList) {
-				if (record.get("execl_title").equals(title[num])) {
+				if (set.contains(record.getStr("execl_title"))) {
 					num++;
 				}
 			}
 		}
-		if (num >= titleList.size()) {
+		if (num == titleList.size()) {
 			return true;
 		} else {
 			return false;
@@ -543,6 +546,11 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 				System.out.println("更新至第【" + causeRow + "】行");
 				//拿到客户ID
 				Party customer = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_CUSTOMER+ "' and c.abbr ='" + content.get(j).get("客户名称") + "';");
+				
+				if(customer==null){
+					throw new Exception("客户名称 【"+content.get(j).get("客户名称")+"】，系统不存在此客户，请核查再更新");
+				}
+				
 				// 通过客户和序列号拿到配送单ID
 				TransferOrderItemDetail transferorderitemdetail = TransferOrderItemDetail.dao
 						.findFirst("SELECT delivery_id from transfer_order_item_detail toid LEFT JOIN transfer_order toi on toi.id=toid.order_id where serial_no ='"
