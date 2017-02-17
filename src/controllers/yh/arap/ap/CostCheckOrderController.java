@@ -1109,7 +1109,7 @@ public class CostCheckOrderController extends Controller {
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
                 + " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 			    + " and '"+is_delivery+"' = 'N' "
-                + (StrKit.isBlank(sp_id2)?"":" and tor.sp_id ="+sp_id2)
+                + (sp_id2=="7151"?" and ior.insurance_id = '2432'":" and ior.insurance_id ="+sp_id2)
                 + " group by ior.id"
 			    
 				+ " union "
