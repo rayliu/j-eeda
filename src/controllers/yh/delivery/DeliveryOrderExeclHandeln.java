@@ -250,8 +250,9 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			Party provider = Party.dao
 					.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and c.abbr ='"
-							+ content.get(j).get("供应商名称") + "';");
+							+ "' and (c.abbr ='"
+							+ content.get(j).get("供应商名称") + "' or c.company_name ='"
+							+ content.get(j).get("供应商名称") +"';");
 			if (provider == null) {
 				title = "供应商名称";
 				break;
