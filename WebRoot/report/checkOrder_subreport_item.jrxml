@@ -100,6 +100,7 @@ where dto.id = aci.ref_order_id
 	where
 		aci.cost_order_id = $P{order_id}
 		and aci.ref_order_no='零担'
+GROUP BY dto.id
 union
 	select
 		aci.ref_order_no,
