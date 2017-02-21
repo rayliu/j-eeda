@@ -527,7 +527,7 @@ where tor.order_no = $P{order_no}]]>
 					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[" 甲方验收单位联系人： "+$F{address}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[" 甲方验收单位地址： "+$F{address}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<staticText>
