@@ -33,7 +33,7 @@
 	ifnull(aao.order_no,'') order_no,
 	ifnull(aao.begin_time,'') begin_time,
             MONTH (aao.begin_time) c_stamp,
-	ifnull(aao.billing_unit,c.company_name) cname,
+	ifnull(c.company_name,aao.billing_unit) cname,
             ifnull(o.office_name,'') office_name,
 	ifnull(aao.remark,'') remark,
 	usl.c_name create_name
