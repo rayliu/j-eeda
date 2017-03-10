@@ -149,7 +149,7 @@ public class PickupOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMISSION_PO_LIST})
     public void pickuplist() {
         String orderNo = getPara("orderNo").trim();
-        String carNo = getPara("carNo").trim();
+        String driver = getPara("carNo").trim();
         String departNo = getPara("departNo").trim();
         String beginTime = getPara("beginTime").trim();
         String endTime = getPara("endTime").trim();
@@ -172,7 +172,7 @@ public class PickupOrderController extends Controller {
         String sqlTotal = "";
         if (StringUtils.isEmpty(planningBeginTime)&& StringUtils.isEmpty(planningEndTime) && (orderNo == null || "".equals(orderNo)) && (departNo == null || "".equals(departNo)) && (beginTime == null || "".equals(beginTime))
         		&& (endTime == null || "".equals(endTime)) &&  (take == null || "".equals(take)) && 
-				 (status == null || "".equals(status)) && (office == null || "".equals(office))&& StringUtils.isNotEmpty(carNo) && (sp_filter == null || "".equals(sp_filter))&&  customerId == null ) {
+				 (status == null || "".equals(status)) && (office == null || "".equals(office))&& StringUtils.isNotEmpty(driver) && (sp_filter == null || "".equals(sp_filter))&&  customerId == null ) {
             sqlTotal = "select count(distinct dor.id) total "
             		+ " from depart_order dor "
                     + " left join carinfo c on dor.carinfo_id = c.id "
@@ -246,7 +246,7 @@ public class PickupOrderController extends Controller {
                     + " LEFT JOIN contact c2 on c2.id = p2.contact_id"
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
             		+ " and ifnull(depart_no,'') like '%"+ departNo + "%' "
-            		+ " and ifnull(dor.car_no,'') like '%"+ carNo + "%' "
+            		+ " and ifnull(dor.driver,'') like '%"+ driver + "%' "
             		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter + "%' "
             		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
@@ -284,7 +284,7 @@ public class PickupOrderController extends Controller {
                     + " LEFT JOIN contact c2 on c2.id = p2.contact_id "
                     + " where dor.status!='取消' and combine_type = '" + DepartOrder.COMBINE_TYPE_PICKUP + "' "
             		+ " and ifnull(depart_no,'') like '%"+ departNo + "%' "
-            		+ " and ifnull(dor.car_no,'') like '%"+ carNo + "%' "
+            		+ " and ifnull(dor.driver,'') like '%"+ driver + "%' "
             		+ " and ifnull(c2.abbr,'') like '%"+ sp_filter + "%' "
             		+ " and ifnull(dtf.transfer_order_no,'') like '%"+ orderNo + "%' "
     				+ " and dor.turnout_time between '" + beginTime + "' and '" + endTime+ "' "
