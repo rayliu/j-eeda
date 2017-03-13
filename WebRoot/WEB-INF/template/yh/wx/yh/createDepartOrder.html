@@ -17,37 +17,54 @@
     	 	 <input type="hidden" id="transferIds" name="transferIds" value="${transferIds!''}"> 
     	 	 <input type="hidden" id="trans_pickups" name="trans_pickups" value="${trans_pickups!''}">
     	 	 <input type="hidden" id="pickupOrder" name="pickupOrder" value="${pickupOrder!''}"> 
-    	 	 <input type="hidden" id="limitation" name="limitation" value="${c_r_p.limitation!'0'}"> 
+    	 	 <input type="hidden" id="limitation" name="limitation" value="${c_r_p[0].limitation!'0'}"> 
     	 	 <div style="background: #DDDDDD;">
-    	 	     <div class="weui_cell" >
+    	 	 <input class="weui_input" type="hidden" id="sp_id" name='sp_id' value="${c_r_p[0].sp_id!''}">
+	    	 	 <div class="weui_cell weui_cell_select weui_select_after">
+		             <div class="weui_cell_hd">
+	                    	供应商：
+	                 </div>
+                 	 <div class="weui_cell_bd weui_cell_primary">
+	                     <select class="weui_select" id="car_type_input" name="car_type_input" style="color:red;">
+	                        <option></option>
+	                        <% for(name in c_r_p!''){ %>
+	                        <option value="${name.sp_id!''}">${name.company_name!''}</option>
+	                        <% } %>
+	                     </select>
+		                 <div class="weui_cell_ft" id="warn_car_type_input" style="display: none;">
+	                    	<i class="weui_icon_warn"></i>
+	                 	 </div>
+                     </div>
+                 </div>
+    	 	     <!-- <div class="weui_cell" >
 		             <label>供应商：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
-		                 <input class="weui_input" type="hidden" id="sp_id" name='sp_id' value="${c_r_p.sp_id!''}">
-		                 <input class="weui_input" type="text" id="sp" name='sp' value="${c_r_p.company_name!''}">
+		                 <input class="weui_input" type="hidden" id="sp_id" name='sp_id' value="${c_r_p[0].sp_id!''}">
+		                 <input class="weui_input" type="text" id="sp" name='sp' value="${c_r_p[0].company_name!''}${c_r_p[1].company_name!''}">
 		             </div>
 		             <div class="weui_cell_ft" id="warn_sp" style="display: none;">
                      <i class="weui_icon_warn"></i>
                  </div>
-	             </div>
+	             </div> -->
 	             <div class="weui_cell" >
 		             <label>客户：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
-		                 <input class="weui_input" type="hidden" id="customer_id" name='customer_id' value="${c_r_p.customer_id!''}">
-		                 <input class="weui_input" type="text" id="customer" name='customer' value="${c_r_p.customer_name!''}">
+		                 <input class="weui_input" type="hidden" id="customer_id" name='customer_id' value="${c_r_p[0].customer_id!''}">
+		                 <input class="weui_input" type="text" id="customer" name='customer' value="${c_r_p[0].customer_name!''}">
 		             </div>
 	             </div>
 	             <div class="weui_cell">
 		             <label>始发城市：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
-		             	 <input class="weui_input" type="hidden" id="route_from" name='route_from' value="${c_r_p.location_from!''}">
-		                 <input class="weui_input" type="text" id="routeFrom" name='routeFrom' value="${c_r_p.routeFrom!''}">
+		             	 <input class="weui_input" type="hidden" id="route_from" name='route_from' value="${c_r_p[0].location_from!''}">
+		                 <input class="weui_input" type="text" id="routeFrom" name='routeFrom' value="${c_r_p[0].routeFrom!''}">
 		             </div>
 	             </div>
 	             <div class="weui_cell">
 		             <label>目的城市：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
-		                 <input class="weui_input" type="hidden" id="route_to" name='route_to' value="${c_r_p.location_to!''}">
-		                 <input class="weui_input" type="text" id="routeTo" name='routeTo' value="${c_r_p.routeTo!''}">
+		                 <input class="weui_input" type="hidden" id="route_to" name='route_to' value="${c_r_p[0].location_to!''}">
+		                 <input class="weui_input" type="text" id="routeTo" name='routeTo' value="${c_r_p[0].routeTo!''}">
 		             </div>
 	             </div>
 	             <div class="weui_cell">
@@ -65,10 +82,10 @@
 	             <div class="weui_cell">
 		             <label>计费方式：</label>
 		             <div class="weui_cell_bd weui_cell_primary">
-		            	 <input class="weui_input" type="hidden" id="charge_type" name='charge_type' value="${c_r_p.charge_type!''}">
-		            	 <input class="weui_input" type="hidden" id="ltl_price_type" name='ltl_price_type' value="${c_r_p.ltl_price_type!''}">
-		            	 <input class="weui_input" type="hidden" id="car_type" name='car_type' value="${c_r_p.car_type!''}">
-		             	 <input class="weui_input" type="text" id="chargeType" name='chargeType' value="${c_r_p.chargeType!''}">
+		            	 <input class="weui_input" type="hidden" id="charge_type" name='charge_type' value="${c_r_p[0].charge_type!''}">
+		            	 <input class="weui_input" type="hidden" id="ltl_price_type" name='ltl_price_type' value="${c_r_p[0].ltl_price_type!''}">
+		            	 <input class="weui_input" type="hidden" id="car_type" name='car_type' value="${c_r_p[0].car_type!''}">
+		             	 <input class="weui_input" type="text" id="chargeType" name='chargeType' value="${c_r_p[0].chargeType!''}">
 		             </div>
 	             </div>
     	 	 </div>
@@ -191,7 +208,7 @@
 <script src="/yh/js/plugins/wx/jweixin-1.0.0.js"></script>
 
 <!-- 某些型号android 不加Version,js文件会不刷新-->
-<script src="/yh/js/wx/yh/createDepartOrder.js"></script>
+<script src="/yh/js/wx/yh/createDepartOrder.js?v=1.0"></script>
 <script src="/yh/js/plugins/jquery-dateFormat/jquery-dateFormat.min.js"></script>
 
 </html>

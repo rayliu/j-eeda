@@ -45,7 +45,7 @@ $(document).ready(function() {
 		//非空校验
 		if(!check())
 			return;
-		checkSp();
+
 		
 		$('#saveBtn').hide();
 		$.post('/wx/departOrder/departOrderCreate',$('#orderForm').serialize(),function(data){
@@ -76,7 +76,7 @@ $(document).ready(function() {
 	
 	
 	//非空校验
-	$('#weigh,#volume,#pay,#booking_note_number,#arrival_time').on('input',function(){
+	$('#weigh,#volume,#pay,#booking_note_number,#arrival_time,#car_type_input').on('input',function(){
 		var weigh = $('#weigh').val();
 		var $weigh = $('#warn_weigh');
 		var volume = $('#volume').val();
@@ -87,6 +87,8 @@ $(document).ready(function() {
 		var $booking_note_number = $('#warn_booking_note_number');
 		var arrival_time = $('#arrival_time').val();
 		var $arrival_time = $('#warn_arrival_time');
+		var car_type_input = $('#car_type_input').val();
+		var $car_type_input = $('#warn_car_type_input');
 		if(weigh!=''){
 			$weigh.hide();
 			$volume.hide();
@@ -104,11 +106,16 @@ $(document).ready(function() {
 		if(arrival_time!=''){
 			$arrival_time.hide();
 		}
+		if(car_type_input!=''){
+			$car_type_input.hide();
+		}
 	})
 	
 	
 	var check = function(){
 		var returner = 0.0;
+		var car_type_input = $('#car_type_input').val();
+		var $car_type_input = $('#warn_car_type_input');
 		var weigh = $('#weigh').val();
 		var $weigh = $('#warn_weigh');
 		var volume = $('#volume').val();
@@ -127,6 +134,10 @@ $(document).ready(function() {
 		}
 		if(pay==''){
 			$pay.show();
+			returner+=1;
+		}
+		if(car_type_input==''){
+			$car_type_input.show();
 			returner+=1;
 		}
 		if(booking_note_number==''){

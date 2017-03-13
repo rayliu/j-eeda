@@ -131,7 +131,7 @@ public class departOrderController extends ApiController {
 		String route_from = transfer.getStr("route_from");
 		String route_to = transfer.getStr("route_to");
 
-		Record c_r_p  = Db.findFirst("SELECT cr.*,l_f.name routeFrom,l_t.name routeTo,"
+		List<Record> c_r_p  = Db.find("SELECT cr.*,l_f.name routeFrom,l_t.name routeTo,"
 				+ " (case"
 				+ " WHEN cr.charge_type = 'perCargo' and cr.ltl_price_type = 'perCBM' "
 				+ " THEN '零担(每立方米)'"
@@ -153,7 +153,7 @@ public class departOrderController extends ApiController {
 				+ " LEFT JOIN location l_f on l_f.code = cr.location_from"
 				+ " where cr.customer_id = "+customer_id+" and cr.location_from ='"+route_from+"' and cr.location_to = '"+ route_to + "'");
 		if(c_r_p==null){
-			c_r_p =Db.findFirst("select tor.*,l_f.name routeFrom,l_t.name routeTo,"
+			c_r_p =Db.find("select tor.*,l_f.name routeFrom,l_t.name routeTo,"
 				+ " (case"
 				+ " WHEN tor.charge_type = 'perCargo' and tor.ltl_unit_type = 'perCBM' "
 				+ " THEN '零担(每立方米)'"
@@ -180,7 +180,7 @@ public class departOrderController extends ApiController {
 	@Before(Tx.class)
 	public void departOrderCreate(){
 		String openid = getPara("openid");
-		String sp_id = getPara("sp_id");
+		String sp_id = getPara("car_type_input");
 		String route_from = getPara("route_from");
 		String route_to = getPara("route_to");
 		String charge_type = getPara("charge_type");
