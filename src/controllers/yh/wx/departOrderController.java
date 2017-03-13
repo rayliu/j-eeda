@@ -172,7 +172,15 @@ public class departOrderController extends ApiController {
 				+ " LEFT JOIN location l_f on l_f.code = tor.route_from"
 				+ " where tor.id="+array[0]);
 		}
-		setAttr("c_r_p", c_r_p);
+		
+		setAttr("c_r_pList", c_r_p);
+		if(c_r_p.size()==0){
+			setAttr("c_r_p", null);
+		}else{
+			setAttr("c_r_p", c_r_p.get(0));
+		}
+		
+		
 		
 		render("/yh/wx/yh/createDepartOrder.html");
 	}
