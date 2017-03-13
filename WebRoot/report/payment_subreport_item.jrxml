@@ -321,14 +321,14 @@ and caor.cost_order_id = appo.id
 				<text><![CDATA[挂账日期]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="216" y="0" width="58" height="20" uuid="000d2054-e746-4fd7-ab98-60b671e49116"/>
+				<reportElement style="table_TD" x="216" y="0" width="53" height="20" uuid="000d2054-e746-4fd7-ab98-60b671e49116"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[对账月份]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="274" y="0" width="55" height="20" uuid="1b600c3e-b7de-402c-823f-bbb9de305ea4"/>
+				<reportElement style="table_TD" x="269" y="0" width="60" height="20" uuid="1b600c3e-b7de-402c-823f-bbb9de305ea4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -381,14 +381,14 @@ and caor.cost_order_id = appo.id
 				<textFieldExpression><![CDATA[$F{create_stamp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MM" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="216" y="0" width="58" height="26" uuid="82223789-934f-459d-9486-6efb0593b693"/>
+				<reportElement style="table_TD" mode="Opaque" x="216" y="0" width="53" height="26" uuid="82223789-934f-459d-9486-6efb0593b693"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{confirm_stamp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="274" y="0" width="55" height="26" uuid="6804431f-7c69-4eed-b024-194effd30be1"/>
+				<reportElement style="table_TD" mode="Opaque" x="269" y="0" width="60" height="26" uuid="6804431f-7c69-4eed-b024-194effd30be1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="11" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -456,7 +456,7 @@ and caor.cost_order_id = appo.id
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[领款人//日期:]]></text>
+				<text><![CDATA[领款人/日期:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="44" y="58" width="50" height="21" uuid="117242fd-3f44-4fbf-8257-3a5455529557"/>
