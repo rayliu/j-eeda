@@ -314,14 +314,14 @@ and caor.cost_order_id = appo.id
 				<text><![CDATA[应付对账单号]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="156" y="0" width="66" height="20" uuid="dc3e1698-7598-4a1c-b83c-65dd418b74de"/>
+				<reportElement style="table_TD" x="156" y="0" width="60" height="20" uuid="dc3e1698-7598-4a1c-b83c-65dd418b74de"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[挂账日期]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="222" y="0" width="52" height="20" uuid="000d2054-e746-4fd7-ab98-60b671e49116"/>
+				<reportElement style="table_TD" x="216" y="0" width="58" height="20" uuid="000d2054-e746-4fd7-ab98-60b671e49116"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -374,14 +374,14 @@ and caor.cost_order_id = appo.id
 				<textFieldExpression><![CDATA[$F{order_no}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="156" y="0" width="66" height="26" uuid="ab85de4c-7294-448c-8820-53a6d91e1455"/>
+				<reportElement style="table_TD" mode="Opaque" x="156" y="0" width="60" height="26" uuid="ab85de4c-7294-448c-8820-53a6d91e1455"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{create_stamp}]]></textFieldExpression>
 			</textField>
 			<textField pattern="MM" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="222" y="0" width="52" height="26" uuid="82223789-934f-459d-9486-6efb0593b693"/>
+				<reportElement style="table_TD" mode="Opaque" x="216" y="0" width="58" height="26" uuid="82223789-934f-459d-9486-6efb0593b693"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -390,14 +390,14 @@ and caor.cost_order_id = appo.id
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="table_TD" mode="Opaque" x="274" y="0" width="55" height="26" uuid="6804431f-7c69-4eed-b024-194effd30be1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<font fontName="宋体" size="11" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="table_TD" mode="Opaque" x="384" y="0" width="65" height="26" uuid="694f5989-3f90-4b34-b5e5-60ffdebda73c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<font fontName="宋体" size="11" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cost_amount}]]></textFieldExpression>
 			</textField>
@@ -410,7 +410,7 @@ and caor.cost_order_id = appo.id
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement style="table_TD" mode="Opaque" x="329" y="0" width="55" height="26" uuid="269c9c7e-f34b-4ea9-bf7b-95f1003cceb1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" size="12" isBold="true" isItalic="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<font fontName="宋体" size="11" isBold="true" isItalic="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cost_balance}]]></textFieldExpression>
 			</textField>
