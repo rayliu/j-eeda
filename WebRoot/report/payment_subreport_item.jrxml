@@ -456,7 +456,7 @@ and caor.cost_order_id = appo.id
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[领款人/4454日期:]]></text>
+				<text><![CDATA[领款人/日期:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
 				<reportElement x="44" y="58" width="50" height="21" uuid="117242fd-3f44-4fbf-8257-3a5455529557"/>
