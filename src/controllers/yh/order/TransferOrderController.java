@@ -1222,11 +1222,11 @@ public class TransferOrderController extends Controller {
 
 		if (input.trim().length() > 0) {
 			if (type != null) {
-				sql = "SELECT * FROM carinfo c LEFT JOIN office o ON o.id = c.office_id WHERE c.type = '"+type+"' AND (c.is_stop IS NULL OR c.is_stop = 0)"
+				sql = "SELECT c.* FROM carinfo c LEFT JOIN office o ON o.id = c.office_id WHERE c.type = '"+type+"' AND (c.is_stop IS NULL OR c.is_stop = 0)"
 						+ " AND (o.id = "+parentID+" OR o.belong_office ="+parentID+")AND (c.driver LIKE '%"+input+"%' or c.car_no LIKE '%"+input+"%')";
 
 			} else {
-				sql = "SELECT * FROM carinfo c LEFT JOIN office o ON o.id = c.office_id WHERE (c.is_stop IS NULL OR c.is_stop = 0) "
+				sql = "SELECT c.* FROM carinfo c LEFT JOIN office o ON o.id = c.office_id WHERE (c.is_stop IS NULL OR c.is_stop = 0) "
 						+ "AND (o.id = "+parentID+" OR o.belong_office ="+parentID+")AND (c.driver LIKE '%"+input+"%' or c.car_no LIKE '%"+input+"%')";
 			}
 
