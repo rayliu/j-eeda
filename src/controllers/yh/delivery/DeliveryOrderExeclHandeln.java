@@ -675,6 +675,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 					if (content.get(j).get("配送发车时间") != null) {
 						dbDataFormat.parse(content.get(j).get("配送发车时间"));
 						deliveryorder.set("depart_stamp", content.get(j).get("配送发车时间"));
+						deliveryorder.set("business_stamp", content.get(j).get("配送发车时间"));
 						}
 					if (content.get(j).get("城市") != null) {
 						Location location = Location.dao
