@@ -16,7 +16,7 @@ $(document).ready(function() {
         $loadingToast.show();
 		$.post('/wx/searchTransferOrder',$("#searchFrom").serialize(), function(data){
 			if(data.length!=0){
-				$('#massage').append('<label class="weui_cell weui_check_label"  style="font-size:10px">'
+				$('#massage').append('<label class="weui_cell weui_check_label"  style="font-size:12px">'
 		                +'<div class="weui_cell_bd weui_cell_primary">'
 		                +'<p align="center">运输单号</p>'
 		                +'</div>'
@@ -28,7 +28,7 @@ $(document).ready(function() {
 		                +'</div>'
 		                +'</label>');
 				for(var i=0; i<data.length; i++){
-					$('#massage').append('<label class="weui_cell weui_check_label" for="'+i+'"  style="font-size:10px">'
+					$('#massage').append('<label class="weui_cell weui_check_label" for="'+i+'"  style="font-size:12px">'
 		                +'<div class="weui_cell_hd" id="box'+i+'">'
 		                +'<input type="checkbox" class="weui_check" name="checkbox1" route_to = "'+data[i].ROUTE_TO+'" status="'+data[i].STATUS+'" transfer_id="'+data[i].ID+'" have="'+data[i].DISABLED+'" pickup_id="'+data[i].PICKUP_ID +'" customer_id="'+ data[i].CUSTOMER_ID +'" id="'+i+'">'
 		                +'<i class="weui_icon_checked"></i>'
