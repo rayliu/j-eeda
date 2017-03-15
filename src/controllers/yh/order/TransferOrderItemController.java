@@ -24,6 +24,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -225,6 +226,7 @@ public class TransferOrderItemController extends Controller {
     }
     
     // 保存货品
+    @Before(Tx.class)
     public void updateTransferOrderItem() {
     	String id = getPara("id");
     	String fieldName = getPara("fieldName");
@@ -253,7 +255,6 @@ public class TransferOrderItemController extends Controller {
                 	item.set("sum_weight", item.getDouble("weight") * itemAmount);
                 }
             }
-            updateTransferOrderItemDetail(item, product);
         } else {
         	product = Product.dao.findById(productId);
             if ("amount".equals(fieldName) && value != null) {
@@ -363,6 +364,9 @@ public class TransferOrderItemController extends Controller {
             // update 不要更新order_id, order_id本来就存在了，upadte 有啥用？
             // item.set("order_id", getPara("transfer_order_id"));
             item.update();
+            if (amount != null && !"".equals(amount)) {
+                saveTransferOrderDetail(item, productId, Double.parseDouble(amount));
+            }
         } else {
             item = new TransferOrderItem();
             if (productId == null || "".equals(productId)) {
@@ -444,7 +448,13 @@ public class TransferOrderItemController extends Controller {
 	        } else {
 	            Product product = Product.dao.findById(productId);
 	            for (int i = 0; i < amount; i++) {
+	            	String serial = "CC"+(last+i+1);
+	            	Record toid = Db.findFirst("select * from transfer_order_item_detail where serial_no = ?",serial);
+	            	if(toid != null){
+	            		serial = serial+"A";
+	            	}
 	                transferOrderItemDetail = new TransferOrderItemDetail();
+	                transferOrderItemDetail.set("serial_no", serial);
 	                transferOrderItemDetail.set("item_name", product.get("item_name"));
 	                transferOrderItemDetail.set("item_no", product.get("item_no"));
 	                transferOrderItemDetail.set("volume", product.get("volume"));

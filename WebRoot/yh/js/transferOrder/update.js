@@ -687,6 +687,7 @@ $(document).ready(function() {
 					$("#notify_party_id").val(transferOrder.NOTIFY_PARTY_ID);
 					//$("#driver_id").val(transferOrder.DRIVER_ID);
 					$("#id").val(transferOrder.ID);
+					contactUrl("edit?id",transferOrder.ID);
 					if(transferOrder.ID>0){
 						$("#arrivalModeVal").val(transferOrder.ARRIVAL_MODE);
 						$("#showOrderNo").text(transferOrder.ORDER_NO);
@@ -897,7 +898,7 @@ $(document).ready(function() {
             	"sWidth": "50px",
             	"sClass": "amount",
             	"fnRender": function(obj) {
-            		if(obj.aData.AMOUNT==null)
+            		if(obj.aData.AMOUNT==null || obj.aData.AMOUNT==0)
             			obj.aData.AMOUNT='';
             		
             		var disabled = '';
@@ -1112,19 +1113,6 @@ $(document).ready(function() {
 		var value= $(this).val();
 		var weight;
 		var volume;
-		/*if(filedName == 'amount'){
-			if(/^\d+$/.test(value)){
-				if($("input[name='orderType']:checked").val() == "arrangementOrder"){
-					$.post('',{itemId:itemId},function(){
-						
-					},'json');
-				}
-			}else{
-				$.scojs_message('数量只能是整数', $.scojs_message.TYPE_ERROR);
-				return false;
-			}
-			
-		}*/
 		
 		if(value != ''){
 			$.ajax({  
@@ -1135,6 +1123,7 @@ $(document).ready(function() {
 	            success : function(data){  
 	            	weight = data.SUM_WEIGHT;
 	            	volume = data.VOLUME;
+	            	$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
 	            }  
 	        });
 		}

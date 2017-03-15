@@ -20,6 +20,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 @RequiresAuthentication
 @Before(SetAttrLoginUserInterceptor.class)
@@ -172,6 +173,7 @@ public class TransferOrderItemDetailController extends Controller {
     }
         
     // 保存单品
+    @Before(Tx.class)
     public void saveTransferOrderItemDetailByField() {
     	String returnValue = "";
     	String detailId = getPara("detailId");
@@ -184,20 +186,22 @@ public class TransferOrderItemDetailController extends Controller {
     	if(detailId != null && !"".equals(detailId)){
     		TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailId);
     		if("serial_no".equals(name)){
-    			if("salesOrder".equals(orderType)){
-    				TransferOrderItemDetail item = TransferOrderItemDetail.dao.findFirst("select toid.* from transfer_order_item_detail toid"
-        					+ " left join transfer_order tor on tor.id = toid.order_id "
-        					+ " where toid.serial_no = '"+value+"' and tor.customer_id = '"+customer_id+"'");
-        			if(item == null){
-        				
-        			}else{
-        				if(!detailId.equals(item.getLong("id").toString()))
-        					flag = false;
-        			}
-    			}else{
-    				detail.set(name, value);
-    				detail.update();
-    			}
+    			detail.set(name, value);
+				detail.update();
+//    			if("salesOrder".equals(orderType)){
+//    				TransferOrderItemDetail item = TransferOrderItemDetail.dao.findFirst("select toid.* from transfer_order_item_detail toid"
+//        					+ " left join transfer_order tor on tor.id = toid.order_id "
+//        					+ " where toid.serial_no = '"+value+"' and tor.customer_id = '"+customer_id+"'");
+//        			if(item == null){
+//        				
+//        			}else{
+//        				if(!detailId.equals(item.getLong("id").toString()))
+//        					flag = false;
+//        			}
+//    			}else{
+//    				detail.set(name, value);
+//    				detail.update();
+//    			}
     		}else{
     			detail.set(name, value);
     			detail.update();
