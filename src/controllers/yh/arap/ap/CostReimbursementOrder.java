@@ -15,6 +15,7 @@ import models.UserLogin;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.ReimbursementOrderFinItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -124,6 +125,8 @@ public class CostReimbursementOrder extends Controller {
 		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
 		String status = getPara("status")==null?"":getPara("status").trim();
 		String accountName = getPara("accountName")==null?"":getPara("accountName").trim();
+		String begin_time = getPara("begin_time");
+		String end_time = getPara("end_time");
 		String sortColIndex = getPara("iSortCol_0");
 	    String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_"+sortColIndex);
@@ -131,6 +134,15 @@ public class CostReimbursementOrder extends Controller {
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        if(StringUtils.isEmpty(begin_time)){
+        	begin_time = "2000-01-01";
+        }
+        
+        if(StringUtils.isNotEmpty(end_time)){
+        	end_time += " 23:59:59"; 
+        }else{
+        	end_time = "2037-01-01";
         }
         String sqlTotal = "";
         String sql = "";
@@ -150,6 +162,7 @@ public class CostReimbursementOrder extends Controller {
         			+ " left join user_login u on u.id  = ro.audit_id "
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
+	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
         			+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
         			+ " and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))";	
 	    	 
@@ -162,6 +175,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
+	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
 	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
 	        		+ " and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))"
 	        		+ " group by ro.id ";

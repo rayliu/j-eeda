@@ -45,7 +45,11 @@ $(document).ready(function() {
         var status = $("#status").val();
         var auditName = $("#auditName").val();
         var accountName = $("#account_name").val();
-        costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&accountName="+accountName;
+        var begin_time = $("#create_time_begin_time").val();
+        var end_time = $("#create_time_end_time").val();
+        costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&accountName="+accountName
+        +"&begin_time="+begin_time
+        +"&end_time="+end_time;
         costExpenseAccountTbody.fnDraw();
     }
     //获取未审核供应商的list，选中信息在下方展示其他信息
