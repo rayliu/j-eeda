@@ -28,6 +28,7 @@ import models.TransferOrderItemDetail;
 import models.UserLogin;
 import models.Warehouse;
 import models.yh.delivery.DeliveryOrder;
+import models.yh.profile.Carinfo;
 import models.yh.profile.Contact;
 
 import com.jfinal.aop.Before;
@@ -657,14 +658,27 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			        }
 					//供应商简称
 					if (content.get(j).get("供应商名称") != null) {
-					Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称") + "';");
-					if(provider==null){
-						throw new Exception("供应商名称信息有误");
+						Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称") + "';");
+						if(provider==null){
+							throw new Exception("供应商名称信息有误");
+						} else{
+							deliveryorder.set("sp_id", provider.get("pid"));
+						}
 					}
-					else{
-						deliveryorder.set("sp_id", provider.get("pid"));
+					
+					if (content.get(j).get("司机") != null) {
+						String sql = "select * from carinfo  c  where c.type = 'OWN'  and (c.is_stop is null or c.is_stop = 0)"
+								+ " and c.driver = '"+content.get(j).get("司机")+"'";
+						
+						Carinfo car = Carinfo.dao.findFirst(sql);
+						if(car==null){
+							throw new Exception("司机信息有误");
+						} else{
+							deliveryorder.set("sp_id", car.get("id"));
+							deliveryorder.set("deliveryMode", "own");
+						}
 					}
-					}
+					
 					if (content.get(j).get("预约送货时间") != null) {
 						dbDataFormat.parse(content.get(j).get("预约送货时间"));
 						deliveryorder.set("order_delivery_stamp", content.get(j).get("预约送货时间"));
