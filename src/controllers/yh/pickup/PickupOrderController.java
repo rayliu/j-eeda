@@ -396,7 +396,7 @@ public class PickupOrderController extends Controller {
         conditions += " and !( cargo_nature = 'ATM' AND atmamount = 0 ) and !( cargo_nature = 'cargo' AND total_amount <= 0 )  and office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"; 
 
-        sql = "select tor.id,tor.office_id , tor.customer_id,tor.order_no,"
+        sql = "select tor.id,tor.receiving_address,tor.office_id , tor.customer_id,tor.order_no,"
         		+ " (select GROUP_CONCAT(ifnull(p.item_no,ifnull(toi.item_no,toi.item_name)) SEPARATOR '<br/>') "
         		+ " from transfer_order_item toi"
         		+ " LEFT JOIN product p on p.id = toi.product_id "
@@ -419,7 +419,7 @@ public class PickupOrderController extends Controller {
                 + " and (tor.operation_type != 'out_source' or (tor.operation_type = 'out_source' and tor.order_type ='replenishmentOrder'))"
                 + " and tor.status not in('手动删除','取消')"
                 + " union"
-                + " select tor.id,tor.office_id , tor.customer_id,CONCAT(tor.order_no,'<br/>','(二次提货)') order_no,"
+                + " select tor.id,tor.receiving_address,tor.office_id , tor.customer_id,CONCAT(tor.order_no,'<br/>','(二次提货)') order_no,"
                 + " (select GROUP_CONCAT(ifnull(p.item_no,ifnull(toi.item_no,toi.item_name)) SEPARATOR '<br/>') "
         		+ " from transfer_order_item toi"
         		+ " LEFT JOIN product p on p.id = toi.product_id "

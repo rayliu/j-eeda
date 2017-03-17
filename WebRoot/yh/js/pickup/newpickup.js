@@ -189,6 +189,11 @@ $(document).ready(function() {
             	"sWidth": "60px",
             	"sClass": "route_to"
             }, 
+            { 
+            	"mDataProp": "RECEIVING_ADDRESS",
+            	"sWidth": "150px",
+            	"sClass": "receiving_address"
+            }, 
 		    {"mDataProp":"ORDER_TYPE",
             	"sWidth": "60px",
             	"sClass": "order_type",
