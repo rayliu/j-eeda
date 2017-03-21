@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import models.DeliveryOrderItem;
 import models.DeliveryOrderMilestone;
 import models.Location;
@@ -657,25 +659,27 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 			            //}
 			        }
 					//供应商简称
-					if (content.get(j).get("供应商名称") != null) {
-						Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + content.get(j).get("供应商名称") + "';");
+			        String sp_name = content.get(j).get("供应商名称");
+					if (StringUtils.isNotEmpty(sp_name)) {
+						Party provider = Party.dao.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='" + Party.PARTY_TYPE_SERVICE_PROVIDER+ "' and c.abbr ='" + sp_name.trim() + "';");
 						if(provider==null){
 							throw new Exception("供应商名称信息有误");
 						} else{
 							deliveryorder.set("sp_id", provider.get("pid"));
 						}
-					}
-					
-					if (content.get(j).get("司机") != null) {
-						String sql = "select * from carinfo  c  where c.type = 'OWN'  and (c.is_stop is null or c.is_stop = 0)"
-								+ " and c.driver = '"+content.get(j).get("司机")+"'";
-						
-						Carinfo car = Carinfo.dao.findFirst(sql);
-						if(car==null){
-							throw new Exception("司机信息有误");
-						} else{
-							deliveryorder.set("sp_id", car.get("id"));
-							deliveryorder.set("deliveryMode", "own");
+					}else{
+						String driver_name = content.get(j).get("司机");
+						if ( StringUtils.isNotEmpty(driver_name)) {
+							String sql = "select * from carinfo  c  where c.type = 'OWN'  and (c.is_stop is null or c.is_stop = 0)"
+									+ " and c.driver = '"+driver_name.trim()+"'";
+							
+							Carinfo car = Carinfo.dao.findFirst(sql);
+							if(car==null){
+								throw new Exception("司机信息有误");
+							} else{
+								deliveryorder.set("sp_id", car.get("id"));
+								deliveryorder.set("deliveryMode", "own");
+							}
 						}
 					}
 					
