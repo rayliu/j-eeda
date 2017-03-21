@@ -677,7 +677,7 @@ public class DeliveryOrderExeclHandeln extends DeliveryController {
 							if(car==null){
 								throw new Exception("司机信息有误");
 							} else{
-								deliveryorder.set("sp_id", car.get("id"));
+								deliveryorder.set("car_id", car.get("id"));
 								deliveryorder.set("deliveryMode", "own");
 							}
 						}
