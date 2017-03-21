@@ -92,6 +92,7 @@ public class DeliveryController extends Controller {
 		String plan_endTime_filter = getPara("plan_endTime_filter").trim();
 		String office_filter = getPara("office_filter").trim();
 		String serial_no = getPara("serial_no").trim();
+		String driver_name = getPara("driver_name");
 		String delivery_no = getPara("delivery_no").trim();
 		String address_filter = getPara("address_filter").trim();
 		String warehouse_filter = getPara("warehouse_filter").trim();
@@ -151,6 +152,9 @@ public class DeliveryController extends Controller {
 			if(office_filter!=null&&!"".equals(office_filter)){
 				condition +=" AND ifnull(o.office_name,'') like'%"+ office_filter.trim()+ "%'";;
 			}
+			if(driver_name!=null&&!"".equals(driver_name)){
+				condition +=" AND ifnull(cif.driver,'') like'%"+ driver_name.trim()+ "%'";;
+			}
 			
 			if (!StringUtils.isNotEmpty(beginTime_filter)){
 				beginTime_filter = "2000-01-01";
@@ -206,6 +210,7 @@ public class DeliveryController extends Controller {
 					+ " GROUP BY d.id  ";
 			String sqlTotal = "SELECT count(1) total from (select count(1) total"
 					+ " FROM delivery_order d"
+					+ " LEFT JOIN carinfo cif ON cif.id = d.car_id"
 					+ " LEFT JOIN party p ON d.customer_id = p.id"
 					+ " LEFT JOIN contact c ON p.contact_id = c.id"
 					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"
@@ -221,7 +226,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN office o ON o.id = d.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " left join return_order ror on ror.delivery_order_id = d.id  and ror.transaction_status is not null " ;
-			String sql = "select * from(SELECT ifnull(trid.item_no,toi.item_no) item_no,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w.warehouse_name,w1.warehouse_name) warehouse_name, "
+			String sql = "select * from(SELECT ifnull(trid.item_no,toi.item_no) item_no,cif.driver driver_name,trid.id tid,IFNULL(c2.contact_person, IFNULL(trid.notify_party_name, '')) driver,IFNULL(c2.phone,IFNULL(trid.notify_party_phone, '')) phone,pickup_mode,IFNULL(c2.address,IFNULL(trid.notify_party_company, '')) company,o.office_name,tor.customer_order_no,tor.STATUS statu,ifnull(w.warehouse_name,w1.warehouse_name) warehouse_name, "
 					+ " (SELECT CASE"
 					+ " 		WHEN d.cargo_nature ='ATM' THEN ("
 					+ " 				select count(1) from delivery_order_item doi"
@@ -248,6 +253,7 @@ public class DeliveryController extends Controller {
 					+ " delivery_order_item doi LEFT JOIN transfer_order_item_detail trid ON trid.id = doi.transfer_item_detail_id"
 					+ " WHERE doi.delivery_id = d.id ) AS serial_no "
 					+ " FROM delivery_order d"
+					+ " LEFT JOIN carinfo cif ON cif.id = d.car_id"
 					+ " LEFT JOIN party p ON d.customer_id = p.id"
 					+ " LEFT JOIN contact c ON p.contact_id = c.id"
 					+ " LEFT JOIN party p2 ON d.notify_party_id = p2.id"

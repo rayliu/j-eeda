@@ -38,6 +38,7 @@ $(document).ready(function() {
             {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
             {"mDataProp":"CUSTOMER" , "sWidth":"70px"},//客户
             {"mDataProp":"ABBR" , "sWidth":"70px"},//供应商
+            {"mDataProp":"DRIVER_NAME" , "sWidth":"70px"},//供应商
             {"mDataProp":"PCS_AMOUNT", "sWidth":"50px"},//件数
             {"mDataProp":"BUSINESS_STAMP","sWidth":"100px"},//配送时间
             {"mDataProp":"TRANSFER_ORDER_NO","sWidth":"100px"},
@@ -204,6 +205,7 @@ $(document).ready(function() {
     	var status_filter = $("#status_filter").val();
       	var customer_filter = $("#customer_filter").val();    	
       	var sp_filter = $("#sp_filter").val();
+      	var driver_name = $("#driver_name").val();
       	var beginTime_filter = $("#create_stamp_begin_time").val();
       	var endTime_filter = $("#create_stamp_end_time").val();
       	var plan_beginTime_filter = $("#planning_stamp_begin_time").val();
@@ -227,7 +229,7 @@ $(document).ready(function() {
 										      	+"&sp_filter="+sp_filter+"&warehouse_filter="+warehouse_filter+"&beginTime_filter="+beginTime_filter
 										      	+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no
 										      	+"&business_stamp_begin_time="+business_stamp_begin_time+"&business_stamp_end_time="+business_stamp_end_time
-										      	+"&depart_stamp_begin_time="+depart_stamp_begin_time+"&depart_stamp_end_time="+depart_stamp_end_time;
+										      	+"&depart_stamp_begin_time="+depart_stamp_begin_time+"&depart_stamp_end_time="+depart_stamp_end_time+"&driver_name="+driver_name;
       	dataTable.fnDraw();
     };
 
