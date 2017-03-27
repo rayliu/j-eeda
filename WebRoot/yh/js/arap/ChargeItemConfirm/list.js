@@ -42,6 +42,10 @@ $(document).ready(function() {
         		}},
             {"mDataProp":"SERIAL_NO", "sWidth":"120px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"120px"}, 
+            {"mDataProp":"PLANNING_TIME", "sWidth":"150px"},
+            {"mDataProp":"ROUTE_FROM", "sWidth":"100px"},                        
+            {"mDataProp":"ROUTE_TO", "sWidth":"100px"},     
+            
             {"mDataProp":"TOTAL_AMOUNT", "sWidth":"120px", 
                 "fnRender": function(obj) {
                     if(obj.aData.TOTAL_AMOUNT==null){
@@ -67,7 +71,7 @@ $(document).ready(function() {
             }, 
             {"mDataProp":"ADDRESS", "sWidth":"150px"},
             {"mDataProp":"REF_NO", "sWidth":"150px"},
-            {"mDataProp":"PLANNING_TIME", "sWidth":"150px"},
+            
             {"mDataProp":"CNAME", "sWidth":"100px"},
             {"mDataProp":"SP", "sWidth":"150px"},
             {"mDataProp":null, "sWidth":"120px",
@@ -94,8 +98,7 @@ $(document).ready(function() {
                 }
             },            
             {"mDataProp":"RECEIPT_DATE", "sWidth":"150px"},        	
-            {"mDataProp":"ROUTE_FROM", "sWidth":"100px"},                        
-            {"mDataProp":"ROUTE_TO", "sWidth":"100px"},                        
+                               
             /*{"mDataProp":null, "sWidth":"150px"},                         
             {"mDataProp":null, "sWidth":"100px"},*/                        
             {"mDataProp":"CONTRACT_AMOUNT", "sWidth":"80px"},
