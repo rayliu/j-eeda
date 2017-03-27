@@ -698,7 +698,7 @@ public class DepartOrderController extends Controller {
 				+ " AND tor. STATUS not in ('手动删除','取消') "
 				+ " and (select GROUP_CONCAT(id) from depart_pickup where pickup_id = dor.id and order_id = tor.id) is null";
 		
-		String conditions=" where 1=1 ";
+		String conditions=" where 1=1 and total_amount >0";
 		if (StringUtils.isNotEmpty(orderNo)){
         	conditions+=" and UPPER(order_no) like '%"+orderNo+"%'";
         }
