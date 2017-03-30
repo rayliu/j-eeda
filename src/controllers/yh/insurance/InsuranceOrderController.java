@@ -102,7 +102,7 @@ public class InsuranceOrderController extends Controller {
             sqlTotal = "select count(1) total "
             		+ fromSql
                     + " where tor.insurance_id is null and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
-                    + " and tor.insurance_id is null and tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
+                    + " and tor.insurance_id is null and tor. STATUS != '手动删除' and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')";
             sql = "select tor.id,tor.order_no,tor.planning_time,tor.operation_type,tor.cargo_nature,tor.order_type,"
             		+ "	(SELECT l.NAME FROM location l where l.code = tor.route_from) route_from,"
             		+ " (SELECT	l.NAME FROM location l where l.code = tor.route_to) route_to,"
@@ -114,7 +114,7 @@ public class InsuranceOrderController extends Controller {
                     + " tor.create_stamp start_create_stamp "
                     + fromSql
                     + " where tor.insurance_id is null "    
-                    + " and tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder' and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
+                    + " and tor. STATUS != '手动删除'  and o.id in (select office_id from user_office where user_name='"+currentUser.getPrincipal()+"') "
                     + " and tor.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') "
                     + " order by tor.planning_time asc" + sLimit;
         } else{
@@ -126,7 +126,7 @@ public class InsuranceOrderController extends Controller {
             }
             sqlTotal = "select count(1) total "
             		+ fromSql
-                    + " where tor.insurance_id is null and tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder' and ifnull((SELECT l. NAME FROM location l WHERE l. CODE = tor.route_from), '') like '%"
+                    + " where tor.insurance_id is null and tor. STATUS != '手动删除'  and ifnull((SELECT l. NAME FROM location l WHERE l. CODE = tor.route_from), '') like '%"
                     + routeFrom
                     + "%' and ifnull((SELECT l. NAME FROM location l WHERE l. CODE = tor.route_to), '') like '%"
                     + routeTo
@@ -151,7 +151,7 @@ public class InsuranceOrderController extends Controller {
                     + " tor.create_stamp,tor.pickup_assign_status,"
                     + " tor.create_stamp start_create_stamp "
                     + fromSql
-                    + " where tor.insurance_id is null and tor. STATUS != '手动删除' AND tor.order_type != 'cargoReturnOrder'"
+                    + " where tor.insurance_id is null and tor. STATUS != '手动删除' "
                     + " and  ifnull((SELECT l. NAME FROM location l WHERE l. CODE = tor.route_from), '') like '%"
                     + routeFrom
                     + "%' and ifnull((SELECT	l. NAME	FROM location l WHERE l. CODE = tor.route_to), '') like '%"
