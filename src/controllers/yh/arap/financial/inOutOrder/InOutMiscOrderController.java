@@ -250,7 +250,14 @@ public class InOutMiscOrderController extends Controller {
 		render("/yh/arap/InOutMiscOrder/InOutMiscOrderEdit.html");
 	}
 
-	
+	@Before(Tx.class)
+	public void delete(){
+		String id = getPara("id");
+		ArapInOutMiscOrder order = ArapInOutMiscOrder.dao.findById(id);
+		order.delete();
+		
+		renderJson(order);
+	}
 
 
 	

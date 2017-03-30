@@ -16,7 +16,16 @@ $(document).ready(function() {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
         "ajax": "/inOutMiscOrder/list",
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+		},
         "columns":[
+           { "width": "30px",
+               "render": function ( data, type, full, meta ) {
+                 return '<button type="button" class="btn btn-primary delete btn-xs" >'+
+                       '<i class="fa fa-trash-o"></i> 删除</button>';
+               }
+           },
             {"data":"ORDER_NO", "sWidth": "80px",
             	"render": function ( data, type, full, meta ) {
         			return "<a href='/inOutMiscOrder/edit?id="+full.ID+"'target='_blank'>"+data+"</a>";
@@ -75,6 +84,28 @@ $(document).ready(function() {
             {"data":"REMARK","sWidth": "150px"}                       
         ]      
     });	 
+    
+    $('#result_table').on('click','.delete',function(){
+    	var order_id = $(this).parent().parent().attr('id');
+    	
+    	if(!confirm("是否确定删除？")){
+    		return false;
+    	}
+    	if(order_id>0){
+    		$.post('/inOutMiscOrder/delete', {id:order_id}, function(data){
+    			if(data){
+    				$.scojs_message("删除成功", $.scojs_message.TYPE_OK);
+    				refreshData();
+    			}else{
+    				$.scojs_message("删除失败", $.scojs_message.TYPE_FAIL);
+    			}
+    		}).fail(function() {
+    	        $.scojs_message('删除失败', $.scojs_message.TYPE_FAIL);
+    	   });
+    	}
+    	
+    });
+    
 
     
     $("#charge_unit_filter,  #pay_unit_filter, #order_no_filter, #beginTime_filter, #endTime_filter").on( 'keyup click', function () {
