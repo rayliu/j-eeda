@@ -14,6 +14,7 @@ import models.Location;
 import models.ParentOfficeModel;
 import models.Party;
 import models.UserCustomer;
+import models.UserLogin;
 import models.UserRole;
 import models.yh.profile.Contact;
 import models.yh.profile.CustomerRoute;
@@ -248,15 +249,26 @@ public class CustomerController extends Controller {
             
             Long parentID = pom.getParentOfficeId();
             //判断当前是否是系统管理员，是的话将当前的客户默认给
-            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name left join office o on o.id = ul.office_id  where role_code = 'admin' and (o.id = ? or o.belong_office = ?)",parentID,parentID);
-            if(urList.size()>0){
-            	for (UserRole userRole : urList) {
-                	UserCustomer uc = new UserCustomer();
-                	uc.set("user_name", userRole.get("user_name"));
-                	uc.set("customer_id",party.get("id"));
-                	uc.save();
-    			}
+//            List<UserRole> urList = UserRole.dao.find("select * from user_role ur left join user_login ul on ur.user_name = ul.user_name left join office o on o.id = ul.office_id  where role_code = 'admin' and (o.id = ? or o.belong_office = ?)",parentID,parentID);
+//            if(urList.size()>0){
+//            	for (UserRole userRole : urList) {
+//                	UserCustomer uc = new UserCustomer();
+//                	uc.set("user_name", userRole.get("user_name"));
+//                	uc.set("customer_id",party.get("id"));
+//                	uc.save();
+//    			}
+//            }
+            
+            //同步到用户
+            List<UserLogin> ulList = UserLogin.dao.find("select * from user_login where all_customer = 'Y'");
+            for(UserLogin ul :ulList){
+            	String user_name = ul.getStr("user_name");
+            	UserCustomer uc = new UserCustomer();
+            	uc.set("user_name", user_name);
+            	uc.set("customer_id", party.getLong("id"));
+            	uc.save();
             }
+            
             
         }
 
