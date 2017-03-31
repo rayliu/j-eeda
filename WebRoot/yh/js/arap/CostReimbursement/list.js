@@ -13,13 +13,22 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/costReimbursement/reimbursementList",
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+		},
         "aoColumns": [ 
+			{ "mDataProp":null,"sWidth": "30px",
+				"fnRender": function(obj) {
+			      return '<button type="button" class="btn btn-primary delete btn-xs" >'+
+			            '<i class="fa fa-trash-o"></i> 删除</button>';
+			    }
+			},
 			{"mDataProp":"ORDER_NO","sWidth":"120px",
 				"fnRender": function(obj) {
 					return "<a href='/costReimbursement/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
 				}
 			},
-            {"mDataProp":"STATUS", "sWidth":"200px"},
+            {"mDataProp":"STATUS", "sWidth":"200px","sClass":"status"},
             {"mDataProp":"ACCOUNT_NAME", "sWidth":"200px"},
             {"mDataProp":"ACCOUNT_NO", "sWidth":"200px"},
             {"mDataProp":"ACCOUNT_BANK", "sWidth":"200px"},
@@ -31,6 +40,37 @@ $(document).ready(function() {
             {"mDataProp":"REMARK", "sWidth":"150px"}
         ]
     });	
+    
+    
+    $('#costExpenseAccountTbody').on('click','.delete',function(){
+    	var tr = $(this).parent().parent();
+    	var id = tr.attr('id');
+    	var status = tr.find('.status').text();
+
+    	if(!confirm("是否确定删除？")){
+    		return false;
+    	}
+    	
+    	if(status!='新建'){
+    		$.scojs_message('单据已存在财务单据，需要先撤销对应财务单据方可删除', $.scojs_message.TYPE_FAIL);
+    		return false;
+    	}
+    	
+    	if(id>0){
+    		$.post('/costReimbursement/delete', {id:id}, function(data){
+    			if(data){
+    				$.scojs_message("删除成功", $.scojs_message.TYPE_OK);
+    				refreshData();
+    			}else{
+    				$.scojs_message("删除失败", $.scojs_message.TYPE_FAIL);
+    			}
+    		}).fail(function() {
+    	        $.scojs_message('删除失败', $.scojs_message.TYPE_FAIL);
+    	   });
+    	}
+    	
+    });
+    
 
     $("#resetBtn").click(function(){
         $('#searchForm')[0].reset();

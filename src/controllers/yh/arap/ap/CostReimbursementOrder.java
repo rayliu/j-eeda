@@ -27,6 +27,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.util.OrderNoGenerator;
@@ -375,6 +376,17 @@ public class CostReimbursementOrder extends Controller {
     	
     	List<Record> parentItemList  = Db.find("select * from fin_item where type='报销费用' and parent_id !=0 and parent_id = '"+value+"'");
     	renderJson(parentItemList);
+    }
+    
+    @Before(Tx.class)
+    public void delete(){
+    	String id = getPara("id");
+    	
+    	Db.update("delete from reimbursement_order_fin_item where order_id = ?",id);
+    	Db.update("delete from delivery_order_milestone where reimbursement_id = ?",id);
+    	Db.deleteById("reimbursement_order", id);
+    	
+    	renderJson("{\"success\":true}");
     }
     
 }
