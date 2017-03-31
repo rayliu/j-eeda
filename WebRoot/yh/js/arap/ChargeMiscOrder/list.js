@@ -15,7 +15,16 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/chargeMiscOrder/list",
-        "aoColumns": [   
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+		},
+        "aoColumns": [ 
+			{ "mDataProp":null,"sWidth": "30px",
+				"fnRender": function(obj) {
+			      return '<button type="button" class="btn btn-primary delete btn-xs" >'+
+			            '<i class="fa fa-trash-o"></i> 删除</button>';
+			    }
+			},
             {"mDataProp":"ORDER_NO","sWidth": "80px",
             	"fnRender": function(obj) {
         			return "<a href='/chargeMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -44,7 +53,7 @@ $(document).ready(function() {
             {"mDataProp":"SP_NAME","sWidth": "130px"},
             {"mDataProp":"OTHERS_NAME","sWidth": "100px"},
             {"mDataProp":"TOTAL_AMOUNT","sWidth": "100px"},
-            {"mDataProp":"STATUS","sWidth": "100px",
+            {"mDataProp":"STATUS","sWidth": "100px","sClass":"status",
                 "fnRender": function(obj) {
                     if(obj.aData.STATUS=='new'){
                         return '新建';
@@ -71,6 +80,44 @@ $(document).ready(function() {
             {"mDataProp":"REMARK","sWidth": "150px"}                       
         ]      
     });	 
+    
+    
+    $('#chargeMiscOrderList-table').on('click','.delete',function(){
+    	var self = this;
+    	$(this).prop('disabled',true);
+    	var tr = $(this).parent().parent();
+    	var id = tr.attr('id');
+    	var status = tr.find('.status').text();
+
+    	if(!confirm("是否确定删除？")){
+    		$(this).prop('disabled',false);
+    		return false;
+    		
+    	}
+    	
+    	if(status!='新建'){
+    		$.scojs_message('单据已存在财务单据，需要先撤销对应财务单据方可删除', $.scojs_message.TYPE_FAIL);
+    		$(this).prop('disabled',false);
+    		return false;
+    	}
+    	
+    	
+    	if(id>0){
+    		$.post('/chargeMiscOrder/delete', {id:id}, function(data){
+    			if(data){
+    				$.scojs_message("删除成功", $.scojs_message.TYPE_OK);
+    				refreshData();
+    			}else{
+    				$.scojs_message("删除失败", $.scojs_message.TYPE_FAIL);
+    			}
+    		}).fail(function() {
+    	        $.scojs_message('删除失败', $.scojs_message.TYPE_FAIL);
+    	   });
+    	}
+    	
+    });
+    
+    
 
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(event){

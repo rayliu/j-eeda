@@ -14,6 +14,7 @@ import models.ArapChargeInvoiceApplication;
 import models.ArapChargeOrder;
 import models.Party;
 import models.UserLogin;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrder;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrderDTO;
 import models.yh.arap.chargeMiscOrder.ArapMiscChargeOrderItem;
@@ -559,5 +560,16 @@ public class ChargeMiscOrderController extends Controller {
 		BillingOrderListMap.put("aaData", BillingOrders);
 
 		renderJson(BillingOrderListMap);
+	}
+	
+	@Before(Tx.class)
+	public void delete(){
+		String id = getPara("id");
+		
+		Db.update("delete from arap_misc_charge_order_item where misc_order_id = ?",id);
+		ArapMiscChargeOrder order = ArapMiscChargeOrder.dao.findById(id);
+		order.delete();
+		
+		renderJson(order);
 	}
 }
