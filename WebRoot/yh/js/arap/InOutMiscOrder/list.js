@@ -69,12 +69,12 @@ $(document).ready(function() {
             {"data":"CHARGE_UNIT","sWidth": "100px"},
             {"data":"CHARGE_PERSON","sWidth": "100px"},
             {"data":"PAY_AMOUNT","sWidth": "100px"},
-            {"data":"PAY_STATUS","sWidth": "100px"},
+            {"data":"PAY_STATUS","sWidth": "100px","class":"pay_status"},
             
             {"data":"PAY_UNIT","sWidth": "130px"},
             {"data":"PAY_PERSON","sWidth": "100px"},
             {"data":"CHARGE_AMOUNT","sWidth": "100px"},
-            {"data":"CHARGE_STATUS","sWidth": "100px"},
+            {"data":"CHARGE_STATUS","sWidth": "100px","class":"charge_status"},
 
             {"data":"CREATE_DATE","sWidth": "100px",
                 "render": function ( data, type, full, meta ) {
@@ -86,13 +86,24 @@ $(document).ready(function() {
     });	 
     
     $('#result_table').on('click','.delete',function(){
-    	var order_id = $(this).parent().parent().attr('id');
     	
+    	var tr = $(this).parent().parent();
+    	var id = tr.attr('id');
+    	var pay_status = tr.find('.pay_status').text();
+    	var charge_status = tr.find('.charge_status').text();
+
     	if(!confirm("是否确定删除？")){
     		return false;
     	}
-    	if(order_id>0){
-    		$.post('/inOutMiscOrder/delete', {id:order_id}, function(data){
+    	
+    	if(!(pay_status=='未付'&&charge_status=='未收')){
+    		$.scojs_message('单据已存在财务单据，需要先撤销对应财务单据方可删除', $.scojs_message.TYPE_FAIL);
+    		return false;
+    	}
+    	
+    	
+    	if(id>0){
+    		$.post('/inOutMiscOrder/delete', {id:id}, function(data){
     			if(data){
     				$.scojs_message("删除成功", $.scojs_message.TYPE_OK);
     				refreshData();
