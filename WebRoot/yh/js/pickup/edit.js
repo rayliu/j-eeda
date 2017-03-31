@@ -1456,9 +1456,15 @@
     $("#cancelBtn").on('click',function(){
     	$("#cancelBtn").attr('disabled',true);
     	var pickup_id = $("#pickupId").val();
+    	var address_type = $('#address_type').val();
     	if(pickup_id==null || pickup_id=='')
     	{
     		$.scojs_message('对不起，当前单据为保存', $.scojs_message.TYPE_ERROR);
+    		return false;
+    	}
+    	
+    	if(address_type=='twice_pickup'){
+    		$.scojs_message('对不起，目前二次提货类型单据不支持撤销', $.scojs_message.TYPE_ERROR);
     		return false;
     	}
     	
