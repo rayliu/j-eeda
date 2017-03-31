@@ -16,7 +16,17 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "sAjaxSource": "/costMiscOrder/list",
-        "aoColumns": [   
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+			$(nRow).attr({audit_status: aData.AUDIT_STATUS}); 
+		},
+        "aoColumns": [ 
+			{ "mDataProp":null,"sWidth": "30px",
+				"fnRender": function(obj) {
+			      return '<button type="button" class="btn btn-primary delete btn-xs" >'+
+			            '<i class="fa fa-trash-o"></i> 删除</button>';
+			    }
+			},
             {"mDataProp":"ORDER_NO","sWidth": "80px",
             	"fnRender": function(obj) {
         			return "<a href='/costMiscOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -45,27 +55,50 @@ $(document).ready(function() {
             {"mDataProp":"SP_NAME","sWidth": "100px"},
             {"mDataProp":"OTHERS_NAME","sWidth": "100px"},
             {"mDataProp":"TOTAL_AMOUNT","sWidth": "100px"},
-            {"mDataProp":"STATUS","sWidth": "100px",
-                "fnRender": function(obj) {
-                    if(obj.aData.STATUS=='new'){
-                        return '新建';
-                    }else if(obj.aData.STATUS=='checking'){
-                        return '已发送对帐';
-                    }else if(obj.aData.STATUS=='confirmed'){
-                        return '已审核';
-                    }else if(obj.aData.STATUS=='completed'){
-                        return '已结算';
-                    }else if(obj.aData.STATUS=='cancel'){
-                        return '取消';
-                    }
-                    return obj.aData.STATUS;
-                }
-            },
+            {"mDataProp":"AUDIT_STATUS","sWidth": "100px"},
             {"mDataProp":"CREATE_STAMP","sWidth": "150px"},
             {"mDataProp":"REF_NO","sWidth": "150px"},
             {"mDataProp":"REMARK","sWidth": "150px"}                       
         ]      
     });	 
+    
+    
+    $('#costMiscOrderList-table').on('click','.delete',function(){
+    	var self = this;
+    	$(this).prop('disabled',true);
+    	var tr = $(this).parent().parent();
+    	var id = tr.attr('id');
+    	var audit_status = tr.attr('audit_status');
+
+    	if(!confirm("是否确定删除？")){
+    		$(this).prop('disabled',false);
+    		return false;
+    		
+    	}
+    	
+    	if(audit_status!='新建'){
+    		$.scojs_message('单据已存在财务单据，需要先撤销对应财务单据方可删除', $.scojs_message.TYPE_FAIL);
+    		$(this).prop('disabled',false);
+    		return false;
+    	}
+    	
+    	
+    	if(id>0){
+    		$.post('/costMiscOrder/delete', {id:id}, function(data){
+    			if(data){
+    				$.scojs_message("删除成功", $.scojs_message.TYPE_OK);
+    				refreshData();
+    			}else{
+    				$.scojs_message("删除失败", $.scojs_message.TYPE_FAIL);
+    			}
+    		}).fail(function() {
+    	        $.scojs_message('删除失败', $.scojs_message.TYPE_FAIL);
+    	   });
+    	}
+    	
+    });
+    
+    
   //获取客户的list，选中信息自动填写其他信息
     $('#companyName').on('keyup click', function(){
         var inputStr = $('#companyName').val();

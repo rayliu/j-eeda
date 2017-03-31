@@ -560,5 +560,16 @@ public class CostMiscOrderController extends Controller {
 	}
 	
 	
+	@Before(Tx.class)
+	public void delete(){
+		String id = getPara("id");
+		
+		Db.update("delete from arap_misc_cost_order_item where misc_order_id = ?",id);
+		ArapMiscCostOrder order = ArapMiscCostOrder.dao.findById(id);
+		order.delete();
+		
+		renderJson(order);
+	}
+	
 	
 }
