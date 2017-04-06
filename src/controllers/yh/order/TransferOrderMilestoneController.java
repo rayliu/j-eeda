@@ -581,7 +581,8 @@ public class TransferOrderMilestoneController extends Controller {
     				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
     				.set("audit_status", "新建").set("sign_status", "未回单");
             		if(warehouse!=null){
-            			deliveryOrder.set("sp_id", transferOrder.getLong("sp_id"));
+                        deliveryOrder.set("sp_id", warehouse.get("sp_id"));
+            			//deliveryOrder.set("sp_id", transferOrder.getLong("sp_id"));
             		}
             		deliveryOrder.save();
     				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
