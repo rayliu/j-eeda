@@ -491,5 +491,21 @@ $(document).ready(function() {
 			reimbursermentMilestoneTbody.fnDraw();
 		}
 	});
+	
+	var lock_flag = $('#lock_flag').val();
+	if(lock_flag=='Y'){
+		$("#saveExpenseAccount").prop("disabled",true);
+		$("#lockBtn").prop("disabled",true);
+	}
+	
+	$("#lockBtn").click(function(e){
+		$.post('/costReimbursement/lock',{id:$('#reimbursementId').val()},function(data){
+			if(data.success){
+				$.scojs_message('已提交', $.scojs_message.TYPE_OK);
+				$("#saveExpenseAccount").prop("disabled",true);
+				$("#lockBtn").prop("disabled",true);
+			}
+		});
+	});
     
 });

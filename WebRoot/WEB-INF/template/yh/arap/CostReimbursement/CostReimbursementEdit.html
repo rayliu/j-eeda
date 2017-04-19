@@ -219,6 +219,8 @@
 		               		<button id="approvalBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">审批</button>
 		               		<button id="cancelApprovalBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">取消审批</button> -->
 		               		<a class="btn  btn-primary" href="/costReimbursement">返回</a>
+		               		<input type="hidden" id = "lock_flag" value="${rei.lock_flag!'N'}">
+		               		<button id="lockBtn" type="button" class="btn  btn-primary">提交</button>
                         </div>                       
                     </div>
                     <!-- /.panel -->
@@ -241,7 +243,7 @@
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
-<script src="/yh/js/arap/CostReimbursement/edit.js"></script>
+<script src="/yh/js/arap/CostReimbursement/edit.js?v=1.0"></script>
 <script src="/yh/js/eeda-common.js"></script>
 <script>
 	var order_no = '${rei.order_no!''}';

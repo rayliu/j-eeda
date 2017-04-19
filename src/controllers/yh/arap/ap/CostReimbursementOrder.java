@@ -389,4 +389,11 @@ public class CostReimbursementOrder extends Controller {
     	renderJson("{\"success\":true}");
     }
     
+    @Before(Tx.class)
+    public void lock(){
+    	String id = getPara("id");
+    	Db.update("update reimbursement_order set lock_flag = 'Y' where id = ?",id);
+    	renderJson("{\"success\":true}");
+    }
+    
 }
