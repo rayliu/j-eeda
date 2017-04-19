@@ -241,6 +241,10 @@ where amco.order_no =$P{order_no}]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{creator_name}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="12" y="70" width="100" height="20" uuid="78237d49-2cac-4d7c-a29f-1e4faf2646cf"/>
+				<text><![CDATA[部门经理：]]></text>
+			</staticText>
 		</band>
 	</summary>
 </jasperReport>
