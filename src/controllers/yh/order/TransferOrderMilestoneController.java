@@ -354,7 +354,7 @@ public class TransferOrderMilestoneController extends Controller {
         		rec = Db.findFirst(sqlTotal);
         		Long departAmount = rec.getLong("departAmount");   ///运输单中已收货单品数量(包括这次数量)
         		
-        		if(departAmount == totalAmount){
+        		if(departAmount.equals(totalAmount)){
         			transferOrderMilestone.set("status", "已收货");
         			transferOrder.set("status", "已完成").update();
         			//生成回单
