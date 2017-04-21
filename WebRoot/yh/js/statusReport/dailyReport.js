@@ -25,7 +25,7 @@ $(document).ready(function() {
             {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
             {"mDataProp":"ORDER_TYPE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_FROM", "sWidth":"60px"},
-            {"mDataProp":null, "sWidth":"100px"},
+            {"mDataProp":"TRANSIT_PLACE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_TO", "sWidth":"60px"},
             {"mDataProp":null, "sWidth":"20px"},
             {"mDataProp":"PIECES", "sWidth":"20px","sClass": "pieces"},

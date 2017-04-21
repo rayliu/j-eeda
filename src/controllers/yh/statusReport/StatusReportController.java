@@ -823,7 +823,7 @@ public class StatusReportController extends Controller{
 						
 					
 				String sql = "SELECT *,round((yf_pickup+yf_depart+yf_insurance+delivery),2) yf_sum,round((ys_insurance+return_amount),2) ys_sum,round(((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery)),2)yz_amount,round(ifnull((((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery))/(ys_insurance+return_amount)),0),2) maolilv from "
-						+ " (SELECT tor.customer_id cid,"
+						+ " (SELECT tor.customer_id cid,if(tor.arrival_mode='gateIn',(select w.warehouse_name from warehouse w where w.id = tor.warehouse_id),'无') transit_place,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -875,7 +875,7 @@ public class StatusReportController extends Controller{
 						+ " WHERE tor.cargo_nature = 'ATM'"
 						+ condition
 						+ " UNION all"
-						+ " SELECT tor.customer_id cid,"
+						+ " SELECT tor.customer_id cid,if(tor.arrival_mode='gateIn',(select w.warehouse_name from warehouse w where w.id = tor.warehouse_id),'无') transit_place,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
