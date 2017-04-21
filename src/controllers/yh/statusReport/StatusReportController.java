@@ -908,7 +908,7 @@ public class StatusReportController extends Controller{
 						+ " ( SELECT ror.transaction_status"
 						+ " FROM return_order ror "
 						+ " WHERE ror.transfer_order_id = tor.id) return_status,"
-						+ " (select dep.status from depart_order dep"
+						+ " (select GROUP_CONCAT(dep.status) from depart_order dep"
 						+ " left join depart_transfer dt on dt.depart_id = dep.id"
 						+ " where dt.order_id = tor.id) depart_status,"
 						+ " (select dor.status from delivery_order dor"
