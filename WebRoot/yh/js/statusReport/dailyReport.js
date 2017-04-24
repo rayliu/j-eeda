@@ -27,7 +27,7 @@ $(document).ready(function() {
             {"mDataProp":"ROUTE_FROM", "sWidth":"60px"},
             {"mDataProp":"TRANSIT_PLACE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_TO", "sWidth":"60px"},
-            {"mDataProp":null, "sWidth":"20px"},
+            /*{"mDataProp":null, "sWidth":"20px"},*/
             {"mDataProp":"PIECES", "sWidth":"20px","sClass": "pieces"},
             {"mDataProp":"WEIGHT", "sWidth":"40px",
         		"fnRender": function(obj) {
@@ -90,18 +90,18 @@ $(document).ready(function() {
     	var type = $(this).attr("alt");
     	//0代表隐藏
     	if(type == 1){
-    		statusTable.fnSetColumnVis(15+1, false);
-    		statusTable.fnSetColumnVis(16+1, false);
-    		statusTable.fnSetColumnVis(17+1, false);
-    		statusTable.fnSetColumnVis(18+1, false);
-    		statusTable.fnSetColumnVis(19+1, false);
+    		statusTable.fnSetColumnVis(15, false);
+    		statusTable.fnSetColumnVis(16, false);
+    		statusTable.fnSetColumnVis(17, false);
+    		statusTable.fnSetColumnVis(18, false);
+    		statusTable.fnSetColumnVis(19, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
-    		statusTable.fnSetColumnVis(15+1, true);
-    		statusTable.fnSetColumnVis(16+1, true);
-    		statusTable.fnSetColumnVis(17+1, true);
-    		statusTable.fnSetColumnVis(18+1, true);
-    		statusTable.fnSetColumnVis(19+1, true);
+    		statusTable.fnSetColumnVis(15, true);
+    		statusTable.fnSetColumnVis(16, true);
+    		statusTable.fnSetColumnVis(17, true);
+    		statusTable.fnSetColumnVis(18, true);
+    		statusTable.fnSetColumnVis(19, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
@@ -111,14 +111,14 @@ $(document).ready(function() {
     	var type = $(this).attr("alt");
     	//0代表隐藏
     	if(type == 1){
-    		statusTable.fnSetColumnVis(21+1, false);
-    		statusTable.fnSetColumnVis(22+1, false);
-    		statusTable.fnSetColumnVis(23+1, false);
+    		statusTable.fnSetColumnVis(21, false);
+    		statusTable.fnSetColumnVis(22, false);
+    		statusTable.fnSetColumnVis(23, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
-    		statusTable.fnSetColumnVis(21+1, true);
-    		statusTable.fnSetColumnVis(22+1, true);
-    		statusTable.fnSetColumnVis(23+1, true);
+    		statusTable.fnSetColumnVis(21, true);
+    		statusTable.fnSetColumnVis(22, true);
+    		statusTable.fnSetColumnVis(23, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
@@ -254,7 +254,7 @@ $(document).ready(function() {
         ], 
         "columnDefs": [ 
             // 将Salary列变为红色
-            { "targets": [5+1], 
+            { "targets": [5], 
             	// 目标列位置，下标从0开始 
             	"data": "salary", 
             	// 数据列名 
