@@ -2949,7 +2949,7 @@ public class DepartOrderController extends Controller {
                      + " left join party p on p.id = tor.customer_id"
                      + " left join contact c on c.id = p.contact_id"
                      + " left join product pd on pd.id = toi.product_id"
-                     + " where toi.order_id in(" + id + ")  order by c.id ) a where (atmamount > 0 or cargoamount>0)" + sLimit;
+                     + " where toi.order_id in(" + id + ")  order by c.id ) a where if(a.cargo_nature='ATM',a.atmamount,a.cargoamount) > 0 " + sLimit;
 
         List<Record> departOrderitem = Db.find(sql);
         Map Map = new HashMap();
