@@ -2368,10 +2368,10 @@ public class DeliveryController extends Controller {
         List<Record> locationList = Collections.EMPTY_LIST;
         if (locationName.trim().length() > 0) {
             locationList = Db
-                    .find("select * from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.abbr like '%"+locationName+"%' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+                    .find("select *,p.id pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' and c.abbr like '%"+locationName+"%' and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
 
         } else {
-            locationList = Db.find("select * from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'  and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
+            locationList = Db.find("select *,p.id pid from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER'  and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')");
 
         }
         renderJson(locationList);
