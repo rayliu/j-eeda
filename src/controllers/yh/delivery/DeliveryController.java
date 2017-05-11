@@ -2235,7 +2235,7 @@ public class DeliveryController extends Controller {
         		+ " )"
         		+ " else (t1.amount)"
         		+ " end) amount,"
-        		+ " t1.complete_amount,t2.order_no,t2.customer_order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
+        		+ " t1.complete_amount,t2.order_no,t2.planning_time,t2.customer_order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
         		+ " (select sum(product_number) from delivery_order_item  toi left join delivery_order dor on dor.id = toi.delivery_id "
         		+ " where toi.transfer_no like '%" + transferOrderNo + "%' and toi.product_id = t1.product_id and dor.status = '新建') quantity "
         		+ " from transfer_order_item t1"

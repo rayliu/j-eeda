@@ -87,9 +87,10 @@ $(document).ready(function() {
 			    }
 			},   
 			{"mDataProp":"TID","bVisible": false},
-            {"mDataProp":"ITEM_NO"},
-            {"mDataProp":"ITEM_NAME"},
+            {"mDataProp":"ITEM_NO", "sWidth":"60px"},
+            {"mDataProp":"ITEM_NAME", "sWidth":"60px"},
             {"mDataProp":"ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
             {"mDataProp":"STATUS","bVisible": false},
             {"mDataProp":"CARGO_NATURE","bVisible": false,
@@ -261,7 +262,7 @@ $(document).ready(function() {
 				
 			}
 			
-			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(10).text());// 允许输入配送数量
+			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(11).text());// 允许输入配送数量
 			
 		}else{
 			$inputAmount.attr('disabled', true);// 不允许输入配送数量
