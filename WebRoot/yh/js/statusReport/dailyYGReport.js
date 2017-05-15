@@ -144,7 +144,7 @@ $(document).ready(function() {
 		statusTable.fnSettings()._iDisplayStart = 0;
     	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&order_no="+order_no
     											+"&customer_id=" +customer_id+"&route_to="+routeTo+"&serial_no="+serialNo
-    											+"&receive=" +receive+"&noreceive="+noreceive+"&inventory="+inventory+"&order_type=daily";
+    											+"&receive=" +receive+"&noreceive="+noreceive+"&inventory="+inventory+"&order_type=YGdaily";
     	statusTable.fnDraw(); 
 	    	/*$.get("/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 		    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType, null, function(data){

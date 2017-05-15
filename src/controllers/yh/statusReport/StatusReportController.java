@@ -275,6 +275,13 @@ public class StatusReportController extends Controller{
 	public void dailyReport() {		
 		render("/yh/statusReport/dailyReport.html");
 	}
+	
+	//运营（预估）日报表
+	public void dailyYGReport() {		
+		render("/yh/statusReport/dailyYGReport.html");
+	}
+	
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_PRODUCTINDEX_LIST})
 	public void productStatus() {
 		String order_no = getPara("order_no");
@@ -713,6 +720,7 @@ public class StatusReportController extends Controller{
 		String receive = getPara("receive");
 		String noreceive = getPara("noreceive");
 		String inventory = getPara("inventory");
+		String order_type = getPara("order_type");
 		String sLimit = "";
 		
 		String condition = "";
@@ -821,7 +829,9 @@ public class StatusReportController extends Controller{
 						+ " GROUP BY	tor.id"
 						+ " ) a";
 				
-				String sql = " SELECT"
+				
+				//预估
+				String yg_sql = " SELECT"
 						+ " 	*, round("
 						+ " 		("
 						+ " 			yf_pickup + yf_depart + yf_insurance + delivery"
@@ -1513,9 +1523,10 @@ public class StatusReportController extends Controller{
 						+ " 		tor.id "
 						+ " 	) a  ";
 						
-					
-				String sql_old = "SELECT *,round((yf_pickup+yf_depart+yf_insurance+delivery),2) yf_sum,round((ys_insurance+return_amount),2) ys_sum,round(((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery)),2)yz_amount,round(ifnull((((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery))/(ys_insurance+return_amount)),0),2) maolilv from "
-						+ " (SELECT tor.customer_id cid,if(tor.arrival_mode='gateIn',(select w.warehouse_name from warehouse w where w.id = tor.warehouse_id),'无') transit_place,"
+			    //营运报表
+				String yy_sql = "SELECT *,round((yf_pickup+yf_depart+yf_insurance+delivery),2) yf_sum,round((ys_insurance+return_amount),2) ys_sum,round(((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery)),2)yz_amount,round(ifnull((((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery))/(ys_insurance+return_amount)),0),2) maolilv from "
+						+ " (SELECT tor.customer_id cid,"
+						+ "if(tor.arrival_mode='gateIn',(select w.warehouse_name from warehouse w where w.id = tor.warehouse_id),'无') transit_place,"
 						+"		(case   when (select l.id from location l  "
 		                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
 		                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
@@ -1548,10 +1559,10 @@ public class StatusReportController extends Controller{
 						+ " ifnull((SELECT sum(rof.amount) FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id WHERE dor.id = toid.delivery_id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),"
 						+ " (SELECT ifnull(sum(rof1.amount), 0) FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE	ror.transfer_order_id = toid.order_id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount ,"
 						+ " ifnull( "
-						+ " ( SELECT ror.transaction_status FROM  return_order ror "
+						+ " ( SELECT GROUP_CONCAT(ror.transaction_status) FROM  return_order ror "
 						+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
 						+ " WHERE ror.transaction_status ),"
-						+ " ( SELECT ror.transaction_status"
+						+ " ( SELECT GROUP_CONCAT(ror.transaction_status)"
 						+ " FROM return_order ror "
 						+ " WHERE ror.transfer_order_id = toid.order_id ) ) return_status,"
 						+ " ( SELECT dep.status FROM depart_order dep"
@@ -1597,7 +1608,7 @@ public class StatusReportController extends Controller{
 						+ " round((SELECT	IFNULL(sum(dofi1.amount),0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id and d_o.audit_status='对账已确认' AND  fi.type = '应付'),2) delivery,"
 						+ " ifnull((SELECT sum(rof.amount)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id"
 						+ " WHERE doi.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount,"
-						+ " ( SELECT ror.transaction_status"
+						+ " ( SELECT GROUP_CONCAT(ror.transaction_status)"
 						+ " FROM return_order ror "
 						+ " WHERE ror.transfer_order_id = tor.id) return_status,"
 						+ " (select GROUP_CONCAT(dep.status) from depart_order dep"
@@ -1633,6 +1644,12 @@ public class StatusReportController extends Controller{
 					conditions +=" and status = '已入库' or status = '部分已入库' or (status = '处理中' and delivery_status is null and depart_status ='已入库')";
 				}
 				
+				String sql = "";
+				if("YGdaily".equals(order_type)){
+					sql = yg_sql;
+				}else{
+					sql = yy_sql;
+				}
 				List<Record> orders =Db.find(sql+ conditions +" order by planning_time desc" + sLimit);
 				orderMap.put("sEcho", pageIndex);
 				orderMap.put("iTotalRecords", rec.getLong("total"));
