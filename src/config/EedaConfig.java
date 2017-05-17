@@ -170,7 +170,7 @@ public class EedaConfig extends JFinalConfig {
         //加载配置文件    	
         loadPropertyFile("app_config.txt");
         
-        me.setDevMode(getPropertyToBoolean("devMode", false));
+        me.setDevMode(true);
         
     	// ApiConfigKit 设为开发模式可以在开发阶段输出请求交互的 xml 与 json 数据
     	ApiConfigKit.setDevMode(me.getDevMode());
@@ -364,7 +364,7 @@ public class EedaConfig extends JFinalConfig {
         me.add(cp);
 
         arp = new ActiveRecordPlugin(cp);
-        arp.setShowSql(true);// 控制台打印Sql
+//        arp.setShowSql(true);// 控制台打印Sql
         SqlReporter.setLogger(true);// log4j 打印Sql
         me.add(arp);
 
