@@ -14,6 +14,7 @@ import models.UserOffice;
 import models.UserRole;
 import models.yh.profile.OfficeCofig;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -302,6 +303,21 @@ public class OfficeController extends Controller {
     		}
     	}
     	renderJson(result);
+    }
+    
+    public void search(){
+    	String input = getPara("input");
+    	
+    	String conditions = " where 1=1 ";
+    	if(StringUtils.isNotBlank(input)){
+    		conditions += " and office_name like '%"+input+"%'";
+    	}
+    	
+    	String sql = "select * from office";
+    	
+    	List<Record> re = Db.find(sql+conditions);
+    	
+    	renderJson(re);
     }
     
 
