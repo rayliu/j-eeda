@@ -57,6 +57,15 @@
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="order_no" name="order_no" value="${rei.order_no!''}" readonly="true">
 			                                            </div>
 			                                            <div class="form-group">
+				                                            <%include("/yh/component/form/inputOfficeField.html", 
+				                                                {
+				                                                    id:'office_id', 
+				                                                    label:'报销网点', 
+				                                                    value:rei.office_id!'',
+				                                                    display_value: re_office_name!''
+				                                                }){} %>
+				                                        </div>
+			                                            <div class="form-group">
 			                                                <label class="search-label">状态</label>
 			                                                <input type="text" class="form-control search-control orderNo_filter" id="status" name="status" value="${rei.status!''}" readonly="true">
 			                                            </div>
@@ -243,7 +252,7 @@
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
-<script src="/yh/js/arap/CostReimbursement/edit.js?v=1.0"></script>
+<script src="/yh/js/arap/CostReimbursement/edit.js?v=1.1"></script>
 <script src="/yh/js/eeda-common.js"></script>
 <script>
 	var order_no = '${rei.order_no!''}';

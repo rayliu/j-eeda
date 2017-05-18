@@ -11,6 +11,7 @@ import java.util.Map;
 import models.Account;
 import models.DeliveryOrderMilestone;
 import models.FinItem;
+import models.Office;
 import models.UserLogin;
 import models.yh.arap.ReimbursementOrder;
 import models.yh.arap.ReimbursementOrderFinItem;
@@ -75,6 +76,7 @@ public class CostReimbursementOrder extends Controller {
 		String remark = getPara("remark");
 		String invoicePayment = getPara("invoice_payment");
 		String payment_type = getPara("payment_type");
+		String office_id = getPara("office_id");
 		String orderNo = null;
 		ReimbursementOrder rei = null;
 		if (id == null || "".equals(id)) {
@@ -93,6 +95,10 @@ public class CostReimbursementOrder extends Controller {
 				}
 				rei.set("fin_account_id", accId);
 			}
+			if(StringUtils.isNotBlank(office_id)){
+				rei.set("office_id", office_id);
+			}
+			
 			rei.set("order_no", orderNo).set("status", "新建")
 					.set("account_name", accountName).set("account_no", accountNo)
 					.set("create_id", userId).set("account_bank", account_bank)
@@ -113,6 +119,9 @@ public class CostReimbursementOrder extends Controller {
 					accId=null;
 				}
 				rei.set("fin_account_id", accId);
+			}
+			if(StringUtils.isNotBlank(office_id)){
+				rei.set("office_id", office_id);
 			}
 			rei.set("account_name", accountName).set("account_no", accountNo).set("account_bank", account_bank)
 				.set("invoice_payment", invoicePayment).set("payment_type", payment_type)
@@ -150,11 +159,12 @@ public class CostReimbursementOrder extends Controller {
         if(orderNo == null && status == null ){
 	        sqlTotal = "select count(1) total from reimbursement_order ro where ro.order_no like 'YFBX%' and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null)) ";
 	    	 
-	        sql = "select ro.*,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
+	        sql = "select ro.*,off.office_name,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro "
+	        		+ " left join office off on off.id = ro.office_id"
 	        		+ " left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
 	        		+ " where ro.order_no like 'YFBX%' and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))  group by ro.id";
@@ -167,13 +177,14 @@ public class CostReimbursementOrder extends Controller {
         			+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
         			+ " and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))";	
 	    	 
-	        sql = "select ro.*,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
+	        sql = "select ro.*,off.office_name,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " left join user_login u on u.id  = ro.audit_id "
 	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
+	        		+ " left join office off on off.id = ro.office_id"
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
@@ -199,6 +210,14 @@ public class CostReimbursementOrder extends Controller {
 	public void edit(){
 		String id = getPara("id");
 		ReimbursementOrder rei = ReimbursementOrder.dao.findById(id);
+		Long office_id = rei.getLong("office_id");
+		if(office_id != null){
+			Office off = Office.dao.findById(office_id);
+			if(off != null){
+				setAttr("re_office_name", off.get("office_name"));
+			}
+		}
+		
 		setAttr("rei", rei);
 		Account acc=Account.dao.findById(rei.get("fin_account_id"));
 		setAttr("acc",acc);

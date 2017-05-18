@@ -30,6 +30,7 @@ $(document).ready(function() {
 			},
             {"mDataProp":"STATUS", "sWidth":"200px","sClass":"status"},
             {"mDataProp":"ACCOUNT_NAME", "sWidth":"200px"},
+            {"mDataProp":"OFFICE_NAME", "sWidth":"200px"},
             {"mDataProp":"ACCOUNT_NO", "sWidth":"200px"},
             {"mDataProp":"ACCOUNT_BANK", "sWidth":"200px"},
             {"mDataProp":"F_NAME", "sWidth":"200px"},
