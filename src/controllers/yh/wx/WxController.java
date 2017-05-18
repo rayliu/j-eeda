@@ -734,14 +734,19 @@ public class WxController extends ApiController {
 		String openid = getPara("openid");
 		String departOrder = getPara("orderNo").toUpperCase();
 		String carNo = getPara("carNo").toUpperCase();
+		String customer = getPara("customer");
 		Record userRec = Db.findFirst("select * from user_login where wechat_openid =?", openid);
 		String conditions=" where 1 = 1 ";
-		if(StringUtils.isNotEmpty(departOrder)){
+		if(StringUtils.isNotBlank(departOrder)){
 			conditions += " and dor.depart_no like '%"+departOrder+"%'";
 		}
 			
-		if(StringUtils.isNotEmpty(carNo)){
+		if(StringUtils.isNotBlank(carNo)){
 			conditions += " and dor.car_no like '%"+carNo+"%'";
+		}
+		
+		if(StringUtils.isNotBlank(customer)){
+			conditions += " and (c.abbr like '%"+customer+"%' or c.company_name like '%"+customer+"%')";
 		}
 
 		String sql = "select tor.id,dor.id pickup_id,dor.depart_no pickup_no,dt.amount,dor.car_no,tor.customer_id,c.abbr customer_name,tor.order_no,l.`name` route_to, "

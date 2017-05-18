@@ -5,7 +5,7 @@ $(document).ready(function() {
 	$("#searchNo").click(function(){
 		$('#massage').empty();
 		$('#show').css('display','none');
-		if($('#orderNo').val().trim() == '' && $('#carNo').val().trim() == ''){
+		if($('#orderNo').val().trim() == '' && $('#carNo').val().trim() == '' && $('#customer').val().trim() == ''){
     		return;
     	}
 		//加载中
