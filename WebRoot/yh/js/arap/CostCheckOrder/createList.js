@@ -56,10 +56,14 @@ $(document).ready(function() {
     	$.post('/costCheckOrder/delete',{jsonStr:JSON.stringify(jsonj)},function(data){
     		if(data.success){
     			$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
+    			$('#checkedOrderId').val('');
+    			$('#checkedOrderNo').val('');
+    			$('#saveBtn').attr('disabled',true);
+    			refreshCreateList();
     			
-    			for(var i = 0;i<$checked.length;i++){
-            		$checked[i].parent().parent().hide();
-            	}
+//    			for(var i = 0;i<$checked.length;i++){
+//            		$checked[i].parent().parent().hide();
+//            	}
     		}else{
     			$.scojs_message('撤回失败', $.scojs_message.TYPE_ERROR);
     		}
@@ -454,8 +458,10 @@ $(document).ready(function() {
 	
 	//检查勾选的单据是否有金额为0的
 	var flag=0;
+	var id_flag = 0;
 	var confirmChecked = function(){
 			    $('#uncheckedCostCheck-table input[type="checkbox"]:checked').each(function(){
+			    	id_flag++;
 			    		var change_amo = $(this).attr('change_amount');
 			    		if(change_amo=='0'){
 			    			flag++;
@@ -466,14 +472,17 @@ $(document).ready(function() {
 	$('#saveBtn').click(function(e){
         e.preventDefault();
         confirmChecked();
-    	if(flag>0){
+        if(id_flag>0){
+        	if(flag>0){
 		    	if(confirm("您勾选的单据其中包含了金额为0的单据,是否继续创建？")){
 					$('#createForm').submit();
 				}
-    	}else{
-    		$('#createForm').submit();
-    	}
-    	
+	    	}else{
+	    		$('#createForm').submit();
+	    	}
+        }else{
+        	alert('请勾选单据');
+        }
     });
 	
 	$("#uncheckedCostCheck-table").on('blur', 'input:text', function(e){
