@@ -9,6 +9,7 @@ $(document).ready(function() {
     
     var costAcceptOrderTab = $('#costAccept-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
+        "bProcessing": true,
         "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": false,
@@ -108,6 +109,7 @@ $(document).ready(function() {
     var applicationTab = $('#application-table').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "bSort": true, 
+        "bProcessing": true,
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": false,
         "iDisplayLength": 100,
