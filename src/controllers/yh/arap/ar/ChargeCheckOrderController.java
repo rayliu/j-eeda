@@ -5,6 +5,7 @@ import interceptor.SetAttrLoginUserInterceptor;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -461,7 +462,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " ELSE "
 				+ " ( SELECT group_concat( DISTINCT toid.serial_no  SEPARATOR  '<br/>' )"
 				+ " FROM transfer_order_item_detail toid "
-				+ " WHERE toid.order_id = tor.id ) END ) serial_no"
+				+ " WHERE toid.order_id = tor.id ) END ) serial_no,'回单' order_ty "
 				+ " from return_order ror"
 				+ " left join transfer_order tor on tor.id = ror.transfer_order_id left join party p on p.id = tor.customer_id left join contact c on c.id = p.contact_id "
 				+ " left join depart_transfer dt on (dt.order_id = tor.id and ifnull(dt.pickup_id, 0)>0)"
@@ -486,7 +487,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " 	where amcoi.misc_order_id = amco.id) customer_order_no,"
 				+ " NULL route_from,NULL route_to,NULL contract_amount,NULL pickup_amount,NULL step_amount,NULL warehouse_amount,NULL send_amount,"
 				+ " NULL installation_amount,NULL super_mileage_amount,NULL insurance_amount,amco.total_amount charge_total_amount , "
-				+ " c1.abbr sp,null serial_no "
+				+ " c1.abbr sp,null serial_no,'收入单' order_ty "
 				+ " FROM arap_misc_charge_order amco"
 				+"    LEFT JOIN party p ON p.id = amco.customer_id"
 				+"    LEFT JOIN contact c ON c.id = p.contact_id"
@@ -1319,4 +1320,33 @@ public class ChargeCheckOrderController extends Controller {
 			renderJson("{\"success\":false}");
 		}
 	}
+	
+	
+	//已确认的撤销会未确认
+	@Before(Tx.class)
+	public void deleteConfirm() {
+		String jsonStr=getPara("jsonStr");
+       	Gson gson = new Gson();  
+        Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);  
+		
+        List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get("jsonArray");
+        
+        for(Map<String, String> li:itemList){
+        	String id = (String) li.get("id");
+    		String order_type =(String) li.get("order_type");
+    		
+    		if ("回单".equals(order_type)) {
+				ReturnOrder ror = ReturnOrder.dao.findById(id);
+				ror.set("transaction_status", "新建");
+				ror.update();
+			} else if ("收入单".equals(order_type)) {
+				ArapMiscChargeOrder amco = ArapMiscChargeOrder.dao
+						.findById(id);
+				amco.set("status", "新建");
+				amco.update();
+			} 
+        }
+		renderJson("{\"success\":true}");
+	}
+	
 }

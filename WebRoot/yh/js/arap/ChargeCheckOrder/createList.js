@@ -17,6 +17,11 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('order_ty', aData.ORDER_TY);
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
         "sAjaxSource": "/chargeCheckOrder/createList",
         "aoColumns": [
 	          { "mDataProp": null, "sWidth":"20px","bSortable": false,
@@ -277,7 +282,7 @@ $(document).ready(function() {
 	});
 	$('#saveBtn').click(function(e){
         e.preventDefault();
-        if(returnIds.length>0 || miscOrderIds){
+        if(returnIds.length>0 || miscOrderIds.length>0){
         	$('#createForm').submit();
         }else{
         	$.scojs_message('对不起，当前你没有选择需要对账的单据', $.scojs_message.TYPE_ERROR);
@@ -423,5 +428,51 @@ $(document).ready(function() {
         $(".bootstrap-datetimepicker-widget").hide();
         $('#endTime_filter1').trigger('keyup');
     });
+    
+    
+    //批量撤销功能
+    $('#deleteAllBtn').on('click',function(e){
+    	var self= this;
+    	$(self).prop('disabled',true);
+    	var jsonj = {};
+    	var jsonArray = [];
+    	var $checked = [];
+    	$('#uncheckedChargeCheck-table input[name="order_check_box"]').each(function(){
+    		var check = $(this).prop('checked');
+    		if(check){
+    			var id = $(this).parent().parent().attr('id');
+    			var order_type = $(this).parent().parent().attr('order_ty');
+    			var jsonStr = {};
+    			jsonStr.id = id;
+    			jsonStr.order_type = order_type;
+    			jsonArray.push(jsonStr);
+    			$checked.push($(this));
+    		}
+    	})
+    	jsonj.jsonArray= jsonArray;
+    	if(jsonArray.length<1){
+    		$.scojs_message('请勾选您要撤回的单据', $.scojs_message.TYPE_ERROR);
+    		$(self).prop('disabled',false);
+    		return false;
+    	}
+    	
+    	$.post('/chargeCheckOrder/deleteConfirm',{jsonStr:JSON.stringify(jsonj)},function(data){
+    		if(data.success){
+    			cName = [];
+    			returnIds = [];
+    		    miscOrderIds =[];
+    		    $('#saveBtn').attr('disabled',true);
+    			$.scojs_message('撤回成功', $.scojs_message.TYPE_OK);
+    			refreshCreate();
+    			
+//    			for(var i = 0;i<$checked.length;i++){
+//            		$checked[i].parent().parent().hide();
+//            	}
+    		}else{
+    			$.scojs_message('撤回失败', $.scojs_message.TYPE_ERROR);
+    		}
+    		$(self).prop('disabled',false);
+    	})
+    })
    
 } );
