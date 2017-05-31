@@ -89,8 +89,10 @@ $(document).ready(function() {
 	 
 	
 	$("#confirmBtn").click(function(e){
+		if(!confirm('更改数据前请确认是否已保存数据？')){
+			return false;
+		}
 		$("#confirmBtn").attr("disabled",true);
-		saveTransferOrder();
 		confiremBtnTransferOrder();
 	});
 	
