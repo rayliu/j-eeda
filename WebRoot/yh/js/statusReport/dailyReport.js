@@ -27,7 +27,8 @@ $(document).ready(function() {
             {"mDataProp":"ROUTE_FROM", "sWidth":"60px"},
             {"mDataProp":"TRANSIT_PLACE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_TO", "sWidth":"60px"},
-            /*{"mDataProp":null, "sWidth":"20px"},*/
+            {"mDataProp":"FULL_ADDRESS", "sWidth":"180px"},
+            {"mDataProp":"ITEM_NO", "sWidth":"60px"},
             {"mDataProp":"PIECES", "sWidth":"20px","sClass": "pieces"},
             {"mDataProp":"WEIGHT", "sWidth":"40px",
         		"fnRender": function(obj) {
