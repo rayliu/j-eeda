@@ -26,18 +26,20 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_TYPE", "sWidth":"100px"},
             {"mDataProp":"ROUTE_FROM", "sWidth":"60px"},
             {"mDataProp":"TRANSIT_PLACE", "sWidth":"100px"},
-            {"mDataProp":"ROUTE_TO", "sWidth":"60px"},
+            {"mDataProp":"ROUTE_TO", "sWidth":"60px"},//10
             {"mDataProp":"FULL_ADDRESS", "sWidth":"180px"},
             {"mDataProp":"ITEM_NO", "sWidth":"60px"},
             {"mDataProp":"PIECES", "sWidth":"20px","sClass": "pieces"},
             {"mDataProp":"WEIGHT", "sWidth":"40px",
         		"fnRender": function(obj) {
         			return "<p align='right'>"+parseFloat(obj.aData.WEIGHT).toFixed(2)+"</p>";
-        	}},
+        		}
+            },
             {"mDataProp":"VOLUME", "sWidth":"40px",
         		"fnRender": function(obj) {
         			return "<p align='right'>"+parseFloat(obj.aData.VOLUME).toFixed(2)+"</p>";
-        	}},
+        		}
+        	},//15
             {"mDataProp":"YZ_AMOUNT", "sWidth":"40px",
             		"fnRender": function(obj) {
             			return "<p align='right'>"+parseFloat(obj.aData.YZ_AMOUNT).toFixed(2)+"</p>";
@@ -46,7 +48,8 @@ $(document).ready(function() {
             {"mDataProp":"MAOLILV", "sWidth":"40px",
         		"fnRender": function(obj) {
         			return "<p align='right'>"+parseFloat(obj.aData.MAOLILV*100).toFixed(2)+"%"+"</p>";
-           }},
+        		}
+            },
             {"mDataProp":"YF_PICKUP", "sWidth":"40px", "bVisible":false,
             		"fnRender": function(obj) {
             			return "<p align='right'>"+parseFloat(obj.aData.YF_PICKUP).toFixed(2)+"</p>";
@@ -61,29 +64,34 @@ $(document).ready(function() {
                 	"fnRender": function(obj) {
                 		return "<p align='right'>"+parseFloat(obj.aData.DELIVERY).toFixed(2)+"</p>";
                 }
-            },
+            },//20
             {"mDataProp":"YF_INSURANCE", "sWidth":"40px", "bVisible":false,
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.YF_INSURANCE).toFixed(2)+"</p>";
-            }},
+            	}
+            },
             {"mDataProp":null, "sWidth":"70px", "bVisible":false},
             {"mDataProp":"YF_SUM", "sWidth":"60px",
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.YF_SUM).toFixed(2)+"</p>";
-            }},
+            	}
+            },
             {"mDataProp":"YS_INSURANCE", "sWidth":"40px", "bVisible":false,
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.YS_INSURANCE).toFixed(2)+"</p>";
-            }},
+            	}
+            },
             {"mDataProp":"RETURN_AMOUNT", "sWidth":"40px", "bVisible":false,
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.RETURN_AMOUNT).toFixed(2)+"</p>";
-            }},
-            {"mDataProp":null, "sWidth":"70px", "bVisible":false},
+            	}
+            },
+            {"mDataProp":null, "sWidth":"70px", "bVisible":false},//25
             {"mDataProp":"YS_SUM", "sWidth":"60px",
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.YS_SUM).toFixed(2)+"</p>";
-            }}
+            	}
+            }
         ]
     });	  
     //成本隐藏与展开
@@ -91,18 +99,18 @@ $(document).ready(function() {
     	var type = $(this).attr("alt");
     	//0代表隐藏
     	if(type == 1){
-    		statusTable.fnSetColumnVis(15, false);
-    		statusTable.fnSetColumnVis(16, false);
     		statusTable.fnSetColumnVis(17, false);
     		statusTable.fnSetColumnVis(18, false);
     		statusTable.fnSetColumnVis(19, false);
+    		statusTable.fnSetColumnVis(20, false);
+    		statusTable.fnSetColumnVis(21, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
-    		statusTable.fnSetColumnVis(15, true);
-    		statusTable.fnSetColumnVis(16, true);
     		statusTable.fnSetColumnVis(17, true);
     		statusTable.fnSetColumnVis(18, true);
     		statusTable.fnSetColumnVis(19, true);
+    		statusTable.fnSetColumnVis(20, true);
+    		statusTable.fnSetColumnVis(21, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
@@ -112,14 +120,16 @@ $(document).ready(function() {
     	var type = $(this).attr("alt");
     	//0代表隐藏
     	if(type == 1){
-    		statusTable.fnSetColumnVis(21, false);
     		statusTable.fnSetColumnVis(22, false);
     		statusTable.fnSetColumnVis(23, false);
+    		statusTable.fnSetColumnVis(24, false);
+    		statusTable.fnSetColumnVis(25, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
-    		statusTable.fnSetColumnVis(21, true);
     		statusTable.fnSetColumnVis(22, true);
     		statusTable.fnSetColumnVis(23, true);
+    		statusTable.fnSetColumnVis(24, true);
+    		statusTable.fnSetColumnVis(25, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
@@ -128,10 +138,13 @@ $(document).ready(function() {
     $("#queryBtn").on('click', function () {
     	var beginTime = $("#start_date").val();
         var endTime = $("#end_date").val();
+        var complete_time_begin_time = $("#complete_time_begin_time").val();
+        var complete_time_end_time = $("#complete_time_end_time").val();
     	var order_no = $("#order_no").val();
     	var customer_id = $("#customer_id").val();
     	var routeTo = $("#routeTo").val();
     	var serialNo = $("#serialNo").val();
+    	var trans_type = $("#trans_type").val();
     	var receive = $("[name=receive]").prop('checked');
     	var noreceive = $("[name=noreceive]").prop('checked');
     	var inventory = $("[name=inventory]").prop('checked');
@@ -145,7 +158,8 @@ $(document).ready(function() {
 		statusTable.fnSettings()._iDisplayStart = 0;
     	statusTable.fnSettings().sAjaxSource = "/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&order_no="+order_no
     											+"&customer_id=" +customer_id+"&route_to="+routeTo+"&serial_no="+serialNo
-    											+"&receive=" +receive+"&noreceive="+noreceive+"&inventory="+inventory+"&order_type=daily";
+    											+"&receive=" +receive+"&noreceive="+noreceive+"&inventory="+inventory+"&order_type=daily"
+    											+"&trans_type="+trans_type+"&complete_time_begin_time="+complete_time_begin_time+"&complete_time_end_time="+complete_time_end_time;
     	statusTable.fnDraw(); 
 	    	/*$.get("/statusReport/dailyReportStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no
 		    		+"&order_no="+order_no+"&customer_id="+customer_id+"&customer_order_no="+customer_order_no+"&item_no="+item_no+"&cargoType="+cargoType, null, function(data){

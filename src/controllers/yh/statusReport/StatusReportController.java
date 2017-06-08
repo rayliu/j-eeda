@@ -721,9 +721,12 @@ public class StatusReportController extends Controller{
 		String noreceive = getPara("noreceive");
 		String inventory = getPara("inventory");
 		String order_type = getPara("order_type");
+		String trans_type = getPara("trans_type");
+		String compl_begin_time = getPara("complete_time_begin_time");
+		String compl_end_time = getPara("complete_time_end_time");
 		String sLimit = "";
 		
-		String condition = "";
+		String condition = "";   //直接从内部开始过滤数据
 		String conditions = "";
 		if(orderNo != null || customerId != null || beginTime != null|| endTime != null ){
 			String time ="";
@@ -738,6 +741,9 @@ public class StatusReportController extends Controller{
 				endTime = "2037-12-31";
 			}
 			conditions =" where 1=1";
+			if(StringUtils.isNotBlank(trans_type)){
+				condition +=" and tor.order_type ='"+ trans_type + "' ";
+			}
 			if(!"".equals(customerId)){
 				condition +=" and tor.customer_id ="+ customerId + " ";
 			}
@@ -1111,7 +1117,7 @@ public class StatusReportController extends Controller{
 						+ " 						AND fi.type = '应付' "
 						+ " 					) / ( "
 						+ " 						SELECT "
-						+ " 							count(0) "
+						+ " 							if(count(1)=0,1,count(1)) "
 						+ " 						FROM "
 						+ " 							transfer_order_item_detail "
 						+ " 						WHERE "
@@ -1426,18 +1432,18 @@ public class StatusReportController extends Controller{
 						+ " 			2 "
 						+ " 		) ys_insurance, "
 						+ " 		round( "
-						+ " 			( "
+						+ " 			ifnull(( "
 						+ " 				SELECT "
 						+ " 					IFNULL(sum(dofi1.amount), (select ifnull(cit.amount,0) from contract_item cit  "
-						+ " LEFT JOIN contract ct on ct.id = cit.contract_id "
-						+ " where  "
-						+ " ct.type = 'DELIVERY_SERVICE_PROVIDER' "
-						+ " and d_o.route_from = cit.from_id "
-						+ " and d_o.route_to = cit.to_id "
-						+ " and d_o.sp_id = ct.party_id "
-						+ " and d_o.priceType = cit.pricetype "
-						+ " and d_o.car_type = cit.carType"
-						+ " )) "
+						+ " 			LEFT JOIN contract ct on ct.id = cit.contract_id "
+						+ " 			where  "
+						+ " 			ct.type = 'DELIVERY_SERVICE_PROVIDER' "
+						+ " 			and d_o.route_from = cit.from_id "
+						+ " 			and d_o.route_to = cit.to_id "
+						+ " 			and d_o.sp_id = ct.party_id "
+						+ " 			and d_o.priceType = cit.pricetype "
+						+ " 			and d_o.car_type = cit.carType"
+						+ " 			)) "
 						+ " 				FROM "
 						+ " 					delivery_order d_o "
 						+ " 				LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id "
@@ -1446,7 +1452,7 @@ public class StatusReportController extends Controller{
 						+ " 				WHERE "
 						+ " 					doi.transfer_order_id = tor.id "
 						+ " 				AND fi.type = '应付' "
-						+ " 			), "
+						+ " 			),0), "
 						+ " 			2 "
 						+ " 		) delivery, "
 						+ " 		ifnull( "
@@ -1614,7 +1620,7 @@ public class StatusReportController extends Controller{
 						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) yf_insurance,"
 						+ " round(ifnull((SELECT IFNULL(sum(ifi.insurance_amount),0) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应收')/(SELECT	COUNT(*) FROM	insurance_order i"
 						+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) ys_insurance,"
-						+ " round((SELECT	IFNULL(sum(dofi1.amount),0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id and d_o.audit_status='对账已确认' AND  fi.type = '应付'),2) delivery,"
+						+ " round(ifnull((SELECT	IFNULL(sum(dofi1.amount),0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id and d_o.audit_status='对账已确认' AND  fi.type = '应付'),0),2) delivery,"
 						+ " ifnull((SELECT sum(rof.amount)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id"
 						+ " WHERE doi.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount,"
 						+ " ( SELECT GROUP_CONCAT(ror.transaction_status)"
