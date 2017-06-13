@@ -141,7 +141,11 @@ public class DeliveryOrderMilestoneController extends Controller {
   				//修改运输单已完成数量
   				TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
   				double outCompleteAmount = transferOrderItem.getDouble("complete_amount")==null?0:transferOrderItem.getDouble("complete_amount");
-  				double newCompleteAmount = outCompleteAmount + Double.parseDouble(shippingNumber[i]);
+  				String shiNumber = shippingNumber[i];
+  				if(StringUtils.isBlank(shippingNumber[i])){
+  					shiNumber = transferOrderItem.getDouble("amount").toString();
+  				}
+  				double newCompleteAmount = outCompleteAmount + Double.parseDouble(shiNumber);
   				transferOrderItem.set("complete_amount", newCompleteAmount).update();
   				
 //  				//货品明细表
