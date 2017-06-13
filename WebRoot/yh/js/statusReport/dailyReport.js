@@ -40,6 +40,7 @@ $(document).ready(function() {
         			return "<p align='right'>"+parseFloat(obj.aData.VOLUME).toFixed(2)+"</p>";
         		}
         	},//15
+        	{"mDataProp":"F_STATUS", "sWidth":"60px"},
             {"mDataProp":"YZ_AMOUNT", "sWidth":"40px",
             		"fnRender": function(obj) {
             			return "<p align='right'>"+parseFloat(obj.aData.YZ_AMOUNT).toFixed(2)+"</p>";
@@ -99,18 +100,20 @@ $(document).ready(function() {
     	var type = $(this).attr("alt");
     	//0代表隐藏
     	if(type == 1){
-    		statusTable.fnSetColumnVis(17, false);
+    		
     		statusTable.fnSetColumnVis(18, false);
     		statusTable.fnSetColumnVis(19, false);
     		statusTable.fnSetColumnVis(20, false);
     		statusTable.fnSetColumnVis(21, false);
+    		statusTable.fnSetColumnVis(22, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
-    		statusTable.fnSetColumnVis(17, true);
+    		
     		statusTable.fnSetColumnVis(18, true);
     		statusTable.fnSetColumnVis(19, true);
     		statusTable.fnSetColumnVis(20, true);
     		statusTable.fnSetColumnVis(21, true);
+    		statusTable.fnSetColumnVis(22, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
@@ -120,16 +123,18 @@ $(document).ready(function() {
     	var type = $(this).attr("alt");
     	//0代表隐藏
     	if(type == 1){
-    		statusTable.fnSetColumnVis(22, false);
+    		
     		statusTable.fnSetColumnVis(23, false);
     		statusTable.fnSetColumnVis(24, false);
     		statusTable.fnSetColumnVis(25, false);
+    		statusTable.fnSetColumnVis(26, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
-    		statusTable.fnSetColumnVis(22, true);
+    		
     		statusTable.fnSetColumnVis(23, true);
     		statusTable.fnSetColumnVis(24, true);
     		statusTable.fnSetColumnVis(25, true);
+    		statusTable.fnSetColumnVis(26, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
