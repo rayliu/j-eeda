@@ -463,18 +463,18 @@ $(document).ready(function() {
     });
   //获取所有的网点
 
-	$.post('/transferOrder/searchPartOffice',function(data){
-	 if(data.length > 0){
-		 var officeSelect = $("#officeSelect");
-		 officeSelect.empty();
-		 officeSelect.append("<option ></option>");
-		
-		 for(var i=0; i<data.length; i++){
-			 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
-		 }
-		
-	 }
- },'json');
+//	$.post('/transferOrder/searchPartOffice',function(data){
+//	 if(data.length > 0){
+//		 var officeSelect = $("#officeSelect");
+//		 officeSelect.empty();
+//		 officeSelect.append("<option ></option>");
+//		
+//		 for(var i=0; i<data.length; i++){
+//			 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+//		 }
+//		
+//	 }
+// },'json');
 	/*----------------------------提示所需JS-----------------------------------*/
 	var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable"  style="display:none">'+
 	    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+

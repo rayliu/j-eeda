@@ -111,15 +111,15 @@
     };
 
 	//获取所有的网点
-    $.post('/transferOrder/searchPartOffice',function(data){
-    	if(data.length > 0){
-    		var officeSelect = $("#officeSelect");
-	   		officeSelect.empty();
-	   		officeSelect.append("<option ></option>");      		 
-	   		for(var i=0; i<data.length; i++)
-	   			officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");
-    	}
-    },'json');
+//    $.post('/transferOrder/searchPartOffice',function(data){
+//    	if(data.length > 0){
+//    		var officeSelect = $("#officeSelect");
+//	   		officeSelect.empty();
+//	   		officeSelect.append("<option ></option>");      		 
+//	   		for(var i=0; i<data.length; i++)
+//	   			officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");
+//    	}
+//    },'json');
     
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){

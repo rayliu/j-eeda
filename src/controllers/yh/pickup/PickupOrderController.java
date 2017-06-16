@@ -68,6 +68,12 @@ public class PickupOrderController extends Controller {
     public void index() {
     	Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
     	setAttr("customizeField", customizeField);
+    	
+    	List<Record> re = Db.find("SELECT o.id,o.office_name FROM transfer_order tor "
+    			+ " LEFT JOIN office o on o.id = tor.office_id"
+    			+ " where tor.office_id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal() + "')  GROUP BY o.id ;");
+    	setAttr("officeList", re);
 
         render("/yh/pickup/pickupOrderList.html");
     }

@@ -64,10 +64,22 @@ public class DepartOrderController extends Controller {
 	private static final String DEPART_ORDER_TOKEN="depart_order_token";
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_LIST})
 	public void index() {
+		
+		List<Record> re = Db.find("SELECT o.id,o.office_name FROM transfer_order tor "
+    			+ " LEFT JOIN office o on o.id = tor.office_id"
+    			+ " where tor.office_id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal() + "')  GROUP BY o.id ;");
+    	setAttr("officeList", re);
+		
 		render("/yh/departOrder/departOrderList.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
 	public void onTrip() {
+		List<Record> re = Db.find("SELECT o.id,o.office_name FROM transfer_order tor "
+    			+ " LEFT JOIN office o on o.id = tor.office_id"
+    			+ " where tor.office_id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal() + "')  GROUP BY o.id ;");
+    	setAttr("officeList", re);
 		render("/yh/departOrder/departOrderOnTripList.html");
 	}
 	// 发车单在途供应商
