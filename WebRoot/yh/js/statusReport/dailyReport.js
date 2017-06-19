@@ -19,6 +19,7 @@ $(document).ready(function() {
         "aoColumns": [   
             {"mDataProp":"ABBR", "sWidth":"60px", "bVisible":true},
             {"mDataProp":"TRANSFERNO", "sWidth":"60px"},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"60px"},
             {"mDataProp":"DELIVERYNO", "sWidth":"100px","sClass": "delivery_no"},
             {"mDataProp":"SERIAL_NO", "sWidth":"40px","sClass": "serial_no"},
             {"mDataProp":"STATUS", "sWidth":"50px"},       	
@@ -101,19 +102,21 @@ $(document).ready(function() {
     	//0代表隐藏
     	if(type == 1){
     		
-    		statusTable.fnSetColumnVis(18, false);
+    		
     		statusTable.fnSetColumnVis(19, false);
     		statusTable.fnSetColumnVis(20, false);
     		statusTable.fnSetColumnVis(21, false);
     		statusTable.fnSetColumnVis(22, false);
+    		statusTable.fnSetColumnVis(23, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
     		
-    		statusTable.fnSetColumnVis(18, true);
+    		
     		statusTable.fnSetColumnVis(19, true);
     		statusTable.fnSetColumnVis(20, true);
     		statusTable.fnSetColumnVis(21, true);
     		statusTable.fnSetColumnVis(22, true);
+    		statusTable.fnSetColumnVis(23, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
@@ -124,17 +127,19 @@ $(document).ready(function() {
     	//0代表隐藏
     	if(type == 1){
     		
-    		statusTable.fnSetColumnVis(23, false);
+    		
     		statusTable.fnSetColumnVis(24, false);
     		statusTable.fnSetColumnVis(25, false);
     		statusTable.fnSetColumnVis(26, false);
+    		statusTable.fnSetColumnVis(27, false);
     		$(this).attr("alt",0).text(">>");
     	}else{
     		
-    		statusTable.fnSetColumnVis(23, true);
+    		
     		statusTable.fnSetColumnVis(24, true);
     		statusTable.fnSetColumnVis(25, true);
     		statusTable.fnSetColumnVis(26, true);
+    		statusTable.fnSetColumnVis(27, true);
     		$(this).attr("alt",1).text("<<");
     	}
     });
