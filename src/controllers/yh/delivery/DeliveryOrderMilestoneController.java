@@ -473,6 +473,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     	            returnOrder.set("order_type", "应收");
     	            returnOrder.set("transaction_status", "新建");
     	            returnOrder.set("creator", userId);
+    	            returnOrder.set("office_id", deliveryOrder.get("office_id"));
     	            returnOrder.set("create_date", createDate);
     	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
     	            returnOrder.save();
@@ -502,6 +503,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 returnOrder.set("order_type", "应收");
                 returnOrder.set("transaction_status", "新建");
                 returnOrder.set("creator", userId);
+                returnOrder.set("office_id", deliveryOrder.get("office_id"));
                 returnOrder.set("create_date", createDate);
                 returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
                 returnOrder.save();
