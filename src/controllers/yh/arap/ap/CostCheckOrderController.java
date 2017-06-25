@@ -46,6 +46,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -371,7 +372,7 @@ public class CostCheckOrderController extends Controller {
 				+ " left join arap_cost_order_invoice_no acoo on acoo.cost_order_id = aco.id "
 		        + " left join user_login u on aco.create_by = u.id"
 		        + " left join user_office uo on u.user_name = uo.user_name and uo.is_main=1";
-		String condition = " where 1=1 and uo.office_id in (select office_id from user_office where user_name='"+user_name+"')";
+		String condition = " where 1=1 and aco.office_id in (select office_id from user_office where user_name='"+user_name+"')";
 		        
 		// TODO 始发地和目的地 客户没有做
 		if (orderNo != null || sp != null || status != null|| (status != null && !"''".equals(serial_no))) {
@@ -528,6 +529,8 @@ public class CostCheckOrderController extends Controller {
 						Double.parseDouble(total_amount)
 								- Double.parseDouble(debit_amount));
 			}
+			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+			arapAuditOrder.set("office_id", office_id);
 			arapAuditOrder.save();
 			for (int i = 0; i < orderIdsArr.length; i++) {
 				ArapCostItem arapAuditItem = new ArapCostItem();
@@ -981,6 +984,7 @@ public class CostCheckOrderController extends Controller {
 				+ " where dor.audit_status='已确认' "
 				+ (StrKit.isBlank(sp_id2)?"":" and dor.sp_id ="+sp_id2)
 				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and dor.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
 		        + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 		        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " group by dor.id "
@@ -1021,6 +1025,7 @@ public class CostCheckOrderController extends Controller {
 				+ " left join location lo2 on lo2.code = dpr.route_to "
 				+ " left join office oe on oe.id = tor.office_id where  (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'DEPART' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
 				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
@@ -1069,6 +1074,7 @@ public class CostCheckOrderController extends Controller {
 				+ " left join office oe on oe.id = tor.office_id "
 				+ " where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
                 + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
                 + "      or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
                 + " and '"+is_delivery+"' = 'N'"
@@ -1140,6 +1146,7 @@ public class CostCheckOrderController extends Controller {
 				+ " WHERE amco.audit_status = '已确认'"
 				+ (StrKit.isBlank(sp_id2)?"":" and amco.sp_id ="+sp_id2)
 				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
+				+ " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
 				+ " GROUP BY amco.id) as A ";
 		String condition = "";
 		if (orderNo != null || sp_id2 != null || serial_no != null
