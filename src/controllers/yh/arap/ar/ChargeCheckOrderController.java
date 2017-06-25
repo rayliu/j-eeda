@@ -44,6 +44,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -472,14 +473,14 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join delivery_order_item doi on doi.delivery_id = dvr.id "
 				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
 				+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已确认' AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
+				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已确认' and ror.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
 		sql2 = " group by ror.id,tor2.id"
 				+ " UNION"
 				+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
 				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
-				+ " ul.c_name confirm_by, amco.confirm_stamp,"
+				+ " ul.c_name confirm_by, amco.confirm_stamp,amco.office_id,"
 				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
 				+ " null address,null planning_time,"
 				+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "
@@ -494,7 +495,8 @@ public class ChargeCheckOrderController extends Controller {
 				+"    LEFT JOIN party p1 ON p1.id = amco.sp_id"
 				+"    LEFT JOIN contact c1 ON c1.id = p1.contact_id"
 				+ " LEFT JOIN user_login ul ON ul.id = amco.confirm_by"
-				+ " WHERE amco. STATUS = '已确认' ";
+				+ " WHERE amco. STATUS = '已确认' "
+				+ " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
 		sql3 = " ) order by planning_time desc ";
 		if (customer == null && beginTime == null && endTime == null
 				&& orderNo == null && customerNo == null && serialNo==null && address == null
@@ -674,6 +676,8 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.set("charge_amount", changeAmount);
 			arapChargeOrder.set("have_invoice", haveInvoice);
 			arapChargeOrder.set("billing_unit", billing_unit);
+			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+			arapChargeOrder.set("office_id", office_id);
 			arapChargeOrder.set("payee", payee);
 			arapChargeOrder.save();
 
@@ -1072,53 +1076,8 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join party p1 on p1.id = aao.sp_id"
 				+ " left join contact c1 on c1.id = p1.contact_id"
 				+ " left join user_login usl on usl.id=aao.create_by "
+				+ "	where aao.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
 				+ "	group by aao.id ";
-		
-//		String conditions = "where 1 = 1 ";
-//		if (StringUtils.isNotEmpty(orderNo)){
-//			conditions += " and ifnull(aao.order_no,'') like '%" + orderNo+"%' ";
-//		}
-//		if (StringUtils.isNotEmpty(customer)){
-//			conditions += " and ifnull(c.abbr,'') like '%" + customer+"%' ";
-//		}
-//		if (StringUtils.isNotEmpty(status)){
-//			conditions += " and ifnull(aao.status,'') like '%" + status+"%' ";
-//		}
-//		
-//		if (StringUtils.isNotEmpty(transferOrderNo)){
-//			conditions += " and GROUP_CONCAT(case when aci.ref_order_type='回单'"
-//				+ " then ( SELECT GROUP_CONCAT(tor.order_no SEPARATOR '<br/>') from transfer_order tor"
-//				+ " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
-//				+ " LEFT JOIN return_order ror on ror.delivery_order_id = doi.delivery_id"
-//				+ " where "
-//				+ " ror.id = aci.ref_order_id ) end  SEPARATOR '<br/>') like '%" + transferOrderNo+"%' ";
-//		}
-//		if (StringUtils.isNotEmpty(refNo)){
-//			conditions += " and GROUP_CONCAT(case when aci.ref_order_type='回单'"
-//				+ " then (SELECT dor.ref_no from return_order ror"
-//				+ " LEFT JOIN delivery_order dor on dor.id = ror.delivery_order_id"
-//				+ " where "
-//				+ " ror.id = ref_order_id) end  SEPARATOR '<br/>') like '%" + refNo+"%' ";
-//		}
-//		if (StringUtils.isNotEmpty(serialNo)){
-//			conditions += " and GROUP_CONCAT(case when aci.ref_order_type='回单' then ("
-//				+ " SELECT GROUP_CONCAT(toid.serial_no SEPARATOR '<br/>') from transfer_order_item_detail toid"
-//				+ " LEFT JOIN delivery_order dor on dor.id = toid.delivery_id"
-//				+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id"
-//				+ " where "
-//				+ " ror.id = aci.ref_order_id ) end SEPARATOR '<br/>') like '%" + serialNo+"%' ";
-//		}
-//		if (StringUtils.isNotEmpty(beginTime)){
-//        	beginTime = " and aao.create_stamp between'"+beginTime+"'";
-//        }else{
-//        	beginTime =" and aao.create_stamp between '1970-1-1'";
-//        }
-//        if (StringUtils.isNotEmpty(endTime)){
-//        	endTime =" and '"+endTime+"'";
-//        }else{
-//        	endTime =" and '3000-1-1' ";
-//        }
-//        conditions+=beginTime+endTime;
 
 		String conditions = " where 1=1 ";
 
