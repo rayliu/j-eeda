@@ -196,7 +196,7 @@ public class ReturnOrderController extends Controller {
         if(!status.equals("'新建'"))
         	conditions += q_begin + q_end;
         
-        conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
+        conditions+=  " and ror_office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' ) and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
         		//+ " and (!(unix_timestamp(planning_time) < unix_timestamp('2015-07-01')) AND cname = '江苏国光') " ;
         String totalSql = " SELECT ror.id, ror.order_no,ror.customer_id,'' create_date,'' remark ,"
     		    + " ( CASE tor.arrival_mode  "
@@ -289,7 +289,7 @@ public class ReturnOrderController extends Controller {
 				+ " dor.ref_no sign_no,"
 				+ " dor.office_id,"
 				+ " o.office_name,"
-				+ " dor.business_stamp"
+				+ " dor.business_stamp,ror.office_id ror_office_id"
 				+ " FROM return_order ror"
 				+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
@@ -390,7 +390,7 @@ public class ReturnOrderController extends Controller {
 					+ " dor.ref_no sign_no," 
 	                + " dor.office_id,"
 					+ " o.office_name,"
-					+ " dor.business_stamp"
+					+ " dor.business_stamp,ror.office_id ror_office_id"
 					+ " FROM return_order ror"
 					+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 					+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
