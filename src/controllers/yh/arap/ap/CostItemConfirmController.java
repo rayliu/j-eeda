@@ -162,6 +162,7 @@ public class CostItemConfirmController extends Controller {
 				+ " where ifnull(ror.transaction_status,'') != '新建' and dor.status in ('已完成','已送达') and unix_timestamp(dor.appointment_stamp) > unix_timestamp('2015-06-01 10:34:36') and  dor.audit_status='新建' and (dor.status !='新建' or dor.status !='计划中' or dor.status != '初始化') and p.party_type='SERVICE_PROVIDER' "
 				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
 		        + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"') "
+		        + " and dor.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
 		        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 		        + customer_con
     			+ " and c.abbr like '%" + sp + "%' "
@@ -218,6 +219,7 @@ public class CostItemConfirmController extends Controller {
 				+ " unix_timestamp(dpr.create_stamp) > unix_timestamp('2015-06-01 10:34:36') and (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='新建'  and dpr.combine_type='DEPART'"
 				+ " and p.party_type='SERVICE_PROVIDER' and dpr.status in('已收货','已入库')"
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
 				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
@@ -275,6 +277,7 @@ public class CostItemConfirmController extends Controller {
 				+ " and (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='新建' "
 				+ " and p.party_type='SERVICE_PROVIDER' and dpr.combine_type='PICKUP' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
                 + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
                 + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
@@ -388,6 +391,7 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN location l1 ON amco.route_to=l1.code"
 				+ " LEFT JOIN office o ON o.id=amco.office_id"
 				+ " where amco.audit_status = '新建' and amco.type = 'biz' and amco.total_amount!=0"
+				+ " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
 				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 				+ customer_con2
 				+ " and c.abbr like '%" + sp + "%' "
