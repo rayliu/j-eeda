@@ -46,6 +46,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
@@ -631,8 +632,11 @@ public class TransferOrderController extends Controller {
 
 			}
 			if (officeId != null && !"".equals(officeId)) {
-				transferOrder.set("office_id", officeId);
+				transferOrder.set("ref_office_id", officeId);
 			}
+			
+			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+			transferOrder.set("office_id", office_id);
 			transferOrder.save();
 
 			saveTransferOrderMilestone(transferOrder);
@@ -698,7 +702,7 @@ public class TransferOrderController extends Controller {
 
 			}
 			if (officeId != null && !"".equals(officeId)) {
-				transferOrder.set("office_id", officeId);
+				transferOrder.set("ref_office_id", officeId);
 			}
 			transferOrder.update();
 

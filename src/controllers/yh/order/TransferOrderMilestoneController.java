@@ -425,6 +425,7 @@ public class TransferOrderMilestoneController extends Controller {
             returnOrder.set("order_no", orderNo)
             .set("transaction_status", "新建")
             .set("customer_id", transfer.getLong("customer_id"))
+            .set("office_id", transfer.getLong("ref_office_id"))
             .set("creator", LoginUserController.getLoginUserId(this))
             .set("create_date", new Date())
             .set("transfer_order_id", transfer.getLong("id")).save();
@@ -537,6 +538,8 @@ public class TransferOrderMilestoneController extends Controller {
     	}
     	DepartOrder departOrder = DepartOrder.dao.findById(departOrderId);
 		departOrder.set("status", "已入库");
+		departOrder.set("gate_in_by", LoginUserController.getLoginUserId(this));
+		departOrder.set("gate_in_stamp", new Date());
 		departOrder.update();
 		
 		TransferOrderMilestone departOrderMilestone = new TransferOrderMilestone();
