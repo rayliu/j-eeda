@@ -49,6 +49,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.util.LocationUtil;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
@@ -433,7 +434,7 @@ public class DepartOrderController extends Controller {
 				+ " left join transfer_order tr  on tr.id = dt.order_id"
 				+ conditions
 				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
-				+ " ( o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
+				+ " ( t.ref_office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                 + " )"
@@ -476,7 +477,7 @@ public class DepartOrderController extends Controller {
 				+ " left join transfer_order tr  on tr.id = dt.order_id"
 				+ conditions
 				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
-				+ " ( o.id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "
+				+ " ( t.ref_office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                 + " )"
@@ -1161,6 +1162,9 @@ public class DepartOrderController extends Controller {
 			}
 			dp.set("audit_status", "新建");
 			dp.set("sign_status", "未回单");
+			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+			dp.set("office_id", office_id);
+			
 			dp.save();
 			
 			saveDepartOrderMilestone(dp);
