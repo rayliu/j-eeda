@@ -210,6 +210,7 @@ public class ChargeItemConfirmController extends Controller {
 				+"    LEFT JOIN user_login usl ON usl.id = ror.creator"
 				+"    WHERE"
 				+"        ror.transaction_status = '已签收'"
+				+ "	  and ror.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )	"
 				+"    AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' )"
 				+"    GROUP BY ror.id"
 				+"    UNION (SELECT "
@@ -266,6 +267,7 @@ public class ChargeItemConfirmController extends Controller {
 				+"    LEFT JOIN contact c1 ON c1.id = p1.contact_id"
 				+"    WHERE"
 				+"        amco.STATUS = '新建'"
+				+ "   and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
 				+"            AND amco.type = 'biz'"
 				+"            AND amco.total_amount != 0)";
 		if (customer == null && beginTime == null && endTime == null
