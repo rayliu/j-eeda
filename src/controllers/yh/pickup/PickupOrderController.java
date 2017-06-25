@@ -53,6 +53,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
@@ -648,6 +649,8 @@ public class PickupOrderController extends Controller {
             }
             
             pickupOrder.set("car_summary_type", "untreated");
+            Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+            pickupOrder.set("office_id", office_id);
             pickupOrder.save();
             
             savePickupOrderMilestone(pickupOrder);
