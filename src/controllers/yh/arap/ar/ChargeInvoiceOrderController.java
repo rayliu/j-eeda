@@ -37,6 +37,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -165,7 +166,8 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " LEFT JOIN contact c ON c.id = p.contact_id"
 				+ " LEFT JOIN contact c1 ON c1.id = aco.sp_id"
 				+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
-				+ " where aco.STATUS ='已确认' and aco.have_invoice = 'Y'";
+				+ " where aco.STATUS ='已确认' and aco.have_invoice = 'Y'"
+				+ "	and aco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )";
 		
 		String condition = "";
 		if(companyName != null || beginTime != null || endTime != null
@@ -230,7 +232,8 @@ public class ChargeInvoiceOrderController extends Controller {
     	String dzOrderNo = getPara("dzOrderNo");
     	String address = getPara("address");
     	//TODO 网点，提货地点，供应商没有做条件过滤
-        String sqlTotal = "select count(1) total from arap_charge_invoice aci";
+        String sqlTotal = "select count(1) total from arap_charge_invoice aci "
+        		+ " where aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )";
 
         
         String sql = "select aci.*,"
@@ -247,7 +250,8 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " left join user_login ul on ul.id = aci.create_by "
 				+ " left join party p on p.id = aci.payee_id "
 				+ " left join contact c on c.id = p.contact_id "
-                + " left join contact c1 on c1.id = aci.sp_id ";
+                + " left join contact c1 on c1.id = aci.sp_id "
+                + "	where aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )";
        String condition = "";
        if(companyName != null || beginTime != null || endTime != null || orderNo != null
     		  || status != null || office != null || sp != null || address != null || dzOrderNo != null){
@@ -257,7 +261,9 @@ public class ChargeInvoiceOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			condition = " where ifnull(c.abbr,'') like '%" + companyName + "%' "
+			condition = " and "
+					+ " aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+					+ " and ifnull(c.abbr,'') like '%" + companyName + "%' "
 					+ " and ifnull(aci.order_no,'') like '%" + orderNo + "%' "
 					+ " and (select group_concat(distinct aco.order_no separator '</br>') "
 					+ " from arap_charge_order aco where aco.invoice_order_id = aci.id) like '%" + dzOrderNo + "%' "
@@ -318,6 +324,8 @@ public class ChargeInvoiceOrderController extends Controller {
     	    	if(spId != null && !"".equals(spId)){
     	    		arapAuditInvoice.set("sp_id", spId);
     	    	}
+    	    	Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+    	    	arapAuditInvoice.set("office_id", office_id);
     	    	arapAuditInvoice.save();
     	    	
     	    	String ids = getPara("chargePreInvoiceOrderIds");
@@ -358,6 +366,8 @@ public class ChargeInvoiceOrderController extends Controller {
     	    	if(spId != null && !"".equals(spId)){
     	    		arapAuditInvoice.set("sp_id", spId);
     	    	}
+    	    	Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+    	    	arapAuditInvoice.set("office_id", office_id);
     	    	arapAuditInvoice.save();
     	    	
     	    	String ids = getPara("chargePreInvoiceOrderIds");
