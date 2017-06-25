@@ -320,5 +320,17 @@ public class OfficeController extends Controller {
     	renderJson(re);
     }
     
+    public static Long getOfficeId (String user_name){
+    	Record uo = Db.findFirst("select * from user_office where user_name = ? and is_main = 1",user_name);
+    	Long officeId = null;
+    	if(uo != null){
+    		officeId = uo.getLong("office_id");
+    	}else{
+    		Record ul = Db.findFirst("select * from user_login where user_name = ?",user_name);
+    		officeId = ul.getLong("office_id");
+    	}
+    	return officeId;
+    }
+    
 
 }
