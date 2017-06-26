@@ -49,6 +49,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -340,6 +341,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			if (total_amount != null && !"".equals(total_amount)) {
 				arapAuditInvoiceApplication.set("total_amount",total_amount);
 			}
+			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+			arapAuditInvoiceApplication.set("office_id", office_id);
 			arapAuditInvoiceApplication.save();
 			
 			String strJson = getPara("detailJson");

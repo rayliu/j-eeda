@@ -168,6 +168,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " FROM reimbursement_order ro"
         		+ " LEFT JOIN car_summary_order cso on cso.id in(ro.car_summary_order_ids)"
         		+ " where ro.STATUS in ("+status2+")"
+        		+ "	and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
         		+ " UNION "
         		+ " SELECT amco.id, amco.order_no,'成本单' as order_type, NULL AS payment_method, amco.others_name AS payee_name, NULL AS account_id, amco. STATUS, "
         		+ "  NULL AS invoice_no, amco.create_stamp create_time, amco.remark, amco.total_amount total_amount, "
@@ -195,6 +196,7 @@ public class CostAcceptOrderController extends Controller {
                 + " end"
                 + " ) AS cname FROM arap_misc_cost_order amco WHERE amco.STATUS in ("+status2+")"
                 + " and amco.type = 'non_biz'  and amco.total_amount>=0 "
+                + "	and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )	"
                 + " UNION"
                 + " SELECT cso.id,cso.order_no,'行车单' AS order_type,'' AS payment_method,cso.main_driver_name AS payee_name,NULL AS account_id,cso. STATUS,"
         		+ "  NULL AS invoice_no,cso.create_data create_time,'' AS remark,cso.actual_payment_amount total_amount,0 application_amount,"
@@ -209,6 +211,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " FROM car_summary_order cso"
         		+ " WHERE cso. STATUS in ("+status+")"
         		+ " AND cso.reimbursement_order_id IS NULL"
+        		+ "	and cso.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )	"
         		+ " UNION"
         		+ " SELECT aio.id, aio.order_no, '往来票据单' AS order_type, NULL AS payment_method, aio.charge_person AS payee_name,"
         		+ " NULL AS account_id, aio.pay_status status, NULL AS invoice_no, aio.create_date create_time,"
@@ -219,6 +222,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " WHERE caor.cost_order_id = aio.id AND caor.order_type = '往来票据单' ) ) nopaid_amount,"//已付未付
         		+ " aio.charge_unit AS cname"
         		+ " FROM arap_in_out_misc_order aio WHERE aio.pay_status IN (" + status4 + ")"
+        		+ "	and aio.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
         		+ " UNION"
         		+ " SELECT aco.id, aco.order_no, '应付对账单' AS order_type, null AS payment_method,"
         		+ " null AS payee_name, NULL AS account_id, aco.status STATUS, NULL AS invoice_no, aco.create_stamp create_time,"
@@ -233,6 +237,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " c.abbr cname FROM arap_cost_order aco"
         		+ " LEFT JOIN party p ON p.id = aco.payee_id"
         		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE aco.status IN ("+ status5 +")"
+        		+ "	and aco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )	"
         		+ " UNION "
         		+ " SELECT app.id, app.order_no, '预付单' AS order_type, null AS payment_method, "
         		+ " null AS payee_name, NULL AS account_id, null STATUS, NULL AS invoice_no, app.create_date create_time,"
@@ -249,6 +254,7 @@ public class CostAcceptOrderController extends Controller {
         		+ " c.abbr cname FROM arap_pre_pay_order app"
         		+ " LEFT JOIN party p ON p.id = app.sp_id"
         		+ " LEFT JOIN contact c ON c.id = p.contact_id WHERE app.status IN ("+ status2 +")"
+        		+ "	and app.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )	"
         	    + " UNION"
         	    + " SELECT dor.id, dor.order_no, '货损单' AS order_type, 	dofi.fin_method AS payment_method, "
         	    + " '' AS payee_name,"
@@ -270,6 +276,7 @@ public class CostAcceptOrderController extends Controller {
         	    + " LEFT JOIN contact c ON c.id = p.contact_id"
         	    + " WHERE"
         	    + " dofi. STATUS IN ("+ status6 +")"
+        	    + "	and dor.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )	"
         	    + " GROUP BY dofi.party_name  , dor.id"
         		+ ") A ";
         
@@ -330,7 +337,7 @@ public class CostAcceptOrderController extends Controller {
         
         String condition = "";
         if(!status.equals("")){
-        	condition = " where aci.status in ("+status+")";
+        	condition = " and aci.status in ("+status+")";
         }
         
         
@@ -407,6 +414,8 @@ public class CostAcceptOrderController extends Controller {
         		+ " from arap_cost_invoice_application_order aci "
         		+ " LEFT JOIN cost_application_order_rel cao on cao.application_order_id = aci.id"
         		+ " left join party p on p.id = aci.payee_id left join contact c on c.id = p.contact_id "
+        		+ " where "
+        		+ " aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )	"
         		+ condition
         		+ " group by aci.id "
         		+ ") A";
