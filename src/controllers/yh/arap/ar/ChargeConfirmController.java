@@ -694,7 +694,6 @@ public class ChargeConfirmController extends Controller {
         			+ " LEFT JOIN contact c ON p.contact_id = c.id "
         			+ " LEFT JOIN contact c2 ON c2.id = cpco.customer_id"
 					+ " left join user_login ul on ul.id=cpco.creator";
-        
         //String totalSql = "select count(1) total" + fromSql;
         
         String columsSql = "select cpco.*, "

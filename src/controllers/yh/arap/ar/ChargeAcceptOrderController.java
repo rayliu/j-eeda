@@ -106,6 +106,8 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " left join contact c on c.id = p.contact_id"
         		+ " left join contact c1 on c1.id = aci.sp_id"
         		+ " where aci.status in(" + status + ") "
+        		+ " and aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+        		+ " and aci.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')"
         	    + " UNION "
         	    + " select amco.id,'手工收入单' order_type, amco.order_no,amco.status, amco.others_name payee ,"
         	    + " '' invoice_no,amco.create_stamp create_time,amco.remark,amco.total_amount,"
@@ -128,6 +130,7 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " where amco.status in(" + status2 + ") "
         	    + " and amco.type = 'non_biz'"
         	    + " and amco.total_amount >= 0"
+        	    + " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
         	    + " UNION "
         	    + " select amco.id,'应收对账单' order_type, amco.order_no,amco.status, amco.payee payee ,"
         	    + " amco.invoice_no invoice_no,amco.create_stamp create_time,amco.remark,amco.charge_amount,ifnull(c.abbr,c1.abbr) cname ,"
@@ -144,6 +147,8 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " LEFT JOIN party p1 ON p1.id = amco.sp_id "
         	    + " LEFT JOIN contact c1 ON c1.id = p1.contact_id "
         	    + " where amco.status in(" + status3 + ") and amco.have_invoice = 'N'"
+        	    + " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+        		+ " and amco.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')"
         		+ " UNION"
         		+ " SELECT aio.id, '往来票据单' order_type, aio.order_no, aio.charge_status status , aio.charge_person AS payee,"
         		+ " NULL AS invoice_no, aio.create_date create_stamp,"
@@ -155,7 +160,9 @@ public class ChargeAcceptOrderController extends Controller {
  				+ " FROM charge_application_order_rel caor "
  				+ " WHERE caor.charge_order_id = aio.id AND caor.order_type = '往来票据单'"
  				+ " )) noreceive_amount"
-        		+ " FROM arap_in_out_misc_order aio WHERE aio.charge_status IN (" + status4 + ")"
+        		+ " FROM arap_in_out_misc_order aio"
+        		+ " WHERE aio.charge_status IN (" + status4 + ")"
+        		+ " and aio.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
         		+ " union"
         		+ " SELECT dor.id,'货损单' AS order_type, dor.order_no, dofi.status STATUS, "
         		+ " ''  AS payee_name,"
@@ -188,6 +195,7 @@ public class ChargeAcceptOrderController extends Controller {
         	    + " LEFT JOIN contact c3 ON c3.id = p3.contact_id"
         	    + " WHERE"
         	    + " dofi. STATUS = '已确认'"
+        	    + " and dor.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
         	    + " GROUP BY dofi.party_name , dor.id"
         	    + " ) A";
 
@@ -299,7 +307,10 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " LEFT JOIN charge_application_order_rel cao on cao.application_order_id = aci.id"
         		+ " left join party p on p.id = aci.payee_id "
         		+ " left join contact c on c.id = p.contact_id "
-        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+") group by aci.id "
+        		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+")"
+				+ "	and aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+				+"  and aci.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')"
+                + " group by aci.id "
         		+ ") A";
 
         
