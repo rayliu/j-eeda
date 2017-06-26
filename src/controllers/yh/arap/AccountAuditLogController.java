@@ -149,6 +149,7 @@ public class AccountAuditLogController extends Controller {
         			+ " LEFT JOIN contact c on c.id = p.contact_id "
         			+ " LEFT JOIN party p2 on p2.id = achia.payee_id "
         			+ " LEFT JOIN contact c2 on c2.id = p2.contact_id"
+        			+"  where aaal.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
         			+ " ) A where 1 = 1 ";        	
         }
 
@@ -216,6 +217,7 @@ public class AccountAuditLogController extends Controller {
     			+ " ) ) balance_amount"
     			+ " FROM arap_account_audit_log aal"
     			+ " right JOIN fin_account fa ON fa.id = aal.account_id"
+    			+"  where aal.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
     			+ " GROUP BY fa.id ";
     	
     	List<Record> BillingOrders = Db.find(sql+sLimit);
