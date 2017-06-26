@@ -1817,6 +1817,8 @@ public class CostPreInvoiceOrderController extends Controller {
 	        	auditLog.set("account_id", 4);
 	        auditLog.set("source_order", "应付开票申请单");
 	        auditLog.set("invoice_order_id", application_id);
+	        Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+	        auditLog.set("office_id", office_id);
 	        auditLog.save();
 	                
 	        renderJson("{\"success\":true}");  

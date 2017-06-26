@@ -30,6 +30,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -73,16 +74,16 @@ public class TransferAccountsController extends Controller {
         			+ " LEFT JOIN user_login ul ON ul.id = tao.create_id";
         String sql=" SELECT tao.id id,tao.order_no order_no,tao.transfer_stamp transfer_stamp,tao.`STATUS` transfer_status,"
         			+ " tao.transfer_method transfer_method,fain.account_no account_in,"
-        			+ " faout.account_no account_out,tao.amount,ul.c_name c_name,tao.remark remark"
+        			+ " faout.account_no account_out,tao.amount,ul.c_name c_name,tao.remark remark,tao.office_id"
         			+ " FROM"
         			+ " transfer_accounts_order tao"
         			+ " LEFT JOIN fin_account fain ON fain.id = tao.bank_in"
         			+ " LEFT JOIN fin_account faout ON faout.id = tao.bank_out"
         			+ " LEFT JOIN user_login ul ON ul.id = tao.create_id";
-        String condition = "";
+        String condition = " where tao.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
         
         if(orderNo != null || transfer_method != null){
-        	condition =  " where ifnull(order_no,'') like '%" + orderNo + "%' "
+        	condition =  " and ifnull(order_no,'') like '%" + orderNo + "%' "
         			+ " and ifnull(transfer_method,'') like '%" + transfer_method + "%' ";
         }
         Record rec = Db.findFirst(sqlTotal+condition);
@@ -184,6 +185,8 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", in_filter);
 				arapaccountauditlog.set("invoice_order_id", transferOrderId);
+				Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+				arapaccountauditlog.set("office_id", office_id);
 				arapaccountauditlog.save();
 			}
 			if(!"".equals(out_filter) && in_filter != null){
@@ -208,6 +211,8 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("source_order", "转账单");
 				arapaccountauditlog.set("account_id", out_filter);
 				arapaccountauditlog.set("invoice_order_id", transferOrderId);
+				Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+				arapaccountauditlog.set("office_id", office_id);
 				arapaccountauditlog.save();
 			}
 			
