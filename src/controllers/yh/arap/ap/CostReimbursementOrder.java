@@ -31,6 +31,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
 
@@ -42,10 +43,14 @@ public class CostReimbursementOrder extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_LIST})
 	public void index() {
-		render("/yh/arap/CostReimbursement/CostReimbursementList.html");
+		 setAttr("userId", LoginUserController.getLoginUserId(this));
+		 render("/yh/arap/CostReimbursement/CostReimbursementList.html");
 	}
 	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 	public void create() {
+		Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+		Office off = Office.dao.findById(office_id);
+		setAttr("officeRe", off);
 		List<Record> itemList  = Db.find("select * from fin_item where type='报销费用' and parent_id !=0 ");
         setAttr("itemList", itemList);
         List<Record> parentItemList  = Db.find("select * from fin_item where type='报销费用' and parent_id =0 ");

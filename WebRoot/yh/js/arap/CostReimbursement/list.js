@@ -3,6 +3,7 @@ $(document).ready(function() {
 	 $('#menu_finance').addClass('active').find('ul').addClass('in');
     
     //datatable, 动态处理
+	 var userId = $('#userId').val();
     var costExpenseAccountTbody = $('#costExpenseAccountTbody').dataTable({
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -17,10 +18,14 @@ $(document).ready(function() {
 			$(nRow).attr({id: aData.ID}); 
 		},
         "aoColumns": [ 
-			{ "mDataProp":null,"sWidth": "30px",
+			{ "mDataProp":null,"sWidth": "50px",
 				"fnRender": function(obj) {
-			      return '<button type="button" class="btn btn-primary delete btn-xs" >'+
+					if(obj.aData.CREATE_ID == userId){
+						return '<button type="button" class="btn btn-primary delete btn-xs" >'+
 			            '<i class="fa fa-trash-o"></i> 删除</button>';
+					}else{
+						return '';
+					}
 			    }
 			},
 			{"mDataProp":"ORDER_NO","sWidth":"120px",
