@@ -473,7 +473,11 @@ public class DeliveryOrderMilestoneController extends Controller {
     	            returnOrder.set("order_type", "应收");
     	            returnOrder.set("transaction_status", "新建");
     	            returnOrder.set("creator", userId);
-    	            returnOrder.set("office_id", deliveryOrder.get("office_id"));
+    	            
+    	            Record tor = Db.findFirst("select * from transfer_order_item_detail toid"
+    	            		+ " left join transfer_order tor on tor.id = toid.order_id "
+    	            		+ " where toid.delivery_id = ?",delivery_id);
+    	            returnOrder.set("office_id", tor.get("office_id"));
     	            returnOrder.set("create_date", createDate);
     	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
     	            returnOrder.save();
@@ -503,7 +507,11 @@ public class DeliveryOrderMilestoneController extends Controller {
                 returnOrder.set("order_type", "应收");
                 returnOrder.set("transaction_status", "新建");
                 returnOrder.set("creator", userId);
-                returnOrder.set("office_id", deliveryOrder.get("office_id"));
+                
+                Record tor = Db.findFirst("select * from transfer_order_item_detail toid"
+	            		+ " left join transfer_order tor on tor.id = toid.order_id "
+	            		+ " where toid.delivery_id = ?",delivery_id);
+	            returnOrder.set("office_id", tor.get("office_id"));
                 returnOrder.set("create_date", createDate);
                 returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
                 returnOrder.save();

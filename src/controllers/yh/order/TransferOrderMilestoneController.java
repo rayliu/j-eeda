@@ -425,7 +425,7 @@ public class TransferOrderMilestoneController extends Controller {
             returnOrder.set("order_no", orderNo)
             .set("transaction_status", "新建")
             .set("customer_id", transfer.getLong("customer_id"))
-            .set("office_id", transfer.getLong("ref_office_id"))
+            .set("office_id", transfer.getLong("office_id"))
             .set("creator", LoginUserController.getLoginUserId(this))
             .set("create_date", new Date())
             .set("transfer_order_id", transfer.getLong("id")).save();
