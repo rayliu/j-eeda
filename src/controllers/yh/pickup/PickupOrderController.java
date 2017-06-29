@@ -649,8 +649,6 @@ public class PickupOrderController extends Controller {
             }
             
             pickupOrder.set("car_summary_type", "untreated");
-            Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-            pickupOrder.set("office_id", office_id);
             pickupOrder.save();
             
             savePickupOrderMilestone(pickupOrder);
@@ -665,6 +663,12 @@ public class PickupOrderController extends Controller {
     			String numbers = (String)map.get("number");          //选择的数量 
     			String cargoItemId = (String)map.get("cargoItemId");  //itemId
     			String detail_ids = (String)map.get("detail_ids");
+    			
+    			if(pickupOrder.get("office_id")==null){
+    				TransferOrder tor = TransferOrder.dao.findById(orderId);
+        			pickupOrder.set("office_id", tor.get("office_id")).update();
+    			}
+    			
     			
     			if(StringUtils.isNotEmpty(getPara("flag"))){
     				if("derect".equals(getPara("flag"))){

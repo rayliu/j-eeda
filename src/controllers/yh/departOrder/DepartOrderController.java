@@ -1162,8 +1162,6 @@ public class DepartOrderController extends Controller {
 			}
 			dp.set("audit_status", "新建");
 			dp.set("sign_status", "未回单");
-			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-			dp.set("office_id", office_id);
 			
 			dp.save();
 			
@@ -1188,6 +1186,12 @@ public class DepartOrderController extends Controller {
 				if("wu".equals(pickupId)){
 					pickupId = null;
 				}
+				
+				//
+				if(dp.get("office_id")==null){
+    				TransferOrder tor = TransferOrder.dao.findById(orderId);
+    				dp.set("office_id", tor.get("office_id")).update();
+    			}
 
 				TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
 				DepartTransferOrder departTransferOrder = new DepartTransferOrder();
