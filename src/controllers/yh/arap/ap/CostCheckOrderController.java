@@ -458,6 +458,8 @@ public class CostCheckOrderController extends Controller {
 								- Double.parseDouble(debit_amount));
 			}
 			arapAuditOrder.update();
+			
+			
 			for (int i = 0; i < orderIdsArr.length; i++) {
 				ArapCostItem arapAuditItem = ArapCostItem.dao
 						.findFirst(
@@ -529,8 +531,6 @@ public class CostCheckOrderController extends Controller {
 						Double.parseDouble(total_amount)
 								- Double.parseDouble(debit_amount));
 			}
-			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-			arapAuditOrder.set("office_id", office_id);
 			arapAuditOrder.save();
 			for (int i = 0; i < orderIdsArr.length; i++) {
 				ArapCostItem arapAuditItem = new ArapCostItem();
@@ -545,34 +545,57 @@ public class CostCheckOrderController extends Controller {
 			}
 
 		}
+		Long refOrderOfficeId = null;
 		for (int i = 0; i < orderIdsArr.length; i++) {
 			if ("提货".equals(orderNoArr[i])) {
 				DepartOrder departOrder = DepartOrder.dao
 						.findById(orderIdsArr[i]);
 				departOrder.set("audit_status", "对账中");
 				departOrder.update();
+				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = departOrder.getLong("office_id");
+				}
 			} else if ("零担".equals(orderNoArr[i])) {
 				DepartOrder departOrder = DepartOrder.dao
 						.findById(orderIdsArr[i]);
 				departOrder.set("audit_status", "对账中");
 				departOrder.update();
+				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = departOrder.getLong("office_id");
+				}
 			} else if ("配送".equals(orderNoArr[i])) {
 				DeliveryOrder deliveryOrder = DeliveryOrder.dao
 						.findById(orderIdsArr[i]);
 				deliveryOrder.set("audit_status", "对账中");
 				deliveryOrder.update();
+				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = deliveryOrder.getLong("office_id");
+				}
 			} else if ("成本单".equals(orderNoArr[i])) {
 				ArapMiscCostOrder arapmisc = ArapMiscCostOrder.dao
 						.findById(orderIdsArr[i]);
 				arapmisc.set("audit_status", "对账中");
 				arapmisc.update();
 
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = arapmisc.getLong("office_id");
+				}
 			} else {
 				InsuranceOrder insuranceOrder = InsuranceOrder.dao
 						.findById(orderIdsArr[i]);
 				insuranceOrder.set("audit_status", "对账中");
 				insuranceOrder.update();
+				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = insuranceOrder.getLong("office_id");
+				}
 			}
+		}
+		if(refOrderOfficeId != null){
+			arapAuditOrder.set("office_id", refOrderOfficeId).update();
 		}
 
 		renderJson(arapAuditOrder);
@@ -1146,7 +1169,6 @@ public class CostCheckOrderController extends Controller {
 				+ " WHERE amco.audit_status = '已确认'"
 				+ (StrKit.isBlank(sp_id2)?"":" and amco.sp_id ="+sp_id2)
 				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
-				+ " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
 				+ " GROUP BY amco.id) as A ";
 		String condition = "";
 		if (orderNo != null || sp_id2 != null || serial_no != null

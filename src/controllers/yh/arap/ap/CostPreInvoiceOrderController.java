@@ -341,11 +341,11 @@ public class CostPreInvoiceOrderController extends Controller {
 			if (total_amount != null && !"".equals(total_amount)) {
 				arapAuditInvoiceApplication.set("total_amount",total_amount);
 			}
-			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-			arapAuditInvoiceApplication.set("office_id", office_id);
+			
 			arapAuditInvoiceApplication.save();
 			
 			String strJson = getPara("detailJson");
+			Long refOrderOfficeId = null;
 			Gson gson = new Gson();
 			List<Map> idList = new Gson().fromJson(strJson, 
 					new TypeToken<List<Map>>(){}.getType());
@@ -368,28 +368,60 @@ public class CostPreInvoiceOrderController extends Controller {
                 if(order_type.equals("对账单")){
 					ArapCostOrder arapCostOrder = ArapCostOrder.dao.findById(id);
 					arapCostOrder.set("status", "付款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId  = arapCostOrder.getLong("office_id");
+					}
+					
 				}else if(order_type.equals("成本单")){
 					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
 					arapMiscCostOrder.set("audit_status", "付款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId  = arapMiscCostOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("行车单")){
 					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
 					carSummaryOrder.set("status", "付款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId  = carSummaryOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("预付单")){
 					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
 					arapPrePayOrder.set("status", "付款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId  = arapPrePayOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("报销单")){
 					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
 					reimbursementOrder.set("status", "付款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId  = reimbursementOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("往来票据单")){
 					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 					arapInOutMiscOrder.set("pay_status", "付款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId  = arapInOutMiscOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("货损单")){
 					DamageOrder damageOrder = DamageOrder.dao.findById(id);
-					if(!damageOrder.getStr("status").equals("已结案"))
+					if(!damageOrder.getStr("status").equals("已结案")){
 						damageOrder.set("status", "单据处理中").update();
+					}
+						
+					if(refOrderOfficeId == null){
+						refOrderOfficeId  = damageOrder.getLong("office_id");
+					}
 				}
 			}
-
+			if(refOrderOfficeId != null){
+				arapAuditInvoiceApplication.set("office_id", refOrderOfficeId).update();
+			}
 		}
 		renderJson(arapAuditInvoiceApplication);
 	}
@@ -1712,6 +1744,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	        arapCostInvoiceApplication.update();
 	        
 	        //更改原始单据状态
+	        Long refOrderOfficeId = null;
 	        String strJson = getPara("detailJson");
 			Gson gson = new Gson();
 			List<Map> idList = new Gson().fromJson(strJson, 
@@ -1727,8 +1760,13 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double paid_amount = re.getDouble("total");
 					if(!total_amount.equals(paid_amount)){
 						arapCostOrder.set("status", "部分已付款").update();
-					}else
+					}else{
 						arapCostOrder.set("status", "已付款").update();
+					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapCostOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("成本单")){
 					ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao.findById(id);
 					
@@ -1737,8 +1775,13 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double paid_amount = re.getDouble("total");
 					if(!total_amount.equals(paid_amount)){
 						arapMiscCostOrder.set("audit_status", "部分已付款").update();
-					}else
+					}else{
 						arapMiscCostOrder.set("audit_status", "已付款").update();
+					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapMiscCostOrder.getLong("office_id");
+					}
 										
 				}else if(order_type.equals("行车单")){
 					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
@@ -1748,8 +1791,13 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double paid_amount = re.getDouble("total");
 					if(!total_amount.equals(paid_amount)){
 						carSummaryOrder.set("status", "部分已付款").update();
-					}else
+					}else{
 						carSummaryOrder.set("status", "已付款").update();
+					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = carSummaryOrder.getLong("office_id");
+					}
 					
 				}else if(order_type.equals("预付单")){
 					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
@@ -1759,8 +1807,13 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double paid_amount = re.getDouble("total");
 					if(!total_amount.equals(paid_amount)){
 						arapPrePayOrder.set("status", "部分已付款").update();
-					}else
+					}else{
 						arapPrePayOrder.set("status", "已付款").update();
+					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapPrePayOrder.getLong("office_id");
+					}
 					
 				}else if(order_type.equals("报销单")){
 					ReimbursementOrder reimbursementOrder = ReimbursementOrder.dao.findById(id);
@@ -1769,8 +1822,13 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double paid_amount = re.getDouble("total");
 					if(!total_amount.equals(paid_amount)){
 						reimbursementOrder.set("status", "部分已付款").update();
-					}else
+					}else{
 						reimbursementOrder.set("status", "已付款").update();
+					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = reimbursementOrder.getLong("office_id");
+					}
 					
 				}else if(order_type.equals("往来票据单")){
 					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
@@ -1780,8 +1838,14 @@ public class CostPreInvoiceOrderController extends Controller {
 					Double paid_amount = re.getDouble("total");
 					if(!total_amount.equals(paid_amount)){
 						arapInOutMiscOrder.set("pay_status", "部分已付款").update();
-					}else
+					}else{
 						arapInOutMiscOrder.set("pay_status", "已付款").update();
+					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapInOutMiscOrder.getLong("office_id");
+					}
+					
 				} else if(order_type.equals("货损单")){
 					DamageOrder damageOrder = DamageOrder.dao.findById(id);
 					Record rec = Db.findFirst("select sum(ifnull(amount,0)) total_amount from damage_order_fin_item dof where dof.order_id = ?",id);
@@ -1799,10 +1863,12 @@ public class CostPreInvoiceOrderController extends Controller {
 						if(!damageOrder.getStr("status").equals("已结案"))
 							damageOrder.set("status", "已完成").update();
 					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = damageOrder.getLong("office_id");
+					}
 				}
 			}
-	        
-	        
 	        
 	      //新建日记账表数据
 			 ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
@@ -1817,8 +1883,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	        	auditLog.set("account_id", 4);
 	        auditLog.set("source_order", "应付开票申请单");
 	        auditLog.set("invoice_order_id", application_id);
-	        Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-	        auditLog.set("office_id", office_id);
+	        auditLog.set("office_id", refOrderOfficeId);
 	        auditLog.save();
 	                
 	        renderJson("{\"success\":true}");  

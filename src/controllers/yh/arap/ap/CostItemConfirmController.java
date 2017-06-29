@@ -392,7 +392,6 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN office o ON o.id=amco.office_id"
 				+ " where amco.audit_status = '新建' and amco.type = 'biz' and amco.total_amount!=0"
 				+ " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
-				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
 				+ customer_con2
 				+ " and c.abbr like '%" + sp + "%' "
 				+ " and ifnull(amco.order_no,'') like '%" + no + "%' "
