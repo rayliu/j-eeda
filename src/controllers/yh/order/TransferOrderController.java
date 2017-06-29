@@ -109,9 +109,9 @@ public class TransferOrderController extends Controller {
 			}
 
 			String sqlTotal = "select count(1) total from transfer_order t "
-					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' and t.office_id in(select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
+					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' "
+					+ " and ((t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')) "
+					+ " or (t.ref_office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')))"
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
 					+ currentUser.getPrincipal() + "')";
 			Record rec = Db.findFirst(sqlTotal);
@@ -133,9 +133,9 @@ public class TransferOrderController extends Controller {
 					+ " left join contact c2 on p2.contact_id = c2.id "
 					+ " left join office o on t.office_id = o.id "
 					+ " left join user_login ul on ul.id=t.create_by "
-					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' and (t.office_id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "')) "
+					+ " where t.status!='手动删除' and t.order_type != 'cargoReturnOrder' "
+					+ " and ((t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')) "
+					+ " or (t.ref_office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')))"
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
 					+ currentUser.getPrincipal()
 					+ "')"
@@ -222,9 +222,8 @@ public class TransferOrderController extends Controller {
 					+ " and t.operation_type like '%"
 					+ operation_type
 					+ "%'"
-					+ " and t.office_id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
+					+ " and ((t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')) "
+					+ " or (t.ref_office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')))"
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
 					+ currentUser.getPrincipal() + "')";
 			Record rec = Db.findFirst(sqlTotal);
@@ -283,9 +282,8 @@ public class TransferOrderController extends Controller {
 					+ " and t.operation_type like '%"
 					+ operation_type
 					+ "%'"
-					+ " and t.office_id in (select office_id from user_office where user_name='"
-					+ currentUser.getPrincipal()
-					+ "') "
+					+ " and ((t.office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')) "
+					+ " or (t.ref_office_id in (select office_id from user_office where user_name='"+currentUser.getPrincipal() +"')))"
 					+ " and t.customer_id in (select customer_id from user_customer where user_name='"
 					+ currentUser.getPrincipal()
 					+ "') order by t.status !='新建',t.status !='已发车',t.status !='在途',t.status !='已入货场',t.status !='已入库',t.status !='已签收' desc, t.planning_time desc"
@@ -632,11 +630,11 @@ public class TransferOrderController extends Controller {
 
 			}
 			if (officeId != null && !"".equals(officeId)) {
-				transferOrder.set("ref_office_id", officeId);
+				transferOrder.set("office_id", officeId);     //运作网点
 			}
 			
 			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-			transferOrder.set("office_id", office_id);
+			transferOrder.set("ref_office_id", office_id);   //创建人网点
 			transferOrder.save();
 
 			saveTransferOrderMilestone(transferOrder);
@@ -702,7 +700,7 @@ public class TransferOrderController extends Controller {
 
 			}
 			if (officeId != null && !"".equals(officeId)) {
-				transferOrder.set("ref_office_id", officeId);
+				transferOrder.set("office_id", officeId);
 			}
 			transferOrder.update();
 
@@ -1155,6 +1153,7 @@ public class TransferOrderController extends Controller {
 						+ parentID + " or o.belong_office = " + parentID);
 		renderJson(offices);
 	}
+
 
 	// 根据用户是否拥有这个网点查询
 	public void searchPartOffice() {

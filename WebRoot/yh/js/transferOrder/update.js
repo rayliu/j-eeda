@@ -2042,7 +2042,7 @@ $(document).ready(function() {
 		 };
 	 },'json');
 	 // 获取用户拥有的网点
-	 $.post('/transferOrder/searchPartOffice',function(data){
+	 $.post('/transferOrder/searchAllOffice',function(data){
 		 if(data.length > 0){
 			 var officeSelect = $("#officeSelect");
 			 officeSelect.empty();

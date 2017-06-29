@@ -307,7 +307,7 @@ public class TransferOrderMilestoneController extends Controller {
 				if(warehouse!=null){
 					deliveryOrder.set("sp_id", warehouse.get("sp_id")).set("office_id", warehouse.get("office_id"));
 				}else{
-					deliveryOrder.set("office_id", users.get("office_id"));
+					deliveryOrder.set("office_id", transferOrder.get("office_id"));
 				}if(transferorderitemdetail!=null){
 					deliveryOrder.set("notify_party_id", transferorderitemdetail.get(0).getLong("notify_party_id"));
 				}
