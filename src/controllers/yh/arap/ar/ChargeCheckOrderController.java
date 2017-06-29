@@ -473,7 +473,9 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join delivery_order_item doi on doi.delivery_id = dvr.id "
 				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
 				+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
-				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator where ror.transaction_status = '已确认' and ror.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
+				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator "
+				+ " where ror.transaction_status = '已确认' and ror.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
+				+ " AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
 		sql2 = " group by ror.id,tor2.id"
 				+ " UNION"
 				+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
@@ -676,21 +678,26 @@ public class ChargeCheckOrderController extends Controller {
 			arapChargeOrder.set("charge_amount", changeAmount);
 			arapChargeOrder.set("have_invoice", haveInvoice);
 			arapChargeOrder.set("billing_unit", billing_unit);
-			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-			arapChargeOrder.set("office_id", office_id);
 			arapChargeOrder.set("payee", payee);
 			arapChargeOrder.save();
 
 			boolean isCreate = true;
-			updateItems(arapChargeOrder.getLong("id"), dto, change_amount,
+			Long refOrderOfficeId = null;
+			refOrderOfficeId = updateItems(arapChargeOrder.getLong("id"), dto, change_amount,
 					isCreate);
+			
+			if(refOrderOfficeId != null){
+				arapChargeOrder.set("office_id", refOrderOfficeId).update();
+			}
+			
 		}
 		renderJson(arapChargeOrder);
 	}
 
-	private void updateItems(Long orderId, Map<String, ?> dto,
+	private Long updateItems(Long orderId, Map<String, ?> dto,
 			Double change_amount, boolean isCreate) {
 		List<Map> items = (List<Map>) dto.get("items");
+		Long office_id = null;
 		for (Map item : items) {
 			String str_ref_order_id = (String) item.get("ORDER_ID");
 			Long ref_order_id = Long.parseLong(str_ref_order_id);
@@ -737,6 +744,11 @@ public class ChargeCheckOrderController extends Controller {
 					chargeItem.save();
 
 				}
+				
+				if(office_id == null){
+					office_id = ro.getLong("office_id");
+				}
+				
 			} else {
 				// 手工单就不允许改确认金额了
 				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao
@@ -749,8 +761,13 @@ public class ChargeCheckOrderController extends Controller {
 					chargeItem.set("ref_order_id", ref_order_id);
 					chargeItem.save();
 				}
+				
+				if(office_id == null){
+					office_id = arapMiscChargeOrder.getLong("office_id");
+				}
 			}
 		}
+		return office_id;
 	}
 
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_CCO_UPDATE })
@@ -1077,6 +1094,7 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join contact c1 on c1.id = p1.contact_id"
 				+ " left join user_login usl on usl.id=aao.create_by "
 				+ "	where aao.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+				+ " AND aao.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
 				+ "	group by aao.id ";
 
 		String conditions = " where 1=1 ";

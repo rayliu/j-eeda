@@ -884,10 +884,11 @@ public class ChargePreInvoiceOrderController extends Controller {
 			if (total_amount != null && !"".equals(total_amount)) {
 				arapAuditInvoiceApplication.set("total_amount",total_amount);
 			}
-			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-			arapAuditInvoiceApplication.set("office_id", office_id);
+			
+			
 			arapAuditInvoiceApplication.save();
 			
+			Long refOrderOfficeId = null;
 			String strJson = getPara("detailJson");
 			Gson gson = new Gson();
 			List<Map> idList = new Gson().fromJson(strJson, 
@@ -911,20 +912,45 @@ public class ChargePreInvoiceOrderController extends Controller {
                 if(order_type.equals("应收对账单")){
 					ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(id);
 					arapChargeOrder.set("status", "收款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapChargeOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("手工收入单")){
 					ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
 					arapMiscChargeOrder.set("status", "收款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapMiscChargeOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("开票记录单")){
 					ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(id);
 					arapChargeInvoice.set("status", "收款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapChargeInvoice.getLong("office_id");
+					}
 				}else if(order_type.equals("往来票据单")){
 					ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 					arapInOutMiscOrder.set("charge_status", "收款申请中").update();
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = arapInOutMiscOrder.getLong("office_id");
+					}
 				}else if(order_type.equals("货损单")){
 					DamageOrder damageOrder = DamageOrder.dao.findById(id);
-					if(!damageOrder.getStr("status").equals("已结案"))
+					if(!damageOrder.getStr("status").equals("已结案")){
 						damageOrder.set("status", "单据处理中").update();
+					}
+					
+					if(refOrderOfficeId == null){
+						refOrderOfficeId = damageOrder.getLong("office_id");
+					}
 				}
+			}
+			
+			if(refOrderOfficeId != null){
+				arapAuditInvoiceApplication.set("office_id", refOrderOfficeId).update();
 			}
 		}
 		renderJson(arapAuditInvoiceApplication);
@@ -1070,6 +1096,7 @@ public class ChargePreInvoiceOrderController extends Controller {
         arapChargeInvoiceApplication.update();
         
         //更改原始单据状态
+        Long refOrderOfficeId = null;
         String strJson = getPara("detailJson");
 		Gson gson = new Gson();
 		List<Map> idList = new Gson().fromJson(strJson, 
@@ -1085,8 +1112,13 @@ public class ChargePreInvoiceOrderController extends Controller {
 				Double receive_amount = re.getDouble("total");
 				if(!total_amount.equals(receive_amount)){
 					arapChargeOrder.set("status", "部分已收款").update();
-				}else
+				}else{
 					arapChargeOrder.set("status", "已收款").update();
+				}
+				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = arapChargeOrder.getLong("office_id");
+				}
 			}else if(order_type.equals("手工收入单")){
 				ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(id);
 				
@@ -1095,9 +1127,13 @@ public class ChargePreInvoiceOrderController extends Controller {
 				Double receive_amount = re.getDouble("total");
 				if(!total_amount.equals(receive_amount)){
 					arapMiscChargeOrder.set("status", "部分已收款").update();
-				}else
+				}else{
 					arapMiscChargeOrder.set("status", "已收款").update();
-									
+				}
+						
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = arapMiscChargeOrder.getLong("office_id");
+				}
 			}else if(order_type.equals("开票记录单")){
 				ArapChargeInvoice arapChargeInvoice = ArapChargeInvoice.dao.findById(id);
 				
@@ -1106,9 +1142,13 @@ public class ChargePreInvoiceOrderController extends Controller {
 				Double receive_amount = re.getDouble("total");
 				if(!total_amount.equals(receive_amount)){
 					arapChargeInvoice.set("status", "部分已收款").update();
-				}else
+				}else{
 					arapChargeInvoice.set("status", "已收款").update();
+				}
 				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = arapChargeInvoice.getLong("office_id");
+				}
 			}else if(order_type.equals("往来票据单")){
 				ArapInOutMiscOrder arapInOutMiscOrder = ArapInOutMiscOrder.dao.findById(id);
 				
@@ -1117,8 +1157,13 @@ public class ChargePreInvoiceOrderController extends Controller {
 				Double receive_amount = re.getDouble("total");
 				if(!total_amount.equals(receive_amount)){
 					arapInOutMiscOrder.set("charge_status", "部分已收款").update();
-				}else
+				}else{
 					arapInOutMiscOrder.set("charge_status", "已收款").update();
+				}
+				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = arapInOutMiscOrder.getLong("office_id");
+				}
 			} else if(order_type.equals("货损单")){
 				DamageOrder damageOrder = DamageOrder.dao.findById(id);
 				Record rec = Db.findFirst("select sum(ifnull(amount,0)) total_amount from damage_order_fin_item dof where dof.order_id = ?",id);
@@ -1133,13 +1178,16 @@ public class ChargePreInvoiceOrderController extends Controller {
 				Double receive_amount = re2.getDouble("total2");
 				Double total = paid_amount + receive_amount;
 				if(total_amount.equals(total)){
-					if(!damageOrder.getStr("status").equals("已结案"))
+					if(!damageOrder.getStr("status").equals("已结案")){
 						damageOrder.set("status", "已完成").update();
+					}
+				}
+				
+				if(refOrderOfficeId == null){
+					refOrderOfficeId = damageOrder.getLong("office_id");
 				}
 			}
 		}
-        
-        
         
       //新建日记账表数据
 		 ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
@@ -1155,8 +1203,7 @@ public class ChargePreInvoiceOrderController extends Controller {
         
         auditLog.set("source_order", "应收开票申请单");
         auditLog.set("invoice_order_id", application_id);
-        Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-        auditLog.set("office_id", office_id);
+        auditLog.set("office_id", refOrderOfficeId);
         auditLog.save();
                 
         renderJson("{\"success\":true}");  

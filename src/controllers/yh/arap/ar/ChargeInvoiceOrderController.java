@@ -167,7 +167,8 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " LEFT JOIN contact c1 ON c1.id = aco.sp_id"
 				+ " LEFT JOIN user_login ul ON ul.id = aco.create_by"
 				+ " where aco.STATUS ='已确认' and aco.have_invoice = 'Y'"
-				+ "	and aco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )";
+				+ "	and aco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+				+ " AND aco.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
 		
 		String condition = "";
 		if(companyName != null || beginTime != null || endTime != null
@@ -232,8 +233,12 @@ public class ChargeInvoiceOrderController extends Controller {
     	String dzOrderNo = getPara("dzOrderNo");
     	String address = getPara("address");
     	//TODO 网点，提货地点，供应商没有做条件过滤
-        String sqlTotal = "select count(1) total from arap_charge_invoice aci "
-        		+ " where aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )";
+        String sqlTotal = "select count(1) total from arap_charge_invoice aci"
+				+ " left join user_login ul on ul.id = aci.create_by "
+				+ " left join party p on p.id = aci.payee_id "
+				+ " left join contact c on c.id = p.contact_id "
+				+ " where aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+        		+ " AND aci.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
 
         
         String sql = "select aci.*,"
@@ -251,7 +256,8 @@ public class ChargeInvoiceOrderController extends Controller {
 				+ " left join party p on p.id = aci.payee_id "
 				+ " left join contact c on c.id = p.contact_id "
                 + " left join contact c1 on c1.id = aci.sp_id "
-                + "	where aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )";
+                + "	where aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+                + " AND aci.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
        String condition = "";
        if(companyName != null || beginTime != null || endTime != null || orderNo != null
     		  || status != null || office != null || sp != null || address != null || dzOrderNo != null){
@@ -261,9 +267,7 @@ public class ChargeInvoiceOrderController extends Controller {
 			if (endTime == null || "".equals(endTime)) {
 				endTime = "9999-12-31";
 			}
-			condition = " and "
-					+ " aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
-					+ " and ifnull(c.abbr,'') like '%" + companyName + "%' "
+			condition =  " and ifnull(c.abbr,'') like '%" + companyName + "%' "
 					+ " and ifnull(aci.order_no,'') like '%" + orderNo + "%' "
 					+ " and (select group_concat(distinct aco.order_no separator '</br>') "
 					+ " from arap_charge_order aco where aco.invoice_order_id = aci.id) like '%" + dzOrderNo + "%' "
@@ -272,11 +276,7 @@ public class ChargeInvoiceOrderController extends Controller {
 			if(!"".equals(status) && status != null){
 				condition = condition + " and aci.status = '" + status + "' "; 
 			}
-			sqlTotal = "select count(1) total from arap_charge_invoice aci"
-					+ " left join user_login ul on ul.id = aci.create_by "
-					+ " left join party p on p.id = aci.payee_id "
-					+ " left join contact c on c.id = p.contact_id ";
-       }
+		  }
         
         
         Record rec = Db.findFirst(sqlTotal + condition );
@@ -324,10 +324,10 @@ public class ChargeInvoiceOrderController extends Controller {
     	    	if(spId != null && !"".equals(spId)){
     	    		arapAuditInvoice.set("sp_id", spId);
     	    	}
-    	    	Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-    	    	arapAuditInvoice.set("office_id", office_id);
+    	    	
     	    	arapAuditInvoice.save();
     	    	
+    	    	Long refOrderOfficeId = null;
     	    	String ids = getPara("chargePreInvoiceOrderIds");
     	    	String[] idArr = null;
     	    	if(ids != null && !"".equals(ids)){
@@ -337,8 +337,17 @@ public class ChargeInvoiceOrderController extends Controller {
     	    			application.set("status", "开票中");
     	    			application.set("invoice_order_id", arapAuditInvoice.get("id"));
     	    			application.update();
+    	    			
+    	    			if(refOrderOfficeId == null){
+    	    				refOrderOfficeId = application.getLong("office_id");
+    	    			}
     	    		}
     	    	}
+    	    	
+    	    	if(refOrderOfficeId != null){
+    	    		arapAuditInvoice.set("office_id", refOrderOfficeId).update();
+    	    	}
+    	    	
         	}
     	}else if(order_type.equals("对账单")){
     		if(!"".equals(chargeInvoiceOrderId) && chargeInvoiceOrderId != null){
@@ -366,10 +375,9 @@ public class ChargeInvoiceOrderController extends Controller {
     	    	if(spId != null && !"".equals(spId)){
     	    		arapAuditInvoice.set("sp_id", spId);
     	    	}
-    	    	Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-    	    	arapAuditInvoice.set("office_id", office_id);
     	    	arapAuditInvoice.save();
     	    	
+    	    	Long refOrderOfficeId = null;
     	    	String ids = getPara("chargePreInvoiceOrderIds");
     	    	String[] idArr = null;
     	    	if(ids != null && !"".equals(ids)){
@@ -379,7 +387,15 @@ public class ChargeInvoiceOrderController extends Controller {
     	    			arapChargeOrder.set("status", "开票中");
     	    			arapChargeOrder.set("invoice_order_id", arapAuditInvoice.get("id"));
     	    			arapChargeOrder.update();
+    	    			
+    	    			if(refOrderOfficeId == null){
+    	    				refOrderOfficeId = arapChargeOrder.getLong("office_id");
+    	    			}
     	    		}
+    	    	}
+    	    	
+    	    	if(refOrderOfficeId != null){
+    	    		arapAuditInvoice.set("office_id", refOrderOfficeId).update();
     	    	}
         	}
     	}
