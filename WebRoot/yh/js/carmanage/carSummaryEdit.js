@@ -398,7 +398,21 @@ $(document).ready(function() {
                      }
                  }
              },
-             //{ "mDataProp": "CHARGE_DATA"},
+             { "mDataProp": "ENTRANCE","sWidth":"130px",
+            	 "fnRender": function(obj) {
+                     if(obj.aData.ENTRANCE!='' && obj.aData.ENTRANCE != null){
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control ' name='entrance' value='"+obj.aData.ENTRANCE+"' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control ' name='entrance' value='"+obj.aData.ENTRANCE+"'>";
+                     }else{
+                    	 if($("#saveCarSummaryBtn").prop("disabled"))
+                    		 return "<input type='text' class='form-control search-control ' name='entrance' disabled='true'>";
+                    	 else
+                    		 return "<input type='text' class='form-control search-control ' name='entrance'>";
+                     }
+                 }
+             },
              { "mDataProp": "CHARGE_SITE","sWidth":"130px",
             	 "fnRender": function(obj) {
                      if(obj.aData.CHARGE_SITE!='' && obj.aData.CHARGE_SITE != null){
