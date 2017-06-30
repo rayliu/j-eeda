@@ -13,6 +13,9 @@
                     	<% if(shiro.hasPermission("DepartOrder.create")){%>
 	                    	<a class="btn btn-primary" href="/departOrder/add">新建发车单</a>
                			<%}%>
+               			<% if(shiro.hasPermission("DepartOrder.create")){%>
+	                    	<a class="btn  btn-primary" href="/departOrder/addForRouteSp">新建整车发车单</a>
+                		<%}%>
                		</div>
                 </div>
                 <!-- /.col-lg-12 -->
