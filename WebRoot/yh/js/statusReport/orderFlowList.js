@@ -184,6 +184,7 @@ $(document).ready(function() {
         var cost_order_no = $("#cost_order_no").val();
         var sign_no = $("#sign_no").val();
         var serial_no = $("#serial_no").val();
+        var customer_id=$("#customer_id").val();
         
         /*
             查询规则：参数对应DB字段名
@@ -200,7 +201,8 @@ $(document).ready(function() {
              +"&charge_order_no="+charge_order_no
              +"&cost_order_no="+cost_order_no
              +"&sign_no="+sign_no
-             +"&serial_no="+serial_no;
+             +"&serial_no="+serial_no
+             +"&customer_id="+customer_id;
 
         dataTable.ajax.url(url).load();
     };

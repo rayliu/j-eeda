@@ -54,6 +54,7 @@ public class StatusReportController extends Controller{
 		String cost_order_no = getPara("cost_order_no");
 		String sign_no = getPara("sign_no");
 		String serial_no = getPara("serial_no");
+		String customer_id = getPara("customer_id");
 		
 		String sLimit = "";
         String pageIndex = getPara("draw");
@@ -88,6 +89,9 @@ public class StatusReportController extends Controller{
 		}
 		if (StringUtils.isNotEmpty(sign_no)){                                            //-- 应收对账单
 			conditions += " and UPPER(deo.ref_no) like '%"+sign_no.toUpperCase()+"%'";
+		}
+		if(StringUtils.isNotEmpty(customer_id)){
+			conditions += " and UPPER(tor.customer_id)='"+customer_id+"'";
 		}
 		if (StringUtils.isNotEmpty(serial_no)){                                            //-- 应收对账单
 			conditions += " and ifnull((SELECT GROUP_CONCAT(toid.serial_no) from transfer_order_item_detail toid"
