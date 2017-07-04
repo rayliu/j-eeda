@@ -319,6 +319,7 @@ $(document).ready(function() {
     	var endTime = $("#departure_time_end_time").val();
     	var planBeginTime = $("#planning_time_begin_time").val();
     	var planEndTime = $("#planning_time_end_time").val();
+    	var office_id=$("#office_id").val();
     	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
 											+"&departNo="+departNo_filter
 											+"&status="+status
@@ -328,6 +329,7 @@ $(document).ready(function() {
 											+"&endTime="+endTime
 											+"&planBeginTime="+planBeginTime
 											+"&planEndTime="+planEndTime
+											+"&office_id="+office_id 
 											+"&office="+office 
 											+"&start="+start
 											+"&cus_order_no="+cus_order_no

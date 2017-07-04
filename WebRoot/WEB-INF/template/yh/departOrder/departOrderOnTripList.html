@@ -75,6 +75,17 @@
                                         <label class="search-label">目的城市</label>
                                         <input type="text" class="form-control search-control orderNo_filter" id="end_filter">
                                     </div>
+                                    
+                                     <div class="form-group">
+                                        <label class="search-label">运作网点</label>
+                                        <select id="office_id" class="form-control search-control officeName_filter" name="officeSelect">
+										<option></option>
+                                        	<% for(list in ListOperationOffice){%>
+                                        	<option value="${list.ID!''}">${list.OFFICE_NAME!''}</option>
+                                        	<% }%>
+                                        </select>
+                                    </div>
+                                    
                                 </div>
                                 <div class="col-lg-4">
                                 	<div class="form-group">
@@ -250,5 +261,5 @@
 	DepartOrder.isComplete = ${departOrderComplete};
 	DepartOnTrip.isUpdate = ${departOnTrip};
 </script>
-<script src="/yh/js/departOrder/onTripList.js?v=1.1"></script>
+<script src="/yh/js/departOrder/onTripList.js?v=1.2"></script>
 

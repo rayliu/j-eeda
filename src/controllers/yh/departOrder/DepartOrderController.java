@@ -77,10 +77,13 @@ public class DepartOrderController extends Controller {
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_OT_LIST})
 	public void onTrip() {
 		List<Record> re = Db.find("SELECT o.id,o.office_name FROM transfer_order tor "
+    			+ " LEFT JOIN office o on o.id = tor.office_id  GROUP BY o.id ;");
+		List<Record> re2 = Db.find("SELECT o.id,o.office_name FROM transfer_order tor "
     			+ " LEFT JOIN office o on o.id = tor.office_id"
     			+ " where tor.office_id in (select office_id from user_office where user_name='"
 				+ currentUser.getPrincipal() + "')  GROUP BY o.id ;");
     	setAttr("officeList", re);
+    	setAttr("ListOperationOffice",re2);
 		render("/yh/departOrder/departOrderOnTripList.html");
 	}
 	// 发车单在途供应商
@@ -355,6 +358,7 @@ public class DepartOrderController extends Controller {
 		String customer = getPara("customer")==null?"":getPara("customer").trim();
 		String planBeginTime = getPara("planBeginTime")==null?"":getPara("planBeginTime").trim();
 		String planEndTime = getPara("planEndTime")==null?"":getPara("planEndTime").trim();
+		String office_id = getPara("office_id")==null?"":getPara("office_id").trim();
 
 		if (getPara("iDisplayStart") != null
 				&& getPara("iDisplayLength") != null) {
@@ -383,6 +387,9 @@ public class DepartOrderController extends Controller {
 		}
 		if(StringUtils.isNotEmpty(office)){
 			conditions += " and ifnull(wo.id,'') = '" + office + "'"; 
+		}
+		if(StringUtils.isNotEmpty(office_id)){
+			conditions += " and ifnull(t.office_id,'') = '" + office_id + "'"; 
 		}
 		if(StringUtils.isNotEmpty(start)){
 			conditions += " and ifnull(l1.name,'') like '%" + start + "%'"; 
