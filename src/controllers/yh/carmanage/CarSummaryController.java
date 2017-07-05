@@ -49,6 +49,11 @@ public class CarSummaryController extends Controller {
 	ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_LIST, PermissionConstant.PERMSSION_CS_CREATE,PermissionConstant.PERMSSION_CS_UPDATE}, logical=Logical.OR)
 	public void index() {
+		List<Record> re2 = Db.find("SELECT o.id,o.office_name FROM transfer_order tor "
+    			+ " LEFT JOIN office o on o.id = tor.office_id"
+    			+ " where tor.office_id in (select office_id from user_office where user_name='"
+				+ currentUser.getPrincipal() + "')  GROUP BY o.id ;");
+        	setAttr("ListOperationOffice",re2);
        render("/yh/carmanage/carSummaryList.html");
     }
 	
@@ -60,6 +65,7 @@ public class CarSummaryController extends Controller {
 		String status = getPara("status")==null?"":getPara("status").trim();
 		String driver = getPara("driver")==null?"":getPara("driver").trim();
 		String car_no = getPara("car_no")==null?"":getPara("car_no").trim();
+		String office_id = getPara("office")==null?"":getPara("office").trim();
 		String transferOrderNo = getPara("transferOrderNo")==null?"":getPara("transferOrderNo").trim();
 		String turnout_time = getPara("create_stamp")==null?"":getPara("create_stamp").trim();
 		
@@ -71,6 +77,10 @@ public class CarSummaryController extends Controller {
         String sql = "";
         String sqlTotal = "";
         String condition = " ";
+        
+        	
+        
+        
         // 获取总条数
 	    sqlTotal =" SELECT count(1) total from (SELECT dor.id, o.id oid,t_o.customer_id, dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,(SELECT group_concat(dt.transfer_order_no SEPARATOR '<br>') FROM depart_transfer dt WHERE pickup_id = dor.id) AS transfer_order_no,"
 		        + " dor. STATUS,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,(SELECT round(sum(ifnull(toi.volume, 0) * (dtf.amount / toi.amount)),2) FROM transfer_order_item toi LEFT JOIN depart_transfer dtf ON dtf.order_item_id = toi.id LEFT JOIN transfer_order t ON t.id = toi.order_id WHERE dtf.pickup_id = dor.id AND t.cargo_nature = 'cargo') cargovolume,"
@@ -83,7 +93,8 @@ public class CarSummaryController extends Controller {
 		        + " LEFT JOIN depart_transfer dtf ON dtf.pickup_id = dor.id"
 		        + " LEFT JOIN transfer_order t_o ON t_o.id = dtf.order_id"
 		        + " LEFT JOIN office o ON o.id = t_o.office_id"
-		        + " WHERE dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
+		        + " WHERE "
+		        + " dor.office_id = '"+office_id+"' and dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
 		        + " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
 		        + " GROUP BY dor.id, dor.car_no "
 		        + " UNION"
@@ -96,7 +107,8 @@ public class CarSummaryController extends Controller {
 		        + " LEFT JOIN carinfo cf on cf.id=dor.car_id"
 		        + " LEFT JOIN office o ON o.id = dor.office_id"
 		        + " LEFT JOIN user_login ul ON ul.id = dor.create_by"
-		        + " where dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
+		        + " where "
+		        + " dor.office_id = '"+office_id+"' and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
 		        + " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 		        + " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	       // 获取当前页的数据
@@ -111,7 +123,7 @@ public class CarSummaryController extends Controller {
 	        	+ " LEFT JOIN depart_transfer dtf ON dtf.pickup_id = dor.id"
 	        	+ " LEFT JOIN transfer_order t_o ON t_o.id = dtf.order_id"
 	        	+ " LEFT JOIN office o ON o.id = t_o.office_id"
-	        	+ " WHERE dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
+	        	+ " WHERE dor.office_id = '"+office_id+"' and  dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
 	        	+ " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
 	        	+ " GROUP BY dor.id, dor.car_no "
 	        	+ " UNION"
@@ -124,7 +136,7 @@ public class CarSummaryController extends Controller {
 	        	+ " LEFT JOIN carinfo cf on cf.id=dor.car_id"
 	        	+ " LEFT JOIN office o ON o.id = dor.office_id"
 	        	+ " LEFT JOIN user_login ul ON ul.id = dor.create_by"
-	        	+ " where dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed') a "
+	        	+ " where dor.office_id = '"+office_id+"' and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed') a "
 	        	+ " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 	        	+ " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	     if (driver != null &&!"".equals(driver)) {	
@@ -969,15 +981,16 @@ public class CarSummaryController extends Controller {
 			setAttr("carNumber", carSummaryOrder.get("month_start_car_next"));
 			//是否审核 isAudit
 			String status = carSummaryOrder.get("status");
-			if("新建".equals(status) ||carSummaryOrder.CAR_SUMMARY_SYSTEM_REVOCATION.equals(status) )
+			if("新建".equals(status) ||carSummaryOrder.CAR_SUMMARY_SYSTEM_REVOCATION.equals(status) ){
 				setAttr("isAudit", "no");
-			else if("已审批".equals(status) || carSummaryOrder.CAR_SUMMARY_SYSTEM_REIMBURSEMENT.equals(status))
+			}else if("已审批".equals(status) || carSummaryOrder.CAR_SUMMARY_SYSTEM_REIMBURSEMENT.equals(status)){
 				setAttr("isAudit", "yes");
-			else
+			}else{
 				setAttr("isAudit", "no");
-			
+			}
+			carSummaryOrder.set("month_refuel_amount", Db.findFirst("select * from car_summary_detail_other_fee where car_summary_id =812 and amount_item = '本次加油';").get("amount"));
 			setAttr("carSummaryOrder", carSummaryOrder);
-			
+
 			Record rec = Db.findFirst("select group_concat(cast(csd.pickup_order_id as char) separator ',') pickupids,group_concat(cast(csd.pickup_type as char) separator ',') pickup_type  from car_summary_detail csd where csd.car_summary_id in("+carSummaryId+") ");
 			//拼车单号
 			setAttr("pickupIds", rec.get("pickupids"));

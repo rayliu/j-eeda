@@ -1103,6 +1103,8 @@ public class DepartOrderController extends Controller {
 		String car_type = getPara("car_type");// 供应商计费类型, 如果是整车，需要知道整车类型
 		String ltlPriceType = getPara("ltlUnitType");// 如果是零担，需要知道零担计费类型：按体积，按重量
 		String sp_id = getPara("sp_id");// 供应商id
+		String volume=getPara("volume");//获取体积
+		String weight=getPara("weight");//获取体重
 		// 查找创建人id
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
@@ -1161,6 +1163,12 @@ public class DepartOrderController extends Controller {
 			}
 			if (!"".equals(car_follow_phone)) {
 				dp.set("car_follow_phone", car_follow_phone);
+			}
+			if(!"".equals(volume)){
+				dp.set("volume", volume);
+			}
+			if(!"".equals(weight)){
+				dp.set("weight", weight);
 			}
 			if (getParaToDate("arrival_time") != null) {
 				dp.set("arrival_time", getPara("arrival_time"));

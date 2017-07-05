@@ -58,6 +58,16 @@
                                                                    <label class="search-label">运输单号</label>
                                                                    <input type="text" class="form-control search-control orderNo_filter" id="transferOrderNo" value="">
                                                                </div>
+                                                               <div class="form-group">
+                                        <label class="search-label">运作网点</label>
+                                        <select id="office" class="form-control search-control officeName_filter" name="officeSelect">
+										<option></option>
+                                        	<% for(list in ListOperationOffice){%>
+                                        	<option value="${list.ID!''}">${list.OFFICE_NAME!''}</option>
+                                        	<% }%>
+                                        </select>
+                                    </div>
+                                                               
                                                                    
                                                            	</div>
                                                            	<div class="col-lg-4">

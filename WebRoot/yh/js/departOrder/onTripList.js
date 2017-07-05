@@ -51,6 +51,7 @@ $(document).ready(function() {
             		 
             	}
             },
+            {"mDataProp":"OFFICE_NAME","sWidth": "80px"}, 
             {"mDataProp":"BOOKING_NOTE_NUMBER","sWidth": "80px"},    
             {"mDataProp":null,
             	"sWidth": "90px",
