@@ -441,7 +441,7 @@ public class DepartOrderController extends Controller {
 				+ " left join transfer_order tr  on tr.id = dt.order_id"
 				+ conditions
 				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
-				+ " ( t.ref_office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
+				+ " ( t.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                 + " )"
@@ -467,7 +467,8 @@ public class DepartOrderController extends Controller {
 				+ " (select dt.order_id from depart_transfer dt where dt.depart_id = deo.id limit 0,1) order_id,  "
 				+ " deo.transfer_type as trip_type,"
 				+ " w.office_id route_to_office_id, "
-                + " wo.office_name route_to_office_name"
+                + " wo.office_name route_to_office_name,"
+                + " if(t.office_id in ( SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"'),'N','Y') wai_flag"
 				+ " from depart_order deo "
 				+ " left join carinfo c on deo.carinfo_id = c.id "
 				+ " left join depart_transfer dt on dt.depart_id = deo.id "
@@ -484,13 +485,13 @@ public class DepartOrderController extends Controller {
 				+ " left join transfer_order tr  on tr.id = dt.order_id"
 				+ conditions
 				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
-				+ " ( t.ref_office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
+				+ " ( t.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                 + " )"
 				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
 				+ currentUser.getPrincipal() + "')"
-				+ " group by deo.id order by deo.create_stamp desc "
+				+ " group by deo.id order by deo.id desc "
 				+ sLimit;
 		
 		Record rec = Db.findFirst(sqlTotal);
