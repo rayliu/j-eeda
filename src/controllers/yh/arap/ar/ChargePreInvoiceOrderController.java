@@ -495,7 +495,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		
 			
 		List<Record> Account = null;
-		Account = Db.find("select * from fin_account where bank_name != '现金'");
+		Account = Db.find("select * from fin_account where bank_name != '现金' and ifnull(is_stop,'') != 1");
 		setAttr("accountList", Account);
 		
 		setAttr("submit_name", LoginUserController.getLoginUserName(this));
