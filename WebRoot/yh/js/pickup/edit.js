@@ -781,8 +781,10 @@
 	// 点击已完成按钮
 	$("#finishBtn").click(function(){
 		$("#finishBtn").attr('disabled', true);	
+		
+	
 		// 处理入库运输单
-		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val()}, function(data){
+		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val(),pid:$("#pickupOrderId").val()}, function(data){
 			//保存成功后，刷新列表
             if(data.success){
             	var pickupOrderId = $("#pickupOrderId").val();
@@ -791,10 +793,10 @@
             		$.post('/pickupOrder/finishPickupOrder', {pickupOrderId:pickupOrderId,priceType:priceType, receiverId:$("#receiverId").val()}, function(data){
                 		pickupOrderMilestone();	
                     	var pickupOrderId = $("#pickupOrderId").val();
-                    	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;
-                    	paymenttable.fnDraw(); 
-                    	routeTable.fnSettings().sAjaxSource = "/pickupOrder/findAllRoute?orderIds="+$("#message").val();
-                		routeTable.fnDraw(); 
+//                    	paymenttable.fnSettings().sAjaxSource = "/pickupOrder/accountPayable?pickupOrderId="+pickupOrderId;
+//                    	paymenttable.fnDraw(); 
+//                    	routeTable.fnSettings().sAjaxSource = "/pickupOrder/findAllRoute?orderIds="+$("#message").val();
+//                		routeTable.fnDraw(); 
                     	$("#saveTransferOrderBtn").attr('disabled', true);	
                     	if(data.PICKUP_TYPE=='direct'){
                     		$("#orderStatus").html(data.STATUS);
