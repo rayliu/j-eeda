@@ -52,6 +52,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
+import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
@@ -572,7 +573,7 @@ public class DeliveryController extends Controller {
 			}
 			
 		}
-		String sql = "select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
+		String sql = "select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile,c.abbr from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
 		//Record customerContact = Db.findFirst(sql);
 		Party customerContact = Party.dao.findFirst(sql);
 
@@ -1527,9 +1528,9 @@ public class DeliveryController extends Controller {
 			         }
     
 		 		 }	
-		 		 UserLogin ul = UserLogin.dao.findById(LoginUserController.getLoginUserId(this));
+		 		Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
 		 		deliveryOrder.set("isNullOrder", "Y")
-		 		.set("office_id", ul.getLong("office_id")).update();
+		 		.set("office_id", office_id).update();
 			}
 			saveDeliveryOrderMilestone(deliveryOrder);
 		} else {
