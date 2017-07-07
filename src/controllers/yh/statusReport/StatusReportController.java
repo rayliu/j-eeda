@@ -103,7 +103,9 @@ public class StatusReportController extends Controller{
 		            + " GROUP BY tor.id ";
 		
 		String sql = " SELECT CONCAT(cast(tor.id as char),':',tor.order_no, '-', tor. STATUS) transfer_order_no, "
-				+ " (select c.abbr  from contact c where id = tor.customer_id) customer_name,"
+				+ " (SELECT c.abbr FROM contact c"
+				+ " LEFT JOIN party p on p.contact_id = c.id"
+				+ " where tor.customer_id = p.id) customer_name,"
 				+ " GROUP_CONCAT(DISTINCT( SELECT group_concat(cast(dor.id as char),':', dor.depart_no ,'-',dor.`STATUS` ,'/财务：',dor.`audit_status` )"
 				+ " FROM depart_order dor "
 				+ " WHERE dor.combine_type = 'PICKUP' AND dor.id = dt.pickup_id ) SEPARATOR '<br/>') pickup_order_no"
