@@ -1053,7 +1053,7 @@ $(document).ready(function() {
 		                    			complete = data.ITEM_NO;
 		                    		}
 		                    	}
-		                    	if(complete != data.ITEM_NO){
+		                    	if(true){
 		                    		return {
 		 	                            label: '型号:'+data.ITEM_NO+' 名称:'+data.ITEM_NAME,
 		 	                            value: columnName=='item_name'?data.ITEM_NAME:data.ITEM_NO,
