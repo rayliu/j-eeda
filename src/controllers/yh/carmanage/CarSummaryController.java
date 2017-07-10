@@ -24,6 +24,7 @@ import models.yh.delivery.DeliveryOrder;
 import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.DriverAssistant;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -78,9 +79,10 @@ public class CarSummaryController extends Controller {
         String sqlTotal = "";
         String condition = " ";
         
-        	
-        
-        
+        String officeCondition = "";
+        if(StringUtils.isNotBlank(office_id)){
+        	officeCondition = " ifnull(dor.office_id,'') = '"+office_id+"'";
+        }
         // 获取总条数
 	    sqlTotal =" SELECT count(1) total from (SELECT dor.id, o.id oid,t_o.customer_id, dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,(SELECT group_concat(dt.transfer_order_no SEPARATOR '<br>') FROM depart_transfer dt WHERE pickup_id = dor.id) AS transfer_order_no,"
 		        + " dor. STATUS,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,(SELECT round(sum(ifnull(toi.volume, 0) * (dtf.amount / toi.amount)),2) FROM transfer_order_item toi LEFT JOIN depart_transfer dtf ON dtf.order_item_id = toi.id LEFT JOIN transfer_order t ON t.id = toi.order_id WHERE dtf.pickup_id = dor.id AND t.cargo_nature = 'cargo') cargovolume,"
@@ -93,8 +95,9 @@ public class CarSummaryController extends Controller {
 		        + " LEFT JOIN depart_transfer dtf ON dtf.pickup_id = dor.id"
 		        + " LEFT JOIN transfer_order t_o ON t_o.id = dtf.order_id"
 		        + " LEFT JOIN office o ON o.id = t_o.office_id"
-		        + " WHERE "
-		        + " dor.office_id = '"+office_id+"' and dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
+		        + " WHERE 1=1 "
+		        + officeCondition
+		        + "  and dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
 		        + " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
 		        + " GROUP BY dor.id, dor.car_no "
 		        + " UNION"
@@ -107,8 +110,9 @@ public class CarSummaryController extends Controller {
 		        + " LEFT JOIN carinfo cf on cf.id=dor.car_id"
 		        + " LEFT JOIN office o ON o.id = dor.office_id"
 		        + " LEFT JOIN user_login ul ON ul.id = dor.create_by"
-		        + " where "
-		        + " dor.office_id = '"+office_id+"' and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
+		        + " where 1 = 1  "
+		        + officeCondition
+		        + " and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
 		        + " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 		        + " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	       // 获取当前页的数据
@@ -123,7 +127,9 @@ public class CarSummaryController extends Controller {
 	        	+ " LEFT JOIN depart_transfer dtf ON dtf.pickup_id = dor.id"
 	        	+ " LEFT JOIN transfer_order t_o ON t_o.id = dtf.order_id"
 	        	+ " LEFT JOIN office o ON o.id = t_o.office_id"
-	        	+ " WHERE dor.office_id = '"+office_id+"' and  dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
+	        	+ " WHERE 1 = 1 "
+	        	+ officeCondition
+	        	+ " and  dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
 	        	+ " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
 	        	+ " GROUP BY dor.id, dor.car_no "
 	        	+ " UNION"
@@ -136,7 +142,9 @@ public class CarSummaryController extends Controller {
 	        	+ " LEFT JOIN carinfo cf on cf.id=dor.car_id"
 	        	+ " LEFT JOIN office o ON o.id = dor.office_id"
 	        	+ " LEFT JOIN user_login ul ON ul.id = dor.create_by"
-	        	+ " where dor.office_id = '"+office_id+"' and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed') a "
+	        	+ " where 1 = 1 "
+	        	+ officeCondition
+	        	+ " and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed') a "
 	        	+ " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 	        	+ " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	     if (driver != null &&!"".equals(driver)) {	
