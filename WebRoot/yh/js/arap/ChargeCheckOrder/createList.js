@@ -26,17 +26,18 @@ $(document).ready(function() {
         "aoColumns": [
 	          { "mDataProp": null, "sWidth":"20px","bSortable": false,
 	            "fnRender": function(obj) {
-	             var strcheck= '<input type="checkbox" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+	            	console.log(obj.aData.tporder+"  "+obj.aData.OFFICE_ID);
+	             var strcheck= '<input type="checkbox" name="order_check_box" tporder="'+obj.aData.TPORDER+'"  data-office_id="'+obj.aData.OFFICE_ID+'"  class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
 	              //回单
 	              for(var i=0;i<returnIds.length;i++){
                          if(returnIds[i]==obj.aData.ID){
-                        	 return strcheck= '<input type="checkbox" checked="checked" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                        	 return strcheck= '<input type="checkbox" checked="checked" name="order_check_box" tporder="'+obj.aData.TPORDER+'" data-office_id="'+obj.aData.OFFICE_ID+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                          }
                      }
                   //手工单
                   for(var i=0;i<miscOrderIds.length;i++){
                          if(miscOrderIds[i]==obj.aData.ID){
-                        	 return strcheck= '<input type="checkbox" checked="checked" name="order_check_box" tporder="'+obj.aData.TPORDER+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+                        	 return strcheck= '<input type="checkbox" checked="checked" name="order_check_box" tporder="'+obj.aData.TPORDER+'" data-office_id="'+obj.aData.OFFICE_ID+'" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
                          }
                      }
                 	 return strcheck;
@@ -155,6 +156,8 @@ $(document).ready(function() {
 	//
     $("input[name='allCheck']").click(function(){
     	$("#uncheckedChargeCheckList input[name='order_check_box']").each(function () {
+    		var now=$(this);
+    		
     		var cname = $(this).parent().siblings('.cname')[0].textContent;
     			if(cName.length != 0){
 						if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
@@ -207,8 +210,25 @@ $(document).ready(function() {
          });
 	 });
     // 未选中列表
+    var end=false;
 	$("#uncheckedChargeCheck-table").on('click', '.checkedOrUnchecked', function(e){
+		//只能选中相同的office_id的单子
+		var now=$(this);
+		$("input:checkbox[name=order_check_box]:checked").each(function (){
+			if($(this).data("office_id")!=now.data("office_id")){
+				now.attr("checked",false);
+				alert("请选择相同 的网点的单据!!!");
+				end=true;
+				return false;
+			}
+		});
+		if(end){
+			end=false;
+			return;
+		}
 		if($(this).prop("checked") == true){
+		
+			
 			if(cName.length != 0){
 				if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
 					alert("请选择同一客户名称的回单");

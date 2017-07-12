@@ -1568,6 +1568,7 @@ public class PickupOrderController extends Controller {
             .set("creator", LoginUserController.getLoginUserId(this))
             .set("create_date", new Date())
             .set("transfer_order_id", order_id)
+            .set("office_id", transferOrder.get("office_id"))
             .set("customer_id", transferOrder.get("customer_id"))
             .save();
 
