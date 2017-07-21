@@ -11,6 +11,7 @@ import java.util.List;
 
 
 
+
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
 import models.CostApplicationOrderRel;
@@ -23,6 +24,7 @@ import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipOutputStream;
 
 import com.jfinal.core.Controller;
+import com.jfinal.plugin.activerecord.Db;
 
 import controllers.yh.util.PrintPatterns;
 
@@ -153,7 +155,10 @@ public class ReportController extends Controller {
 				.findFirst(
 						"select * from arap_cost_invoice_application_order where order_no = ?",
 						order_no);
-		
+		//更新打印次数
+		int pt=arapAuditInvoiceApplication.getInt("print_times");
+		pt++;
+		arapAuditInvoiceApplication.set("print_times", pt).update();
 		String checkOrderFile = "";
 		StringBuffer buffer = new StringBuffer();
 		
