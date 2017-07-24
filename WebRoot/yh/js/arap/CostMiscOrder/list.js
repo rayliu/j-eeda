@@ -23,7 +23,12 @@ $(document).ready(function() {
         "aoColumns": [ 
 			{ "mDataProp":null,"sWidth": "30px",
 				"fnRender": function(obj) {
-			      return '<button type="button" class="btn btn-primary delete btn-xs" >'+
+					var status="disabled";
+					var creator=$("#creator").val();
+					if(obj.aData.CREATE_BY==creator){
+						status="";
+					}
+			      return '<button type="button" class="btn btn-primary delete btn-xs" '+status+' >'+
 			            '<i class="fa fa-trash-o"></i> 删除</button>';
 			    }
 			},

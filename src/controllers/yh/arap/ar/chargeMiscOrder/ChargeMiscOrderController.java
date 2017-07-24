@@ -42,6 +42,8 @@ public class ChargeMiscOrderController extends Controller {
 	Subject currentUser = SecurityUtils.getSubject();
 
 	public void index() {
+		Long user_id = LoginUserController.getLoginUserId(this);
+		setAttr("creator",user_id);
 		render("/yh/arap/ChargeMiscOrder/ChargeMiscOrderList.html");
 	}
 

@@ -49,6 +49,8 @@ public class CostMiscOrderController extends Controller {
     private Logger logger = Logger.getLogger(CostMiscOrderController.class);
 	Subject currentUser = SecurityUtils.getSubject();
     public void index() {
+    		Long user_id = LoginUserController.getLoginUserId(this);
+    		setAttr("creator",user_id);
     	   render("/yh/arap/CostMiscOrder/CostMiscOrderList.html");
     }
 
@@ -69,6 +71,7 @@ public class CostMiscOrderController extends Controller {
     }
 
     public void list() {
+    	Long user_id = LoginUserController.getLoginUserId(this);
     	String sp = getPara("sp")==null?"":getPara("sp").trim();
         String customer = getPara("companyName")==null?"":getPara("companyName").trim();
         String spName = getPara("spName")==null?"":getPara("spName").trim();
@@ -128,9 +131,7 @@ public class CostMiscOrderController extends Controller {
         BillingOrderListMap.put("sEcho", pageIndex);
         BillingOrderListMap.put("iTotalRecords", rec.getLong("total"));
         BillingOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
         BillingOrderListMap.put("aaData", BillingOrders);
-
         renderJson(BillingOrderListMap);
     }
     
