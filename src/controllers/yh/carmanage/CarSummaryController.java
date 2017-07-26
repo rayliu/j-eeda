@@ -81,7 +81,7 @@ public class CarSummaryController extends Controller {
         
         String officeCondition = "";
         if(StringUtils.isNotBlank(office_id)){
-        	officeCondition = " ifnull(dor.office_id,'') = '"+office_id+"'";
+        	officeCondition = " and ifnull(dor.office_id,'') = '"+office_id+"'";
         }
         // 获取总条数
 	    sqlTotal =" SELECT count(1) total from (SELECT dor.id, o.id oid,t_o.customer_id, dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,(SELECT group_concat(dt.transfer_order_no SEPARATOR '<br>') FROM depart_transfer dt WHERE pickup_id = dor.id) AS transfer_order_no,"
