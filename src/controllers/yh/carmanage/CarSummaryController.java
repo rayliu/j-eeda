@@ -929,15 +929,15 @@ public class CarSummaryController extends Controller {
     	String value = getPara("value").trim();
     	if(!"".equals(carSummaryId) && carSummaryId != null){
     		CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
-    		if("审核".equals(value)){
+    		//if("审核".equals(value)){
     			value = "已审批";
-    		}else if("撤销审核".equals(value)){
-    			value = order.CAR_SUMMARY_SYSTEM_REVOCATION;
-    		}else if("报销".equals(value)){
-    			value = order.CAR_SUMMARY_SYSTEM_REIMBURSEMENT;
-    		}else{
-    			value = "";
-    		}
+//    		}else if("撤销审核".equals(value)){
+//    			value = order.CAR_SUMMARY_SYSTEM_REVOCATION;
+//    		}else if("报销".equals(value)){
+//    			value = order.CAR_SUMMARY_SYSTEM_REIMBURSEMENT;
+//    		}else{
+//    			value = "";
+//    		}
     		order.set("status", value);
     		order.update();
     		//修改行车里程碑状态
@@ -987,6 +987,7 @@ public class CarSummaryController extends Controller {
 			setAttr("driver", carSummaryOrder.get("main_driver_name"));
 			//出车次
 			setAttr("carNumber", carSummaryOrder.get("month_start_car_next"));
+			setAttr("status", carSummaryOrder.get("status"));
 			//是否审核 isAudit
 			String status = carSummaryOrder.get("status");
 			if("新建".equals(status) ||carSummaryOrder.CAR_SUMMARY_SYSTEM_REVOCATION.equals(status) ){
@@ -994,7 +995,7 @@ public class CarSummaryController extends Controller {
 			}else if("已审批".equals(status) || carSummaryOrder.CAR_SUMMARY_SYSTEM_REIMBURSEMENT.equals(status)){
 				setAttr("isAudit", "yes");
 			}else{
-				setAttr("isAudit", "no");
+				setAttr("isAudit", "yes");
 			}
 			carSummaryOrder.set("month_refuel_amount", Db.findFirst("select * from car_summary_detail_other_fee where car_summary_id =812 and amount_item = '本次加油';").get("amount"));
 			setAttr("carSummaryOrder", carSummaryOrder);
@@ -1181,7 +1182,21 @@ public class CarSummaryController extends Controller {
     	}
     }
     
-    
+    public void returnOrder(){
+    	String order_id = getPara("order_id");
+    	Record re = new Record();
+    	CarSummaryOrder car = CarSummaryOrder.dao.findById(order_id);
+    	String status = car.getStr("status");
+    	
+    	if("已审批".equals(status)){
+    		car.set("status", "新建").update();
+    		re.set("result", true);
+    	}else{
+    		re.set("result", false);
+    		re.set("msg", "此单据"+status+",无法撤回");
+    	}
+    	renderJson(re);
+    }
     
     
 }

@@ -166,6 +166,7 @@ $(document).ready(function() {
  				$("#car_summary_no").val(data.ORDER_NO);
  				contactUrl("edit?carSummaryId",data.ID);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+ 				$("#auditBtn").prop("disabled",false);
  			}else{
  				$.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
  			}
@@ -1202,9 +1203,11 @@ $(document).ready(function() {
 			$.post('/carsummary/updateCarSummaryOrderStatus', {carSummaryId:car_summary_id,value:value}, function(data){
 				if(data.success){
 					$("#isAudit").val("yes");
+					$("#status").val("已审批");
+					$("#returnBtn").attr('disabled',false);
 					//$("#auditBtn").hide();
 					$("#auditBtn").prop("disabled",true);
-					$("#saveCarSummaryBtn").prop("disabled",true);
+					$("#saveCarSummaryBtn").attr("disabled",true);
 					$("#delAuditBtn").show();
 					$("#saveCarSummaryBtn").prop("disabled",true);
 					$("#addCarSummaryRouteFee").prop("disabled",true);
@@ -1213,8 +1216,8 @@ $(document).ready(function() {
 					$("#editProportionBtn").prop("disabled",true);
 					$("#affirmBtn").prop("disabled",true);
 					//刷新当前选项卡 
-					$("#"+clickTabId+"").click();
-					
+					//$("#"+clickTabId+"").click();
+					$.scojs_message('审核成功', $.scojs_message.TYPE_OK);
 				}else{
 					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}
@@ -1377,6 +1380,31 @@ $(document).ready(function() {
         	}
 		}
 	});
+	
+	
+	$("#returnBtn").click(function(){
+		var self = this;
+		
+		var status = $('#status').val();
+		var order_id = $('#car_summary_id').val();
+		self.disabled = true;
+		if(status=='已审批'){
+			$.post('/carsummary/returnOrder',{order_id:order_id},function(data){
+				if(data.RESULT){
+					$("#saveCarSummaryBtn").attr('disabled',false);
+					$.scojs_message('已退回新建状态', $.scojs_message.TYPE_OK);
+				}else{
+					
+					$.scojs_message('操作失败'+data.MSG, $.scojs_message.TYPE_ERROR);
+				}
+			});
+		}
+	});
+	
+	var status = $('#status').val();
+	if(status=='已审批'){
+		$("#returnBtn").attr('disabled',false);
+	}
 	
 });
 function datetimepicker(data){
