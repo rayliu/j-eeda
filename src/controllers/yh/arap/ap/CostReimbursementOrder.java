@@ -48,9 +48,11 @@ public class CostReimbursementOrder extends Controller {
 	}
 	 @RequiresPermissions(value = {PermissionConstant.PERMSSION_COSTREIMBURSEMENT_CREATE, PermissionConstant.PERMSSION_COSTREIMBURSEMENT_UPDATE}, logical=Logical.OR)
 	public void create() {
-		Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
-		Office off = Office.dao.findById(office_id);
-		setAttr("officeRe", off);
+		//Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+		 List<Record> offices = Db
+					.find("select o.id,o.office_name,o.is_stop from office o where o.id in (select office_id from user_office where user_name='"
+							+ currentUser.getPrincipal() + "')");
+		setAttr("userOffices", offices);
 		List<Record> itemList  = Db.find("select * from fin_item where type='报销费用' and parent_id !=0 ");
         setAttr("itemList", itemList);
         List<Record> parentItemList  = Db.find("select * from fin_item where type='报销费用' and parent_id =0 ");
@@ -69,15 +71,7 @@ public class CostReimbursementOrder extends Controller {
 		String accountName = getPara("account_name");
 		String accountNo = getPara("account_no");
 		String account_bank = getPara("account_bank");
-		/*
-		String amount = getPara("amount");
-		String createId = getPara("create_id");
-		String createStamp = getPara("create_stamp");
-		String auditId = getPara("audit_id");
-		String auditStamp = getPara("audit_stamp");
-		String approvalId = getPara("approval_id");
-		String approvalStamp = getPara("approval_stamp");
-		*/
+
 		String remark = getPara("remark");
 		String invoicePayment = getPara("invoice_payment");
 		String payment_type = getPara("payment_type");
