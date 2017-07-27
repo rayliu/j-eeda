@@ -365,19 +365,22 @@ $(document).ready(function() {
 		var transferOrderNo = $("#carSummary_transfer_order").val();
 		var order_no = $("#carSummary_pickup_order").val();
 		var start_data = $("#carSummary_start_data").val();
-		var office=$("#office").val
+		var office_id=$("#carSummary_office").val();
 		num2 = 1;
-		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&order_no="+order_no+"&start_data="+start_data+"&office="+office;
+		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&order_no="+order_no+"&start_data="+start_data+"&office_id="+office_id;
 		travellingCraneReceipts_table.fnDraw();
 		saveConditions1();
 	};
+	
 	$("#searchBtn1").click(function(){
         refreshData1();
     });
+	
     $("#resetBtn1").click(function(){
         $('#searchForm1')[0].reset();
         saveConditions1();
     });
+    
     var saveConditions1=function(){
         var conditions={
         	status:$("#carSummary_status").val(),

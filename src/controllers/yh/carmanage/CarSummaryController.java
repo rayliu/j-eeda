@@ -184,6 +184,7 @@ public class CarSummaryController extends Controller {
 		String transferOrderNo = getPara("transferOrderNo");
 		String order_no = getPara("order_no");
 		String start_data = getPara("start_data");
+		String office_id = getPara("office_id");
 		 
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -195,11 +196,12 @@ public class CarSummaryController extends Controller {
         String sqlTotal = "";
         String sql = "";
         String condition = " where 1=1 ";
-        sqlTotal = "select count(1) total from (select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+        sqlTotal = "select count(1) total from (select distinct cso.id,cso.office_id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 				+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 				+ "	round((cso.next_start_car_amount + cso.month_refuel_amount),2) AS total_cost,"
 				+ " round((cso.finish_car_mileage - cso.start_car_mileage),2) AS carsummarymileage,"
-				+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
+				+ " (select group_concat(pickup_order_no separator '<br>' ) "
+				+ " from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
 				+ " (SELECT GROUP_CONCAT(DISTINCT ifnull(dt.transfer_order_no,doi.transfer_no) SEPARATOR '<br>') FROM car_summary_detail csd LEFT JOIN depart_transfer dt ON dt.pickup_id = csd.pickup_order_id and csd.pickup_type='提货' LEFT JOIN delivery_order_item doi on doi.delivery_id=csd.pickup_order_id and csd.pickup_type='配送'  WHERE csd.car_summary_id = cso.id) AS transfer_order_no,"
 				+ " (select turnout_time from depart_order where id = ( select min(pickup_order_id) from car_summary_detail where car_summary_id = cso.id and pickup_type = '提货')) as turnout_time,"
 				+ " (select return_time from depart_order where id = ( select max(pickup_order_id) from car_summary_detail where car_summary_id = cso.id and pickup_type = '提货')) as return_time,"
@@ -220,7 +222,7 @@ public class CarSummaryController extends Controller {
 				+ " (select amount from car_summary_detail_other_fee where car_summary_id = cso.id and item = 12) other_charges"
 				+ " from car_summary_order cso "
 				+ " order by cso.create_data desc ) a " ;
-		sql = " select * from (select distinct cso.id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
+		sql = " select * from (select distinct cso.id,cso.office_id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
 				+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
 				+ "	round((cso.next_start_car_amount + cso.month_refuel_amount),2) AS total_cost,"
 				+ " round((cso.finish_car_mileage - cso.start_car_mileage),2) AS carsummarymileage,"
@@ -262,6 +264,9 @@ public class CarSummaryController extends Controller {
 		}
 		if (start_data != null ) {
 			condition +=" AND ifnull(turnout_time,'') like'%"+ start_data.trim()+ "%'";
+		}
+		if (StringUtils.isNotEmpty(office_id)) {
+			condition +=" AND office_id = '"+office_id+"'";
 		}
 		Record rec = Db.findFirst(sqlTotal+condition);
         logger.debug("total records:" + rec.getLong("total"));
@@ -385,6 +390,12 @@ public class CarSummaryController extends Controller {
 	    			for (Record record : recList) {
 	    				orderIds.add(record.getLong("transfer_order_id"));
 					}
+	    			
+	    			Long office_id = deliveryOrder.getLong("office_id");
+	    			if(office_id != null){
+	    				carSummaryOrder.set("office_id", office_id).update();
+	    			}
+	    				
     			}else{
 	    			DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
 	    			departOrder.set("car_summary_type", "processed");
@@ -401,6 +412,11 @@ public class CarSummaryController extends Controller {
 	    			for (Record record : recList) {
 	    				orderIds.add(record.getLong("order_id"));
 					}
+	    			
+	    			Long office_id = departOrder.getLong("office_id");
+	    			if(office_id != null){
+	    				carSummaryOrder.set("office_id", office_id).update();
+	    			}
     			}
     			//送货员工资明细
     			List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select * from pickup_driver_assistant where pickup_id = ?",pickupIds[i]);
