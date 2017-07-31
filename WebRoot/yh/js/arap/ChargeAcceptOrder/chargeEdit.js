@@ -83,7 +83,7 @@
     		array.push(obj);
     	});
     	
-    	$("#total_amount").val(parseFloat(sum).toFixed(2));
+    	$("#total_amount").val($("#pay_amount").val());
     	var str_JSON = JSON.stringify(array);
     	console.log(str_JSON);
     	$("#detailJson").val(str_JSON);
