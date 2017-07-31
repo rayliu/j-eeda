@@ -217,7 +217,7 @@ public class AccountAuditLogController extends Controller {
     			+ " ) ) balance_amount"
     			+ " FROM arap_account_audit_log aal"
     			+ " right JOIN fin_account fa ON fa.id = aal.account_id"
-    			+"  where aal.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+    			+"  where ifnull(aal.office_id,'') IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
     			+ " GROUP BY fa.id ";
     	
     	List<Record> BillingOrders = Db.find(sql+sLimit);
