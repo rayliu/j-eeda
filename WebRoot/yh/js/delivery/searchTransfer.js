@@ -110,7 +110,7 @@ $(document).ready(function() {
             {"mDataProp":"WID", "bVisible": false},
             {"mDataProp":"ABBR","sClass": "cname", "sWidth":"120px"},
             {"mDataProp":"PID", "bVisible": false},
-            {"mDataProp":"AMOUNT","sWidth":"30px"},
+            {"mDataProp":"AMOUNT","sWidth":"30px","sClass":"total_amount"},
             {"mDataProp":null,"sWidth":"80px",
             	"fnRender": function(obj) {
             		if(obj.aData.COMPLETE_AMOUNT != null && obj.aData.COMPLETE_AMOUNT != "")
@@ -791,9 +791,9 @@ $(document).ready(function() {
 	});
     
 	//输入普货配送数量
-	$("#eeda-table2").on('keyup click', 'input[name="amount"]', function(e){
+	$("#eeda-table2").on('blur', 'input[name="amount"]', function(e){
 		var value = $(this).val();
-		var available = $(this).parent().parent().find("td").eq(10).text();
+		var available = $($(this).parent().parent().find(".total_amount")).text();
 		if(isNaN(value)){
 			$.scojs_message('只能输入数字,请重新输入', $.scojs_message.TYPE_ERROR);
 			$(this).val("");
