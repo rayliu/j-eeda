@@ -808,7 +808,7 @@
                     		$("#orderStatus").html(data.STATUS);
                     		$.scojs_message('入库成功', $.scojs_message.TYPE_OK);
                     	}else{
-                    		("#orderStatus").html(data.STATUS);
+                    		$("#orderStatus").html(data.STATUS);
                     		$.scojs_message('已入货场', $.scojs_message.TYPE_OK);
                     	}
                 	},'json');

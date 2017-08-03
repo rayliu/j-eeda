@@ -394,15 +394,20 @@ $(document).ready(function() {
 		    	"oLanguage": {
 		            "sUrl": "/eeda/dataTables.ch.txt"
 		        },
-		        "sAjaxSource": "/delivery/orderListCargo?transferItemIds="+transferItemIds,
+		        "sAjaxSource": "/delivery/orderListCargo?transferItemIds="+transferItemIds+"&order_id="+$("#delivery_id").val(),
 		        "aoColumns": [
 		            {"mDataProp":"ITEM_NO"},  
 		            {"mDataProp":"ITEM_NAME"},
 		            {"mDataProp":"VOLUME"},
 		            {"mDataProp":"WEIGHT"},
-		            {"mDataProp":null,
+		            {"mDataProp":"D_AMOUNT",
 		            	"fnRender": function(obj) {
-		            		return numbers[num++];
+		            		if(obj.aData.D_AMOUNT == null || obj.aData.D_AMOUNT == ''){
+		            			return numbers[num++];
+		            		}else{
+		            			return obj.aData.D_AMOUNT;
+		            		}
+		            		
 		            	}
 		            },   
 		            {"mDataProp":"ABBR"},

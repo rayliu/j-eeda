@@ -1458,6 +1458,8 @@ public class DeliveryController extends Controller {
 						.set("transfer_order_id",order.get("id"))
 						.set("amount", this_amount)
 						.save();	
+						
+						transferOrderItem.set("complete_amount", Tcomplete_amount+this_amount).update();
 					} 
 				}else{
 					String string = getPara("tranferid");
@@ -2175,16 +2177,25 @@ public class DeliveryController extends Controller {
     }
     
     public void orderListCargo(){	
+    	String order_id = getPara("order_id");
     	String transferItemIds = getPara("transferItemIds");
     	String pageIndex = getPara("sEcho");
     	
+    	String d_amount = null;
+    	if(StringUtils.isNotBlank(order_id)){
+    		Record re = Db.findFirst("select * from delivery_order_item where delivery_id = ?",order_id);
+    		String amount = re.get("amount").toString();
+    		d_amount = amount;
+    	}
+    	
     	String sqlTotal = "select count(0) total from transfer_order_item where id in (" + transferItemIds + ");";
-        String sql = "select toi.*,c.abbr,tor.order_no from transfer_order_item toi "
+        String sql = "select toi.*,c.abbr,tor.order_no ,"+d_amount+" d_amount"
+        		+ " from transfer_order_item toi "
         		+ " left join transfer_order tor on tor.id = toi.order_id"
         		+ " left join product pro on pro.id = toi.product_id"
         		+ " left join party p on p.id = tor.customer_id"
         		+ " left join contact c on c.id = p.contact_id"
-        		+ " where toi.id in (" + transferItemIds + ");";
+        		+ " where toi.id in (" + transferItemIds + ")";
         Record rec = Db.findFirst(sqlTotal);
         List<Record> products = Db.find(sql);
         Map Map = new HashMap();

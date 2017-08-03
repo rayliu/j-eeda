@@ -139,14 +139,14 @@ public class DeliveryOrderMilestoneController extends Controller {
   				//InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item ii where ii.warehouse_id = '" + warehouseId + "' and ii.product_id = '" + productId[i] + "' and ii.party_id = '" + customerId + "';");
   				//item.set("total_quantity", item.getDouble("total_quantity") - Double.parseDouble(shippingNumber[i])).update();
   				//修改运输单已完成数量
-  				TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
-  				double outCompleteAmount = transferOrderItem.getDouble("complete_amount")==null?0:transferOrderItem.getDouble("complete_amount");
-  				String shiNumber = shippingNumber[i];
-  				if(StringUtils.isBlank(shippingNumber[i])){
-  					shiNumber = transferOrderItem.getDouble("amount").toString();
-  				}
-  				double newCompleteAmount = outCompleteAmount + Double.parseDouble(shiNumber);
-  				transferOrderItem.set("complete_amount", newCompleteAmount).update();
+//  				TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
+//  				double outCompleteAmount = transferOrderItem.getDouble("complete_amount")==null?0:transferOrderItem.getDouble("complete_amount");
+//  				String shiNumber = shippingNumber[i];
+//  				if(StringUtils.isBlank(shippingNumber[i])){
+//  					shiNumber = transferOrderItem.getDouble("amount").toString();
+//  				}
+//  				double newCompleteAmount = outCompleteAmount + Double.parseDouble(shiNumber);
+//  				transferOrderItem.set("complete_amount", newCompleteAmount).update();
   				
 //  				//货品明细表
 //				long transfer_id = transferOrderItem.getLong("order_id");
