@@ -309,7 +309,7 @@ public class ChargeAcceptOrderController extends Controller {
         		+ " left join contact c on c.id = p.contact_id "
         		+ " left join arap_cost_invoice_item_invoice_no invoice_item on aci.id = invoice_item.invoice_id where aci.status in ("+status+")"
 				+ "	and aci.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
-				+"  and (aci.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"') or ifnull(aci.payee_id,'') = '')"
+				//+"  and (aci.payee_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"') or ifnull(aci.payee_id,'') = '')"
                 + " group by aci.id "
         		+ ") A";
 
