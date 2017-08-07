@@ -487,6 +487,10 @@ public class DeliveryController extends Controller {
 		List<Record> unitList = Db.find("select * from unit");
 		setAttr("unitList", unitList);
 		
+		List<Record> offices = Db
+				.find("select o.id,o.office_name,o.is_stop from office o ");
+		setAttr("userOffices", offices);
+		
 		List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select * from transfer_order_item toi"
 				+ " where delivery_id = ? ",delivery_id);	
 		setAttr("itemList", itemList);
@@ -696,6 +700,10 @@ public class DeliveryController extends Controller {
 			paymentItemList = Db.find("select * from fin_item where type='应付'");
 			setAttr("paymentItemList", paymentItemList);
 		}
+		
+		List<Record> offices = Db
+				.find("select o.id,o.office_name,o.is_stop from office o ");
+		setAttr("userOffices", offices);
 		
 		
 		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
@@ -1278,6 +1286,7 @@ public class DeliveryController extends Controller {
 		String orderDeliveryStamp  = getPara("order_delivery_stamp");
 		String transferOrderNo  = getPara("transferOrderNo").trim();
 		String receivingunit =getPara("receivingunit");
+		String officeSelect =getPara("officeSelect");
 		String remark =getPara("remark");
 		String[] idlist = getPara("localArr").split(",");
 		String[] idlist2 = getPara("localArr2").split(",");
@@ -1545,9 +1554,9 @@ public class DeliveryController extends Controller {
 			         }
     
 		 		 }	
-		 		Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
+		 		//Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
 		 		deliveryOrder.set("isNullOrder", "Y")
-		 		.set("office_id", office_id).update();
+		 		.set("office_id", officeSelect).update();
 			}
 			saveDeliveryOrderMilestone(deliveryOrder);
 		} else {
@@ -1596,6 +1605,8 @@ public class DeliveryController extends Controller {
 				         }
 			 		 }	
 				 }
+				 
+				 deliveryOrder.set("office_id", officeSelect).update();
 			}
 					
 			
