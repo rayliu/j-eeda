@@ -207,10 +207,12 @@ $(document).ready(function() {
 		var transferOrderNo = $("#transferOrderNo").val();
 		var create_stamp = $("#create_stamp").val();
 		var office = $("#office").val();
+		var orderNo = $("#orderNo").val();
 		
 		num = 1;
 		unDispose_table.fnSettings().oFeatures.bServerSide = true; 
-		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp+"&office="+office;
+		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList?status="+status+"&driver="+driver+"&car_no="
+		+car_no+"&transferOrderNo="+transferOrderNo+"&create_stamp="+create_stamp+"&office="+office+"&orderNo="+orderNo;
 		unDispose_table.fnDraw();
 		saveConditions();
 	};
@@ -374,8 +376,11 @@ $(document).ready(function() {
 		var order_no = $("#carSummary_pickup_order").val();
 		var start_data = $("#carSummary_start_data").val();
 		var office_id=$("#carSummary_office").val();
+		
 		num2 = 1;
-		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo+"&order_no="+order_no+"&start_data="+start_data+"&office_id="+office_id;
+		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?" +
+				" status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo
+				+"&order_no="+order_no+"&start_data="+start_data+"&office_id="+office_id;
 		travellingCraneReceipts_table.fnDraw();
 		saveConditions1();
 	};

@@ -69,6 +69,7 @@ public class CarSummaryController extends Controller {
 		String office_id = getPara("office")==null?"":getPara("office").trim();
 		String transferOrderNo = getPara("transferOrderNo")==null?"":getPara("transferOrderNo").trim();
 		String turnout_time = getPara("create_stamp")==null?"":getPara("create_stamp").trim();
+		String order_no = getPara("orderNo")==null?"":getPara("orderNo").trim();
 		
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -161,6 +162,9 @@ public class CarSummaryController extends Controller {
 	     }
 	     if (turnout_time != null &&!"".equals(turnout_time)) {	
 	    	 condition +=" AND ifnull(turnout_time,'') like'%"+ turnout_time+ "%'";
+	     }
+	     if (StringUtils.isNotBlank(order_no)) {	
+	    	 condition +=" AND ifnull(depart_no,'') like'%"+ order_no+ "%'";
 	     }
         List<Record> orders = Db.find(sql+condition + sLimit);
         Record rec = Db.findFirst(sqlTotal+condition);
