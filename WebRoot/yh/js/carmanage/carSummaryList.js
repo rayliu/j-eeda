@@ -44,13 +44,13 @@ $(document).ready(function() {
 			{"mDataProp":null,"sWidth":"120px",
 				"fnRender": function(obj) {
 					var order_no = obj.aData.DEPART_NO;	
-					if(order_no.indexOf("DC")){
+					if(order_no.indexOf("DC")>-1){
 						if(Pickup.isUpdate || Pickup.isCompleted){
 							return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
 						}else{
 							return order_no;
 						}
-					}else if(order_no.indexOf("PS")){
+					}else if(order_no.indexOf("PS")>-1){
 						return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
 					}else{
 						return order_no;
