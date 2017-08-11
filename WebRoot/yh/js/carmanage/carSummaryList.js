@@ -43,11 +43,19 @@ $(document).ready(function() {
 			}, 
 			{"mDataProp":null,"sWidth":"120px",
 				"fnRender": function(obj) {
-					if(Pickup.isUpdate || Pickup.isCompleted){
-						return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
+					var order_no = obj.aData.DEPART_NO;	
+					if(order_no.indexOf("DC")){
+						if(Pickup.isUpdate || Pickup.isCompleted){
+							return "<a href='/pickupOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
+						}else{
+							return order_no;
+						}
+					}else if(order_no.indexOf("PS")){
+						return "<a href='/delivery/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.DEPART_NO+"</a>";
 					}else{
-						return obj.aData.DEPART_NO;
+						return order_no;
 					}
+					
 				}
 			},
 			{"mDataProp":"TRANSFER_ORDER_NO", "sWidth":"120px"},
