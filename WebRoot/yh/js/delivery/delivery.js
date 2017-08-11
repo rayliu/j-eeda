@@ -222,7 +222,7 @@ $(document).ready(function() {
  			driverList.empty();
  			for(var i = 0; i < data.length; i++)
  			{
- 				driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].ID+"' car_no='"+data[i].CAR_NO+"' phone='"+data[i].PHONE+"' driver='"+data[i].DRIVER+"' > "+data[i].DRIVER+" "+data[i].PHONE+"</a></li>");
+ 				driverList.append("<li><a tabindex='-1' class='fromLocationItem' pid='"+data[i].ID+"' car_no='"+data[i].CAR_NO+"' phone='"+data[i].PHONE+"' driver='"+data[i].DRIVER+"' > "+data[i].DRIVER+" "+data[i].CAR_NO+"</a></li>");
  			}
  		},'json');
  		
