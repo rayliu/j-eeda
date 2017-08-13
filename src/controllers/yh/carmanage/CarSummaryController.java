@@ -36,6 +36,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.profile.CarinfoController;
 import controllers.yh.util.OrderNoGenerator;
@@ -102,7 +103,7 @@ public class CarSummaryController extends Controller {
 		        + " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
 		        + " GROUP BY dor.id, dor.car_no "
 		        + " UNION"
-		        + " SELECT dor.id, o.id oid, t_o.customer_id,dor.order_no, ifnull(ul.c_name, ul.user_name) user_name,dor.remark,(SELECT group_concat(tor.order_no SEPARATOR '<br>') FROM delivery_order_item doi LEFT JOIN transfer_order tor on tor.id=doi.transfer_order_id WHERE doi.delivery_id = dor.id) AS transfer_order_no,"
+		        + " SELECT dor.id, o.id oid, dor.customer_id,dor.order_no, ifnull(ul.c_name, ul.user_name) user_name,dor.remark,(SELECT group_concat(tor.order_no SEPARATOR '<br>') FROM delivery_order_item doi LEFT JOIN transfer_order tor on tor.id=doi.transfer_order_id WHERE doi.delivery_id = dor.id) AS transfer_order_no,"
 		        + " dor.`STATUS`,cf.car_no,cf.driver,cf.phone,'' cartype,dor.business_stamp,o.office_name, ROUND((SELECT ifnull(toi.volume, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargovolume,"
 		        + " ROUND((SELECT ifnull(toi.weight, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargoweight,0 atmvolume,0 atmweight"
 		        + " FROM delivery_order dor"
@@ -134,7 +135,7 @@ public class CarSummaryController extends Controller {
 	        	+ " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
 	        	+ " GROUP BY dor.id, dor.car_no "
 	        	+ " UNION"
-	        	+ " SELECT dor.id, o.id oid,'配送' order_type, t_o.customer_id,dor.order_no, ifnull(ul.c_name, ul.user_name) user_name,dor.remark,(SELECT group_concat(tor.order_no SEPARATOR '<br>') FROM delivery_order_item doi LEFT JOIN transfer_order tor on tor.id=doi.transfer_order_id WHERE doi.delivery_id = dor.id) AS transfer_order_no,"
+	        	+ " SELECT dor.id, o.id oid,'配送' order_type, dor.customer_id,dor.order_no, ifnull(ul.c_name, ul.user_name) user_name,dor.remark,(SELECT group_concat(tor.order_no SEPARATOR '<br>') FROM delivery_order_item doi LEFT JOIN transfer_order tor on tor.id=doi.transfer_order_id WHERE doi.delivery_id = dor.id) AS transfer_order_no,"
 	        	+ " dor.`STATUS`,cf.car_no,cf.driver contact_person,cf.phone,'' cartype,dor.business_stamp,o.office_name, ROUND((SELECT ifnull(toi.volume, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargovolume,"
 	        	+ " ROUND((SELECT ifnull(toi.weight, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargoweight,0 atmvolume,0 atmweight"
 	        	+ " FROM delivery_order dor"
@@ -332,6 +333,7 @@ public class CarSummaryController extends Controller {
 	}
 	
 	//保存行车单
+	@Before(Tx.class)
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_CREATE, PermissionConstant.PERMSSION_CS_UPDATE}, logical=Logical.OR)
 	public void saveCarSummary(){
 		//拼车单id
@@ -392,7 +394,9 @@ public class CarSummaryController extends Controller {
 	    			//记录运输单id
 	    			List<Record> recList = Db.find("SELECT doi.transfer_order_id FROM delivery_order d LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id WHERE d.id =?",deliveryOrder.get("id"));
 	    			for (Record record : recList) {
-	    				orderIds.add(record.getLong("transfer_order_id"));
+	    				if(record.getLong("transfer_order_id")!=null){
+	    					orderIds.add(record.getLong("transfer_order_id"));
+	    				}
 					}
 	    			
 	    			Long office_id = deliveryOrder.getLong("office_id");
@@ -451,14 +455,16 @@ public class CarSummaryController extends Controller {
     		//创建行车里程碑
     		saveCarSummaryOrderMilestone(id,carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW);
     		//设置默认运输单分摊比例
-    		double number = 1.0D/orderIds.size();
-    		BigDecimal b = new BigDecimal(number); 
-    		double rate = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
-    		for (Long orderId : orderIds) {
-    			TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
-				transferOrder.set("car_summary_order_share_ratio", rate);
-				transferOrder.update();
-			}
+    		if(orderIds.size()>0){
+    			double number = 1.0D/orderIds.size();
+        		BigDecimal b = new BigDecimal(number); 
+        		double rate = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
+        		for (Long orderId : orderIds) {
+        			TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
+    				transferOrder.set("car_summary_order_share_ratio", rate);
+    				transferOrder.update();
+    			}
+    		}
         }else{//修改时
         	carSummaryOrder = CarSummaryOrder.dao.findById(carSummaryId);
         	if(carSummaryOrder != null){
@@ -621,7 +627,7 @@ public class CarSummaryController extends Controller {
         		+ " FROM delivery_order dor"
         		+" LEFT JOIN delivery_order_item doi ON dor.id = doi.delivery_id"
         		+" LEFT JOIN transfer_order tor on tor.id=doi.transfer_order_id"
-        		+" LEFT JOIN transfer_order_item toi ON toi.order_id=tor.id"
+        		+" LEFT JOIN transfer_order_item toi ON (toi.order_id = tor.id or(toi.id = doi.transfer_item_id))"
         		+" LEFT JOIN party p ON p.id = tor.customer_id"
         		+" LEFT JOIN contact c ON c.id = p.contact_id"
         		+" LEFT JOIN product pd ON pd.id = toi.product_id"
