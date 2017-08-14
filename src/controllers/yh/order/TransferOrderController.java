@@ -321,7 +321,7 @@ public class TransferOrderController extends Controller {
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
-		// 根据用户的默认网点确定默认的运作网点
+		// 根据用户的默认网点确定默认运输网点
 		UserOffice uo = UserOffice.dao
 				.findFirst(
 						"select * from user_office where user_name = ? and is_main = 1",
@@ -630,7 +630,7 @@ public class TransferOrderController extends Controller {
 
 			}
 			if (officeId != null && !"".equals(officeId)) {
-				transferOrder.set("office_id", officeId);     //运作网点
+				transferOrder.set("office_id", officeId);     //运输网点
 			}
 			
 			Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());

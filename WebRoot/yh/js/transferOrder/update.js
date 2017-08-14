@@ -169,7 +169,7 @@ $(document).ready(function() {
             customerMessage : {required:  "请选择一个客户"},
         	outOfficeSelect:{required: "出库RDC不能为空"},
         	gateOutSelect:{required: "出库仓库不能为空"},
-        	officeSelect: {required: "运作网点不能为空"},
+        	officeSelect: {required: "运输网点不能为空"},
         	deliveryOfficeSelect: {required: "RDC仓不能为空"},
         	route_from_INPUT: {required:"始发城市不能为空"},
         	route_to_INPUT: {required:"目的地城市不能为空"}

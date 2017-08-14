@@ -105,12 +105,23 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label class="search-label">网点</label>
+                                            <label class="search-label">配送网点</label>
                                             <select id="deliveryOffice" name="deliveryOffice" class="form-control search-control office_filter"></select>
                                         </div>
                                         <div class="form-group">
                                             <label class="search-label">司机</label>
                                             <input type="text" class="form-control search-control driver_name" id="driver_name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="search-label">运输网点</label>
+                                            <select id="trans_office" class="form-control search-control trans_office" name="trans_office">
+                                                <option value=""></option>
+                                                <%
+                                                    for(office in officeList![]){
+                                                %>
+                                                    <option value="${office.ID!''}">${office.OFFICE_NAME!''}</option>
+                                                <%}%>
+                                            </select>
                                         </div>
                                     </div>
                                     
@@ -136,11 +147,12 @@
                                         	<th>配送单号</th>
                                             <th>运输计划时间</th>
                                             <th>仓库</th>
-                                            <th>网点</th>
+                                            <th>配送网点</th>
                                             <th>序列号</th>
                                             <th>产品型号</th>
                                             <th>数量</th>
                                             <th>状态</th>
+                                            <th>运输网点</th>
                                             <th>地址</th>
                                             <th>联系人</th>
                                             <th>联系电话</th>
@@ -204,6 +216,6 @@
 	Delivery.isUpdate = ${deliverUpdate};
 	Delivery.isComplete = ${deliverComplete};
 </script>
-<script src="/yh/js/delivery/list.js?v=1.0"></script>
+<script src="/yh/js/delivery/list.js?v=1.1"></script>
 
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>

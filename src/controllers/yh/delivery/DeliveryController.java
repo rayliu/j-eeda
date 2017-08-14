@@ -70,6 +70,10 @@ public class DeliveryController extends Controller {
 	
 	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_LIST})
 	public void index() {
+		List<Record> offices = Db
+				.find("select o.id,o.office_name,o.is_stop from office o ");
+		setAttr("officeList", offices);
+		
 		render("/yh/delivery/deliveryOrderList.html");
 	}
 	
@@ -101,6 +105,7 @@ public class DeliveryController extends Controller {
 		String business_stamp_end_time = getPara("business_stamp_end_time").trim();
 		String depart_stamp_begin_time = getPara("depart_stamp_begin_time").trim();
 		String depart_stamp_end_time = getPara("depart_stamp_end_time").trim();
+		String trans_office = getPara("trans_office").trim();
 	
 		String sLimit = "";
 		String pageIndex = getPara("sEcho");
@@ -155,6 +160,9 @@ public class DeliveryController extends Controller {
 			}
 			if(driver_name!=null&&!"".equals(driver_name)){
 				condition +=" AND ifnull(cif.driver,'') like'%"+ driver_name.trim()+ "%'";;
+			}
+			if(StringUtils.isNotBlank(trans_office)){
+				condition +=" AND ifnull(t_o.id,'') ='"+ trans_office+ "'";;
 			}
 			
 			if (!StringUtils.isNotEmpty(beginTime_filter)){
@@ -224,6 +232,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN warehouse w1 ON d.change_warehouse_id = w1.id "
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+					+ " LEFT JOIN office t_o ON t_o.id = tor.office_id"
 					+ " LEFT JOIN office o ON o.id = d.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " left join return_order ror on ror.delivery_order_id = d.id  and ror.transaction_status is not null " ;
@@ -259,7 +268,7 @@ public class DeliveryController extends Controller {
 					+ " ( SELECT group_concat( trid.serial_no SEPARATOR ' ' )"
 					+ " FROM "
 					+ " delivery_order_item doi LEFT JOIN transfer_order_item_detail trid ON trid.id = doi.transfer_item_detail_id"
-					+ " WHERE doi.delivery_id = d.id ) AS serial_no "
+					+ " WHERE doi.delivery_id = d.id ) AS serial_no,t_o.office_name trans_office "
 					+ " FROM delivery_order d"
 					+ " LEFT JOIN carinfo cif ON cif.id = d.car_id"
 					+ " LEFT JOIN party p ON d.customer_id = p.id"
@@ -274,6 +283,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN warehouse w1 ON d.change_warehouse_id = w1.id "
 					+ " LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = doi.transfer_order_id"
+					+ " LEFT JOIN office t_o ON t_o.id = tor.office_id"
 					+ " LEFT JOIN office o ON o.id = d.office_id"
 					+ " LEFT JOIN transfer_order_item toi ON toi.order_id = tor.id"
 					+ " left join return_order ror on ror.delivery_order_id = d.id  and ror.transaction_status is not null " ;

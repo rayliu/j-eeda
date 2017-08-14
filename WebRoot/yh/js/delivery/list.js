@@ -33,6 +33,7 @@ $(document).ready(function() {
             {"mDataProp":"ITEM_NO","sWidth":"90px"},//型号
             {"mDataProp":"AMOUNT","sWidth":"50px"},//数量
             {"mDataProp":"STATUS","sWidth":"70px"},//状态
+            {"mDataProp":"TRANS_OFFICE","sWidth":"70px"},//状态
             {"mDataProp":"COMPANY","sWidth":"150px"},//地址
             {"mDataProp":"DRIVER","sWidth":"70px"},//联系人
             {"mDataProp":"PHONE","sWidth":"80px"},//联系电话
@@ -215,6 +216,7 @@ $(document).ready(function() {
       	var business_stamp_end_time = $("#business_stamp_end_time").val();
       	var depart_stamp_begin_time = $("#depart_stamp_begin_time").val();
       	var depart_stamp_end_time = $("#depart_stamp_end_time").val();
+      	var trans_office = $("#trans_office").val();
       	
       	var warehouse = $("#warehouse").val();
       	var serial_no = $("#serial_no").val();
@@ -229,7 +231,8 @@ $(document).ready(function() {
 										      	+"&sp_filter="+sp_filter+"&warehouse_filter="+warehouse_filter+"&beginTime_filter="+beginTime_filter
 										      	+"&endTime_filter="+endTime_filter+"&warehouse="+warehouse+"&serial_no="+serial_no+"&delivery_no="+delivery_no
 										      	+"&business_stamp_begin_time="+business_stamp_begin_time+"&business_stamp_end_time="+business_stamp_end_time
-										      	+"&depart_stamp_begin_time="+depart_stamp_begin_time+"&depart_stamp_end_time="+depart_stamp_end_time+"&driver_name="+driver_name;
+										      	+"&depart_stamp_begin_time="+depart_stamp_begin_time+"&depart_stamp_end_time="+depart_stamp_end_time
+										      	+"&driver_name="+driver_name+"&trans_office="+trans_office;
       	dataTable.fnDraw();
     };
 

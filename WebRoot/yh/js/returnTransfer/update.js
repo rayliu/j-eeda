@@ -101,7 +101,7 @@ $(document).ready(function() {
         },
         messages : {	             
         	customerMessage : {required:  "请选择一个客户"},
-        	officeSelect: {required: "运作网点不能为空"},
+        	officeSelect: {required: "运输网点不能为空"},
         	cmbCityFrom: {required:"始发城市不能为空"},
         	cmbCityTo: {required:"目的地城市不能为空"}
         }

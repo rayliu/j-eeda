@@ -195,7 +195,7 @@ public class ReturnTransferController extends Controller{
 		receivableItemList = Db.find("select * from fin_item where type='应收'");
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
-		//根据用户的默认网点确定默认的运作网点
+		//根据用户的默认网点确定默认的运输网点
 		UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = 1",userLogin.get("user_name"));
 		if(uo != null){
 			transferOrder.set("office_id", uo.get("office_id"));
