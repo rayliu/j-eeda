@@ -1,0 +1,193 @@
+<%layout("/yh/layout.html"){%>
+	<link href="/yh/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/yh/css/ui/jquery-ui.css">
+    <link href="/yh/js/plugins/sco/css/sco.message.css" rel="stylesheet"> 
+    <link href="/yh/js/plugins/datatables-1.10.9/css/jquery.dataTables.min.css" rel="stylesheet">
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="btn-header" style="font-size:32px">提货入库单</div>
+                </div>
+            </div>
+            <input id="order_id" type="hidden" name="order_id" value="${order.id!''}"/>
+            <input id="depart_id" type="hidden" name="order_id" value="${departId!order.depart_id!''}"/>
+            <div class="group-form">
+                <form id="orderForm">
+                    <div class="row">
+                        <div class="col-lg-4"> 
+                            <%include("/yh/component/form/inputField.html", 
+                            {   id:'order_no', 
+                                label:'提货单号', 
+                                value:order.ORDER_NO!'', 
+                                disabled: 'disabled'
+                            }){}%>
+                        </div>    
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'create_stamp', 
+                                                    label:'创建时间', 
+                                                    value:order.create_stamp!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                        </div>    
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'status', 
+                                                    label:'状态', 
+                                                    value:order.status!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'creator_name', 
+                                                    label:'创建人', 
+                                                    value:order.creator_name!ulRe.c_name!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                    	</div>
+                    </div>
+					<hr/>
+                    <div class="row">
+                        <div class="col-lg-6">
+                             <input id="pickup_mode" type="hidden" value="${order.pickup_mode!'own'}">
+                             <label class="search-label">提货方式</label>
+                            	
+                             <label class="radio-inline">
+                                 <input type="radio" name="pickupMode"  value="own" <%if(order.pickup_mode!'own'=='own'){%>checked="checked"<%}%>>公司自提
+                             </label>
+                             <label class="radio-inline">
+                                 <input type="radio" name="pickupMode"  value="routeSP" <%if(order.pickup_mode!'own'=='routeSP'){%>checked="checked"<%}%>>干线供应商自提
+                             </label>
+                             <label class="radio-inline">
+                                 <input type="radio" name="pickupMode"  value="pickupSP" <%if(order.pickup_mode!'own'=='pickupSP'){%>checked="checked"<%}%>>外包供应商提货
+                             </label>       
+                     	</div>
+                    </div>
+                    
+                    <div class="row">
+                    <br/>
+                    	<div class="col-lg-4" id = "spDiv" style="display:none;">
+                            <%include("/yh/component/form/inputSpField.html", 
+                                {
+                                    id:'sp_id', 
+                                    label:'供应商', 
+                                    value:order.sp_id!'',
+                                    display_value: spRe.abbr!'',
+                                    required:'required'
+                                }){} %>
+                        </div>
+                    </div>    
+                    <h3>车辆信息</h3>
+                    <div class="row">
+                    	<div class="col-lg-4">
+                            <label class="search-label">司机<span style="color:red"> *</span></label>
+							<input type="hidden" id="car_id" value="${order.car_id!''}">
+					        <input type="text" name="driver_name" required class="form-control search-control" id="driver_name" value="${order.driver_name!''}">
+					        <ul style="top: 17%; left: 2%;"  class="pull-right dropdown-menu default" id="driverList">
+					        </ul>
+                    	</div>
+                    	 <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'car_no', 
+                                                    label:'车牌', 
+                                                    value:order.car_no!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                    	</div>
+                    	 <div class="col-lg-4">
+                            <%include("/yh/component/form/inputField.html", 
+                                                {   id:'driver_phone', 
+                                                    label:'电话', 
+                                                    value:order.driver_phone!'', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                    	</div>
+                    	
+                    </div> 
+                    <div class="row">
+                    	<div class="col-lg-4">
+                    		<%include("/yh/component/form/inputField.html", 
+                                                {   id:'trans_to', 
+                                                    label:'运输去向', 
+                                                    value:'仓库', 
+                                                    disabled: 'disabled'
+                                                }){}%>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                   <div class="form-group">
+                        <label>备注</label>
+                        <textarea id='remark' class="form-control" rows="3" name="remark">${order.remark!''}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+            <div class="row">
+                <div class="col-lg-12">
+                <h4>货品明细</h4>
+                    <%include("/yh/component/form/detailTable.html", 
+                        {
+                            id:'cargo_table', 
+                            headers:[ '运输单', '客户', '计划时间', '产品型号','产品名称','数量','备注'],
+                            field_list:[ 'order_no', 'abbr', 'planning_time','item_no','item_name', 'amount' ,'remark'],
+                            value_list: itemList![]
+                        }){} %>
+                </div>
+            </div>
+            <hr>
+            <div class="row" id="costDiv" <% if(order.pickup_mode!''=='own'){%>style="display:none;"<%}%>>
+                <div class="col-lg-12">
+                <h4>应付费用</h4>
+                <button class="btn btn-success btn-xs" id="add_cost">添加</button>
+                    <%include("/yh/component/form/detailTable.html", 
+                        {
+                            id:'cost_table', 
+                            headers:['', '费用条目', '金额', '备注','fin_item_name'],
+                            field_list:['', 'fin_item_id', 'amount', 'remark','fin_item_name'],
+                            value_list: costList![]
+                        }){} %>
+                </div>
+            </div>
+            <div id="paymentItemList" style="display:none;">
+            	<%
+				for(item in finItemList){ %>
+					<option value='${item.ID!''}'>${item.NAME!''}</option>
+				<%		
+					}
+				%>
+            </div>
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <a id='saveBtn' class="btn  btn-primary" disabled >保存</a>
+                    <a id='gateInBtn' class="btn  btn-primary" disabled>入库确认</a>
+                    <a class="btn  btn-default" href="/pickupGateIn">返回</a>
+                </div>
+            </div>
+        </div>
+<%}%>
+
+<script src="/yh/js/plugins/datatables-1.10.9/js/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/datatables-1.10.9/js/dataTables.bootstrap.js"></script>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/yh/js/plugins/sco/js/sco.message.js"></script>
+<script src="/yh/js/eeda-common.js"></script>
+<script>
+    var order_no = '${order.order_no!'提货入库单'}'; 
+    var order = {};
+</script>
+<script src="/yh/js/pickupGateIn/edit.js"></script>
+<script src="/yh/js/pickupGateIn/edit_cost_table.js"></script>
+

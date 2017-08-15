@@ -12,6 +12,7 @@ import models.DepartOrder;
 import models.InsuranceOrder;
 import models.Office;
 import models.Party;
+import models.PickupGateInOrder;
 import models.yh.arap.ArapMiscCostOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.profile.Contact;
@@ -395,7 +396,80 @@ public class CostItemConfirmController extends Controller {
 				+ customer_con2
 				+ " and c.abbr like '%" + sp + "%' "
 				+ " and ifnull(amco.order_no,'') like '%" + no + "%' "
-				+ " GROUP BY amco.id) as A ";
+				+ " GROUP BY amco.id"
+				+ " union"
+				+ " select distinct pgio.id,"
+				+ " pgio.order_no,"
+				+ " pgio.status,"
+				+ " ifnull((SELECT NAME FROM location WHERE CODE = dpr.route_from),"
+        		+ " (SELECT NAME FROM location WHERE CODE = dpr.route_to )) route_from,"
+        		+ " ifnull((SELECT NAME FROM location WHERE CODE = dpr.route_to),"
+        		+ " (SELECT NAME FROM location WHERE CODE = dpr.route_to)) route_to,"
+				+ " (CASE tor.arrival_mode WHEN 'gateIn' THEN w.warehouse_name WHEN 'delivery' THEN tor.receiving_address WHEN 'deliveryToFactory' THEN tor.receiving_address WHEN 'deliveryToWarehouse' OR 'deliveryToFachtoryFromWarehouse' THEN w.warehouse_name ELSE tor.receiving_address END) receivingunit, "
+				+ " c.abbr spname,"
+				+ " ( SELECT CASE WHEN tor.cargo_nature = 'ATM' THEN ( SELECT count(toid.id) FROM 	transfer_order_item_detail toid WHERE toid.depart_id = dpr.id ) WHEN tor.cargo_nature = 'cargo'  "
+				+ " THEN ( SELECT sum(toi.amount) FROM "
+				+ "	depart_order dpr2 LEFT JOIN depart_transfer dt on dt.depart_id = dpr2.id LEFT JOIN transfer_order_item toi on toi.order_id = dt.order_id "
+				+ "	where dpr2.id = dpr.id ) END ) amount,"
+				+ " round((select count(id) * volume as volume from transfer_order_item_detail where depart_id =dpr.id),2) volume,"
+				+ " round((select count(id) * weight as weight from transfer_order_item_detail where depart_id =dpr.id),2) weight,"
+				+ " DATE(pgio.create_stamp) create_stamp,"
+				+ " ifnull(ul.c_name, ul.user_name) creator,tor.customer_order_no customer_order_no,"
+				+ " null as ref_no,"
+				+ " '到达提货' business_type, "
+				+ " null as booking_note_number,"
+				+ " null as customer_delivery_no,"
+				+ " (select ifnull(sum(pgia.amount),0) "
+				+ " from pickup_gate_in_arap_item pgia "
+				+ " left join fin_item fi on fi.id = pgia.fin_item_id "
+				+ " where pgia.order_id = pgio.id  and fi.type = '应付' "
+				+ " and IFNULL(pgia.cost_source,'') != '对账调整金额') pay_amount, "
+				
+				+ " (SELECT sum(amount) FROM pickup_gate_in_arap_item pgia"
+				+ " LEFT JOIN fin_item fi ON fi.id = pgia.fin_item_id"
+				+ " WHERE pgia.order_id = pgio.id AND fi.type = '应付') change_amount,"
+				
+				+ " group_concat(distinct (select tor.order_no from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') transfer_order_no,"
+				+ " dpr.sign_status return_order_collection,"
+				+ " pgio.remark,"
+				+ " DATE(dpr.departure_time) as depart_time, "
+				+ " group_concat( distinct(select cast(tor.planning_time AS CHAR) from transfer_order tor where tor.id = dtr.order_id) separator '\r\n') planning_time,"
+				+ " oe.office_name office_name,"
+				+ " c1.abbr cname,"
+				+ " 0 AS transport_cost,"
+				+ " 0 AS carry_cost,"
+				+ " 0 AS climb_cost,"
+				+ " 0 AS insurance_cost,"
+				+ " 0 AS take_cost,"
+				+ " 0 AS anzhuang_cost,"
+				+ " 0 AS cangchu_cost,"
+				+ " 0 AS other_cost"
+				+ " from  pickup_gate_in_order pgio"
+				+ " LEFT JOIN pickup_gate_in_item pgii on pgii.order_id = pgio.id"
+				+ " LEFT JOIN depart_order dpr on dpr.id = pgii.depart_id"
+				+ " left join depart_transfer dtr on dtr.depart_id = dpr.id"
+				+ " left join transfer_order tor on tor.id = dtr.order_id "
+				+ " left join party p1 on tor.customer_id = p1.id"
+				+ " left join contact c1 on p1.contact_id = c1.id"
+				+ "	left join depart_order_fin_item dofi on dofi.depart_order_id = dpr.id "
+				+ " left join user_login ul on ul.id = pgio.create_by"
+				+ " left join party p on p.id = pgio.sp_id "
+				+ " left join contact c on c.id = p.contact_id "
+				+ " LEFT JOIN warehouse w ON w.id = tor.warehouse_id"
+				+ " left join office oe on oe.id = tor.office_id"
+				+ "  where  "
+				+ " pgio.audit_status='新建'  and dpr.combine_type='DEPART'"
+				+ " and p.party_type='SERVICE_PROVIDER' and pgio.status ='已入库'"
+				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
+				+ " and pgio.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
+				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+				+ " and '"+is_delivery+"' = 'N'"
+				+ customer_con
+				+ " and c.abbr like '%" + sp + "%' "
+				+ " and ifnull(pgio.order_no,'') like '%" + no + "%' "
+				+ " group by pgio.id"
+				+ ") as A ";
         String condition = "";
       
         if(  orderNo !=null || beginTime != null
@@ -483,6 +557,12 @@ System.out.println("开始："+sql + condition + orderByStr + sLimit);
     			arapmisccostOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
     			arapmisccostOrder.set("confirm_stamp", new Date());
     			arapmisccostOrder.update();
+    		}else if("到达提货".equals(orderNoArr[i])){
+    			PickupGateInOrder order = PickupGateInOrder.dao.findById(idArr[i]);
+    			order.set("audit_status", "已确认");
+    			order.set("confirm_by", LoginUserController.getLoginUserId(this));
+    			order.set("confirm_stamp", new Date());
+    			order.update();
     		}else{
     			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(idArr[i]);
     			insuranceOrder.set("audit_status", "已确认");

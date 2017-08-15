@@ -26,9 +26,15 @@ $(document).ready(function() {
 			    	console.log(obj.aData.ARRIVAL_MODE);
 			    	if(obj.aData.DEPART_STATUS != '已入库' && obj.aData.DEPART_STATUS != '已收货'){
 			    		if(obj.aData.ARRIVAL_MODE == '货品直送'){
-				    		return "<a class='btn  btn-primary confirmReceipt' departOrderId='"+obj.aData.ID+"' code='"+obj.aData.ORDER_ID+"'>"+"收货确认"+"</a>";
+				    		return "<a class='btn  btn-primary confirmReceipt' departOrderId='"+obj.aData.ID+"' code='"+obj.aData.ORDER_ID+"'>收货确认</a>";
 				    	}else{
-				    		return "<a class='btn  btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>"+"入库确认"+"</a>";
+				    		if(obj.aData.WAI_FLAG == 'Y'){
+				    			return "<button class='btn  btn-primary confirmInWarehouse btn-xs' code='"+obj.aData.ID+"'>入库确认</button>" +
+			    				"<button class='btn btn-xs btn-primary pickupGateIn' style='margin-top:2px' code='"+obj.aData.ID+"'>提货入库</button>";
+				    		}else{
+				    			return "<button class='btn  btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>入库确认</button>";
+			    				
+				    		}
 				    	}
 			    	}else{
 			    		if(obj.aData.DEPART_STATUS == '已入库'){
@@ -175,7 +181,7 @@ $(document).ready(function() {
     $("#eeda-table").on('click', '.confirmInWarehouse', function(e){
     	var departOrderId =$(this).attr("code");
     	$(this).attr("disabled",true);
-    	if(confirm("确定入库吗？")){
+    	if(confirm("确定入库吗？","ok","false")){
     		$.post('/transferOrderMilestone/warehousingConfirm',{departOrderId:departOrderId},function(data){
     			if(data.success){
     				detailTable.fnDraw(); 
@@ -187,6 +193,20 @@ $(document).ready(function() {
                 	$(this).attr("disabled",false);
                 }
     		},'json');
+        } else {
+        	$(this).attr("disabled",false);
+            return;
+        }
+    });
+    
+   
+    
+    //提货入库
+    $("#eeda-table").on('click', '.pickupGateIn', function(e){
+    	var departOrderId =$(this).attr("code");
+    	$(this).attr("disabled",true);
+    	if(confirm("确定要重新提货吗？","ok","false")){
+    		window.location.href='/pickupGateIn/create?departId='+departOrderId;
         } else {
         	$(this).attr("disabled",false);
             return;

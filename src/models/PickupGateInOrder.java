@@ -1,0 +1,1 @@
+package models;import com.jfinal.plugin.activerecord.Model;@SuppressWarnings("serial")public class PickupGateInOrder extends Model<PickupGateInOrder> {	public static final PickupGateInOrder dao = new PickupGateInOrder();}

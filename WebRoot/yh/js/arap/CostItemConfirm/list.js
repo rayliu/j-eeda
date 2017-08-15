@@ -58,7 +58,7 @@ $(document).ready(function() {
               	  }
               	  else{
                       if(obj.aData.CHANGE_AMOUNT!=''&& obj.aData.CHANGE_AMOUNT != null){
-                          return "<input type='text' style='width:60px' class='cls' name='change_amount' id='change' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
+                          return "<input type='text' style='width:60px' class='cls' name='change_amount' value='"+obj.aData.CHANGE_AMOUNT+"'/>";
                           
                       }
                       else {

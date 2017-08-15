@@ -78,6 +78,8 @@ import models.OrderStatus;
 import models.Party;
 import models.PartyAttribute;
 import models.Permission;
+import models.PickupGateInArapItem;
+import models.PickupGateInOrder;
 import models.PickupOrderFinItem;
 import models.Product;
 import models.ReturnOrder;
@@ -272,6 +274,8 @@ public class EedaConfig extends JFinalConfig {
 
         me.add("/copeCheckOrder", controllers.yh.arap.CopeCheckOrderController.class, contentPath);
         me.add("/departOrder", controllers.yh.departOrder.DepartOrderController.class, contentPath);
+        me.add("/pickupGateIn", controllers.yh.departOrder.PickupGateInController.class, contentPath);//提货入库
+        
         me.add("/gateIn", controllers.yh.inventory.InventoryController.class, contentPath);
         me.add("/gateOut", controllers.yh.inventory.InventoryController.class, contentPath);
         me.add("/stock", controllers.yh.inventory.InventoryController.class, contentPath);
@@ -344,6 +348,7 @@ public class EedaConfig extends JFinalConfig {
 		me.add("/module", ModuleController.class, contentPath);
 		//客户查询模块
 		me.add("/customerQuery", CustomerQueryController.class, contentPath);
+
 		
 	}
 
@@ -515,6 +520,10 @@ public class EedaConfig extends JFinalConfig {
         //common
         arp.addMapping("modules", Module.class);
         arp.addMapping("structure_action", Action.class);
+        
+        //提货入库
+        arp.addMapping("pickup_gate_in_order", PickupGateInOrder.class);
+        arp.addMapping("pickup_gate_in_arap_item", PickupGateInArapItem.class);
         
     }
 
