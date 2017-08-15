@@ -79,7 +79,7 @@ public class WarehouseController extends Controller{
 		Record rec = Db.findFirst(sqlTotal);
 		logger.debug("total records:" + rec.getLong("total"));
 
-		String sql = "select w.*,(select trim(concat(l2.name, ' ', l1.name,' ',l.name)) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=w.location) dname,lc.name ,company_name from warehouse w"
+		String sql = "select w.*,(select trim(concat(IFNULL(l2. NAME,''),' ',IFNULL(l1. NAME,''),' ',IFNULL(l. NAME,''))) from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code=w.location) dname,lc.name ,company_name from warehouse w"
 						+ "	LEFT JOIN  party p ON w.sp_id = p.id "
 						+ "	LEFT JOIN contact c ON p.contact_id = c.id "
 						+ " left join location lc on w.location = lc.code"
