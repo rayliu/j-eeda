@@ -49,7 +49,7 @@
 	
   
 	//条件查询
-  $("#return_type, #transfer_type, #order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no","#officeSelect").on('keyup', function (e) {    	 	
+  $("#return_type, #transfer_type, #order_no ,#tr_order_no ,#de_order_no,#stator,#status,#time_one,#time_two, #serial_no, #sign_no","#officeSele").on('keyup', function (e) {    	 	
   	
     var code = e.which; // recommended to use e.which, it's normalized across browsers
     if(code==13)e.preventDefault();
@@ -125,6 +125,8 @@
         { "mDataProp": "RECEIPT_PHONE","sWidth":"80px"},
         { "mDataProp": "RECEIVING_UNIT","sWidth":"120px"},
         { "mDataProp": "RECEIPT_ADDRESS","sWidth":"100px"},
+        { "mDataProp": "TOR_OFFICE_NAME","sWidth":"120px"},
+        { "mDataProp": "DOR_OFFICE_NAME","sWidth":"100px" },
         { "mDataProp": "WAREHOUSE_NAME","sWidth":"80px"},
  		{ "mDataProp": "A_AMOUNT","sWidth":"30px"},
         { "mDataProp": "CNAME","sWidth":"80px"},
@@ -134,7 +136,6 @@
         { "mDataProp": "ADDRESS","sWidth":"120px"}, 
         /*{ "mDataProp": "TURNOUT_TIME","sWidth":"120px"},*/
         { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
-        { "mDataProp": "OFFICE_NAME","sWidth":"100px" },
         { "mDataProp": "BUSINESS_STAMP","sWidth":"120px" },
         { "mDataProp": "CREATE_DATE","sWidth":"100px"},
         { "mDataProp": "TRANSACTION_STATUS","sWidth":"40px",
@@ -176,11 +177,13 @@
    			},
    		    { "mDataProp": "WAREHOUSE_NAME","sWidth":"100px"},
    		    { "mDataProp": "SERIAL_NO","sWidth":"120px"},
-          { "mDataProp": "SIGN_NO","sWidth":"120px"},
+   		    { "mDataProp": "SIGN_NO","sWidth":"120px"},
    		    { "mDataProp": "ITEM_NO","sWidth":"80px"},
    		    { "mDataProp": "A_AMOUNT","sWidth":"30px"},
    		    { "mDataProp": "RECEIVING_UNIT","sWidth":"100px"},
    		    { "mDataProp": "RECEIPT_ADDRESS","sWidth":"120px"},
+   		    { "mDataProp": "TOR_OFFICE_NAME","sWidth":"120px"},
+   		    { "mDataProp": "DOR_OFFICE_NAME","sWidth":"100px" },
    		    { "mDataProp": "RECEIPT_PERSON","sWidth":"75px"},
    		    { "mDataProp": "RECEIPT_PHONE","sWidth":"100px"},
             { "mDataProp": "CNAME","sWidth":"120px"},
@@ -189,7 +192,6 @@
             { "mDataProp": "TO_NAME","sWidth":"120px"},
             { "mDataProp": "ADDRESS","sWidth":"120px"},
             { "mDataProp": "DELIVERY_ORDER_NO","sWidth":"120px"},
-            { "mDataProp": "OFFICE_NAME","sWidth":"100px" },
             { "mDataProp": "BUSINESS_STAMP","sWidth":"120px" },
             { "mDataProp": "CREATOR_NAME","sWidth":"100px" },
             { "mDataProp": "CREATE_DATE","sWidth":"140px" },
@@ -362,16 +364,17 @@
       var q_begin =$("#q_begin_date").val();
       var q_end =$("#q_end_date").val();
       var officeSelect = $("#officeSelect").val();
+      var officeSelect2 = $("#officeSelect2").val();
       var delivery_date_begin_time = $("#delivery_date_begin_time").val();
       var delivery_date_end_time = $("#delivery_date_end_time").val();
      
       if(clickTabId == "createTab"){
         createDataTable.fnSettings().oFeatures.bServerSide = true;
-        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&photo_type="+photo_type+"&delivery_date_begin_time="+delivery_date_begin_time+"&delivery_date_end_time="+delivery_date_end_time;
+        createDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&officeSelect2="+officeSelect2+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='新建'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&photo_type="+photo_type+"&delivery_date_begin_time="+delivery_date_begin_time+"&delivery_date_end_time="+delivery_date_end_time;
         createDataTable.fnDraw();
       }else{
         finishDataTable.fnSettings().oFeatures.bServerSide = true;
-        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&q_begin="+q_begin+"&q_end="+q_end+"&photo_type="+photo_type+"&delivery_date_begin_time="+delivery_date_begin_time+"&delivery_date_end_time="+delivery_date_end_time;
+        finishDataTable.fnSettings().sAjaxSource = "/returnOrder/list?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no+"&officeSelect="+officeSelect+"&officeSelect2="+officeSelect2+"&tr_order_no="+tr_order_no+"&de_order_no="+de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one+"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type+"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name+"&province="+province+"&imgaudit="+imgaudit+"&q_begin="+q_begin+"&q_end="+q_end+"&photo_type="+photo_type+"&delivery_date_begin_time="+delivery_date_begin_time+"&delivery_date_end_time="+delivery_date_end_time;
         finishDataTable.fnDraw();
       }
       saveConditions();
@@ -417,10 +420,11 @@
       var q_begin =$("#q_begin_date").val();
       var q_end =$("#q_end_date").val();
       var officeSelect = $("#officeSelect").val();
+      var officeSelect2 = $("#officeSelect2").val();
       var delivery_date_begin_time = $("#delivery_date_begin_time").val();
       var delivery_date_end_time = $("#delivery_date_end_time").val();
         $.post("returnOrder/download?order_no="+order_no+"&sign_no="+sign_no+"&serial_no="+serial_no
-          +"&officeSelect="+officeSelect+"&tr_order_no="+tr_order_no+"&de_order_no="
+          +"&officeSelect="+officeSelect+"&officeSelect2="+officeSelect2+"&tr_order_no="+tr_order_no+"&de_order_no="
           +de_order_no+"&status='已签收','已确认','对账中','对账已确认','已拒收'&time_one="+time_one
           +"&time_two="+time_two+"&customer="+inputStr+"&return_type="+return_type
           +"&transfer_type="+transfer_type+"&warehouse="+warehouse+"&to_name="+to_name
@@ -453,8 +457,12 @@
 		 officeSelect.empty();
 		 officeSelect.append("<option ></option>");
 		
+		 var officeSelect2 = $("#officeSelect2");
+		 officeSelect2.empty();
+		 officeSelect2.append("<option ></option>");
 		 for(var i=0; i<data.length; i++){
-			 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+			 officeSelect.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
+			 officeSelect2.append("<option value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");
 		 }
 		
 	 }

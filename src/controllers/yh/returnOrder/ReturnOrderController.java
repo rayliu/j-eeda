@@ -94,6 +94,7 @@ public class ReturnOrderController extends Controller {
 		String photo_type = getPara("photo_type")==null?"":getPara("photo_type").trim();
 		String sign_no = getPara("sign_no")==null?"":getPara("sign_no").trim();
 		String officeSelect = getPara("officeSelect")==null?"":getPara("officeSelect").trim();
+		String officeSelect2 = getPara("officeSelect2")==null?"":getPara("officeSelect2").trim();
 		String delivery_date_begin_time = getPara("delivery_date_begin_time")==null?"":getPara("delivery_date_begin_time").trim();
 		String delivery_date_end_time = getPara("delivery_date_end_time")==null?"":getPara("delivery_date_end_time").trim();
 		String q_begin = getPara("q_begin")==null?"":getPara("q_begin").trim();
@@ -156,7 +157,10 @@ public class ReturnOrderController extends Controller {
         	conditions+=" and UPPER(transfer_type) like '%"+transfer_type+"%'";
         }
         if(StringUtils.isNotEmpty(officeSelect)){
-        	conditions+=" and office_id = '" + officeSelect+"'";
+        	conditions+=" and dor_office_id = '" + officeSelect+"'";
+        }
+        if(StringUtils.isNotEmpty(officeSelect2)){
+        	conditions+=" and tor_office_id = '" + officeSelect2+"'";
         }
         if (StringUtils.isNotEmpty(time_one)){
         	time_one = " and planning_time between'"+time_one+"'";
@@ -287,13 +291,16 @@ public class ReturnOrderController extends Controller {
                 + ") photo_type, "
 
 				+ " dor.ref_no sign_no,"
-				+ " dor.office_id,"
-				+ " o.office_name,"
+				+ " dor.office_id dor_office_id,"
+				+ " tor.office_id tor_office_id,"
+				+ " o.office_name dor_office_name,"
+				+ " o2.office_name tor_office_name,"
 				+ " dor.business_stamp,ror.office_id ror_office_id"
 				+ " FROM return_order ror"
 				+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
 				+ " LEFT JOIN office o ON dor.office_id = o.id "
+				+ " LEFT JOIN office o2 ON tor.office_id = o2.id "
 				+ " LEFT JOIN party p ON p.id = dor.notify_party_id"
 				+ " LEFT JOIN contact c ON c.id = p.contact_id"
 				+ " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"
@@ -388,13 +395,16 @@ public class ReturnOrderController extends Controller {
 	                + " ELSE '' END "
 	                + ") photo_type, "
 					+ " dor.ref_no sign_no," 
-	                + " dor.office_id,"
-					+ " o.office_name,"
+	                + " dor.office_id dor_office_id,"
+	                + " tor.office_id tor_office_id,"
+					+ " o.office_name dor_office_name,"
+					+ " o2.office_name tor_office_name,"
 					+ " dor.business_stamp,ror.office_id ror_office_id"
 					+ " FROM return_order ror"
 					+ " LEFT JOIN transfer_order tor ON tor.id = ror.transfer_order_id"
 					+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
 					+ " LEFT JOIN office o ON dor.office_id = o.id "
+					+ " LEFT JOIN office o2 ON tor.office_id = o2.id "
 					+ " LEFT JOIN party p ON p.id = dor.notify_party_id"
 					+ " LEFT JOIN contact c ON c.id = p.contact_id"
 					+ " LEFT JOIN warehouse w ON tor.warehouse_id = w.id"
@@ -1772,6 +1782,7 @@ public class ReturnOrderController extends Controller {
        String photo_type = getPara("photo_type")==null?"":getPara("photo_type").trim();
        String sign_no = getPara("sign_no")==null?"":getPara("sign_no").trim();
        String officeSelect = getPara("officeSelect")==null?"":getPara("officeSelect").trim();
+       String officeSelect2 = getPara("officeSelect2")==null?"":getPara("officeSelect2").trim();
        String delivery_date_begin_time = getPara("delivery_date_begin_time")==null?"":getPara("delivery_date_begin_time").trim();
        String delivery_date_end_time = getPara("delivery_date_end_time")==null?"":getPara("delivery_date_end_time").trim();
        String q_begin = getPara("q_begin")==null?"":getPara("q_begin").trim();
@@ -1831,7 +1842,10 @@ public class ReturnOrderController extends Controller {
            conditions+=" and UPPER(transfer_type) like '%"+transfer_type+"%'";
        }
        if(StringUtils.isNotEmpty(officeSelect)){
-           conditions+=" and office_id = '" + officeSelect+"'";
+           conditions+=" and dor_office_id = '" + officeSelect+"'";
+       }
+       if(StringUtils.isNotEmpty(officeSelect2)){
+           conditions+=" and tor_office_id = '" + officeSelect2+"'";
        }
 //       if (StringUtils.isNotEmpty(time_one)){
 //           time_one = " and planning_time between'"+time_one+"'";
@@ -1927,8 +1941,9 @@ public class ReturnOrderController extends Controller {
                    + " ELSE '有图片已审核' END ) imgaudit,"
                    + " af.photo_type, "
                    + " dor.ref_no sign_no," 
-                   + " dor.office_id,"
-                   + " o.office_name,"
+                   + " dor.office_id dor_office_id,"
+                   + " tor.office_id tor_office_id,"
+                   + " o.office_name dor_office_name,"
                    + " dor.business_stamp"
                    + " FROM return_order ror"
                    + " left join order_attachment_file af on ror.id = af.order_id and af.order_type='RETURN'"
