@@ -25,6 +25,18 @@
                                          	<%include("/yh/component/form/inputDateQueryField.html", 
                                          	{id:'create_stamp', label:'创建时间', value:''}){} %>
                                     	</div>
+                                    	<div class="col-lg-4">
+	                                        <label class="search-label">状态</label>
+	                                         <select id="status_filter" class="form-control search-control status_filter">
+                                                <option value=""></option>
+                                                <option value="新建">新建</option>
+                                                <option value="已发车">已发车</option>
+                                                <option value="在途">在途</option>                                                
+                                                <option value="已入货场">已入货场</option>                                                
+                                                <option value="已入库">已入库</option>                                                
+                                                <option value="已签收">已签收</option>                                                
+                                            </select>
+	                                    </div>
                                     </div>
                                     <div class="col-lg-4">
                                         <%include("/yh/component/form/inputSpField.html", 
@@ -52,6 +64,7 @@
                                             <th>司机</th>
                                             <th>状态</th>
                                             <th>财务状态</th>
+                                            <th>创建时间</th>
                                             <th>备注</th>
                                         </tr>
                                     </thead>

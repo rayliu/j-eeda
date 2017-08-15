@@ -14,7 +14,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": false,
+        "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt",//datatable的中文翻译
             "sProcessing":     "Procesando..."
@@ -41,6 +41,7 @@ $(document).ready(function() {
             {"mDataProp":"DRIVER"},
             {"mDataProp":"STATUS"},
             {"mDataProp":"AUDIT_STATUS"},
+            {"mDataProp":"CREATE_STAMP"},
             {"mDataProp":"REMARK"}
         ]  
     });	
@@ -57,6 +58,7 @@ $(document).ready(function() {
    var searchData=function(){
         var orderNo = $("#order_no").val();
         var sp_id=$("#sp_id").val();
+        var status_filter=$("#status_filter").val();
         var beginTime = $("#create_stamp_begin_time").val();
         var endTime = $("#create_stamp_end_time").val();
         /*  
@@ -66,12 +68,13 @@ $(document).ready(function() {
             *_status =
             时间字段需成双定义  *_begin_time *_end_time   between
         */
-        var url = "/pickupGateIn/list?order_no="+orderNo
+        transferOrder.fnSettings().sAjaxSource = "/pickupGateIn/list?order_no="+orderNo
              +"&sp_id="+sp_id
+             +"&status_filter="+status_filter
              +"&begin_time="+beginTime
              +"&end_time="+endTime;
-
-        dataTable.ajax.url(url).load();
+        transferOrder.fnDraw(); 
+        
     };
     
 

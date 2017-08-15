@@ -227,6 +227,7 @@ public class PickupGateInController extends Controller {
 	public void list() {
 		String orderNo = getPara("order_no");
 		String sp_id= getPara("sp_id");
+		String status= getPara("status_filter");
 		String beginTime = getPara("begin_time");
 		String endTime = getPara("end_time");
 
@@ -244,16 +245,17 @@ public class PickupGateInController extends Controller {
 		if (StringUtils.isNotEmpty(orderNo)){
         	conditions+=" and gg.order_no like '%"+orderNo+"%'";
         }
-
-        if (StringUtils.isNotEmpty(beginTime)){
-			beginTime = " and gg.create_stamp between'"+beginTime+"'";
-        }else{
-        	beginTime =" and gg.create_stamp between '2000-1-1'";
+		if (StringUtils.isNotEmpty(sp_id)){
+        	conditions+=" and gg.sp_id like '%"+sp_id+"%'";
         }
-        if (StringUtils.isNotEmpty(endTime)){
-        	endTime =" and '"+endTime+" 23:59:59'";
+		if (StringUtils.isNotEmpty(status)){
+        	conditions+=" and gg.status='"+status+"'";
+        }
+
+        if (StringUtils.isNotEmpty(beginTime)&&StringUtils.isNotEmpty(endTime)){
+        	conditions+= " and (gg.create_stamp between'"+beginTime+"' and '"+endTime+" 23:59:59')";
         }else{
-        	endTime =" and '3000-1-1'";
+        	conditions+=" and (gg.create_stamp between '2000-1-1' and '3000-1-1')";
         }
        
         conditions += " and gg.office_id in (select office_id from user_office where user_name='"
@@ -268,6 +270,7 @@ public class PickupGateInController extends Controller {
       			+ " gg.status,"
       			+ " gg.audit_status,"
       			+ " gg.pickup_mode,"
+      			+ " gg.create_stamp,"
       			+ " gg.remark"
       			+ " FROM `pickup_gate_in_order` gg"
       			+ " LEFT JOIN party p on p.id = gg.sp_id "
