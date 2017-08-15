@@ -142,7 +142,7 @@
                 </div>
             </div>
             <hr>
-            <div class="row" id="costDiv" <% if(order.pickup_mode!''=='own'){%>style="display:none;"<%}%>>
+            <div class="row" id="costDiv" <% if(order.pickup_mode!''=='own' || order!'' == ''){%>style="display:none;"<%}%>>
                 <div class="col-lg-12">
                 <h4>应付费用</h4>
                 <button class="btn btn-success btn-xs" id="add_cost">添加</button>
