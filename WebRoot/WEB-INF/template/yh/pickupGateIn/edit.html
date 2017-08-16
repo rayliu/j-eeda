@@ -48,6 +48,22 @@
                                                     disabled: 'disabled'
                                                 }){}%>
                     	</div>
+                    	<div class="col-lg-4">
+                            <%include("/yh/component/form/dateInputField.html", 
+                                                {   id:'dispatch_date', 
+                                                    label:'出车时间', 
+                                                    value:order.dispatch_date!'',
+                                                    required:'required'
+                                                }){}%>
+                        </div> 
+                        <div class="col-lg-4">
+                            <%include("/yh/component/form/dateInputField.html", 
+                                                {   id:'return_date', 
+                                                    label:'返回时间', 
+                                                    value:order.return_date!'',
+                                                    required:'required'
+                                                }){}%>
+                        </div> 
                     </div>
 					<hr/>
                     <div class="row">

@@ -38,16 +38,18 @@ $(document).ready(function() {
         }
 
         var orderJson = {
-            id: $('#order_id').val(), 
-            sp_id: $('#sp_id').val(),  
-            car_id: $('#car_id').val(),
-            pickup_mode: $('[name=pickupMode]:checked').val(),  
-            driver_name: $('#driver_name').val(),  
-            driver_phone: $('#driver_phone').val(),
-            car_no: $('#car_no').val(), 
-            remark: $('#remark').val(),  
-            trans_to: $('#trans_to').val(),  
-            depart_id:$('#depart_id').val(),  
+            id : $('#order_id').val(), 
+            sp_id : $('#sp_id').val(),  
+            car_id : $('#car_id').val(),
+            pickup_mode : $('[name=pickupMode]:checked').val(),  
+            driver_name : $('#driver_name').val(),  
+            driver_phone : $('#driver_phone').val(),
+            car_no : $('#car_no').val(), 
+            remark : $('#remark').val(),  
+            trans_to : $('#trans_to').val(),  
+            depart_id : $('#depart_id').val(),  
+            dispatch_date : $('#dispatch_date').val(),  
+            return_date : $('#return_date').val(),  
            
             cost_list: order.buildCostDetail()
         };
@@ -92,7 +94,9 @@ $(document).ready(function() {
 			var driverList = $("#driverList");
 			driverList.empty();
 			for(var i = 0; i < data.length; i++){ 	
-	 			driverList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].DRIVER+"</a></li>");	
+	 			driverList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID
+	 					+"' carNo='"+data[i].CAR_NO+"' carType='"+data[i].CARTYPE+"' length='"+data[i].LENGTH
+	 					+"' driver='"+data[i].DRIVER+"' phone='"+data[i].PHONE+"'> "+data[i].DRIVER+' '+data[i].CAR_NO+"</a></li>");	
 			}
 		},'json');
 		$("#driverList").css({ 
