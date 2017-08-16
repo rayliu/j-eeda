@@ -11,6 +11,7 @@ import java.util.Map;
 
 import models.DepartOrder;
 import models.ParentOfficeModel;
+import models.PickupGateInOrder;
 import models.TransferOrder;
 import models.TransferOrderMilestone;
 import models.UserLogin;
@@ -82,41 +83,43 @@ public class CarSummaryController extends Controller {
         String condition = " ";
         
         String officeCondition = "";
+        String offcon = "";
         if(StringUtils.isNotBlank(office_id)){
         	officeCondition = " and ifnull(dor.office_id,'') = '"+office_id+"'";
+        	offcon =  " and ifnull(pgio.office_id,'') = '"+office_id+"'";
         }
         // 获取总条数
-	    sqlTotal =" SELECT count(1) total from (SELECT dor.id, o.id oid,t_o.customer_id, dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,(SELECT group_concat(dt.transfer_order_no SEPARATOR '<br>') FROM depart_transfer dt WHERE pickup_id = dor.id) AS transfer_order_no,"
-		        + " dor. STATUS,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,(SELECT round(sum(ifnull(toi.volume, 0) * (dtf.amount / toi.amount)),2) FROM transfer_order_item toi LEFT JOIN depart_transfer dtf ON dtf.order_item_id = toi.id LEFT JOIN transfer_order t ON t.id = toi.order_id WHERE dtf.pickup_id = dor.id AND t.cargo_nature = 'cargo') cargovolume,"
-		        + " (SELECT round(sum(ifnull(toi.sum_weight, 0) * (dtf.amount / toi.amount)),2) FROM transfer_order_item toi LEFT JOIN depart_transfer dtf ON dtf.order_item_id = toi.id LEFT JOIN transfer_order t ON t.id = toi.order_id WHERE dtf.pickup_id = dor.id AND t.cargo_nature = 'cargo') cargoweight,"
-		        + " round((SELECT sum(ifnull(volume, 0)) FROM transfer_order_item_detail WHERE pickup_id = dor.id),2) atmvolume,round((SELECT sum(ifnull(weight, 0)) FROM transfer_order_item_detail WHERE pickup_id = dor.id),2) atmweight"
-		        + " FROM depart_order dor"
-		        + " LEFT JOIN party p ON dor.driver_id = p.id"
-		        + " LEFT JOIN contact ct ON p.contact_id = ct.id"
-		        + " LEFT JOIN user_login u ON u.id = dor.create_by"
-		        + " LEFT JOIN depart_transfer dtf ON dtf.pickup_id = dor.id"
-		        + " LEFT JOIN transfer_order t_o ON t_o.id = dtf.order_id"
-		        + " LEFT JOIN office o ON o.id = t_o.office_id"
-		        + " WHERE 1=1 "
-		        + officeCondition
-		        + "  and dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
-		        + " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
-		        + " GROUP BY dor.id, dor.car_no "
-		        + " UNION"
-		        + " SELECT dor.id, o.id oid, dor.customer_id,dor.order_no, ifnull(ul.c_name, ul.user_name) user_name,dor.remark,(SELECT group_concat(tor.order_no SEPARATOR '<br>') FROM delivery_order_item doi LEFT JOIN transfer_order tor on tor.id=doi.transfer_order_id WHERE doi.delivery_id = dor.id) AS transfer_order_no,"
-		        + " dor.`STATUS`,cf.car_no,cf.driver,cf.phone,'' cartype,dor.business_stamp,o.office_name, ROUND((SELECT ifnull(toi.volume, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargovolume,"
-		        + " ROUND((SELECT ifnull(toi.weight, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargoweight,0 atmvolume,0 atmweight"
-		        + " FROM delivery_order dor"
-		        + " LEFT JOIN delivery_order_item doi on doi.delivery_id=dor.id"
-		        + " LEFT JOIN transfer_order t_o on t_o.id=doi.transfer_order_id"
-		        + " LEFT JOIN carinfo cf on cf.id=dor.car_id"
-		        + " LEFT JOIN office o ON o.id = dor.office_id"
-		        + " LEFT JOIN user_login ul ON ul.id = dor.create_by"
-		        + " where 1 = 1  "
-		        + officeCondition
-		        + " and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
-		        + " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
-		        + " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
+//	    sqlTotal =" SELECT count(1) total from (SELECT dor.id, o.id oid,t_o.customer_id, dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,(SELECT group_concat(dt.transfer_order_no SEPARATOR '<br>') FROM depart_transfer dt WHERE pickup_id = dor.id) AS transfer_order_no,"
+//		        + " dor. STATUS,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,(SELECT round(sum(ifnull(toi.volume, 0) * (dtf.amount / toi.amount)),2) FROM transfer_order_item toi LEFT JOIN depart_transfer dtf ON dtf.order_item_id = toi.id LEFT JOIN transfer_order t ON t.id = toi.order_id WHERE dtf.pickup_id = dor.id AND t.cargo_nature = 'cargo') cargovolume,"
+//		        + " (SELECT round(sum(ifnull(toi.sum_weight, 0) * (dtf.amount / toi.amount)),2) FROM transfer_order_item toi LEFT JOIN depart_transfer dtf ON dtf.order_item_id = toi.id LEFT JOIN transfer_order t ON t.id = toi.order_id WHERE dtf.pickup_id = dor.id AND t.cargo_nature = 'cargo') cargoweight,"
+//		        + " round((SELECT sum(ifnull(volume, 0)) FROM transfer_order_item_detail WHERE pickup_id = dor.id),2) atmvolume,round((SELECT sum(ifnull(weight, 0)) FROM transfer_order_item_detail WHERE pickup_id = dor.id),2) atmweight"
+//		        + " FROM depart_order dor"
+//		        + " LEFT JOIN party p ON dor.driver_id = p.id"
+//		        + " LEFT JOIN contact ct ON p.contact_id = ct.id"
+//		        + " LEFT JOIN user_login u ON u.id = dor.create_by"
+//		        + " LEFT JOIN depart_transfer dtf ON dtf.pickup_id = dor.id"
+//		        + " LEFT JOIN transfer_order t_o ON t_o.id = dtf.order_id"
+//		        + " LEFT JOIN office o ON o.id = t_o.office_id"
+//		        + " WHERE 1=1 "
+//		        + officeCondition
+//		        + "  and dor. STATUS != '取消' AND dor.car_summary_type = 'untreated' AND combine_type = 'PICKUP'"
+//		        + " AND ( dor. STATUS = '已入货场' or dor. STATUS = '已二次提货' OR dor. STATUS = '已入库' OR dor. STATUS = '已收货') AND dor.pickup_mode = 'own'"
+//		        + " GROUP BY dor.id, dor.car_no "
+//		        + " UNION"
+//		        + " SELECT dor.id, o.id oid, dor.customer_id,dor.order_no, ifnull(ul.c_name, ul.user_name) user_name,dor.remark,(SELECT group_concat(tor.order_no SEPARATOR '<br>') FROM delivery_order_item doi LEFT JOIN transfer_order tor on tor.id=doi.transfer_order_id WHERE doi.delivery_id = dor.id) AS transfer_order_no,"
+//		        + " dor.`STATUS`,cf.car_no,cf.driver,cf.phone,'' cartype,dor.business_stamp,o.office_name, ROUND((SELECT ifnull(toi.volume, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargovolume,"
+//		        + " ROUND((SELECT ifnull(toi.weight, 0) * ifnull(sum(doi.amount),0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi on toi.id=doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) AS cargoweight,0 atmvolume,0 atmweight"
+//		        + " FROM delivery_order dor"
+//		        + " LEFT JOIN delivery_order_item doi on doi.delivery_id=dor.id"
+//		        + " LEFT JOIN transfer_order t_o on t_o.id=doi.transfer_order_id"
+//		        + " LEFT JOIN carinfo cf on cf.id=dor.car_id"
+//		        + " LEFT JOIN office o ON o.id = dor.office_id"
+//		        + " LEFT JOIN user_login ul ON ul.id = dor.create_by"
+//		        + " where 1 = 1  "
+//		        + officeCondition
+//		        + " and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed' ) a "
+//		        + " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+//		        + " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	       // 获取当前页的数据
 	     sql = " SELECT * from (SELECT dor.id, o.id oid,'提货' order_type,t_o.customer_id, dor.depart_no,ifnull(u.c_name, u.user_name) user_name,dor.remark,(SELECT group_concat(dt.transfer_order_no SEPARATOR '<br>') FROM depart_transfer dt WHERE pickup_id = dor.id) AS transfer_order_no,"
 	        	+ " dor. STATUS,dor.car_no,dor.driver contact_person,dor.phone phone,dor.car_type cartype,dor.turnout_time,o.office_name office_name,(SELECT round(sum(ifnull(toi.volume, 0) * (dtf.amount / toi.amount)),2) FROM transfer_order_item toi LEFT JOIN depart_transfer dtf ON dtf.order_item_id = toi.id LEFT JOIN transfer_order t ON t.id = toi.order_id WHERE dtf.pickup_id = dor.id AND t.cargo_nature = 'cargo') cargovolume,"
@@ -146,9 +149,50 @@ public class CarSummaryController extends Controller {
 	        	+ " LEFT JOIN user_login ul ON ul.id = dor.create_by"
 	        	+ " where 1 = 1 "
 	        	+ officeCondition
-	        	+ " and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed') a "
+	        	+ " and dor.deliveryMode='own' AND ifnull(dor.car_summary_type,'untreated') != 'processed'"
+	        	+ " union "
+	        	+ " SELECT"
+	        	+ " pgio.id,"
+	        	+ " o.id oid,"
+	        	+ " '到达提货' order_type,"
+	        	+ " t_o.customer_id,"
+	        	+ " pgio.order_no,"
+	        	+ " ifnull(u.c_name, u.user_name) user_name,"
+	        	+ " pgio.remark,"
+	        	+ " ( SELECT group_concat( dt.transfer_order_no SEPARATOR '<br>' )"
+	        	+ " FROM depart_transfer dt"
+	        	+ "  WHERE depart_id = pgii.depart_id ) transfer_order_no, "
+	        	+ " pgio. STATUS, pgio.car_no, "
+	        	+ " pgio.driver_name contact_person,"
+	        	+ " pgio.driver_phone phone,"
+	        	+ " '' cartype,"
+	        	+ " pgio.dispatch_date, o.office_name office_name,"
+	        	+ " ( SELECT round( sum( ifnull(toi.volume, 0) * (dtf.amount / toi.amount) ), 2 )"
+	        	+ " FROM transfer_order_item toi"
+	        	+ " LEFT JOIN depart_transfer dtf ON dtf.order_id = toi.order_id"
+	        	+ " LEFT JOIN transfer_order t ON t.id = toi.order_id"
+	        	+ " WHERE dtf.depart_id = pgii.depart_id AND t.cargo_nature = 'cargo' ) cargovolume,"
+	        	+ " ( SELECT round( sum( ifnull(toi.sum_weight, 0) * (dtf.amount / toi.amount) ), 2 )"
+	        	+ " FROM transfer_order_item toi"
+	        	+ " LEFT JOIN depart_transfer dtf ON dtf.order_id = toi.order_id"
+	        	+ " LEFT JOIN transfer_order t ON t.id = toi.order_id"
+	        	+ " WHERE dtf.depart_id = pgii.depart_id AND t.cargo_nature = 'cargo' ) cargoweight,"
+	        	+ " round( ( SELECT sum(ifnull(volume, 0)) FROM transfer_order_item_detail WHERE depart_id = pgii.depart_id ), 2 ) atmvolume,"
+	        	+ " round( ( SELECT sum(ifnull(weight, 0)) FROM transfer_order_item_detail WHERE depart_id = pgii.depart_id ), 2 ) atmweight"
+	        	+ " FROM pickup_gate_in_order pgio"
+	        	+ " LEFT JOIN pickup_gate_in_item pgii on pgii.order_id = pgio.id"
+	        	+ " LEFT JOIN user_login u ON u.id = pgio.create_by"
+	        	+ " LEFT JOIN depart_transfer dtf ON dtf.depart_id = pgii.depart_id"
+	        	+ " LEFT JOIN transfer_order t_o ON t_o.id = dtf.order_id"
+	        	+ " LEFT JOIN office o ON o.id = pgio.office_id "
+	        	+ " WHERE 1 = 1 AND pgio.car_summary_type = 'untreated'"
+	        	+ " AND pgio.pickup_mode = 'own'"
+	        	+ " and pgio.status = '已入库'"
+	        	+ offcon
+	        	+ " GROUP BY pgio.id "
+	        	+ ") a "
 	        	+ " where oid IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
-	        	+ " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')";
+	        	+ " AND customer_id IN (SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"')" ;
 	     if (driver != null &&!"".equals(driver)) {	
 	    	 condition +=" AND ifnull(contact_person,'') like'%"+ driver.trim()+ "%'";
 	     }
@@ -167,8 +211,10 @@ public class CarSummaryController extends Controller {
 	     if (StringUtils.isNotBlank(order_no)) {	
 	    	 condition +=" AND ifnull(depart_no,'') like'%"+ order_no+ "%'";
 	     }
+	     
+	     
         List<Record> orders = Db.find(sql+condition + sLimit);
-        Record rec = Db.findFirst(sqlTotal+condition);
+        Record rec = Db.findFirst("select count(0) total from("+sql+condition+") B");
 	 	orderMap = new HashMap();
         orderMap.put("sEcho", pageIndex);
         orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -308,6 +354,14 @@ public class CarSummaryController extends Controller {
 							//主司机姓名
 							setAttr("driver", deliveryOrder.get("driver"));
 						}
+					}else if("到达提货".equals(orderTypes[i])){
+						PickupGateInOrder  pgi = PickupGateInOrder.dao.findById(pickupIds[i]);
+						if(num == 0){
+							//车牌号
+							setAttr("car_no", pgi.get("car_no"));
+							//主司机姓名
+							setAttr("driver", pgi.get("driver_name"));
+						}
 					}else{
 						DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
 						if(num == 0){
@@ -404,6 +458,29 @@ public class CarSummaryController extends Controller {
 	    				carSummaryOrder.set("office_id", office_id).update();
 	    			}
 	    				
+    			}else if("到达提货".equals(orderTypes[i])){
+    				PickupGateInOrder pgi = PickupGateInOrder.dao.findById(pickupIds[i]);
+    				pgi.set("car_summary_type", "processed");
+    				pgi.update();
+	    			//插入从表数据
+	    			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
+	    			carSummaryDetail.set("car_summary_id", id);
+	    			carSummaryDetail.set("pickup_order_id", pgi.get("id"));
+	    			carSummaryDetail.set("pickup_order_no", pgi.get("depart_no"));
+	    			carSummaryDetail.set("pickup_type", "到达提货");
+	    			carSummaryDetail.save();
+	    			//记录运输单id
+	    			List<Record> recList = Db.find("select distinct dt.order_id from depart_transfer dt"
+	    					+ " left join pickup_gate_in_item pgii on pgii.depart_id = dt.depart_id"
+	    					+ " where pgii.order_id = "+pickupIds[i]);
+	    			for (Record record : recList) {
+	    				orderIds.add(record.getLong("order_id"));
+					}
+	    			
+	    			Long office_id = pgi.getLong("office_id");
+	    			if(office_id != null){
+	    				carSummaryOrder.set("office_id", office_id).update();
+	    			}
     			}else{
 	    			DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
 	    			departOrder.set("car_summary_type", "processed");
@@ -455,7 +532,7 @@ public class CarSummaryController extends Controller {
     		//创建行车里程碑
     		saveCarSummaryOrderMilestone(id,carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW);
     		//设置默认运输单分摊比例
-    		if(orderIds.size()>0){
+    		if(orderIds.size()>0){             //到达提货分摊已经把原来的提货分摊给覆盖掉了，待处理？？？？？？？？
     			double number = 1.0D/orderIds.size();
         		BigDecimal b = new BigDecimal(number); 
         		double rate = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
@@ -505,10 +582,14 @@ public class CarSummaryController extends Controller {
 		String orderTypes[] = orderTypesArr.split(",");
 		String pickupId="";
 		String deliveryId="";
+		String rePickupId="";
 		for(int i=0; i<pickupIds.length;i++){
 			if("配送".equals(orderTypes[i])){
 				deliveryId+=pickupIds[i];
 				deliveryId+=",";
+			}else if("到达提货".equals(orderTypes[i])){
+				rePickupId += pickupIds[i];
+				rePickupId += ",";
 			}else{
 				pickupId+=pickupIds[i];
 				pickupId+=",";
@@ -524,12 +605,21 @@ public class CarSummaryController extends Controller {
 		}else{
 			deliveryId="-1";
 		}
+		
+		if(!"".equals(rePickupId)){
+			rePickupId = rePickupId.substring(0,rePickupId.length()-1);
+		}else{
+			rePickupId="-1";
+		}
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "SELECT COUNT(1) total from (SELECT dor.id FROM depart_order dor WHERE dor.id IN ("+pickupId+") UNION SELECT dor.id FROM delivery_order dor WHERE dor.id IN ("+deliveryId+")) a";
+        String sqlTotal = "SELECT COUNT(1) total from (SELECT dor.id FROM depart_order dor WHERE dor.id IN ("+pickupId+")"
+        		+ " UNION SELECT dor.id FROM delivery_order dor WHERE dor.id IN ("+deliveryId+")"
+        		+ " UNION SELECT pgio.id FROM pickup_gate_in_order pgio WHERE pgio.id IN ("+rePickupId+")"
+        		+ ") a";
     	 
         String sql = "SELECT DISTINCT dor.depart_no, dor.create_stamp,tr.order_no,c.abbr,tr.address transferaddress,dor.address pickupaddress,"
         		+ " (SELECT warehouse_name FROM warehouse WHERE id = tr.warehouse_id) warehousename"
@@ -539,6 +629,16 @@ public class CarSummaryController extends Controller {
         		+ " LEFT JOIN party p ON p.id = tr.customer_id"
         		+ " LEFT JOIN contact c ON c.id = p.contact_id"
         		+ " WHERE dor.id IN ("+pickupId+")"
+        		+ " UNION"//到达提货
+        		+ " SELECT DISTINCT pgio.order_no, pgio.create_stamp,tr.order_no,c.abbr,tr.address transferaddress,null pickupaddress,"
+        		+ " (SELECT warehouse_name FROM warehouse WHERE id = tr.warehouse_id) warehousename"
+        		+ " FROM pickup_gate_in_order pgio"
+        		+ " left join pickup_gate_in_item pgii on pgii.order_id = pgio.id"
+        		+ " LEFT JOIN depart_transfer dt ON dt.depart_id = pgii.depart_id"
+        		+ " LEFT JOIN transfer_order tr ON tr.id = dt.order_id"
+        		+ " LEFT JOIN party p ON p.id = tr.customer_id"
+        		+ " LEFT JOIN contact c ON c.id = p.contact_id"
+        		+ " WHERE pgio.id IN ("+rePickupId+")"
         		+ " UNION"
         		+ " SELECT DISTINCT dor.order_no depart_no,dor.create_stamp,tr.order_no,c.abbr,tr.address transferaddress,l.`name` pickupaddress,"
         		+ " (SELECT warehouse_name FROM warehouse WHERE id = tr.warehouse_id) warehousename"
@@ -569,10 +669,14 @@ public class CarSummaryController extends Controller {
 		String orderTypes[] = orderTypesArr.split(",");
 		String pickupId="";
 		String deliveryId="";
+		String rePickupId = "";
 		for(int i=0; i<pickupIds.length;i++){
 			if("配送".equals(orderTypes[i])){
 				deliveryId+=pickupIds[i];
 				deliveryId+=",";
+			}else if("到达提货".equals(orderTypes[i])){
+				rePickupId+=pickupIds[i];
+				rePickupId+=",";
 			}else{
 				pickupId+=pickupIds[i];
 				pickupId+=",";
@@ -588,6 +692,11 @@ public class CarSummaryController extends Controller {
 		}else{
 			deliveryId="-1";
 		}
+		if(!"".equals(rePickupId)){
+			rePickupId = rePickupId.substring(0,rePickupId.length()-1);
+		}else{
+			rePickupId="-1";
+		}
         String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
@@ -597,7 +706,7 @@ public class CarSummaryController extends Controller {
         		+ " left join depart_transfer dt on dt.order_id = toi.order_id"
         		+ " left join depart_order dor on dor.id = dt.pickup_id"
         		+ " left join transfer_order tor on tor.id = dt.order_id "
-        		+ " where dt.pickup_id in(" + pickupId + ")";
+        		+ " where dt.pickup_id in(" + pickupId + ")" ;
         
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
@@ -618,6 +727,24 @@ public class CarSummaryController extends Controller {
         		+ " left join contact c on c.id = p.contact_id "
         		+ " left join product pd on pd.id = toi.product_id "
         		+ " where dt.pickup_id in(" + pickupId + ")"
+        		+ " UNION"
+        		+ " select distinct toi.id,pgio.order_no,tor.order_no,c.abbr customer,ifnull(toi.item_no, pd.item_no) item_no,toi.item_name,toi.remark,tor.cargo_nature, "
+        		+ " (select count(0) total from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and depart_id = dt.depart_id) atmamount,"
+        		+ " (select round(ifnull(pd.volume * count(0), 0), 2) from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and depart_id = dt.depart_id) atmvolume,"
+        		+ " (select round(ifnull(pd.weight * count(0), 0), 2) from transfer_order_item_detail where order_id = tor.id and item_id = toi.id and depart_id = dt.depart_id) atmweight,"
+        		+ " (select ifnull(d.amount,0) from transfer_order_item t left join depart_transfer d on d.order_item_id = t.id where t.id = toi.id and d.depart_id = dt.depart_id) cargoamount,"
+        		+ " (select round(ifnull(pd.volume,0)*ifnull(d.amount,0),2) from transfer_order_item t left join depart_transfer d on d.order_item_id = t.id where t.id = toi.id and d.depart_id = dt.depart_id) cargovolume,"
+        		+ " (select round(ifnull(pd.weight,0)*ifnull(d.amount,0),2) from transfer_order_item t left join depart_transfer d on d.order_item_id = t.id where t.id = toi.id and d.depart_id = dt.depart_id) cargoweight"
+        		+ " from transfer_order_item toi"
+        		+ " left join depart_transfer dt on dt.order_id = toi.order_id"
+        		+ " left join pickup_gate_in_item pgii on pgii.depart_id = dt.depart_id"
+        		+ " left join pickup_gate_in_order pgio on pgio.id = pgii.order_id"
+        		+ " left join depart_order dor on dor.id = dt.depart_id"
+        		+ " left join transfer_order tor on tor.id = dt.order_id "
+        		+ " left join party p on p.id = tor.customer_id "
+        		+ " left join contact c on c.id = p.contact_id "
+        		+ " left join product pd on pd.id = toi.product_id "
+        		+ " where pgii.order_id in(" + rePickupId + ")"
         		+ " UNION"
         		+ " SELECT DISTINCT  toi.id, dor.order_no depart_no,tor.order_no, c.abbr customer, ifnull(toi.item_no, pd.item_no) item_no,toi.item_name,toi.remark,tor.cargo_nature,"
         		+ " ROUND((SELECT ifnull(sum(doi.amount), 0) FROM delivery_order_item doi WHERE doi.delivery_id = dor.id),2) AS atmvolume,"
@@ -1042,11 +1169,15 @@ public class CarSummaryController extends Controller {
 		String orderTypes[] = orderTypesArr.split(",");
 		String pickupId="";
 		String deliveryId="";
+		String rePickupId = "";
 		for(int i=0; i<pickupIds.length;i++){
 			if("配送".equals(orderTypes[i])){
 				deliveryId+=pickupIds[i];
 				deliveryId+=",";
-			}else{
+			} else  if("到达提货".equals(orderTypes[i])){
+				rePickupId+=pickupIds[i];
+				rePickupId+=",";
+			} else{
 				pickupId+=pickupIds[i];
 				pickupId+=",";
 			}
@@ -1061,12 +1192,20 @@ public class CarSummaryController extends Controller {
 		}else{
 			deliveryId="-1";
 		}
+		if(!"".equals(rePickupId)){
+			rePickupId = rePickupId.substring(0,rePickupId.length()-1);
+		}else{
+			rePickupId="-1";
+		}
     	String sLimit = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
-        String sqlTotal = "SELECT COUNT(1) total from (select  id from depart_order where id in("+pickupId+") union SELECT id from delivery_order where id in ("+deliveryId+"))a";
+        String sqlTotal = "SELECT COUNT(1) total from (select  id from depart_order where id in("+pickupId+")"
+        		+ " union SELECT id from delivery_order where id in ("+deliveryId+")"
+        		+ " UNION SELECT pgio.id FROM pickup_gate_in_order pgio WHERE pgio.id IN ("+rePickupId+")"
+        		+ ")a";
         logger.debug("sql :" + sqlTotal);
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
@@ -1087,6 +1226,26 @@ public class CarSummaryController extends Controller {
         		+ " left join contact c on c.id = p.contact_id"
         		+ " left join product pd on pd.id = toi.product_id"
         		+ " where dt.pickup_id in(" + pickupId+") "
+        		+ " UNION"
+        		+ " select distinct tr.id,tr.order_no,c.abbr,tr.car_summary_order_share_ratio,tr.remark,tr.cargo_nature,"
+        		+ " (select count(0) total from transfer_order_item_detail where order_id = tr.id  and depart_id in(" + rePickupId+")) atmamount,"
+        		+ " round((select sum(ifnull(volume, 0)) from transfer_order_item_detail where depart_id in(" + rePickupId+")), 2) atmvolume,"
+        		+ " round((select sum(ifnull(weight, 0)) from transfer_order_item_detail where depart_id in(" + rePickupId+")), 2) atmweight,"
+        		+ " (select SUM(amount) from depart_transfer where pickup_id = dt.pickup_id) cargoamount,"
+        		+ " (select round(sum(ifnull(toi.volume,0)*(dtf.amount/toi.amount)),2) from transfer_order_item toi left join depart_transfer dtf on dtf.order_item_id = toi.id "
+        		+ " left join transfer_order t on t.id = toi.order_id	where dtf.pickup_id = dt.pickup_id and t.cargo_nature = 'cargo') cargovolume,"
+        		+ " (select round(sum(ifnull(toi.sum_weight,0)*(dtf.amount/toi.amount)),2) from transfer_order_item toi left join depart_transfer dtf on dtf.order_item_id = toi.id "
+        		+ " left join transfer_order t on t.id = toi.order_id	where dtf.pickup_id = dt.pickup_id and t.cargo_nature = 'cargo') cargoweight"
+        		+ " from depart_transfer dt"
+        		+ " left join pickup_gate_in_item pgii on pgii.depart_id = dt.depart_id"
+        		+ " left join depart_pickup dp on dp.depart_id = dt.depart_id"
+        		
+        		+ " left join transfer_order tr on tr.id = dt.order_id"
+        		+ " left join transfer_order_item toi on toi.order_id = tr.id"
+        		+ " left join party p on p.id = tr.customer_id"
+        		+ " left join contact c on c.id = p.contact_id"
+        		+ " left join product pd on pd.id = toi.product_id"
+        		+ " where pgii.order_id in(" + rePickupId + ") "
         		+ " UNION"
         		+ " SELECT t_o.id,t_o.order_no ,c.abbr,t_o.car_summary_order_share_ratio,t_o.remark,t_o.cargo_nature,"
         		+ " ROUND((SELECT ifnull(sum(doi.amount), 0) FROM delivery_order_item doi LEFT JOIN transfer_order_item toi ON toi.id = doi.transfer_item_id WHERE doi.delivery_id = dor.id),2) atmamount,"
