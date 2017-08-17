@@ -440,7 +440,7 @@ public class DepartOrderController extends Controller {
 				+ " LEFT JOIN office wo ON wo.id = w.office_id"
 				+ " left join transfer_order tr  on tr.id = dt.order_id"
 				+ conditions
-				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
+				+ " and ifnull(deo.pickup_flag,'') !='Y' and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
 				+ " ( t.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
@@ -484,7 +484,7 @@ public class DepartOrderController extends Controller {
 				+ " LEFT JOIN office wo ON wo.id = w.office_id"
 				+ " left join transfer_order tr  on tr.id = dt.order_id"
 				+ conditions
-				+ " and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
+				+ " and ifnull(deo.pickup_flag,'') !='Y' and deo.combine_type = 'DEPART'  and ifnull(deo.status,'') != '新建' and "
 				+ " ( t.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"') "//o.id
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"

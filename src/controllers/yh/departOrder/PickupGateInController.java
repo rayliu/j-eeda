@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.DepartOrder;
 import models.PickupGateInArapItem;
 import models.PickupGateInOrder;
 import models.UserLogin;
@@ -111,6 +112,11 @@ public class PickupGateInController extends Controller {
 			re.set("order_id", id);
 			re.set("depart_id", depart_id);
 			Db.save("pickup_gate_in_item", re);
+			
+			//更新标记位
+			DepartOrder dp = DepartOrder.dao.findById(depart_id);
+			dp.set("pickup_flag", "Y");
+			dp.update();
 		}
 		
 		List<Map<String, String>> costList = (ArrayList<Map<String, String>>)dto.get("cost_list");

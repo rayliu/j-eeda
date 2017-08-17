@@ -1062,8 +1062,8 @@ public class CostCheckOrderController extends Controller {
 				+ (StrKit.isBlank(sp_id2)?"":" and dor.sp_id ="+sp_id2)
 				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and dor.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
-		        + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
-		        + " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+		       // + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+		        //+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " group by dor.id "
 				+ " union"
 				
@@ -1104,8 +1104,8 @@ public class CostCheckOrderController extends Controller {
 				+ " left join office oe on oe.id = tor.office_id where  (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'DEPART' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
-				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
-				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+				//+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				//+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
 				+ (StrKit.isBlank(sp_id2)?"":" and dpr.sp_id ="+sp_id2)
 				+ " group by dpr.id"
@@ -1160,8 +1160,8 @@ public class CostCheckOrderController extends Controller {
 				+ "  pgio.audit_status='已确认' AND dpr.combine_type = 'DEPART' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and pgio.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
-				+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
-				+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+				//+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+				//+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
 				+ (StrKit.isBlank(sp_id2)?"":" and pgio.sp_id ="+sp_id2)
 				+ " group by pgio.id"
@@ -1209,8 +1209,8 @@ public class CostCheckOrderController extends Controller {
 				+ " where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' "
 				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
 				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
-                + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
-                + "      or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
+                //+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
+                //+ "      or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
                 + " and '"+is_delivery+"' = 'N'"
                 + (StrKit.isBlank(sp_id2)?"":" and dpr.sp_id ="+sp_id2)
                 + " group by dpr.id"
