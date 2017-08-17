@@ -38,6 +38,7 @@ $(document).ready(function() {
         }
 
         var orderJson = {
+        	office_id : $('#office_id').val(), 
             id : $('#order_id').val(), 
             sp_id : $('#sp_id').val(),  
             car_id : $('#car_id').val(),

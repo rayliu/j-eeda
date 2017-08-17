@@ -154,7 +154,7 @@ public class CarSummaryController extends Controller {
 	        	+ " SELECT"
 	        	+ " pgio.id,"
 	        	+ " o.id oid,"
-	        	+ " '到达提货' order_type,"
+	        	+ " '干线提货' order_type,"
 	        	+ " t_o.customer_id,"
 	        	+ " pgio.order_no,"
 	        	+ " ifnull(u.c_name, u.user_name) user_name,"
@@ -354,7 +354,7 @@ public class CarSummaryController extends Controller {
 							//主司机姓名
 							setAttr("driver", deliveryOrder.get("driver"));
 						}
-					}else if("到达提货".equals(orderTypes[i])){
+					}else if("干线提货".equals(orderTypes[i])){
 						PickupGateInOrder  pgi = PickupGateInOrder.dao.findById(pickupIds[i]);
 						if(num == 0){
 							//车牌号
@@ -458,7 +458,7 @@ public class CarSummaryController extends Controller {
 	    				carSummaryOrder.set("office_id", office_id).update();
 	    			}
 	    				
-    			}else if("到达提货".equals(orderTypes[i])){
+    			}else if("干线提货".equals(orderTypes[i])){
     				PickupGateInOrder pgi = PickupGateInOrder.dao.findById(pickupIds[i]);
     				pgi.set("car_summary_type", "processed");
     				pgi.update();
@@ -467,7 +467,7 @@ public class CarSummaryController extends Controller {
 	    			carSummaryDetail.set("car_summary_id", id);
 	    			carSummaryDetail.set("pickup_order_id", pgi.get("id"));
 	    			carSummaryDetail.set("pickup_order_no", pgi.get("depart_no"));
-	    			carSummaryDetail.set("pickup_type", "到达提货");
+	    			carSummaryDetail.set("pickup_type", "干线提货");
 	    			carSummaryDetail.save();
 	    			//记录运输单id
 	    			List<Record> recList = Db.find("select distinct dt.order_id from depart_transfer dt"
@@ -532,7 +532,7 @@ public class CarSummaryController extends Controller {
     		//创建行车里程碑
     		saveCarSummaryOrderMilestone(id,carSummaryOrder.CAR_SUMMARY_SYSTEM_NEW);
     		//设置默认运输单分摊比例
-    		if(orderIds.size()>0){             //到达提货分摊已经把原来的提货分摊给覆盖掉了，待处理？？？？？？？？
+    		if(orderIds.size()>0){             //干线提货分摊已经把原来的提货分摊给覆盖掉了，待处理？？？？？？？？
     			double number = 1.0D/orderIds.size();
         		BigDecimal b = new BigDecimal(number); 
         		double rate = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();  
@@ -587,7 +587,7 @@ public class CarSummaryController extends Controller {
 			if("配送".equals(orderTypes[i])){
 				deliveryId+=pickupIds[i];
 				deliveryId+=",";
-			}else if("到达提货".equals(orderTypes[i])){
+			}else if("干线提货".equals(orderTypes[i])){
 				rePickupId += pickupIds[i];
 				rePickupId += ",";
 			}else{
@@ -629,7 +629,7 @@ public class CarSummaryController extends Controller {
         		+ " LEFT JOIN party p ON p.id = tr.customer_id"
         		+ " LEFT JOIN contact c ON c.id = p.contact_id"
         		+ " WHERE dor.id IN ("+pickupId+")"
-        		+ " UNION"//到达提货
+        		+ " UNION"//干线提货
         		+ " SELECT DISTINCT pgio.order_no, pgio.create_stamp,tr.order_no,c.abbr,tr.address transferaddress,null pickupaddress,"
         		+ " (SELECT warehouse_name FROM warehouse WHERE id = tr.warehouse_id) warehousename"
         		+ " FROM pickup_gate_in_order pgio"
@@ -674,7 +674,7 @@ public class CarSummaryController extends Controller {
 			if("配送".equals(orderTypes[i])){
 				deliveryId+=pickupIds[i];
 				deliveryId+=",";
-			}else if("到达提货".equals(orderTypes[i])){
+			}else if("干线提货".equals(orderTypes[i])){
 				rePickupId+=pickupIds[i];
 				rePickupId+=",";
 			}else{
@@ -1174,7 +1174,7 @@ public class CarSummaryController extends Controller {
 			if("配送".equals(orderTypes[i])){
 				deliveryId+=pickupIds[i];
 				deliveryId+=",";
-			} else  if("到达提货".equals(orderTypes[i])){
+			} else  if("干线提货".equals(orderTypes[i])){
 				rePickupId+=pickupIds[i];
 				rePickupId+=",";
 			} else{

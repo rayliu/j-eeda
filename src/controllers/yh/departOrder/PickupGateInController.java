@@ -47,6 +47,7 @@ public class PickupGateInController extends Controller {
 	
 	public void create() {
 		String departId = getPara("departId");
+		String office_id = getPara("office_id");
 		
 		//获取明细
 		String itemSql = "select "
@@ -75,6 +76,7 @@ public class PickupGateInController extends Controller {
 		List<Record> reList = Db.find(itemSql);
 		setAttr("itemList", reList);
 		setAttr("departId", departId);
+		setAttr("office_id", office_id);
 
 		render("/yh/pickupGateIn/edit.html");
 	}
@@ -88,7 +90,6 @@ public class PickupGateInController extends Controller {
         PickupGateInOrder order = null;
 		String id = (String) dto.get("id");
 		Long user_id =  LoginUserController.getLoginUserId(this);
-		Long office_id = OfficeController.getOfficeId(currentUser.getPrincipal().toString());
 		if (StringUtils.isNotEmpty(id)) {
 			order = PickupGateInOrder.dao.findById(id);
 			DbUtils.setModelValues(dto, order);
@@ -101,7 +102,6 @@ public class PickupGateInController extends Controller {
 			order.set("order_no", OrderNoGenerator.getNextOrderNo("PGI"));
 			order.set("create_by", user_id);
 			order.set("create_stamp", new Date());
-			order.set("office_id", office_id);
 			order.set("status", "新建");
 			order.save();
 			id = order.get("id").toString();

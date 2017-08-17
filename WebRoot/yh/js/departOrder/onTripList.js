@@ -30,7 +30,7 @@ $(document).ready(function() {
 				    	}else{
 				    		if(obj.aData.WAI_FLAG == 'Y'){
 				    			return "<button class='btn  btn-primary confirmInWarehouse btn-xs' code='"+obj.aData.ID+"'>入库确认</button>" +
-			    				"<button class='btn btn-xs btn-primary pickupGateIn' style='margin-top:2px' code='"+obj.aData.ID+"'>提货入库</button>";
+			    				"<button class='btn btn-xs btn-primary pickupGateIn' style='margin-top:2px' code='"+obj.aData.ID+"' office_id='"+obj.aData.ROUTE_TO_OFFICE_ID+"'>干线提货</button>";
 				    		}else{
 				    			return "<button class='btn  btn-primary confirmInWarehouse' code='"+obj.aData.ID+"'>入库确认</button>";
 			    				
@@ -201,12 +201,13 @@ $(document).ready(function() {
     
    
     
-    //提货入库
+    //干线提货
     $("#eeda-table").on('click', '.pickupGateIn', function(e){
     	var departOrderId =$(this).attr("code");
+    	var office_id =$(this).attr("office_id");
     	$(this).attr("disabled",true);
     	if(confirm("确定要重新提货吗？","ok","false")){
-    		window.location.href='/pickupGateIn/create?departId='+departOrderId;
+    		window.location.href='/pickupGateIn/create?departId='+departOrderId+'&office_id='+office_id;
         } else {
         	$(this).attr("disabled",false);
             return;

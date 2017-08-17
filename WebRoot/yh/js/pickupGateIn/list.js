@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-	document.title = '提货入库单查询 | '+document.title;
+	document.title = '干线提货单查询 | '+document.title;
 
     $('#menu_status').addClass('active').find('ul').addClass('in');
     

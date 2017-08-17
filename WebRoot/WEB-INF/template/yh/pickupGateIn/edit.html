@@ -6,10 +6,11 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="btn-header" style="font-size:32px">提货入库单</div>
+                    <div class="btn-header" style="font-size:32px">干线提货单</div>
                 </div>
             </div>
             <input id="order_id" type="hidden" name="order_id" value="${order.id!''}"/>
+            <input id="office_id" type="hidden" name="office_id" value="${office_id!order.office_id!''}"/>
             <input id="depart_id" type="hidden" name="order_id" value="${departId!order.depart_id!''}"/>
             <div class="group-form">
                 <form id="orderForm">
@@ -201,7 +202,7 @@
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/eeda-common.js"></script>
 <script>
-    var order_no = '${order.order_no!'提货入库单'}'; 
+    var order_no = '${order.order_no!'干线提货单'}'; 
     var order = {};
 </script>
 <script src="/yh/js/pickupGateIn/edit.js"></script>

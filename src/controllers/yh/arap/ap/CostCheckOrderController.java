@@ -113,7 +113,7 @@ public class CostCheckOrderController extends Controller {
 				DepartOrder departOrder = DepartOrder.dao
 						.findById(orderIdsArr[i]);
 				spId = departOrder.getLong("sp_id");
-			} else if ("到达提货".equals(orderNoArr[i])) {
+			} else if ("干线提货".equals(orderNoArr[i])) {
 				rec = Db.findFirst(
 						" select sum(amount) sum_amount from pickup_gate_in_arap_item dofi"
 						+ " where dofi.order_id = ?  and IFNULL(dofi.cost_source,'') != '对账调整金额'",
@@ -510,7 +510,7 @@ public class CostCheckOrderController extends Controller {
 								.findById(orderIdsArr[i]);
 						departOrder.set("audit_status", "对账中");
 						departOrder.update();
-					} else if ("到达提货".equals(orderNoArr[i])) {
+					} else if ("干线提货".equals(orderNoArr[i])) {
 						PickupGateInOrder pgi = PickupGateInOrder.dao
 								.findById(orderIdsArr[i]);
 						pgi.set("audit_status", "对账中");
@@ -595,7 +595,7 @@ public class CostCheckOrderController extends Controller {
 				if(refOrderOfficeId == null){
 					refOrderOfficeId = departOrder.getLong("office_id");
 				}
-			} else if ("到达提货".equals(orderNoArr[i])) {
+			} else if ("干线提货".equals(orderNoArr[i])) {
 				PickupGateInOrder pgi = PickupGateInOrder.dao
 						.findById(orderIdsArr[i]);
 				pgi.set("audit_status", "对账中");
@@ -712,7 +712,7 @@ public class CostCheckOrderController extends Controller {
 					changeamount = changeamount
 							+ rec.getDouble("change_amount");
 				}
-			} else if ("到达提货".equals(orderNoArr[i])) {
+			} else if ("干线提货".equals(orderNoArr[i])) {
 				rec1 = Db
 						.findFirst(
 								"select ifnull(sum(amount),0) sum_amount from pickup_gate_in_arap_item dofi where dofi.order_id = ? and IFNULL(dofi.cost_source,'') !='对账调整金额'",
@@ -1121,7 +1121,7 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN transfer_order_item toi ON toi.order_id = dt.order_id  "
 				+ " WHERE dpr2.id = dpr.id ) END ) amount, "
 				+ " ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,pgio.create_stamp create_stamp,ul.user_name creator,"
-				+ " '到达提货' business_type, "
+				+ " '干线提货' business_type, "
 				+ " (select sum(amount) from pickup_gate_in_arap_item dofi"
 				+ " where dofi.order_id = pgio.id and IFNULL(dofi.cost_source,'') !='对账调整金额') pay_amount,"
 				
@@ -1376,7 +1376,7 @@ public class CostCheckOrderController extends Controller {
 					pickupId += orderIdsArr[i] + ",";
 				} else if ("零担".equals(orderNoArr[i])) {
 					departId += orderIdsArr[i] + ",";
-				} else if ("到达提货".equals(orderNoArr[i])) {
+				} else if ("干线提货".equals(orderNoArr[i])) {
 					rePickupId += orderIdsArr[i] + ",";
 				} else if ("配送".equals(orderNoArr[i])) {
 					deliveryId += orderIdsArr[i] + ",";
@@ -1397,7 +1397,7 @@ public class CostCheckOrderController extends Controller {
 					pickupId += itemId + d;
 				} else if ("零担".equals(type)) {
 					departId += itemId + d;
-				} else if ("到达提货".equals(type)) {
+				} else if ("干线提货".equals(type)) {
 					rePickupId += itemId + d;
 				} else if ("配送".equals(type)) {
 					deliveryId += itemId + d;
@@ -1522,7 +1522,7 @@ public class CostCheckOrderController extends Controller {
 				+ " THEN ( SELECT sum(toi.amount) FROM depart_order dpr2 LEFT JOIN depart_transfer dt ON dt.depart_id = dpr2.id LEFT JOIN transfer_order_item toi ON toi.order_id = dt.order_id"
 				+ " WHERE dpr2.id = dpr.id )END) amount,"
 				+ " ifnull(prod.volume,toi.volume) volume,ifnull(prod.weight,toi.weight) weight,pgio.create_stamp create_stamp,ul.user_name creator,"
-				+ " '到达提货' business_type, dpr.booking_note_number,"
+				+ " '干线提货' business_type, dpr.booking_note_number,"
 				+ " ifnull((SELECT NAME FROM location WHERE CODE = dpr.route_to),'') route_from,"
 				+ " ifnull((SELECT NAME FROM location WHERE CODE = dpr.route_to),'') route_to,"
 				+ " (select ifnull(sum(amount),0) from pickup_gate_in_arap_item dofi"
@@ -1785,7 +1785,7 @@ public class CostCheckOrderController extends Controller {
 				ifi.set("cost_source", "对账调整金额");
 				ifi.save();
 			}
-		} else if ("到达提货".equals(type)) {
+		} else if ("干线提货".equals(type)) {
 			rec1 = Db
 					.findFirst(
 							"select ifnull(sum(amount),0) sum_amount from pickup_gate_in_arap_item dofi where dofi.order_id = ? ",
@@ -1895,7 +1895,7 @@ public class CostCheckOrderController extends Controller {
     			DepartOrder departOrder = DepartOrder.dao.findById(id);
     			departOrder.set("audit_status", "新建");
     			departOrder.update();
-    		} else if ("到达提货".equals(order_type)) {
+    		} else if ("干线提货".equals(order_type)) {
     			PickupGateInOrder pgi = PickupGateInOrder.dao.findById(id);
     			pgi.set("audit_status", "新建");
     			pgi.update();
@@ -1936,7 +1936,7 @@ public class CostCheckOrderController extends Controller {
 			DepartOrder departOrder = DepartOrder.dao.findById(id);
 			departOrder.set("audit_status", "已确认");
 			departOrder.update();
-		} else if ("到达提货".equals(order_type)) {
+		} else if ("干线提货".equals(order_type)) {
 			PickupGateInOrder pgi = PickupGateInOrder.dao.findById(id);
 			pgi.set("audit_status", "已确认");
 			pgi.update();
@@ -1985,7 +1985,7 @@ public class CostCheckOrderController extends Controller {
 					DepartOrder departOrder = DepartOrder.dao.findById(ref_order_id);
 					departOrder.set("audit_status", "已确认");
 					departOrder.update();
-				}  else if ("到达提货".equals(order_type)) {
+				}  else if ("干线提货".equals(order_type)) {
 					PickupGateInOrder order_no = PickupGateInOrder.dao.findById(ref_order_id);
 					order_no.set("audit_status", "已确认");
 					order_no.update();
@@ -2036,7 +2036,7 @@ public class CostCheckOrderController extends Controller {
 			}else if("成本单".equals(order_type)){
 				ArapMiscCostOrder aco  = ArapMiscCostOrder.dao.findById(order_id);
 				aco.set("remark", remark).update();
-			}else if("到达提货".equals(order_type)){
+			}else if("干线提货".equals(order_type)){
 				Record order = Db.findById("pickup_gate_in_order", order_id);
 				order.set("remark", remark);
 				Db.update("pickup_gate_in_order",order);

@@ -416,7 +416,7 @@ public class CostItemConfirmController extends Controller {
 				+ " DATE(pgio.create_stamp) create_stamp,"
 				+ " ifnull(ul.c_name, ul.user_name) creator,tor.customer_order_no customer_order_no,"
 				+ " null as ref_no,"
-				+ " '到达提货' business_type, "
+				+ " '干线提货' business_type, "
 				+ " null as booking_note_number,"
 				+ " null as customer_delivery_no,"
 				+ " (select ifnull(sum(pgia.amount),0) "
@@ -557,7 +557,7 @@ System.out.println("开始："+sql + condition + orderByStr + sLimit);
     			arapmisccostOrder.set("confirm_by", LoginUserController.getLoginUserId(this));
     			arapmisccostOrder.set("confirm_stamp", new Date());
     			arapmisccostOrder.update();
-    		}else if("到达提货".equals(orderNoArr[i])){
+    		}else if("干线提货".equals(orderNoArr[i])){
     			PickupGateInOrder order = PickupGateInOrder.dao.findById(idArr[i]);
     			order.set("audit_status", "已确认");
     			order.set("confirm_by", LoginUserController.getLoginUserId(this));
