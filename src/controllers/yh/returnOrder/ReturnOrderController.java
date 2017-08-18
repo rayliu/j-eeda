@@ -200,7 +200,7 @@ public class ReturnOrderController extends Controller {
         if(!status.equals("'新建'"))
         	conditions += q_begin + q_end;
         
-        conditions+=  " and ror_office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' ) and customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')";
+
         		//+ " and (!(unix_timestamp(planning_time) < unix_timestamp('2015-07-01')) AND cname = '江苏国光') " ;
         String totalSql = " SELECT ror.id, ror.order_no,ror.customer_id,'' create_date,'' remark ,"
     		    + " ( CASE tor.arrival_mode  "
@@ -309,7 +309,12 @@ public class ReturnOrderController extends Controller {
 				+ " LEFT JOIN contact c2 ON c2.id = p2.contact_id"
 				+ " LEFT JOIN location lo ON lo. CODE = ifnull(tor.route_from, dor.route_from )"
 				+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
-				+ " LEFT JOIN user_login ul ON ul.id = ror.creator " ;
+				+ " LEFT JOIN user_login ul ON ul.id = ror.creator "
+				+ " where "
+				+ " ifnull(tor.office_id,(select DISTINCT tor.office_id from transfer_order tor"
+	                + " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
+	                + " where doi.delivery_id = dor.id )) IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+				+ " and ror.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')" ;
 
 			// 获取当前页的数据
 	    sql = " SELECT ror.id, ror.order_no,ror.customer_id,'' create_date,'' remark ,"
@@ -396,7 +401,9 @@ public class ReturnOrderController extends Controller {
 	                + ") photo_type, "
 					+ " dor.ref_no sign_no," 
 	                + " dor.office_id dor_office_id,"
-	                + " tor.office_id tor_office_id,"
+	                + " ifnull(tor.office_id,(select DISTINCT tor.office_id from transfer_order tor"
+	                + " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
+	                + " where doi.delivery_id = dor.id )) tor_office_id,"
 					+ " o.office_name dor_office_name,"
 					+ " o2.office_name tor_office_name,"
 					+ " dor.business_stamp,ror.office_id ror_office_id"
@@ -413,7 +420,12 @@ public class ReturnOrderController extends Controller {
 					+ " LEFT JOIN contact c2 ON c2.id =p2.contact_id"
 					+ " LEFT JOIN location lo ON lo. CODE = ifnull(tor.route_from, dor.route_from )"
 					+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
-					+ " LEFT JOIN user_login ul ON ul.id = ror.creator where 1=1 " ;
+					+ " LEFT JOIN user_login ul ON ul.id = ror.creator "
+					+ " where "
+					+ " ifnull(tor.office_id,(select DISTINCT tor.office_id from transfer_order tor"
+	                + " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
+	                + " where doi.delivery_id = dor.id )) IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+					+ " and ror.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')" ;
 	    if (StringUtils.isNotEmpty(order_no)){
 	        sql+=" and UPPER(ror.order_no) like '%"+order_no+"%'";
         }
@@ -1821,7 +1833,7 @@ public class ReturnOrderController extends Controller {
            conditions+=" and UPPER(serial_no) like '%"+serial_no+"%'";
        }
        if (StringUtils.isNotEmpty(customer)){
-           conditions+=" and UPPER(cname) like '%"+customer+"%'";
+           conditions+=" and UPPER(customer_id) = '"+customer+"'";
        }
        if (StringUtils.isNotEmpty(return_type)){
            conditions+=" and UPPER(return_type) like '%"+return_type+"%'";
@@ -1885,8 +1897,6 @@ public class ReturnOrderController extends Controller {
        if(!status.equals("'新建'"))
            conditions += q_begin + q_end;
        
-       conditions+=  " and customer_id in (select customer_id from user_customer where user_name='" 
-               + currentUser.getPrincipal() + "'"+") and file_path is not null";
        // 获取当前页的数据
        sql = " SELECT ror.id, ror.order_no, af.id file_id, af.file_path, ror.customer_id,'' create_date,'' remark ,"
                    + " '' transfer_type,"
@@ -1958,7 +1968,11 @@ public class ReturnOrderController extends Controller {
                    + " LEFT JOIN contact c2 ON c2.id =p2.id"
                    + " LEFT JOIN location lo ON lo. CODE = ifnull(tor.route_from, dor.route_from )"
                    + " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
-                   + " LEFT JOIN user_login ul ON ul.id = ror.creator " ;
+                   + " LEFT JOIN user_login ul ON ul.id = ror.creator "
+                   + " where "
+                   + " ifnull(tor.office_id,dor.office_id) IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
+                   + " and ror.customer_id in (select customer_id from user_customer where user_name='" 
+                   + currentUser.getPrincipal() + "'"+") and file_path is not null" ;
 
        String orderByStr = " order by id asc ";
        
