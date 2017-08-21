@@ -45,7 +45,7 @@
     			"fnRender": function(obj) {
 					nopay = nopay + parseFloat(obj.aData.YUFU_AMOUNT) ;
 					$("#nopay").html(nopay.toFixed(2));
-					return obj.aData.YUFU_AMOUNT;
+					return parseFloat(obj.aData.YUFU_AMOUNT).toFixed(2);
     			}
     		},
     		{"mDataProp":null,"sWidth": "100px",
@@ -54,7 +54,7 @@
 						pay = pay + parseFloat(obj.aData.YUFU_AMOUNT) ;
 						$("#pay").html(pay.toFixed(2));
 						$("#pay_amount").val(pay.toFixed(2));
-						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+obj.aData.YUFU_AMOUNT+"'>";
+						return "<input type ='text' name='amount' style='width:80px' id ='amount' value='"+parseFloat(obj.aData.YUFU_AMOUNT).toFixed(2)+"'>";
 					}
 					else{
 						if(obj.aData.PAY_AMOUNT==0){
