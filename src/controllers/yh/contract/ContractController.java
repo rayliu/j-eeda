@@ -540,10 +540,27 @@ public class ContractController extends Controller {
     // 列出供应商公司名称, 包括：干线，配送
     public void searchSp() {
     	String input = getPara("spName");
+    	String sp_type = getPara("sp_type");
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
 		// Long officeID = pom.getCurrentOfficeId();
 		List<Record> locationList = Collections.EMPTY_LIST;
+		String type_conditions = "";
+		if(StringUtils.isNotBlank(sp_type)){
+			String[] array = sp_type.split(";");
+			for (int i = 0; i < array.length; i++) {
+				if(i == 0){
+					type_conditions += " and (c.sp_type like '%"+array[i]+"%'";
+				}else{
+					if(i == array.length-1){
+						type_conditions += " or c.sp_type like '%"+array[i]+"%')";
+					}else{
+						type_conditions += " or c.sp_type like '%"+array[i]+"%'";
+					}
+				}
+			}
+		}
+		
 		if (input.trim().length() > 0) {
 			locationList = Db
 					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where  ifnull(p.is_stop,0) != 1 and p.contact_id = c.id and p.party_type = '"
@@ -552,26 +569,19 @@ public class ContractController extends Controller {
 							+ input
 							+ "%' or c.abbr like '%"
 							+ input
-							+ "%' or c.contact_person like '%"
-							+ input
-							+ "%' or c.email like '%"
-							+ input
-							+ "%' or c.mobile like '%"
-							+ input
-							+ "%' or c.phone like '%"
-							+ input
-							+ "%' or c.address like '%"
-							+ input
-							+ "%' or c.postal_code like '%"
-							+ input
-							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
+							+ "%') "
+							+ type_conditions
+							+ "and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
 							parentID, parentID);
 		} else {
 			locationList = Db
 					.find("select p.id, c.abbr,c.postal_code,c.contact_person,c.email,c.phone,c.address,c.company_name, p.id AS pid from party p "
 							+ " LEFT JOIN contact c on p.contact_id = c.id "
 							+ " LEFT JOIN office o on o.id = p.office_id"
-							+ " where ifnull(p.is_stop,0) != 1 and p.contact_id = c.id and p.party_type = '"
+							+ " where "
+							+ " ifnull(p.is_stop,0) != 1"
+							+ type_conditions
+							+ " and p.contact_id = c.id and p.party_type = '"
 							+ Party.PARTY_TYPE_SERVICE_PROVIDER
 							+ "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
 							parentID, parentID);

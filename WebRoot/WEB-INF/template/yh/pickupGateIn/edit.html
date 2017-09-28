@@ -86,14 +86,16 @@
                     
                     <div class="row">
                     <br/>
-                    	<div class="col-lg-4" id = "spDiv" style="display:none;">
+                    	<div class="col-lg-4" id = "spDiv" <%if(order.pickup_mode!''=='own'){%>style="display:none;<%}%>">
                             <%include("/yh/component/form/inputSpField.html", 
                                 {
                                     id:'sp_id', 
                                     label:'供应商', 
                                     value:order.sp_id!'',
                                     display_value: spRe.abbr!'',
-                                    required:'required'
+                                    required:'required',
+                                    sp_type:'line;pickup'
+                                    
                                 }){} %>
                         </div>
                     </div>   

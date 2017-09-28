@@ -6,7 +6,7 @@
     </label>
 	<input type="text" class="form-control search-control" 
 	id="${id}_input" 
-	placeholder="${placeholder!'请选择供应商'}" ${required!''}  value="${display_value!''}">
+	placeholder="${placeholder!'请选择供应商'}" ${required!''}  value="${display_value!''}" autocomplete="off">
 	<ul id='${id}_list' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 35%; left: 2%;">
 </ul>
 </div>
@@ -20,14 +20,14 @@ $(document).ready(function() {
 	var spList =$("#${id}_list");
 	var inputField = $('#${id}_input');
 	var hiddenField = $('#${id}');
-	
+	var sp_type = '${sp_type!""}';
 	//供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
     inputField.on('input click', function(){
     	var me = this;
 		var inputStr = inputField.val();
 		
-		$.get('/customerContract/searchSp', {spName:inputStr}, function(data){
+		$.get('/customerContract/searchSp', {spName:inputStr,sp_type:sp_type}, function(data){
 			if(inputStr!=inputField.val()){//查询条件与当前输入值不相等，返回
 				return;
 			}

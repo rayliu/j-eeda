@@ -30,11 +30,11 @@ $(document).ready(function() {
             {"mDataProp":"PICKUP_MODE",
             	"fnRender": function(obj) {
             		if(obj.aData.PICKUP_MODE == 'own'){
-            			return '自提';
+            			return '公司自提';
             		}else if(obj.aData.PICKUP_MODE == 'routeSP'){
-            			return '1';
+            			return '干线供应商自提';
             		}else if(obj.aData.PICKUP_MODE == 'pickupSP'){
-            			return '2';
+            			return '外包供应商提货';
             		}
             	}
             },
