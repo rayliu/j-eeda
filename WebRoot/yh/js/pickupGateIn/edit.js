@@ -13,9 +13,15 @@ $(document).ready(function() {
 
     		$('#sp_id').val("");
     		$('#sp_id_input').val("");
+    		$('#carDiv').show();
     	}else{
-    		$('#spDiv').show();
-    		$('#costDiv').show();
+    		if(pickupMode == 'pickupSP'){
+    			$('#carDiv').hide();
+    		}else{
+    			$('#spDiv').show();
+        		$('#costDiv').show();
+        		$('#carDiv').show();
+    		}
     	}
     	$('#sp_id').val("");
 		$('#sp_id_input').val("");

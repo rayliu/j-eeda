@@ -96,33 +96,35 @@
                                     required:'required'
                                 }){} %>
                         </div>
-                    </div>    
-                    <h3>车辆信息</h3>
-                    <div class="row">
-                    	<div class="col-lg-4">
-                            <label class="search-label">司机<span style="color:red"> *</span></label>
-							<input type="hidden" id="car_id" value="${order.car_id!''}">
-					        <input type="text" name="driver_name" required class="form-control search-control" id="driver_name" value="${order.driver_name!''}">
-					        <ul style="top: 17%; left: 2%;"  class="pull-right dropdown-menu default" id="driverList">
-					        </ul>
-                    	</div>
-                    	 <div class="col-lg-4">
-                            <%include("/yh/component/form/inputField.html", 
-                                                {   id:'car_no', 
-                                                    label:'车牌', 
-                                                    value:order.car_no!'', 
-                                                    disabled: 'disabled'
-                                                }){}%>
-                    	</div>
-                    	 <div class="col-lg-4">
-                            <%include("/yh/component/form/inputField.html", 
-                                                {   id:'driver_phone', 
-                                                    label:'电话', 
-                                                    value:order.driver_phone!'', 
-                                                    disabled: 'disabled'
-                                                }){}%>
-                    	</div>
-                    	
+                    </div>   
+                    <div id="carDiv">
+	                    <h3>车辆信息</h3>
+	                    <div class="row">
+	                    	<div class="col-lg-4">
+	                            <label class="search-label">司机<span style="color:red"> *</span></label>
+								<input type="hidden" id="car_id" value="${order.car_id!''}">
+						        <input type="text" name="driver_name" required class="form-control search-control" id="driver_name" value="${order.driver_name!''}">
+						        <ul style="top: 17%; left: 2%;"  class="pull-right dropdown-menu default" id="driverList">
+						        </ul>
+	                    	</div>
+	                    	 <div class="col-lg-4">
+	                            <%include("/yh/component/form/inputField.html", 
+	                                                {   id:'car_no', 
+	                                                    label:'车牌', 
+	                                                    value:order.car_no!'', 
+	                                                    disabled: 'disabled'
+	                                                }){}%>
+	                    	</div>
+	                    	 <div class="col-lg-4">
+	                            <%include("/yh/component/form/inputField.html", 
+	                                                {   id:'driver_phone', 
+	                                                    label:'电话', 
+	                                                    value:order.driver_phone!'', 
+	                                                    disabled: 'disabled'
+	                                                }){}%>
+	                    	</div>
+	                    	
+	                    </div> 
                     </div> 
                     <div class="row">
                     	<div class="col-lg-4">
