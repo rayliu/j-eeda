@@ -779,9 +779,14 @@
  	});
 	
 	// 点击已完成按钮
+	var finish_num =  0;
 	$("#finishBtn").click(function(){
+		finish_num++;
 		$("#finishBtn").attr('disabled', true);	
-		
+		$("#saveTransferOrderBtn").attr('disabled', true);	
+		if(finish_num >1){
+			return ;
+		}
 	
 		// 处理入库运输单
 		$.post('/pickupOrder/getTransferOrderDestination', {warehouseIds: $("#warehouseIds").val(),pid:$("#pickupOrderId").val()}, function(data){
@@ -815,6 +820,7 @@
             	}
             }else{
             	$("#finishBtn").attr('disabled', false);	
+            	$("#saveTransferOrderBtn").attr('disabled', true);	
                 alert('操作失败');
             }
 		},'json');
