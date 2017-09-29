@@ -288,7 +288,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String total_amount = getPara("total_amount")==""?"0.00":getPara("total_amount");   //申请总金额
 
 		
-		if (!"".equals(application_id) && application_id != null) {
+		if (StringUtils.isNotBlank(application_id)) {
 			arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(application_id);
 			arapAuditInvoiceApplication.set("last_modified_by",LoginUserController.getLoginUserId(this));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
@@ -300,7 +300,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
 			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			arapAuditInvoiceApplication.set("num_name", numname);
-			if (total_amount != null && !"".equals(total_amount)) {
+			if (StringUtils.isNotBlank(total_amount)) {
 				arapAuditInvoiceApplication.set("total_amount",total_amount);
 			}
 			arapAuditInvoiceApplication.update();
@@ -338,7 +338,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("num_name", numname);
 			arapAuditInvoiceApplication.set("payee_id", payee_id);
 		
-			if (total_amount != null && !"".equals(total_amount)) {
+			if (StringUtils.isNotBlank(total_amount)) {
 				arapAuditInvoiceApplication.set("total_amount",total_amount);
 			}
 			
@@ -929,23 +929,6 @@ public class CostPreInvoiceOrderController extends Controller {
                 ArapCostInvoiceApplication arapcostInvoice = ArapCostInvoiceApplication.dao.findById(orderId);
                 arapcostInvoice.set("status", "已付款确认");
                 arapcostInvoice.update();
-               /* //应收对账单的状态改变
-                ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findFirst("select * from arap_cost_order where application_order_id = ?",orderId);
-                arapAuditOrder.set("status", "已付款确认");
-                arapAuditOrder.update();
-                //手工付款单的状态改变：注意有的对账单没有手工付款单
-                Long arapMiscId = arapAuditOrder.get("id");
-                if(arapMiscId != null && !"".equals(arapMiscId)){
-                	List<ArapMiscCostOrder> list = ArapMiscCostOrder.dao.find("select * from arap_misc_cost_order where cost_order_id = ?",arapMiscId);
-                	if(list.size()>0){
-                		for (ArapMiscCostOrder model : list) {
-                			model.set("status", "对账已完成");
-                			model.update();
-						}
-                	}
-                    
-                }*/
-                
             	}
 			
 				//现金 或 银行  金额处理
@@ -1874,13 +1857,19 @@ public class CostPreInvoiceOrderController extends Controller {
 			 ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
 	        auditLog.set("payment_method", pay_type);
 	        auditLog.set("payment_type", ArapAccountAuditLog.TYPE_COST);
+	        if(0 == Double.parseDouble(pay_amount)){
+	        	Record re = Db.findFirst("select sum(pay_amount) total_amount from cost_application_order_rel"
+	        			+ " where application_order_id = ?",application_id);
+	        	pay_amount = re.get("total_amount").toString();
+	        }
 	        auditLog.set("amount", pay_amount);
 	        auditLog.set("creator", LoginUserController.getLoginUserId(this));
 	        auditLog.set("create_date", pay_time);
-	        if(pay_bank_id!=null && !pay_bank_id.equals("") )
+	        if(StringUtils.isNotBlank(pay_bank_id)){
 	        	auditLog.set("account_id", pay_bank_id);
-	        else
+	        }else{
 	        	auditLog.set("account_id", 4);
+	        }
 	        auditLog.set("source_order", "应付开票申请单");
 	        auditLog.set("invoice_order_id", application_id);
 	        auditLog.set("office_id", refOrderOfficeId);
