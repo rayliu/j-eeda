@@ -1217,7 +1217,7 @@ $(document).ready(function() {
 					$("#affirmBtn").prop("disabled",true);
 					//刷新当前选项卡 
 					//$("#"+clickTabId+"").click();
-					$.scojs_message('审核成功', $.scojs_message.TYPE_OK);
+					$.scojs_message('审批成功', $.scojs_message.TYPE_OK);
 				}else{
 					$.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
 				}

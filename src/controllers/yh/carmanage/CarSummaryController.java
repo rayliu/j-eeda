@@ -1082,15 +1082,7 @@ public class CarSummaryController extends Controller {
     	String value = getPara("value").trim();
     	if(!"".equals(carSummaryId) && carSummaryId != null){
     		CarSummaryOrder order = CarSummaryOrder.dao.findById(carSummaryId);
-    		//if("审核".equals(value)){
-    			value = "已审批";
-//    		}else if("撤销审核".equals(value)){
-//    			value = order.CAR_SUMMARY_SYSTEM_REVOCATION;
-//    		}else if("报销".equals(value)){
-//    			value = order.CAR_SUMMARY_SYSTEM_REIMBURSEMENT;
-//    		}else{
-//    			value = "";
-//    		}
+    		value = "已审批";
     		order.set("status", value);
     		order.update();
     		//修改行车里程碑状态
@@ -1098,6 +1090,8 @@ public class CarSummaryController extends Controller {
     	}
     	renderJson("{\"success\":true}");
     }
+    
+    
     //每次新增调车单时要添加的数据
     private void initCarSummaryDetailOtherFeeData(long carSummaryOrderId){
     	String name[] = {"car_summary_id","item","amount_item","is_delete"};

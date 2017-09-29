@@ -24,11 +24,11 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/carsummary/untreatedCarManageList",
+        //"sAjaxSource": "/carsummary/untreatedCarManageList",
         "aoColumns": [ 
 			{ "mDataProp": null,"sWidth":"10px",
 				"fnRender": function(obj) {
@@ -200,6 +200,8 @@ $(document).ready(function() {
 		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList";
 		unDispose_table.fnDraw();
 	});
+	
+	
     var refreshData=function(){
 		var status = $("#status").val();
 		var driver = $("#driver").val();
@@ -360,15 +362,18 @@ $(document).ready(function() {
 	});
 	
 	// 选显卡-行车单查询
-	$("#carSummaryOrderList").click(function(){
-		num2 = 1;
-		unDispose_table.fnSettings().oFeatures.bServerSide = false; 
-		travellingCraneReceipts_table.fnSettings().oFeatures.bServerSide = true; 
-		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList";
-		travellingCraneReceipts_table.fnDraw();
-	});
+//	$("#carSummaryOrderList").click(function(){
+//		num2 = 1;
+//		unDispose_table.fnSettings().oFeatures.bServerSide = false; 
+//		travellingCraneReceipts_table.fnSettings().oFeatures.bServerSide = true; 
+//		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList";
+//		travellingCraneReceipts_table.fnDraw();
+//	});
+//	
+	
 	//行车单查询各种搜索
 	refreshData1=function () {
+		travellingCraneReceipts_table.fnSettings().oFeatures.bServerSide = true; 
 		var status = $("#carSummary_status").val();
 		var car_no = $("#carSummary_car_no").val();
 		var driver = $("#carSummary_driver").val();
@@ -376,10 +381,10 @@ $(document).ready(function() {
 		var order_no = $("#carSummary_pickup_order").val();
 		var start_data = $("#carSummary_start_data").val();
 		var office_id=$("#carSummary_office").val();
-		
+
 		num2 = 1;
 		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?" +
-				" status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo
+				"status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo
 				+"&order_no="+order_no+"&start_data="+start_data+"&office_id="+office_id;
 		travellingCraneReceipts_table.fnDraw();
 		saveConditions1();
@@ -424,25 +429,7 @@ $(document).ready(function() {
     loadConditions1();
     
 });
-/*function DateDiff(d1,d2){ 
-    var day = 24 * 60 * 60 *1000; 
-	try{     
-	   var dateArr = d1.split("-"); 
-	   var checkDate = new Date(); 
-	   checkDate.setFullYear(dateArr[0], dateArr[1]-1, dateArr[2]); 
-	   var checkTime = checkDate.getTime(); 
-	   
-	   var dateArr2 = d2.split("-"); 
-	   var checkDate2 = new Date(); 
-	   checkDate2.setFullYear(dateArr2[0], dateArr2[1]-1, dateArr2[2]); 
-	   var checkTime2 = checkDate2.getTime(); 
-	     
-	   var cha = (checkTime - checkTime2)/day;   
-	        return cha; 
-    }catch(e){ 
-    	return false; 
-    }
-};*/
+
 function DateDiff(sDate1, sDate2) {  //sDate1和sDate2是yyyy-MM-dd格式
     var aDate, oDate1, oDate2, iDays;
     aDate = sDate1.split("-");
