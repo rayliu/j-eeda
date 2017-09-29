@@ -2247,12 +2247,38 @@ public class DeliveryController extends Controller {
     	String warehouse1 = getPara("warehouse1");
     	String transferOrderNo = getPara("transferOrderNo");
     	String customerName1 = getPara("customerName1");
+    	String customer_id = getPara("customer_id");
+    	String warehouse_id = getPara("warehouse_id");
+    	String address = getPara("address");
+    	String customerOrderNo = getPara("customerOrderNo");
+    	
     	
     	String sLimit = "";
+    	String conditions = "";
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
         }
+        
+        if(StringUtils.isNotBlank(customer_id)){
+        	conditions += " and t2.customer_id = "+ customer_id;
+        }
+		if(StringUtils.isNotBlank(warehouse_id)){
+			conditions += " and t2.warehouse_id = "+ warehouse_id;
+		} else if(StringUtils.isNotBlank(warehouse1)){
+			conditions += " and w.warehouse_name LIKE '%" + warehouse1 + "%'";
+		}
+		if(StringUtils.isNotBlank(transferOrderNo)){
+			conditions += " and t2.order_no like '%"+ transferOrderNo + "%'";
+		}
+		if(StringUtils.isNotBlank(customerOrderNo)){
+			conditions += " and t2.customer_order_no like '%"+ customerOrderNo + "%'";
+		}
+		if(StringUtils.isNotBlank(address)){
+			conditions += " and t2.receiving_address like '%"+ address + "%'";
+		}
+		
+		
     	String sqlTotal = "select count(0) total from transfer_order_item t1"
         		+ " left join transfer_order t2 on t1.order_id = t2.id"
         		+ " left join product pro on pro.id = t1.product_id"
@@ -2260,9 +2286,7 @@ public class DeliveryController extends Controller {
         		+ " left join party p on t2.customer_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
         		+ " where t2.cargo_nature = 'cargo'"
-        		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
-        		+ " and c.abbr LIKE '%" + customerName1 + "%'"
-        		+ " and t2.order_no like '%" + transferOrderNo + "%'"
+        		+ conditions
         		+ " and (t1.amount != t1.complete_amount or t1.complete_amount is null) "
         		+ " and (case when t2.operation_type != 'out_source'"
         		+ " then (select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp "
@@ -2273,7 +2297,8 @@ public class DeliveryController extends Controller {
         		+ " end) is not null "
         		+ " order by t1.id desc";
     	
-        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,"
+        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,"
+        		+ " ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,"
         		+ " (case when t2.operation_type != 'out_source'"
         		+ " then (SELECT "
         		+ " ifnull(dt.amount, 0)"
@@ -2292,7 +2317,7 @@ public class DeliveryController extends Controller {
         		+ " end) amount,"
         		+ " t1.complete_amount,t2.order_no,t2.planning_time,t2.customer_order_no,t2.status,t2.cargo_nature,w.warehouse_name,c.abbr,"
         		+ " (select sum(product_number) from delivery_order_item  toi left join delivery_order dor on dor.id = toi.delivery_id "
-        		+ " where toi.transfer_no like '%" + transferOrderNo + "%' and toi.product_id = t1.product_id and dor.status = '新建') quantity "
+        		+ " where toi.product_id = t1.product_id and dor.status = '新建') quantity "
         		+ " from transfer_order_item t1"
         		+ " left join transfer_order t2 on t1.order_id = t2.id"
         		+ " left join product pro on pro.id = t1.product_id"
@@ -2300,9 +2325,7 @@ public class DeliveryController extends Controller {
         		+ " left join party p on t2.customer_id = p.id"
         		+ " left join contact c on p.contact_id = c.id"
         		+ " where t2.cargo_nature = 'cargo'"
-        		+ " and w.warehouse_name LIKE '%" + warehouse1 + "%'"
-        		+ " and c.abbr LIKE '%" + customerName1 + "%'"
-        		+ " and t2.order_no like '%" + transferOrderNo + "%'"
+        		+ conditions
         		+ " and (t1.amount != t1.complete_amount or t1.complete_amount is null)"
         		+ " and (case when t2.operation_type != 'out_source'"
         		+ " then (select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp "

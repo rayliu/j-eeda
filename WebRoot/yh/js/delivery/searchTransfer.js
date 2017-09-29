@@ -459,21 +459,26 @@ $(document).ready(function() {
     // 选中某个客户时候
     $('#companyList1').on('click', '.fromLocationItem', function(e){        
          $('#customerName1').val($(this).text());
+         $('#cargo_customer_id').val($(this).attr('partyId'));
+         
          $("#companyList1").hide();
          var companyId = $(this).attr('partyId');
          $('#customerId').val(companyId);
-         	var customerName1 = $("#customerName1").val();
-	      	var warehouse1 = $("#warehouse1").val();
-	      	var transferOrderNo = $("#transferOrderNo").val();
-	      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
-	      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-	      		dab2.fnSettings().oFeatures.bServerSide = true;
-	      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
-		      	dab2.fnDraw();
-	      	}
+//         	var customerName1 = $("#customerName1").val();
+//	      	var warehouse1 = $("#warehouse1").val();
+//	      	var transferOrderNo = $("#transferOrderNo").val();
+//	      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
+//	      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
+//	      		dab2.fnSettings().oFeatures.bServerSide = true;
+//	      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
+//		      	dab2.fnDraw();
+//	      	}
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customerName1').on('blur', function(){
+    	if(this.value==''){
+    		$('#cargo_customer_id').val('');
+    	}
         $('#companyList1').hide();
     });
 
@@ -511,8 +516,11 @@ $(document).ready(function() {
  		$("#warehouseList1").hide();
  	});
  	$('#warehouseList1').on('blur', function(){
- 			$('#warehouseList1').hide();
- 		});
+ 		if(this.value == ''){
+ 			$('#cargo_warehouse_id').val('');
+ 		}
+		$('#warehouseList1').hide();
+	});
 
  	$('#warehouseList1').on('mousedown', function(){
  		return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
@@ -523,16 +531,17 @@ $(document).ready(function() {
  		var warehouseId = $(this).attr('code');
  		$("#warehouseId").val(warehouseId);
  		$('#warehouse1').val($(this).text());
+ 		$('#cargo_warehouse_id').val(warehouseId);
  		
- 		var customerName1 = $("#customerName1").val();
-      	var warehouse1 = $("#warehouse1").val();
-      	var transferOrderNo = $("#transferOrderNo").val();
-      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
-      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-      		dab2.fnSettings().oFeatures.bServerSide = true;
-      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
-	      	dab2.fnDraw();
-      	}
+// 		var customerName1 = $("#customerName1").val();
+//      	var warehouse1 = $("#warehouse1").val();
+//      	var transferOrderNo = $("#transferOrderNo").val();
+//      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
+//      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
+//      		dab2.fnSettings().oFeatures.bServerSide = true;
+//      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
+//	      	dab2.fnDraw();
+//      	}
      	$('#warehouseList1').hide();
  	});
  	
@@ -752,17 +761,28 @@ $(document).ready(function() {
     });
   	
   	
-  	$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1,#transferOrderNo").on('keyup click', function () {
+  	//$("#deliveryOrderNo1,#customerName1,#orderStatue1,#warehouse1,#transferOrderNo").on('keyup click', function () {
+  	$('#searchCargoBtn').click(function(){
   		var customerName1 = $("#customerName1").val();
+  		var cargo_customer_id = $("#cargo_customer_id").val();
+  		var cargo_warehouse_id = $("#cargo_warehouse_id").val();
       	var warehouse1 = $("#warehouse1").val();
       	var transferOrderNo = $("#transferOrderNo").val();
-      	/*&&transferOrderNo!=""&&transferOrderNo!=null*/
+      	var address = $("#address").val();
+      	var customerNo = $("#customerNo").val();
       	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
       		dab2.fnSettings().oFeatures.bServerSide = true;
-      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1+"&warehouse1="+warehouse1+"&transferOrderNo="+transferOrderNo;
+      		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1
+      		+"&warehouse1="+warehouse1
+      		+"&customer_id="+cargo_customer_id
+      		+"&warehouse_id="+cargo_warehouse_id
+      		+"&address="+address
+      		+"&customerOrderNo="+customerNo
+      		+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
       	}
-  	});
+  	})
+  		
   	
   	$("#transferOrderNo").on('keyup click', function () {
   		var customerName1 = $("#customerName1").val();
