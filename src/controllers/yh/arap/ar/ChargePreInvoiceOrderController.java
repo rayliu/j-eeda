@@ -32,6 +32,7 @@ import models.yh.carmanage.CarSummaryOrder;
 import models.yh.damageOrder.DamageOrder;
 import models.yh.profile.Contact;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -831,7 +832,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 		String total_amount = getPara("total_amount")==""?"0.00":getPara("total_amount");   //申请总金额
 
 		
-		if (!"".equals(application_id) && application_id != null) {
+		if (StringUtils.isNotBlank(application_id)) {
 			arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(application_id);
 			arapAuditInvoiceApplication.set("last_modified_by",LoginUserController.getLoginUserId(this));
 			arapAuditInvoiceApplication.set("last_modified_stamp", new Date());
@@ -843,7 +844,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("bank_no", bank_no);
 			arapAuditInvoiceApplication.set("bank_name", bank_name);
 			arapAuditInvoiceApplication.set("num_name", numname);
-			if (total_amount != null && !"".equals(total_amount)) {
+			if (StringUtils.isNotBlank(total_amount)) {
 				arapAuditInvoiceApplication.set("total_amount",total_amount);
 			}
 			arapAuditInvoiceApplication.update();
@@ -881,7 +882,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditInvoiceApplication.set("num_name", numname);
 			arapAuditInvoiceApplication.set("payee_id", payee_id);
 			
-			if (total_amount != null && !"".equals(total_amount)) {
+			if (StringUtils.isNotBlank(total_amount)) {
 				arapAuditInvoiceApplication.set("total_amount",total_amount);
 			}
 			
@@ -1193,13 +1194,20 @@ public class ChargePreInvoiceOrderController extends Controller {
 		 ArapAccountAuditLog auditLog = new ArapAccountAuditLog();
         auditLog.set("payment_method", receive_type);
         auditLog.set("payment_type", ArapAccountAuditLog.TYPE_CHARGE);
+        
+        if(0 == Double.parseDouble(pay_amount)){
+        	Record re = Db.findFirst("select sum(receive_amount) total_amount from charge_application_order_rel"
+        			+ " where application_order_id = ?",application_id);
+        	pay_amount = re.get("total_amount").toString();
+        }
         auditLog.set("amount", pay_amount);
         auditLog.set("creator", LoginUserController.getLoginUserId(this));
         auditLog.set("create_date", receive_time);
-        if(receive_bank_id!=null  &&  !receive_bank_id.equals(""))
+        if(StringUtils.isNotBlank(receive_bank_id)){
         	auditLog.set("account_id", receive_bank_id);
-        else
+        }else{
         	auditLog.set("account_id", 4);
+        }
         
         auditLog.set("source_order", "应收开票申请单");
         auditLog.set("invoice_order_id", application_id);
