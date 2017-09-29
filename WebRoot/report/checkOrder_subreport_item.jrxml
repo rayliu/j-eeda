@@ -105,6 +105,51 @@ where dto.id = aci.ref_order_id
 		and aci.ref_order_no='零担'
 GROUP BY dto.id
 union
+select
+		aci.ref_order_no,
+		aci.ref_order_id,
+		aci.cost_order_id,
+		pgio.order_no  as order_no,
+	  pgio.create_stamp as create_date,
+		dto.booking_note_number as sp_order_no,
+		c.abbr as customer_name,
+		r_t.`name` as route_from,
+		r_t.`name` as route_to,
+		'干线提货' as service_type,
+		(SELECT CASE WHEN t.cargo_nature = 'ATM' THEN (SELECT count(toid.id) FROM transfer_order_item_detail toid WHERE toid.depart_id = dto.id )
+		WHEN t.cargo_nature = 'cargo' THEN ( SELECT sum(toi.amount) FROM depart_order dpr2 LEFT JOIN depart_transfer dt ON dt.depart_id = dpr2.id LEFT JOIN transfer_order_item toi ON toi.order_id = dt.order_id
+		WHERE dpr2.id = dto.id )END) as quantity,
+		(
+SELECT group_concat(DISTINCT c.address SEPARATOR '\r\n')
+from contact c
+left join transfer_order t on t.notify_party_id=c.id
+LEFT JOIN depart_transfer dt on t.id = dt.order_id
+left join depart_order dto on dto.id =dt.depart_id
+where dto.id = aci.ref_order_id
+ ) as address,
+		ifnull((select sum(amount) from pickup_gate_in_arap_item dofi
+    where  dofi.order_id = aci.ref_order_id and ifnull(dofi.cost_source,'')!='对账调整金额'),0) as amount,
+		ifnull((select sum(amount) from pickup_gate_in_arap_item dofi
+    where dofi.order_id = aci.ref_order_id),0) as confirm_amount,
+		dto.remark as remark
+	from
+		arap_cost_item aci
+	LEFT JOIN pickup_gate_in_order pgio on pgio.id =  aci.ref_order_id
+	left join pickup_gate_in_item pgii on pgii.order_id = pgio.id
+  left join depart_order dto on dto.id = pgii.depart_id
+	left join depart_transfer dt on dt.depart_id = dto.id
+	left join transfer_order t on t.id = dt.order_id
+            LEFT JOIN warehouse w on t.warehouse_id=w.id
+            left join location lc on lc.code = w.location
+	left join party p on t.customer_id = p.id
+	left join contact c on p.contact_id = c.id
+	left join location r_f on r_f.`code` = t.route_from
+	left join location r_t on r_t.`code` = t.route_to
+	where
+		aci.cost_order_id = $P{order_id}
+		and aci.ref_order_no='干线提货'
+GROUP BY dto.id
+union
 	select
 		aci.ref_order_no,
 		aci.ref_order_id,
