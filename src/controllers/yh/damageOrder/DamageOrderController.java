@@ -166,7 +166,7 @@ public class DamageOrderController extends Controller {
 	
 
 	private Record getOrderDto(String orderId) {
-		String sql = "SELECT dao.*, c1.abbr customer_name, c2.abbr sp_name,c3.abbr insurance_name, "
+		String sql = "SELECT dao.*, c1.abbr customer_name, c2.company_name sp_name,c3.abbr insurance_name, "
 			+ " ifnull(u.c_name, u.user_name) creator_name from damage_order dao"
 			+"	left join party p1 on dao.customer_id = p1.id "
 			+"		left join contact c1 on p1.contact_id = c1.id"
