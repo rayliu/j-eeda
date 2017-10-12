@@ -528,7 +528,28 @@ public class DeliveryOrderMilestoneController extends Controller {
         	        
                 //}
             }
+        }else{  
+        	/**
+        	 * 空白配送单生成回单流程
+        	 */
+        	String orderNo = OrderNoGenerator.getNextOrderNo("HD");
+        	ReturnOrder order = new ReturnOrder();
+        	order.set("order_no", orderNo);
+        	//如果是配送单生成回单：一张配送单只生成一张回单
+        	order.set("delivery_order_id", delivery_id);
+        	order.set("customer_id", deliveryOrder.get("customer_id"));
+            order.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+            order.set("order_type", "应收");
+            order.set("transaction_status", "新建");
+            order.set("creator", userId);
+            
+            order.set("office_id", deliveryOrder.get("office_id"));
+            order.set("create_date", new Date());
+            order.set("customer_id", deliveryOrder.get("customer_id"));
+            order.save();
         }
+        
+        
         if("wx".equals(order_type)){
         	renderJson(return_id);
         }else{

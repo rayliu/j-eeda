@@ -203,7 +203,7 @@ public class ChargeItemConfirmController extends Controller {
 				+"    LEFT JOIN delivery_order dvr ON ror.delivery_order_id = dvr.id"
 				+"    LEFT JOIN delivery_order_item doi ON doi.delivery_id = dvr.id"
 				+"    LEFT JOIN transfer_order tor2 ON tor2.id = doi.transfer_order_id"
-				+"    LEFT JOIN party p2 ON p2.id = tor2.customer_id"
+				+"    LEFT JOIN party p2 ON p2.id = ifnull(tor2.customer_id,dvr.customer_id)"
 				+"    LEFT JOIN contact c2 ON c2.id = p2.contact_id"
 				+"    LEFT JOIN depart_order dor ON dor.id = dt.pickup_id"
 				+"    LEFT JOIN pickup_order_fin_item dofi ON dofi.pickup_order_id = dor.id"

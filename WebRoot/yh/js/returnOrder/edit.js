@@ -17,111 +17,121 @@ $(document).ready(function() {
 		height: 120,
 		text	: 'http://'+window.location.host+'/wx/fileUpload/'+returnOrder.orderNo //'http://'+window.location.host+'
 	});	
+	
+	
+	
+	
+	
 	var returnOrderId = $("#returnId").val();
 	var transferOrderId =$("#transferOrderId").val();
 	var cargoNature = $("#cargoNature").val();
-	//datatable, 动态处理
-	var transferOrder = $('#transferOrderTable').dataTable({
-        "bFilter": false, //不需要默认的搜索框
-        //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
-        //"sPaginationType": "bootstrap",
-        "iDisplayLength": 10,
-        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
-    	"oLanguage": {
-            "sUrl": "/eeda/dataTables.ch.txt"
-        },
-        "sAjaxSource": "/returnOrder/transferOrderItemList?order_id="+returnOrderId+"&id="+transferOrderId,
-        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-			$(nRow).attr('ID', aData.TID);
-			return nRow;
-		},
-        "aoColumns": [ 
-			{
-				"mDataProp":null,            	
-				"sWidth": "80px",
-				"fnRender":function(obj){
-					var str = '';
-					if(cargoNature == 'ATM')
-						str = "<input type='text' name='serial_no' id='serial_no' value='"+obj.aData.SERIAL_NO+"'/>";
-            		return str;
-				}
+	 var transferOrder ;
+	if(isNull_flag == 'N'){
+		//datatable, 动态处理
+	  transferOrder = $('#transferOrderTable').dataTable({
+	        "bFilter": false, //不需要默认的搜索框
+	        "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+	        "iDisplayLength": 10,
+	        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+	        "bServerSide": false,
+	    	"oLanguage": {
+	            "sUrl": "/eeda/dataTables.ch.txt"
+	        },
+	        "sAjaxSource": "/returnOrder/transferOrderItemList?order_id="+returnOrderId+"&id="+transferOrderId,
+	        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+				$(nRow).attr('ID', aData.TID);
+				return nRow;
 			},
-            {
-            	"mDataProp":"ITEM_NO",            	
-            	"sWidth": "80px",
-            	"sClass": "item_no"
-        	},
-            {
-            	"mDataProp":"ITEM_NAME",
-            	"sWidth": "100px",
-            	"sClass": "item_name"
-            },
-            {
-            	"mDataProp":"SIZE",            	
-            	"sWidth": "80px",
-            	"sClass": "size"
-        	},
-            {
-            	"mDataProp":"WIDTH",
-            	"sWidth": "80px",
-            	"sClass": "width"
-            },
-            {
-            	"mDataProp":"HEIGHT",            	
-            	"sWidth": "80px",
-            	"sClass": "height"
-        	}, 
-            {
-            	"mDataProp":"WEIGHT",
-            	"sWidth": "80px",
-            	"sClass": "weight",
-            },
-        	{
-            	"mDataProp":"AMOUNT",
-            	"sWidth": "60px",
-            	"sClass": "amount"
-            }, 
-        	{
-            	"mDataProp":null,
-            	"sWidth": "60px",
-            	"fnRender":function(obj){
-            		if(obj.aData.TIEM_NAME =="ATM"){
-						return obj.Data.PIECES;
+	        "aoColumns": [ 
+				{
+					"mDataProp":null,            	
+					"sWidth": "80px",
+					"fnRender":function(obj){
+						var str = '';
+						if(cargoNature == 'ATM')
+							str = "<input type='text' name='serial_no' id='serial_no' value='"+obj.aData.SERIAL_NO+"'/>";
+	            		return str;
 					}
-					return "";
-				}
-            },
-            {
-            	"mDataProp":"UNIT",
-            	"sWidth": "60px",
-            	"sClass": "unit"
-            },
-            {
-            	"mDataProp":null,
-            	"sWidth": "95px",
-            	"sClass": "sumWeight",
-            	"fnRender": function(obj) {
-            		var str = "";
-            		if(obj.aData.SUM_WEIGHT != undefined && obj.aData.SUM_WEIGHT != null && obj.aData.SUM_WEIGHT != ""){
-            			str = obj.aData.SUM_WEIGHT;
-            		}
-            		return str;
-                }
-            },
-            {
-            	"mDataProp":"VOLUME",
-            	"sWidth": "95px",
-            	"sClass": "volume",
-            	"fnRender": function(obj) {
-            		return obj.aData.VOLUME;
-            	}
-            },            
-            {"mDataProp":"REMARK"},
-                              
-        ]  
-    });	
+				},
+	            {
+	            	"mDataProp":"ITEM_NO",            	
+	            	"sWidth": "80px",
+	            	"sClass": "item_no"
+	        	},
+	            {
+	            	"mDataProp":"ITEM_NAME",
+	            	"sWidth": "100px",
+	            	"sClass": "item_name"
+	            },
+	            {
+	            	"mDataProp":"SIZE",            	
+	            	"sWidth": "80px",
+	            	"sClass": "size"
+	        	},
+	            {
+	            	"mDataProp":"WIDTH",
+	            	"sWidth": "80px",
+	            	"sClass": "width"
+	            },
+	            {
+	            	"mDataProp":"HEIGHT",            	
+	            	"sWidth": "80px",
+	            	"sClass": "height"
+	        	}, 
+	            {
+	            	"mDataProp":"WEIGHT",
+	            	"sWidth": "80px",
+	            	"sClass": "weight",
+	            },
+	        	{
+	            	"mDataProp":"AMOUNT",
+	            	"sWidth": "60px",
+	            	"sClass": "amount"
+	            }, 
+	        	{
+	            	"mDataProp":null,
+	            	"sWidth": "60px",
+	            	"fnRender":function(obj){
+	            		if(obj.aData.TIEM_NAME =="ATM"){
+							return obj.Data.PIECES;
+						}
+						return "";
+					}
+	            },
+	            {
+	            	"mDataProp":"UNIT",
+	            	"sWidth": "60px",
+	            	"sClass": "unit"
+	            },
+	            {
+	            	"mDataProp":null,
+	            	"sWidth": "95px",
+	            	"sClass": "sumWeight",
+	            	"fnRender": function(obj) {
+	            		var str = "";
+	            		if(obj.aData.SUM_WEIGHT != undefined && obj.aData.SUM_WEIGHT != null && obj.aData.SUM_WEIGHT != ""){
+	            			str = obj.aData.SUM_WEIGHT;
+	            		}
+	            		return str;
+	                }
+	            },
+	            {
+	            	"mDataProp":"VOLUME",
+	            	"sWidth": "95px",
+	            	"sClass": "volume",
+	            	"fnRender": function(obj) {
+	            		return obj.aData.VOLUME;
+	            	}
+	            },            
+	            {"mDataProp":"REMARK"}
+	                              
+	        ]  
+	    });	
+	}
+	
+
+	
+
 	var orderId = $("#order_id").val();
 	//datatable, 动态处理
     var detailDataTable = $('#detailTable').dataTable({

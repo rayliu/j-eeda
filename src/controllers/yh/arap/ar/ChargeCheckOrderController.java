@@ -471,7 +471,9 @@ public class ChargeCheckOrderController extends Controller {
 				+ " LEFT JOIN party p3 ON p3.id = dvr.notify_party_id"
 				+ " LEFT JOIN contact c3 ON c3.id = p3.contact_id"
 				+ " left join delivery_order_item doi on doi.delivery_id = dvr.id "
-				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id left join party p2 on p2.id = tor2.customer_id left join contact c2 on c2.id = p2.contact_id "
+				+ " left join transfer_order tor2 on tor2.id = doi.transfer_order_id "
+				+ " left join party p2 on p2.id = ifnull(tor2.customer_id,dvr.customer_id)"
+				+ " left join contact c2 on c2.id = p2.contact_id "
 				+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator "
 				+ " where ror.transaction_status = '已确认' and ror.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
@@ -535,7 +537,7 @@ public class ChargeCheckOrderController extends Controller {
 					+ "' and '"
 					+ endTime
 					+ "') "
-					+ " and (ifnull(tor2.planning_time,tor.planning_time) between'"
+					+ " and (ifnull(tor2.planning_time,ifnull(tor.planning_time,'2000-1-1')) between'"
 					+ planningBeginTime
 					+ "' and '"
 					+ planningEndTime
@@ -545,7 +547,7 @@ public class ChargeCheckOrderController extends Controller {
 					+ "%' or ifnull(tor2.customer_order_no,'')  like '%"
 					+ customerNo
 					+ "%') "
-					+ " and ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id))  like '%"
+					+ " and ifnull(tor.order_no,(select group_concat(distinct ifnull(tor.order_no,'') separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id))  like '%"
 					+ orderNo
 					+ "%' "
 					+ " and ifnull((select name from location where code = tor.route_from),ifnull((select name from location where code = tor2.route_from),''))  like '%"

@@ -163,9 +163,9 @@ public class ReturnOrderController extends Controller {
         	conditions+=" and tor_office_id = '" + officeSelect2+"'";
         }
         if (StringUtils.isNotEmpty(time_one)){
-        	time_one = " and planning_time between'"+time_one+"'";
+        	time_one = " and ifnull(planning_time,'2000-1-1') between'"+time_one+"'";
         }else{
-        	time_one =" and planning_time between '2000-1-1'";
+        	time_one =" and ifnull(planning_time,'2000-1-1') between '2000-1-1'";
         }
         if (StringUtils.isNotEmpty(time_two)){
         	time_two =" and '"+time_two+"'";
@@ -311,7 +311,7 @@ public class ReturnOrderController extends Controller {
 				+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
 				+ " LEFT JOIN user_login ul ON ul.id = ror.creator "
 				+ " where "
-				+ " ifnull(tor.office_id,(select DISTINCT tor.office_id from transfer_order tor"
+				+ " ifnull(if(dor.isNullOrder = 'Y',dor.office_id,tor.office_id),(select DISTINCT tor.office_id from transfer_order tor"
 	                + " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
 	                + " where doi.delivery_id = dor.id )) IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
 				+ " and ror.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')" ;
@@ -422,7 +422,7 @@ public class ReturnOrderController extends Controller {
 					+ " LEFT JOIN location lo2 ON lo2. CODE = ifnull(tor.route_to, dor.route_to)"
 					+ " LEFT JOIN user_login ul ON ul.id = ror.creator "
 					+ " where "
-					+ " ifnull(tor.office_id,(select DISTINCT tor.office_id from transfer_order tor"
+					+ " ifnull(if(dor.isNullOrder = 'Y',dor.office_id,tor.office_id),(select DISTINCT tor.office_id from transfer_order tor"
 	                + " LEFT JOIN delivery_order_item doi on doi.transfer_order_id = tor.id"
 	                + " where doi.delivery_id = dor.id )) IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"' )"
 					+ " and ror.customer_id in (select customer_id from user_customer where user_name='" + currentUser.getPrincipal() + "')" ;
@@ -463,6 +463,7 @@ public class ReturnOrderController extends Controller {
 		Long notify_party_id = null;
 		String code = "";
 		String routeTo = "";
+		String isNull_flag = "N";
 
 		if (deliveryId == null) {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
@@ -473,6 +474,13 @@ public class ReturnOrderController extends Controller {
 			setAttr("isRefused", "NO");
 		} else {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
+			isNull_flag = deliveryOrder.getStr("isNullOrder");
+			if("Y".equals(isNull_flag)){
+				List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select * from transfer_order_item toi"
+						+ " where delivery_id = ? ",deliveryId);	
+				setAttr("itemList", itemList);
+			}
+			
 			notify_party_id = deliveryOrder.get("notify_party_id");
 			TransferOrderItemDetail detail =TransferOrderItemDetail.dao.findFirst("SELECT * from transfer_order_item_detail where delivery_refused_id=?",deliveryId);
 			// TODO 一张配送单对应多张运输单时回单怎样取出信息
@@ -519,6 +527,25 @@ public class ReturnOrderController extends Controller {
 						.get("contact_id"));
 				code = locationCode.get("location");
 			}
+		}else{
+			if (returnOrder.get("customer_id") != null) {
+				Party customer = Party.dao.findById(returnOrder.get("customer_id"));
+				Contact customerContact = Contact.dao.findById(customer
+						.get("contact_id"));
+				setAttr("customerContact", customerContact);
+			}
+			
+			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
+			if (deliveryOrder.get("notify_party_id") != null) {
+				Party notify = Party.dao.findById(deliveryOrder.get("notify_party_id"));
+				Contact contact = Contact.dao.findById(notify.get("contact_id"));
+				if(contact!=null){
+					setAttr("contact", contact);
+				}
+				Contact locationCode = Contact.dao.findById(notify
+						.get("contact_id"));
+				code = locationCode.get("location");
+			}
 		}
 
 		List<Location> provinces2 = Location.dao
@@ -540,6 +567,27 @@ public class ReturnOrderController extends Controller {
 
 		if(transferOrder != null){
 			String routeFrom = transferOrder.get("route_from");
+			Location locationFrom = null;
+			if (routeFrom != null || !"".equals(routeFrom)) {
+				List<Location> provinces = Location.dao
+						.find("select * from location where pcode ='1'");
+				Location l = Location.dao
+						.findFirst("select * from location where code = (select pcode from location where code = '"
+								+ routeFrom + "')");
+				if (provinces.contains(l)) {
+					locationFrom = Location.dao
+							.findFirst("select l.name as city,l1.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code = '"
+									+ routeFrom + "'");
+				} else {
+					locationFrom = Location.dao
+							.findFirst("select l.name as district, l1.name as city,l2.name as province,l.code from location l left join location  l1 on l.pcode =l1.code left join location l2 on l1.pcode = l2.code where l.code ='"
+									+ routeFrom + "'");
+				}
+				setAttr("locationFrom", locationFrom);
+			}
+		}else{
+			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
+			String routeFrom = deliveryOrder.get("route_from");
 			Location locationFrom = null;
 			if (routeFrom != null || !"".equals(routeFrom)) {
 				List<Location> provinces = Location.dao
@@ -585,6 +633,7 @@ public class ReturnOrderController extends Controller {
 		
 		Map<String, String> customizeField = getCustomFile.getInstance().getCustomizeFile(this);
 		setAttr("customizeField", customizeField);
+		setAttr("isNull_flag", isNull_flag);
 		render("/yh/returnOrder/returnOrder.html");
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_UPDATE})
