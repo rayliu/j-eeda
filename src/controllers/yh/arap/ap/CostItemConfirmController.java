@@ -103,7 +103,9 @@ public class CostItemConfirmController extends Controller {
         
         String customer_con = "";
         String customer_con2 = "";
+        String dor_customer_con = "";
         if(StringUtils.isNotEmpty(customer_id)){
+        	dor_customer_con = " and dor.customer_id = '"+customer_id+"'";
         	customer_con = " and tor.customer_id = '"+customer_id+"'";
         	customer_con2 = " and amco.customer_id = '"+customer_id+"'";
         }
@@ -153,7 +155,7 @@ public class CostItemConfirmController extends Controller {
 				+ " LEFT JOIN transfer_order_item_detail toid ON toid.id = doi.transfer_item_detail_id"
 				+ " left join product prod on toi.product_id = prod.id "
 				+ " left join transfer_order tor ON tor.id = doi.transfer_order_id"
-				+ " left join party p1 on tor.customer_id = p1.id"
+				+ " left join party p1 on dor.customer_id = p1.id"
 				+ " left join contact c1 on p1.contact_id = c1.id"
 				+ " LEFT JOIN party p3 ON dor.notify_party_id = p3.id"
 				+ " LEFT JOIN contact c3 ON p3.contact_id = c3.id"
@@ -165,7 +167,7 @@ public class CostItemConfirmController extends Controller {
 		        //+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"') "
 				//+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 		        + " and dor.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
-		        + customer_con
+		        + dor_customer_con
     			+ " and c.abbr like '%" + sp + "%' "
     			+ " and ifnull(dor.order_no,'') like '%" + no + "%' "
 				+ " group by dor.id "
