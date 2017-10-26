@@ -23,6 +23,10 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnDrawCallback": function( settings ) {
+           $('#searchBtn').attr('disabled',false);
+           $('#searchBtn').text('查询');
+        },
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr('id', aData.ID);
 			$(nRow).attr('order_ty', aData.ORDER_TP);
@@ -216,6 +220,8 @@ $(document).ready(function() {
        });
     
     var refreshCreateList = function(){
+    	$('#searchBtn').attr('disabled',true);
+    	$('#searchBtn').text('查询中...');
     	  //获取所有的条件
         var customer = $('#customer_filter').val();
 		var beginTime = $("#beginTime_filter").val();
