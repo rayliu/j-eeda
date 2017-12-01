@@ -494,10 +494,10 @@ public class ReturnOrderController extends Controller {
 				routeTo = deliveryOrder.get("route_to");
 				List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao
 						.find("select * from delivery_order_item where delivery_id = ?", deliveryId);
-				for (DeliveryOrderItem deliveryOrderItem : deliveryOrderItems) {
-					transferOrder = TransferOrder.dao.findById(deliveryOrderItem.get("transfer_order_id"));
-					break;
-				}
+				//for (DeliveryOrderItem deliveryOrderItem : deliveryOrderItems) {
+					transferOrder = TransferOrder.dao.findById(transferOrderId);
+				//	break;
+				//}
 				setAttr("deliveryOrder", deliveryOrder);
 				setAttr("transferOrder", transferOrder);
 			}

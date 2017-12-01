@@ -24,6 +24,7 @@ import models.Location;
 import models.Office;
 import models.ParentOfficeModel;
 import models.Party;
+import models.ReturnOrder;
 import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
@@ -53,6 +54,7 @@ import com.jfinal.upload.UploadFile;
 
 import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
+import controllers.yh.returnOrder.ReturnOrderController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
 import controllers.yh.util.PermissionConstant;
@@ -747,12 +749,8 @@ public class DeliveryController extends Controller {
 		String shippingNumbers = getPara("shippingNumbers");
 		String cargoNature = getPara("cargoNature");
 		String transfer_no = getPara("transfer_no");
-//		//客户ID
-//		Record record = Db.findFirst("SELECT tor.customer_id FROM transfer_order tor LEFT JOIN transfer_order_item toi on toi.order_id = tor.id where toi.id in (?)",transferItemIds);
-//		Long customerId = record.getLong("customer_id");
 		//客户
 		if (customerId != null) {
-			
 			Party party = Party.dao
 					.findFirst("select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile from party p left join contact c on c.id = p.contact_id where p.id = '"+ customerId + "'");
 			setAttr("customer", party);
@@ -786,8 +784,8 @@ public class DeliveryController extends Controller {
 				setAttr("locationFrom", locationFrom);
 			}
 		}
-		TransferOrderItem transferItem = TransferOrderItem.dao.findById(transferItemIds);
-		TransferOrder transferOrder = TransferOrder.dao.findById(transferItem.get("order_id"));
+		//TransferOrderItem transferItem = TransferOrderItem.dao.findById(transferItemIds);
+		Record transferOrder = Db.findFirst("select * from transfer_order where order_no = ?",transfer_no);
 		setAttr("transferItemIds", transferItemIds);
 		setAttr("productIds", productIds);
 		setAttr("shippingNumbers", shippingNumbers);
@@ -1474,21 +1472,24 @@ public class DeliveryController extends Controller {
 			 */
 			if(!"Y".equals(isNullOrder)){
 				if("cargo".equals(cargoNature)){
-					TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where order_no = '"+ transferOrderNo + "';");
-					for (int i = 0; i < productId.length; i++) {
+					
+					for (int i = 0; i < transferItemId.length; i++) {
 						//更新transferOrderIten表
 						TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
+						TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where id = '"+ transferOrderItem.get("order_id") + "';");
 						Double total_amount = transferOrderItem.getDouble("amount");
 						Double Tcomplete_amount = transferOrderItem.getDouble("complete_amount");
 						if(Tcomplete_amount == null){
 							Tcomplete_amount = 0.00;
-						}
-						Double this_amount = Double.valueOf(shippingNumber[i]);
+						} 
+						
+						String num = shippingNumber[i].split(":")[1];
+						Double this_amount = Double.valueOf(num);
 						//新增配送单从表
 						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
 						deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"))
 						.set("transfer_item_id", transferItemId[i])
-						.set("transfer_no", transferOrderNo)
+						.set("transfer_no", order.getStr("order_no"))
 						.set("transfer_order_id",order.get("id"))
 						.set("amount", this_amount)
 						.save();	
@@ -2297,7 +2298,7 @@ public class DeliveryController extends Controller {
         		+ " end) is not null "
         		+ " order by t1.id desc";
     	
-        String sql = "select t1.id as tid,w.id as wid,p.id as pid,pro.id as productId,"
+        String sql = "select t1.id as tid,t2.id transfer_id,w.id as wid,p.id as pid,pro.id as productId,"
         		+ " ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,"
         		+ " (case when t2.operation_type != 'out_source'"
         		+ " then (SELECT "
@@ -2594,4 +2595,147 @@ public class DeliveryController extends Controller {
 			dofi.delete();
 		}	
 	}
+	
+	@Before(Tx.class)
+	public void finishOrder(){
+		String transfer_ids = getPara("transfer_ids");
+		String sp_id = getPara("sp_id");
+		String business_date = getPara("business_date");
+		
+		String[] idsArray = transfer_ids.split(",");
+		for (int i = 0; i < idsArray.length; i++) {
+			createDeliveryOrder(idsArray[i],sp_id,business_date);
+		}
+		
+		renderJson(true) ;
+	}
+	
+	/*
+	 * 普货配送单处理
+	 */
+	@Before(Tx.class)
+    public void createDeliveryOrder(String transfer_id,String sp_id,String business_date){
+    	TransferOrder transfer = TransferOrder.dao.findById(transfer_id);
+    	
+    	DeliveryOrder deliveryOrder = null;
+    	String orderNo = OrderNoGenerator.getNextOrderNo("PS");
+		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transfer.get("warehouse_id")); 
+		deliveryOrder = new DeliveryOrder();
+		deliveryOrder.set("order_no", orderNo)
+		.set("customer_id", transfer.get("customer_id"))
+		.set("notify_party_id", transfer.getLong("notify_party_id"))
+		.set("receivingUnit", transfer.getStr("receiving_unit"))
+		.set("create_stamp", new Date())
+		.set("create_by", LoginUserController.getLoginUserId(this))
+		.set("status", "已完成")
+		.set("route_from",transfer.get("route_to"))
+		.set("route_to",transfer.get("route_to"))
+		.set("pricetype", getPara("chargeType"))
+		.set("office_id", warehouse.get("office_id"))
+		.set("from_warehouse_id", transfer.get("warehouse_id"))
+		.set("cargo_nature", transfer.get("cargo_nature"))
+		.set("priceType", "perUnit")
+		.set("deliveryMode", "out_source")
+		.set("ref_no",transfer.getStr("sign_in_no"))
+		.set("warehouse_nature", "warehouseNatureNo")
+		.set("business_stamp", business_date)
+		.set("client_order_stamp", business_date)
+		.set("order_delivery_stamp",business_date)
+		.set("depart_stamp", business_date)
+		.set("warehouse_nature", "warehouseNatureNo")
+		.set("ltl_price_type","perCBM")
+		.set("audit_status", "新建")
+		.set("sign_status", "已回单");
+        deliveryOrder.set("sp_id", sp_id);
+        deliveryOrder.set("arrive_stamp", new Date());
+        if(transfer.getLong("notify_party_id") == null){
+        	Record c = new Record();
+        	if(StringUtils.isNotBlank(transfer.getStr("receiving_unit"))){
+        		c.set("company_name", transfer.getStr("receiving_unit"));
+        	}
+        	if(StringUtils.isNotBlank(transfer.getStr("receiving_phone"))){
+        		c.set("phone", transfer.getStr("receiving_phone"));
+        	}
+        	if(StringUtils.isNotBlank(transfer.getStr("receiving_address"))){
+        		c.set("address", transfer.getStr("receiving_address"));
+        	}
+        	if(StringUtils.isNotBlank(transfer.getStr("receiving_name"))){
+        		c.set("contact_person", transfer.getStr("receiving_name"));
+        	}
+        	c.set("create_date", new Date());
+        	Db.save("contact", c);
+        	
+        	Record p = new Record();
+        	p.set("party_type", "NOTIFY_PARTY");
+        	p.set("contact_id", c.get("id"));
+        	p.set("creator", LoginUserController.getLoginUserId(this));
+        	p.set("create_date", new Date());
+        	Db.save("party", p);
+        	deliveryOrder.set("notify_party_id", p.get("id"));
+        }
+        
+		deliveryOrder.save();
+		
+		List<Record> transfer_items = Db.find("SELECT * FROM transfer_order_item toi"
+    			+ " where toi.order_id = ?"
+    			+ " and toi.amount - complete_amount > 0 ",transfer_id);
+		for (Record item : transfer_items) {
+			DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
+			deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+			.set("transfer_order_id",transfer.get("id"))
+			.set("transfer_no",transfer.get("order_no"))
+			.set("transfer_item_id",item.getLong("id"))
+			.set("amount", item.getDouble("amount")-item.getDouble("complete_amount"));
+			deliveryOrderItem.save();
+			//在单品中设置delivery_id
+			item.set("complete_amount", item.get("amount"));
+			item.set("delivery_id", deliveryOrder.get("id"));
+			Db.update("transfer_order_item",item);
+		}
+		
+		createReturnOrder(deliveryOrder,transfer);
+    }
+	
+	
+	// 配送单生成回单
+    @Before(Tx.class)
+    public void createReturnOrder(DeliveryOrder deliveryOrder,TransferOrder transfer) {
+    	Long userId = LoginUserController.getLoginUserId(this);
+    	
+        DeliveryOrderMilestone milestone = new DeliveryOrderMilestone();
+        milestone.set("status", "已送达");
+        milestone.set("create_by", userId);
+        milestone.set("location", "");
+        milestone.set("create_stamp", new Date());
+        milestone.set("delivery_id", deliveryOrder.get("id"));
+        milestone.save();
+        
+		ReturnOrder returnOrder = new ReturnOrder();
+		Long deliveryId = deliveryOrder.getLong("id");
+		Long transferId = transfer.getLong("id");
+		String orderNo = OrderNoGenerator.getNextOrderNo("HD");
+		returnOrder.set("order_no", orderNo);
+        returnOrder.set("delivery_order_id", deliveryId);
+        returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+        returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+        returnOrder.set("transfer_order_id", transferId);
+        returnOrder.set("order_type", "应收");
+        returnOrder.set("receipt_date", new Date());
+        returnOrder.set("transaction_status", "已签收");
+        returnOrder.set("creator", userId);
+        returnOrder.set("office_id", transfer.get("office_id"));
+        returnOrder.set("create_date", new Date());
+        returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+        returnOrder.save();
+        ReturnOrderController roController = new ReturnOrderController(); 
+        //把运输单的应收带到回单中
+        roController.tansferIncomeFinItemToReturnFinItem(returnOrder, deliveryId, transferId);
+        //计算普货合同应收，算没单品的，有单品暂时没做
+        TransferOrder order = TransferOrder.dao.findById(transferId);
+        if(!order.getBoolean("no_contract_revenue")){
+        	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", deliveryId);
+        	roController.calculateChargeGeneral(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
+        }
+    }
+	
 }

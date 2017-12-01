@@ -436,8 +436,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         String isNullOrder = deliveryOrder.getStr("isNullOrder");
         if(!isNullOrder.equals("Y")){
         	Date createDate = Calendar.getInstance().getTime();
-        	String orderNo = OrderNoGenerator.getNextOrderNo("HD");
-        	ReturnOrder returnOrder = new ReturnOrder();
+        	String orderNo = null;
+        	ReturnOrder returnOrder = null;
             Record  transferDetail= Db
     				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",delivery_id);
             //查询配送单中的运输单,如果是普货配送就验证是否以配送完成
@@ -450,14 +450,12 @@ public class DeliveryOrderMilestoneController extends Controller {
 //        		double totalamount = deliveryTotal.getDouble("amount"); //货品总数
 //        		
 //            	//因为现在普货的话只能是一站式配送，所以只有一张运输单的数据
-            	DeliveryOrderItem item = DeliveryOrderItem.dao.findFirst("select * from delivery_order_item where delivery_id = '" + delivery_id + "';");
-            	long transferOrderId = item.getLong("transfer_order_id");
-//            	
-//    			//已送达的货品数量
-//    			Record finishTotal = Db.findFirst("SELECT sum(doi.amount) total FROM `delivery_order_item` doi where doi.transfer_order_id = '" + transferOrderId + "';");
-//    			double totalArrive = finishTotal.getDouble("total");
-//    			if(totalArrive == totalamount){
-    				//当运输单配送完成时生成回单
+            	List<DeliveryOrderItem> items = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = '" + delivery_id + "' group by transfer_order_id;");
+            	for(DeliveryOrderItem item :items){
+            		orderNo = OrderNoGenerator.getNextOrderNo("HD");
+            		returnOrder = new ReturnOrder();
+            		long transferOrderId = item.getLong("transfer_order_id");
+            		//当运输单配送完成时生成回单
     				if(transferDetail!=null){
     					Record  returnRefusedOrder= Db
     							.findFirst("select * from return_order where delivery_order_id =?",transferDetail.get("delivery_id"));
@@ -492,9 +490,10 @@ public class DeliveryOrderMilestoneController extends Controller {
     	            	List<Record> transferOrderItemList = Db.find("select toid.* from transfer_order_item toid left join delivery_order_item doi on toid.id = doi.transfer_item_id where doi.delivery_id = ?", delivery_id);
     	            	roController.calculateChargeGeneral(Long.parseLong(userId), deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
     	            }
-    			//}
+            	}
             }else{
-            	
+            	returnOrder = new ReturnOrder();
+            	orderNo = OrderNoGenerator.getNextOrderNo("HD");
             	//ATM
             	if(transferDetail!=null){
     				Record  returnRefusedOrder= Db

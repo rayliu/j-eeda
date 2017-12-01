@@ -402,12 +402,21 @@ $(document).ready(function() {
 		            {"mDataProp":"WEIGHT"},
 		            {"mDataProp":"D_AMOUNT",
 		            	"fnRender": function(obj) {
+		            		var data = obj.aData.D_AMOUNT;
 		            		if(obj.aData.D_AMOUNT == null || obj.aData.D_AMOUNT == ''){
-		            			return numbers[num++];
+		            			
+		            			for (var int = 0; int < numbers.length; int++) {
+		            				number = numbers[int].split(':');
+		            				var itemId = number[0];
+		            				var num = number[1];
+		            				if(obj.aData.ID == itemId){
+		            					data = num;
+		            				}
+								}
 		            		}else{
-		            			return obj.aData.D_AMOUNT;
+		            			data =  obj.aData.D_AMOUNT;
 		            		}
-		            		
+		            		return data;
 		            	}
 		            },   
 		            {"mDataProp":"ABBR"},

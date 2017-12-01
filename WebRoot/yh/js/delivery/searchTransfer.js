@@ -14,6 +14,61 @@ $(document).ready(function() {
 		}
 	});
 	
+	
+	$("#replaceBtn").click(function(e){
+		$('.checkedOrUnchecked').attr('class','finish');
+		$('#allCheck').show();
+	});
+	
+	$("#allCheck").click(function(e){
+		if(this.checked){
+			$('#eeda-table2 .finish').prop("checked",true);
+		}else{
+			$('#eeda-table2 .finish').prop("checked",false);
+		}
+	});
+	
+	
+	$("#finishBtn").click(function(e){
+		var transfer_ids = getItemIds();
+		var sp_id = $('#sp_id').val();
+		var business_date = $('#business_date').val();
+		
+		if(sp_id == null || sp_id == ''){
+			alert('供应商不能为空');
+			return false;
+		}
+		if(business_date == null || business_date == ''){
+			alert('业务时间不能为空');
+			return false;
+		}
+		$.post('/delivery/finishOrder',{transfer_ids:transfer_ids,sp_id:sp_id,business_date:business_date},function(data){
+			if(data){
+				$.scojs_message('处理成功', $.scojs_message.TYPE_OK);
+				$('#searchCargoBtn').click();
+			}else{
+				$.scojs_message('处理失败', $.scojs_message.TYPE_ERROR);
+			}
+		}).fail(function(){
+			$.scojs_message('后台报错', $.scojs_message.TYPE_ERROR);
+		});
+	});
+	
+	
+	var getItemIds = function(){
+		var ids = '';
+		var transfer_ids = '';
+		$('#eeda-table2 .finish').each(function(){
+			if(this.checked){
+				var item_id = $(this).attr('inventoryId');
+				ids += item_id+',';
+				var transfer_id = $(this).attr('transfer_id');
+				transfer_ids += transfer_id+',';
+			}
+		});
+		return transfer_ids;
+	}
+	
 	//点击创建 - 普货  
 	$("#saveDeliveryCargo").click(function(e){
 		e.preventDefault();
@@ -21,9 +76,9 @@ $(document).ready(function() {
     	var transferItemIds=[];
     	var shippingNumbers = [];*/
 		var productIds = null;
-    	var transferItemIds = null;
+    	var transferItemIds = [];
     	var order_no = null;
-    	var shippingNumbers = null;
+    	var shippingNumbers = [];
     	var result = true;
     	$("#eeda-table2 tr:not(:first)").each(function(){
         	$("input:checked",this).each(function(){
@@ -40,8 +95,11 @@ $(document).ready(function() {
         		shippingNumbers.push($(this).parent().parent().find("td>input[name='amount']").val());
         		transferItemIds.push($(this).parent().parent().attr("id"));*/
         		productIds = $(this).val(); //货品id
-        		shippingNumbers = $(this).parent().parent().find("td>input[name='amount']").val();
-        		transferItemIds = $(this).parent().parent().attr("id");
+        		var itemId = $(this).parent().parent().attr("id");
+        		var itemNum = $(this).parent().parent().find("td>input[name='amount']").val();
+ 
+        		shippingNumbers.push(itemId+':'+itemNum);
+        		transferItemIds.push(itemId);
         		order_no = $(this).parent().parent().attr("order_no");
         	});
     	}); 
@@ -82,14 +140,14 @@ $(document).ready(function() {
 			    	}else if((obj.aData.COMPLETE_AMOUNT + obj.aData.QUANTITY) == obj.aData.AMOUNT){
 			    		return "";
 			    	}else{
-			    		return '<input type="checkbox" class="checkedOrUnchecked" inventoryId='+obj.aData.TID+' code3='+obj.aData.PID+' name="check_box" value="'+obj.aData.PRODUCTID+'">';
+			    		return '<input type="checkbox" class="checkedOrUnchecked" transfer_id='+obj.aData.TRANSFER_ID+' inventoryId='+obj.aData.TID+' code3='+obj.aData.PID+' name="check_box" value="'+obj.aData.PRODUCTID+'">';
 			    	}
 			    }
 			},   
 			{"mDataProp":"TID","bVisible": false},
             {"mDataProp":"ITEM_NO", "sWidth":"60px"},
             {"mDataProp":"ITEM_NAME", "sWidth":"60px"},
-            {"mDataProp":"ORDER_NO", "sWidth":"100px"},
+            {"mDataProp":"ORDER_NO", "sWidth":"100px","sClass": "transferNo"},
             {"mDataProp":"PLANNING_TIME", "sWidth":"100px"},
             {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"100px"},
             {"mDataProp":"STATUS","bVisible": false},
@@ -247,27 +305,14 @@ $(document).ready(function() {
 
 
 	var cname = [];
-	var warehouseArr = [];		    
+	var warehouseArr = [];		
+	var transferNo = '';
 	// 构造已选的行数据
 	var buildItems=function(objCheckBox, cargoNature){
 		// 判断当前是选中还是去除
 		var row=$(objCheckBox).parent().parent();
 		var $inputAmount=row.find('input[name=amount]');
-		if($(objCheckBox).prop("checked") == true){					
-			if(cargoNature==="ATM"){
-				$("#saveDelivery").attr('disabled', false);
-			}
-			if(cargoNature==="cargo"){
-				$("#saveDeliveryCargo").attr('disabled', false);
-				
-			}
-			
-			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(11).text());// 允许输入配送数量
-			
-		}else{
-			$inputAmount.attr('disabled', true);// 不允许输入配送数量
-			$inputAmount.val('0');// 清零
-		}
+		
 
 		// TODO: 需要优化，没时间搞。
 		if(cname.length == 0 && warehouseArr.length == 0){
@@ -297,8 +342,17 @@ $(document).ready(function() {
 							warehouseArr.push($checkBox.parent().siblings('.warehouse')[0].innerHTML);
 						}
 					}
+					
+//					if(cargoNature=="cargo"){
+//						if(transferNo != $checkBox.parent().siblings('.transferNo')[0].innerHTML){
+//							alert("请选择同一运输单!");
+//							$checkBox.attr("checked",false);
+//							return false;
+//						}
+//					}
 				}
 			}else{
+				transferNo = $checkBox.parent().siblings('.transferNo')[0].innerHTML;
 				if($checkBox.parent().siblings('.cname')[0].innerHTML != ''){
 					cname.push($checkBox.parent().siblings('.cname')[0].innerHTML);
 					warehouseArr.push($checkBox.parent().siblings('.warehouse')[0].innerHTML);
@@ -315,9 +369,26 @@ $(document).ready(function() {
 				if($("input[name='cargoType']:checked").val() == 'ATM'){
 					$("#saveDelivery").attr('disabled', true);
 				}else{
+					transferNo = '';
 					$("#saveDeliveryCargo").attr('disabled', true);
 				}
 			}
+		}
+		
+		if($(objCheckBox).prop("checked") == true){					
+			if(cargoNature==="ATM"){
+				$("#saveDelivery").attr('disabled', false);
+			}
+			if(cargoNature==="cargo"){
+				$("#saveDeliveryCargo").attr('disabled', false);
+				
+			}
+			
+			$inputAmount.attr('disabled', false).val($(objCheckBox).parent().parent().find("td").eq(11).text());// 允许输入配送数量
+			
+		}else{
+			$inputAmount.attr('disabled', true);// 不允许输入配送数量
+			$inputAmount.val('0');// 清零
 		}
 	};
 	
@@ -332,17 +403,17 @@ $(document).ready(function() {
 	$("#eeda-table2").on('click', '.checkedOrUnchecked', function(){
 		var val = $(this).prop("checked");
 		var tid = $(this).attr("inventoryId");
-		$("input[name='check_box']").each(function(){
-			var id = $(this).attr("inventoryId");
-			if(id != tid){
-				if($(this).prop("checked") == true){
-		    	   	$(this).prop("checked",false);
-		    	   	$(this).parent().parent().find('input[name=amount]').val("0");
-		    	   	$(this).parent().parent().find('input[name=amount]').attr("disabled",true); 
-		        }
-			}
-			
-		}); 
+//		$("input[name='check_box']").each(function(){
+//			var id = $(this).attr("inventoryId");
+//			if(id != tid){
+//				if($(this).prop("checked") == true){
+//		    	   	$(this).prop("checked",false);
+//		    	   	$(this).parent().parent().find('input[name=amount]').val("0");
+//		    	   	$(this).parent().parent().find('input[name=amount]').attr("disabled",true); 
+//		        }
+//			}
+//			
+//		}); 
 		//$(this).prop("checked",true);
 		buildItems(this, "cargo");
 			
