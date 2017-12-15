@@ -135,7 +135,7 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="33" y="12" width="109" height="22" uuid="d78fd8f8-060e-4efd-959d-9a2b15391c5e"/>
+					<reportElement x="33" y="13" width="109" height="22" uuid="d78fd8f8-060e-4efd-959d-9a2b15391c5e"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
