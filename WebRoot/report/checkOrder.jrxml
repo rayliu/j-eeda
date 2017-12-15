@@ -47,7 +47,7 @@ LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id=caor.application
 LEFT JOIN user_login ul ON ul.id = aco.create_by
 LEFT JOIN user_login u ON u.id = aco.confirm_by
 LEFT JOIN office o ON o.id = u.office_id
-LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} and (caor.order_type="对账单" or caor.order_type is null) and (aciao.id=$P{application_id} or aciao.id is null)]]>
+LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} and (caor.order_type='对账单' or caor.order_type is null) and (aciao.id=$P{application_id} or aciao.id is null)]]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
