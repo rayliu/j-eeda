@@ -37,7 +37,8 @@
 	ifnull(ul.c_name, ul.user_name) AS create_name,
 	ifnull(u.c_name, u.user_name) AS confirm_name,
 	o.office_name,
-	ifnull(aco.remark,'') as remark
+	ifnull(aco.remark,'') as remark,
+	caor.order_type
 FROM
 	arap_cost_order aco
 LEFT JOIN party p ON p.id = aco.payee_id
@@ -46,7 +47,7 @@ LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id=caor.application
 LEFT JOIN user_login ul ON ul.id = aco.create_by
 LEFT JOIN user_login u ON u.id = aco.confirm_by
 LEFT JOIN office o ON o.id = u.office_id
-LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} and (caor.order_type='对账单' or caor.order_type is null) and (aciao.id=$P{application_id} or aciao.id is null)]]>
+LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} and (caor.order_type="对账单" or caor.order_type is null) and (aciao.id=$P{application_id} or aciao.id is null)]]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -68,6 +69,9 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="remark" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="order_type" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<variable name="chineseTotal" class="java.lang.String"/>
