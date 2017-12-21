@@ -2557,14 +2557,14 @@ public class DeliveryController extends Controller {
 		}
 		
 		//删除配送子表
-		List<DeliveryOrderItem> dois = DeliveryOrderItem.dao.find("select * from delivery_order_item where order_id = ?",id);
+		List<DeliveryOrderItem> dois = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?",id);
 		for (DeliveryOrderItem doi:dois) {
 			//清除单品表信息
 			long transfer_item_id = doi.getLong("transfer_item_id");
-			int amount = Integer.parseInt(doi.getStr("amount"));
+			int amount = doi.getDouble("amount").intValue();
 			TransferOrderItem toi =TransferOrderItem.dao.findById(transfer_item_id);
-			int complete_amount = Integer.parseInt(toi.getStr("complete_amount"));
-			int totalAmount = Integer.parseInt(toi.getStr("amount"));
+			int complete_amount = toi.getDouble("complete_amount").intValue();
+			int totalAmount = toi.getDouble("amount").intValue();
 			
 			if(amount==totalAmount){
 				toi.set("complete_amount",null);
