@@ -2302,7 +2302,7 @@ public class DeliveryController extends Controller {
         		+ " ifnull(pro.item_no,t1.item_no) as item_no,ifnull(pro.item_name,t1.item_name) as item_name,"
         		+ " (case when t2.operation_type != 'out_source'"
         		+ " then (SELECT "
-        		+ " ifnull(dt.amount, 0)"
+        		+ " sum(ifnull(dt.amount, 0))"
         		+ " FROM"
         		+ " depart_transfer dt"
         		+ " LEFT JOIN depart_pickup dp ON dp.pickup_id = dt.pickup_id"
