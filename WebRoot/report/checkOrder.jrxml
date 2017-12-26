@@ -86,7 +86,7 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 			<frame>
 				<reportElement x="0" y="0" width="802" height="73" uuid="75a2363a-65a6-4bf2-99fd-66debf4e5dc4"/>
 				<staticText>
-					<reportElement x="274" y="0" width="221" height="71" uuid="19c720f7-6f4f-4317-8bc3-ef04714cbcee"/>
+					<reportElement x="275" y="0" width="221" height="71" uuid="19c720f7-6f4f-4317-8bc3-ef04714cbcee"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="黑体" size="24" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
