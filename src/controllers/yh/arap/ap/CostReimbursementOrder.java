@@ -134,6 +134,7 @@ public class CostReimbursementOrder extends Controller {
 		String orderNo = getPara("orderNo")==null?"":getPara("orderNo").trim();
 		String status = getPara("status")==null?"":getPara("status").trim();
 		String accountName = getPara("accountName")==null?"":getPara("accountName").trim();
+		String office_name = getPara("office_name");
 		String begin_time = getPara("begin_time");
 		String end_time = getPara("end_time");
 		String sortColIndex = getPara("iSortCol_0");
@@ -143,6 +144,11 @@ public class CostReimbursementOrder extends Controller {
         String pageIndex = getPara("sEcho");
         if (getPara("iDisplayStart") != null && getPara("iDisplayLength") != null) {
             sLimit = " LIMIT " + getPara("iDisplayStart") + ", " + getPara("iDisplayLength");
+        }
+        if(StringUtils.isNotBlank(office_name)){
+        	office_name = " and off.office_name like '%"+office_name+"%'";
+        }else{
+        	office_name = "";
         }
         if(StringUtils.isEmpty(begin_time)){
         	begin_time = "2000-01-01";
@@ -187,7 +193,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
-	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
+	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"+office_name
 	        		+ " and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))"
 	        		+ " group by ro.id ";
         }

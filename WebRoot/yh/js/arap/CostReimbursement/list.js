@@ -91,9 +91,11 @@ $(document).ready(function() {
         var status = $("#status").val();
         var auditName = $("#auditName").val();
         var accountName = $("#account_name").val();
+        var office_name = $("#office_name").val();
         var begin_time = $("#create_time_begin_time").val();
         var end_time = $("#create_time_end_time").val();
         costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&accountName="+accountName
+        +"&office_name="+office_name
         +"&begin_time="+begin_time
         +"&end_time="+end_time;
         costExpenseAccountTbody.fnDraw();
