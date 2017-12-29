@@ -99,6 +99,10 @@
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
+		"fnDrawCallback": function( settings ) {
+            $('#searchBtn').attr('disabled',false);
+            $('#searchBtn').text('查询');
+         },
         //"sAjaxSource": "/returnOrder/list?status=新建",
    			"aoColumns": [
 			{ "mDataProp": null, "sWidth":"10px", "bSortable": false,
@@ -346,6 +350,8 @@
           $.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
           return;
        }
+      $("#searchBtn").attr("disabled",true);
+ 	  $("#searchBtn").text("查询中···");
       var order_no = $("#order_no").val();
       var serial_no = $("#serial_no").val();
       var warehouse = $("#warehouse").val();
