@@ -32,7 +32,7 @@ $(document).ready(function() {
 			$(nRow).attr('order_ty', aData.ORDER_TP);
 			return nRow;
 		},
-        "sAjaxSource": "/chargeConfiremList/list",
+        "sAjaxSource": "/chargeConfiremList/list?flag=new",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px","bSortable": false,
               "fnRender": function(obj) {
@@ -352,7 +352,7 @@ $(document).ready(function() {
        
        $(function(){
     	   if($("#top_form input").val()!=null){  //刷新页面
-    		   refreshCreateList();
+    		   //refreshCreateList();
     	   }
        });
 } );

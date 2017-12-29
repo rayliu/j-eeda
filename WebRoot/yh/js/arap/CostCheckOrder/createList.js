@@ -180,6 +180,10 @@ $(document).ready(function() {
 			$(nRow).attr('order_ty', aData.BUSINESS_TYPE);
 			return nRow;
 		},
+		"fnDrawCallback": function( settings ) {
+	           $('#searchBtn').attr('disabled',false);
+	           $('#searchBtn').text('查询');
+	    },
         //"sAjaxSource": "/costCheckOrder/unSelectedList",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px", "bSortable": false,
@@ -604,6 +608,8 @@ $(document).ready(function() {
     
     
     var refreshCreateList = function() {
+	    $('#searchBtn').attr('disabled',true);
+        $('#searchBtn').text('查询中···');
     	var booking_id = $("#booking_id").val();
     	var orderNo = $("#orderNo_filter").val();
     	var sp = $("#sp_id_input").val();

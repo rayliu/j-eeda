@@ -22,7 +22,11 @@ $(document).ready(function() {
 			$(nRow).attr('id', aData.ID);
 			return nRow;
 		},
-        "sAjaxSource": "/chargeCheckOrder/createList",
+		"fnDrawCallback": function( settings ) {
+	           $('#searchBtn').attr('disabled',false);
+	           $('#searchBtn').text('查询');
+	    },
+        "sAjaxSource": "/chargeCheckOrder/createList?flag=new",
         "aoColumns": [
 	          { "mDataProp": null, "sWidth":"20px","bSortable": false,
 	            "fnRender": function(obj) {
@@ -313,7 +317,14 @@ $(document).ready(function() {
 	$("#checkedChargeCheckOrder").click(function(){
 		$("#checked").show();
 	});
+	
+	$("#searchBtn").click(function(){
+		refreshCreate();
+	});
+	
     var refreshCreate = function(){
+    	$("#searchBtn").attr("disabled",true);
+    	$("#searchBtn").text("查询中···");
     	var customer = $('#customer_filter').val();
 		var beginTime = $("#beginTime_filter").val();
 		var endTime = $("#endTime_filter").val();
@@ -337,15 +348,6 @@ $(document).ready(function() {
 															+"&status="+status;
 		uncheckedChargeCheckTable.fnDraw();
     };
-   
-    
-    $('#customer_filter,#beginTime_filter,#endTime_filter,#beginTime_filter1,#endTime_filter1,#orderNo_filter,#customerNo_filter,#serialNo_filter2,#address_filter').on( 'keyup', function () {
-    	refreshCreate();
-	} );
-    $('#shouru_filter').on( 'change', function () {
-    	refreshCreate();
-	} );
-    
  
     //获取客户的list，选中信息自动填写其他信息
     $('#customer_filter').on('keyup click', function(){
@@ -384,8 +386,6 @@ $(document).ready(function() {
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-       
-        refreshCreate();
     });
     $('#createBtn').click(function(e){
         e.preventDefault();

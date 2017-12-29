@@ -2,6 +2,7 @@ package controllers.yh.arap.ar;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,7 @@ public class ChargeItemConfirmController extends Controller {
 
 	//
 	public void list() {
+		String flag = getPara("flag");
 		String customer = getPara("customer");//客户
 		String beginTime = getPara("beginTime");//开始时间
 		String endTime = getPara("endTime");//结束时间
@@ -300,11 +302,15 @@ public class ChargeItemConfirmController extends Controller {
 			sql = "select * from ("+ sql +") A " + conditions;
 		}
 		
-		
-		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
-
-		List<Record> BillingOrders = Db.find(sql + orderByStr  + sLimit);
+		Record rec = null;
+		List<Record> BillingOrders = null;
+		if(!"new".equals(flag)){
+			rec = Db.findFirst(sqlTotal);
+			BillingOrders = Db.find(sql + orderByStr  + sLimit);
+		}else{
+			rec = Db.findFirst("select 0 total;");
+			BillingOrders = new ArrayList<Record>();
+		}
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);

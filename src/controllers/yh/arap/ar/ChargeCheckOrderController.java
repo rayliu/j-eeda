@@ -397,7 +397,8 @@ public class ChargeCheckOrderController extends Controller {
 		String customer_no = getPara("customer_no")==null?"":getPara("customer_no").trim();// 添加单据的客户名称
 		String ispage = getPara("ispage")==null?"":getPara("ispage").trim();
 		String status = getPara("status")==null?"":getPara("status").trim();
-
+		String flag = getPara("flag");
+		
 		String colsLength = getPara("iColumns");
 		String fieldsWhere = "AND (";
 		for (int i = 0; i < Integer.parseInt(colsLength); i++) {
@@ -570,11 +571,17 @@ public class ChargeCheckOrderController extends Controller {
 		}
 		sqlTotal = "select count(1) total from (" + sql + condition + sql2
 				+ condition2 + sql3 + ") as A";
-		rec = Db.findFirst(sqlTotal + fieldsWhere);
+		
+		if(!"new".equals(flag)){
+			rec = Db.findFirst(sqlTotal + fieldsWhere);
+			orders = Db.find("select * from (" + sql + condition + sql2
+					+ condition2 + sql3 + fieldsWhere + ") A " + orderByStr
+					+ sLimit);
+		}else{
+			rec = Db.findFirst("select 0 total;");
+			orders = new ArrayList<Record>();
+		}
 		logger.debug("total records:" + rec.getLong("total"));
-		orders = Db.find("select * from (" + sql + condition + sql2
-				+ condition2 + sql3 + fieldsWhere + ") A " + orderByStr
-				+ sLimit);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));

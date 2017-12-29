@@ -30,6 +30,10 @@ $(document).ready(function() {
           $(nRow).attr('order_ty', aData.BUSINESS_TYPE);
           return nRow;
         },
+        "fnDrawCallback": function( settings ) {
+	           $('#searchButton').attr('disabled',false);
+	           $('#searchButton').text('查询');
+	    },
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"10px", "bSortable": false,
                 "fnRender": function(obj) {
@@ -306,6 +310,8 @@ $(document).ready(function() {
         });
         
        var refreshData = function(){
+    	    $("#searchButton").attr("disabled",true);
+       		$("#searchButton").text("查询中···");
         	var orderNo = $('#orderNo_filter').val().trim();
     		var sp = $("#sp_id_input").val().trim();
     		var no = $("#operation_number").val().trim();
