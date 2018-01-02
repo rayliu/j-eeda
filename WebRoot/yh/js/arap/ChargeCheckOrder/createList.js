@@ -318,7 +318,7 @@ $(document).ready(function() {
 		$("#checked").show();
 	});
 	
-	$("#searchBtn").click(function(){
+	$("#create_searchBtn").click(function(){
 		refreshCreate();
 	});
 	
