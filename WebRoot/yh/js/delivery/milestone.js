@@ -17,7 +17,12 @@ $(document).ready(function() {
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/delivery/deliveryMilestone",
+        "sAjaxSource": "/delivery/deliveryMilestone?flag=new",
+        "fnDrawCallback": function( settings ) {
+            $('#searchBtn').attr('disabled',false);
+            $('#searchBtn').text('查询');
+        },
+
         "aoColumns": [ 
             { 
                 "mDataProp": null, 
@@ -270,6 +275,8 @@ $(document).ready(function() {
 			};
 	},'json');
     $("#searchBtn").click(function(){
+    	$('#searchBtn').attr('disabled',true);
+        $('#searchBtn').text('查询中。。。');
         refreshData();
     });
 

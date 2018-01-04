@@ -310,6 +310,8 @@ public class DeliveryController extends Controller {
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DOM_LIST})
 	public void deliveryMilestone() {
+		String flag = getPara("flag");
+		
 		String transferorderNo = getPara("transferorderNo")==null?"":getPara("transferorderNo").trim();
 		String deliveryNo = getPara("deliveryNo")==null?"":getPara("deliveryNo").trim();
 		String customer = getPara("customer")==null?"":getPara("customer").trim();
@@ -416,7 +418,7 @@ public class DeliveryController extends Controller {
 					+ " (select name from location where code = d.route_to) route_to,"
 					+ " o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ( case when d.isNullOrder = 'Y'"
-					+ " then (select item_no from transfer_order_item where delivery_id = d.id)"
+					+ " then (select GROUP_CONCAT(item_no SEPARATOR '<br>') from transfer_order_item where delivery_id = d.id)"
 					+ " ELSE"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
@@ -427,7 +429,7 @@ public class DeliveryController extends Controller {
 					+ "  item_no,"
 					+ " ("
 					+ " case when d.isNullOrder = 'Y'"
-					+ " then (select amount from transfer_order_item where delivery_id = d.id)"
+					+ " then (select sum(amount) from transfer_order_item where delivery_id = d.id)"
 					+ " ELSE"
 					+ " ("
 					+ "  select sum(toid.pieces) from delivery_order_item doi "
@@ -459,17 +461,28 @@ public class DeliveryController extends Controller {
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by d.id order by d.create_stamp desc" + sLimit;
 			
-		Record rec = Db.findFirst(sqlTotal);
-		logger.debug("total records:" + rec.getLong("total"));
-		List<Record> depart = Db.find(sql_seach);
 		
-		Map map = new HashMap();
-		map.put("sEcho", pageIndex);
-		map.put("iTotalRecords", rec.getLong("total"));
-		map.put("iTotalDisplayRecords", rec.getLong("total"));
-		map.put("aaData", depart);
+		if("new".equals(flag)){
+			Record depart = new Record();
+			Map map = new HashMap();
+			map.put("sEcho", pageIndex);
+			map.put("iTotalRecords", 0);
+			map.put("iTotalDisplayRecords", 0);
+			map.put("aaData", depart);
+			renderJson(map);
+		}else{
+			Record rec = Db.findFirst(sqlTotal);
+			logger.debug("total records:" + rec.getLong("total"));
+			List<Record> depart = Db.find(sql_seach);
+			
+			Map map = new HashMap();
+			map.put("sEcho", pageIndex);
+			map.put("iTotalRecords", rec.getLong("total"));
+			map.put("iTotalDisplayRecords", rec.getLong("total"));
+			map.put("aaData", depart);
 
-		renderJson(map);
+			renderJson(map);
+		}
 	}
 
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_CREATE})
