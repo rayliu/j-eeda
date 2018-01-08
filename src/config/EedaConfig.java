@@ -513,10 +513,6 @@ public class EedaConfig extends JFinalConfig {
         arp.addMapping("field", Field.class);
         arp.addMapping("contentlet", Contentlet.class);
         
-        //bz
-        arp.addMapping("bz_gate_out_order", BzGateOutOrder.class);
-        arp.addMapping("bz_gate_out_order_item", BzGateOutOrderItem.class);
-        
         //common
         arp.addMapping("modules", Module.class);
         arp.addMapping("structure_action", Action.class);
