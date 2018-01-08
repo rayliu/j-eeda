@@ -42,12 +42,12 @@
 FROM
 	arap_cost_order aco
 LEFT JOIN party p ON p.id = aco.payee_id
-LEFT JOIN cost_application_order_rel caor on caor.cost_order_id=aco.id
+LEFT JOIN cost_application_order_rel caor on caor.cost_order_id=aco.id and caor.order_type = '对账单'
 LEFT JOIN arap_cost_invoice_application_order aciao on aciao.id=caor.application_order_id
 LEFT JOIN user_login ul ON ul.id = aco.create_by
 LEFT JOIN user_login u ON u.id = aco.confirm_by
 LEFT JOIN office o ON o.id = u.office_id
-LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} and (caor.order_type='对账单' or caor.order_type is null) and (aciao.id=$P{application_id} or aciao.id is null)]]>
+LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} and (aciao.id=$P{application_id} or aciao.id is null)]]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -135,7 +135,7 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 					<textFieldExpression><![CDATA[null]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="33" y="13" width="109" height="22" uuid="d78fd8f8-060e-4efd-959d-9a2b15391c5e"/>
+					<reportElement x="33" y="14" width="109" height="22" uuid="d78fd8f8-060e-4efd-959d-9a2b15391c5e"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
