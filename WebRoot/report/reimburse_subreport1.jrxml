@@ -176,7 +176,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="14" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
-				<textFieldExpression><![CDATA[((controllers.yh.report.ReportScriptlet)$P{REPORT_SCRIPTLET}).convertNumToChinese($F{revocation_amount})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[((controllers.yh.report.ReportScriptlet)$P{REPORT_SCRIPTLET}).convertNumToChinese($V{sum_amount})]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
 				<reportElement x="411" y="0" width="126" height="27" uuid="c23f73d8-7471-4ecf-84e0-3751ca8bcc68"/>
