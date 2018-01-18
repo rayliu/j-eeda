@@ -64,7 +64,7 @@ where ro.order_no like 'YFBX%' and ro.order_no=$P{order_no}]]>
 				<text><![CDATA[NO：]]></text>
 			</staticText>
 			<textField pattern="yyyy-MM-dd" isBlankWhenNull="false">
-				<reportElement x="431" y="19" width="94" height="17" uuid="885658a1-5ac0-482b-873d-1577babe62e3"/>
+				<reportElement x="431" y="19" width="124" height="17" uuid="885658a1-5ac0-482b-873d-1577babe62e3"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -85,7 +85,7 @@ where ro.order_no like 'YFBX%' and ro.order_no=$P{order_no}]]>
 				<text><![CDATA[打印日期：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="431" y="36" width="94" height="17" uuid="56d1dbcd-b909-4e8b-a3c9-ad310ef251b8"/>
+				<reportElement x="431" y="36" width="124" height="17" uuid="56d1dbcd-b909-4e8b-a3c9-ad310ef251b8"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -109,7 +109,7 @@ where ro.order_no like 'YFBX%' and ro.order_no=$P{order_no}]]>
 				<reportElement x="18" y="54" width="527" height="1" uuid="26587acd-a956-4ffe-a384-37ab309754e0"/>
 			</line>
 			<textField>
-				<reportElement x="431" y="2" width="94" height="17" uuid="20205b04-367b-4db9-9e19-f0b3d53e4ef4"/>
+				<reportElement x="431" y="2" width="124" height="17" uuid="20205b04-367b-4db9-9e19-f0b3d53e4ef4"/>
 				<textElement>
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
