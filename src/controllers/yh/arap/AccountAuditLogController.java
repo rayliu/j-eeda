@@ -2,6 +2,7 @@ package controllers.yh.arap;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class AccountAuditLogController extends Controller {
     	String end = getPara("end");
     	String bankName = getPara("bankName");
     	String money = getPara("money");
+    	String flag = getPara("flag");
     	String condiction = "";
     	//升降序
     	String sortColIndex = getPara("iSortCol_0");
@@ -183,9 +185,15 @@ public class AccountAuditLogController extends Controller {
         			+ ") A where 1 = 1 ";        	
         }
 
-        Record rec = Db.findFirst("select count(*) total from ("+sql  + ") B ");
-        logger.debug("total records:" + rec.getLong("total"));
-        List<Record> BillingOrders = Db.find(sql + orderByStr + sLimit);
+        Record rec = null;
+        List<Record> BillingOrders = null;
+        if("new".equals(flag)){
+        	rec = Db.findFirst("select 0 total");
+        	BillingOrders = new ArrayList<Record>();
+        }else{
+        	 rec = Db.findFirst("select count(*) total from ("+sql + ") B ");
+             BillingOrders = Db.find(sql + orderByStr + sLimit);
+        }
 
         
         

@@ -19,7 +19,7 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/accountAuditLog/list?beginTime="+$("#beginTime_filter").val(),
+        "sAjaxSource": "/accountAuditLog/list?flag=new",
         "aoColumns": [
             {"mDataProp":null, "sWidth":"20px",
                 "fnRender": function(obj) {
