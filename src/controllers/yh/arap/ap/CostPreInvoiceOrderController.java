@@ -1669,7 +1669,7 @@ public class CostPreInvoiceOrderController extends Controller {
 					arapMiscCostOrder.set("audit_status", "新建").update();
 				}else if(order_type.equals("行车单")){
 					CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(id);
-					carSummaryOrder.set("status", "已审核").update();
+					carSummaryOrder.set("status", "已审批").update();
 				}else if(order_type.equals("预付单")){
 					ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
 					arapPrePayOrder.set("status", "新建").update();
