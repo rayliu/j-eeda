@@ -134,10 +134,60 @@ $(document).ready(function(){
 	//添加客户
 	$("#addCustomer").on('click',function(){
 		$("#customerTbody").append('<tr><td>'
-				+'<select class="form-control customer" name="customerSelect"></select></td>'
-                +' <td><a class="btn removeCustomer" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
+				 	+'<input type="text" class="form-control search-control customer_filter" id=".customer_filter" placeholder="请选择客户">'
+	                +'<ul tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll companyList" style="top: 22%; left: 33%;"></ul>'
+	                +'</td>'
+                     +' <td><a class="btn removeCustomer" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 		queryCustomer();
 	});
+	
+	
+	//获取客户列表，自动填充
+    $('#customer-table').on('keyup click','.customer_filter', function(event){
+
+        var me = this;
+        var inputStr = $(this).val();
+        var companyList = $($(this).parent().find('.companyList'));
+        
+        $.get("/customerContract/search", {customerName:inputStr}, function(data){
+            companyList.empty();
+            for(var i = 0; i < data.length; i++)
+                companyList.append("<li><a tabindex='-1' class='fromLocationItem' data_id='"+data[i].ID+"' >"+data[i].ABBR+"</a></li>");
+                
+            companyList.css({ 
+		    	left:$(me).position().left+"px", 
+		    	top:$(me).position().top+28+"px" 
+		    });
+	        companyList.show();    
+        },'json');
+        /*if(inputStr=='')
+        	transferOrder.fnFilter('', 2);*/
+        
+    });
+
+    $('#customer-table').on('click','.companyList .fromLocationItem', function(e){        
+    	$($(this).parent().parent().parent().find('.customer_filter')).val($(this).text());
+        $(".companyList").hide();
+        var companyId = $(this).attr('data_id');
+        $(this).parent().parent().val(companyId);
+    });
+    // 没选中客户，焦点离开，隐藏列表
+    $('#customer-table').on('blur','.customer_filter', function(){
+        $('.companyList').hide();
+    });
+
+    //当用户只点击了滚动条，没选客户，再点击页面别的地方时，隐藏列表
+    $('#customer-table').on('blur','.customer_filter', function(){
+        $('.companyList').hide();
+    });
+
+    $('#customer-table').on('mousedown','.companyList', function(){
+        return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
+    });
+	
+	
+	
+	
 	/*---移除---*/
 	//移除网点
 	$("#tobdy").on('click','.removeOffice',function(){
@@ -218,6 +268,8 @@ $(document).ready(function(){
 	});
 	//点击保存按钮时，将用户网点和用户可见客户的值传到后台中
 	$("#saveBtn").click(function(){
+		var self = this;
+		
 		//检测验证是否通过
 		if(!$("#leadsForm").valid()){
 			return false;
@@ -234,9 +286,19 @@ $(document).ready(function(){
 				customerIds.push($(this).val());
 			}
    		});
+		
+		$(".companyList").each(function(){
+			if($(this).val()!=null&&$(this).val()!=""){
+				if(($.inArray($(this).val(), customerIds))==-1){
+					customerIds.push($(this).val());
+				};
+			}
+   		});
+
 		$("#officeIds").val(officeIds.toString());
 		$("#customerIds").val(customerIds.toString());
 		
+		self.disabled = true;
 		$("#leadsForm").submit();
 	});
 	if($("#userId").val() != "" && $("#userId").val() != null){
