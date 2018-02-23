@@ -3,6 +3,9 @@ $(document).ready(function() {
 	document.title = '运输在途查询 | '+document.title;
     $('#menu_status').addClass('active').find('ul').addClass('in');
     
+    $('#searchBtn').attr('disabled',true);
+    $('#searchBtn').text('查询中。。。');
+
 	//datatable, 动态处理
     var detailTable = $('#eeda-table').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
@@ -15,6 +18,10 @@ $(document).ready(function() {
         "bServerSide": true,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnDrawCallback": function( settings ) {
+            $('#searchBtn').attr('disabled',false);
+            $('#searchBtn').text('查询');
         },
         "sAjaxSource": "/departOrder/onTripList",
         "aoColumns": [
@@ -362,6 +369,9 @@ $(document).ready(function() {
 	
 	
     $("#searchBtn").on('click',function(){
+        $('#searchBtn').attr('disabled',true);
+        $('#searchBtn').text('查询中。。。');
+
     	searchMassage();
     	detailTable.fnDraw();
     });
