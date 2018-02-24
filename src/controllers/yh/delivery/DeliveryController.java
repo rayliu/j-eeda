@@ -418,7 +418,7 @@ public class DeliveryController extends Controller {
 					+ " (select name from location where code = d.route_to) route_to,"
 					+ " o.office_name,(SELECT group_concat(DISTINCT cast(tor.planning_time as char) SEPARATOR '\r\n') from transfer_order tor LEFT JOIN delivery_order_item dt2 ON dt2.transfer_order_id = tor.id where dt2.delivery_id = d.id) planning_time,"
 					+ " ( case when d.isNullOrder = 'Y'"
-					+ " then (select GROUP_CONCAT(item_no SEPARATOR '<br>') from transfer_order_item where delivery_id = d.id)"
+					+ " then ( GROUP_CONCAT(toi.item_no SEPARATOR '<br>') )"
 					+ " ELSE"
 					+ " ("
 					+ " select group_concat(DISTINCT toid.item_no SEPARATOR ' ') "
@@ -429,7 +429,7 @@ public class DeliveryController extends Controller {
 					+ "  item_no,"
 					+ " ("
 					+ " case when d.isNullOrder = 'Y'"
-					+ " then (select sum(amount) from transfer_order_item where delivery_id = d.id)"
+					+ " then ( sum(toi.amount) )"
 					+ " ELSE"
 					+ " ("
 					+ "  select sum(toid.pieces) from delivery_order_item doi "
@@ -457,9 +457,10 @@ public class DeliveryController extends Controller {
 					+ " left join office o on o.id= d.office_id "
 					+ " LEFT JOIN transfer_order_item_detail trid ON trid.id = dt2.transfer_item_detail_id"
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
+					+ " LEFT JOIN transfer_order_item toi on toi.delivery_id = d.id"
 					+ conditions
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by d.id order by d.create_stamp desc" + sLimit;
+					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') group by d.id desc" + sLimit;
 			
 		
 		if("new".equals(flag)){
