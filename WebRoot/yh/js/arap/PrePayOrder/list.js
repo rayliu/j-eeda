@@ -15,8 +15,24 @@ $(document).ready(function() {
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr({id: aData.ID}); 
+			$(nRow).attr({status: aData.STATUS}); 
+		},
         "sAjaxSource": "/costPrePayOrder/list",
         "aoColumns": [   
+			{ "mDataProp":null,"sWidth": "30px",
+				"fnRender": function(obj) {
+					var text = '';
+					if(obj.aData.TYPE == 'origin' ){
+						if(obj.aData.STATUS != '取消' ){
+							text = '<button type="button" class="btn btn-primary delete btn-xs"  >'+
+							'<i class="fa fa-trash-o"></i> 删除</button>';
+						}
+					}
+			      return text;
+			    }
+			},
             {"mDataProp":"ORDER_NO","sWidth": "80px",
             	"fnRender": function(obj) {
         			return "<a href='/costPrePayOrder/edit?id="+obj.aData.ID+"'target='_blank'>"+obj.aData.ORDER_NO+"</a>";
@@ -43,6 +59,44 @@ $(document).ready(function() {
             {"mDataProp":"REMARK","sWidth": "150px"}                       
         ]      
     });	 
+    
+    $('#costMiscOrderList-table').on('click','.delete',function(){
+    	var self = this;
+    	$(self).prop('disabled',true);
+    	var tr = $(this).parent().parent();
+    	var id = tr.attr('id');
+    	var status = tr.attr('status');
+
+    	if(!confirm("将会同时删除关联的预付单据哦，是否确定删除？")){
+    		$(self).prop('disabled',false);
+    		return false;
+    		
+    	}
+    	
+    	if(status!='新建'){
+    		$.scojs_message('单据已存在财务单据，需要先撤销对应财务单据方可删除', $.scojs_message.TYPE_FAIL);
+    		$(self).prop('disabled',false);
+    		return false;
+    	}
+    	
+    	
+    	if(id>0){
+    		$.post('/costPrePayOrder/delete', {id:id}, function(data){
+    			if(data){
+    				$.scojs_message("删除成功", $.scojs_message.TYPE_OK);
+    				refreshData();
+    			}else{
+    				$.scojs_message("单据已存在财务单据，需要先撤销对应财务单据方可删除", $.scojs_message.TYPE_FAIL);
+    			}
+    			$(self).prop('disabled',false);
+    		}).fail(function() {
+    	        $.scojs_message('操作失败', $.scojs_message.TYPE_FAIL);
+    	   });
+    	}
+    	
+    });
+    
+    
   //获取客户的list，选中信息自动填写其他信息
     $('#companyName').on('keyup click', function(){
         var inputStr = $('#companyName').val();

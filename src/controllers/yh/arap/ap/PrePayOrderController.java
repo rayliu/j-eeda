@@ -13,6 +13,7 @@ import models.Account;
 import models.ArapCostOrder;
 import models.Party;
 import models.UserLogin;
+import models.yh.arap.ArapMiscCostOrder;
 import models.yh.arap.prePayOrder.ArapPrePayOrder;
 import models.yh.arap.prePayOrder.ArapPrePayOrderItem;
 import models.yh.profile.Contact;
@@ -369,5 +370,35 @@ public class PrePayOrderController extends Controller {
 	@RequiresPermissions(value = { PermissionConstant.PERMSSION_PrePayOrder_CANCEL })
 	public void cancel() {
 
+	}
+	
+	@Before(Tx.class)
+	public void delete(){
+		String id = getPara("id");
+		boolean result = false;
+		
+		ArapPrePayOrder order = ArapPrePayOrder.dao.findById(id);
+		Long ref_id = order.getLong("ref_order_id");
+		ArapPrePayOrder reforder = ArapPrePayOrder.dao.findById(ref_id);
+		
+		if("新建".equals(order.get("status")) && "新建".equals(reforder.get("status"))){
+			order.set("status", "取消");
+			reforder.set("status", "取消");
+			
+			order.update();
+			reforder.update();
+			result = true;
+		}
+		
+
+//		//删除子表
+//		Db.update("delete from arap_misc_cost_order_item where order_id = ?",id);
+//		Db.update("delete from arap_misc_cost_order_item where order_id = ?",ref_id);
+//		order.
+//		
+//		ArapMiscCostOrder order = ArapMiscCostOrder.dao.findById(id);
+//		order.delete();
+		
+		renderJson(result);
 	}
 }
