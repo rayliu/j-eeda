@@ -60,7 +60,7 @@ public class AccountAuditLogController extends Controller {
         	orderByStr = " order by A."+colName+" "+sortBy;
         }
     	if(ids != null && !"".equals(ids)){
-    		condiction += " and account_id in("+ids+") ";
+    		condiction += " and aaal.account_id in("+ids+") ";
     	}
     	if(beginTime == null || "".equals(beginTime)){
     		beginTime = "1970-01-01";
