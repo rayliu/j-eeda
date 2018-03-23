@@ -545,6 +545,11 @@ public class DeliveryController extends Controller {
 	public void edit() {
 		String id = getPara("id");
 		
+		Record ref = Db.findFirst("SELECT * FROM `delivery_order` where delivery_id = ? or (id=? and delivery_id is not null)",id,id);
+		if(ref != null){//说明是调拨后所生成的调拨单
+			setAttr("db_flag", "Y");
+		}
+		
 		//System.out.println(id);
 		List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select * from transfer_order_item toi"
 				+ " where delivery_id = ? ",id);	

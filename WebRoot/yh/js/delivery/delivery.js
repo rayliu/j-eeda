@@ -630,7 +630,7 @@ $(document).ready(function() {
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
             	if(data.STATUS=='已完成'){
-            		//$("#saveBtn").attr("disabled", true);
+            		$("#saveBtn").attr("disabled", true);
             		$("#ConfirmationBtn").attr("disabled", true);
             	}else{
                     $("#saveBtn").attr("disabled", false);
@@ -876,13 +876,18 @@ $(document).ready(function() {
 		//配送对账状态
 		//只要对账没确认就可以保存
 		var audit_status=$("#audit_status").val();
-		if(audit_status == '新建'){
+		var order_status = $("#deliverystatus").val();
+//		if(audit_status == '新建'){
+//			$("#saveBtn").attr("disabled",false);
+//		}else{
+//			$("#saveBtn").attr("disabled", true);
+//		}
+		if(order_status == ''){
 			$("#saveBtn").attr("disabled",false);
-		}else{
-			$("#saveBtn").attr("disabled", true);
 		}
-		if($("#deliverystatus").val() =='新建'|| $("#deliverystatus").val()=='计划中' ){
+		if(order_status =='新建'|| order_status=='计划中' ){
 			$("#ConfirmationBtn").attr("disabled", false);
+			$("#saveBtn").attr("disabled",false);
 		}else{
 			$("#ConfirmationBtn").attr("disabled", true);
 		}
