@@ -877,11 +877,11 @@ $(document).ready(function() {
 		//只要对账没确认就可以保存
 		var audit_status=$("#audit_status").val();
 		var order_status = $("#deliverystatus").val();
-//		if(audit_status == '新建'){
-//			$("#saveBtn").attr("disabled",false);
-//		}else{
-//			$("#saveBtn").attr("disabled", true);
-//		}
+		if(audit_status == '新建'){
+			$("#saveBtn").attr("disabled",false);
+		}else{
+			$("#saveBtn").attr("disabled", true);
+		}
 		if(order_status == ''){
 			$("#saveBtn").attr("disabled",false);
 		}
