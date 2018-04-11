@@ -494,17 +494,28 @@ public class DepartOrderController extends Controller {
 				+ " group by deo.id order by deo.id desc "
 				+ sLimit;
 		
-		Record rec = Db.findFirst(sqlTotal);
-		long startMi = Calendar.getInstance().getTimeInMillis();
-		List<Record> departOrders = Db.find(sql);
-		long endMi = Calendar.getInstance().getTimeInMillis();
-		logger.debug("get result cost:" + (endMi - startMi));
-		Map map = new HashMap();
-		map.put("sEcho", pageIndex);
-		map.put("iTotalRecords", rec.getLong("total"));
-		map.put("iTotalDisplayRecords", rec.getLong("total"));
-		map.put("aaData", departOrders);
-		renderJson(map);
+        String flag = getPara("flag");
+        if("new".equals(flag)){
+            Record depart = new Record();
+            Map map = new HashMap();
+            map.put("sEcho", pageIndex);
+            map.put("iTotalRecords", 0);
+            map.put("iTotalDisplayRecords", 0);
+            map.put("aaData", depart);
+            renderJson(map);
+        }else{
+        	Record rec = Db.findFirst(sqlTotal);
+    		long startMi = Calendar.getInstance().getTimeInMillis();
+    		List<Record> departOrders = Db.find(sql);
+    		long endMi = Calendar.getInstance().getTimeInMillis();
+    		logger.debug("get result cost:" + (endMi - startMi));
+    		Map map = new HashMap();
+    		map.put("sEcho", pageIndex);
+    		map.put("iTotalRecords", rec.getLong("total"));
+    		map.put("iTotalDisplayRecords", rec.getLong("total"));
+    		map.put("aaData", departOrders);
+    		renderJson(map);
+        }
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
 	public void add() {

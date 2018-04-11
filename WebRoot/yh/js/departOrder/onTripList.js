@@ -23,7 +23,7 @@ $(document).ready(function() {
             $('#searchBtn').attr('disabled',false);
             $('#searchBtn').text('查询');
         },
-        "sAjaxSource": "/departOrder/onTripList",
+        "sAjaxSource": "/departOrder/onTripList?flag=new",
         "aoColumns": [
 			{ 
 			    "mDataProp": null,
