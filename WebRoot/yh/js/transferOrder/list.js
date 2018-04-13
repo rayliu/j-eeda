@@ -417,6 +417,21 @@ $(document).ready(function() {
         var officeName = $("#officeSelect").val();
         var operation_type = $("#operation_type_filter").val();
         var to_route = $("#to_route").val();
+        
+        var flag = false;
+        $('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
 
         transferOrder.fnSettings().oFeatures.bServerSide = true;
         transferOrder.fnSettings().sAjaxSource = "/transferOrder/list?orderNo="+orderNo +"&status="+status+"&address=" +address

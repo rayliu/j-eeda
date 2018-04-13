@@ -112,11 +112,31 @@ function refreshData(){
 	var transfer_type = $("#transfer_type").val();
 	var booking_note_number = $("#booking_note_number").val();
 	var costchebox = $("input[type='checkbox']:checked").val();
-	if(costchebox!='zero'){
+	if(costchebox!='0'){
 		costchebox = '1';
 	}else{
 		costchebox = '0';
 	}
+	
+	  var flag = false;
+      $('#searchForm input,#searchForm select').each(function(){
+      	 var textValue = this.value;
+      	 if(textValue != '' && textValue != null){
+      		 if(this.id=="costcheckbox"){
+      			 if(textValue=='0'){
+      				return true;
+      			 }
+      		 }
+      		 flag = true;
+      		 return;
+      	 } 
+      });
+      
+      if(!flag){
+      	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+      	 return false;
+      }
+	
 	dataTable.fnSettings().oFeatures.bServerSide = true;
 	dataTable.fnSettings().sAjaxSource = "/departOrder/list?orderNo="+orderNo
 										+"&departNo="+departNo_filter
@@ -137,18 +157,10 @@ function refreshData(){
 }
 
 $('#query').on('click', function () {
-	if(findData()!=false){
 	   refreshData();
-	}
 });
 
-var findData = function(){
-	var customer_filter=$('#customer_filter').val();
-	if(!customer_filter){
-	   $.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
-	   return false;
-	}	
-}
+
 
 //$.post('/transferOrder/searchPartOffice',function(data){
 //	 if(data.length > 0){

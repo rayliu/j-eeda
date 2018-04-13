@@ -5,15 +5,16 @@ $(document).ready(function() {
     //datatable, 动态处理
 	 var userId = $('#userId').val();
     var costExpenseAccountTbody = $('#costExpenseAccountTbody').dataTable({
+    	 "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costReimbursement/reimbursementList",
+        //"sAjaxSource": "/costReimbursement/reimbursementList",
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
 		},
@@ -94,6 +95,21 @@ $(document).ready(function() {
         var office_name = $("#office_name").val();
         var begin_time = $("#create_time_begin_time").val();
         var end_time = $("#create_time_end_time").val();
+        
+        var flag = false;
+        $('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
+        costExpenseAccountTbody.fnSettings().oFeatures.bServerSide = true;
         costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&accountName="+accountName
         +"&office_name="+office_name
         +"&begin_time="+begin_time

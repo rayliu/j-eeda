@@ -159,6 +159,26 @@ $(document).ready(function() {
     	var noreceive = $("[name=noreceive]").prop('checked');
     	var inventory = $("[name=inventory]").prop('checked');
     	
+    	 var flag = false;
+	        $('#statusForm input,#statusForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 if(this.name=="receive"){
+	        			 return true;
+	        		 }else if(this.name=="noreceive"){
+	        			 return true;
+	        		 }else if(this.name == "inventory"){
+	        			 return true;
+	        		 }
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+    	
     	if(customer_id == ''){
     		$.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
     		return false;

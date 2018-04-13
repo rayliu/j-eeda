@@ -14,8 +14,8 @@ $(document).ready(function() {
         "bFilter": false, //不需要默认的搜索框
         "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "bServerSide": true,
-        "iDisplayLength": 100,
+        "bServerSide": false,
+        "iDisplayLength": 25,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -25,7 +25,7 @@ $(document).ready(function() {
 			$(nRow).attr({order_type: aData.ORDER_TYPE}); 
 			return nRow;
 		},
-        "sAjaxSource": "/chargeAcceptOrder/list",
+        //"sAjaxSource": "/chargeAcceptOrder/list",
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {
@@ -179,8 +179,8 @@ $(document).ready(function() {
         "bFilter": false, //不需要默认的搜索框
         "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "bServerSide": true,
-        "iDisplayLength": 100,
+        "bServerSide": false,
+        "iDisplayLength": 25,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -189,7 +189,7 @@ $(document).ready(function() {
 			$(nRow).attr({id: aData.ID}); 
 			return nRow;
 		},
-        "sAjaxSource": "/chargeAcceptOrder/applicationList",
+        //"sAjaxSource": "/chargeAcceptOrder/applicationList",
         "aoColumns": [   
 	        { "mDataProp": null, "sWidth":"20px",
 	            "fnRender": function(obj) {	
@@ -270,6 +270,13 @@ $(document).ready(function() {
         ids = [];
     });
 	
+	$("#searchBtn").click(function(){
+        refreshData();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
 	
 	//未复核数据条件查询
 	var refreshData=function(){
@@ -277,7 +284,21 @@ $(document).ready(function() {
 		var customer_filter =  $("#customer_filter").val();
 		var beginTime_filter =  $("#beginTime_filter").val();
 		var endTime_filter =  $("#endTime_filter").val();
-
+		
+		var flag = false;
+        $('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+		
+        chargeNoAcceptOrderTab.fnSettings().oFeatures.bServerSide = true;
         chargeNoAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?orderNo_filter="+orderNo_filter
         		                                       +"&customer_filter="+customer_filter
         		                                       +"&beginTime_filter="+beginTime_filter
@@ -287,7 +308,7 @@ $(document).ready(function() {
     
     
     $("#orderNo_filter,#customer_filter,#beginTime_filter,#endTime_filter").on('keyup',function(){
-    	refreshData();
+    	//refreshData();
     });
     
     
@@ -304,6 +325,20 @@ $(document).ready(function() {
 		var status_filter =  $("#status_filter8").val();
 		var applicationOrderNo =  $("#applicationOrderNo").val();
 
+		var flag = false;
+        $('#searchForm1 input,#searchForm1 select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+			
+        chargeAcceptOrderTab.fnSettings().oFeatures.bServerSide = true;
 		chargeAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/applicationList?applicationOrderNo="+applicationOrderNo
         		                                       +"&cname="+customer_filter
         		                                       +"&orderNo="+orderNo_filter
@@ -314,6 +349,9 @@ $(document).ready(function() {
 		chargeAcceptOrderTab.fnDraw();
     };
     
+    $("#reset2Btn").click(function(){
+        $('#searchForm1')[0].reset();
+    });
     
     $("#search2Btn").on('click', function () {
     	refreshData2();
@@ -347,7 +385,7 @@ $(document).ready(function() {
         $("#companyList").hide();
 //        var companyId = $(this).attr('partyId');
 //        $('#customerId').val(companyId);
-    	refreshData();
+    	//refreshData();
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customer_filter').on('blur', function(){
@@ -386,7 +424,7 @@ $(document).ready(function() {
     $('#companyList2').on('click', '.fromLocationItem2', function(e){        
         $('#customer_filter2').val($(this).text());
         $("#companyList2").hide();
-    	refreshData2();
+    	//refreshData2();
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customer_filter2').on('blur', function(){

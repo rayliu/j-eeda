@@ -19,7 +19,7 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -32,7 +32,7 @@ $(document).ready(function() {
 			$(nRow).attr('order_ty', aData.ORDER_TP);
 			return nRow;
 		},
-        "sAjaxSource": "/chargeConfiremList/list?flag=new",
+        //"sAjaxSource": "/chargeConfiremList/list?flag=new",
         "aoColumns": [ 
             { "mDataProp": null, "sWidth":"20px","bSortable": false,
               "fnRender": function(obj) {
@@ -233,6 +233,24 @@ $(document).ready(function() {
 		var customerNo = $("#customerNo_filter").val();
 		var start = $("#start_filter").val();
 		var status = $("#shouru_filter").val();
+		
+		 var flag = false;
+	        $('#top_form input,#top_form select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 alert(textValue);
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 	$('#searchBtn').attr('disabled',false);
+	         		$('#searchBtn').text('查询');
+	        	 return false;
+	        }
+		
+		chargeConfiremTable.fnSettings().oFeatures.bServerSide = true;
 	    chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
 	   												+"&beginTime="+beginTime
 	   												+"&endTime="+endTime

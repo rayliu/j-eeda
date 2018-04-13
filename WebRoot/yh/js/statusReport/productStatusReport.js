@@ -95,6 +95,19 @@ $(document).ready(function() {
     	var customer_order_no = $("#customer_order_no").val();
     	var item_no = $("#item_no").val();
     	
+    	var flag = false;
+        $('#statusForm input,#statusForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+    	
 		statusTable.fnSettings().oFeatures.bServerSide = true;
 		statusTable.fnSettings()._iDisplayStart = 0;
     	statusTable.fnSettings().sAjaxSource = "/statusReport/productStatus?beginTime="+beginTime+"&endTime="+endTime+"&serial_no="+serial_no

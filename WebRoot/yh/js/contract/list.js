@@ -32,6 +32,7 @@ $(document).ready(function() {
     
 	//datatable, 动态处理
    var tab2= $('#eeda-table').dataTable({
+	   "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
 	   "bFilter": false, 
 	   //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -42,8 +43,8 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "bProcessing": true,
-        "bServerSide": true,
-        "sAjaxSource": urlSource,
+        "bServerSide": false,
+        //"sAjaxSource": urlSource,
         "aoColumns": [   
             {"mDataProp":"NAME",
               "fnRender": function(obj) { 
@@ -186,6 +187,10 @@ $(document).ready(function() {
       
   });
 	
+	$("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+	
 	//条件搜索>>,
   $("#searchBtn").on('click', function () {    	 	
     	search();
@@ -199,6 +204,19 @@ $(document).ready(function() {
     var phone_filter = $("#phone_filter").val();   
     var periodTo_filter = $("#periodTo_filter").val();
     
+    var flag = false;
+    $('#searchForm input,#searchForm select').each(function(){
+    	 var textValue = this.value;
+    	 if(textValue != '' && textValue != null){
+    		 flag = true;
+    		 return;
+    	 } 
+    });
+    if(!flag){
+    	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+    	 return false;
+    }
+    tab2.fnSettings().oFeatures.bServerSide = true;
     if(type=='CUSTOMER'){
         tab2.fnSettings().sAjaxSource = "/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
     }if(type=='SERVICE_PROVIDER'){

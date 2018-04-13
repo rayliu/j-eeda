@@ -168,6 +168,10 @@
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
+        "fnDrawCallback": function( settings ) {
+            $('#searchBtn').attr('disabled',false);
+            $('#searchBtn').text('查询');
+         },
         // "sAjaxSource": "/returnOrder/list?status='已签收','已确认','对账中','对账已确认'",
    			"aoColumns": [
    			{ "mDataProp": "ORDER_NO",
@@ -292,8 +296,6 @@
 
   $("#resetBtn").click(function(){
       $('#searchForm')[0].reset();
-      saveConditions();
-      findData();
   });
 
   //var conditions_name="query_return_order_list";
@@ -346,10 +348,6 @@
   
   var findData = function(){
       var customer_filter=$('#customer_id_input').val();
-       if(!customer_filter){
-          $.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
-          return;
-       }
       $("#searchBtn").attr("disabled",true);
  	  $("#searchBtn").text("查询中···");
       var order_no = $("#order_no").val();
@@ -373,6 +371,21 @@
       var officeSelect2 = $("#officeSelect2").val();
       var delivery_date_begin_time = $("#delivery_date_begin_time").val();
       var delivery_date_end_time = $("#delivery_date_end_time").val();
+      
+      var flag = false;
+  	$('#searchForm input,#searchForm select').each(function(){
+     	 var textValue = this.value;
+     	 if(textValue != '' && textValue != null){
+     		 flag = true;
+     		 return;
+     	 } 
+     });
+     if(!flag){
+     	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+     	 $("#searchBtn").attr("disabled",false);
+   	  	$("#searchBtn").text("查询");
+     	 return false;
+     }
      
       if(clickTabId == "createTab"){
         createDataTable.fnSettings().oFeatures.bServerSide = true;

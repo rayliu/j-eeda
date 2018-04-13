@@ -275,8 +275,6 @@ $(document).ready(function() {
 			};
 	},'json');
     $("#searchBtn").click(function(){
-    	$('#searchBtn').attr('disabled',true);
-        $('#searchBtn').text('查询中。。。');
         refreshData();
     });
 
@@ -298,6 +296,20 @@ $(document).ready(function() {
       var status  = $("#status").val();
       var serial_no  = $("#serial_no").val();
       var deliveryOffice  = $("#deliveryOffice").val();
+      
+      var flag = false;
+  	$('#searchForm input,#searchForm select').each(function(){
+     	 var textValue = this.value;
+     	 if(textValue != '' && textValue != null){
+     		 flag = true;
+     		 return;
+     	 } 
+     });
+     if(!flag){
+     	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+     	 return false;
+     }
+     
       detailTable.fnSettings().oFeatures.bServerSide = true;
       detailTable.fnSettings().sAjaxSource = "/delivery/deliveryMilestone?deliveryNo="+deliveryNo+"&customer="+customer+"&transferorderNo="+transferorderNo
                                            +"&sp="+sp+"&beginTime="+beginTime+"&endTime="+endTime+"&status="+status

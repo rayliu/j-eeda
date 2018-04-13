@@ -4,17 +4,18 @@ $(document).ready(function() {
     var names = [];
 	//datatable, 动态处理
     var insuranceOrder = $('#eeda-table').dataTable({
+    	  "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
     	"bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
         "iDisplayLength": 25,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/insuranceOrder/createList",
+        //"sAjaxSource": "/insuranceOrder/createList",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -105,7 +106,7 @@ $(document).ready(function() {
         $('#createForm').submit();
     });
     $('#orderNo_filter,  #customer_filter, #beginTime_filter, #endTime_filter, #routeTo_filter, #routeFrom_filter').on( 'keyup click', function () {
-    	refresh();
+    	//refresh();
     } );
  
     $('#datetimepicker').datetimepicker({  
@@ -222,7 +223,7 @@ $(document).ready(function() {
 	        $("#companyList").hide();
 	        var inputStr = $('#customer_filter').val();
 	        if(inputStr!=null){
-	        	refresh();
+	        	//refresh();
 	        }
 	    });
 	 // 没选中客户，焦点离开，隐藏列表
@@ -240,9 +241,14 @@ $(document).ready(function() {
 	    });
 	    $("#resetBtn").click(function(){
 	        $('#searchForm')[0].reset();
-	        saveConditions();
-	        refresh();
+	        //saveConditions();
+	        //refresh();
 	    });
+	    
+	    $("#searchBtn").click(function(){
+	    	refresh();
+	    });
+	    
 	    function refresh(){
 	    	var orderNo = $("#orderNo_filter").val();
 	    	var customer = $("#customer_filter").val();
@@ -250,6 +256,22 @@ $(document).ready(function() {
 	    	var endTime = $("#endTime_filter").val();
 	    	var routeFrom = $("#routeFrom_filter").val();
 	    	var routeTo = $("#routeTo_filter").val(); 	
+	    	
+	    	var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+	        
+	    	
+	    	insuranceOrder.fnSettings().oFeatures.bServerSide = true;
 	    	insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/createList?orderNo="+orderNo+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
 	    	insuranceOrder.fnDraw(); 
 	    	saveConditions();
@@ -283,5 +305,5 @@ $(document).ready(function() {
 	        }
 	    };
 	    loadConditions();
-	    refresh();
+	   // refresh();
 } );

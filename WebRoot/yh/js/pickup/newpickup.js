@@ -94,16 +94,16 @@ $(document).ready(function() {
     var flag=$("#flag").val();
     var pickupOrder = $('#eeda-table').dataTable({
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
-    	"bSort": false, // 不要排序
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
-        "bServerSide": true,
+        "iDisplayLength": 10,
+        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/pickupOrder/createList?flag="+flag,
+       // "sAjaxSource": "/pickupOrder/createList?flag="+flag,
         "aoColumns": [
             { "mDataProp": null,
 				 "fnRender": function(obj) {
@@ -448,6 +448,9 @@ $(document).ready(function() {
         $('#createForm').submit();
     });
     
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
     
     $('#searchBtn').on( 'click', function () {
     	var orderNo = $("#orderNo_filter").val();
@@ -460,6 +463,21 @@ $(document).ready(function() {
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
     	var orderType = $("#orderType_filter").val();
+    	
+    	var flag = false;
+    	$('#searchForm input,#searchForm select').each(function(){
+       	 var textValue = this.value;
+       	 if(textValue != '' && textValue != null){
+       		 flag = true;
+       		 return;
+       	 } 
+       });
+       if(!flag){
+       	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+       	 return false;
+       }
+       
+       pickupOrder.fnSettings().oFeatures.bServerSide = true;
     	pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/createList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer
     	+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo+"&orderType="+orderType+"&item_no="+item_no;
     	pickupOrder.fnDraw(); 

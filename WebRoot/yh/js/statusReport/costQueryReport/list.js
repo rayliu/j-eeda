@@ -205,6 +205,19 @@ $(document).ready(function() {
     		var plantime_end_time = $("#plantime_end_time").val();
     		var serial_no = $("#serial_no").val();
     		var sign_no = $("#sign_no").val();
+    		
+    		 var flag = false;
+ 	        $('#searchForm input,#searchForm select').each(function(){
+ 	        	 var textValue = this.value;
+ 	        	 if(textValue != '' && textValue != null){
+ 	        		 flag = true;
+ 	        		 return;
+ 	        	 } 
+ 	        });
+ 	        if(!flag){
+ 	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+ 	        	 return false;
+ 	        }
 
             costConfiremTable.fnSettings().oFeatures.bServerSide = true;
     		costConfiremTable.fnSettings().sAjaxSource = "/statusReport/costQueryReportSearch?orderNo="+orderNo
@@ -227,8 +240,12 @@ $(document).ready(function() {
        };
        
        /*=====================条件过滤=======================*/
-      $('#searchButton').click(function(){
+      $('#searchBtn').click(function(){
           refreshData();
+      });
+      
+      $("#resetBtn").click(function(){
+          $('#searchForm')[0].reset();
       });
       
 } );

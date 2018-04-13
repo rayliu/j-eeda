@@ -211,6 +211,20 @@ $(document).ready(function() {
 		var office = $("#office").val();
 		var orderNo = $("#orderNo").val();
 		
+		 var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+		
 		num = 1;
 		unDispose_table.fnSettings().oFeatures.bServerSide = true; 
 		unDispose_table.fnSettings().sAjaxSource = "/carsummary/untreatedCarManageList?status="+status+"&driver="+driver+"&car_no="
@@ -381,6 +395,19 @@ $(document).ready(function() {
 		var order_no = $("#carSummary_pickup_order").val();
 		var start_data = $("#carSummary_start_data").val();
 		var office_id=$("#carSummary_office").val();
+		
+		 var flag = false;
+	        $('#searchForm1 input,#searchForm1 select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
 
 		num2 = 1;
 		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?" +

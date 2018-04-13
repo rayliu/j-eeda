@@ -154,6 +154,22 @@ $(document).ready(function() {
     	var beginTime = $("#beginTime_filter").val();
     	var endTime = $("#endTime_filter").val();
     	var officeName = $("#officeSelect").val();
+    	
+    	  var flag = false;
+          $('#searchForm input,#searchForm select').each(function(){
+        	  if(this.id !="order_type_filter"){
+        		  var textValue = this.value;
+               	 if(textValue != '' && textValue != null){
+               		 flag = true;
+               		 return;
+               	 } 
+        	  }
+          });
+          if(!flag){
+          	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+          	 return false;
+          }
+          
 
         transferOrder.fnSettings().oFeatures.bServerSide = true;
     	transferOrder.fnSettings().sAjaxSource = "/returnTransfer/list?orderNo="+orderNo +"&status="+status+"&address=" +address

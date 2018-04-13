@@ -8,12 +8,13 @@ $(document).ready(function() {
 	}
     
     var costAcceptOrderTab = $('#costAccept-table').dataTable({
+    	 "bProcessing": true, //table载入数据时，是否显示‘loading...’提示 
         "bFilter": false, //不需要默认的搜索框
         "bProcessing": true,
         "bSort": true, 
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": false,
-        "iDisplayLength": 100,
+        "iDisplayLength": 25,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -26,7 +27,7 @@ $(document).ready(function() {
 			$(nRow).attr({order_type: aData.ORDER_TYPE}); 
 			return nRow;
 		},
-        "sAjaxSource": "/costAcceptOrder/list",
+        //"sAjaxSource": "/costAcceptOrder/list",
         "aoColumns": [
 			{ "mDataProp": null, "sWidth":"20px", "bSortable": false,
 			    "fnRender": function(obj) {
@@ -112,7 +113,7 @@ $(document).ready(function() {
         "bProcessing": true,
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "bServerSide": false,
-        "iDisplayLength": 100,
+        "iDisplayLength": 25,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
@@ -546,7 +547,7 @@ $(document).ready(function() {
                 left:$(me).position().left+"px", 
                 top:$(me).position().top+28+"px" 
             }); 
-            refreshData();
+            //refreshData();
             spList.show();
             
         },'json');
@@ -593,7 +594,7 @@ $(document).ready(function() {
             address = '';
         pageSpAddress.append(address);
         $('#spList1').hide();
-        refreshData();
+        //refreshData();
     });
     $('#companyList1').on('mousedown', function(){
         return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
@@ -619,10 +620,16 @@ $(document).ready(function() {
     });
     
     $('#beginTime_filter2,#endTime_filter2,#orderNo_filter1,#orderType').on('keyup', function () {
-    	refreshData();
+    	//refreshData();
     } );
     
-   
+    $("#searchBtn").click(function(){
+    	refreshData();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchFrom')[0].reset();
+    });
 
     var saveConditions=function(){
         var conditions={
@@ -648,6 +655,19 @@ $(document).ready(function() {
         var endTime = $("#endTime_filter2").val();
         var orderType = $("#orderType").val();
 
+        var flag = false;
+        $('#searchFrom input,#searchFrom select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
         costAcceptOrderTab.fnSettings().oFeatures.bServerSide = true;
         costAcceptOrderTab.fnSettings().sAjaxSource = "/costAcceptOrder/list?status="+status
             +"&beginTime="+beginTime+"&endTime="+endTime+"&orderNo="+orderNo+"&sp="+sp+"&orderType="+orderType;
@@ -683,6 +703,13 @@ $(document).ready(function() {
         }
     };
     
+    $("#search2Btn").click(function(){
+    	refreshData2();
+    });
+
+    $("#reset2Btn").click(function(){
+        $('#searchForm2')[0].reset();
+    });
     
   //待付款页面
     var refreshData2=function(){
@@ -698,6 +725,19 @@ $(document).ready(function() {
         var confirmEndTime = $("#confirmEnd_date").val();
         var insurance = $("#insurance").val();
 
+        var flag = false;
+        $('#searchForm2 input,#searchForm2 select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
         applicationTab.fnSettings().oFeatures.bServerSide = true;
         applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status
             +"&beginTime="+beginTime+"&endTime="+endTime
@@ -748,7 +788,7 @@ $(document).ready(function() {
     };
     loadConditions();
     loadConditions2();
-    refreshData();
-    refreshData2();
+    //refreshData();
+    //refreshData2();
  
 } );

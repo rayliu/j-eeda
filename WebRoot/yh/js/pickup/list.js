@@ -102,6 +102,19 @@
 		var endTime = $("#turnout_time_end_time").val();
 		var planningBeginTime = $("#planning_time_begin_time").val();
 		var planningEndTime = $("#planning_time_end_time").val();
+		
+		 var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
 
 		pickupOrder.fnSettings().oFeatures.bServerSide = true;
 		pickupOrder.fnSettings().sAjaxSource = "/pickupOrder/pickuplist?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime+"&carNo="+carNo+"&take="+take+"&status="+status

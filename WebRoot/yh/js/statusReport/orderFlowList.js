@@ -186,6 +186,19 @@ $(document).ready(function() {
         var serial_no = $("#serial_no").val();
         var customer_id=$("#customer_id").val();
         
+        var flag = false;
+        $('#orderForm input,#orderForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
         /*
             查询规则：参数对应DB字段名
             *_no like

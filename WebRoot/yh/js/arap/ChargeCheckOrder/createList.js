@@ -11,9 +11,9 @@ $(document).ready(function() {
         "bFilter": false, //不需要默认的搜索框
     	"bSort": true, // 不要排序
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "iDisplayLength": 100,
+        "iDisplayLength": 10,
         "aLengthMenu": [ [10 ,25 ,50 ,100 ,9999999], [10 ,25 ,50 ,100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
@@ -26,7 +26,7 @@ $(document).ready(function() {
 	           $('#searchBtn').attr('disabled',false);
 	           $('#searchBtn').text('查询');
 	    },
-        "sAjaxSource": "/chargeCheckOrder/createList?flag=new",
+        	//"sAjaxSource": "/chargeCheckOrder/createList?flag=new",
         "aoColumns": [
 	          { "mDataProp": null, "sWidth":"20px","bSortable": false,
 	            "fnRender": function(obj) {
@@ -115,13 +115,13 @@ $(document).ready(function() {
     	"bFilter": false, //不需要默认的搜索框
     	"bSort": false, // 不要排序
     	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-    	"iDisplayLength": 25,
+    	"iDisplayLength": 10,
     	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-    	"bServerSide": true,
+    	"bServerSide": false,
     	"oLanguage": {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
-    	"sAjaxSource": "/chargeCheckOrder/createList2",
+    	//"sAjaxSource": "/chargeCheckOrder/createList2",
     	"aoColumns": [ 
 	          {"mDataProp": null},  
 	          {"mDataProp":null, "bVisible": false},
@@ -322,6 +322,10 @@ $(document).ready(function() {
 		refreshCreate();
 	});
 	
+	
+	 $("#resetBtn").click(function(){
+	        $('#returnOrderSearchForm')[0].reset();
+	    });
     var refreshCreate = function(){
     	$("#searchBtn").attr("disabled",true);
     	$("#searchBtn").text("查询中···");
@@ -336,6 +340,24 @@ $(document).ready(function() {
 		var address = $("#address_filter").val();
 		var status = $("#shouru_filter").val();
 		$("#allCheck").attr("checked",false);
+		
+		
+		 var flag = false;
+	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 $("#searchBtn").attr("disabled",false);
+	         	$("#searchBtn").text("查询");
+	        	 return false;
+	        }
+		
+		uncheckedChargeCheckTable.fnSettings().oFeatures.bServerSide = true;
 		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?customer="+customer
 															+"&beginTime="+beginTime
 															+"&endTime="+endTime

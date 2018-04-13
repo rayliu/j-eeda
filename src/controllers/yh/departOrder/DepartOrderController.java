@@ -805,17 +805,15 @@ public class DepartOrderController extends Controller {
         if(colName.length()>0){
         	orderByStr = " order by "+colName+" "+sortBy;
         }
-		rec = Db.findFirst("select count(*) total from (select * from ("+sql+") A "+conditions+ ") B" );
-		logger.debug("total records:" + rec.getLong("total"));
-		List<Record> transferOrders = Db.find("select * from ("+sql+") A "+conditions+  orderByStr + sLimit);
-
-		Map transferOrderListMap = new HashMap();
-		transferOrderListMap.put("sEcho", pageIndex);
-		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
-		transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
-
-		transferOrderListMap.put("aaData", transferOrders);
-		renderJson(transferOrderListMap);
+			rec = Db.findFirst("select count(*) total from (select * from ("+sql+") A "+conditions+ ") B" );
+			logger.debug("total records:" + rec.getLong("total"));
+			List<Record> transferOrders = Db.find("select * from ("+sql+") A "+conditions+  orderByStr + sLimit);
+			Map transferOrderListMap = new HashMap();
+			transferOrderListMap.put("sEcho", pageIndex);
+			transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+			transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+			transferOrderListMap.put("aaData", transferOrders);
+			renderJson(transferOrderListMap);
 	}
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
 	// 创建发车单的运输单列表(干线供应商+整车)

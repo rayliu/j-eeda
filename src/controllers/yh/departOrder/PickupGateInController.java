@@ -285,15 +285,25 @@ public class PickupGateInController extends Controller {
       			+ " LEFT JOIN carinfo cin on cin.id  = gg.car_id"
       			+ "   ";
 				
-
-		Record rec = Db.findFirst("select count(1) total from (" + sql+ conditions +" ) B");
-		List<Record> departOrders = Db.find( sql + conditions  + sLimit);
-		Map map = new HashMap();
-		map.put("sEcho", pageIndex);
-		map.put("iTotalRecords", rec.getLong("total"));
-		map.put("iTotalDisplayRecords", rec.getLong("total"));
-		map.put("aaData", departOrders);
-		renderJson(map);
+      	String flag = getPara("flag");
+        if("new".equals(flag)){
+        	Record depart = new Record();
+            Map map = new HashMap();
+            map.put("sEcho", pageIndex);
+            map.put("iTotalRecords", 0);
+            map.put("iTotalDisplayRecords", 0);
+            map.put("aaData", depart);
+            renderJson(map);
+        }else{
+        	Record rec = Db.findFirst("select count(1) total from (" + sql+ conditions +" ) B");
+    		List<Record> departOrders = Db.find( sql + conditions  + sLimit);
+    		Map map = new HashMap();
+    		map.put("sEcho", pageIndex);
+    		map.put("iTotalRecords", rec.getLong("total"));
+    		map.put("iTotalDisplayRecords", rec.getLong("total"));
+    		map.put("aaData", departOrders);
+    		renderJson(map);
+        }
 	}
 	
 	

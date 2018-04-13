@@ -12,14 +12,14 @@ $(document).ready(function() {
         "bProcessing": true, //table载入数据时，是否显示‘loading...’提示
     	"bFilter": false, //不需要默认的搜索框
         "bSort": true, 
-        "iDisplayLength": 100,
+        "iDisplayLength": 25,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/accountAuditLog/list?flag=new",
+        //"sAjaxSource": "/accountAuditLog/list?flag=new",
         "aoColumns": [
             {"mDataProp":null, "sWidth":"20px",
                 "fnRender": function(obj) {
@@ -186,6 +186,13 @@ $(document).ready(function() {
         $('#endTime').trigger('keyup');
     });
     
+    $("#searchBtn").click(function(){
+    	find();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm1')[0].reset();
+    });
     
     var find = function(){
     	var source_order = $('#source_order').val();
@@ -194,6 +201,21 @@ $(document).ready(function() {
     	var endTime = $('#endTime').val();
     	var bankName = $('#bankName').val();
     	var money = $('#money').val();
+    	
+    	 var flag = false;
+	        $('#searchForm1 input,#searchForm1 select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+    	
+	    accountAuditLogTable.fnSettings().oFeatures.bServerSide = true;
     	accountAuditLogTable.fnSettings().sAjaxSource = "/accountAuditLog/list?source_order="+source_order
 										            +"&orderNo="+orderNo
 										            +"&bankName="+bankName
@@ -204,7 +226,7 @@ $(document).ready(function() {
     };
     
     $('#source_order,#orderNo,#beginTime,#endTime,#bankName,#money').on('blur',function(){
-    	find();
+    	//find();
     });
     
     

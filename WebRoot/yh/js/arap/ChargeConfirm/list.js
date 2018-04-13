@@ -12,11 +12,11 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 100,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeConfirm/list",
+        //"sAjaxSource": "/chargeConfirm/list",
         "aoColumns": [
             {"mDataProp":"ORDER_NO", "sWidth": "100px", //付款确认单号
             	"fnRender": function(obj) {

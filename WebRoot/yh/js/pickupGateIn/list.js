@@ -19,7 +19,7 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt",//datatable的中文翻译
             "sProcessing":     "Procesando..."
         },
-        "sAjaxSource": "/pickupGateIn/list",
+        "sAjaxSource": "/pickupGateIn/list?flag=new",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO", "sWidth":"150px",
             	"fnRender": function(obj) {
@@ -36,6 +36,7 @@ $(document).ready(function() {
             		}else if(obj.aData.PICKUP_MODE == 'pickupSP'){
             			return '外包供应商提货';
             		}
+            		return '';
             	}
             },
             {"mDataProp":"DRIVER"},
@@ -48,7 +49,7 @@ $(document).ready(function() {
 
     
     $('#resetBtn').click(function(e){
-        $("#orderForm")[0].reset();
+        $("#searchForm")[0].reset();
     });
 
     $('#searchBtn').click(function(){
@@ -61,6 +62,20 @@ $(document).ready(function() {
         var status_filter=$("#status_filter").val();
         var beginTime = $("#create_stamp_begin_time").val();
         var endTime = $("#create_stamp_end_time").val();
+        
+        var flag = false;
+        $('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
         /*  
             查询规则：参数对应DB字段名
             *_no like

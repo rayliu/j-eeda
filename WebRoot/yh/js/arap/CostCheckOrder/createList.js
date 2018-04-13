@@ -620,6 +620,10 @@ $(document).ready(function() {
     	var type = $("#order_type_filter").val();
     	var status = $("#order_status_filter").val();
     	var serial_no = $("#serial_no").val();
+    	
+    
+    	
+    	
         uncheckedCostCheckTable.fnSettings().oFeatures.bServerSide = true;
     	uncheckedCostCheckTable.fnSettings().sAjaxSource = "/costCheckOrder/unSelectedList?sp_id2="+sp_id2
 														+"&beginTime="+beginTime
@@ -635,6 +639,20 @@ $(document).ready(function() {
     };
     
     $("#searchBtn").click(function(){
+    	
+    	var flag = false;
+        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+    	
         var sp_id2 = $("#sp_id").val();
         if(sp_id2.length==0 ){
             $.scojs_message('请选择一个供应商.', $.scojs_message.TYPE_ERROR);

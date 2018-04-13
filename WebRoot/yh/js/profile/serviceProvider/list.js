@@ -6,15 +6,16 @@ $(document).ready(function() {
 
 	//datatable, 动态处理
     var dataTable= $('#eeda-table').dataTable({
+    	"bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
     	"bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/serviceProvider/list",
+        //"sAjaxSource": "/serviceProvider/list",
         "aoColumns": [ 
             {"mDataProp":"COMPANY_NAME",
             	"fnRender":function(obj){
@@ -94,17 +95,38 @@ $(document).ready(function() {
             }                         
         ]    
     });
+    
+    $("#searchBtn").click(function(){
+        refreshData();
+    });
 
-  //条件筛选
-	$("#COMPANY_NAME ,#CONTACT_PERSON ,#RECEIPT,#ABBR,#ADDRESS,#LOCATION").on('keyup click', function () {    	 	
-      	var COMPANY_NAME = $("#COMPANY_NAME").val();
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+    
+    var refreshData=function(){
+    	var COMPANY_NAME = $("#COMPANY_NAME").val();
       	var CONTACT_PERSON = $("#CONTACT_PERSON").val();
     	var RECEIPT = $("#RECEIPT").val();
       	var ABBR = $("#ABBR").val();    	
       	var ADDRESS = $("#ADDRESS").val();
       	var LOCATION = $("#LOCATION").val();
+      	
+      	 var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+	    dataTable.fnSettings().oFeatures.bServerSide = true;   
       	dataTable.fnSettings().sAjaxSource = "/serviceProvider/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
       	dataTable.fnDraw();
-      });
+    };
 	
 } );

@@ -11,11 +11,11 @@
 	        //"sPaginationType": "bootstrap",
 	        "iDisplayLength": 10,
 	        "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-	        "bServerSide": true,
+	        "bServerSide": false,
 	    	"oLanguage": {
 	            "sUrl": "/eeda/dataTables.ch.txt"
 	        },
-	        "sAjaxSource": "/insuranceOrder/list",
+	        //"sAjaxSource": "/insuranceOrder/list",
 	        "aoColumns": [   
 			    {"mDataProp":"ORDER_NO",
 	            	"fnRender": function(obj) {
@@ -92,7 +92,7 @@
             $("#companyList").hide();
             var companyId = $(this).attr('partyId');
             $('#customerId').val(companyId);
-        	refreshData();
+        	//refreshData();
         });
         // 没选中客户，焦点离开，隐藏列表
         $('#customer_filter').on('blur', function(){
@@ -108,7 +108,15 @@
             return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
         });
         $('#endTime_filter, #beginTime_filter, #orderNo_filter ,#departNo_filter,#planning_end_filter,#planning_begin_filter').on('keyup click', function () {
-        	refreshData();
+        	//refreshData();
+        });
+        
+        $("#searchBtn").click(function(){
+            refreshData();
+        });
+
+        $("#resetBtn").click(function(){
+            $('#searchForm')[0].reset();
         });
         var refreshData= function () {
 			var orderNo = $("#orderNo_filter").val();
@@ -118,6 +126,21 @@
 			var endTime = $("#endTime_filter").val();
 			var planningEndTime = $("#planning_end_filter").val();
 			var planningBeginTime = $("#planning_begin_filter").val();
+			
+			var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+			
+			insuranceOrder.fnSettings().oFeatures.bServerSide = true;
 			insuranceOrder.fnSettings().sAjaxSource = "/insuranceOrder/list?orderNo="+orderNo+"&departNo="+departNo_filter+"&beginTime="+beginTime+"&endTime="+endTime+"&customer="+customer+"&planningBeginTime="+planningBeginTime+"&planningEndTime="+planningEndTime;
 			insuranceOrder.fnDraw();
 		};

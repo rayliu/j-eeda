@@ -11,11 +11,11 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeCheckOrder/list",
+        //	"sAjaxSource": "/chargeCheckOrder/list",
         "aoColumns": [   
             {"mDataProp":"ID", "bVisible": false},
             {"mDataProp":"ORDER_NO",
@@ -67,6 +67,10 @@ $(document).ready(function() {
         ]      
     });	
     
+    $("#resetBtn1").click(function(){
+        $('#searchFrom')[0].reset();
+    });
+    
     $('#searchBtn').on('click',function(){
     	var orderNo = $('#select_orderNo_filter').val();
 		var beginTime = $("#kaishi_filter").val();
@@ -80,6 +84,22 @@ $(document).ready(function() {
 		var refNo = $("#refNo_filter").val();
 		var serialNo = $("#serialNo_filter").val();
 		var customerNo2 = $("#customerNo_filter2").val();
+		
+		var flag = false;
+        $('#searchFrom input,#searchFrom select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+		
+		
+        datatable.fnSettings().oFeatures.bServerSide = true;
 		datatable.fnSettings().sAjaxSource = "/chargeCheckOrder/list?orderNo="+orderNo
 															+"&beginTime="+beginTime
 															+"&endTime="+endTime

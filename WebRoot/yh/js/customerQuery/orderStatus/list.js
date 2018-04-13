@@ -24,7 +24,7 @@ $(document).ready(function() {
     var dataTable = $('#orderStatus_table').DataTable({
         "processing": true,
         "searching": false,
-        "serverSide": true,
+        "serverSide": false,
         "responsive": true,
         "scrollX": true,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
@@ -33,7 +33,7 @@ $(document).ready(function() {
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        "ajax": "/customerQuery/orderStatusSearch",
+        //"ajax": "/customerQuery/orderStatusSearch",
         "columns": [
             { "data": "CUSTOMER_ORDER_NO"},
             { "data": "ROUTE_TO"},
@@ -79,14 +79,14 @@ $(document).ready(function() {
     var serial_dataTable = $('#serial_no_table').DataTable({
         "processing": true,
         "searching": false,
-        "serverSide": true,
+        "serverSide": false,
         "scrollX": true,
         "scrollCollapse": true,
         "autoWidth": false,
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        "ajax": "/customerQuery/orderSerialNoSearch",
+        //"ajax": "/customerQuery/orderSerialNoSearch",
         "columns": [
             { "data": "SERIAL_NO"},
             { "data": "ITEM_NO"},
@@ -127,6 +127,22 @@ $(document).ready(function() {
         var beginTime = $("#plan_time_begin_time").val();
         var endTime = $("#plan_time_end_time").val();
         
+        var flag = false;
+        $('#orderForm input,#orderForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 if(this.name=="search_type"){
+       				return true;
+       		 }
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
         var url = "/customerQuery/orderStatusSearch?search_type="+search_type
              +"&customer_order_no="+customer_order_no
              +"&customer_id="+customer_id
@@ -140,6 +156,23 @@ $(document).ready(function() {
     var searchSerailData=function(){
         var customer_id=$("#customer_id").val();
         var serial_no=$("#serial_no").val();
+        
+        var flag = false;
+        $('#orderForm input,#orderForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 if(this.name=="search_type"){
+          				return true;
+          		 }
+        		 
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
         
         var url = "/customerQuery/orderSerialNoSearch?serial_no="+serial_no
              +"&customer_id="+customer_id;

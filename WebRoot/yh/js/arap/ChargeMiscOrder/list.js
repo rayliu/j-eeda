@@ -6,15 +6,16 @@ $(document).ready(function() {
 
 	//datatable, 动态处理
     var datatable=$('#chargeMiscOrderList-table').dataTable({
+    	 "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeMiscOrder/list",
+        //"sAjaxSource": "/chargeMiscOrder/list",
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
 		},
@@ -266,6 +267,10 @@ $(document).ready(function() {
     $("#searchBtn").on('click', function () {
         refreshData();
     });
+    
+    $("#resetBtn").click(function(){
+        $('#searchFrom')[0].reset();
+    });
 
     var refreshData=function(){
         var customer=$("#customer_filter").val();
@@ -274,6 +279,20 @@ $(document).ready(function() {
         var type = $("#status_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
+        
+        var flag = false;
+        $('#searchFrom input,#searchFrom select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        datatable.fnSettings().oFeatures.bServerSide = true;
         datatable.fnSettings().sAjaxSource = "/chargeMiscOrder/list?orderNo="+orderNo +"&type="+type
                                                 +"&customer="+customer+"&sp="+sp+"&beginTime="+beginTime
                                                 +"&endTime="+endTime;

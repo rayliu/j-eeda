@@ -12,13 +12,13 @@ $(document).ready(function() {
     	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
+        "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/departOrder/createTransferOrderListForRouteSp",
+        //"sAjaxSource": "/departOrder/createTransferOrderListForRouteSp",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -123,7 +123,15 @@ $(document).ready(function() {
         $('#endTime_filter').trigger('keyup');
     });
     
-    $("#routeTo_filter ,#endTime_filter ,#beginTime_filter ,#routeFrom_filter ,#customer_filter ,#address_filter ,#status_filter ,#orderNo_filter").on( 'keyup click', function () {    	 	
+    $("#resetBtn").click(function(){
+        $('#searchFrom')[0].reset();
+    });
+    
+	$("#searchBtn").click(function(){
+        refreshData();
+    });
+    
+    var refreshData = function(){
     	var orderNo = $("#orderNo_filter").val();
     	var status = $("#status_filter").val();
     	var address = $("#address_filter").val();
@@ -132,9 +140,24 @@ $(document).ready(function() {
     	var endTime = $("#endTime_filter").val();
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
+    	
+   	 var flag = false;
+     $('#searchFrom input,#searchFrom select').each(function(){
+     	 var textValue = this.value;
+     	 if(textValue != '' && textValue != null){
+     		 flag = true;
+     		 return;
+     	 } 
+     });
+     if(!flag){
+     	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+     	 return false;
+     }
+    	
+    	datatable.fnSettings().oFeatures.bServerSide = true;
     	datatable.fnSettings().sAjaxSource = "/departOrder/createTransferOrderListForRouteSp?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
-    	datatable.fnDraw();    	
-    });
+    	datatable.fnDraw(); 
+    };
   //获取所有客户
     $('#customer_filter').on('keyup click', function(){
            var inputStr = $('#customer_filter').val();

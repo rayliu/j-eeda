@@ -6,7 +6,7 @@ $(document).ready(function() {
     var inventory_dataTable = $('#eeda-table').DataTable({
         "processing": true,
         "searching": false,
-        "serverSide": true,
+        "serverSide": false,
         "scrollX": true,
         //"scrollY": "300px",
         "scrollCollapse": true,
@@ -14,7 +14,7 @@ $(document).ready(function() {
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        "ajax": "/customerQuery/inventorySearch",
+        //"ajax": "/customerQuery/inventorySearch",
         "columns": [
             { "data": "WAREHOUSE_NAME"},
             { "data": "ITEM_NO"}, 
@@ -34,11 +34,11 @@ $(document).ready(function() {
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/departOrder/getItemDetail",
+        //"sAjaxSource": "/departOrder/getItemDetail",
         "aoColumns": [
             {"mDataProp":"SERIAL_NO"},
             {"mDataProp":"ITEM_NO"},
@@ -72,6 +72,19 @@ $(document).ready(function() {
    var searchData=function(){
         var warehouse_id=$("#warehouse_id").val();
         var item_no=$("#item_no").val();
+   	 var flag = false;
+     $('#orderForm input,#orderForm select').each(function(){
+     	 var textValue = this.value;
+     	 if(textValue != '' && textValue != null){
+     		 flag = true;
+     		 return;
+     	 } 
+     });
+     if(!flag){
+     	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+     	 return false;
+     }
+
         
         var url = "/customerQuery/inventorySearch?warehouse_id="+warehouse_id
              +"&item_no="+item_no;

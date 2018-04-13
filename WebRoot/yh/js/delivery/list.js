@@ -224,6 +224,21 @@ $(document).ready(function() {
       	var address_filter = $("#address_filter").val();
       	var office_filter = $("#deliveryOffice").val();
       	var warehouse_filter = $("#deliveryWarehouse").val();
+      	
+      	 var flag = false;
+     	$('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
+      	
         dataTable.fnSettings().oFeatures.bServerSide = true;
       	dataTable.fnSettings().sAjaxSource = "/delivery/deliveryList?orderNo_filter="+orderNo_filter+"&plan_beginTime_filter="+plan_beginTime_filter
 										      	+"&plan_endTime_filter="+plan_endTime_filter+"&office_filter="+office_filter+"&address_filter="+address_filter

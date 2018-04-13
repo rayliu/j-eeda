@@ -267,6 +267,10 @@ $(document).ready(function() {
         }
     });
     
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+    
     
  // 撤销收货
     $("#eeda-table").on('click', '.deleteReceipt', function(e){
@@ -349,6 +353,22 @@ $(document).ready(function() {
     	var planBeginTime = $("#planning_time_begin_time").val();
     	var planEndTime = $("#planning_time_end_time").val();
     	var office_id=$("#office_id").val();
+    	
+    	 var flag = false;
+    	$('#searchForm input,#searchForm select').each(function(){
+       	 var textValue = this.value;
+       	 if(textValue != '' && textValue != null){
+       		 flag = true;
+       		 return;
+       	 } 
+       });
+       if(!flag){
+       	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+       	 return false;
+       }
+    	
+    	
+    	
     	detailTable.fnSettings().sAjaxSource = "/departOrder/onTripList?orderNo="+orderNo
 											+"&departNo="+departNo_filter
 											+"&status="+status

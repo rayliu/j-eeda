@@ -29,7 +29,7 @@
 			<input type="hidden" name="page" id="page" value="${page!''}">
 			<div class="tab-content">
 					<div class="tab-pane fade active in" id="audit">
-						<form role="form" style="margin: 15px 15px;">
+						<form role="form" style="margin: 15px 15px;" id="searchFrom">
 							<div class="row search_panel">
 								<div class="col-lg-4">
 									<div class="form-group">
@@ -89,6 +89,11 @@
 								<!-- end of col-lg-6-->
 							</div>
 							<!-- end of row-->
+							<div class="form-group">
+                                        <button id="searchBtn" class="btn  btn-primary" type="button">查询</button>
+                                        <button id="resetBtn" class="btn  btn-default" type="button">清空条件</button>
+                             </div>
+							
 					</form>
 					<!--   ------------------------------------------------ -->
 					<div class="row">
@@ -134,7 +139,7 @@
 		
 		
 					<div class="tab-pane fade " id="unpay">
-						<form role="form" style="margin: 15px 15px;">
+						<form role="form" style="margin: 15px 15px;" id="searchForm2">
 							<div class="row search_panel">
 								<div class="col-lg-4">
 									<div class="form-group">
@@ -189,7 +194,10 @@
 								<!-- end of col-lg-6-->
 							</div>
 							<!-- end of row-->
-					<button id="search2Btn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查询</button>
+							<div class="form-group">
+                                        <button id="search2Btn" class="btn  btn-primary" type="button">查询</button>
+                                        <button id="reset2Btn" class="btn  btn-default" type="button">清空条件</button>
+                                    </div>
 										
 					</form>
 					<div class="table-responsive">
@@ -319,5 +327,5 @@
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/yh/js/eeda-common.js"></script>
-<script src="/yh/js/arap/CostConfirm/list.js?v=1.0"></script>
-<script src="/yh/js/arap/CostAcceptOrder/list.js?v=1.0"></script>
+<script src="/yh/js/arap/CostConfirm/list.js?v=1.1"></script>
+<script src="/yh/js/arap/CostAcceptOrder/list.js?v=1.1"></script>

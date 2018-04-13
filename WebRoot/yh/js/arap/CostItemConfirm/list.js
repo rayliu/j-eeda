@@ -309,6 +309,10 @@ $(document).ready(function() {
             $('#endTime_filter').trigger('keyup');
         });
         
+        $("#resetBtn").click(function(){
+            $('#searchFrom')[0].reset();
+        });
+        
        var refreshData = function(){
     	    $("#searchButton").attr("disabled",true);
        		$("#searchButton").text("查询中···");
@@ -328,6 +332,21 @@ $(document).ready(function() {
     		var arrivaltime = $("#arrivaltime").val().trim();
     		var serial_no = $("#serial_no").val().trim();
     		var sign_no = $("#sign_no").val().trim();
+    		
+    		var flag = false;
+	        $('#searchFrom input,#searchFrom select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 $("#searchButton").attr("disabled",false);
+	        		$("#searchButton").text("查询");
+	        	 return false;
+	        }
     		
     		costConfiremTable.fnSettings().oFeatures.bServerSide = true;
     		costConfiremTable.fnSettings().sAjaxSource = "/costConfirmList/list?orderNo="+orderNo

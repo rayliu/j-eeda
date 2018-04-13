@@ -4,16 +4,17 @@ $(document).ready(function() {
 
     $('#menu_charge').addClass('active').find('ul').addClass('in');
     var chargeInvoiceOrderListTable = $('#chargeInvoiceOrderList-table').dataTable({
+        "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
         "bFilter": false, //不需要默认的搜索框
         "bSort":true,
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeInvoiceOrder/list",
+        //"sAjaxSource": "/chargeInvoiceOrder/list",
         "aoColumns": [   
             {"mDataProp":"ORDER_NO","sWidth":"130px",
             	"fnRender": function(obj) {
@@ -51,6 +52,15 @@ $(document).ready(function() {
         ]      
     });	
     
+    $("#searchBtn1").click(function(){
+    	refreshList();
+    });
+
+    $("#resetBtn1").click(function(){
+        $('#searchFrom')[0].reset();
+    });
+    
+    
     var refreshList = function (){
     	var companyName = $('#select_customer_filter').val();
 		var beginTime = $("#kaishi_filter").val();
@@ -61,6 +71,22 @@ $(document).ready(function() {
 		var dzOrderNo = $("#dzOrderNo_filter").val();
 		var sp = $("#sp_filter").val();
 		var address = $("#address_filter").val();
+		
+		var flag = false;
+        $('#searchFrom input,#searchFrom select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+		
+		
+		chargeInvoiceOrderListTable.fnSettings().oFeatures.bServerSide = true;
 		chargeInvoiceOrderListTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/list?companyName="+companyName
 																		+"&beginTime="+beginTime
 																		+"&endTime="+endTime
@@ -73,10 +99,10 @@ $(document).ready(function() {
 		chargeInvoiceOrderListTable.fnDraw();
     };
     $('#select_orderNo_filter,#select_customer_filter,#sp_filter,#address_filter,#kaishi_filter,#jieshu_filter,#dzOrderNo_filter').on( 'keyup', function () {    	
-    	refreshList();
+    	//refreshList();
 	} );
     $("#select_status_filter,#select_office_filter").on('change',function(){    	
-    	refreshList();
+    	//refreshList();
     });
     /*-------------------------获取所有客户-----------------------------------*/
  
@@ -104,7 +130,7 @@ $(document).ready(function() {
            $("#select_companyList").hide();
            var companyId = $(this).attr('partyId');
            $('#customerId').val(companyId);
-           refreshList();
+          // refreshList();
        });
     // 没选中客户，焦点离开，隐藏列表
        $('#select_customer_filter').on('blur', function(){
@@ -215,7 +241,7 @@ $(document).ready(function() {
        		}
        		pageSpAddress.append(address);
                $('#spList').hide();
-               refreshList();
+               //refreshList();
            });
        	
        	$('#datetimepickerK').datetimepicker({  

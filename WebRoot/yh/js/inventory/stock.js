@@ -10,11 +10,11 @@ $(document).ready(function() {
 	   	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
 	   	"iDisplayLength": 10,
 	   	"aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-	   	"bServerSide": true,
+	   	"bServerSide": false,
 	   	"oLanguage": {
 	   		"sUrl": "/eeda/dataTables.ch.txt"
 	   	},
-        "sAjaxSource":"/stock/stocklist",
+       "sAjaxSource":"/stock/stocklist",
 		"aoColumns": [
             {"mDataProp":"ITEM_NO", "sWidth":"80px"}, 
             {"mDataProp":"CUSTOMER_NAME", "sWidth":"130px"},
@@ -190,7 +190,11 @@ $(document).ready(function() {
     }); 
 	
 	
-	$("#queryBtn").on("click",function(){
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+	
+	$("#searchBtn").on("click",function(){
 		 var customerId = $("#hiddenCustomerId").val();
 		 var warehouseId = $("#warehouseId").val();
 		 var officeId = $("#hiddenOfficeId").val();
@@ -201,6 +205,19 @@ $(document).ready(function() {
 		 if(warehouseId != null && warehouseId != ''){
 			 officeId = ''; 
 		 }
+		 
+		 var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
 		 
          tab.fnSettings().sAjaxSource ="/stock/stocklist?customerId="+customerId
 	     					+"&warehouseId="+warehouseId+"&officeId="+officeId+"&starDate="+starDate+"&endDate="+endDate

@@ -6,6 +6,7 @@ $(document).ready(function() {
 
 	//datatable, 动态处理
    var dataTable= $('#eeda-table').dataTable({
+	   "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
 	   "bFilter": false, //不需要默认的搜索框 
 	   //"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
@@ -16,8 +17,8 @@ $(document).ready(function() {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
         "bProcessing": true,
-        "bServerSide": true,
-        "sAjaxSource": "/customer/list",
+        "bServerSide": false,
+        //"sAjaxSource": "/customer/list",
         "aoColumns": [   
             {"mDataProp":"COMPANY_NAME",
             	"fnRender":function(obj){
@@ -79,15 +80,36 @@ $(document).ready(function() {
         ]    
     });
     
-  //条件筛选
-	$("#COMPANY_NAME,#CONTACT_PERSON ,#RECEIPT,#ABBR,#ADDRESS,#LOCATION").on('keyup click', function () {    	 	
-      	var COMPANY_NAME = $("#COMPANY_NAME").val();
-      	var CONTACT_PERSON = $("#CONTACT_PERSON").val();
-    	var RECEIPT = $("#RECEIPT").val();
-      	var ABBR = $("#ABBR").val();    	
-      	var ADDRESS = $("#ADDRESS").val();
-      	var LOCATION = $("#LOCATION").val();
-      	dataTable.fnSettings().sAjaxSource = "/customer/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
-      	dataTable.fnDraw();
-      });
+	$("#searchBtn").click(function(){
+		refreshData();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+   
+   var refreshData=function(){
+	   var COMPANY_NAME = $("#COMPANY_NAME").val();
+     	var CONTACT_PERSON = $("#CONTACT_PERSON").val();
+     	var RECEIPT = $("#RECEIPT").val();
+     	var ABBR = $("#ABBR").val();    	
+     	var ADDRESS = $("#ADDRESS").val();
+     	var LOCATION = $("#LOCATION").val();
+     	 var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+	        dataTable.fnSettings().oFeatures.bServerSide = true;
+	        dataTable.fnSettings().sAjaxSource = "/customer/list?COMPANY_NAME="+COMPANY_NAME+"&CONTACT_PERSON="+CONTACT_PERSON+"&RECEIPT="+RECEIPT+"&ABBR="+ABBR+"&ADDRESS="+ADDRESS+"&LOCATION="+LOCATION;
+	        dataTable.fnDraw();
+   };
+   
 } );

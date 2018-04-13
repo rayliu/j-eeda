@@ -6,16 +6,17 @@ $(document).ready(function() {
 
 	//datatable, 动态处理
     var datatable=$('#costMiscOrderList-table').dataTable({
+    	 "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
         "bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
         "bSort": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/costMiscOrder/list",
+       //"sAjaxSource": "/costMiscOrder/list",
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
 			$(nRow).attr({audit_status: aData.AUDIT_STATUS}); 
@@ -140,13 +141,13 @@ $(document).ready(function() {
         return false;//阻止事件回流，不触发 $('#spMessage').on('blur'
     });
     $('#beginTime_filter').on('keyup', function () {
-    	refreshData();
+    	//refreshData();
     } );    
     $("#status_filter").on('change', function () {
-        refreshData();
+       // refreshData();
     });
     $('#endTime_filter').on( 'keyup click', function () {
-    	refreshData();
+    	//refreshData();
     } );   
 
     $('#datetimepicker3').datetimepicker({  
@@ -191,7 +192,7 @@ $(document).ready(function() {
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-        refreshData();
+        //refreshData();
     });
     // 没选中客户，焦点离开，隐藏列表
     $('#customer_filter').on('blur', function(){
@@ -285,11 +286,20 @@ $(document).ready(function() {
 			address = '';
 		pageSpAddress.append(address);
         $('#spList').hide();
-        refreshData();
+        //refreshData();
     });
 	$("#orderNo_filter").on( 'keyup click', function () {
-    	refreshData();
+    	//refreshData();
     });
+	
+	$("#searchBtn").click(function(){
+		refreshData();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+	
     var refreshData=function(){
         var orderNo = $("#orderNo_filter").val();//单号
         var status = $("#status_filter").val();
@@ -297,6 +307,21 @@ $(document).ready(function() {
         var sp = $("#sp_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
+        
+        var flag = false;
+        $('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
+        datatable.fnSettings().oFeatures.bServerSide = true;
         datatable.fnSettings().sAjaxSource = "/costMiscOrder/list?companyName="+customer+"&beginTime="+beginTime+"&endTime="+endTime+"&spName="+sp+"&orderNo="+orderNo+"&status="+status;
         datatable.fnDraw();
     };

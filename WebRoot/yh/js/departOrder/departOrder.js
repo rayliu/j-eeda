@@ -62,13 +62,13 @@ $(document).ready(function() {
     	//"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         //"sPaginationType": "bootstrap",
-        "iDisplayLength": 25,
+        "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	"oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/departOrder/createTransferOrderList",
+        //"sAjaxSource": "/departOrder/createTransferOrderList?flag=new",
         "aoColumns": [
             { "mDataProp": null,
                  "fnRender": function(obj) {
@@ -208,7 +208,6 @@ $(document).ready(function() {
     $("#resetBtn").click(function(){
         $('#searchForm')[0].reset();
         saveConditions();
-        findData();
     });
     var saveConditions=function(){
         var conditions={
@@ -251,6 +250,20 @@ $(document).ready(function() {
     	var endTime = $("#planning_time_end_time").val();
     	var routeFrom = $("#routeFrom_filter").val();
     	var routeTo = $("#routeTo_filter").val();
+    	
+    	var flag = false;
+    	$('#searchForm input,#searchForm select').each(function(){
+       	 var textValue = this.value;
+       	 if(textValue != '' && textValue != null){
+       		 flag = true;
+       		 return;
+       	 } 
+       });
+       if(!flag){
+       	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+       	 return false;
+       }
+       datatable.fnSettings().oFeatures.bServerSide = true;
     	datatable.fnSettings().sAjaxSource = "/departOrder/createTransferOrderList?orderNo="+orderNo+"&status="+status+"&address="+address+"&customer="+customer+"&routeFrom="+routeFrom+"&beginTime="+beginTime+"&endTime="+endTime+"&routeTo="+routeTo;
     	datatable.fnDraw();
     	saveConditions();

@@ -129,6 +129,9 @@ $(document).ready(function() {
            },'json');
            //refreshCreateList();
        });
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
     
     var refreshCreateList = function(){
     	  //获取所有的条件
@@ -142,7 +145,20 @@ $(document).ready(function() {
     		var customerNo = $("#customerNo_filter").val();
     		var start = $("#start_filter").val();
     		var status = $("#shouru_filter").val();
-
+    		
+    		var flag = false;
+	        $('#searchForm input,#searchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return false;
+	        }
+    		
         chargeConfiremTable.fnSettings().oFeatures.bServerSide = true;
   	    chargeConfiremTable.fnSettings().sAjaxSource = "/statusReport/revenueQueryReportSearch?customer="+customer
   	   												+"&beginTime="+beginTime

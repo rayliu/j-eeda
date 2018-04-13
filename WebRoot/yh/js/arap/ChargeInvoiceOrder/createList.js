@@ -4,15 +4,16 @@ $(document).ready(function() {
     $('#saveBtn').attr('disabled', true);
 	//datatable, 动态处理
 	var uncheckedChargePreInvoiceOrderTable=$('#uncheckedChargePreInvoiceOrder-table').dataTable({
+		"bProcessing": true, //table载入数据时，是否显示‘loading...’提示
 		"bFilter": false, //不需要默认的搜索框
         "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
         "iDisplayLength": 10,
         "aLengthMenu": [ [10, 25, 50, 100, 9999999], [10, 25, 50, 100, "All"] ],
-        "bServerSide": true,
+        "bServerSide": false,
     	  "oLanguage": {
             "sUrl": "/eeda/dataTables.ch.txt"
         },
-        "sAjaxSource": "/chargeInvoiceOrder/createList",
+        //"sAjaxSource": "/chargeInvoiceOrder/createList",
         "aoColumns": [    
             { "mDataProp": null,"sWidth":"20px",
   	            "fnRender": function(obj) {
@@ -115,6 +116,15 @@ $(document).ready(function() {
 	$("#checkedChargeCheckOrder").click(function(){
 		$("#checked").show();
 	});
+	
+	$("#searchBtn").click(function(){
+		refreshCreateList();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#returnOrderSearchForm')[0].reset();
+    });
+	
     var refreshCreateList = function(){
     	var companyName = $('#customer_filter').val();
 		var beginTime = $("#beginTime_filter").val();
@@ -122,6 +132,21 @@ $(document).ready(function() {
 		var orderNo = $("#orderNo_filter").val();
 		var status = $("#status_filter").val();
 		var office = $("#office_filter").val();
+		
+		 var flag = false;
+	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
+	        	 var textValue = this.value;
+	        	 if(textValue != '' && textValue != null){
+	        		 flag = true;
+	        		 return;
+	        	 } 
+	        });
+	        if(!flag){
+	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+	        	 return true;
+	        }
+		
+		uncheckedChargePreInvoiceOrderTable.fnSettings().oFeatures.bServerSide = true;
 		uncheckedChargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/createList?companyName="+companyName
 																		+"&beginTime="+beginTime
 																		+"&endTime="+endTime
@@ -133,7 +158,7 @@ $(document).ready(function() {
   
     
     $('#beginTime_filter,#endTime_filter,#orderNo_filter,#orderNo_filter').on( 'keyup', function () {
-    	refreshCreateList();
+    	//refreshCreateList();
 	} );
     $("#status_filter,#office_filter").on('change',function(){
     	refreshCreateList();
@@ -164,14 +189,14 @@ $(document).ready(function() {
             if(data.length>0)
                 companyList.show();
         },'json');
-        refreshCreateList();
+       // refreshCreateList();
     });    
     $('#companyList').on('click', '.fromLocationItem', function(e){        
         $('#customer_filter').val($(this).text());
         $("#companyList").hide();
         var companyId = $(this).attr('partyId');
         $('#customerId').val(companyId);
-        refreshCreateList();
+       // refreshCreateList();
        
     });
     // 没选中客户，焦点离开，隐藏列表

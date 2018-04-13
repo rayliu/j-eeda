@@ -6,7 +6,7 @@ $(document).ready(function() {
 
 	//datatable, 动态处理
     var datatable=$('#result_table').DataTable({
-        "processing": true,
+    	 "bProcessing": true, //table载入数据时，是否显示‘loading...’提示  
         "searching": false,
         //"serverSide": true,
         "scrollX": true,
@@ -15,7 +15,7 @@ $(document).ready(function() {
         "language": {
             "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
         },
-        "ajax": "/inOutMiscOrder/list",
+        //"ajax": "/inOutMiscOrder/list",
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 			$(nRow).attr({id: aData.ID}); 
 		},
@@ -120,13 +120,21 @@ $(document).ready(function() {
 
     
     $("#charge_unit_filter,  #pay_unit_filter, #order_no_filter, #beginTime_filter, #endTime_filter").on( 'keyup click', function () {
-        refreshData();
+        //refreshData();
     });
 
     $("#biz_type_filter").on('change', function () {
-        refreshData();
+       // refreshData();
     });
 
+    $("#searchBtn").click(function(){
+    	refreshData();
+    });
+
+    $("#resetBtn").click(function(){
+        $('#searchForm')[0].reset();
+    });
+    
     var refreshData=function(){
         var charge_unit=$("#charge_unit_filter").val();
         var pay_unit=$("#pay_unit_filter").val();
@@ -134,6 +142,21 @@ $(document).ready(function() {
         var biz_type = $("#biz_type_filter").val();
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
+        
+        var flag = false;
+        
+        $('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
+        
         var url="/inOutMiscOrder/list?order_no="+order_no +"&biz_type="+biz_type
                                                 +"&charge_unit="+charge_unit
                                                 +"&pay_unit="+pay_unit

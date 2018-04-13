@@ -456,8 +456,8 @@ public class PickupOrderController extends Controller {
             
         Record rec = Db.findFirst("select count(1) total from (select * from ("+sql+ ") A "+ conditions + ") B");
         logger.debug("total records:" + rec.getLong("total"));
+      
         List<Record> transferOrders = Db.find("select * from ("+sql+ ") A "+ conditions + " order by planning_time desc " + sLimit);
-
         transferOrderListMap = new HashMap();
         transferOrderListMap.put("sEcho", pageIndex);
         transferOrderListMap.put("iTotalRecords", rec.getLong("total"));

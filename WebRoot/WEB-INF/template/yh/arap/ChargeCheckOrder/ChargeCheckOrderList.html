@@ -142,6 +142,7 @@
 									                                    <div class="controls">
 									                                      <% if(shiro.hasPermission("ChargeCheckOrder.create")){%>
 									                                      	<button id="create_searchBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">查询</button>
+									                                      	<button id="resetBtn" class="btn  btn-default" type="button">清空条件</button>
 									                                      	<button id="saveBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">创建对账单</button>
 									                                      	<button id="deleteAllBtn"  type="button" style="float:right" class="btn  btn-danger">批量撤回</button>
 									                                      <%}%>
@@ -266,7 +267,7 @@
                                 
                                  <div class="tab-pane fade" id="search">
                                     <div class="panel-body">
-                            		<form role="form" style="margin: 0 15px;">
+                            		<form role="form" style="margin: 0 15px;" id="searchFrom">
 	                                <div class="row search_panel">
 	                                    <div class="col-lg-4">
 	                                        <div class="form-group">
@@ -349,6 +350,7 @@
                                 <div class="row">
                                  	<div class="col-lg-4">
                                 		<button type="button" class="btn  btn-primary" id="searchBtn">查询</button>
+                                		<button id="resetBtn1" class="btn  btn-default" type="button">清空条件</button>
                                 	</div>
                                 </div>
                             
@@ -414,8 +416,8 @@
 	ChargeCheck.isUpdate = ${chargeOrderUpdate};
 	ChargeCheck.isAffirm = ${chargeOrderAffirm};
 </script>
-<script src="/yh/js/arap/ChargeCheckOrder/list.js"></script>
-<script src="/yh/js/arap/ChargeCheckOrder/createList.js?v=1.5"></script>
+<script src="/yh/js/arap/ChargeCheckOrder/list.js?v=1.0"></script>
+<script src="/yh/js/arap/ChargeCheckOrder/createList.js?v=1.6"></script>
 <script src="/yh/js/plugins/sco/js/sco.message.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
