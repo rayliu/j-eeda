@@ -44,22 +44,21 @@ ifnull(ifnull(tor.receiving_address,tor2.receiving_address),
 							WHERE
 						toi.order_id =ifnull(tor.id,tor2.id)
 						) item_name,
-       ((
+      if((d_o.id is not null),(
 				SELECT
 					IFNULL(sum(doi1.amount),0)
 				FROM
 					delivery_order_item doi1
 				WHERE
 					doi1.delivery_id = d_o.id
-			) +
-(
+			),(
 				SELECT
 					IFNULL(sum(toi.amount),0)
 				FROM
 					transfer_order_item toi
 				WHERE
 					toi.order_id = tor.id
-			)) amount,
+			))  amount,
        (SELECT
 					ROUND(IFNULL(sum(toi.volume),0),2)
 				FROM
@@ -291,93 +290,93 @@ and aci.ref_order_type='收入单']]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<textField pattern="###0.00">
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="667" y="0" width="61" height="20" uuid="0312bf23-f0e1-485a-81eb-3fd9e7a2d9d8"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="667" y="0" width="61" height="25" uuid="0312bf23-f0e1-485a-81eb-3fd9e7a2d9d8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{change_amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="728" y="0" width="74" height="20" uuid="be703e8c-463e-4ffb-85b5-fc0e28f2e6b3"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="728" y="0" width="74" height="25" uuid="be703e8c-463e-4ffb-85b5-fc0e28f2e6b3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="606" y="0" width="61" height="20" uuid="ac8e5aa8-5e75-40a9-8f5f-90dc5b37c3b2"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="606" y="0" width="61" height="25" uuid="ac8e5aa8-5e75-40a9-8f5f-90dc5b37c3b2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="558" y="0" width="48" height="20" uuid="4a2645d7-d344-443f-a385-0a2ec469c4fd"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="558" y="0" width="48" height="25" uuid="4a2645d7-d344-443f-a385-0a2ec469c4fd"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{weight}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="515" y="0" width="43" height="20" uuid="0a623fa2-6260-489d-b26e-20c8ddba608a"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="515" y="0" width="43" height="25" uuid="0a623fa2-6260-489d-b26e-20c8ddba608a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{volume}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="479" y="0" width="36" height="20" uuid="6f6664bc-9029-4374-a747-3b5022d57b03"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="479" y="0" width="36" height="25" uuid="6f6664bc-9029-4374-a747-3b5022d57b03"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="418" y="0" width="61" height="20" uuid="35f11094-7709-4378-bacd-8ffb6e1c28ce"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="418" y="0" width="61" height="25" uuid="35f11094-7709-4378-bacd-8ffb6e1c28ce"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{item_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="274" y="0" width="96" height="20" uuid="05b6f911-f5e2-4408-adb8-acb4e1e37e00"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="274" y="0" width="96" height="25" uuid="05b6f911-f5e2-4408-adb8-acb4e1e37e00"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="false"/>
+					<font fontName="宋体" size="8" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{receipt_address}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="370" y="0" width="48" height="20" uuid="0dc5d022-8c70-4e06-b2d8-cf93df16414d"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="370" y="0" width="48" height="25" uuid="0dc5d022-8c70-4e06-b2d8-cf93df16414d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{to_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="205" y="0" width="69" height="20" uuid="7b6d1626-11a0-42e1-934b-9f37bd6d7fe4"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="205" y="0" width="69" height="25" uuid="7b6d1626-11a0-42e1-934b-9f37bd6d7fe4"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{customer_order_no}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="110" y="0" width="95" height="20" uuid="3111c7ca-4e25-4f76-8ee8-c5d9808c7b09"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="110" y="0" width="95" height="25" uuid="3111c7ca-4e25-4f76-8ee8-c5d9808c7b09"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					<font fontName="宋体" size="9" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{order_no}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="1" y="0" width="35" height="20" uuid="fa5b4aec-36c8-4d73-a951-d86ac16a5f82"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="1" y="0" width="35" height="25" uuid="fa5b4aec-36c8-4d73-a951-d86ac16a5f82"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{count}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy/MM/dd" isBlankWhenNull="true">
-				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="36" y="0" width="74" height="20" uuid="540d89d5-c867-4dd6-8f15-7872211d5bb3"/>
+				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="36" y="0" width="74" height="25" uuid="540d89d5-c867-4dd6-8f15-7872211d5bb3"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
