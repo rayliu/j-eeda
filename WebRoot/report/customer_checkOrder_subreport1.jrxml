@@ -36,11 +36,10 @@ IFNULL(tor.planning_time,tor2.planning_time)  planning_time,
 ifnull(ifnull(tor.receiving_address,tor2.receiving_address),
 						c4.address
 					) receipt_address,
-            (
-							SELECT group_concat(DISTINCT ifnull(p.item_name, ifnull(toi.item_name,'')) SEPARATOR '')
+           (
+							SELECT group_concat(ifnull(toi.item_name,ifnull(toi.item_no,'')) SEPARATOR '')
 							FROM
 								transfer_order_item toi
-							LEFT JOIN product p ON p.id = toi.product_id
 							WHERE
 						toi.order_id =ifnull(tor.id,tor2.id)
 						) item_name,
@@ -87,7 +86,7 @@ ifnull(ifnull(tor.receiving_address,tor2.receiving_address),
 				WHERE
 					rofi.return_order_id = r_o.id
 			) change_amount,
-     r_o.remark,
+   ifnull(r_o.remark,'') remark,
 ifnull(ul.c_name,ul.user_name) as create_name
 FROM
 	arap_charge_item aci
