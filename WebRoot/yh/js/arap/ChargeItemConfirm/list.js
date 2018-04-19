@@ -238,7 +238,6 @@ $(document).ready(function() {
 	        $('#top_form input,#top_form select').each(function(){
 	        	 var textValue = this.value;
 	        	 if(textValue != '' && textValue != null){
-	        		 alert(textValue);
 	        		 flag = true;
 	        		 return;
 	        	 } 
