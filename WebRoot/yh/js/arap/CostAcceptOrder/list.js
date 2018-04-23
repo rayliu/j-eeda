@@ -655,18 +655,18 @@ $(document).ready(function() {
         var endTime = $("#endTime_filter2").val();
         var orderType = $("#orderType").val();
 
-        var flag = false;
-        $('#searchFrom input,#searchFrom select').each(function(){
-        	 var textValue = this.value;
-        	 if(textValue != '' && textValue != null){
-        		 flag = true;
-        		 return;
-        	 } 
-        });
-        if(!flag){
-        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-        	 return false;
-        }
+//        var flag = false;
+//        $('#searchFrom input,#searchFrom select').each(function(){
+//        	 var textValue = this.value;
+//        	 if(textValue != '' && textValue != null){
+//        		 flag = true;
+//        		 return;
+//        	 } 
+//        });
+//        if(!flag){
+//        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+//        	 return false;
+//        }
         
         costAcceptOrderTab.fnSettings().oFeatures.bServerSide = true;
         costAcceptOrderTab.fnSettings().sAjaxSource = "/costAcceptOrder/list?status="+status

@@ -308,18 +308,18 @@ $(document).ready(function() {
         var beginTime = $("#beginTime_filter").val();
         var endTime = $("#endTime_filter").val();
         
-//        var flag = false;
-//        $('#searchForm input,#searchForm select').each(function(){
-//        	 var textValue = this.value;
-//        	 if(textValue != '' && textValue != null){
-//        		 flag = true;
-//        		 return;
-//        	 } 
-//        });
-//        if(!flag){
-//        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-//        	 return false;
-//        }
+        var flag = false;
+        $('#searchForm input,#searchForm select').each(function(){
+        	 var textValue = this.value;
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 return false;
+        }
         
         datatable.fnSettings().oFeatures.bServerSide = true;
         datatable.fnSettings().sAjaxSource = "/costMiscOrder/list?companyName="+customer+"&beginTime="+beginTime+"&endTime="+endTime+"&spName="+sp+"&orderNo="+orderNo+"&status="+status;
