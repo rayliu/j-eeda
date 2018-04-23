@@ -156,12 +156,12 @@ $(document).ready(function() {
    
    
  
-	
-	$("#status_filter").on('change',function(){
-		var status = $("#status_filter").val();
-		chargeNoAcceptOrderTab.fnSettings().sAjaxSource = "/chargeAcceptOrder/list?status="+status;
-		chargeNoAcceptOrderTab.fnDraw(); 
-	});
+//	
+//	$("#status_filter").on('change',function(){
+//		var status = $("#status_filter").val();
+//		chargeNoAcceptOrderTab.fnSettings().sAjaxSource = "/chargeAcceptOrder/list?status="+status;
+//		chargeNoAcceptOrderTab.fnDraw(); 
+//	});
 	
 	
 	//**
@@ -284,24 +284,26 @@ $(document).ready(function() {
 		var customer_filter =  $("#customer_filter").val();
 		var beginTime_filter =  $("#beginTime_filter").val();
 		var endTime_filter =  $("#endTime_filter").val();
+		var status = $("#status_filter").val();
 		
-		var flag = false;
-        $('#searchForm input,#searchForm select').each(function(){
-        	 var textValue = this.value;
-        	 if(textValue != '' && textValue != null){
-        		 flag = true;
-        		 return;
-        	 } 
-        });
-        if(!flag){
-        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-        	 return false;
-        }
+//		var flag = false;
+//        $('#searchForm input,#searchForm select').each(function(){
+//        	 var textValue = this.value;
+//        	 if(textValue != '' && textValue != null){
+//        		 flag = true;
+//        		 return;
+//        	 } 
+//        });
+//        if(!flag){
+//        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+//        	 return false;
+//        }
 		
         chargeNoAcceptOrderTab.fnSettings().oFeatures.bServerSide = true;
         chargeNoAcceptOrderTab.fnSettings().sAjaxSource="/chargeAcceptOrder/list?orderNo_filter="+orderNo_filter
         		                                       +"&customer_filter="+customer_filter
         		                                       +"&beginTime_filter="+beginTime_filter
+        		                                       +"&status="+status
         		                                       +"&endTime_filter="+endTime_filter;
 		chargeNoAcceptOrderTab.fnDraw();
     };

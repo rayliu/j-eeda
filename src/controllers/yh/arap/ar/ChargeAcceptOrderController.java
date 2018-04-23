@@ -70,7 +70,7 @@ public class ChargeAcceptOrderController extends Controller {
         	status = status2 = status3 = status4 = "'部分已复核'";
         	
         }else if(status.equals("部分收款中")){
-        	status = status2 = status3 = status4 = "'部分已付款'";
+        	status = status2 = status3 = status4 = "'部分已收款'";
         }
         
         String pageIndex = getPara("sEcho");
