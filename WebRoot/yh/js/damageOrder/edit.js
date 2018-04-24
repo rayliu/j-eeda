@@ -25,7 +25,7 @@ $(document).ready(function() {
         var cost_items_array=damageOrder.buildCostDetail();
 
         var order = {
-            id: $('#order_id').val(),
+            id:$('#order_id').val(),
             order_no: $('#order_no').val(),  
             customer_id: $('#customer_id').val(),  
             sp_id: $('#sp_id').val(),

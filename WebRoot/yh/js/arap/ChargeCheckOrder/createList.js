@@ -329,22 +329,22 @@ $(document).ready(function() {
     var refreshCreate = function(){
     	$("#searchBtn").attr("disabled",true);
     	$("#searchBtn").text("查询中···");
-    	var customer = $('#customer_filter').val();
-		var beginTime = $("#beginTime_filter").val();
-		var endTime = $("#endTime_filter").val();
-		var planningBeginTime = $("#beginTime_filter1").val();
-		var planningEndTime = $("#endTime_filter1").val();
-		var orderNo = $("#orderNo_filter").val();
-		var customerNo = $("#customerNo_filter").val();
-		var serialNo2 = $("#serialNo_filter2").val();
-		var address = $("#address_filter").val();
-		var status = $("#shouru_filter").val();
+    	var customer = $.trim($('#customer_filter').val());
+		var beginTime = $.trim($("#beginTime_filter").val());
+		var endTime = $.trim($("#endTime_filter").val());
+		var planningBeginTime = $.trim($("#beginTime_filter1").val());
+		var planningEndTime = $.trim($("#endTime_filter1").val());
+		var orderNo = $.trim($("#orderNo_filter").val());
+		var customerNo = $.trim($("#customerNo_filter").val());
+		var serialNo2 = $.trim($("#serialNo_filter2").val());
+		var address = $.trim($("#address_filter").val());
+		var status = $.trim($("#shouru_filter").val());
 		$("#allCheck").attr("checked",false);
 		
 		
 		 var flag = false;
 	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

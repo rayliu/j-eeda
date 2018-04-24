@@ -97,21 +97,21 @@
 	
 	
 function refreshData(){
-	var office =$("#officeSelect").val();
-	var start =$("#start_filter").val();
-	var destination=$("#destination_filter").val();
-	var orderNo = $("#orderNo_filter").val();
-	var departNo_filter = $("#departNo_filter").val();
-	var status = $("#status_filter").val();
-	var sp = $("#sp_filter_input").val();
-	var beginTime = $("#create_stamp_begin_time").val();
-	var endTime = $("#create_stamp_end_time").val();
-	var planBeginTime = $("#planning_stamp_begin_time").val();
-	var planEndTime = $("#planning_stamp_end_time").val();
-	var customer = $("#customer_filter").val();
-	var transfer_type = $("#transfer_type").val();
-	var booking_note_number = $("#booking_note_number").val();
-	var costchebox = $("input[type='checkbox']:checked").val();
+	var office =$.trim($("#officeSelect").val());
+	var start =$.trim($("#start_filter").val());
+	var destination=$.trim($("#destination_filter").val());
+	var orderNo = $.trim($("#orderNo_filter").val());
+	var departNo_filter = $.trim($("#departNo_filter").val());
+	var status = $.trim($("#status_filter").val());
+	var sp = $.trim($("#sp_filter_input").val());
+	var beginTime = $.trim($("#create_stamp_begin_time").val());
+	var endTime = $.trim($("#create_stamp_end_time").val());
+	var planBeginTime = $.trim($("#planning_stamp_begin_time").val());
+	var planEndTime = $.trim($("#planning_stamp_end_time").val());
+	var customer = $.trim($("#customer_filter").val());
+	var transfer_type = $.trim($("#transfer_type").val());
+	var booking_note_number = $.trim($("#booking_note_number").val());
+	var costchebox = $.trim($("input[type='checkbox']:checked").val());
 	if(costchebox!='0'){
 		costchebox = '1';
 	}else{
@@ -120,7 +120,7 @@ function refreshData(){
 	
 	  var flag = false;
       $('#searchForm input,#searchForm select').each(function(){
-      	 var textValue = this.value;
+      	 var textValue = $.trim(this.value);
       	 if(textValue != '' && textValue != null){
       		 if(this.id=="costcheckbox"){
       			 if(textValue=='0'){

@@ -57,16 +57,15 @@ $(document).ready(function() {
     })
 
    var searchData=function(){
-        var orderNo = $("#order_no").val();
-        var sp_id=$("#sp_id").val();
-        var status_filter=$("#status_filter").val();
-        var beginTime = $("#create_stamp_begin_time").val();
-        var endTime = $("#create_stamp_end_time").val();
+        var orderNo = $.trim($("#order_no").val());
+        var sp_id=$.trim($("#sp_id").val());
+        var status_filter=$.trim($("#status_filter").val());
+        var beginTime =$.trim($("#create_stamp_begin_time").val());
+        var endTime = $.trim($("#create_stamp_end_time").val());
         
         var flag = false;
         $('#searchForm input,#searchForm select').each(function(){
-        	 var textValue = this.value;
-        	
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

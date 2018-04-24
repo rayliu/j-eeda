@@ -136,17 +136,17 @@ $(document).ready(function() {
     });
     
     var refreshData=function(){
-        var charge_unit=$("#charge_unit_filter").val();
-        var pay_unit=$("#pay_unit_filter").val();
-        var order_no = $("#order_no_filter").val();
-        var biz_type = $("#biz_type_filter").val();
-        var beginTime = $("#beginTime_filter").val();
-        var endTime = $("#endTime_filter").val();
+        var charge_unit=$.trim($("#charge_unit_filter").val());
+        var pay_unit=$.trim($("#pay_unit_filter").val());
+        var order_no = $.trim($("#order_no_filter").val());
+        var biz_type = $.trim($("#biz_type_filter").val());
+        var beginTime = $.trim($("#beginTime_filter").val());
+        var endTime = $.trim($("#endTime_filter").val());
         
         var flag = false;
         
         $('#searchForm input,#searchForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

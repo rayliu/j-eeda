@@ -190,25 +190,25 @@ $(document).ready(function() {
         });
         
        var refreshData = function(){
-        	var orderNo = $('#orderNo_filter').val();
-    		var sp = $("#sp_id_input").val();
-    		var no = $("#operation_number").val();
-    		var car_out_time_begin_time = $("#car_out_time_begin_time").val();
-    		var car_out_time_end_time = $("#car_out_time_end_time").val();
-    		var status = $("#order_status_filter").val();
-    		var type = $("#order_type_filter").val();
-    		var booking_note_number = $("#booking_note_number").val();
-    		var route_from =$("#route_from").val();
-    		var route_to = $("#route_to").val();
-    		var customer_name = $("#customer_id_input").val();
-    		var plantime_begin_time = $("#plantime_begin_time").val();
-    		var plantime_end_time = $("#plantime_end_time").val();
-    		var serial_no = $("#serial_no").val();
-    		var sign_no = $("#sign_no").val();
+        	var orderNo = $.trim($('#orderNo_filter').val());
+    		var sp = $.trim($("#sp_id_input").val());
+    		var no = $.trim($("#operation_number").val());
+    		var car_out_time_begin_time = $.trim($("#car_out_time_begin_time").val());
+    		var car_out_time_end_time = $.trim($("#car_out_time_end_time").val());
+    		var status = $.trim($("#order_status_filter").val());
+    		var type = $.trim($("#order_type_filter").val());
+    		var booking_note_number = $.trim($("#booking_note_number").val());
+    		var route_from =$.trim($("#route_from").val());
+    		var route_to = $.trim($("#route_to").val());
+    		var customer_name = $.trim($("#customer_id_input").val());
+    		var plantime_begin_time = $.trim($("#plantime_begin_time").val());
+    		var plantime_end_time = $.trim($("#plantime_end_time").val());
+    		var serial_no = $.trim($("#serial_no").val());
+    		var sign_no = $.trim($("#sign_no").val());
     		
     		 var flag = false;
  	        $('#searchForm input,#searchForm select').each(function(){
- 	        	 var textValue = this.value;
+ 	        	 var textValue = $.trim(this.value);
  	        	 if(textValue != '' && textValue != null){
  	        		 flag = true;
  	        		 return;

@@ -88,17 +88,17 @@ $(document).ready(function() {
     });
 
     var refreshData= function(){
-        var orderNo = $("#orderNo").val();
-        var status = $("#status").val();
-        var auditName = $("#auditName").val();
-        var accountName = $("#account_name").val();
-        var office_name = $("#office_name").val();
-        var begin_time = $("#create_time_begin_time").val();
-        var end_time = $("#create_time_end_time").val();
+        var orderNo = $.trim($("#orderNo").val());
+        var status = $.trim($("#status").val());
+        var auditName = $.trim($("#auditName").val());
+        var accountName = $.trim($("#account_name").val());
+        var office_name = $.trim($("#office_name").val());
+        var begin_time = $.trim($("#create_time_begin_time").val());
+        var end_time = $.trim($("#create_time_end_time").val());
         
         var flag = false;
         $('#searchForm input,#searchForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

@@ -517,6 +517,7 @@ public class DepartOrderController extends Controller {
     		renderJson(map);
         }
 	}
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMISSION_DO_CREATE})
 	public void add() {
 

@@ -86,18 +86,18 @@ $(document).ready(function() {
     
     
     $("#queryBtn").on('click', function () {
-    	var beginTime=$("#beginTime").val();
-    	var endTime=$("#endTime").val();
-    	var serial_no = $("#serial_no").val();
-    	var sign_no = $("#sign_no").val();
-    	var order_no = $("#order_no").val();
-    	var customer_id = $("#customer_id").val();
-    	var customer_order_no = $("#customer_order_no").val();
-    	var item_no = $("#item_no").val();
+    	var beginTime=$.trim($("#beginTime").val());
+    	var endTime=$.trim($("#endTime").val());
+    	var serial_no =$.trim($("#serial_no").val());
+    	var sign_no = $.trim($("#sign_no").val());
+    	var order_no = $.trim($("#order_no").val());
+    	var customer_id = $.trim($("#customer_id").val());
+    	var customer_order_no = $.trim($("#customer_order_no").val());
+    	var item_no = $.trim($("#item_no").val());
     	
     	var flag = false;
         $('#statusForm input,#statusForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

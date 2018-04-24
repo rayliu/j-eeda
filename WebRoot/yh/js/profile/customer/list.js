@@ -89,15 +89,15 @@ $(document).ready(function() {
     });
    
    var refreshData=function(){
-	   var COMPANY_NAME = $("#COMPANY_NAME").val();
-     	var CONTACT_PERSON = $("#CONTACT_PERSON").val();
-     	var RECEIPT = $("#RECEIPT").val();
-     	var ABBR = $("#ABBR").val();    	
-     	var ADDRESS = $("#ADDRESS").val();
-     	var LOCATION = $("#LOCATION").val();
+	   var COMPANY_NAME = $.trim($("#COMPANY_NAME").val());
+     	var CONTACT_PERSON = $.trim($("#CONTACT_PERSON").val());
+     	var RECEIPT = $.trim($("#RECEIPT").val());
+     	var ABBR = $.trim($("#ABBR").val());    	
+     	var ADDRESS = $.trim($("#ADDRESS").val());
+     	var LOCATION = $.trim($("#LOCATION").val());
      	 var flag = false;
 	        $('#searchForm input,#searchForm select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

@@ -82,12 +82,12 @@ $(document).ready(function() {
     });
 
     $('#query_btn').click(function(){
-        var order_no = $('#order_no_filter').val();
-        var status = $('#status_filter').val();
-        var sp_name = $('#sp_filter2').val();
-        var receiverName = $('#receiver_filter').val();
-        var beginTime = $('#beginTime_filter').val();
-        var endTime = $('#endTime_filter').val();
+        var order_no = $.trim($('#order_no_filter').val());
+        var status = $.trim($('#status_filter').val());
+        var sp_name = $.trim($('#sp_filter2').val());
+        var receiverName = $.trim($('#receiver_filter').val());
+        var beginTime = $.trim($('#beginTime_filter').val());
+        var endTime = $.trim($('#endTime_filter').val());
         datatable.fnSettings().sAjaxSource = "/costConfirm/list?orderNo="+order_no
             +"&status="+status
             +"&sp_name="+sp_name

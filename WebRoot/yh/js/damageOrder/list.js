@@ -53,22 +53,22 @@ $(document).ready(function() {
     })
 
    var searchData=function(){
-        var orderNo = $("#order_no").val();
-        var customer_id=$("#customer_id").val();
-        var sp_id=$("#sp_id").val();
+        var orderNo = $.trim($("#order_no").val());
+        var customer_id=$.trim($("#customer_id").val());
+        var sp_id=$.trim($("#sp_id").val());
         
-        var order_type = $("#order_type").val();
-        var biz_order_no = $('#biz_order_no').val();
-        var process_status = $('#process_status').val();
+        var order_type = $.trim($("#order_type").val());
+        var biz_order_no = $.trim($('#biz_order_no').val());
+        var process_status = $.trim($('#process_status').val());
 
-        var accident_type = $('#accident_type').val();
+        var accident_type = $.trim($('#accident_type').val());
 
-        var beginTime = $("#start_date").val();
-        var endTime = $("#end_date").val();
+        var beginTime = $.trim($("#start_date").val());
+        var endTime = $.trim($("#end_date").val());
         
         var flag = false;
         $('#orderForm input,#orderForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

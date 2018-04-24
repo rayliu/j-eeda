@@ -126,16 +126,16 @@ $(document).ready(function() {
     });
 	
     var refreshCreateList = function(){
-    	var companyName = $('#customer_filter').val();
-		var beginTime = $("#beginTime_filter").val();
-		var endTime = $("#endTime_filter").val();
-		var orderNo = $("#orderNo_filter").val();
-		var status = $("#status_filter").val();
-		var office = $("#office_filter").val();
+    	var companyName = $.trim($('#customer_filter').val());
+		var beginTime = $.trim($("#beginTime_filter").val());
+		var endTime = $.trim($("#endTime_filter").val());
+		var orderNo = $.trim($("#orderNo_filter").val());
+		var status = $.trim($("#status_filter").val());
+		var office = $.trim($("#office_filter").val());
 		
 		 var flag = false;
 	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

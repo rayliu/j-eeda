@@ -90,26 +90,28 @@
     });
     
     var refreshData=function(){
-    	var sp_filter = $("#sp_filter").val();
-    	var carNo = $("#carNo_filter").val();
-    	var take = $("#take_filter").val();
-    	var status = $("#status_filter").val();
-    	var office =$("#officeSelect").val();
-    	var customer_filter =$("#customer_filter").val();
-    	var orderNo = $("#orderNo_filter").val();
-		var departNo_filter = $("#departNo_filter").val();
-		var beginTime = $("#turnout_time_begin_time").val();
-		var endTime = $("#turnout_time_end_time").val();
-		var planningBeginTime = $("#planning_time_begin_time").val();
-		var planningEndTime = $("#planning_time_end_time").val();
+    	var sp_filter = $.trim($("#sp_filter").val());
+    	var carNo = $.trim($("#carNo_filter").val());
+    	var take = $.trim($("#take_filter").val());
+    	var status = $.trim($("#status_filter").val());
+    	var office =$.trim($("#officeSelect").val());
+    	var customer_filter =$.trim($("#customer_filter").val());
+    	var orderNo = $.trim($("#orderNo_filter").val());
+		var departNo_filter = $.trim($("#departNo_filter").val());
+		var beginTime = $.trim($("#turnout_time_begin_time").val());
+		var endTime = $.trim($("#turnout_time_end_time").val());
+		var planningBeginTime = $.trim($("#planning_time_begin_time").val());
+		var planningEndTime = $.trim($("#planning_time_end_time").val());
 		
 		 var flag = false;
 	        $('#searchForm input,#searchForm select').each(function(){
-	        	 var textValue = this.value;
-	        	 if(textValue != '' && textValue != null){
-	        		 flag = true;
-	        		 return;
-	        	 } 
+	        	if(this.id !="customer_id"){
+	        		var textValue = $.trim(this.value);
+		        	 if(textValue != '' && textValue != null){
+		        		 flag = true;
+		        		 return;
+		        	 } 
+	        	}
 	        });
 	        if(!flag){
 	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);

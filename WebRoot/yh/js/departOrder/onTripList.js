@@ -338,25 +338,25 @@ $(document).ready(function() {
 	
 	
 	var searchMassage = function(){
-		var office =$("#officeSelect").val();
-    	var start =$("#start_filter").val();
-    	var booking_note_number =$("#booking_note_number").val();
-    	var cus_order_no =$("#cus_order_no").val();
-    	var end =$("#end_filter").val();
-    	var customer =$("#customer_filter").val();
-    	var orderNo = $("#orderNo_filter").val();
-    	var departNo_filter = $("#departNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#departure_time_begin_time").val();
-    	var endTime = $("#departure_time_end_time").val();
-    	var planBeginTime = $("#planning_time_begin_time").val();
-    	var planEndTime = $("#planning_time_end_time").val();
-    	var office_id=$("#office_id").val();
+		var office =$.trim($("#officeSelect").val());
+    	var start =$.trim($("#start_filter").val());
+    	var booking_note_number =$.trim($("#booking_note_number").val());
+    	var cus_order_no =$.trim($("#cus_order_no").val());
+    	var end =$.trim($("#end_filter").val());
+    	var customer =$.trim($("#customer_filter").val());
+    	var orderNo = $.trim($("#orderNo_filter").val());
+    	var departNo_filter = $.trim($("#departNo_filter").val());
+    	var status = $.trim($("#status_filter").val());
+    	var sp = $.trim($("#sp_filter").val());
+    	var beginTime = $.trim($("#departure_time_begin_time").val());
+    	var endTime = $.trim($("#departure_time_end_time").val());
+    	var planBeginTime = $.trim($("#planning_time_begin_time").val());
+    	var planEndTime = $.trim($("#planning_time_end_time").val());
+    	var office_id=$.trim($("#office_id").val());
     	
     	 var flag = false;
     	$('#searchForm input,#searchForm select').each(function(){
-       	 var textValue = this.value;
+       	 var textValue = $.trim(this.value);
        	 if(textValue != '' && textValue != null){
        		 flag = true;
        		 return;

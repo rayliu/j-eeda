@@ -142,23 +142,23 @@ $(document).ready(function() {
 	});
     
     var refreshData=function(){
-    	var order_type=$("#order_type_filter").val();
-    	var plantime=$("#plantime").val();
-    	var arrivarltime=$("#arrivaltime").val();
-    	var customer_order_no=$("#customer_order_no_filter").val();
-    	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var sp = $("#sp_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var officeName = $("#officeSelect").val();
+    	var order_type=$.trim($("#order_type_filter").val());
+    	var plantime=$.trim($("#plantime").val());
+    	var arrivarltime=$.trim($("#arrivaltime").val());
+    	var customer_order_no=$.trim($("#customer_order_no_filter").val());
+    	var orderNo = $.trim($("#orderNo_filter").val());
+    	var status = $.trim($("#status_filter").val());
+    	var address = $.trim($("#address_filter").val());
+    	var customer = $.trim($("#customer_filter").val());
+    	var sp = $.trim($("#sp_filter").val());
+    	var beginTime = $.trim($("#beginTime_filter").val());
+    	var endTime = $.trim($("#endTime_filter").val());
+    	var officeName = $.trim($("#officeSelect").val());
     	
     	  var flag = false;
           $('#searchForm input,#searchForm select').each(function(){
         	  if(this.id !="order_type_filter"){
-        		  var textValue = this.value;
+        		  var textValue = $.trim(this.value);
                	 if(textValue != '' && textValue != null){
                		 flag = true;
                		 return;

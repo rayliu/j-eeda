@@ -203,17 +203,17 @@ $(document).ready(function() {
 	
 	
     var refreshData=function(){
-		var status = $("#status").val();
-		var driver = $("#driver").val();
-		var car_no = $("#car_no").val();
-		var transferOrderNo = $("#transferOrderNo").val();
-		var create_stamp = $("#create_stamp").val();
-		var office = $("#office").val();
-		var orderNo = $("#orderNo").val();
+		var status = $.trim($("#status").val());
+		var driver = $.trim($("#driver").val());
+		var car_no = $.trim($("#car_no").val());
+		var transferOrderNo = $.trim($("#transferOrderNo").val());
+		var create_stamp = $.trim($("#create_stamp").val());
+		var office = $.trim($("#office").val());
+		var orderNo = $.trim($("#orderNo").val());
 		
 		 var flag = false;
 	        $('#searchForm input,#searchForm select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;
@@ -388,17 +388,17 @@ $(document).ready(function() {
 	//行车单查询各种搜索
 	refreshData1=function () {
 		travellingCraneReceipts_table.fnSettings().oFeatures.bServerSide = true; 
-		var status = $("#carSummary_status").val();
-		var car_no = $("#carSummary_car_no").val();
-		var driver = $("#carSummary_driver").val();
-		var transferOrderNo = $("#carSummary_transfer_order").val();
-		var order_no = $("#carSummary_pickup_order").val();
-		var start_data = $("#carSummary_start_data").val();
-		var office_id=$("#carSummary_office").val();
+		var status = $.trim($("#carSummary_status").val());
+		var car_no = $.trim($("#carSummary_car_no").val());
+		var driver = $.trim($("#carSummary_driver").val());
+		var transferOrderNo = $.trim($("#carSummary_transfer_order").val());
+		var order_no = $.trim($("#carSummary_pickup_order").val());
+		var start_data = $.trim($("#carSummary_start_data").val());
+		var office_id=$.trim($("#carSummary_office").val());
 		
 		 var flag = false;
 	        $('#searchForm1 input,#searchForm1 select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

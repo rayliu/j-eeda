@@ -195,16 +195,16 @@ $(document).ready(function() {
     });
     
     var find = function(){
-    	var source_order = $('#source_order').val();
-    	var orderNo = $('#orderNo').val();
-    	var beginTime = $('#beginTime').val();
-    	var endTime = $('#endTime').val();
-    	var bankName = $('#bankName').val();
-    	var money = $('#money').val();
+    	var source_order = $.trim($('#source_order').val());
+    	var orderNo = $.trim($('#orderNo').val());
+    	var beginTime = $.trim($('#beginTime').val());
+    	var endTime = $.trim($('#endTime').val());
+    	var bankName = $.trim($('#bankName').val());
+    	var money =$.trim( $('#money').val());
     	
     	 var flag = false;
 	        $('#searchForm1 input,#searchForm1 select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

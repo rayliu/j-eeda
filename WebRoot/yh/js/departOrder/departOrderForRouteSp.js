@@ -132,18 +132,18 @@ $(document).ready(function() {
     });
     
     var refreshData = function(){
-    	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var routeFrom = $("#routeFrom_filter").val();
-    	var routeTo = $("#routeTo_filter").val();
+    	var orderNo = $.trim($("#orderNo_filter").val());
+    	var status = $.trim($("#status_filter").val());
+    	var address = $.trim($("#address_filter").val());
+    	var customer = $.trim($("#customer_filter").val());
+    	var beginTime = $.trim($("#beginTime_filter").val());
+    	var endTime = $.trim($("#endTime_filter").val());
+    	var routeFrom = $.trim($("#routeFrom_filter").val());
+    	var routeTo = $.trim($("#routeTo_filter").val());
     	
    	 var flag = false;
      $('#searchFrom input,#searchFrom select').each(function(){
-     	 var textValue = this.value;
+     	 var textValue = $.trim(this.value);
      	 if(textValue != '' && textValue != null){
      		 flag = true;
      		 return;

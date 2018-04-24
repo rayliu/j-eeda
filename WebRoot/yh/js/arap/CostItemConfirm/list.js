@@ -316,26 +316,26 @@ $(document).ready(function() {
        var refreshData = function(){
     	    $("#searchButton").attr("disabled",true);
        		$("#searchButton").text("查询中···");
-        	var orderNo = $('#orderNo_filter').val().trim();
-    		var sp = $("#sp_id_input").val().trim();
-    		var no = $("#operation_number").val().trim();
-    		var beginTime = $("#beginTime_filter").val().trim();
-    		var endTime = $("#endTime_filter").val().trim();
-    		var status = $("#order_status_filter").val().trim();
-    		var type = $("#order_type_filter").val().trim();
-    		var booking_note_number = $("#booking_note_number").val().trim();
-    		var route_from =$("#route_from").val().trim();
-    		var route_to = $("#route_to").val().trim();
-    		var customer_id = $("#customer_id").val().trim();
-    		var customer_name = $("#customer_id_input").val().trim();
-    		var plantime = $("#plantime").val().trim();
-    		var arrivaltime = $("#arrivaltime").val().trim();
-    		var serial_no = $("#serial_no").val().trim();
-    		var sign_no = $("#sign_no").val().trim();
+        	var orderNo = $.trim($('#orderNo_filter').val());
+    		var sp = $.trim($("#sp_id_input").val());
+    		var no = $.trim($("#operation_number").val());
+    		var beginTime = $.trim($("#beginTime_filter").val());
+    		var endTime = $.trim($("#endTime_filter").val());
+    		var status = $.trim($("#order_status_filter").val());
+    		var type = $.trim($("#order_type_filter").val());
+    		var booking_note_number = $.trim($("#booking_note_number").val());
+    		var route_from =$.trim($("#route_from").val());
+    		var route_to = $.trim($("#route_to").val());
+    		var customer_id = $.trim($("#customer_id").val());
+    		var customer_name = $.trim($("#customer_id_input").val());
+    		var plantime = $.trim($("#plantime").val());
+    		var arrivaltime = $.trim($("#arrivaltime").val());
+    		var serial_no = $.trim($("#serial_no").val());
+    		var sign_no = $.trim($("#sign_no").val());
     		
     		var flag = false;
 	        $('#searchFrom input,#searchFrom select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

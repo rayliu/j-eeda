@@ -223,20 +223,20 @@ $(document).ready(function() {
     	$('#searchBtn').attr('disabled',true);
     	$('#searchBtn').text('查询中...');
     	  //获取所有的条件
-        var customer = $('#customer_filter').val();
-		var beginTime = $("#beginTime_filter").val();
-		var endTime = $("#endTime_filter").val();
-		var orderNofilter = $("#orderNo_filter").val();
-		var transferOrderNo = $("#transfer_Order_filter").val();
-		var serial_no = $("#serial_no").val();
-		var ref_no = $("#ref_no").val();
-		var customerNo = $("#customerNo_filter").val();
-		var start = $("#start_filter").val();
-		var status = $("#shouru_filter").val();
+        var customer = $.trim($('#customer_filter').val());
+		var beginTime = $.trim($("#beginTime_filter").val());
+		var endTime = $.trim($("#endTime_filter").val());
+		var orderNofilter = $.trim($("#orderNo_filter").val());
+		var transferOrderNo = $.trim($("#transfer_Order_filter").val());
+		var serial_no = $.trim($("#serial_no").val());
+		var ref_no = $.trim($("#ref_no").val());
+		var customerNo = $.trim($("#customerNo_filter").val());
+		var start = $.trim($("#start_filter").val());
+		var status = $.trim($("#shouru_filter").val());
 		
 		 var flag = false;
 	        $('#top_form input,#top_form select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

@@ -283,23 +283,23 @@ $(document).ready(function() {
     });
     
     var refreshData=function () {
-      var deliveryNo = $("#deliveryNo_filter").val();
-      var customer = $("#customer_filter").val();
-      var transferorderNo = $("#transferorderNo_filter").val();
-      var sp = $("#sp_filter").val();
-      var route_from = $("#route_from").val();
-      var route_to = $("#route_to").val();
-      var beginTime = $("#beginTime_filter").val();
-      var endTime = $("#endTime_filter").val();
-      var arrive_stamp_begin_time = $("#arrive_stamp_begin_time").val();
-      var arrive_stamp_end_time = $("#arrive_stamp_end_time").val();
-      var status  = $("#status").val();
-      var serial_no  = $("#serial_no").val();
-      var deliveryOffice  = $("#deliveryOffice").val();
+      var deliveryNo = $.trim($("#deliveryNo_filter").val());
+      var customer = $.trim($("#customer_filter").val());
+      var transferorderNo = $.trim($("#transferorderNo_filter").val());
+      var sp = $.trim($("#sp_filter").val());
+      var route_from = $.trim($("#route_from").val());
+      var route_to = $.trim($("#route_to").val());
+      var beginTime = $.trim($("#beginTime_filter").val());
+      var endTime = $.trim($("#endTime_filter").val());
+      var arrive_stamp_begin_time = $.trim($("#arrive_stamp_begin_time").val());
+      var arrive_stamp_end_time = $.trim($("#arrive_stamp_end_time").val());
+      var status  = $.trim($("#status").val());
+      var serial_no  = $.trim($("#serial_no").val());
+      var deliveryOffice  = $.trim($("#deliveryOffice").val());
       
       var flag = false;
   	$('#searchForm input,#searchForm select').each(function(){
-     	 var textValue = this.value;
+     	 var textValue =$.trim(this.value);
      	 if(textValue != '' && textValue != null){
      		 flag = true;
      		 return;

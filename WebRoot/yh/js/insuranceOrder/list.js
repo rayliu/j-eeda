@@ -119,17 +119,17 @@
             $('#searchForm')[0].reset();
         });
         var refreshData= function () {
-			var orderNo = $("#orderNo_filter").val();
-			var departNo_filter = $("#departNo_filter").val();
-			var beginTime = $("#beginTime_filter").val();
-			var customer = $("#customer_filter").val();
-			var endTime = $("#endTime_filter").val();
-			var planningEndTime = $("#planning_end_filter").val();
-			var planningBeginTime = $("#planning_begin_filter").val();
+			var orderNo = $.trim($("#orderNo_filter").val());
+			var departNo_filter = $.trim($("#departNo_filter").val());
+			var beginTime = $.trim($("#beginTime_filter").val());
+			var customer = $.trim($("#customer_filter").val());
+			var endTime = $.trim($("#endTime_filter").val());
+			var planningEndTime = $.trim($("#planning_end_filter").val());
+			var planningBeginTime = $.trim($("#planning_begin_filter").val());
 			
 			var flag = false;
 	        $('#searchForm input,#searchForm select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

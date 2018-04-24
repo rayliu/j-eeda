@@ -125,19 +125,19 @@ $(document).ready(function() {
     
     
     $("#queryBtn").on('click', function () {
-    	var beginTime = $("#start_date").val();
-        var endTime = $("#end_date").val();
-    	var order_no = $("#order_no").val();
-    	var customer_id = $("#customer_id").val();
-    	var routeTo = $("#routeTo").val();
-    	var serialNo = $("#serialNo").val();
-    	var receive = $("[name=receive]").prop('checked');
-    	var noreceive = $("[name=noreceive]").prop('checked');
-    	var inventory = $("[name=inventory]").prop('checked');
+    	var beginTime = $.trim($("#start_date").val());
+        var endTime = $.trim($("#end_date").val());
+    	var order_no = $.trim($("#order_no").val());
+    	var customer_id = $.trim($("#customer_id").val());
+    	var routeTo = $.trim($("#routeTo").val());
+    	var serialNo = $.trim($("#serialNo").val());
+    	var receive = $.trim($("[name=receive]").prop('checked'));
+    	var noreceive = $.trim($("[name=noreceive]").prop('checked'));
+    	var inventory = $.trim($("[name=inventory]").prop('checked'));
     	
     	 var flag = false;
 	        $('#statusForm input,#statusForm select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 if(this.name == "receive"){
 	        			 return true;

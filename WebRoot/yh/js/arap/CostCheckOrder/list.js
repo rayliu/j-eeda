@@ -154,14 +154,14 @@ $(document).ready(function() {
         
         //查询
         var refreshData = function(){
-        	var order_no = $("#order_no").val();
-          	var status = $("#status_filter").val();
-        	var sp = $("#sp_id1_input").val();
-        	var serial_no = $("#serial_no_filter").val();
+        	var order_no = $.trim($("#order_no").val());
+          	var status = $.trim($("#status_filter").val());
+        	var sp = $.trim($("#sp_id1_input").val());
+        	var serial_no = $.trim($("#serial_no_filter").val());
         	
         	var flag = false;
             $('#costCheckOrderItemForm input,#costCheckOrderItemForm select').each(function(){
-            	 var textValue = this.value;
+            	 var textValue = $.trim(this.value);
             	 if(textValue != '' && textValue != null){
             		 flag = true;
             		 return;

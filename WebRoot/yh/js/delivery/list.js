@@ -201,33 +201,33 @@ $(document).ready(function() {
     });
 
     var refreshData=function(){
-    	var orderNo_filter = $("#orderNo_filter").val();
-      	var transfer_filter = $("#transfer_filter").val();
-    	var status_filter = $("#status_filter").val();
-      	var customer_filter = $("#customer_filter").val();    	
-      	var sp_filter = $("#sp_filter").val();
-      	var driver_name = $("#driver_name").val();
-      	var beginTime_filter = $("#create_stamp_begin_time").val();
-      	var endTime_filter = $("#create_stamp_end_time").val();
-      	var plan_beginTime_filter = $("#planning_stamp_begin_time").val();
-      	var plan_endTime_filter = $("#planning_stamp_end_time").val();
+    	var orderNo_filter = $.trim($("#orderNo_filter").val());
+      	var transfer_filter = $.trim($("#transfer_filter").val());
+    	var status_filter = $.trim($("#status_filter").val());
+      	var customer_filter = $.trim($("#customer_filter").val());    	
+      	var sp_filter = $.trim($("#sp_filter").val());
+      	var driver_name = $.trim($("#driver_name").val());
+      	var beginTime_filter = $.trim($("#create_stamp_begin_time").val());
+      	var endTime_filter = $.trim($("#create_stamp_end_time").val());
+      	var plan_beginTime_filter = $.trim($("#planning_stamp_begin_time").val());
+      	var plan_endTime_filter = $.trim($("#planning_stamp_end_time").val());
       	
-      	var business_stamp_begin_time = $("#business_stamp_begin_time").val();
-      	var business_stamp_end_time = $("#business_stamp_end_time").val();
-      	var depart_stamp_begin_time = $("#depart_stamp_begin_time").val();
-      	var depart_stamp_end_time = $("#depart_stamp_end_time").val();
-      	var trans_office = $("#trans_office").val();
+      	var business_stamp_begin_time = $.trim($("#business_stamp_begin_time").val());
+      	var business_stamp_end_time = $.trim($("#business_stamp_end_time").val());
+      	var depart_stamp_begin_time = $.trim($("#depart_stamp_begin_time").val());
+      	var depart_stamp_end_time = $.trim($("#depart_stamp_end_time").val());
+      	var trans_office = $.trim($("#trans_office").val());
       	
-      	var warehouse = $("#warehouse").val();
-      	var serial_no = $("#serial_no").val();
-      	var delivery_no = $("#delivery_no").val();
-      	var address_filter = $("#address_filter").val();
-      	var office_filter = $("#deliveryOffice").val();
-      	var warehouse_filter = $("#deliveryWarehouse").val();
+      	var warehouse = $.trim($("#warehouse").val());
+      	var serial_no = $.trim($("#serial_no").val());
+      	var delivery_no = $.trim($("#delivery_no").val());
+      	var address_filter = $.trim($("#address_filter").val());
+      	var office_filter = $.trim($("#deliveryOffice").val());
+      	var warehouse_filter = $.trim($("#deliveryWarehouse").val());
       	
       	 var flag = false;
      	$('#searchForm input,#searchForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

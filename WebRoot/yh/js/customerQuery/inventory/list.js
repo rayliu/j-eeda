@@ -70,11 +70,11 @@ $(document).ready(function() {
     })
 
    var searchData=function(){
-        var warehouse_id=$("#warehouse_id").val();
-        var item_no=$("#item_no").val();
+        var warehouse_id=$.trim($("#warehouse_id").val());
+        var item_no=$.trim($("#item_no").val());
    	 var flag = false;
      $('#orderForm input,#orderForm select').each(function(){
-     	 var textValue = this.value;
+     	 var textValue = $.trim(this.value);
      	 if(textValue != '' && textValue != null){
      		 flag = true;
      		 return;

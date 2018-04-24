@@ -62,19 +62,19 @@ $(document).ready(function() {
     
     
     var refreshList = function (){
-    	var companyName = $('#select_customer_filter').val();
-		var beginTime = $("#kaishi_filter").val();
-		var endTime = $("#jieshu_filter").val();
-		var orderNo = $("#select_orderNo_filter").val();
-		var status = $("#select_status_filter").val();
-		var office = $("#select_office_filter").val();
-		var dzOrderNo = $("#dzOrderNo_filter").val();
-		var sp = $("#sp_filter").val();
-		var address = $("#address_filter").val();
+    	var companyName = $.trim($('#select_customer_filter').val());
+		var beginTime = $.trim($("#kaishi_filter").val());
+		var endTime = $.trim($("#jieshu_filter").val());
+		var orderNo = $.trim($("#select_orderNo_filter").val());
+		var status = $.trim($("#select_status_filter").val());
+		var office = $.trim($("#select_office_filter").val())
+		var dzOrderNo = $.trim($("#dzOrderNo_filter").val());
+		var sp = $.trim($("#sp_filter").val());
+		var address = $.trim($("#address_filter").val());
 		
 		var flag = false;
         $('#searchFrom input,#searchFrom select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

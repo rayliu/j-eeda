@@ -280,11 +280,11 @@ $(document).ready(function() {
 	
 	//未复核数据条件查询
 	var refreshData=function(){
-		var orderNo_filter =  $("#orderNo_filter").val();
-		var customer_filter =  $("#customer_filter").val();
-		var beginTime_filter =  $("#beginTime_filter").val();
-		var endTime_filter =  $("#endTime_filter").val();
-		var status = $("#status_filter").val();
+		var orderNo_filter =  $.trim($("#orderNo_filter").val());
+		var customer_filter =  $.trim($("#customer_filter").val());
+		var beginTime_filter =  $.trim($("#beginTime_filter").val());
+		var endTime_filter =  $.trim($("#endTime_filter").val());
+		var status = $.trim($("#status_filter").val());
 		
 //		var flag = false;
 //        $('#searchForm input,#searchForm select').each(function(){
@@ -320,16 +320,16 @@ $(document).ready(function() {
     
   //已申请数据条件查询
 	var refreshData2=function(){
-		var orderNo_filter =  $("#orderNo_filter2").val();
-		var customer_filter =  $("#customer_filter2").val();
-		var beginTime_filter =  $("#beginTime_filter2").val();
-		var endTime_filter =  $("#endTime_filter2").val();
-		var status_filter =  $("#status_filter8").val();
-		var applicationOrderNo =  $("#applicationOrderNo").val();
+		var orderNo_filter =  $.trim($("#orderNo_filter2").val());
+		var customer_filter =  $.trim($("#customer_filter2").val());
+		var beginTime_filter =  $.trim($("#beginTime_filter2").val());
+		var endTime_filter =  $.trim($("#endTime_filter2").val());
+		var status_filter =  $.trim($("#status_filter8").val());
+		var applicationOrderNo =  $.trim($("#applicationOrderNo").val());
 
 		var flag = false;
         $('#searchForm1 input,#searchForm1 select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value );
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

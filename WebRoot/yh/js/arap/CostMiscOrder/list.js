@@ -301,16 +301,16 @@ $(document).ready(function() {
     });
 	
     var refreshData=function(){
-        var orderNo = $("#orderNo_filter").val();//单号
-        var status = $("#status_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#beginTime_filter").val();
-        var endTime = $("#endTime_filter").val();
+        var orderNo =$.trim($("#orderNo_filter").val());//单号
+        var status = $.trim($("#status_filter").val());
+        var customer = $.trim($("#customer_filter").val());
+        var sp = $.trim($("#sp_filter").val());
+        var beginTime = $.trim($("#beginTime_filter").val());
+        var endTime = $.trim($("#endTime_filter").val());
         
         var flag = false;
         $('#searchForm input,#searchForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

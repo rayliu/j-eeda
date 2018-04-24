@@ -197,16 +197,16 @@ $(document).ready(function() {
   });
 
   var search = function(){
-    var contractName_filter = $("#contractName_filter").val();
-    var contactPerson_filter = $("#contactPerson_filter").val();
-    var periodFrom_filter = $("#periodFrom_filter").val();
-    var companyName_filter = $("#companyName_filter").val();
-    var phone_filter = $("#phone_filter").val();   
-    var periodTo_filter = $("#periodTo_filter").val();
+    var contractName_filter = $.trim($("#contractName_filter").val());
+    var contactPerson_filter = $.trim($("#contactPerson_filter").val());
+    var periodFrom_filter = $.trim($("#periodFrom_filter").val());
+    var companyName_filter = $.trim($("#companyName_filter").val());
+    var phone_filter = $.trim($("#phone_filter").val());   
+    var periodTo_filter = $.trim($("#periodTo_filter").val());
     
     var flag = false;
     $('#searchForm input,#searchForm select').each(function(){
-    	 var textValue = this.value;
+    	 var textValue = $.trim(this.value);
     	 if(textValue != '' && textValue != null){
     		 flag = true;
     		 return;

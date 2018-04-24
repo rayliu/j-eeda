@@ -174,21 +174,21 @@ $(document).ready(function() {
     });
 
    var searchData=function(){
-        var transfer_order_no = $("#transfer_order_no").val();
+        var transfer_order_no = $.trim($("#transfer_order_no").val());
         //var customer_id=$("#customer_id").val();
-        var pickup_order_no=$("#pickup_order_no").val();
-        var depart_order_no = $("#depart_order_no").val();
-        var delivery_order_no = $('#delivery_order_no').val();
-        var return_order_no = $('#return_order_no').val();
-        var charge_order_no = $('#charge_order_no').val();
-        var cost_order_no = $("#cost_order_no").val();
-        var sign_no = $("#sign_no").val();
-        var serial_no = $("#serial_no").val();
-        var customer_id=$("#customer_id").val();
+        var pickup_order_no=$.trim($("#pickup_order_no").val());
+        var depart_order_no = $.trim($("#depart_order_no").val());
+        var delivery_order_no = $.trim($('#delivery_order_no').val());
+        var return_order_no = $.trim($('#return_order_no').val());
+        var charge_order_no = $.trim($('#charge_order_no').val());
+        var cost_order_no = $.trim($("#cost_order_no").val());
+        var sign_no = $.trim($("#sign_no").val());
+        var serial_no = $.trim($("#serial_no").val());
+        var customer_id=$.trim($("#customer_id").val());
         
         var flag = false;
         $('#orderForm input,#orderForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

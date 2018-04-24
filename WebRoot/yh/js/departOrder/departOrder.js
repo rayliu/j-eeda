@@ -242,18 +242,18 @@ $(document).ready(function() {
         }
     };
     var findData = function(){    	 	
-    	var orderNo = $("#orderNo_filter").val();
-    	var status = $("#status_filter").val();
-    	var address = $("#address_filter").val();
-    	var customer = $("#customer_filter").val();
-    	var beginTime = $("#planning_time_begin_time").val();
-    	var endTime = $("#planning_time_end_time").val();
-    	var routeFrom = $("#routeFrom_filter").val();
-    	var routeTo = $("#routeTo_filter").val();
+    	var orderNo = $.trim($("#orderNo_filter").val());
+    	var status = $.trim($("#status_filter").val());
+    	var address = $.trim($("#address_filter").val());
+    	var customer = $.trim($("#customer_filter").val());
+    	var beginTime = $.trim($("#planning_time_begin_time").val());
+    	var endTime = $.trim($("#planning_time_end_time").val());
+    	var routeFrom = $.trim($("#routeFrom_filter").val());
+    	var routeTo = $.trim($("#routeTo_filter").val());
     	
     	var flag = false;
     	$('#searchForm input,#searchForm select').each(function(){
-       	 var textValue = this.value;
+       	 var textValue = $.trim(this.value);
        	 if(textValue != '' && textValue != null){
        		 flag = true;
        		 return;

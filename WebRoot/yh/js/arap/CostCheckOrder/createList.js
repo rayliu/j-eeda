@@ -610,16 +610,16 @@ $(document).ready(function() {
     var refreshCreateList = function() {
 	    $('#searchBtn').attr('disabled',true);
         $('#searchBtn').text('查询中···');
-    	var booking_id = $("#booking_id").val();
-    	var orderNo = $("#orderNo_filter").val();
-    	var sp = $("#sp_id_input").val();
-        var sp_id2 = $("#sp_id").val();
-    	var no = $("#no").val();
-    	var beginTime = $("#beginTime_filter").val();
-    	var endTime = $("#endTime_filter").val();
-    	var type = $("#order_type_filter").val();
-    	var status = $("#order_status_filter").val();
-    	var serial_no = $("#serial_no").val();
+    	var booking_id = $.trim($("#booking_id").val());
+    	var orderNo = $.trim($("#orderNo_filter").val());
+    	var sp = $.trim($("#sp_id_input").val());
+        var sp_id2 = $.trim($("#sp_id").val());
+    	var no = $.trim($("#no").val());
+    	var beginTime = $.trim($("#beginTime_filter").val());
+    	var endTime = $.trim($("#endTime_filter").val());
+    	var type = $.trim($("#order_type_filter").val());
+    	var status = $.trim($("#order_status_filter").val());
+    	var serial_no = $.trim($("#serial_no").val());
     	
     
     	
@@ -642,7 +642,7 @@ $(document).ready(function() {
     	
     	var flag = false;
         $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

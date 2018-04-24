@@ -72,22 +72,22 @@ $(document).ready(function() {
     });
     
     $('#searchBtn').on('click',function(){
-    	var orderNo = $('#select_orderNo_filter').val();
-		var beginTime = $("#kaishi_filter").val();
-		var endTime = $("#jieshu_filter").val();
-		var status = $("#status_filter").val();
-		var customer = $("#select_customer_filter").val();
-		var sp = $("#sp_filter").val();
-		var tihuo = $("#tihuo_filter").val();
-		var office = $("#officeName_filter").val();
-		var transferOrderNo = $("#transferOrderNo_filter").val();
-		var refNo = $("#refNo_filter").val();
-		var serialNo = $("#serialNo_filter").val();
-		var customerNo2 = $("#customerNo_filter2").val();
+    	var orderNo = $.trim($('#select_orderNo_filter').val());
+		var beginTime = $.trim($("#kaishi_filter").val());
+		var endTime = $.trim($("#jieshu_filter").val());
+		var status = $.trim($("#status_filter").val());
+		var customer = $.trim($("#select_customer_filter").val());
+		var sp = $.trim($("#sp_filter").val());
+		var tihuo = $.trim($("#tihuo_filter").val());
+		var office = $.trim($("#officeName_filter").val());
+		var transferOrderNo = $.trim($("#transferOrderNo_filter").val());
+		var refNo = $.trim($("#refNo_filter").val());
+		var serialNo = $.trim($("#serialNo_filter").val());
+		var customerNo2 = $.trim($("#customerNo_filter2").val());
 		
 		var flag = false;
         $('#searchFrom input,#searchFrom select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

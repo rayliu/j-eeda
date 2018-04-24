@@ -347,34 +347,34 @@
   };
   
   var findData = function(){
-      var customer_filter=$('#customer_id_input').val();
+      var customer_filter=$.trim($('#customer_id_input').val());
       $("#searchBtn").attr("disabled",true);
  	  $("#searchBtn").text("查询中···");
-      var order_no = $("#order_no").val();
-      var serial_no = $("#serial_no").val();
-      var warehouse = $("#warehouse").val();
-      var return_type = $("#return_type").val();
-      var tr_order_no = $("#tr_order_no").val();
-      var de_order_no = $("#de_order_no").val();
-      var sign_no = $("#sign_no").val();
-      var time_one = $("#time_one").val();
-      var time_two = $("#time_two").val();
-      var inputStr =$("#customer_id").val();
-      var transfer_type =$("#transfer_type").val();
-      var to_name =$("#to_name").val();
-      var province =$("#province").val();
-      var imgaudit =$("#imgaudit").val();
-      var photo_type =$("#photo_type").val();
-      var q_begin =$("#q_begin_date").val();
-      var q_end =$("#q_end_date").val();
-      var officeSelect = $("#officeSelect").val();
-      var officeSelect2 = $("#officeSelect2").val();
-      var delivery_date_begin_time = $("#delivery_date_begin_time").val();
-      var delivery_date_end_time = $("#delivery_date_end_time").val();
+      var order_no = $.trim($("#order_no").val());
+      var serial_no = $.trim($("#serial_no").val());
+      var warehouse = $.trim($("#warehouse").val());
+      var return_type = $.trim($("#return_type").val());
+      var tr_order_no = $.trim($("#tr_order_no").val());
+      var de_order_no = $.trim($("#de_order_no").val());
+      var sign_no = $.trim($("#sign_no").val());
+      var time_one = $.trim($("#time_one").val());
+      var time_two = $.trim($("#time_two").val());
+      var inputStr =$.trim($("#customer_id").val());
+      var transfer_type =$.trim($("#transfer_type").val());
+      var to_name =$.trim($("#to_name").val());
+      var province =$.trim($("#province").val());
+      var imgaudit =$.trim($("#imgaudit").val());
+      var photo_type =$.trim($("#photo_type").val());
+      var q_begin =$.trim($("#q_begin_date").val());
+      var q_end =$.trim($("#q_end_date").val());
+      var officeSelect = $.trim($("#officeSelect").val());
+      var officeSelect2 =$.trim($("#officeSelect2").val());
+      var delivery_date_begin_time = $.trim($("#delivery_date_begin_time").val());
+      var delivery_date_end_time = $.trim($("#delivery_date_end_time").val());
       
       var flag = false;
   	$('#searchForm input,#searchForm select').each(function(){
-     	 var textValue = this.value;
+     	 var textValue = $.trim(this.value);
      	 if(textValue != '' && textValue != null){
      		 flag = true;
      		 return;

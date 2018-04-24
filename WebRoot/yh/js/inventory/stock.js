@@ -195,12 +195,12 @@ $(document).ready(function() {
     });
 	
 	$("#searchBtn").on("click",function(){
-		 var customerId = $("#hiddenCustomerId").val();
-		 var warehouseId = $("#warehouseId").val();
-		 var officeId = $("#hiddenOfficeId").val();
-		 var itemId = $("#hiddenItemId").val();
-		 var starDate = $("#star_date").val();
-		 var endDate = $("#end_date").val();
+		 var customerId = $.trim($("#hiddenCustomerId").val());
+		 var warehouseId = $.trim($("#warehouseId").val());
+		 var officeId = $.trim($("#hiddenOfficeId").val());
+		 var itemId = $.trim($("#hiddenItemId").val());
+		 var starDate = $.trim($("#star_date").val());
+		 var endDate = $.trim($("#end_date").val());
 		 
 		 if(warehouseId != null && warehouseId != ''){
 			 officeId = ''; 
@@ -208,7 +208,7 @@ $(document).ready(function() {
 		 
 		 var flag = false;
 	        $('#searchForm input,#searchForm select').each(function(){
-	        	 var textValue = this.value;
+	        	 var textValue = $.trim(this.value);
 	        	 if(textValue != '' && textValue != null){
 	        		 flag = true;
 	        		 return;

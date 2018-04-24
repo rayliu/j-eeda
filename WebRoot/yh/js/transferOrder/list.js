@@ -403,24 +403,24 @@ $(document).ready(function() {
     };
 
     var refreshData=function(){
-        var order_type=$("#order_type_filter").val();
-        var plantime=$("#planning_time_begin_time").val();
-        var arrivarltime=$("#planning_time_end_time").val();
-        var customer_order_no=$("#order_no_filter").val();
-        var orderNo = $("#orderNo_filter").val();
-        var status = $("#status_filter").val();
-        var address = $("#address_filter").val();
-        var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter").val();
-        var beginTime = $("#create_time_begin_time").val();
-        var endTime = $("#create_time_end_time").val();
-        var officeName = $("#officeSelect").val();
-        var operation_type = $("#operation_type_filter").val();
-        var to_route = $("#to_route").val();
+        var order_type=$.trim($("#order_type_filter").val());
+        var plantime=$.trim($("#planning_time_begin_time").val());
+        var arrivarltime=$.trim($("#planning_time_end_time").val());
+        var customer_order_no=$.trim($("#order_no_filter").val());
+        var orderNo =$.trim($("#orderNo_filter").val());
+        var status = $.trim($("#status_filter").val());
+        var address = $.trim($("#address_filter").val());
+        var customer = $.trim($("#customer_filter").val());
+        var sp = $.trim($("#sp_filter").val());
+        var beginTime = $.trim($("#create_time_begin_time").val());
+        var endTime = $.trim($("#create_time_end_time").val());
+        var officeName = $.trim($("#officeSelect").val());
+        var operation_type = $.trim($("#operation_type_filter").val());
+        var to_route = $.trim($("#to_route").val());
         
         var flag = false;
         $('#searchForm input,#searchForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	
         	 if(textValue != '' && textValue != null){
         		 flag = true;

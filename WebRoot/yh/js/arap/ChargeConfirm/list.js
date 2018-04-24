@@ -199,14 +199,15 @@ $(document).ready(function() {
 
     
     var refreshData = function(){
-    	var receiveConfirnNo = $('#receiveConfirnNo_filter').val();
-        var order_no = $('#orderNo').val();
-        var status = $('#status_filter').val();
-        var sp_name = $('#sp_filter').val();
-        var customer_name = $('#customer_filter3').val();
-        var receiverName = $('#receiver_filter').val();
-        var beginTime = $('#beginTime_filter3').val();
-        var endTime = $('#endTime_filter3').val();
+    	var receiveConfirnNo = $.trim($('#receiveConfirnNo_filter').val());
+        var order_no = $.trim($('#orderNo').val());
+        var status = $.trim($('#status_filter').val());
+        var sp_name = $.trim($('#sp_filter').val());
+        var customer_name = $.trim($('#customer_filter3').val());
+        var receiverName = $.trim($('#receiver_filter').val());
+        var beginTime = $.trim($('#beginTime_filter3').val());
+        var endTime = $.trim($('#endTime_filter3').val());
+        
         datatable.fnSettings().sAjaxSource = "/chargeConfirm/list?orderNo="+order_no
             +"&status="+status
             +"&receiveConfirnNo="+receiveConfirnNo

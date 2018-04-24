@@ -647,13 +647,13 @@ $(document).ready(function() {
 
     //待申请页面
     var refreshData=function(){
-        var orderNo = $("#orderNo_filter1").val();//单号
-        var status = $("#status_filter1").val();
+        var orderNo = $.trim($("#orderNo_filter1").val());//单号
+        var status = $.trim($("#status_filter1").val());
         //var customer = $("#customer_filter").val();
-        var sp = $("#sp_filter1").val();
-        var beginTime = $("#beginTime_filter2").val();
-        var endTime = $("#endTime_filter2").val();
-        var orderType = $("#orderType").val();
+        var sp = $.trim($("#sp_filter1").val());
+        var beginTime = $.trim($("#beginTime_filter2").val());
+        var endTime = $.trim($("#endTime_filter2").val());
+        var orderType = $.trim($("#orderType").val());
 
 //        var flag = false;
 //        $('#searchFrom input,#searchFrom select').each(function(){
@@ -713,21 +713,21 @@ $(document).ready(function() {
     
   //待付款页面
     var refreshData2=function(){
-        var applicationOrderNo = $("#applicationOrderNo").val();//申请单号
-        var orderNo = $("#orderNo").val();//业务单号
-        var status = $("#status2").val();
-        var sp = $("#sp_id_input").val();
-        var beginTime = $("#begin_date").val();
-        var endTime = $("#end_date").val();
-        var check_begin_date = $("#check_begin_date").val();
-        var check_end_date = $("#check_end_date").val();
-        var confirmBeginTime = $("#confirmBegin_date").val();
-        var confirmEndTime = $("#confirmEnd_date").val();
-        var insurance = $("#insurance").val();
+        var applicationOrderNo = $.trim($("#applicationOrderNo").val());//申请单号
+        var orderNo = $.trim($("#orderNo").val());//业务单号
+        var status = $.trim($("#status2").val());
+        var sp = $.trim($("#sp_id_input").val());
+        var beginTime =$.trim($("#begin_date").val());
+        var endTime = $.trim($("#end_date").val());
+        var check_begin_date = $.trim($("#check_begin_date").val());
+        var check_end_date = $.trim($("#check_end_date").val());
+        var confirmBeginTime = $.trim($("#confirmBegin_date").val());
+        var confirmEndTime = $.trim($("#confirmEnd_date").val());
+        var insurance = $.trim($("#insurance").val());
 
         var flag = false;
         $('#searchForm2 input,#searchForm2 select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 flag = true;
         		 return;

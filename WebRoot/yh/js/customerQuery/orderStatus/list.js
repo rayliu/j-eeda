@@ -118,18 +118,18 @@ $(document).ready(function() {
     })
 
    var searchData=function(){
-        var customer_order_no = $("#customer_order_no").val();
-        var customer_id=$("#customer_id").val();
-        var route_to= $("#route_to").val();
+        var customer_order_no = $.trim($("#customer_order_no").val());
+        var customer_id=$.trim($("#customer_id").val());
+        var route_to= $.trim($("#route_to").val());
         
-        var search_type = $("#search_type").val();
+        var search_type = $.trim($("#search_type").val());
        
-        var beginTime = $("#plan_time_begin_time").val();
-        var endTime = $("#plan_time_end_time").val();
+        var beginTime = $.trim($("#plan_time_begin_time").val());
+        var endTime = $.trim($("#plan_time_end_time").val());
         
         var flag = false;
         $('#orderForm input,#orderForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 if(this.name=="search_type"){
        				return true;
@@ -154,12 +154,12 @@ $(document).ready(function() {
     };
     
     var searchSerailData=function(){
-        var customer_id=$("#customer_id").val();
-        var serial_no=$("#serial_no").val();
+        var customer_id=$.trim($("#customer_id").val());
+        var serial_no=$.trim($("#serial_no").val());
         
         var flag = false;
         $('#orderForm input,#orderForm select').each(function(){
-        	 var textValue = this.value;
+        	 var textValue =$.trim(this.value);
         	 if(textValue != '' && textValue != null){
         		 if(this.name=="search_type"){
           				return true;
