@@ -125,7 +125,7 @@
 				            	 	<div class="row search_panel">
 						            	<div class="col-lg-4">
 			                                   <div class="form-group">
-			                                       <label class="search-label">客户：</label>
+			                                       <label class="search-label"><span style="color:red">*</span>客户：</label>
 			                                       <input id="customerName2" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择客户" autocomplete="off">
 			                                   	<ul id='companyList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 45%; left: 32%;"></ul>
 			                                   </div>
@@ -140,7 +140,7 @@
 										</div>
 										<div class="col-lg-4">
 			                                   <div class="form-group">
-			                                       <label class="search-label">RDC：</label>
+			                                       <label class="search-label"><span style="color:red">*</span>RDC：</label>
 			                                       <input id="rdc" class="form-control search-control status_filter" type="text" placeholder="请输入或者选择RDC" autocomplete="off">
 			                                   	<ul id='rdcList' tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll" style="top: 17%; left: 2%;" >
 												</ul>
@@ -176,7 +176,9 @@
 						                        <input id='localArr2' name='localArr2' type="hidden">
 						                        <input id='localArr3' name='localArr3' type="hidden">
 						                        <input id="cargoNature" type="hidden" name="cargoNature" value="ATM">
+						                       
 						                        <a class="btn  btn-primary" id="saveDelivery" disabled="true">创建</a>
+						                         <button id="searchBtn" class="btn  btn-primary" type="button">查询</button>
 					                        </form>
 					                    </div>
 				                    </div><br/>
