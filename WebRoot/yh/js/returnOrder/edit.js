@@ -440,7 +440,12 @@ $(document).ready(function() {
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-				             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"' style='width:100px;height:30px'>";
+			    			 if(obj.aData.NEW_STATUS=="对账已确认"|| obj.aData.NEW_STATUS=="已签收"){
+			    				 return "<input type='text' name='amount' disabled='disabled'  value='"+obj.aData.AMOUNT+"' style='width:100px;height:30px'>";
+			    			 }else{
+			    				 return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"' style='width:100px;height:30px'>";
+			    			 }
+				            
 				         }else{
 				         	 return "<input type='text' name='amount' style='width:100px;height:30px'>";
 				         }
@@ -448,12 +453,16 @@ $(document).ready(function() {
 			{"mDataProp":"REMARK",
                 "fnRender": function(obj) {
                     if(obj.aData.REMARK!='' && obj.aData.REMARK != null){
-                        return "<input type='text' name='remark' value='"+obj.aData.REMARK+"' style='width:350px;height:30px' >";
+                    	if(obj.aData.NEW_STATUS=="对账已确认"|| obj.aData.NEW_STATUS=="已签收"){
+                    		 return "<input type='text' name='remark' disabled='disabled' value='"+obj.aData.REMARK+"' style='width:350px;height:30px' >";
+                    	}else{
+                    		return "<input type='text' name='remark'   value='"+obj.aData.REMARK+"' style='width:350px;height:30px' >";
+                    	}
                     }else{
                     	 return "<input type='text' name='remark' style='width:350px;height:30px'>";
                     }
             }}, 
-			{"mDataProp":"STATUS","sWidth": "80px","sClass": "status"},
+			{"mDataProp":"NEW_STATUS","sWidth": "80px","sClass": "status"},
 			{"mDataProp":null,
 				"sWidth": "130px",
 				"fnRender":function(obj) {

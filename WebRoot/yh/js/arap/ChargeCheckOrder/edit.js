@@ -86,6 +86,7 @@ $(document).ready(function() {
             change_amount += Number(itemsArray[i].CHANGE_AMOUNT);
             $('#chargeAmount').html(total_amount);
         }
+        
 
         var order={
             chargeCheckOrderId: $('#chargeCheckOrderId').val(),
@@ -121,7 +122,11 @@ $(document).ready(function() {
             $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
         });
 	};
+	
+	
+	
     $("#chargeConfirem-table").on('click', '.finItemdel', function(){
+    	var self=$(this);
         var chargeCheckOrderId =$("#chargeCheckOrderId").val();
         var order_id = $(this).attr('code');
         var order_type = $(this).attr('order_type');
@@ -165,6 +170,7 @@ $(document).ready(function() {
 		$('#saveChargeCheckOrderBtn').attr('disabled', true);
 		var chargeCheckOrderId = $("#chargeCheckOrderId").val();
 		$.post('/chargeCheckOrder/auditChargeCheckOrder', {chargeCheckOrderId:chargeCheckOrderId}, function(data){
+			$.scojs_message('已确认', $.scojs_message.TYPE_OK);
 			$("#chargeCheckOrderStatus").html(data.STATUS);
 		},'json');
 	});
@@ -853,5 +859,45 @@ $(document).ready(function() {
         	}
         });
         
+        $(function(){
+        	
+            var tableRows = $("#chargeConfirem-table tr");
+            var itemsArray=[];
+            for(var index=0; index<tableRows.length; index++){
+                if(index==0)
+                    continue;
+
+                var row = tableRows[index];
+                var get_item_change_amount  = function(td){
+                    var element = td.find('input');
+                    if(element.length>0){
+                        return element.val();
+                    }else{
+                        return td.text();
+                    }
+                };
+                var item={
+                    ORDER_ID: $(row).attr('id'), 
+                    ORDER_TYPE: $(row).attr('order_type'),
+                    AMOUNT: $(row.children[2]).text(),
+                    CHANGE_AMOUNT: get_item_change_amount($(row.children[3]))
+                };
+                itemsArray.push(item);
+            }
+
+            var total_amount = 0.00;
+            var change_amount = 0;
+            for(var i=0; i<itemsArray.length; i++){
+                total_amount += Number(itemsArray[i].AMOUNT);
+                change_amount += Number(itemsArray[i].CHANGE_AMOUNT);
+                $('#chargeAmount').html(total_amount);
+                $("#chargeAmount")[0].innerHTML = total_amount;
+    			$("#total_amount").text(total_amount);
+            }
+            
+				
+    		
+        });
+       
         
 } );

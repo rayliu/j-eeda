@@ -1237,11 +1237,9 @@ public class ReturnOrderController extends Controller {
 		String sql = "";
 		ReturnOrder returnorder=ReturnOrder.dao.findById(returnOrderId);
 		Record transferOrder = Db
-				.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id ="
-						+ transferOrderId);
+				.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id =?", transferOrderId);
 		Record  transferDetail= Db
-				.findFirst("select * from transfer_order_item_detail where delivery_refused_id ="
-						+ returnorder.get("delivery_order_id"));
+				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",returnorder.get("delivery_order_id"));
 		//判断是否为ATM机
 		if (transferOrder.get("cargo_nature").equals("ATM")) {
 			if(transferDetail!=null){
@@ -1505,7 +1503,7 @@ public class ReturnOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		sql = "select distinct f.name name, rofi.*,ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname"
+		sql = "select distinct f.name name, rofi.*,ifnull(tor.order_no,(select group_concat(distinct tor3.order_no separator '\r\n') from delivery_order dor  left join delivery_order_item doi2 on doi2.delivery_id = dor.id  left join transfer_order tor3 on tor3.id = doi2.transfer_order_id where r_o.delivery_order_id = dor.id)) transfer_order_no, d_o.order_no as delivery_order_no, ifnull(c.abbr,c2.abbr) cname,r_o.transaction_status new_status"
 				+ " from return_order_fin_item rofi "
 				+ " left join return_order r_o on r_o.id = rofi.return_order_id"
 				+ " left join fin_item f on rofi.fin_item_id = f.id "
