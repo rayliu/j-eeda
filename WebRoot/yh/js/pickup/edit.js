@@ -5,6 +5,12 @@
 		document.title = pickupOrder.depart_no +' | '+document.title;
 	}
 	
+	$(function(){
+		var id=$("#pickupOrderId").val();
+		if(id!=null&&id!==""){
+			 $("#address_type").attr("disabled","disabled");
+		}
+	})
 	
 	
 	//按钮控制
@@ -336,6 +342,7 @@
 			        showFinishBut();	
 			        contactUrl("edit?id",data.ID);
 			        $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+			        address_type
 			        
 			        //
 			        var message=$("#message").val();
@@ -388,6 +395,7 @@
 	    	}
 	 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        $("#finishBtn").attr('disabled', false);
+	        $("#address_type").attr("disabled","disabled");
 	        //$("#cancelBtn").attr('disabled', false);
     	}
     };

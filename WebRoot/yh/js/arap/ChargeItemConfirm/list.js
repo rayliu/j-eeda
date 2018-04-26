@@ -219,6 +219,25 @@ $(document).ready(function() {
            //refreshCreateList();
        });
     
+    $('#searchBtn').on('click',function(){//查询
+    	var flag = false;
+        $('#top_form input,#top_form select').each(function(){
+        	 var textValue = $.trim(this.value);
+        	 if(textValue != '' && textValue != null){
+        		 flag = true;
+        		 return;
+        	 } 
+        });
+        if(!flag){
+        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+        	 	$('#searchBtn').attr('disabled',false);
+         		$('#searchBtn').text('查询');
+        	 return false;
+        }
+        
+ 	   refreshCreateList();  
+    });
+    
     var refreshCreateList = function(){
     	$('#searchBtn').attr('disabled',true);
     	$('#searchBtn').text('查询中...');
@@ -233,21 +252,6 @@ $(document).ready(function() {
 		var customerNo = $.trim($("#customerNo_filter").val());
 		var start = $.trim($("#start_filter").val());
 		var status = $.trim($("#shouru_filter").val());
-		
-		 var flag = false;
-	        $('#top_form input,#top_form select').each(function(){
-	        	 var textValue = $.trim(this.value);
-	        	 if(textValue != '' && textValue != null){
-	        		 flag = true;
-	        		 return;
-	        	 } 
-	        });
-	        if(!flag){
-	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-	        	 	$('#searchBtn').attr('disabled',false);
-	         		$('#searchBtn').text('查询');
-	        	 return false;
-	        }
 		
 		chargeConfiremTable.fnSettings().oFeatures.bServerSide = true;
 	    chargeConfiremTable.fnSettings().sAjaxSource = "/chargeConfiremList/list?customer="+customer
@@ -295,9 +299,7 @@ $(document).ready(function() {
     	   //refreshCreateList();
        });
        
-       $('#searchBtn').on('click',function(){//查询
-    	   refreshCreateList();  
-       });
+      
        
        
        $('#datetimepicker').datetimepicker({  
