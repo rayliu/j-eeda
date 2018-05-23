@@ -790,7 +790,7 @@
 	var finish_num =  0;
 	$("#finishBtn").click(function(){
 		finish_num++;
-		$("#finishBtn").attr('disabled', true);	
+		this.disabled = true;
 		$("#saveTransferOrderBtn").attr('disabled', true);	
 		if(finish_num >1){
 			return ;

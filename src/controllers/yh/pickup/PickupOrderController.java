@@ -1538,6 +1538,7 @@ public class PickupOrderController extends Controller {
         for (DepartTransferOrder departTransferOrder : departTransfers) {
         	Long order_id = departTransferOrder.getLong("order_id");   //运单号
 
+        	
             //更新运输单信息
         	TransferOrder transferOrder = TransferOrder.dao.findById(order_id);
 			transferOrder.set("status", "已完成").update();
@@ -1559,6 +1560,12 @@ public class PickupOrderController extends Controller {
             .set("depart_id", order_id)
             .set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE)
             .save();
+            
+          //校验是否有存在回单
+        	Record rRec = Db.findFirst("select * from return_order ror where transfer_order_id = ?",order_id);
+        	if(rRec != null){
+        		return;
+        	}
  
             //直接生成回单，在把合同等费用带到回单中
             String orderNo = OrderNoGenerator.getNextOrderNo("HD");
