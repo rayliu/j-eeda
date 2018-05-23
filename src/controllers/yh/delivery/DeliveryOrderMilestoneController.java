@@ -433,6 +433,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         String username = userLogin.get("user_name");
         map.put("username", username);
         
+        Record rRec = Db.findFirst("select * from return_order where delivery_order_id = ?",delivery_id);
+        if(rRec == null){
         String isNullOrder = deliveryOrder.getStr("isNullOrder");
         if(!isNullOrder.equals("Y")){
         	Date createDate = Calendar.getInstance().getTime();
@@ -547,7 +549,7 @@ public class DeliveryOrderMilestoneController extends Controller {
             order.set("customer_id", deliveryOrder.get("customer_id"));
             order.save();
         }
-        
+    	}
         
         if("wx".equals(order_type)){
         	renderJson(return_id);
