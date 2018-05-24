@@ -124,6 +124,8 @@ $(document).ready(function() {
     $("#resetBtn").click(function(){
         $('#returnOrderSearchForm')[0].reset();
     });
+    
+    
 	
     var refreshCreateList = function(){
     	var companyName = $.trim($('#customer_filter').val());
@@ -132,6 +134,13 @@ $(document).ready(function() {
 		var orderNo = $.trim($("#orderNo_filter").val());
 		var status = $.trim($("#status_filter").val());
 		var office = $.trim($("#office_filter").val());
+		
+		var json = {};
+		json.companyName = companyName;
+		json.beginTime = beginTime;
+		json.endTime = endTime;
+		json.orderNo = orderNo;
+		sessionStorage.setItem('block_key',JSON.stringify(json));
 		
 		 var flag = false;
 	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
@@ -266,4 +275,19 @@ $(document).ready(function() {
     });
 
     
+    var json_data = sessionStorage.getItem('block_key');
+    if(json_data != null){
+    	var obj = JSON.parse(json_data);
+    	var beginTime = obj.beginTime;
+    	var endTime = obj.endTime;
+    	var orderNo = obj.orderNo;
+    	var companyName = obj.companyName;
+    	
+    	$('#customer_filter').val(companyName);
+    	$("#beginTime_filter").val(beginTime);
+    	$("#endTime_filter").val(endTime);
+    	$("#orderNo_filter").val(orderNo);
+    	
+    	refreshCreateList();
+    }
 } );
