@@ -1581,7 +1581,7 @@ public class TransferOrderController extends Controller {
 	 * 文件下载
 	 */
 	public void downloadTransferOrderTemplate() {
-		File file = new File(PathKit.getWebRootPath() + "/download/运输单导入模板.xls");
+		File file = new File(PathKit.getWebRootPath() + "/download/运输单导入模板.xlxs");
 		renderFile(file);
 	}
 
