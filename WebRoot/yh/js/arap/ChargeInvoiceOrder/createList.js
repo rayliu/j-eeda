@@ -142,18 +142,18 @@ $(document).ready(function() {
 		json.orderNo = orderNo;
 		sessionStorage.setItem('block_key',JSON.stringify(json));
 		
-		 var flag = false;
-	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
-	        	 var textValue = $.trim(this.value);
-	        	 if(textValue != '' && textValue != null){
-	        		 flag = true;
-	        		 return;
-	        	 } 
-	        });
-	        if(!flag){
-	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-	        	 return true;
-	        }
+//		 var flag = false;
+//        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
+//        	 var textValue = $.trim(this.value);
+//        	 if(textValue != '' && textValue != null){
+//        		 flag = true;
+//        		 return;
+//        	 } 
+//        });
+//        if(!flag){
+//        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+//        	 return true;
+//        }
 		
 		uncheckedChargePreInvoiceOrderTable.fnSettings().oFeatures.bServerSide = true;
 		uncheckedChargePreInvoiceOrderTable.fnSettings().sAjaxSource = "/chargeInvoiceOrder/createList?companyName="+companyName
@@ -287,7 +287,6 @@ $(document).ready(function() {
     	$("#beginTime_filter").val(beginTime);
     	$("#endTime_filter").val(endTime);
     	$("#orderNo_filter").val(orderNo);
-    	
-    	refreshCreateList();
     }
+    refreshCreateList();
 } );

@@ -72,18 +72,18 @@ $(document).ready(function() {
 		var sp = $.trim($("#sp_filter").val());
 		var address = $.trim($("#address_filter").val());
 		
-		var flag = false;
-        $('#searchFrom input,#searchFrom select').each(function(){
-        	 var textValue = $.trim(this.value);
-        	 if(textValue != '' && textValue != null){
-        		 flag = true;
-        		 return;
-        	 } 
-        });
-        if(!flag){
-        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-        	 return false;
-        }
+//		var flag = false;
+//        $('#searchFrom input,#searchFrom select').each(function(){
+//        	 var textValue = $.trim(this.value);
+//        	 if(textValue != '' && textValue != null){
+//        		 flag = true;
+//        		 return;
+//        	 } 
+//        });
+//        if(!flag){
+//        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+//        	 return false;
+//        }
 		
 		
 		chargeInvoiceOrderListTable.fnSettings().oFeatures.bServerSide = true;

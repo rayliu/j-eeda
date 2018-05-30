@@ -85,18 +85,18 @@ $(document).ready(function() {
 		var serialNo = $.trim($("#serialNo_filter").val());
 		var customerNo2 = $.trim($("#customerNo_filter2").val());
 		
-		var flag = false;
-        $('#searchFrom input,#searchFrom select').each(function(){
-        	 var textValue = $.trim(this.value);
-        	 if(textValue != '' && textValue != null){
-        		 flag = true;
-        		 return;
-        	 } 
-        });
-        if(!flag){
-        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-        	 return false;
-        }
+//		var flag = false;
+//        $('#searchFrom input,#searchFrom select').each(function(){
+//        	 var textValue = $.trim(this.value);
+//        	 if(textValue != '' && textValue != null){
+//        		 flag = true;
+//        		 return;
+//        	 } 
+//        });
+//        if(!flag){
+//        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+//        	 return false;
+//        }
 		
 		
         datatable.fnSettings().oFeatures.bServerSide = true;

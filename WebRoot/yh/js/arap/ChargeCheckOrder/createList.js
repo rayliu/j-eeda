@@ -342,20 +342,20 @@ $(document).ready(function() {
 		$("#allCheck").attr("checked",false);
 		
 		
-		 var flag = false;
-	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
-	        	 var textValue = $.trim(this.value);
-	        	 if(textValue != '' && textValue != null){
-	        		 flag = true;
-	        		 return;
-	        	 } 
-	        });
-	        if(!flag){
-	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-	        	 $("#searchBtn").attr("disabled",false);
-	         	$("#searchBtn").text("查询");
-	        	 return false;
-	        }
+//		 var flag = false;
+//	        $('#returnOrderSearchForm input,#returnOrderSearchForm select').each(function(){
+//	        	 var textValue = $.trim(this.value);
+//	        	 if(textValue != '' && textValue != null){
+//	        		 flag = true;
+//	        		 return;
+//	        	 } 
+//	        });
+//	        if(!flag){
+//	        	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+//	        	 $("#searchBtn").attr("disabled",false);
+//	         	$("#searchBtn").text("查询");
+//	        	 return false;
+//	        }
 		
 		uncheckedChargeCheckTable.fnSettings().oFeatures.bServerSide = true;
 		uncheckedChargeCheckTable.fnSettings().sAjaxSource = "/chargeCheckOrder/createList?customer="+customer

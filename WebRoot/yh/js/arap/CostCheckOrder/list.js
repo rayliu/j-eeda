@@ -159,18 +159,18 @@ $(document).ready(function() {
         	var sp = $.trim($("#sp_id1_input").val());
         	var serial_no = $.trim($("#serial_no_filter").val());
         	
-        	var flag = false;
-            $('#costCheckOrderItemForm input,#costCheckOrderItemForm select').each(function(){
-            	 var textValue = $.trim(this.value);
-            	 if(textValue != '' && textValue != null){
-            		 flag = true;
-            		 return;
-            	 } 
-            });
-            if(!flag){
-            	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-            	 return false;
-            }
+//        	var flag = false;
+//            $('#costCheckOrderItemForm input,#costCheckOrderItemForm select').each(function(){
+//            	 var textValue = $.trim(this.value);
+//            	 if(textValue != '' && textValue != null){
+//            		 flag = true;
+//            		 return;
+//            	 } 
+//            });
+//            if(!flag){
+//            	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+//            	 return false;
+//            }
 
           datatableAA.fnSettings().oFeatures.bServerSide = true;
         	datatableAA.fnSettings().sAjaxSource = "/costCheckOrder/list?order_no="+order_no
