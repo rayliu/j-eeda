@@ -55,7 +55,7 @@ public class MainController extends Controller {
     // me.add("/yh", controllers.yh.AppController.class, "/yh");
     Subject currentUser = SecurityUtils.getSubject();
 
-    private boolean isAuthenticated() {
+    private boolean isAuthenticated() { 
 
         // remember me 处理，自动帮user 登陆
         if (!currentUser.isAuthenticated() && currentUser.isRemembered()) {
