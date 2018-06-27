@@ -2912,11 +2912,15 @@ public class DepartOrderController extends Controller {
     			double totalAmount = re.getDouble("total") ;    //总货品数量
     			double departAmount = 0.0;  //已入库的数量（包括这次）
     			if(!transfer.getStr("operation_type").equals("out_source")){
-    				re = Db.findFirst("select sum(ifnull(dt.amount,0)) yishou from depart_pickup dp"
+    				re = Db.findFirst("select ifnull(sum(ifnull(dt.amount,0)),0) yishou from depart_pickup dp"
     						+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id"
     						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
     						+ " where dor.status is not null and dor.status !='新建' and dt.order_id = ?",transferId);
-    				departAmount = re.getDouble("yishou");
+    				if(re != null){
+    					departAmount = re.getDouble("yishou");
+    				}else{
+    					departAmount = totalAmount;
+    				}
     			}else{
     				departAmount = totalAmount; //外包（因无法多次发车，所以数量和总数量相同）
     			}
