@@ -1602,7 +1602,26 @@ $(document).ready(function() {
 	    	});
 		}
 	});
-    
+	
+	$('[name=modeDelvery]').on('change',function(){
+		if(this.value=='own'){
+			$('#arapTab').hide();
+		}else{
+			$('#arapTab').show();
+		}
+	});
+	
+	$('[name=warehouseNature]').on('change',function(){
+		if(this.value=='warehouseNatureYes'){
+			var order_no = $('#order_no').text();
+
+			if(order_no.indexOf('-DB')>-1){
+				alert('此配送单已经做过了调拨单，不能再次调拨了')
+				$('#warehouseNature1').click();
+			}
+		}
+	});
+	
 });
 
 
