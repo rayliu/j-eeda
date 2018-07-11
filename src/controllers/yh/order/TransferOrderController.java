@@ -36,10 +36,12 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
+import org.apache.tools.ant.filters.TokenFilter.Trim;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -858,40 +860,21 @@ public class TransferOrderController extends Controller {
 
 	// 查找供应商
 	public void searchSp() {
-		String input = getPara("input");
+		String input = getPara("input").trim();
 		ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 		Long parentID = pom.getParentOfficeId();
 		// Long officeID = pom.getCurrentOfficeId();
 		List<Record> locationList = Collections.EMPTY_LIST;
-		if (input.trim().length() > 0) {
-			locationList = Db
-					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and (c.company_name like '%"
-							+ input
-							+ "%' or c.abbr like '%"
-							+ input
-							+ "%' or c.contact_person like '%"
-							+ input
-							+ "%' or c.email like '%"
-							+ input
-							+ "%' or c.mobile like '%"
-							+ input
-							+ "%' or c.phone like '%"
-							+ input
-							+ "%' or c.address like '%"
-							+ input
-							+ "%' or c.postal_code like '%"
-							+ input
-							+ "%') and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
-							parentID, parentID);
-		} else {
-			locationList = Db
-					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
-							parentID, parentID);
+		String searchInput="";
+		if(StrKit.notBlank(input)){
+			searchInput = " and (c.company_name like '%"+input+"%' or c.abbr like '%"+input+"%')";
 		}
+			locationList = Db.find("SELECT p.*,c.*,p.id AS pid  FROM party p"
+					+ " LEFT JOIN contact c ON c.`id` = p.`contact_id`"
+					+ " LEFT JOIN office o ON o.`id` = p.`office_id`"
+					+ " WHERE p.`party_type` = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'"
+							+searchInput+ " AND (o.`id` = ? OR o.`belong_office` = ? )",parentID,parentID);
+			
 		renderJson(locationList);
 	}
 
