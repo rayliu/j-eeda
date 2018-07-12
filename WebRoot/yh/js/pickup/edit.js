@@ -710,7 +710,7 @@
 	});
 
 	//获取供应商的list，选中信息在下方展示其他信息
-	$('#spMessage').on('keyup click', function(){
+	$('#spMessage').on('keyup', function(){
 		var inputStr = $('#spMessage').val();
 		if(inputStr == ""){
 			var pageSpName = $("#pageSpName");

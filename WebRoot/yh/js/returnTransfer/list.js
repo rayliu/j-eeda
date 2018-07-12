@@ -191,9 +191,20 @@ $(document).ready(function() {
 			 officeSelect.append("<option value='"+data[i].OFFICE_NAME+"'>"+data[i].OFFICE_NAME+"</option>");					 
 	 }
 	},'json');
-
+	
+	var cpLock = false;
+    $('#customer_filter, #sp_filter').on('compositionstart', function () {
+        cpLock = true;
+    });
+    $('#customer_filter, #sp_filter').on('compositionend', function () {
+        cpLock = false;
+    });
+	
     //获取客户列表，自动填充
     $('#customer_filter').on('keyup click', function(){
+    	if(cpLock)
+            return;
+    	
         var inputStr = $('#customer_filter').val();
         var companyList =$("#companyList");
         $.get("/transferOrder/searchCustomer", {input:inputStr}, function(data){
@@ -231,9 +242,13 @@ $(document).ready(function() {
 
     //供应商查询
     //获取供应商的list，选中信息在下方展示其他信息
-    $('#sp_filter').on('input click', function(){
+    $('#sp_filter').on('keyup click', function(){
+    	
 		var inputStr = $('#sp_filter').val();
 		var spList =$("#spList");
+		
+		if(cpLock)
+            return;
 		$.get('/transferOrder/searchSp', {input:inputStr}, function(data){
 			if(inputStr!=$('#sp_filter').val()){//查询条件与当前输入值不相等，返回
 				return;

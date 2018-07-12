@@ -25,6 +25,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -324,8 +325,7 @@ public class ServiceProviderController extends Controller {
     	renderJson(map);
     }
     public void searchSp() {
-    	
-		String input = getPara("input");
+    	String input = getPara("input").trim();
 		String sp_type = getPara("sp_type")==null?"":getPara("sp_type");
 		String[] spArr = sp_type.split(";");
 		String spCon = "";
@@ -337,34 +337,18 @@ public class ServiceProviderController extends Controller {
 		}
 		Long parentID = pom.getParentOfficeId();
 		List<Record> locationList = Collections.EMPTY_LIST;
-		if (input.trim().length() > 0) {
-			locationList = Db
-					.find(" select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and"
-					        + " ("+spCon+") and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and (c.company_name like '%"
-							+ input
-							+ "%' or c.abbr like '%"
-							+ input
-							+ "%' or c.contact_person like '%"
-							+ input
-							+ "%' or c.email like '%"
-							+ input
-							+ "%' or c.mobile like '%"
-							+ input
-							+ "%' or c.phone like '%"
-							+ input
-							+ "%' or c.address like '%"
-							+ input
-							+ "%' or c.postal_code like '%"
-							+ input
-							+ "%')  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office=?) limit 0,10",parentID,parentID);
-		} else {
-			locationList = Db
-					.find("select p.*,c.*,p.id as pid from party p,contact c,office o where o.id = p.office_id and p.contact_id = c.id and"
-					        + " ("+spCon+") and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER + "'  and (p.is_stop is null or p.is_stop = 0) and (o.id = ? or o.belong_office =?)",parentID,parentID);
+		String condition = "";
+		if(StrKit.notBlank(input)){
+			condition = " and (c.company_name like '%"+input+"%' or c.abbr like '%"+input+"%') limit 0,10";
 		}
+		locationList = Db.find("SELECT p.*,c.*,p.id AS pid FROM party p"
+				+ " LEFT JOIN contact c ON c.`id` = p.`contact_id`"
+				+ " LEFT JOIN office o ON o.`id` = p.`office_id`"
+				+ " WHERE  p.`party_type` = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'"
+				+  " AND ("+spCon+")"
+				+ " AND  (p.`is_stop` IS NULL OR p.`is_stop` = 0)"
+				+ " AND (o.`id` = ? OR o.`belong_office` = ?) "+condition+"",parentID,parentID);
+			
 		renderJson(locationList);
 	}
     public void searchInsurance() {

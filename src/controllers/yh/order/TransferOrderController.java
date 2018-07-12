@@ -793,68 +793,42 @@ public class TransferOrderController extends Controller {
 
 	// 查找客户
 	public void searchCustomer() {
-		String input = getPara("input");
+		String input = getPara("input").trim();
 		List<Record> locationList = Collections.EMPTY_LIST;
-		if (input.trim().length() > 0) {
-			locationList = Db
-					.find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER
-							+ "' and (c.company_name like '%"
-							+ input
-							+ "%' or c.contact_person like '%"
-							+ input
-							+ "%' or c.email like '%"
-							+ input
-							+ "%' or c.mobile like '%"
-							+ input
-							+ "%' or c.phone like '%"
-							+ input
-							+ "%' or c.address like '%"
-							+ input
-							+ "%' or c.postal_code like '%"
-							+ input
-							+ "%') and p.id in (select customer_id from user_customer where user_name='"
-							+ currentUser.getPrincipal() + "') limit 0,10");
-		} else {
-			locationList = Db
-					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER
-							+ "' and p.id in (select customer_id from user_customer where user_name='"
-							+ currentUser.getPrincipal() + "')");
+		
+		String condition ="";
+		if(StrKit.notBlank(input)){
+			condition = " and (c.company_name like '%"+input+"%' or c.abbr like '%"+input+"%' or c.contact_person like '%"+input+"%')";
 		}
+		locationList =Db
+				.find("SELECT c.`postal_code`,c.`contact_person`,c.`email`,c.`phone`,c.`address`,c.`company_name`,c.`abbr`,p.`id` AS pid"
+						+ " FROM party p"
+						+ " LEFT JOIN contact c ON c.`id` = p.`contact_id`"
+						+ " WHERE p.`party_type` = '"+Party.PARTY_TYPE_CUSTOMER+"'"
+						+ condition
+						+ " AND p.`is_stop` !=1 AND p.`id` IN (SELECT customer_id FROM user_customer WHERE user_name='"+ currentUser.getPrincipal() +"')");
+		
 		renderJson(locationList);
 	}
 
 	public void searchPartCustomer() {
-		String input = getPara("input");
+		String input = getPara("input").trim();
 		List<Record> locationList = Collections.EMPTY_LIST;
-		if (input.trim().length() > 0) {
-			locationList = Db
-					.find("select *,p.id as pid,p.payment from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER
-							+ "' and (c.company_name like '%"
-							+ input
-							+ "%' or c.contact_person like '%"
-							+ input
-							+ "%' or c.email like '%"
-							+ input
-							+ "%' or c.mobile like '%"
-							+ input
-							+ "%' or c.phone like '%"
-							+ input
-							+ "%' or c.address like '%"
-							+ input
-							+ "%' or c.postal_code like '%"
-							+ input
-							+ "%') and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"
-							+ currentUser.getPrincipal() + "') limit 0,10");
-		} else {
-			locationList = Db
-					.find("select *,p.id as pid from party p,contact c where p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_CUSTOMER
-							+ "' and (p.is_stop is null or p.is_stop = 0) and p.id in (select customer_id from user_customer where user_name='"
-							+ currentUser.getPrincipal() + "')");
+		String condition ="";
+		if(StrKit.notBlank(input)){
+			condition = " and (c.company_name like '%"+input+"%' or c.abbr like '%"+input+"%' or c.contact_person like '%"+input+"%')";
 		}
+		
+		locationList = Db
+				.find("SELECT c.id,c.`company_name`,c.`contact_person`,c.`phone`,c.`location`,c.`postal_code`,c.`email`,c.`address`,p.`charge_type`,p.`payment`,p.`id` AS pid"
+						+ " FROM party p"
+						+ " LEFT JOIN contact c ON c.`id` = p.`contact_id`"
+						+ " WHERE p.`party_type` = '"+Party.PARTY_TYPE_CUSTOMER+"'"
+						+ condition
+						+ " AND p.`is_stop` !=1"
+						+ " AND p.`id`"
+						+ " IN (SELECT customer_id FROM user_customer WHERE user_name='"+currentUser.getPrincipal()+"')");
+		
 		renderJson(locationList);
 	}
 
@@ -865,15 +839,15 @@ public class TransferOrderController extends Controller {
 		Long parentID = pom.getParentOfficeId();
 		// Long officeID = pom.getCurrentOfficeId();
 		List<Record> locationList = Collections.EMPTY_LIST;
-		String searchInput="";
+		String condition = "";
 		if(StrKit.notBlank(input)){
-			searchInput = " and (c.company_name like '%"+input+"%' or c.abbr like '%"+input+"%')";
+			condition = " and (c.company_name like '%"+input+"%' or c.abbr like '%"+input+"%')";
 		}
-			locationList = Db.find("SELECT p.*,c.*,p.id AS pid  FROM party p"
+			locationList = Db.find("SELECT  c.`abbr`,c.`company_name`,c.`contact_person`,c.`phone`,c.`postal_code`,c.`email`,c.`id`,c.`address`,p.`charge_type`,p.id AS pid FROM party p"
 					+ " LEFT JOIN contact c ON c.`id` = p.`contact_id`"
 					+ " LEFT JOIN office o ON o.`id` = p.`office_id`"
 					+ " WHERE p.`party_type` = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'"
-							+searchInput+ " AND (o.`id` = ? OR o.`belong_office` = ? )",parentID,parentID);
+							+condition+ "AND p.`is_stop` !=1 AND (o.`id` = ? OR o.`belong_office` = ? )",parentID,parentID);
 			
 		renderJson(locationList);
 	}

@@ -508,9 +508,11 @@ public class ContractController extends Controller {
         }
         
         List<Record> locationList = Collections.EMPTY_LIST;
-        String sql = "select p.id, c.abbr from party p,contact c where p.contact_id = c.id and p.party_type = 'CUSTOMER' "
-        		+ " and p.id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"') ";
-        			
+        String sql  = "SELECT p.`id`,c.`abbr` FROM party p"
+        		+ " LEFT JOIN contact c ON c.`id` = p.`contact_id`"
+        		+ " WHERE p.`party_type` = 'CUSTOMER'"
+        		+ " AND p.is_stop !=1"
+        		+ " AND p.`id` IN (SELECT customer_id FROM user_customer WHERE user_name='"+currentUser.getPrincipal()+"')";
         if (customerName.trim().length() > 0) {
         	sql +=" and (c.abbr like '%" + customerName + "%' or c.quick_search_code like '%" + customerName.toUpperCase() + "%') ";
         }
@@ -562,17 +564,20 @@ public class ContractController extends Controller {
 		}
 		
 		if (input.trim().length() > 0) {
-			locationList = Db
-					.find("select p.*,c.*,p.id as pid, p.payment from party p,contact c,office o where  ifnull(p.is_stop,0) != 1 and p.contact_id = c.id and p.party_type = '"
-							+ Party.PARTY_TYPE_SERVICE_PROVIDER
-							+ "' and (c.company_name like '%"
+			locationList =Db
+					.find("SELECT c.`postal_code`,c.`contact_person`,c.`email`,c.`phone`,c.`address`,c.`company_name`,c.`abbr`,p.id AS pid, p.payment"
+							+ " FROM party p"
+							+ " LEFT JOIN contact c ON c.`id` =p.`contact_id`"
+							+ " LEFT JOIN office o ON o.`id` = p.`office_id`"
+							+ " WHERE  IFNULL(p.is_stop,0) !=1"
+							+ " AND p.`party_type` = '"+Party.PARTY_TYPE_SERVICE_PROVIDER+"'"
+							+ " AND (c.company_name LIKE '%"
 							+ input
-							+ "%' or c.abbr like '%"
+							+ "%' OR c.abbr LIKE '%"
 							+ input
 							+ "%') "
 							+ type_conditions
-							+ "and o.id = p.office_id and (o.id = ? or o.belong_office = ?)",
-							parentID, parentID);
+							+ " AND  (o.id = ? OR o.belong_office = ?)",parentID,parentID);
 		} else {
 			locationList = Db
 					.find("select p.id, c.abbr,c.postal_code,c.contact_person,c.email,c.phone,c.address,c.company_name, p.id AS pid from party p "

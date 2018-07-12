@@ -113,8 +113,19 @@ $(document).ready(function() {
        container: "body"
      });
 		
+   //处理中文输入法, 没完成前不触发查询
+     var cpLock = false;
+     $('#customerMessage').on('compositionstart', function () {
+         cpLock = true;
+     });
+     $('#customerMessage').on('compositionend', function () {
+         cpLock = false;
+     });
+     
 	//获取客户的list，选中信息在下方展示其他信息
 	$('#customerMessage').on('keyup click', function(){
+		if(cpLock)
+            return;
 		var inputStr = $('#customerMessage').val();
 		$("label[name = 'errorMessage']").empty().remove();
 		if(inputStr == ""){
