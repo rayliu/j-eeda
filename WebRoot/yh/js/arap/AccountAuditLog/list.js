@@ -41,7 +41,11 @@ $(document).ready(function() {
             {"mDataProp":"ORDER_NO",
             	"fnRender": function(obj) {
             		if(obj.aData.SOURCE_ORDER=='应付开票申请单'||obj.aData.SOURCE_ORDER=='应收开票申请单'||obj.aData.SOURCE_ORDER=='转账单'){
-            			return eeda.getUrlByNo(obj.aData.INVOICE_ORDER_ID, obj.aData.ORDER_NO);
+            			if($.trim(obj.aData.ORDER_NO)){
+            				return eeda.getUrlByNo(obj.aData.INVOICE_ORDER_ID, obj.aData.ORDER_NO);
+            			}else{
+            				return  obj.aData.ORDER_NO;
+            			}
             		}else{
             			return  obj.aData.ORDER_NO;
             		}
@@ -200,7 +204,7 @@ $(document).ready(function() {
     	var beginTime = $.trim($('#beginTime').val());
     	var endTime = $.trim($('#endTime').val());
     	var bankName = $.trim($('#bankName').val());
-    	var money = $('#money').val();
+    	var money = $.trim($('#money').val());
     	
     	 var flag = false;
 	        $('#searchForm1 input,#searchForm1 select').each(function(){
