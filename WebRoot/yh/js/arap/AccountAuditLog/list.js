@@ -200,7 +200,7 @@ $(document).ready(function() {
     	var beginTime = $.trim($('#beginTime').val());
     	var endTime = $.trim($('#endTime').val());
     	var bankName = $.trim($('#bankName').val());
-    	var money =$.trim( $('#money').val());
+    	var money = $('#money').val();
     	
     	 var flag = false;
 	        $('#searchForm1 input,#searchForm1 select').each(function(){
