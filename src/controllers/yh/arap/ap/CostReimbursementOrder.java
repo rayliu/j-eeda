@@ -162,7 +162,9 @@ public class CostReimbursementOrder extends Controller {
         String sqlTotal = "";
         String sql = "";
         if(orderNo == null && status == null ){
-	        sqlTotal = "select count(1) total from reimbursement_order ro where ro.order_no like 'YFBX%' and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null)) ";
+	        sqlTotal = "select count(1) total from reimbursement_order ro "
+	        		+ " where ro.order_no like 'YFBX%' "
+	        		+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	    	 
 	        sql = "select ro.*,off.office_name,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
@@ -172,7 +174,9 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " left join office off on off.id = ro.office_id"
 	        		+ " left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
-	        		+ " where ro.order_no like 'YFBX%' and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))  group by ro.id";
+	        		+ " where ro.order_no like 'YFBX%'  "
+	        		+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+	        		+ " group by ro.id";
         }else{
         	sqlTotal = "select count(1) total from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
         			+ " left join user_login u on u.id  = ro.audit_id "
@@ -180,8 +184,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
         			+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
-        			+ " and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))";	
-	    	 
+        			+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
 	        sql = "select ro.*,off.office_name,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
@@ -194,7 +197,7 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " and ro.status like '%" + status + "%'"
 	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
 	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"+office_name
-	        		+ " and (ro.create_id in(SELECT id FROM user_login WHERE user_name = '"+currentUser.getPrincipal()+"') or (select ur.id from user_role ur LEFT JOIN role_permission rp on rp.role_code=ur.role_code WHERE user_name = '"+currentUser.getPrincipal()+"' and rp.permission_code='costReimbureement_alldata' and ur.id is not null))"
+	        		+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 	        		+ " group by ro.id ";
         }
         
