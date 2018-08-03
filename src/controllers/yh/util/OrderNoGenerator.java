@@ -35,7 +35,7 @@ public class OrderNoGenerator {
             count = "00000";
         }
         String orderNo="";
-//        synchronized (locks){	
+        synchronized (locks){	
             orderNo = orderPrefix +nowdate+ getNo(count);
             
             CustomizeField cf = CustomizeField.dao.findFirst("select * from customize_field where order_type='latestOrderNo'");
@@ -43,7 +43,7 @@ public class OrderNoGenerator {
 		        logger.debug("orderNo:"+orderNo);
 		        cf.set("field_code", orderNo).update();
 	        }
-//		}
+		}
 		return orderNo;
 	}
 
