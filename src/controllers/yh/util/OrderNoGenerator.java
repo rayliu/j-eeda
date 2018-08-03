@@ -38,11 +38,11 @@ public class OrderNoGenerator {
         synchronized (locks){	
             orderNo = orderPrefix +nowdate+ getNo(count);
             
-            CustomizeField cf = CustomizeField.dao.findFirst("select * from customize_field where order_type='latestOrderNo'");
-            if(cf!=null){
-		        logger.debug("orderNo:"+orderNo);
-		        cf.set("field_code", orderNo).update();
-	        }
+            CustomizeField cf = CustomizeField.dao.findFirst("update customize_field set field_code = ? where order_type='latestOrderNo'", orderNo);
+//            if(cf!=null){
+//		        logger.debug("orderNo:"+orderNo);
+//		        cf.set("field_code", orderNo).update();
+//	        }
 		}
 		return orderNo;
 	}
