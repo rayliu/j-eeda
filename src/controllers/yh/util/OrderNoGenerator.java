@@ -23,7 +23,7 @@ public class OrderNoGenerator {
 	public final static Byte[] locks = new Byte[0];  
 	//如果服务器重启了，当前的序列号就从数据库找到最后的号码，然后接着计数
 	//TODO：如果需要按每张单的前缀来生成序列号，可以多加一个Map来记录
-	public synchronized static String getNextOrderNo(String orderPrefix) {
+	public static String getNextOrderNo(String orderPrefix) {
 		if("00000".equals(count)){
 			initCountFromDB();
 		}
