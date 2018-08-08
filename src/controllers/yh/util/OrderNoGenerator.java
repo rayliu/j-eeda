@@ -8,6 +8,7 @@ import models.yh.profile.CustomizeField;
 import org.apache.commons.lang.StringUtils;
 
 import com.jfinal.log.Logger;
+import com.jfinal.plugin.activerecord.Db;
 
 /**
  * generate Order number
@@ -38,7 +39,7 @@ public class OrderNoGenerator {
         synchronized (locks){	
             orderNo = orderPrefix +nowdate+ getNo(count);
             
-            CustomizeField cf = CustomizeField.dao.findFirst("update customize_field set field_code = ? where order_type='latestOrderNo'", orderNo);
+            Db.update("update customize_field set field_code = ? where order_type='latestOrderNo'", orderNo);
 //            if(cf!=null){
 //		        logger.debug("orderNo:"+orderNo);
 //		        cf.set("field_code", orderNo).update();
