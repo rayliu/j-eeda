@@ -123,7 +123,7 @@
                                     <button id="saveChargeInvoiceOrderBtn" disabled="disabled" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>                                  
                                     <button id="departureConfirmationBtn" disabled="disabled" type="button"  class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">审批</button>
                                     <a class="btn  btn-primary" href="/chargeInvoiceOrder">返回</a>
-                                    <button id="deleteBtn" type="button" class="btn  btn-danger hidden" >撤销</button>
+                                    <button id="deleteBtn" type="button" class="btn  btn-danger <% if(login_id!'' != arapAuditOrder.create_by!''){%>hidden<% }%>" >撤销</button>
                                 </div>
                                 
                         </div>

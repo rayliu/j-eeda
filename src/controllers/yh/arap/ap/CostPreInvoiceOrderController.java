@@ -1097,6 +1097,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			setAttr("submit_name", LoginUserController.getLoginUserName(this));
 			setAttr("saveOK", false);
 			setAttr("status", "new");
+			Long login_id = LoginUserController.getLoginUserId(this);
+			setAttr("login_id", login_id);
 			render("/yh/arap/CostAcceptOrder/payEdit.html");
 		}
 		
@@ -1503,6 +1505,8 @@ public class CostPreInvoiceOrderController extends Controller {
 			
 			List<Record> Account = Db.find("select * from fin_account where bank_name != '现金'");
 			setAttr("accountList", Account);
+			Long login_id = LoginUserController.getLoginUserId(this);
+			setAttr("login_id", login_id);
 			
 			render("/yh/arap/CostAcceptOrder/payEdit.html");
 		}
@@ -1652,6 +1656,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			//删除主单据数据
 			
 	        String application_id=getPara("application_id");
+	        
 	        //删除从表数据
 	        String sql = "select * from cost_application_order_rel "
 					+ " where application_order_id = '"+application_id+"'";

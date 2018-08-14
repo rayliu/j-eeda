@@ -298,7 +298,7 @@
 							             }  
 							         %>
                                     <a class="btn  btn-primary" href="/costCheckOrder">返回</a>
-                                    <button id="deleteBtn" type="button" class="btn  btn-danger hidden" >撤销</button>
+                                    <button id="deleteBtn" type="button" class="btn  btn-danger <% if(login_id!'' != arapAuditOrder.create_by!''){%>hidden<% }%>" >撤销</button>
                                 </div>
                                 
                                 

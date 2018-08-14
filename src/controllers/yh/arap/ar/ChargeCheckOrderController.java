@@ -155,6 +155,9 @@ public class ChargeCheckOrderController extends Controller {
 
 		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null,null);
 		setAttr("itemList", itemList);
+		Long login_id = LoginUserController.getLoginUserId(this);
+		setAttr("login_id", login_id);
+		
 		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
 
@@ -831,6 +834,9 @@ public class ChargeCheckOrderController extends Controller {
 
 		List<Record> itemList = getItemList(returnOrderIds, miscOrderIds,null,null,null);
 		setAttr("itemList", itemList);
+		Long login_id = LoginUserController.getLoginUserId(this);
+		setAttr("login_id", login_id);
+		
 		render("/yh/arap/ChargeCheckOrder/ChargeCheckOrderEdit.html");
 	}
 

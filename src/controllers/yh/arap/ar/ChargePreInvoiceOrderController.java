@@ -501,6 +501,9 @@ public class ChargePreInvoiceOrderController extends Controller {
 		
 		setAttr("submit_name", LoginUserController.getLoginUserName(this));
 		setAttr("status", "new");
+		Long login_id = LoginUserController.getLoginUserId(this);
+		setAttr("login_id", login_id);
+		
 		render("/yh/arap/ChargeAcceptOrder/chargeEdit.html");
 	}
 	
@@ -811,6 +814,8 @@ public class ChargePreInvoiceOrderController extends Controller {
 		
 		List<Record> Account = Db.find("select * from fin_account where bank_name != '现金'");
 		setAttr("accountList", Account);
+		Long login_id = LoginUserController.getLoginUserId(this);
+		setAttr("login_id", login_id);
 		
 		render("/yh/arap/ChargeAcceptOrder/chargeEdit.html");
 	}

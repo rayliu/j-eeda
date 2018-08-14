@@ -47,6 +47,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.PermissionConstant;
@@ -278,7 +279,8 @@ public class CostCheckOrderController extends Controller {
         	}
         }
 		setAttr("is_office", is_office);
-		
+		Long login_id = LoginUserController.getLoginUserId(this);
+		setAttr("login_id", login_id);
 		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
 	}
 
@@ -789,6 +791,8 @@ public class CostCheckOrderController extends Controller {
 					Double.valueOf(String.format("%.2f", changeamount)));
 			setAttr("actualAmount", actualamount);
 		}
+		Long login_id = LoginUserController.getLoginUserId(this);
+		setAttr("login_id", login_id);
 		render("/yh/arap/CostCheckOrder/CostCheckOrderEdit.html");
 	}
 

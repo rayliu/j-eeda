@@ -426,7 +426,7 @@
                                     <button id="auditBtn" type="button" disabled="disabled" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">确认</button>
                                     <button id="printBtn" type="button" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">打印</button>
                                     <a class="btn  btn-primary" href="/chargeCheckOrder">返回</a>
-                                    <button id="deleteBtn" type="button" class="btn  btn-danger hidden" >撤销</button>
+                                    <button id="deleteBtn" type="button" class="btn  btn-danger <% if(login_id!'' != arapAuditOrder.create_by!''){%>hidden<% }%>" >撤销</button>
                                 </div>
                                 <!-- <p>保存：新建时只能保存（其他按钮都灰掉不能点）, 保存后单据状态变为“新建”</p>
                                 <p>确认：点击后生成单据状态 “已审核”，里程碑中记录审核人，审核时间， 然后生成“结账单”</p> -->
