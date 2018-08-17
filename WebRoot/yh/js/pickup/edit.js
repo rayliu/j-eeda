@@ -435,7 +435,15 @@
  				$("#acc").show();
  				return false;
  			}
+ 		} 
+ 		if($('#driverMessage').val() != ''){
+ 			var driver_id = $("#carinfoId").val();
+ 			if(!driver_id){
+ 				alert("请选择司机信息，是点击选择下拉列表里面的司机哦");
+ 				return;
+ 			}
  		}
+ 		
  		clickSavePickupOrder(e);
 	});
    
@@ -632,6 +640,8 @@
 			if($(this).val() != 'own'){
 				$("#spDiv").show();
 				$("#pickupOrderPayment").show();
+				
+				$('#driverMessage').attr('required',false);
 			}else{	
 				$("#pickupOrderPayment").hide();
 			}
@@ -669,6 +679,8 @@
 			  $("#pickupOrderPayment").hide();
 		  }
 		  $("#show_follow_name").show();
+		  
+		  $('#driverMessage').attr('required',true);
 	  }else{
 		  $("#spDiv").show();
 		  $("#paymentDiv").show();
@@ -678,6 +690,8 @@
 		      $('[name=driver_name]').attr('required',false); 	  
 		      $('[name=driver_phone]').attr('required',false); 	  
 		  }
+		  
+		  $('#driverMessage').attr('required',false);
 	  } 
   	});
     

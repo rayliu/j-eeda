@@ -103,7 +103,7 @@
                                         <div class="form-group">
 											<label>司机<span style="color:red"> *</span></label>
 											<input type="hidden" id="carInfoDriverMessage" value="${carinfo.driver!''}">
-									        <input type="text" name="driver_name" required class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
+									        <input type="text" name="driver_name" required  autocomplete="off" class="form-control" id="driverMessage" value="${driverContact.contact_person!''}">
 									        <ul style="top: 17%; left: 2%;" tabindex="-1" class="pull-right dropdown-menu default" id="driverList">
 											</ul> 
 										</div>  
@@ -551,6 +551,6 @@
  	pickupOrder.order_no = "${order_no!''}" ;
  	pickupOrder.depart_no = "${pickupOrder.depart_no!''}";
 </script>
-<script src="/yh/js/pickup/edit.js?v=1.5"></script>
+<script src="/yh/js/pickup/edit.js?v=1.6"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
