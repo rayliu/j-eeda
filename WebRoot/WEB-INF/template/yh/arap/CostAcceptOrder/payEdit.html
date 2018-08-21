@@ -187,7 +187,7 @@
                             <hr/>
                             <button id="confirmBtn" type="button" class="btn  btn-primary" data-toggle="modal" disabled="disabled"  data-target=".bs-example-modal-sm">付款确认</button> 
                             <a class="btn  btn-primary" href="/costAcceptOrder?page=return">返回</a>
-                            <button id="returnConfirmBtn" type="button" class="btn  btn-primary hidden"  disabled >撤回</button>
+                            <button id="returnConfirmBtn" type="button" class="btn  btn-primary <% if(login_id!'' != invoiceApplication.create_by!''){%>hidden<% }%>"  disabled >撤回</button>
                         </div>
            			</div>
            		</div>	
