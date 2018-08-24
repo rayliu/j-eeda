@@ -468,7 +468,10 @@ public class DepartOrderController extends Controller {
 				+ " deo.transfer_type as trip_type,"
 				+ " w.office_id route_to_office_id, "
                 + " wo.office_name route_to_office_name,"
-                + " if((w.office_id in ( SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')) && w.office_id != t.office_id ,'Y','N') wai_flag"
+				
+                //+ " if((w.office_id in ( SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')) && w.office_id != t.office_id ,'Y','N') wai_flag"
+                + " if((w.office_id in ( SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')),'Y','N') wai_flag"
+                
 				+ " from depart_order deo "
 				+ " left join carinfo c on deo.carinfo_id = c.id "
 				+ " left join depart_transfer dt on dt.depart_id = deo.id "

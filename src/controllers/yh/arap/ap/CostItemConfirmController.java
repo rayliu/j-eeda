@@ -91,15 +91,16 @@ public class CostItemConfirmController extends Controller {
        
         String user_name = currentUser.getPrincipal().toString();
         List<Record> uo = Db.find("select * from user_office where user_name =?",user_name);
-        String is_delivery = "Y";
-        for(Record record :uo){
-        	long office_id = record.getLong("office_id");
-        	Office office = Office.dao.findById(office_id);
-        	String office_type = office.getStr("type");
-        	if(!"配送中心RDC".equals(office_type)){
-        		is_delivery = "N";
-        	}
-        }
+        String is_delivery = "N";
+//        for(Record record :uo){
+//        	long office_id = record.getLong("office_id");
+//        	Office office = Office.dao.findById(office_id);
+//        	String office_type = office.getStr("type");
+//        	if(!"配送中心RDC".equals(office_type)){
+//        		is_delivery = "N";
+//        	}
+//        }
+        is_delivery = "N";
         
         String customer_con = "";
         String customer_con2 = "";
