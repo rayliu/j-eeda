@@ -2103,7 +2103,7 @@ public class ReturnOrderController extends Controller {
 				sql = "select toid.*,tor.order_no from transfer_order_item_detail toid"
 						+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
 						+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
-						+ " where ror.id = ?"
+						+ " where ror.id = ? and toid.charge_amount > 0"
 						+ " GROUP BY toid.id";
 			}else{
 				sql = "select toid.*,tor.order_no from transfer_order_item_detail toid "
@@ -2111,7 +2111,7 @@ public class ReturnOrderController extends Controller {
 						+ " LEFT JOIN delivery_order_item doi on doi.transfer_item_detail_id = toid.id "
 						+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
 						+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
-						+ " where ror.id = ? "
+						+ " where ror.id = ?  and toid.charge_amount > 0"
 						+ " GROUP BY toid.id";
 			}
 		}else{
@@ -2121,7 +2121,7 @@ public class ReturnOrderController extends Controller {
 					sql = "select toid.*,tor.order_no from transfer_order_item_detail toid"
 							+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
 							+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
-							+ " where ror.id = ?"
+							+ " where ror.id = ? and toid.charge_amount > 0"
 							+ "  GROUP BY toid.id";
 				}else{
 					sql = "select toid.*,tor.order_no from transfer_order_item_detail toid "
@@ -2129,24 +2129,24 @@ public class ReturnOrderController extends Controller {
 							+ " LEFT JOIN delivery_order_item doi on doi.transfer_item_detail_id = toid.id "
 							+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
 							+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
-							+ " where ror.id = ? "
+							+ " where ror.id = ?  and toid.charge_amount > 0"
 							+ " GROUP BY toid.id";
 				}
 			}else{
 				//cargo
 				if("delivery".equals(arrival_mode)){
-					sql = "select toid.*,tor.order_no from transfer_order_item toi"
+					sql = "select toi.*,tor.order_no from transfer_order_item toi"
 							+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id "
 							+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
-							+ " where ror.id = ?"
+							+ " where ror.id = ? and toi.charge_amount > 0"
 							+ " GROUP BY toi.id";
 				}else{
-					sql = "select toid.*,tor.order_no from transfer_order_item toi "
+					sql = "select toi.*,tor.order_no from transfer_order_item toi "
 							+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id "
 							+ " LEFT JOIN delivery_order_item doi on doi.transfer_item_id = toi.id "
 							+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
 							+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
-							+ " where ror.id = ? "
+							+ " where ror.id = ? and toi.charge_amount > 0"
 							+ " GROUP BY toi.id";
 				}
 			}
