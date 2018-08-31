@@ -973,7 +973,29 @@ $(document).ready(function() {
     	
     });*/
     	
-    	
+	var receipttable =$('#charge_table').dataTable({
+		"sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+        "bFilter": false, //不需要默认的搜索框
+        //"sPaginationType": "bootstrap",
+        "iDisplayLength": 10,
+        "bServerSide": true,
+        "bLengthChange":false,
+        "sAjaxSource":"/returnOrder/charge_amount_list?return_id="+order_id,
+    	"oLanguage": {
+            "sUrl": "/eeda/dataTables.ch.txt"
+        },
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+			$(nRow).attr('id', aData.ID);
+			return nRow;
+		},
+        "aoColumns": [
+  			{"mDataProp":"ORDER_NO","sWidth": "80px"},
+  			{"mDataProp":"ITEM_NO","sWidth": "80px"},
+			{"mDataProp":"ITEM_NAME","sWidth": "80px"},   
+			{"mDataProp":"CHARGE_AMOUNT","sWidth": "80px"},
+			{"mDataProp":"REMARK","sWidth": "80px"}
+        ]      
+    });	
     	
     	
     

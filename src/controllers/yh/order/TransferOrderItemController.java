@@ -52,7 +52,7 @@ public class TransferOrderItemController extends Controller {
         Record rec = Db.findFirst(sqlTotal);
         logger.debug("total records:" + rec.getLong("total"));
         String sql = "";
-        sql = "select distinct toi.id,toi.product_id prod_id,ifnull(p.item_no,toi.item_no) item_no, ifnull(p.item_name,toi.item_name) item_name,"
+        sql = "select distinct toi.id,toi.charge_amount,toi.product_id prod_id,ifnull(p.item_no,toi.item_no) item_no, ifnull(p.item_name,toi.item_name) item_name,"
                 + " ifnull(p.size,toi.size) size, ifnull(p.width, toi.width) width, ifnull(p.height, toi.height) height,"
                 + " ifnull(p.weight,toi.weight) weight, toi.volume volume,toi.amount amount,"
                 + " ifnull(p.unit,toi.unit) unit,toi.sum_weight sum_weight, toi.remark from transfer_order_item toi "

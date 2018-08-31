@@ -984,6 +984,8 @@ $(document).ready(function() {
         			return inputBox;
                 }
             },
+            
+            {"mDataProp":"CHARGE_AMOUNT","sWidth": "80px"},
             {  
                 "mDataProp": null, 
                 "sWidth": "60px",  
@@ -1623,6 +1625,7 @@ $(document).ready(function() {
                     	 return "<input type='text' style='width:360px;' name='remark'>";
                     }
             }},
+            {"mDataProp":"CHARGE_AMOUNT","sWidth": "80px"},
             /*,
             {  
                 "mDataProp": null, 

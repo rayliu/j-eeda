@@ -2083,4 +2083,82 @@ public class ReturnOrderController extends Controller {
        logger.debug(buffer.toString());
        return buffer.toString();
    }
+   
+	public void charge_amount_list(){
+		String return_id = getPara("return_id");
+		//先判断运单产品类型
+		Record re = Db.findFirst("select tor.* from return_order ror "
+				+ " LEFT JOIN delivery_order dor on dor.id = ror.delivery_order_id and ror.delivery_order_id is not null "
+				+ " LEFT JOIN delivery_order_item doi on doi.delivery_id = dor.id "
+				+ " LEFT JOIN transfer_order tor on tor.id = ifnull(ror.transfer_order_id,doi.transfer_order_id) "
+				+ " where ror.id = ?", return_id);
+		String cargo_nature = re.getStr("cargo_nature");
+		String cargo_nature_detail = re.getStr("cargo_nature_detail");
+		String arrival_mode = re.getStr("arrival_mode");
+		
+		String sql = "";
+		if("ATM".equals(cargo_nature)){
+			//atm
+			if("delivery".equals(arrival_mode)){
+				sql = "select toid.*,tor.order_no from transfer_order_item_detail toid"
+						+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
+						+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
+						+ " where ror.id = ?";
+			}else{
+				sql = "select toid.*,tor.order_no from transfer_order_item_detail toid "
+						+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
+						+ " LEFT JOIN delivery_order_item doi on doi.transfer_item_detail_id = toid.id "
+						+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
+						+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
+						+ " where ror.id = ? "
+						+ " GROUP BY toid.id";
+			}
+		}else{
+			if("cargoNatureDetailYes".equals(cargo_nature_detail)){
+				//atm
+				if("delivery".equals(arrival_mode)){
+					sql = "select toid.*,tor.order_no from transfer_order_item_detail toid"
+							+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
+							+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
+							+ " where ror.id = ?";
+				}else{
+					sql = "select toid.*,tor.order_no from transfer_order_item_detail toid "
+							+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
+							+ " LEFT JOIN delivery_order_item doi on doi.transfer_item_detail_id = toid.id "
+							+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
+							+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
+							+ " where ror.id = ? "
+							+ " GROUP BY toid.id";
+				}
+			}else{
+				//cargo
+				if("delivery".equals(arrival_mode)){
+					sql = "select toid.*,tor.order_no from transfer_order_item toi"
+							+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id "
+							+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
+							+ " where ror.id = ?";
+				}else{
+					sql = "select toid.*,tor.order_no from transfer_order_item toi "
+							+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id "
+							+ " LEFT JOIN delivery_order_item doi on doi.transfer_item_id = toi.id "
+							+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
+							+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
+							+ " where ror.id = ? "
+							+ " GROUP BY toid.id";
+				}
+			}
+		}
+		
+		String pageIndex = getPara("sEcho");
+		Record rec = Db.findFirst("select count(*) total from ("+sql+") A", return_id);
+		List<Record> transferOrders = Db.find(sql, return_id);
+		Map transferOrderListMap = new HashMap();
+		transferOrderListMap.put("sEcho", pageIndex);
+		transferOrderListMap.put("iTotalRecords", rec.getLong("total"));
+		transferOrderListMap.put("iTotalDisplayRecords", rec.getLong("total"));
+
+		transferOrderListMap.put("aaData", transferOrders);
+
+		renderJson(transferOrderListMap);
+	}
 }

@@ -531,6 +531,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			transferOrderItem.set("order_id", tansferOrder.get("id"))
 					.set("volume", sumVolume).set("sum_weight", sumWeight)			
 					.set("remark", item.get("备注"))
+					.set("charge_amount", item.get("应收费用"))
 					.save();
 		}
 		return transferOrderItem;
@@ -571,6 +572,9 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				.set("service_telephone", content.get("服务站电话"));// 服务站电话
 		if (!"".equals(content.get("单品件数"))) {
 			itemDatail.set("pieces", content.get("单品件数"));
+		}
+		if (!"".equals(content.get("应收费用"))) {
+			itemDatail.set("charge_amount", content.get("应收费用"));
 		}
 		itemDatail.save();
 	}
@@ -944,6 +948,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		serialMap.put("单品序列号", content.get(j).get("单品序列号"));
 		serialMap.put("发货数量", content.get(j).get("发货数量"));
 		serialMap.put("备注", content.get(j).get("备注"));
+		serialMap.put("应收费用", content.get(j).get("应收费用"));
 		return serialMap;
 	}
 
