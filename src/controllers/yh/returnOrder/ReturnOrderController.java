@@ -2103,7 +2103,8 @@ public class ReturnOrderController extends Controller {
 				sql = "select toid.*,tor.order_no from transfer_order_item_detail toid"
 						+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
 						+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
-						+ " where ror.id = ?";
+						+ " where ror.id = ?"
+						+ " GROUP BY toid.id";
 			}else{
 				sql = "select toid.*,tor.order_no from transfer_order_item_detail toid "
 						+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
@@ -2120,7 +2121,8 @@ public class ReturnOrderController extends Controller {
 					sql = "select toid.*,tor.order_no from transfer_order_item_detail toid"
 							+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
 							+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
-							+ " where ror.id = ?";
+							+ " where ror.id = ?"
+							+ "  GROUP BY toid.id";
 				}else{
 					sql = "select toid.*,tor.order_no from transfer_order_item_detail toid "
 							+ " LEFT JOIN transfer_order tor on tor.id = toid.order_id "
@@ -2136,7 +2138,8 @@ public class ReturnOrderController extends Controller {
 					sql = "select toid.*,tor.order_no from transfer_order_item toi"
 							+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id "
 							+ " LEFT JOIN return_order ror on ror.transfer_order_id = tor.id "
-							+ " where ror.id = ?";
+							+ " where ror.id = ?"
+							+ " GROUP BY toi.id";
 				}else{
 					sql = "select toid.*,tor.order_no from transfer_order_item toi "
 							+ " LEFT JOIN transfer_order tor on tor.id = toi.order_id "
@@ -2144,7 +2147,7 @@ public class ReturnOrderController extends Controller {
 							+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
 							+ " LEFT JOIN return_order ror on ror.delivery_order_id = dor.id "
 							+ " where ror.id = ? "
-							+ " GROUP BY toid.id";
+							+ " GROUP BY toi.id";
 				}
 			}
 		}
