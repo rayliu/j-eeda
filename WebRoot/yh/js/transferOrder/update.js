@@ -984,8 +984,11 @@ $(document).ready(function() {
         			return inputBox;
                 }
             },
-            
-            {"mDataProp":"CHARGE_AMOUNT","sWidth": "80px"},
+            {"mDataProp":"CHARGE_AMOUNT","sWidth": "80px", 
+            	"fnRender": function(obj) {
+            		return '<input type ="text" class="charge_amount" name="charge_amount" item_id="'+obj.aData.ID+'" value="'+obj.aData.CHARGE_AMOUNT+'">';
+            	}
+            },
             {  
                 "mDataProp": null, 
                 "sWidth": "60px",  
@@ -1008,6 +1011,19 @@ $(document).ready(function() {
             }                         
         ]      
     });	
+    
+    $('#itemTable').on('blur', '.charge_amount', function() {
+    	var item_id = $(this).attr('item_id');
+    	var charge_amount = $(this).val();
+    	
+    	$.post('/transferOrderItem/updateChargeAmount', {item_id: item_id, charge_amount: charge_amount}, function(data) {
+    		if(data){
+    			$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
+    		}else{
+    			$.scojs_message('更新失败', $.scojs_message.TYPE_FALSE);
+    		}
+    	})
+    });
 
     // 计算体积
 	var sumVolume = function(currentEle){
@@ -1127,6 +1143,9 @@ $(document).ready(function() {
 		var value= $(this).val();
 		var weight;
 		var volume;
+		if(fieldName == 'charge_amount'){
+			return;
+		}
 		
 		if(value != ''){
 			$.ajax({  
@@ -1625,7 +1644,11 @@ $(document).ready(function() {
                     	 return "<input type='text' style='width:360px;' name='remark'>";
                     }
             }},
-            {"mDataProp":"CHARGE_AMOUNT","sWidth": "80px"},
+            {"mDataProp":"CHARGE_AMOUNT","sWidth": "80px", 
+            	"fnRender": function(obj) {
+            		return '<input type ="text" class="charge_amount" name="charge_amount" item_id="'+obj.aData.ID+'" value="'+obj.aData.CHARGE_AMOUNT+'">';
+            	}
+            }
             /*,
             {  
                 "mDataProp": null, 
@@ -1638,6 +1661,19 @@ $(document).ready(function() {
             } */                        
         ]      
     });
+    
+    $('#detailTable').on('blur', '.charge_amount', function() {
+    	var item_id = $(this).attr('item_id');
+    	var charge_amount = $(this).val();
+    	
+    	$.post('/transferOrderItemDetail/updateChargeAmount', {item_id: item_id, charge_amount: charge_amount}, function(data) {
+    		if(data){
+    			$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
+    		}else{
+    			$.scojs_message('更新失败', $.scojs_message.TYPE_FALSE);
+    		}
+    	})
+    });
 
 	$("#detailTable").on('blur', 'input', function(e){
 		e.preventDefault();
@@ -1647,6 +1683,10 @@ $(document).ready(function() {
 		var name = $(this).attr("name");
 		var orderType = $('[name=orderType]:checked').val();
 		var value = $(this).val();
+		
+		if(name == 'charge_amount'){
+			return;
+		}
 		if(value != ""){
 			$.post('/transferOrderItemDetail/saveTransferOrderItemDetailByField', {orderType:orderType,customer_id:customerId,detailId: detailId, pId: pId, name: name, value: value}, function(data){
 				if(data.success){

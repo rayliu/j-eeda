@@ -18,6 +18,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -208,5 +209,23 @@ public class TransferOrderItemDetailController extends Controller {
     		}
     	}
         renderJson("{\"success\":"+flag+"}");
+    }
+    
+    
+    public void updateChargeAmount(){
+    	boolean result = false;
+    	String item_id = getPara("item_id");
+    	String charge_amount = getPara("charge_amount");
+    	
+    	Record item = Db.findById("transfer_order_item_detail", item_id);
+    	if(item != null){
+    		if(StrKit.notBlank(charge_amount)){
+    			item.set("charge_amount", charge_amount);
+    			Db.update("transfer_order_item_detail", item);
+        		result = true;
+    		}
+    	}
+    	
+    	renderJson(result);
     }
 }
