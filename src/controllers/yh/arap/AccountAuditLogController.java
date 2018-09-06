@@ -16,6 +16,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -121,6 +122,9 @@ public class AccountAuditLogController extends Controller {
     	if(end == null || "".equals(end)){
     		condiction += " and '" + endTime + "' ";
     	}else{
+    		if(StrKit.notBlank(end)){
+    			end += " 23:59:59" ;
+    		}
     		condiction += " and '" + end + "' ";
     	}
     	
