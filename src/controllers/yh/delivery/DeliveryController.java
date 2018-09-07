@@ -2756,5 +2756,35 @@ public class DeliveryController extends Controller {
         	roController.calculateChargeGeneral(userId, deliveryOrder, returnOrder.getLong("id"), transferOrderItemList);
         }
     }
+    
+    public void return_new(){
+    	String item_id = getPara("item_id");
+    	boolean result = true;
+    	String error_msg = "";
+    	
+    	Record re = Db.findById("delivery_order", item_id);
+    	if(re != null){
+    		String audit_status = re.getStr("audit_status");
+    		if("新建".equals(audit_status)){
+    			String status = re.getStr("status");
+    			if("配送在途".equals(status)){
+    				re.set("status", "新建");
+    				Db.update("delivery_order", re);
+    			}else{
+    				result = false;
+    				error_msg = "已存在回单，请先撤销回单";
+    			}
+    		} else {
+    			result = false;
+    			error_msg = "已存在财务单据，无法退回";
+    		}
+    	}
+    	
+    	Record order = new Record();
+    	order.set("result", result);
+    	order.set("error_msg", error_msg);
+    	renderJson(order);
+    }
+    
 	
 }

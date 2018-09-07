@@ -73,16 +73,40 @@ $(document).ready(function() {
             {"mDataProp":"TID","sWidth":"70px"},
             { 
                 "mDataProp": null,  
-                "bVisible":false,
-                "fnRender": function(obj) {                    
-                    return "<a class='btn btn-danger cancelbutton' title='取消单据' code='"+obj.aData.ID+"'>"+
-                                "<i class='fa fa-trash-o fa-fw'></i>"+ 
-                            "</a>";
+                "fnRender": function(obj) {
+                	var disabled = "disabled";
+                	if(obj.aData.STATUS != '新建'){
+                		disabled = '';
+	                }
+	                return "<button class='btn btn-danger returnNew' "+disabled+" title='' code='"+obj.aData.ID+"'>退回</button>";
                 }
-            }                         
+             }                           
         ]      
     });	
 	
+	
+	$("#eeda-table3").on('click', '.returnNew', function(e){
+		var self = this;
+		if(confirm("确认退回新建状态吗？")){
+			var item_id = $(this).attr('code');
+			
+			if(item_id){
+				self.disabled = true;
+				$.post('/delivery/return_new', {item_id: item_id}, function(data) {
+					if(data.RESULT) {
+						$.scojs_message('退回成功', $.scojs_message.TYPE_OK);
+					} else {
+						var error_msg = data.ERROR_MSG;
+						$.scojs_message(error_msg, $.scojs_message.TYPE_ERROR);
+						self.disabled = false;
+					}
+				}).fail(function() {
+					$.scojs_message("后台出错", $.scojs_message.TYPE_ERROR);
+					self.disabled = true;
+				});
+			}
+		}
+    });
 	
 	$("#dowmload").on('click', function(e){
     	if(confirm("确认下载吗？")){
