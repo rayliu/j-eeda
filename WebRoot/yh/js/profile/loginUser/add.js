@@ -134,7 +134,7 @@ $(document).ready(function(){
 	//添加客户
 	$("#addCustomer").on('click',function(){
 		$("#customerTbody").append('<tr><td>'
-				 	+'<input type="text" class="form-control search-control customer_filter" id=".customer_filter" placeholder="请选择客户">'
+				 	+'<input type="text" autocomplete="off" class="form-control search-control customer_filter" id=".customer_filter" placeholder="请选择客户">'
 	                +'<ul tabindex="-1" class="pull-right dropdown-menu default dropdown-scroll companyList" style="top: 22%; left: 33%;"></ul>'
 	                +'</td>'
                      +' <td><a class="btn removeCustomer" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
