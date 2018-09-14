@@ -37,6 +37,7 @@ import models.yh.profile.DriverAssistant;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.hive.ql.parse.HiveParser.booleanValue_return;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -47,6 +48,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -2626,6 +2628,53 @@ public class PickupOrderController extends Controller {
 				}
 			}
 		}
+    }
+    
+    @Before(Tx.class)
+    public void update_pickupMode(){
+    	boolean result = false;
+    	String error_msg = "";
+    	String pickupId = getPara("pickupId");
+    	String pickupMode = getPara("pickupMode");
+    	String sp_id = getPara("sp_id");
+    	String driver_id = getPara("driver_id");
+    	
+    	String car_no = getPara("car_no");
+    	String driver = getPara("driver");
+    	String phone = getPara("phone");
+    	
+    	DepartOrder dp = DepartOrder.dao.findById(pickupId);
+    	if(dp != null){
+    		String car_summary_type = dp.getStr("car_summary_type");
+    		String audit_status = dp.getStr("audit_status");
+    		if(!"untreated".equals(car_summary_type)){
+    			error_msg = "已做行车单，无法更改了哦";
+    		} else if(!"新建".equals(audit_status)){
+    			error_msg = "已做财务单据，无法更改了哦";
+    		} else {
+    			dp.set("pickup_mode", pickupMode);
+    			
+    			if(StrKit.notBlank(driver_id)){
+    				dp.set("carinfo_id", driver_id);
+    			}else{
+    				dp.set("carinfo_id", null);
+    			}
+    			dp.set("car_no", pickupMode);
+    			dp.set("driver", pickupMode);
+    			dp.set("phone", pickupMode);
+    			
+    			if(StrKit.notBlank(sp_id)){
+    				dp.set("sp_id", sp_id);
+    			}
+    			dp.update();	
+    			result = true;
+    		}
+    	}
+    	
+    	Record order = new Record();
+    	order.set("result", result);
+    	order.set("error_msg", error_msg);
+    	renderJson(order);
     }
     
 }

@@ -665,6 +665,7 @@
 	var inputId;
     $("#pickupModes").on('click', 'input', function(){
     	//没换一次，清空数据
+    	$("#carinfoId").val("");
     	$("#carNoMessage").val("");
     	$("#driverMessage").val("");
     	$("#driver_phone").val("");
@@ -1517,4 +1518,36 @@
     	});
     	
     });
+    
+    
+    
+    //更新"update_pickupModes"
+    $('#update_pickupModes').click(function() {
+    	var self = this;
+    	var pickupId = $('#pickupId').val();
+    	var pickupMode = $('[name=pickupMode]:checked').val();
+    	var sp_id = $('#sp_id').val();
+    	var driver_id = $("#carinfoId").val();
+    	
+    	var driver = $("#driverMessage").val();
+    	var car_no = $("#carNoMessage").val();
+    	var phone = $("#driver_phone").val();
+    	
+    	self.disabled = true;
+    	$.post('/pickupOrder/update_pickupMode', {pickupId:pickupId, pickupMode:pickupMode,sp_id: sp_id,driver_id: driver_id,
+    		driver: driver, car_no: car_no, phone: phone}, function(data){ 
+    		if(data.RESULT){
+    			$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
+    		}else {
+    			var error_msg = data.ERROR_MSG;
+    			$.scojs_message(error_msg, $.scojs_message.TYPE_ERROR);
+    		}
+    		self.disabled = false;
+    	}).fail(function() {
+    		$.scojs_message('后台出了点问题哦，请刷新重试', $.scojs_message.TYPE_ERROR);
+    	});
+    	
+    	
+    });
+    
 });

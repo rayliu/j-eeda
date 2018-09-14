@@ -84,6 +84,7 @@
 	                                            <label class="radio-inline">
 	                                                <input type="radio" name="pickupMode" id="pickupMode3" value="pickupSP">外包供应商提货
 	                                            </label>
+	                                            <button id="update_pickupModes" type="button" style="margin-left: 10px;" class="btn btn-primary btn-xs <% if(pickupOrder.id!'' == ''){%>hide<%}%>">更新</button>
 	                                        </div> 
 	                                        
                                         <div id="spDiv" style="display: none;">    
@@ -551,6 +552,6 @@
  	pickupOrder.order_no = "${order_no!''}" ;
  	pickupOrder.depart_no = "${pickupOrder.depart_no!''}";
 </script>
-<script src="/yh/js/pickup/edit.js?v=1.6"></script>
+<script src="/yh/js/pickup/edit.js?v=1.7"></script>
 <script src="/yh/js/bootstrap-datetimepicker.min.js"></script>
 <script src="/yh/js/bootstrap-datetimepicker.zh-CN.js"></script>
