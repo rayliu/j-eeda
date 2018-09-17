@@ -137,6 +137,7 @@ public class CostReimbursementOrder extends Controller {
 		String office_name = getPara("office_name");
 		String begin_time = getPara("begin_time");
 		String end_time = getPara("end_time");
+		String creator_name = getPara("creator_name");
 		String sortColIndex = getPara("iSortCol_0");
 	    String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_"+sortColIndex);
@@ -153,7 +154,6 @@ public class CostReimbursementOrder extends Controller {
         if(StringUtils.isEmpty(begin_time)){
         	begin_time = "2000-01-01";
         }
-        
         if(StringUtils.isNotEmpty(end_time)){
         	end_time += " 23:59:59"; 
         }else{
@@ -161,27 +161,14 @@ public class CostReimbursementOrder extends Controller {
         }
         String sqlTotal = "";
         String sql = "";
-        if(orderNo == null && status == null ){
-	        sqlTotal = "select count(1) total from reimbursement_order ro "
-	        		+ " where ro.order_no like 'YFBX%' "
-	        		+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
-	    	 
-	        sql = "select ro.*,off.office_name,fi.name f_name,(select sum(revocation_amount) from reimbursement_order_fin_item where order_id = ro.id) amount,"
-	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.create_id) createName,"
-	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.audit_id) auditName,"
-	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
-	        		+ " from reimbursement_order ro "
-	        		+ " left join office off on off.id = ro.office_id"
-	        		+ " left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
-	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
-	        		+ " where ro.order_no like 'YFBX%'  "
-	        		+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
-	        		+ " group by ro.id";
-        }else{
-        	sqlTotal = "select count(1) total from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
-        			+ " left join user_login u on u.id  = ro.audit_id "
+
+        	sqlTotal = "select count(1) total from reimbursement_order ro "
+        			+ " left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
+        			+ " left join user_login us on us.id  = ro.create_id "
+        			+ " left join office off on off.id = ro.office_id"
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
-	        		+ " and ro.status like '%" + status + "%'"
+	        		+ " and ro.status like '%" + status + "%' "+ office_name
+	        		+ " and us.c_name like '%" + creator_name + "%'"
 	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
         			+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
         			+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
@@ -191,15 +178,18 @@ public class CostReimbursementOrder extends Controller {
 	        		+ " (select ifnull(c_name, user_name) from user_login where id = ro.approval_id)  approvalName"
 	        		+ " from reimbursement_order ro left join reimbursement_order_fin_item rofi on rofi.order_id = ro.id "
 	        		+ " left join user_login u on u.id  = ro.audit_id "
+	        		+ " left join user_login us on us.id  = ro.create_id "
 	        		+ " LEFT JOIN fin_item fi ON fi.id = rofi.fin_item_id"
 	        		+ " left join office off on off.id = ro.office_id"
 	        		+ " where ro.order_no like 'YFBX%' and ro.order_no like '%" + orderNo + "%'"
 	        		+ " and ro.status like '%" + status + "%'"
+	        		+ " and us.c_name like '%" + creator_name + "%'"
 	        		+ " and (ro.create_stamp between '" + begin_time + "' and '" + end_time + "')"
-	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"+office_name
+	        		+ " and ifnull(ro.account_name,'') like '%" + accountName + "%'"
+	        		+ office_name
 	        		+ " and ro.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 	        		+ " group by ro.id ";
-        }
+        
         
 		Record rec = Db.findFirst(sqlTotal);
 		String orderByStr = " order by ro.create_stamp desc ";

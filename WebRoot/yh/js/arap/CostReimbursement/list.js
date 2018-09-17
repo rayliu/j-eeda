@@ -95,6 +95,7 @@ $(document).ready(function() {
         var office_name = $.trim($("#office_name").val());
         var begin_time = $.trim($("#create_time_begin_time").val());
         var end_time = $.trim($("#create_time_end_time").val());
+        var creator_name = $.trim($("#creator_name").val());
         
         var flag = false;
         $('#searchForm input,#searchForm select').each(function(){
@@ -110,7 +111,7 @@ $(document).ready(function() {
         }
         
         costExpenseAccountTbody.fnSettings().oFeatures.bServerSide = true;
-        costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?orderNo="+orderNo+"&status="+status+"&accountName="+accountName
+        costExpenseAccountTbody.fnSettings().sAjaxSource = "/costReimbursement/reimbursementList?creator_name="+creator_name+"&orderNo="+orderNo+"&status="+status+"&accountName="+accountName
         +"&office_name="+office_name
         +"&begin_time="+begin_time
         +"&end_time="+end_time;
