@@ -495,7 +495,7 @@ public class TransferOrderController extends Controller {
 			party.set("creator", currentUser.getPrincipal());
 			party.save();
 		}
-		renderJson(party.get("id"));
+		renderJson(party.getLong("id").toString());
 	}
 
 	// 保存供应商
@@ -514,7 +514,7 @@ public class TransferOrderController extends Controller {
 			party.set("creator", currentUser.getPrincipal());
 			party.save();
 		}
-		renderJson(party.get("id"));
+		renderJson(party.getLong("id").toString());
 	}
 
 	// 收货人列表

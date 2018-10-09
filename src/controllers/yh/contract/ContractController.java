@@ -448,8 +448,8 @@ public class ContractController extends Controller {
             c.save();
            
         }
-       
-        this.renderJson(c.get("id"));
+        
+        this.renderJson(c.getLong("id").toString());
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_DELETE})
     public void delete() {

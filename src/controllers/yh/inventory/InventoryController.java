@@ -542,7 +542,7 @@ public class InventoryController extends Controller {
                     .set("order_no", orderNo);
             warehouseOrder.save();
         }
-        renderJson(warehouseOrder.get("id"));
+        renderJson(warehouseOrder.getLong("id").toString());
     }
 
     // 保存出库单
@@ -568,7 +568,7 @@ public class InventoryController extends Controller {
             warehouseOrder.set("creator", users.get(0).get("id")).set("create_date", createDate);
             warehouseOrder.save();
         }
-        renderJson(warehouseOrder.get("id"));
+        renderJson(warehouseOrder.getLong("id").toString());
     }
 
     // 保存入库单货品
@@ -598,7 +598,7 @@ public class InventoryController extends Controller {
             warehouseOrderItem.set("creator", users.get(0).get("id")).set("create_date", createDate);
             warehouseOrderItem.save();
         }
-        renderJson(warehouseOrderItem.get("id"));
+        renderJson(warehouseOrderItem.getLong("id").toString());
     }
 
     public void setwarehouseItem(WarehouseOrderItem warehouseOrderItem) {
@@ -872,7 +872,7 @@ public class InventoryController extends Controller {
                     tItem.save();
                 }
             }
-            renderJson(transferOrder.get("id"));
+            renderJson(transferOrder.getLong("id").toString());
         }
     }
 
