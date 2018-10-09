@@ -184,9 +184,9 @@ public class ReturnTransferController extends Controller{
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		setAttr("create_by", users.get(0).get("id"));
+		setAttr("create_by", users.get(0).getLong("id"));
 
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+		UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
 		setAttr("userLogin", userLogin);
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -198,7 +198,7 @@ public class ReturnTransferController extends Controller{
 		//根据用户的默认网点确定默认的运输网点
 		UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = 1",userLogin.get("user_name"));
 		if(uo != null){
-			transferOrder.set("office_id", uo.get("office_id"));
+			transferOrder.set("office_id", uo.getLong("office_id"));
 		}
 		
 		
@@ -216,25 +216,25 @@ public class ReturnTransferController extends Controller{
 		TransferOrder transferOrder = TransferOrder.dao.findById(id);
 		setAttr("transferOrder", transferOrder);
 
-		Long customer_id = transferOrder.get("customer_id");
-		Long sp_id = transferOrder.get("sp_id");
-		Long driver_id = transferOrder.get("driver_id");
+		Long customer_id = transferOrder.getLong("customer_id");
+		Long sp_id = transferOrder.getLong("sp_id");
+		Long driver_id = transferOrder.getLong("driver_id");
 		
 		if (customer_id != null) {
 			Party customer = Party.dao.findById(customer_id);
 			Contact customerContact = Contact.dao.findById(customer
-					.get("contact_id"));
+					.getLong("contact_id"));
 			setAttr("customerContact", customerContact);
 		}
 		if (sp_id != null) {
 			Party sp = Party.dao.findById(sp_id);
-			Contact spContact = Contact.dao.findById(sp.get("contact_id"));
+			Contact spContact = Contact.dao.findById(sp.getLong("contact_id"));
 			setAttr("spContact", spContact);
 		}
 		if (driver_id != null) {
 			Party driver = Party.dao.findById(driver_id);
 			Contact driverContact = Contact.dao.findById(driver
-					.get("contact_id"));
+					.getLong("contact_id"));
 			setAttr("driverContact", driverContact);
 		}
 
@@ -285,7 +285,7 @@ public class ReturnTransferController extends Controller{
 		
 		
 		UserLogin userLogin = UserLogin.dao.findById(transferOrder
-				.get("create_by"));
+				.getLong("create_by"));
 		setAttr("userLogin2", userLogin);
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
