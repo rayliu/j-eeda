@@ -37,7 +37,7 @@ import models.yh.profile.DriverAssistant;
 import models.yh.returnOrder.ReturnOrderFinItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.hadoop.hive.ql.parse.HiveParser.booleanValue_return;
+//import org.apache.hadoop.hive.ql.parse.HiveParser.booleanValue_return;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;

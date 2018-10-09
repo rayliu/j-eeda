@@ -2,16 +2,13 @@ package controllers.yh;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import models.Office;
 import models.ParentOfficeModel;
@@ -29,10 +26,7 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.util.SavedRequest;
-import org.apache.shiro.web.util.WebUtils;
 
 import com.google.gson.Gson;
 import com.jfinal.aop.Before;
@@ -43,7 +37,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
-import controllers.eeda.ModuleController;
 import controllers.yh.util.EedaCommonHandler;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
@@ -235,7 +228,7 @@ public class MainController extends Controller {
         UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name ='"+currentUser.getPrincipal()+"' and is_main=1");
         if(uo != null){
             Office office = Office.dao.findById(uo.get("office_id"));
-            setAttr("office_name", office.get("office_name"));
+            setAttr("office_name", office.getLong("office_name"));
         }
         setAttr("SYS_CONFIG", of);
 	}
