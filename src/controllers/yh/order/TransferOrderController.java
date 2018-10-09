@@ -349,25 +349,25 @@ public class TransferOrderController extends Controller {
 		TransferOrder transferOrder = TransferOrder.dao.findById(id);
 		setAttr("transferOrder", transferOrder);
 
-		Long customer_id = transferOrder.get("customer_id");
-		Long sp_id = transferOrder.get("sp_id");
-		Long driver_id = transferOrder.get("driver_id");
+		Long customer_id = transferOrder.getLong("customer_id");
+		Long sp_id = transferOrder.getLong("sp_id");
+		Long driver_id = transferOrder.getLong("driver_id");
 
 		if (customer_id != null) {
 			Party customer = Party.dao.findById(customer_id);
 			Contact customerContact = Contact.dao.findById(customer
-					.get("contact_id"));
+					.getLong("contact_id"));
 			setAttr("customerContact", customerContact);
 		}
 		if (sp_id != null) {
 			Party sp = Party.dao.findById(sp_id);
-			Contact spContact = Contact.dao.findById(sp.get("contact_id"));
+			Contact spContact = Contact.dao.findById(sp.getLong("contact_id"));
 			setAttr("spContact", spContact);
 		}
 		if (driver_id != null) {
 			Party driver = Party.dao.findById(driver_id);
 			Contact driverContact = Contact.dao.findById(driver
-					.get("contact_id"));
+					.getLong("contact_id"));
 			setAttr("driverContact", driverContact);
 		}
 		/*
@@ -426,17 +426,17 @@ public class TransferOrderController extends Controller {
 		Office office = Office.dao
 				.findFirst(
 						"select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?",
-						transferOrder.get("warehouse_id"));
+						transferOrder.getLong("warehouse_id"));
 		setAttr("office", office);
 
 		Office outOffice = Office.dao
 				.findFirst(
 						"select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?",
-						transferOrder.get("from_warehouse_id"));
+						transferOrder.getLong("from_warehouse_id"));
 		setAttr("outOffice", outOffice);
 
 		UserLogin userLogin = UserLogin.dao.findById(transferOrder
-				.get("create_by"));
+				.getLong("create_by"));
 		setAttr("userLogin2", userLogin);
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -733,7 +733,7 @@ public class TransferOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		transferOrderMilestone.set("create_by", users.get(0).get("id"));
+		transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 		transferOrderMilestone.set("location", "");
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -1303,7 +1303,7 @@ public class TransferOrderController extends Controller {
 				.findFirst("select * from fin_item where type = '应收' order by id asc");
 		if (item != null) {
 			TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+			dFinItem.set("status", "新建").set("fin_item_id", item.getLong("id"))
 					.set("order_id", orderId)
 					.set("create_name", dFinItem.CREATE_NAME_USER).save();
 		}
@@ -1318,7 +1318,7 @@ public class TransferOrderController extends Controller {
 				.findFirst("select * from fin_item where type = '应付' order by id asc");
 		if (item != null) {
 			TransferOrderFinItem dFinItem = new TransferOrderFinItem();
-			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+			dFinItem.set("status", "新建").set("fin_item_id", item.getLong("id"))
 					.set("order_id", orderId)
 					.set("create_name", dFinItem.CREATE_NAME_USER).save();
 		}
@@ -1333,7 +1333,7 @@ public class TransferOrderController extends Controller {
 		String finItemId = getPara("finItemId");
 		TransferOrderFinItem dFinItem = TransferOrderFinItem.dao.findById(id);
 
-		FinItem fItem = FinItem.dao.findById(dFinItem.get("fin_item_id"));
+		FinItem fItem = FinItem.dao.findById(dFinItem.getLong("fin_item_id"));
 
 		String amount = getPara("amount");
 
@@ -1354,15 +1354,15 @@ public class TransferOrderController extends Controller {
 		List<Record> list = Db.find("select * from fin_item");
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).get("name") == null) {
-				FinItem.dao.deleteById(list.get(i).get("id"));
+				FinItem.dao.deleteById(list.get(i).getLong("id"));
 				List<Record> list2 = Db
 						.find("select * from transfer_order_fin_item where fin_item_id ='"
-								+ list.get(i).get("id") + "'");
+								+ list.get(i).getLong("id") + "'");
 				List<Record> list3 = Db
 						.find("select * from fin_item where id ='"
-								+ list2.get(0).get("fin_item_id") + "'");
+								+ list2.get(0).getLong("fin_item_id") + "'");
 				if (list3.size() == 0) {
-					TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+					TransferOrderFinItem.dao.deleteById(list2.get(0).getLong("id"));
 				}
 			}
 		}
@@ -1372,10 +1372,10 @@ public class TransferOrderController extends Controller {
 						+ dFinItem.get("order_id") + "'");
 		if (list2.size() > 0) {
 			for (int i = 0; i < list2.size(); i++) {
-				FinItem fin_item = FinItem.dao.findById(list2.get(i).get(
+				FinItem fin_item = FinItem.dao.findById(list2.get(i).getLong(
 						"fin_item_id"));
 				if (fin_item == null) {
-					TransferOrderFinItem.dao.deleteById(list2.get(i).get("id"));
+					TransferOrderFinItem.dao.deleteById(list2.get(i).getLong("id"));
 				}
 
 			}
@@ -1409,7 +1409,7 @@ public class TransferOrderController extends Controller {
 		String warehouseId = getPara("warehouseId");
 		Warehouse warehouse = Warehouse.dao.findById(warehouseId);
 		Contact contact = Contact.dao
-				.findById(warehouse.get("notify_party_id"));
+				.findById(warehouse.getLong("notify_party_id"));
 		Location location = new Location();
 		if (warehouse != null) {
 			String code = warehouse.get("location");
