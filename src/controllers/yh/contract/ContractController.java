@@ -449,7 +449,7 @@ public class ContractController extends Controller {
            
         }
        
-        renderJson(c.get("id"));
+        this.renderJson(c.get("id"));
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_DELETE})
     public void delete() {
