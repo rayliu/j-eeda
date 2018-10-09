@@ -277,10 +277,10 @@ public class ReturnTransferController extends Controller{
 			}
 			setAttr("locationTo", locationTo);
 		}
-		Office office = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.get("warehouse_id"));
+		Office office = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.getLong("warehouse_id"));
 		setAttr("office", office);	
 		
-		Office outOffice = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.get("from_warehouse_id"));
+		Office outOffice = Office.dao.findFirst("select o.* from office o left join warehouse w on w.office_id = o.id where w.id = ?", transferOrder.getLong("from_warehouse_id"));
 		setAttr("outOffice", outOffice);
 		
 		
