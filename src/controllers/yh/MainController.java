@@ -227,8 +227,8 @@ public class MainController extends Controller {
         }
         UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name ='"+currentUser.getPrincipal()+"' and is_main=1");
         if(uo != null){
-            Office office = Office.dao.findById(uo.get("office_id"));
-            setAttr("office_name", office.getLong("office_name"));
+            Office office = Office.dao.findById(uo.getLong("office_id"));
+            setAttr("office_name", office.get("office_name"));
         }
         setAttr("SYS_CONFIG", of);
 	}
