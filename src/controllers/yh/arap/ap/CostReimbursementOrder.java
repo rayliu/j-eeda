@@ -338,7 +338,7 @@ public class CostReimbursementOrder extends Controller {
     		reimbursementOrderFinItem.update();
     		rei = ReimbursementOrder.dao.findById(reimbursementOrderFinItem.getStr("order_id"));
     		if("revocation_amount".equals(name) && !"0".equals(value)){
-    			Record rec = Db.findFirst("select sum(revocation_amount) amount from reimbursement_order_fin_item where order_id = "+ reimbursementOrderFinItem.getLong("order_id"));
+    			Record rec = Db.findFirst("select sum(revocation_amount) amount from reimbursement_order_fin_item where order_id = "+ reimbursementOrderFinItem.getStr("order_id"));
     			rei.set("amount", rec.getDouble("amount")).update();
     		} 
     	}
