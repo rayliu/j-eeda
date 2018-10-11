@@ -196,7 +196,7 @@ public class ReturnTransferController extends Controller{
 		setAttr("receivableItemList", receivableItemList);
 		setAttr("status", "新建");
 		//根据用户的默认网点确定默认的运输网点
-		UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = 1",userLogin.get("user_name"));
+		UserOffice uo = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = 1",userLogin.getStr("user_name"));
 		if(uo != null){
 			transferOrder.set("office_id", uo.getLong("office_id"));
 		}
@@ -238,7 +238,7 @@ public class ReturnTransferController extends Controller{
 			setAttr("driverContact", driverContact);
 		}
 
-		String routeFrom = transferOrder.get("route_from");
+		String routeFrom = transferOrder.getStr("route_from");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
 			List<Location> provinces = Location.dao
@@ -258,7 +258,7 @@ public class ReturnTransferController extends Controller{
 			setAttr("locationFrom", locationFrom);
 		}
 
-		String routeTo = transferOrder.get("route_to");
+		String routeTo = transferOrder.getStr("route_to");
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
 			List<Location> provinces = Location.dao

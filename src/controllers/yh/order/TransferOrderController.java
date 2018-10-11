@@ -314,7 +314,7 @@ public class TransferOrderController extends Controller {
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
 
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+		UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
 		setAttr("userLogin", userLogin);
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -327,9 +327,9 @@ public class TransferOrderController extends Controller {
 		UserOffice uo = UserOffice.dao
 				.findFirst(
 						"select * from user_office where user_name = ? and is_main = 1",
-						userLogin.get("user_name"));
+						userLogin.getStr("user_name"));
 		if (uo != null) {
-			transferOrder.set("office_id", uo.get("office_id"));
+			transferOrder.set("office_id", uo.getLong("office_id"));
 		}/*
 		 * else{ transferOrder.set("office_id", null); }
 		 */
@@ -378,7 +378,7 @@ public class TransferOrderController extends Controller {
 		 * contact); }
 		 */
 
-		String routeFrom = transferOrder.get("route_from");
+		String routeFrom = transferOrder.getStr("route_from");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
 			List<Location> provinces = Location.dao
@@ -401,7 +401,7 @@ public class TransferOrderController extends Controller {
 			setAttr("fromRoute", re.getStr("fromRoute"));
 		}
 
-		String routeTo = transferOrder.get("route_to");
+		String routeTo = transferOrder.getStr("route_to");
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
 			List<Location> provinces = Location.dao
@@ -714,9 +714,9 @@ public class TransferOrderController extends Controller {
 	private void deleteDepartOrder(TransferOrder transferOrder) {
 		DepartTransferOrder departTransferOrder = DepartTransferOrder.dao
 				.findFirst("select * from depart_transfer where order_id = ?",
-						transferOrder.get("id"));
+						transferOrder.getLong("id"));
 		if (departTransferOrder != null) {
-			Long departId = departTransferOrder.get("depart_id");
+			Long departId = departTransferOrder.getLong("depart_id");
 			departTransferOrder.set("order_id", null);
 			departTransferOrder.update();
 			departTransferOrder.delete();
@@ -740,7 +740,7 @@ public class TransferOrderController extends Controller {
 		transferOrderMilestone.set("create_stamp", sqlDate);
 		transferOrderMilestone.set("type",
 				TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-		transferOrderMilestone.set("order_id", transferOrder.get("id"));
+		transferOrderMilestone.set("order_id", transferOrder.getLong("id"));
 		transferOrderMilestone.save();
 	}
 
@@ -774,7 +774,7 @@ public class TransferOrderController extends Controller {
 
 	// 更新联系人
 	private Contact editContact(Party party) {
-		Contact contact = Contact.dao.findById(party.get("contact_id"));
+		Contact contact = Contact.dao.findById(party.getLong("contact_id"));
 		contact.set("contact_person", getPara("notify_contact_person"));
 		contact.set("phone", getPara("notify_phone"));
 		contact.set("address", getPara("notify_address"));
@@ -784,7 +784,7 @@ public class TransferOrderController extends Controller {
 
 	// 更新司机
 	private Contact editDriver(Party party) {
-		Contact contact = Contact.dao.findById(party.get("contact_id"));
+		Contact contact = Contact.dao.findById(party.getLong("contact_id"));
 		contact.set("contact_person", getPara("driver_name"));
 		contact.set("phone", getPara("driver_phone"));
 		contact.update();
@@ -1353,7 +1353,7 @@ public class TransferOrderController extends Controller {
 		// 清除不要的条目
 		List<Record> list = Db.find("select * from fin_item");
 		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).get("name") == null) {
+			if (list.get(i).getStr("name") == null) {
 				FinItem.dao.deleteById(list.get(i).getLong("id"));
 				List<Record> list2 = Db
 						.find("select * from transfer_order_fin_item where fin_item_id ='"
@@ -1369,7 +1369,7 @@ public class TransferOrderController extends Controller {
 		// 删除没添加成功的记录
 		List<Record> list2 = Db
 				.find("select * from transfer_order_fin_item where order_id ='"
-						+ dFinItem.get("order_id") + "'");
+						+ dFinItem.getLong("order_id") + "'");
 		if (list2.size() > 0) {
 			for (int i = 0; i < list2.size(); i++) {
 				FinItem fin_item = FinItem.dao.findById(list2.get(i).getLong(
@@ -1412,7 +1412,7 @@ public class TransferOrderController extends Controller {
 				.findById(warehouse.getLong("notify_party_id"));
 		Location location = new Location();
 		if (warehouse != null) {
-			String code = warehouse.get("location");
+			String code = warehouse.getStr("location");
 			if (code != null || !"".equals(code)) {
 				List<Location> provinces = Location.dao
 						.find("select * from location where pcode ='1'");

@@ -138,8 +138,8 @@ public class DamageOrderController extends Controller {
 			
 			//需后台处理的字段
 			order.set("order_no", OrderNoGenerator.getNextOrderNo("HSD"));
-			order.set("creator", user.get("id"));
-			order.set("office_id", user.get("office_id"));
+			order.set("creator", user.getLong("id"));
+			order.set("office_id", user.getLong("office_id"));
 			order.set("create_date", new Date());
 			order.set("status", "新建");
 			order.save();
