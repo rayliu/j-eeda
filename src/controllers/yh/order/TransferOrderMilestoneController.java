@@ -61,12 +61,12 @@ public class TransferOrderMilestoneController extends Controller {
                     .find("select * from transfer_order_milestone where type = '"
                             + TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE + "' and order_id=" + order_id);
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
-                UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+                UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
                 String username = "";
-                if(userLogin.get("c_name")!=null&&!"".equals(userLogin.get("c_name"))){
-                	username=userLogin.get("c_name");
+                if(userLogin.getStr("c_name")!=null&&!"".equals(userLogin.getStr("c_name"))){
+                	username=userLogin.getStr("c_name");
                 }else{
-                	username=userLogin.get("user_name");
+                	username=userLogin.getStr("user_name");
                 }
                 usernames.add(username);
             }
@@ -77,12 +77,12 @@ public class TransferOrderMilestoneController extends Controller {
                     .find("select * from transfer_order_milestone where type = '"
                             + TransferOrderMilestone.TYPE_PICKUP_ORDER_MILESTONE + "' and pickup_id=" + pickupOrderId);
             for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
-                UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
+                UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
                 String username = "";
-                if(userLogin.get("c_name")!=null&&!"".equals(userLogin.get("c_name"))){
-                	username=userLogin.get("c_name");
+                if(userLogin.getStr("c_name")!=null&&!"".equals(userLogin.getStr("c_name"))){
+                	username=userLogin.getStr("c_name");
                 }else{
-                	username=userLogin.get("user_name");
+                	username=userLogin.getStr("user_name");
                 }
                 usernames.add(username);
             }
@@ -119,7 +119,7 @@ public class TransferOrderMilestoneController extends Controller {
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -129,10 +129,10 @@ public class TransferOrderMilestoneController extends Controller {
             transferOrderMilestone.save();
 
             map.put("transferOrderMilestone", transferOrderMilestone);
-            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-            String username = userLogin.get("c_name");
+            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
+            String username = userLogin.getStr("c_name");
             if(username==null||"".equals(username)){
-            	username=userLogin.get("user_name");
+            	username=userLogin.getStr("user_name");
             }
             map.put("username", username);
         } else if (milestonePickupId != null && !"".equals(milestonePickupId)) {
@@ -157,7 +157,7 @@ public class TransferOrderMilestoneController extends Controller {
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -168,9 +168,9 @@ public class TransferOrderMilestoneController extends Controller {
 
             // 更新运输单状态
             List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find(
-                    "select * from depart_transfer where depart_id = ?", departOrder.get("id"));
+                    "select * from depart_transfer where depart_id = ?", departOrder.getLong("id"));
             for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-                transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+                transferOrder = TransferOrder.dao.findById(departTransferOrder.getLong("order_id"));
                 TransferOrderMilestone tom = new TransferOrderMilestone();
                 String status2 = getPara("status");
                 String location2 = getPara("location");
@@ -190,22 +190,22 @@ public class TransferOrderMilestoneController extends Controller {
                 String name2 = (String) currentUser.getPrincipal();
                 List<UserLogin> users2 = UserLogin.dao.find("select * from user_login where user_name='" + name2 + "'");
 
-                tom.set("create_by", users.get(0).get("id"));
+                tom.set("create_by", users.get(0).getLong("id"));
 
                 java.util.Date utilDate2 = new java.util.Date();
                 java.sql.Timestamp sqlDate2 = new java.sql.Timestamp(utilDate2.getTime());
                 tom.set("create_stamp", sqlDate2);
-                tom.set("order_id", departTransferOrder.get("order_id"));
+                tom.set("order_id", departTransferOrder.getLong("order_id"));
                 tom.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
                 tom.save();
                 transferOrder.update();
             }
 
             map.put("transferOrderMilestone", transferOrderMilestone);
-            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-            String username = userLogin.get("c_name");
+            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
+            String username = userLogin.getStr("c_name");
             if(username==null||"".equals(username)){
-            	username=userLogin.get("user_name");
+            	username=userLogin.getStr("user_name");
             }
             map.put("username", username);
         } else if (milestoneDepartId != null && !"".equals(milestoneDepartId)) {
@@ -229,7 +229,7 @@ public class TransferOrderMilestoneController extends Controller {
             String name = (String) currentUser.getPrincipal();
             List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
-            transferOrderMilestone.set("create_by", users.get(0).get("id"));
+            transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 
             java.util.Date utilDate = new java.util.Date();
             java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -239,10 +239,10 @@ public class TransferOrderMilestoneController extends Controller {
             transferOrderMilestone.save();
 
             map.put("transferOrderMilestone", transferOrderMilestone);
-            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-            String username = userLogin.get("c_name");
+            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
+            String username = userLogin.getStr("c_name");
             if(username==null||"".equals(username)){
-            	username=userLogin.get("user_name");
+            	username=userLogin.getStr("user_name");
             }
             map.put("username", username);
         }
@@ -290,24 +290,24 @@ public class TransferOrderMilestoneController extends Controller {
 		    	DeliveryOrder deliveryOrder = new DeliveryOrder();
 		    	String orderNo = OrderNoGenerator.getNextOrderNo("PS");
 		        List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = "+transerOrderId+" and depart_id ="+ departOrderId);
-		        Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id"));
+		        Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.getLong("warehouse_id"));
 				deliveryOrder.set("order_no", orderNo)
-				.set("customer_id", transferOrder.get("customer_id"))
+				.set("customer_id", transferOrder.getLong("customer_id"))
 				.set("create_stamp", sqlDate).set("create_by", userId).set("status", "新建")
-				.set("route_from",transferOrder.get("route_to"))
-				.set("route_to",transferOrder.get("route_to"))
+				.set("route_from",transferOrder.getStr("route_to"))
+				.set("route_to",transferOrder.getStr("route_to"))
 				.set("pricetype", getPara("chargeType"))
-				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
-				.set("cargo_nature", transferOrder.get("cargo_nature"))
-				.set("priceType", departOrder.get("charge_type"))
+				.set("from_warehouse_id", transferOrder.getLong("warehouse_id"))
+				.set("cargo_nature", transferOrder.getStr("cargo_nature"))
+				.set("priceType", departOrder.getStr("charge_type"))
 				.set("deliveryMode", "own")
 				.set("warehouse_nature", "warehouseNatureNo")
-				.set("ltl_price_type", departOrder.get("ltl_price_type")).set("car_type", departOrder.get("car_type"))
+				.set("ltl_price_type", departOrder.getStr("ltl_price_type")).set("car_type", departOrder.getStr("car_type"))
 				.set("audit_status", "新建").set("sign_status", "未回单");
 				if(warehouse!=null){
-					deliveryOrder.set("sp_id", warehouse.get("sp_id")).set("office_id", warehouse.get("office_id"));
+					deliveryOrder.set("sp_id", warehouse.getLong("sp_id")).set("office_id", warehouse.getLong("office_id"));
 				}else{
-					deliveryOrder.set("office_id", transferOrder.get("office_id"));
+					deliveryOrder.set("office_id", transferOrder.getLong("office_id"));
 				}if(transferorderitemdetail!=null){
 					deliveryOrder.set("notify_party_id", transferorderitemdetail.get(0).getLong("notify_party_id"));
 				}
@@ -315,16 +315,16 @@ public class TransferOrderMilestoneController extends Controller {
 				if("ATM".equals(transferOrder.getStr("cargo_nature"))){
 					for (TransferOrderItemDetail transferdetail:transferorderitemdetail) {
 						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
-						.set("transfer_order_id",transferOrder.get("id"))
-						.set("transfer_no",transferOrder.get("order_no"))
+						deliveryOrderItem.set("delivery_id",deliveryOrder.getLong("id"))
+						.set("transfer_order_id",transferOrder.getLong("id"))
+						.set("transfer_no",transferOrder.getStr("order_no"))
 						.set("transfer_item_detail_id",transferdetail.getLong("id"))
 						.set("amount", 1);
 						deliveryOrderItem.save();
 						//在单品中设置delivery_id
 						TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
 								.findById(transferdetail.getLong("id"));
-						transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
+						transferOrderItemDetail.set("delivery_id",deliveryOrder.getLong("id"));
 						transferOrderItemDetail.set("is_delivered", true);
 						transferOrderItemDetail.update();
 					}
@@ -332,11 +332,11 @@ public class TransferOrderMilestoneController extends Controller {
 					List<TransferOrderItem> transferorderitem =TransferOrderItem.dao.find("select * from transfer_order_item where order_id = "+transerOrderId+"");
 					for (TransferOrderItem transferitem:transferorderitem) {
 						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-						deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
-						.set("transfer_order_id",transferOrder.get("id"))
-						.set("transfer_no",transferOrder.get("order_no"))
+						deliveryOrderItem.set("delivery_id",deliveryOrder.getLong("id"))
+						.set("transfer_order_id",transferOrder.getLong("id"))
+						.set("transfer_no",transferOrder.getStr("order_no"))
 						.set("transfer_item_id",transferitem.getLong("id"))
-						.set("amount", transferitem.get("amount"));
+						.set("amount", transferitem.getDouble("amount"));
 						deliveryOrderItem.save();
 					}
 				}
@@ -453,9 +453,9 @@ public class TransferOrderMilestoneController extends Controller {
     	
     	List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao.find("select * from depart_transfer where depart_id = ?", departOrderId);
     	for(DepartTransferOrder departTransferOrder : departTransferOrders){
-    		TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.get("order_id"));
+    		TransferOrder transferOrder = TransferOrder.dao.findById(departTransferOrder.getLong("order_id"));
     		Long transferId = departTransferOrder.getLong("order_id");
-    		if("ATM".equals(transferOrder.get("cargo_nature"))){
+    		if("ATM".equals(transferOrder.getStr("cargo_nature"))){
     			//这里只能算单品的总数,缺失判断不同货品的情况
         		//运输单中所有单品
         		String sqlTotal = "select count(1) total from transfer_order_item_detail where order_id = " + transferId;
@@ -480,14 +480,14 @@ public class TransferOrderMilestoneController extends Controller {
     				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
     				transferOrderMilestone = milestoneMessages(transferOrderMilestone);
     				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-    				transferOrderMilestone.set("order_id", transferOrder.get("id"));
+    				transferOrderMilestone.set("order_id", transferOrder.getLong("id"));
     				transferOrderMilestone.set("status", "已入库");
     				transferOrderMilestone.save();
         		}else{
     				TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
     				transferOrderMilestone = milestoneMessages(transferOrderMilestone);
     				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-    				transferOrderMilestone.set("order_id", transferOrder.get("id"));
+    				transferOrderMilestone.set("order_id", transferOrder.getLong("id"));
     				transferOrderMilestone.set("status", "部分已入库");
     				transferOrderMilestone.save();
         		}
@@ -529,7 +529,7 @@ public class TransferOrderMilestoneController extends Controller {
     			}
     			transferOrderMilestone = milestoneMessages(transferOrderMilestone);
 				transferOrderMilestone.set("type", TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-				transferOrderMilestone.set("order_id", transferOrder.get("id"));
+				transferOrderMilestone.set("order_id", transferOrder.getLong("id"));
 				transferOrderMilestone.save();
 				
 				//自动生成配送单（每一单品----一张配送）
@@ -546,7 +546,7 @@ public class TransferOrderMilestoneController extends Controller {
 		departOrderMilestone = milestoneMessages(departOrderMilestone);
 		departOrderMilestone.set("type", TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
 		departOrderMilestone.set("status", "已入库");
-		departOrderMilestone.set("depart_id", departOrder.get("id"));
+		departOrderMilestone.set("depart_id", departOrder.getLong("id"));
 		departOrderMilestone.save();
     	DepartOrderController.productInWarehouse(departOrderId);
     	renderJson("{\"success\":true}");        
@@ -554,10 +554,10 @@ public class TransferOrderMilestoneController extends Controller {
     
     @Before(Tx.class)
     public void createDeliveryOrder(TransferOrder transferOrder,String departOrderId){
-    	Party party=Party.dao.findById(transferOrder.get("customer_id"));
+    	Party party=Party.dao.findById(transferOrder.getLong("customer_id"));
     	DepartOrder departOrder1= DepartOrder.dao.findById(departOrderId);
-    	if("Y".equals(party.get("is_auto_ps"))){
-    		List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = "+transferOrder.get("id")+" and depart_id ="+ departOrderId);
+    	if("Y".equals(party.getStr("is_auto_ps"))){
+    		List<TransferOrderItemDetail> transferorderitemdetail =TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = "+transferOrder.getLong("id")+" and depart_id ="+ departOrderId);
     		for (TransferOrderItemDetail transferdetail:transferorderitemdetail) {
     			if(transferdetail.getLong("delivery_id")==null){
     				DeliveryOrder deliveryOrder = null;
@@ -565,40 +565,40 @@ public class TransferOrderMilestoneController extends Controller {
             		Date createDate = Calendar.getInstance().getTime();
             		String name = (String) currentUser.getPrincipal();
             		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-            		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.get("warehouse_id")); 
+            		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transferOrder.getLong("warehouse_id")); 
             		deliveryOrder = new DeliveryOrder();
             		deliveryOrder.set("order_no", orderNo)
-    				.set("customer_id", transferOrder.get("customer_id"))
+    				.set("customer_id", transferOrder.getLong("customer_id"))
     				.set("notify_party_id", transferdetail.getLong("notify_party_id"))
-    				.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
-    				.set("route_from",transferOrder.get("route_to"))
-    				.set("route_to",transferOrder.get("route_to"))
+    				.set("create_stamp", createDate).set("create_by", users.get(0).getLong("id")).set("status", "新建")
+    				.set("route_from",transferOrder.getStr("route_to"))
+    				.set("route_to",transferOrder.getStr("route_to"))
     				.set("pricetype", getPara("chargeType"))
-    				.set("office_id", warehouse.get("office_id"))
-    				.set("from_warehouse_id", transferOrder.get("warehouse_id"))
-    				.set("cargo_nature", transferOrder.get("cargo_nature"))
-    				.set("priceType", departOrder1.get("charge_type"))
+    				.set("office_id", warehouse.getLong("office_id"))
+    				.set("from_warehouse_id", transferOrder.getLong("warehouse_id"))
+    				.set("cargo_nature", transferOrder.getStr("cargo_nature"))
+    				.set("priceType", departOrder1.getStr("charge_type"))
     				.set("deliveryMode", "out_source")
     				.set("ref_no",transferOrder.getStr("sign_in_no"))
     				.set("warehouse_nature", "warehouseNatureNo")
-    				.set("ltl_price_type", departOrder1.get("ltl_price_type")).set("car_type", departOrder1.get("car_type"))
+    				.set("ltl_price_type", departOrder1.getStr("ltl_price_type")).set("car_type", departOrder1.getStr("car_type"))
     				.set("audit_status", "新建").set("sign_status", "未回单");
             		if(warehouse!=null){
-                        deliveryOrder.set("sp_id", warehouse.get("sp_id"));
+                        deliveryOrder.set("sp_id", warehouse.getLong("sp_id"));
             			//deliveryOrder.set("sp_id", transferOrder.getLong("sp_id"));
             		}
             		deliveryOrder.save();
     				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-    				deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
-    				.set("transfer_order_id",transferOrder.get("id"))
-    				.set("transfer_no",transferOrder.get("order_no"))
+    				deliveryOrderItem.set("delivery_id",deliveryOrder.getLong("id"))
+    				.set("transfer_order_id",transferOrder.getLong("id"))
+    				.set("transfer_no",transferOrder.getLong("order_no"))
     				.set("transfer_item_detail_id",transferdetail.getLong("id"))
     				.set("amount", 1);
     				deliveryOrderItem.save();
     				//在单品中设置delivery_id
     				TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
     						.findById(transferdetail.getLong("id"));
-    				transferOrderItemDetail.set("delivery_id",deliveryOrder.get("id"));
+    				transferOrderItemDetail.set("delivery_id",deliveryOrder.getLong("id"));
     				transferOrderItemDetail.set("is_delivered", true);
     				transferOrderItemDetail.update();
     			}
@@ -613,7 +613,7 @@ public class TransferOrderMilestoneController extends Controller {
     private TransferOrderMilestone milestoneMessages(TransferOrderMilestone transferOrderMilestone){
     	String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+        transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());

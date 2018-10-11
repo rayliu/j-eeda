@@ -1412,7 +1412,7 @@ public class DepartOrderController extends Controller {
 		for (DepartTransferOrder departTransferOrder : departTransferOrders) {
 			TransferOrder transferOrder = TransferOrder.dao
 					.findById(departTransferOrder.getLong("order_id"));
-			transferOrder.set("sp_id", dp.getLong("sp_id"));
+			transferOrder.set("sp_id", dp.getInt("sp_id"));
 			transferOrder.update();
 		}
 	}

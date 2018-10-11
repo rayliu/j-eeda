@@ -1748,10 +1748,10 @@ public class PickupOrderController extends Controller {
     
     @Before(Tx.class)
     public void swapPickupSeq() {
-        TransferOrder transferOrder = TransferOrder.dao.findById(getPara("currentId"));
+        TransferOrder transferOrder = TransferOrder.dao.findById(getParaToLong("currentId"));
         transferOrder.set("pickup_seq", getPara("currentVal"));
         transferOrder.update();
-        TransferOrder transferOrderPrev = TransferOrder.dao.findById(getPara("targetId"));
+        TransferOrder transferOrderPrev = TransferOrder.dao.findById(getParaToLong("targetId"));
         transferOrderPrev.set("pickup_seq", getPara("targetVal"));
         transferOrderPrev.update();
         renderJson("{\"success\":true}");
