@@ -142,8 +142,8 @@ public class CustomerController extends Controller {
         String id = getPara();
 
         Party party = Party.dao.findById(id);
-        Contact locationCode = Contact.dao.findById(party.get("contact_id"));
-        String code = locationCode.get("location");
+        Contact locationCode = Contact.dao.findById(party.getLong("contact_id"));
+        String code = locationCode.getStr("location");
 
         List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
         Location l = Location.dao

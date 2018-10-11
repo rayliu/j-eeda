@@ -354,25 +354,25 @@ public class CarSummaryController extends Controller {
 					if("配送".equals(orderTypes[i])){
 						if(num == 0){
 							//车牌号
-							setAttr("car_no", deliveryOrder.get("car_no"));
+							setAttr("car_no", deliveryOrder.getStr("car_no"));
 							//主司机姓名
-							setAttr("driver", deliveryOrder.get("driver"));
+							setAttr("driver", deliveryOrder.getStr("driver"));
 						}
 					}else if("干线提货".equals(orderTypes[i])){
 						PickupGateInOrder  pgi = PickupGateInOrder.dao.findById(pickupIds[i]);
 						if(num == 0){
 							//车牌号
-							setAttr("car_no", pgi.get("car_no"));
+							setAttr("car_no", pgi.getStr("car_no"));
 							//主司机姓名
-							setAttr("driver", pgi.get("driver_name"));
+							setAttr("driver", pgi.getStr("driver_name"));
 						}
 					}else{
 						DepartOrder departOrder = DepartOrder.dao.findById(pickupIds[i]);
 						if(num == 0){
 							//车牌号
-							setAttr("car_no", departOrder.get("car_no"));
+							setAttr("car_no", departOrder.getStr("car_no"));
 							//主司机姓名
-							setAttr("driver", departOrder.get("driver"));
+							setAttr("driver", departOrder.getStr("driver"));
 						}
 					}
 					num++;
@@ -445,12 +445,12 @@ public class CarSummaryController extends Controller {
     				//插入从表数据
 	    			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
 	    			carSummaryDetail.set("car_summary_id", id);
-	    			carSummaryDetail.set("pickup_order_id", deliveryOrder.get("id"));
-	    			carSummaryDetail.set("pickup_order_no", deliveryOrder.get("order_no"));
+	    			carSummaryDetail.set("pickup_order_id", deliveryOrder.getLong("id"));
+	    			carSummaryDetail.set("pickup_order_no", deliveryOrder.getStr("order_no"));
 	    			carSummaryDetail.set("pickup_type", "配送");
 	    			carSummaryDetail.save();
 	    			//记录运输单id
-	    			List<Record> recList = Db.find("SELECT doi.transfer_order_id FROM delivery_order d LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id WHERE d.id =?",deliveryOrder.get("id"));
+	    			List<Record> recList = Db.find("SELECT doi.transfer_order_id FROM delivery_order d LEFT JOIN delivery_order_item doi ON doi.delivery_id = d.id WHERE d.id =?",deliveryOrder.getLong("id"));
 	    			for (Record record : recList) {
 	    				if(record.getLong("transfer_order_id")!=null){
 	    					orderIds.add(record.getLong("transfer_order_id"));
@@ -469,8 +469,8 @@ public class CarSummaryController extends Controller {
 	    			//插入从表数据
 	    			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
 	    			carSummaryDetail.set("car_summary_id", id);
-	    			carSummaryDetail.set("pickup_order_id", pgi.get("id"));
-	    			carSummaryDetail.set("pickup_order_no", pgi.get("depart_no"));
+	    			carSummaryDetail.set("pickup_order_id", pgi.getLong("id"));
+	    			carSummaryDetail.set("pickup_order_no", pgi.getStr("depart_no"));
 	    			carSummaryDetail.set("pickup_type", "干线提货");
 	    			carSummaryDetail.save();
 	    			//记录运输单id
@@ -492,12 +492,12 @@ public class CarSummaryController extends Controller {
 	    			//插入从表数据
 	    			CarSummaryDetail carSummaryDetail = new CarSummaryDetail();
 	    			carSummaryDetail.set("car_summary_id", id);
-	    			carSummaryDetail.set("pickup_order_id", departOrder.get("id"));
-	    			carSummaryDetail.set("pickup_order_no", departOrder.get("depart_no"));
+	    			carSummaryDetail.set("pickup_order_id", departOrder.getLong("id"));
+	    			carSummaryDetail.set("pickup_order_no", departOrder.getStr("depart_no"));
 	    			carSummaryDetail.set("pickup_type", "提货");
 	    			carSummaryDetail.save();
 	    			//记录运输单id
-	    			List<Record> recList = Db.find("select distinct order_id from depart_transfer where pickup_id = "+departOrder.get("id"));
+	    			List<Record> recList = Db.find("select distinct order_id from depart_transfer where pickup_id = "+departOrder.getLong("id"));
 	    			for (Record record : recList) {
 	    				orderIds.add(record.getLong("order_id"));
 					}
@@ -510,21 +510,21 @@ public class CarSummaryController extends Controller {
     			//送货员工资明细
     			List<PickupDriverAssistant> assistantList = PickupDriverAssistant.dao.find("select * from pickup_driver_assistant where pickup_id = ?",pickupIds[i]);
     			for (PickupDriverAssistant pickupDriverAssistant : assistantList) {
-    				if(!"".equals(pickupDriverAssistant.get("driver_assistant_id")) && pickupDriverAssistant.get("driver_assistant_id") != null){
-        				DriverAssistant driver = DriverAssistant.dao.findById(pickupDriverAssistant.get("driver_assistant_id"));
+    				if(!"".equals(pickupDriverAssistant.getLong("driver_assistant_id")) && pickupDriverAssistant.getLong("driver_assistant_id") != null){
+        				DriverAssistant driver = DriverAssistant.dao.findById(pickupDriverAssistant.getLong("driver_assistant_id"));
         				CarSummaryDetailSalary salary = new CarSummaryDetailSalary();
         				salary.set("car_summary_id", id)
-        				.set("username", pickupDriverAssistant.get("name"))
+        				.set("username", pickupDriverAssistant.getStr("name"))
 						.set("work_type", "跟车人员")
 						.set("create_data", new Date());
         				if(driver != null){
-							salary.set("deserved_amount", driver.get("daily_wage"));
+							salary.set("deserved_amount", driver.getDouble("daily_wage"));
 						}
         				salary.save();
     				}else{
     					CarSummaryDetailSalary salary = new CarSummaryDetailSalary();
         				salary.set("car_summary_id", id)
-        				.set("username", pickupDriverAssistant.get("name"))
+        				.set("username", pickupDriverAssistant.getStr("name"))
 						.set("work_type", "跟车人员")
 						.set("create_data", new Date())
 						.save();
@@ -942,7 +942,7 @@ public class CarSummaryController extends Controller {
     			carSummaryDetailOilFee.update();
     			//修改费用合计中的本次加油
     			Record rec = Db.findFirst("select ifnull(sum(refuel_amount),0) amount from car_summary_detail_oil_fee where car_summary_id ="+carSummaryId);
-				String sql="update car_summary_detail_other_fee set amount = "+rec.get("amount")+"  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
+				String sql="update car_summary_detail_other_fee set amount = "+rec.getDouble("amount")+"  where amount_item  = '本次加油' and car_summary_id = "+carSummaryId;
     			Db.update(sql);
     			//修改费用合计中的本次油耗
     			updateNextFuelStandard(carSummaryId);
@@ -1116,7 +1116,7 @@ public class CarSummaryController extends Controller {
  		String name = (String) currentUser.getPrincipal();
  		List<UserLogin> users = UserLogin.dao
  				.find("select * from user_login where user_name='" + name + "'");
- 		transferOrderMilestone.set("create_by", users.get(0).get("id"));
+ 		transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
  		transferOrderMilestone.set("location", "");
  		java.util.Date utilDate = new java.util.Date();
  		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -1133,14 +1133,14 @@ public class CarSummaryController extends Controller {
     	if(carSummaryId != "" && carSummaryId != null){
     		CarSummaryOrder carSummaryOrder = CarSummaryOrder.dao.findById(carSummaryId);
     		//车牌号
-			setAttr("car_no", carSummaryOrder.get("car_no"));
+			setAttr("car_no", carSummaryOrder.getStr("car_no"));
 			//主司机姓名
-			setAttr("driver", carSummaryOrder.get("main_driver_name"));
+			setAttr("driver", carSummaryOrder.getStr("main_driver_name"));
 			//出车次
-			setAttr("carNumber", carSummaryOrder.get("month_start_car_next"));
-			setAttr("status", carSummaryOrder.get("status"));
+			setAttr("carNumber", carSummaryOrder.getInt("month_start_car_next"));
+			setAttr("status", carSummaryOrder.getStr("status"));
 			//是否审核 isAudit
-			String status = carSummaryOrder.get("status");
+			String status = carSummaryOrder.getStr("status");
 			if("新建".equals(status) ||carSummaryOrder.CAR_SUMMARY_SYSTEM_REVOCATION.equals(status) ){
 				setAttr("isAudit", "no");
 			}else if("已审批".equals(status) || carSummaryOrder.CAR_SUMMARY_SYSTEM_REIMBURSEMENT.equals(status)){
@@ -1148,7 +1148,7 @@ public class CarSummaryController extends Controller {
 			}else{
 				setAttr("isAudit", "yes");
 			}
-			carSummaryOrder.set("month_refuel_amount", Db.findFirst("select * from car_summary_detail_other_fee where car_summary_id =812 and amount_item = '本次加油';").get("amount"));
+			carSummaryOrder.set("month_refuel_amount", Db.findFirst("select * from car_summary_detail_other_fee where car_summary_id =812 and amount_item = '本次加油';").getDouble("amount"));
 			setAttr("carSummaryOrder", carSummaryOrder);
 
 			Record rec = Db.findFirst("select group_concat(cast(csd.pickup_order_id as char) separator ',') pickupids,group_concat(cast(csd.pickup_type as char) separator ',') pickup_type  from car_summary_detail csd where csd.car_summary_id in("+carSummaryId+") ");

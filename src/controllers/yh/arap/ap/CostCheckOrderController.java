@@ -239,13 +239,13 @@ public class CostCheckOrderController extends Controller {
 				}
 				InsuranceOrder insuraceOrder = InsuranceOrder.dao
 						.findById(orderIdsArr[i]);
-				spId = insuraceOrder.get("insurance_id");
+				spId = insuraceOrder.getLong("insurance_id");
 			}
 		}
 		if (!"".equals(spId) && spId != null) {
 			Party party = Party.dao.findById(spId);
 			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id")
+			Contact contact = Contact.dao.findById(party.getLong("contact_id")
 					.toString());
 			setAttr("sp", contact);
 		} else {
@@ -262,9 +262,9 @@ public class CostCheckOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		setAttr("create_by", users.get(0).get("id"));
-		UserLogin ul = UserLogin.dao.findById(users.get(0).get("id"));
-		setAttr("create_name", ul.get("c_name"));
+		setAttr("create_by", users.get(0).getLong("id"));
+		UserLogin ul = UserLogin.dao.findById(users.get(0).getLong("id"));
+		setAttr("create_name", ul.getStr("c_name"));
 		setAttr("status", "new");
 		//网点权限
 		String user_name = currentUser.getPrincipal().toString();
@@ -497,7 +497,7 @@ public class CostCheckOrderController extends Controller {
 					addArapAuditItem.set("ref_order_id", orderIdsArr[i]);
 					addArapAuditItem.set("ref_order_no", orderNoArr[i]);
 					addArapAuditItem.set("cost_order_id",
-							arapAuditOrder.get("id"));
+							arapAuditOrder.getLong("id"));
 					// arapAuditItem.set("item_status", "");
 					addArapAuditItem.set("create_by", getPara("create_by"));
 					addArapAuditItem.set("create_stamp", new Date());
@@ -569,7 +569,7 @@ public class CostCheckOrderController extends Controller {
 				// arapAuditItem.set("ref_order_type", );
 				arapAuditItem.set("ref_order_id", orderIdsArr[i]);
 				arapAuditItem.set("ref_order_no", orderNoArr[i]);
-				arapAuditItem.set("cost_order_id", arapAuditOrder.get("id"));
+				arapAuditItem.set("cost_order_id", arapAuditOrder.getLong("id"));
 				// arapAuditItem.set("item_status", "");
 				arapAuditItem.set("create_by", getPara("create_by"));
 				arapAuditItem.set("create_stamp", new Date());
@@ -646,11 +646,11 @@ public class CostCheckOrderController extends Controller {
 	public void edit() {
 		ArapCostOrder arapAuditOrder = ArapCostOrder.dao
 				.findById(getPara("id"));
-		Long spId = arapAuditOrder.get("payee_id");
+		Long spId = arapAuditOrder.getLong("payee_id");
 		if (!"".equals(spId) && spId != null) {
 			Party party = Party.dao.findById(spId);
 			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id")
+			Contact contact = Contact.dao.findById(party.getLong("contact_id")
 					.toString());
 			setAttr("sp", contact);
 		}
@@ -669,23 +669,23 @@ public class CostCheckOrderController extends Controller {
 		setAttr("is_office", is_office);
 
 		UserLogin create_user = UserLogin.dao.findById(arapAuditOrder
-				.get("create_by"));
+				.getLong("create_by"));
 		setAttr("create_user", create_user);
 		UserLogin confirm_user = UserLogin.dao.findById(arapAuditOrder
-				.get("confirm_by"));
+				.getLong("confirm_by"));
 		setAttr("confirm_user", confirm_user);
 
 		setAttr("arapAuditOrder", arapAuditOrder);
-		setAttr("is_pdf", arapAuditOrder.get("is_pdf"));
+		setAttr("is_pdf", arapAuditOrder.getStr("is_pdf"));
 
 		String orderIds = "";
 		String orderNos = "";
 		List<ArapCostItem> arapCostItems = ArapCostItem.dao.find(
 				"select * from arap_cost_item where cost_order_id = ?",
-				arapAuditOrder.get("id"));
+				arapAuditOrder.getLong("id"));
 		for (ArapCostItem arapCostItem : arapCostItems) {
-			orderIds += arapCostItem.get("ref_order_id") + ",";
-			orderNos += arapCostItem.get("ref_order_no") + ",";
+			orderIds += arapCostItem.getLong("ref_order_id") + ",";
+			orderNos += arapCostItem.getStr("ref_order_no") + ",";
 		}
 		orderIds = orderIds.substring(0, orderIds.length() - 1);
 		orderNos = orderNos.substring(0, orderNos.length() - 1);
@@ -810,37 +810,37 @@ public class CostCheckOrderController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			arapAuditOrder.set("confirm_by", users.get(0).get("id"));
+			arapAuditOrder.set("confirm_by", users.get(0).getLong("id"));
 			arapAuditOrder.set("confirm_stamp", new Date());
 			arapAuditOrder.update();
 			List<ArapCostItem> list = ArapCostItem.dao.find(
 					"select * from arap_cost_item where cost_order_id = ?",
-					arapAuditOrder.get("id"));
+					arapAuditOrder.getLong("id"));
 			if (list.size() > 0) {
 				for (ArapCostItem arapCostItem : list) {
-					if ("零担".equals(arapCostItem.get("ref_order_no"))) {
+					if ("零担".equals(arapCostItem.getStr("ref_order_no"))) {
 						DepartOrder departOrder = DepartOrder.dao
-								.findById(arapCostItem.get("ref_order_id"));
+								.findById(arapCostItem.getLong("ref_order_id"));
 						departOrder.set("audit_status", "对账已确认");
 						departOrder.update();
-					} else if ("保险".equals(arapCostItem.get("ref_order_no"))) {
+					} else if ("保险".equals(arapCostItem.getStr("ref_order_no"))) {
 						InsuranceOrder insuranceOrder = InsuranceOrder.dao
-								.findById(arapCostItem.get("ref_order_id"));
+								.findById(arapCostItem.getLong("ref_order_id"));
 						insuranceOrder.set("audit_status", "对账已确认");
 						insuranceOrder.update();
-					} else if ("提货".equals(arapCostItem.get("ref_order_no"))) {
+					} else if ("提货".equals(arapCostItem.getStr("ref_order_no"))) {
 						DepartOrder pickupOrder = DepartOrder.dao
-								.findById(arapCostItem.get("ref_order_id"));
+								.findById(arapCostItem.getLong("ref_order_id"));
 						pickupOrder.set("audit_status", "对账已确认");
 						pickupOrder.update();
-					} else if ("配送".equals(arapCostItem.get("ref_order_no"))) {
+					} else if ("配送".equals(arapCostItem.getStr("ref_order_no"))) {
 						DeliveryOrder deliveryOrder = DeliveryOrder.dao
-								.findById(arapCostItem.get("ref_order_id"));
+								.findById(arapCostItem.getLong("ref_order_id"));
 						deliveryOrder.set("audit_status", "对账已确认");
 						deliveryOrder.update();
 					} else {
 						ArapMiscCostOrder arapMiscCostOrder = ArapMiscCostOrder.dao
-								.findById(arapCostItem.get("ref_order_id"));
+								.findById(arapCostItem.getLong("ref_order_id"));
 						arapMiscCostOrder.set("audit_status", "对账已确认");
 						arapMiscCostOrder.update();
 					}
@@ -850,7 +850,7 @@ public class CostCheckOrderController extends Controller {
 			// updateReturnOrderStatus(arapAuditOrder, "对账已确认");
 		}
 		Map BillingOrderListMap = new HashMap();
-		UserLogin ul = UserLogin.dao.findById(arapAuditOrder.get("confirm_by"));
+		UserLogin ul = UserLogin.dao.findById(arapAuditOrder.getLong("confirm_by"));
 		BillingOrderListMap.put("arapAuditOrder", arapAuditOrder);
 		BillingOrderListMap.put("ul", ul);
 		renderJson(BillingOrderListMap);
@@ -1705,7 +1705,7 @@ public class CostCheckOrderController extends Controller {
 				pofi.set("amount", num);
 				pofi.set("STATUS", "新建");
 				pofi.set("create_date", new Date());
-				pofi.set("creator", users.get(0).get("id"));
+				pofi.set("creator", users.get(0).getLong("id"));
 				pofi.set("remark", "对账调整金额");
 				pofi.set("cost_source", "对账调整金额");
 				pofi.save();
@@ -1732,7 +1732,7 @@ public class CostCheckOrderController extends Controller {
 				dofi.set("STATUS", "新建");
 				dofi.set("create_date", new Date());
 				dofi.set("create_name", "user");
-				dofi.set("creator", users.get(0).get("id"));
+				dofi.set("creator", users.get(0).getLong("id"));
 				dofi.set("remark", "对账调整金额");
 				dofi.set("cost_source", "对账调整金额");
 				dofi.save();
@@ -1758,7 +1758,7 @@ public class CostCheckOrderController extends Controller {
 				dofi.set("amount", num);
 				dofi.set("STATUS", "新建");
 				dofi.set("create_date", new Date());
-				dofi.set("creator", users.get(0).get("id"));
+				dofi.set("creator", users.get(0).getLong("id"));
 				dofi.set("create_name", "user");
 				dofi.set("remark", "对账调整金额");
 				dofi.set("cost_source", "对账调整金额");
@@ -1785,7 +1785,7 @@ public class CostCheckOrderController extends Controller {
 				ifi.set("insurance_amount", num);
 				ifi.set("STATUS", "新建");
 				ifi.set("create_stamp", new Date());
-				ifi.set("create_by", users.get(0).get("id"));
+				ifi.set("create_by", users.get(0).getLong("id"));
 				ifi.set("cost_source", "对账调整金额");
 				ifi.save();
 			}
@@ -1809,7 +1809,7 @@ public class CostCheckOrderController extends Controller {
 				pofi.set("fin_item_id", "1");
 				pofi.set("amount", num);
 				pofi.set("create_time", new Date());
-				pofi.set("creator", users.get(0).get("id"));
+				pofi.set("creator", users.get(0).getLong("id"));
 				pofi.set("remark", "对账调整金额");
 				pofi.set("cost_source", "对账调整金额");
 				Db.save("pickup_gate_in_arap_item",pofi);

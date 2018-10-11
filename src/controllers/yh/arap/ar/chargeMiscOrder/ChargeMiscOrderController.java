@@ -55,7 +55,7 @@ public class ChargeMiscOrderController extends Controller {
 		String customerId = getPara("customerId");
 		Party party = Party.dao.findById(customerId);
 
-		Contact contact = Contact.dao.findById(party.get("contact_id")
+		Contact contact = Contact.dao.findById(party.getLong("contact_id")
 				.toString());
 		setAttr("customer", contact);
 		setAttr("type", "CUSTOMER");
@@ -141,11 +141,11 @@ public class ChargeMiscOrderController extends Controller {
 			setAttr("chargeCheckOrderIds", ids);
 			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao
 					.findById(idArray[0]);
-			Long customerId = arapChargeOrder.get("payee_id");
+			Long customerId = arapChargeOrder.getLong("payee_id");
 			if (!"".equals(customerId) && customerId != null) {
 				Party party = Party.dao.findById(customerId);
 				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get("contact_id")
+				Contact contact = Contact.dao.findById(party.getLong("contact_id")
 						.toString());
 				setAttr("customer", contact);
 				setAttr("type", "CUSTOMER");
@@ -157,9 +157,9 @@ public class ChargeMiscOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		setAttr("create_by", users.get(0).get("id"));
+		setAttr("create_by", users.get(0).getLong("id"));
 
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+		UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
 		setAttr("userLogin", userLogin);
 
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
@@ -254,7 +254,7 @@ public class ChargeMiscOrderController extends Controller {
 				ArapMiscChargeOrderItem arapMiscChargeOrderItem = new ArapMiscChargeOrderItem();
 
 				arapMiscChargeOrderItem.set("status", "新建");
-				arapMiscChargeOrderItem.set("creator", user.get("id"));
+				arapMiscChargeOrderItem.set("creator", user.getLong("id"));
 				arapMiscChargeOrderItem.set("create_date", new Date());
 				arapMiscChargeOrderItem.set("customer_order_no",
 						item.get("CUSTOMER_ORDER_NO"));
@@ -308,7 +308,7 @@ public class ChargeMiscOrderController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			arapAuditOrder.set("audit_by", users.get(0).get("id"));
+			arapAuditOrder.set("audit_by", users.get(0).getLong("id"));
 			arapAuditOrder.set("audit_stamp", new Date());
 			arapAuditOrder.update();
 		}
@@ -327,7 +327,7 @@ public class ChargeMiscOrderController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			arapAuditOrder.set("approver_by", users.get(0).get("id"));
+			arapAuditOrder.set("approver_by", users.get(0).getLong("id"));
 			arapAuditOrder.set("approval_stamp", new Date());
 			arapAuditOrder.update();
 		}
@@ -343,7 +343,7 @@ public class ChargeMiscOrderController extends Controller {
 		ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao
 				.findById(id);
 		UserLogin userLogin = UserLogin.dao.findById(arapMiscChargeOrder
-				.get("create_by"));
+				.getLong("create_by"));
 
 		setAttr("userLogin", userLogin);
 
@@ -353,14 +353,14 @@ public class ChargeMiscOrderController extends Controller {
 							"select amcoi.* from arap_misc_charge_order amcoi where id=?",
 							arapMiscChargeOrder.getLong("ref_order_id"));
 			if (refOrder != null)
-				setAttr("ref_order_no", refOrder.get("order_no"));
+				setAttr("ref_order_no", refOrder.getStr("order_no"));
 		} else {
 			ArapMiscChargeOrder refOrder = ArapMiscChargeOrder.dao
 					.findFirst(
 							"select amcoi.* from arap_misc_charge_order amcoi where ref_order_id=?",
 							id);
 			if (refOrder != null)
-				setAttr("ref_order_no", refOrder.get("order_no"));
+				setAttr("ref_order_no", refOrder.getStr("order_no"));
 		}
 		setAttr("arapMiscChargeOrder", arapMiscChargeOrder);
 
@@ -368,12 +368,12 @@ public class ChargeMiscOrderController extends Controller {
 				.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"
 						+ arapMiscChargeOrder.getLong("customer_id") + "'");
 		if (r != null)
-			setAttr("customer_name", r.get("company_name"));
+			setAttr("customer_name", r.getStr("company_name"));
 		Record q = Db
 				.findFirst("select * from party p left join contact c on p.contact_id = c.id where p.id = '"
 						+ arapMiscChargeOrder.getLong("sp_id") + "'");
 		if (q != null)
-			setAttr("sp_name", q.get("company_name"));
+			setAttr("sp_name", q.getStr("company_name"));
 
 		// 获取从表
 		List<Record> itemList = Db
@@ -437,7 +437,7 @@ public class ChargeMiscOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		arapMiscChargeOrderItem.set("creator", users.get(0).get("id"));
+		arapMiscChargeOrderItem.set("creator", users.get(0).getLong("id"));
 		arapMiscChargeOrderItem.set("create_date", new Date());
 		arapMiscChargeOrderItem.set("fin_item_id", 4);
 		arapMiscChargeOrderItem.set("misc_order_id",
@@ -467,7 +467,7 @@ public class ChargeMiscOrderController extends Controller {
 				.findFirst(
 						"select sum(amount) sum_amount from arap_misc_charge_order_item where misc_order_id = ?",
 						chargeMiscOrderId);
-		arapMiscChargeOrder.set("total_amount", record.get("sum_amount"));
+		arapMiscChargeOrder.set("total_amount", record.getDouble("sum_amount"));
 		arapMiscChargeOrder.update();
 
 		if (chargeCheckOrderIds != null && !"".equals(chargeCheckOrderIds)) {

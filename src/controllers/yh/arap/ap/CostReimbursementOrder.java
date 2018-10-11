@@ -212,17 +212,17 @@ public class CostReimbursementOrder extends Controller {
 		if(office_id != null){
 			Office off = Office.dao.findById(office_id);
 			if(off != null){
-				setAttr("re_office_name", off.get("office_name"));
+				setAttr("re_office_name", off.getStr("office_name"));
 			}
 		}
 		
 		setAttr("rei", rei);
-		Account acc=Account.dao.findById(rei.get("fin_account_id"));
+		Account acc=Account.dao.findById(rei.getLong("fin_account_id"));
 		setAttr("acc",acc);
 		//创建人
 		UserLogin create = UserLogin.dao
-				.findFirst("select * from user_login where id='" + rei.get("create_id") + "'");
-		setAttr("createName", create.get("c_name"));
+				.findFirst("select * from user_login where id='" + rei.getLong("create_id") + "'");
+		setAttr("createName", create.getStr("c_name"));
 		List<Record> itemList  = Db.find("select * from fin_item where type='报销费用' and parent_id != 0");
         setAttr("itemList", itemList);
         
@@ -247,13 +247,13 @@ public class CostReimbursementOrder extends Controller {
 				.findFirst("select * from user_login where user_name='" + name + "'");
 		ReimbursementOrder rei = ReimbursementOrder.dao.findById(reimbursementId);
 		DeliveryOrderMilestone milestone = new DeliveryOrderMilestone();
-		milestone.set("create_by", users.get("id")).set("create_stamp", new Date()).set("reimbursement_id", rei.get("id"));
+		milestone.set("create_by", users.getLong("id")).set("create_stamp", new Date()).set("reimbursement_id", rei.getLong("id"));
 		if("审核".equals(btntTxt)){
-			rei.set("status", "已审核").set("audit_id", users.get("id"))
+			rei.set("status", "已审核").set("audit_id", users.getLong("id"))
 			.set("audit_stamp", new Date()).update();
 			milestone.set("status", "已审核").save();
 		}else if("审批".equals(btntTxt)){
-			rei.set("status", "已审批").set("approval_id", users.get("id"))
+			rei.set("status", "已审批").set("approval_id", users.getLong("id"))
 			.set("approval_stamp", new Date()).update();
 			milestone.set("status", "已审批").save();
 		}else if("取消审核".equals(btntTxt)){
@@ -336,9 +336,9 @@ public class CostReimbursementOrder extends Controller {
     		ReimbursementOrderFinItem reimbursementOrderFinItem = ReimbursementOrderFinItem.dao.findById(paymentId);
     		reimbursementOrderFinItem.set(name, value);
     		reimbursementOrderFinItem.update();
-    		rei = ReimbursementOrder.dao.findById(reimbursementOrderFinItem.get("order_id"));
+    		rei = ReimbursementOrder.dao.findById(reimbursementOrderFinItem.getStr("order_id"));
     		if("revocation_amount".equals(name) && !"0".equals(value)){
-    			Record rec = Db.findFirst("select sum(revocation_amount) amount from reimbursement_order_fin_item where order_id = "+ reimbursementOrderFinItem.get("order_id"));
+    			Record rec = Db.findFirst("select sum(revocation_amount) amount from reimbursement_order_fin_item where order_id = "+ reimbursementOrderFinItem.getLong("order_id"));
     			rei.set("amount", rec.getDouble("amount")).update();
     		} 
     	}

@@ -44,6 +44,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -557,45 +558,45 @@ public class DepartOrderController extends Controller {
 		DepartTransferOrder departTransferOrder2 = DepartTransferOrder.dao
 				.findFirst(
 						"select * from depart_transfer where depart_id = ? order by id desc",
-						departOrder.get("id"));
+						departOrder.getLong("id"));
 
 		TransferOrder transferOrderAttr = TransferOrder.dao
-				.findById(departTransferOrder2.get("order_id"));
+				.findById(departTransferOrder2.getLong("order_id"));
 		setAttr("transferOrderAttr", transferOrderAttr);
 
-		Long sp_id = departOrder.get("sp_id");
+		Long sp_id = departOrder.getLong("sp_id");
 		if (sp_id != null) {
 			Party sp = Party.dao.findById(sp_id);
-			Contact spContact = Contact.dao.findById(sp.get("contact_id"));
+			Contact spContact = Contact.dao.findById(sp.getLong("contact_id"));
 			setAttr("spContact", spContact);
 		}
-		Long driverId = departOrder.get("driver_id");
+		Long driverId = departOrder.getLong("driver_id");
 		if (driverId != null) {
 			Party driver = Party.dao.findById(driverId);
 			Contact driverContact = Contact.dao.findById(driver
-					.get("contact_id"));
+					.getLong("contact_id"));
 			setAttr("driverContact", driverContact);
 		}
-		Long carinfoId = departOrder.get("carinfo_id");
+		Long carinfoId = departOrder.getLong("carinfo_id");
 		if (carinfoId != null) {
 			Carinfo carinfo = Carinfo.dao.findById(carinfoId);
 			setAttr("carinfo", carinfo);
 		}
 		UserLogin userLogin = UserLogin.dao.findById(departOrder
-				.get("create_by"));
+				.getLong("create_by"));
 		setAttr("userLogin2", userLogin);
 		setAttr("depart_id", getPara());
 		String orderId = "";
 		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
 				.find("select * from depart_transfer where depart_id = ?",
-						departOrder.get("id"));
+						departOrder.getLong("id"));
 		for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-			orderId += departTransferOrder.get("order_id") + ",";
+			orderId += departTransferOrder.getLong("order_id") + ",";
 		}
 		orderId = orderId.substring(0, orderId.length() - 1);
 		setAttr("localArr", orderId);
 
-		String routeFrom = departOrder.get("route_from");
+		String routeFrom = departOrder.getStr("route_from");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
 			List<Location> provinces = Location.dao
@@ -615,7 +616,7 @@ public class DepartOrderController extends Controller {
 			setAttr("locationFrom", locationFrom);
 		}
 
-		String routeTo = departOrder.get("route_to");
+		String routeTo = departOrder.getStr("route_to");
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
 			List<Location> provinces = Location.dao
@@ -638,7 +639,7 @@ public class DepartOrderController extends Controller {
 		TransferOrderMilestone transferOrderMilestone = TransferOrderMilestone.dao
 				.findFirst(
 						"select * from transfer_order_milestone where pickup_id = ? order by create_stamp desc",
-						departOrder.get("id"));
+						departOrder.getLong("id"));
 		setAttr("transferOrderMilestone", transferOrderMilestone);
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -1014,39 +1015,41 @@ public class DepartOrderController extends Controller {
 		setAttr("routeSp", getPara("routeSp"));
 		setAttr("transfer_type", getPara("transfer_type"));
 		setAttr("pickupIds", getPara("pickupIds"));
-		String[] orderIds = list.split(",");
-		int numone = 0;
-		for (int i = 0; i < orderIds.length; i++) {
-			String[] array = orderIds[i].split(":");
-			String orderId = array[0];
-			TransferOrder transferOrder = TransferOrder.dao
-					.findById(orderId);
-			if (numone == 0) {
-				setAttr("transferOrder", transferOrder);
-				setAttr("chargeType", transferOrder.get("charge_type"));
+		String[] orderIds = null;
+		if(StrKit.notBlank(list)){
+			 orderIds = list.split(",");
+			 int numone = 0;
+				for (int i = 0; i < orderIds.length; i++) {
+					String[] array = orderIds[i].split(":");
+					String orderId = array[0];
+					TransferOrder transferOrder = TransferOrder.dao
+							.findById(orderId);
+					if (numone == 0) {
+						setAttr("transferOrder", transferOrder);
+						setAttr("chargeType", transferOrder.getStr("charge_type"));
 
-				numone = 1;
-			}
-			String routeFrom = transferOrder.get("route_from");
-			Location locationFrom = LocationUtil.getLocation(routeFrom);
-			if (locationFrom != null) {
-				setAttr("locationFrom", locationFrom);
-			}
+						numone = 1;
+					}
+					String routeFrom = transferOrder.getStr("route_from");
+					Location locationFrom = LocationUtil.getLocation(routeFrom);
+					if (locationFrom != null) {
+						setAttr("locationFrom", locationFrom);
+					}
 
-			String routeTo = transferOrder.get("route_to");
-			Location locationTo = LocationUtil.getLocation(routeTo);;
-			if (routeTo != null || !"".equals(routeTo)) {
-				setAttr("locationTo", locationTo);
-			}
-			if (transferOrder.get("sp_id") != null) {
-				Party sp = Party.dao.findById(transferOrder.get("sp_id"));
-				setAttr("partySp", sp);
-				Contact spContact = Contact.dao.findById(sp.get("contact_id"));
-				setAttr("spContact", spContact);
-				break;
-			}
+					String routeTo = transferOrder.getStr("route_to");
+					Location locationTo = LocationUtil.getLocation(routeTo);;
+					if (routeTo != null || !"".equals(routeTo)) {
+						setAttr("locationTo", locationTo);
+					}
+					if (transferOrder.getLong("sp_id") != null) {
+						Party sp = Party.dao.findById(transferOrder.getLong("sp_id"));
+						setAttr("partySp", sp);
+						Contact spContact = Contact.dao.findById(sp.getLong("contact_id"));
+						setAttr("spContact", spContact);
+						break;
+					}
+				}
 		}
-
 		logger.debug("localArr" + list);
 		String order_no = null;
 		setAttr("saveOK", false);
@@ -1054,9 +1057,9 @@ public class DepartOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		setAttr("create_by", users.get(0).get("id"));
+		setAttr("create_by", users.get(0).getLong("id"));
 
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+		UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
 		setAttr("userLogin", userLogin);
 		List<Record> paymentItemList = Collections.EMPTY_LIST;
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
@@ -1138,7 +1141,7 @@ public class DepartOrderController extends Controller {
 		if ("".equals(depart_id)) {
 			dp = new DepartOrder();
 			dp.set("charge_type", charge_type)
-					.set("create_by", users.get(0).get("id"))
+					.set("create_by", users.get(0).getLong("id"))
 					.set("create_stamp", createDate)
 					.set("combine_type", DepartOrder.COMBINE_TYPE_DEPART)
 					.set("depart_no", OrderNoGenerator.getNextOrderNo("FC"))
@@ -1217,16 +1220,16 @@ public class DepartOrderController extends Controller {
 				}
 				
 				//
-				if(dp.get("office_id")==null){
+				if(dp.getLong("office_id")==null){
     				TransferOrder tor = TransferOrder.dao.findById(orderId);
-    				dp.set("office_id", tor.get("office_id")).update();
+    				dp.set("office_id", tor.getLong("office_id")).update();
     			}
 
 				TransferOrder transferOrder = TransferOrder.dao.findById(orderId);
 				DepartTransferOrder departTransferOrder = new DepartTransferOrder();
-				departTransferOrder.set("depart_id", dp.get("id"));
+				departTransferOrder.set("depart_id", dp.getLong("id"));
 				departTransferOrder.set("order_id",orderId);
-				departTransferOrder.set("transfer_order_no", transferOrder.get("order_no"));
+				departTransferOrder.set("transfer_order_no", transferOrder.getStr("order_no"));
 				departTransferOrder.save();
 				// 记录调车单中单品的发车单ID，//发车单从表记录所选的调车单
 				if ("整车".equals(transfer_type) || pickupId == "" || pickupId == null ) {
@@ -1234,12 +1237,12 @@ public class DepartOrderController extends Controller {
 							.find("select * from transfer_order_item_detail where order_id = '"
 									+ orderId + "';");
 					for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-						transferOrderItemDetail.set("depart_id", dp.get("id"));
+						transferOrderItemDetail.set("depart_id", dp.getLong("id"));
 						transferOrderItemDetail.update();
 					}
 
 					DepartPickupOrder departPickup = new DepartPickupOrder();
-					departPickup.set("depart_id", dp.get("id"))
+					departPickup.set("depart_id", dp.getLong("id"))
 							.set("order_id", orderId).save();
 
 					//更新对应的运输单
@@ -1257,20 +1260,20 @@ public class DepartOrderController extends Controller {
 									pickupId);
 					for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
 						transferOrderItemDetail.set("depart_id",
-								dp.get("id"));
+								dp.getLong("id"));
 						transferOrderItemDetail.update();
 					}
 
 					DepartPickupOrder departPickup = new DepartPickupOrder();
-					departPickup.set("depart_id", dp.get("id"))
+					departPickup.set("depart_id", dp.getLong("id"))
 							.set("pickup_id", pickupId)
 							.set("order_id", orderId).save();
 					}
 
 					// 验证是否已全部发车完成，调车单全部提货完成的情况下进行判断
 					if (TransferOrder.ASSIGN_STATUS_ALL.equals(transferOrder
-							.get("pickup_assign_status"))) {
-						if (transferOrder.get("cargo_nature").equals("ATM")) {
+							.getStr("pickup_assign_status"))) {
+						if (transferOrder.getStr("cargo_nature").equals("ATM")) {
 							// 运输单单品总数
 							Record totalTransferOrderAmount = Db
 									.findFirst("select count(0) total from transfer_order_item_detail where order_id = "
@@ -1390,10 +1393,10 @@ public class DepartOrderController extends Controller {
 	private void transferOrderForRouteSp(DepartOrder dp) {
 		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
 				.find("select * from depart_transfer where depart_id = ?",
-						dp.get("id"));
+						dp.getLong("id"));
 		for (DepartTransferOrder departTransferOrder : departTransferOrders) {
 			TransferOrder transferOrder = TransferOrder.dao
-					.findById(departTransferOrder.get("order_id"));
+					.findById(departTransferOrder.getLong("order_id"));
 			transferOrder.set("pickup_mode", "routeSP");
 			transferOrder.set("charge_type", "perCar");
 			transferOrder.update();
@@ -1405,11 +1408,11 @@ public class DepartOrderController extends Controller {
 	private void updateTransferOrderSp(DepartOrder dp) {
 		List<DepartTransferOrder> departTransferOrders = DepartTransferOrder.dao
 				.find("select * from depart_transfer where depart_id = ?",
-						dp.get("id"));
+						dp.getLong("id"));
 		for (DepartTransferOrder departTransferOrder : departTransferOrders) {
 			TransferOrder transferOrder = TransferOrder.dao
-					.findById(departTransferOrder.get("order_id"));
-			transferOrder.set("sp_id", dp.get("sp_id"));
+					.findById(departTransferOrder.getLong("order_id"));
+			transferOrder.set("sp_id", dp.getLong("sp_id"));
 			transferOrder.update();
 		}
 	}
@@ -1422,7 +1425,7 @@ public class DepartOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		transferOrderMilestone.set("create_by", users.get(0).get("id"));
+		transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 		transferOrderMilestone.set("location", "");
 		transferOrderMilestone.set("exception_record", "");
 		java.util.Date utilDate = new java.util.Date();
@@ -1430,7 +1433,7 @@ public class DepartOrderController extends Controller {
 		transferOrderMilestone.set("create_stamp", sqlDate);
 		transferOrderMilestone.set("type",
 				TransferOrderMilestone.TYPE_DEPART_ORDER_MILESTONE);
-		transferOrderMilestone.set("depart_id", pickupOrder.get("id"));
+		transferOrderMilestone.set("depart_id", pickupOrder.getLong("id"));
 		transferOrderMilestone.save();
 	}
 
@@ -1445,11 +1448,11 @@ public class DepartOrderController extends Controller {
 					&& checkedDetailIds.length > 0; j++) {
 				transferOrderItemDetail = TransferOrderItemDetail.dao
 						.findById(checkedDetailIds[j]);
-				transferOrderItemDetail.set("depart_id", pickupOrder.get("id"));
+				transferOrderItemDetail.set("depart_id", pickupOrder.getLong("id"));
 				transferOrderItemDetail.update();
 			}
 			TransferOrder transferOrder = TransferOrder.dao
-					.findById(transferOrderItemDetail.get("order_id"));
+					.findById(transferOrderItemDetail.getLong("order_id"));
 			transferOrder.set("depart_assign_status",
 					TransferOrder.ASSIGN_STATUS_PARTIAL);
 			transferOrder.update();
@@ -1471,7 +1474,7 @@ public class DepartOrderController extends Controller {
 							+ orderId + ")");
 			String str = "";
 			for (TransferOrderItemDetail transferOrderItemDetail : transferOrderItemDetails) {
-				Long departId = transferOrderItemDetail.get("depart_id");
+				Long departId = transferOrderItemDetail.getLong("depart_id");
 				if (departId == null || "".equals(departId)) {
 					str += departId;
 				}
@@ -1518,7 +1521,7 @@ public class DepartOrderController extends Controller {
 
 		String transferIds = "";
 		for (DepartTransferOrder dItem2 : dItem) {
-			transferIds += dItem2.get("order_id") + ",";
+			transferIds += dItem2.getLong("order_id") + ",";
 		}
 
 		if (transferIds.length() > 0)
@@ -1526,7 +1529,7 @@ public class DepartOrderController extends Controller {
 		
 		String finItemOrderIds1 = "";
 		for (DepartOrderFinItem dofi1 : dofi) {
-			finItemOrderIds1 += dofi1.get("depart_order_id") + ",";
+			finItemOrderIds1 += dofi1.getLong("depart_order_id") + ",";
 		}
 		List<Record> transferOrderItemList = Db
 				.find("select toi.*, t_o.route_from, t_o.route_to,t_o.cargo_nature from transfer_order_item toi left join transfer_order t_o on toi.order_id = t_o.id where toi.order_id in("
@@ -1547,7 +1550,7 @@ public class DepartOrderController extends Controller {
 			returnOrder.set("depart_order_id", depart_id);
 			returnOrder.set("order_type", "应收");
 			returnOrder.set("transaction_status", "新建");
-			returnOrder.set("creator", users.get("id"));
+			returnOrder.set("creator", users.getLong("id"));
 			returnOrder.set("create_date", createDate);
 			returnOrder.save();
 
@@ -1580,13 +1583,13 @@ public class DepartOrderController extends Controller {
 						+ "' between c.period_from and c.period_to) and c.party_id = "
 						+ spId
 						+ " and ci.from_id = '"
-						+ departOrder.get("route_from")
+						+ departOrder.getStr("route_from")
 						+ "' and ci.to_id = '"
-						+ departOrder.get("route_to") + "'");
+						+ departOrder.getStr("route_to") + "'");
 		if (spContract == null)
 			return;
 
-		String chargeType = departOrder.get("charge_type");
+		String chargeType = departOrder.getStr("charge_type");
 
 		if (spId != null) {
 			if ("perUnit".equals(chargeType)) {
@@ -1612,8 +1615,8 @@ public class DepartOrderController extends Controller {
 		for (Record record : transferOrderItemList) {
 			TransferOrder transferOrder = TransferOrder.dao.findFirst(
 					"select * from transfer_order where id = ?",
-					record.get("order_id"));
-			Boolean isTrue = transferOrder.get("no_contract_cost");
+					record.getLong("order_id"));
+			Boolean isTrue = transferOrder.getBoolean("no_contract_cost");
 			if (isTrue) {
 				isFinContract = false;
 			}
@@ -1627,11 +1630,11 @@ public class DepartOrderController extends Controller {
 					.findFirst("select amount, fin_item_id from contract_item where contract_id ="
 							+ spContract.getLong("id")
 							+ " and carType = '"
-							+ departOrder.get("car_type")// 对应发车单的 car_type
+							+ departOrder.getStr("car_type")// 对应发车单的 car_type
 							+ "' and from_id = '"
-							+ departOrder.get("route_from")
+							+ departOrder.getStr("route_from")
 							+ "' and to_id = '"
-							+ departOrder.get("route_to")
+							+ departOrder.getStr("route_to")
 							+ "' and priceType='"
 							+ chargeType + "'");
 			if (contractFinItem != null) {
@@ -1641,11 +1644,11 @@ public class DepartOrderController extends Controller {
 						.findFirst("select amount, fin_item_id from contract_item where contract_id ="
 								+ spContract.getLong("id")
 								+ " and carType = '"
-								+ departOrder.get("car_type")// 对应发车单的 car_type
+								+ departOrder.getStr("car_type")// 对应发车单的 car_type
 								+ "' and from_id = '"
-								+ departOrder.get("route_from")
+								+ departOrder.getStr("route_from")
 								+ "' and to_id = '"
-								+ departOrder.get("route_to")
+								+ departOrder.getStr("route_to")
 								+ "' and priceType='" + chargeType + "'");
 				if (contractFinItem != null) {
 					genFinItem(departOrder, null, contractFinItem, chargeType);
@@ -1664,10 +1667,10 @@ public class DepartOrderController extends Controller {
 							.findFirst("select amount, fin_item_id from contract_item where contract_id ="
 									+ spContract.getLong("id")
 									+ " and carType = '"
-									+ departOrder.get("car_type")// 对应发车单的
+									+ departOrder.getStr("car_type")// 对应发车单的
 																	// car_type
 									+ "' and to_id = '"
-									+ departOrder.get("route_to")
+									+ departOrder.getStr("route_to")
 									+ "' and priceType='" + chargeType + "'");
 					if (contractFinItem != null) {
 						genFinItem(departOrder, null, contractFinItem,
@@ -1689,18 +1692,18 @@ public class DepartOrderController extends Controller {
 			// TODO:获取到运输单，并且判断是否要计算合同
 			TransferOrder transferOrder = TransferOrder.dao.findFirst(
 					"select * from transfer_order where id = ?",
-					tOrderItemRecord.get("order_id"));
-			Boolean isTrue = transferOrder.get("no_contract_cost");
+					tOrderItemRecord.getLong("order_id"));
+			Boolean isTrue = transferOrder.getBoolean("no_contract_cost");
 			if (!isTrue) {
 				Record contractFinItem = Db
 						.findFirst("select amount, fin_item_id from contract_item where contract_id ="
 								+ spContract.getLong("id")
 								+ " and product_id = "
-								+ tOrderItemRecord.get("product_id")
+								+ tOrderItemRecord.getLong("product_id")
 								+ " and from_id = '"
-								+ departOrder.get("route_from")
+								+ departOrder.getStr("route_from")
 								+ "' and to_id = '"
-								+ departOrder.get("route_to")
+								+ departOrder.getStr("route_to")
 								+ "' and priceType='" + chargeType + "'");
 				if (contractFinItem != null) {
 					genFinItem(departOrder, tOrderItemRecord, contractFinItem,
@@ -1710,9 +1713,9 @@ public class DepartOrderController extends Controller {
 							.findFirst("select amount, fin_item_id from contract_item where contract_id ="
 									+ spContract.getLong("id")
 									+ " and product_id = "
-									+ tOrderItemRecord.get("product_id")
+									+ tOrderItemRecord.getLong("product_id")
 									+ " and to_id = '"
-									+ departOrder.get("route_to")
+									+ departOrder.getStr("route_to")
 									+ "' and priceType='" + chargeType + "'");
 					if (contractFinItem != null) {
 						genFinItem(departOrder, tOrderItemRecord,
@@ -1722,9 +1725,9 @@ public class DepartOrderController extends Controller {
 								.findFirst("select amount, fin_item_id from contract_item where contract_id ="
 										+ spContract.getLong("id")
 										+ " and from_id = '"
-										+ departOrder.get("route_from")
+										+ departOrder.getStr("route_from")
 										+ "' and to_id = '"
-										+ departOrder.get("route_to")
+										+ departOrder.getStr("route_to")
 										+ "' and priceType='"
 										+ chargeType
 										+ "'");
@@ -1736,7 +1739,7 @@ public class DepartOrderController extends Controller {
 									.findFirst("select amount, fin_item_id from contract_item where contract_id ="
 											+ spContract.getLong("id")
 											+ " and to_id = '"
-											+ departOrder.get("route_to")
+											+ departOrder.getStr("route_to")
 											+ "' and priceType='"
 											+ chargeType
 											+ "'");
@@ -1758,7 +1761,7 @@ public class DepartOrderController extends Controller {
 		DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
 
 		departOrderFinItem.set("fin_item_id",
-				contractFinItem.get("fin_item_id"));
+				contractFinItem.getLong("fin_item_id"));
 		String name = (String) currentUser.getPrincipal();
 		UserLogin users = UserLogin.dao
 				.findFirst("select * from user_login where user_name='" + name
@@ -1769,7 +1772,7 @@ public class DepartOrderController extends Controller {
 					departOrderFinItem, users);
 		} else {
 			if (tOrderItemRecord != null) {
-				String cargo_nature = tOrderItemRecord.get("cargo_nature");
+				String cargo_nature = tOrderItemRecord.getStr("cargo_nature");
 				double money = 0;
 				if (cargo_nature.equals("cargo")) {// 普货计件
 					genFinItemNormalCargo(departOrder, tOrderItemRecord,
@@ -1789,20 +1792,20 @@ public class DepartOrderController extends Controller {
 		double money;
 		Record record = Db
 				.findFirst("select count(toid.id) as amount from transfer_order_item_detail toid where item_id = "
-						+ tOrderItemRecord.get("id")
+						+ tOrderItemRecord.getLong("id")
 						+ " and depart_id = "
-						+ departOrder.get("id"));
+						+ departOrder.getLong("id"));
 		if (record.getLong("amount") != 0) {
 			money = contractFinItem.getDouble("amount")
-					* Double.parseDouble(record.get("amount").toString());
+					* Double.parseDouble(record.getDouble("amount").toString());
 			BigDecimal bg = new BigDecimal(money);
 			double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP)
 					.doubleValue();
 			departOrderFinItem.set("amount", amountDouble);
 			departOrderFinItem.set("transfer_order_id",
-					tOrderItemRecord.get("order_id"));
+					tOrderItemRecord.getLong("order_id"));
 			departOrderFinItem.set("transfer_order_item_id",
-					tOrderItemRecord.get("id"));
+					tOrderItemRecord.getLong("id"));
 
 			saveFinItem(departOrder, now, departOrderFinItem, users);
 		}
@@ -1813,15 +1816,15 @@ public class DepartOrderController extends Controller {
 			UserLogin users) {
 		double money;
 		money = contractFinItem.getDouble("amount")
-				* Double.parseDouble(tOrderItemRecord.get("amount").toString());
+				* Double.parseDouble(tOrderItemRecord.getDouble("amount").toString());
 		BigDecimal bg = new BigDecimal(money);
 		double amountDouble = bg.setScale(2, BigDecimal.ROUND_HALF_UP)
 				.doubleValue();
 		departOrderFinItem.set("amount", amountDouble);
 		departOrderFinItem.set("transfer_order_id",
-				tOrderItemRecord.get("order_id"));
+				tOrderItemRecord.getLong("order_id"));
 		departOrderFinItem.set("transfer_order_item_id",
-				tOrderItemRecord.get("id"));
+				tOrderItemRecord.getLong("id"));
 
 		saveFinItem(departOrder, now, departOrderFinItem, users);
 	}
@@ -1842,7 +1845,7 @@ public class DepartOrderController extends Controller {
 			DepartOrderFinItem departOrderFinItem, UserLogin users) {
 		departOrderFinItem.set("depart_order_id", departOrder.getLong("id"));
 		departOrderFinItem.set("status", "未完成");
-		departOrderFinItem.set("creator", users.get("id"));
+		departOrderFinItem.set("creator", users.getLong("id"));
 		departOrderFinItem.set("create_date", now);
 		departOrderFinItem.set("create_name",
 				departOrderFinItem.CREATE_NAME_SYSTEM);
@@ -1937,10 +1940,10 @@ public class DepartOrderController extends Controller {
 							+ "'and depart_id=" + departOrderId);
 			for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
 				UserLogin userLogin = UserLogin.dao
-						.findById(transferOrderMilestone.get("create_by"));
-				String username = userLogin.get("c_name");
+						.findById(transferOrderMilestone.getLong("create_by"));
+				String username = userLogin.getStr("c_name");
 				if (username == null || "".equals(username)) {
-					username = userLogin.get("user_name");
+					username = userLogin.getStr("user_name");
 				}
 				usernames.add(username);
 			}
@@ -1986,7 +1989,7 @@ public class DepartOrderController extends Controller {
 					.find("select * from user_login where user_name='" + name
 							+ "'");
 
-			transferOrderMilestone.set("create_by", users.get(0).get("id"));
+			transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 
 			java.util.Date utilDate = new java.util.Date();
 			java.sql.Timestamp sqlDate = new java.sql.Timestamp(
@@ -2000,10 +2003,10 @@ public class DepartOrderController extends Controller {
 
 			map.put("transferOrderMilestone", transferOrderMilestone);
 			UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
-					.get("create_by"));
-			String username = userLogin.get("c_name");
+					.getLong("create_by"));
+			String username = userLogin.getStr("c_name");
 			if (username == null || "".equals(username)) {
-				username = userLogin.get("user_name");
+				username = userLogin.getStr("user_name");
 			}
 			map.put("username", username);
 		}
@@ -2018,12 +2021,12 @@ public class DepartOrderController extends Controller {
 				.find("select * from depart_transfer  where depart_id in("
 						+ depart_id + ")");
 		for (int i = 0; i < dep.size(); i++) {
-			int order_id = Integer.parseInt(dep.get(i).get("order_id")
+			int order_id = Integer.parseInt(dep.get(i).getLong("order_id")
 					.toString());
 			TransferOrder tr = TransferOrder.dao.findById(order_id);
 			TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 			if (!"".equals(status) && status != null) {
-				if (tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
+				if (tr.getStr("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
 					transferOrderMilestone.set("status", "部分" + status);
 					tr.set("status", "部分" + status);
 				} else {
@@ -2031,7 +2034,7 @@ public class DepartOrderController extends Controller {
 					tr.set("status", status);
 				}
 			} else {
-				if (tr.get("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
+				if (tr.getStr("depart_assign_status") == TransferOrder.ASSIGN_STATUS_PARTIAL) {
 					transferOrderMilestone.set("status", "部分在途");
 					tr.set("status", "部分在途");
 				} else {
@@ -2044,7 +2047,7 @@ public class DepartOrderController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			transferOrderMilestone.set("create_by", users.get(0).get("id"));
+			transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 			if (location == null || location.isEmpty()) {
 				transferOrderMilestone.set("location", "");
 			} else {
@@ -2296,10 +2299,10 @@ public class DepartOrderController extends Controller {
 							+ "' and order_id=" + order_id);
 			for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
 				UserLogin userLogin = UserLogin.dao
-						.findById(transferOrderMilestone.get("create_by"));
-				String username = userLogin.get("c_name");
+						.findById(transferOrderMilestone.getLong("create_by"));
+				String username = userLogin.getStr("c_name");
 				if (username == null || "".equals(username)) {
-					username = userLogin.get("user_name");
+					username = userLogin.getStr("user_name");
 				}
 				usernames.add(username);
 			}
@@ -2312,10 +2315,10 @@ public class DepartOrderController extends Controller {
 							+ "' and pickup_id=" + pickupOrderId);
 			for (TransferOrderMilestone transferOrderMilestone : transferOrderMilestones) {
 				UserLogin userLogin = UserLogin.dao
-						.findById(transferOrderMilestone.get("create_by"));
-				String username = userLogin.get("c_name");
+						.findById(transferOrderMilestone.getLong("create_by"));
+				String username = userLogin.getStr("c_name");
 				if (username == null || "".equals(username)) {
-					username = userLogin.get("user_name");
+					username = userLogin.getStr("user_name");
 				}
 				usernames.add(username);
 			}
@@ -2353,7 +2356,7 @@ public class DepartOrderController extends Controller {
 					.find("select * from user_login where user_name='" + name
 							+ "'");
 
-			transferOrderMilestone.set("create_by", users.get(0).get("id"));
+			transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 
 			java.util.Date utilDate = new java.util.Date();
 			java.sql.Timestamp sqlDate = new java.sql.Timestamp(
@@ -2366,8 +2369,8 @@ public class DepartOrderController extends Controller {
 
 			map.put("transferOrderMilestone", transferOrderMilestone);
 			UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone
-					.get("create_by"));
-			String username = userLogin.get("user_name");
+					.getLong("create_by"));
+			String username = userLogin.getStr("user_name");
 			map.put("username", username);
 		}
 		renderJson(map);
@@ -2380,7 +2383,7 @@ public class DepartOrderController extends Controller {
 		String id = getPara("depart_id");
 		if (id != null && id != "") {
 			DepartOrder de = DepartOrder.dao.findById(Integer.parseInt(id));
-			Long d_id = de.get("driver_id");
+			Long d_id = de.getLong("driver_id");
 			Carinfo car = Carinfo.dao.findById(d_id);
 			renderJson(car);
 		}
@@ -2396,10 +2399,10 @@ public class DepartOrderController extends Controller {
 				+ de_id + " and item_id=" + it_id + "";
 		List<Record> de_item_amount = Db.find(sql);
 		if (de_item_amount.size() == 1) {
-			if (de_item_amount.get(0).get("itemdetail_id") == null) {
+			if (de_item_amount.get(0).getLong("itemdetail_id") == null) {
 				TransferOrderItem tr_item = TransferOrderItem.dao
 						.findById(it_id);
-				amount = Double.parseDouble(tr_item.get("amount").toString());
+				amount = Double.parseDouble(tr_item.getDouble("amount").toString());
 			} else {
 				amount = de_item_amount.size();
 			}
@@ -2419,37 +2422,37 @@ public class DepartOrderController extends Controller {
 					.find("select * from depart_transfer where depart_id = ?",
 							departId);
 			for (DepartTransferOrder departTransferOrder : departTransferOrders) {
-				orderIds += departTransferOrder.get("order_id") + ",";
+				orderIds += departTransferOrder.getLong("order_id") + ",";
 			}
 			orderIds = orderIds.substring(0, orderIds.length() - 1);
 			List<TransferOrder> transferOrders = TransferOrder.dao
 					.find("select * from transfer_order where id in("
 							+ orderIds + ")");
 			for (TransferOrder transferOrder : transferOrders) {
-				if ("gateIn".equals(transferOrder.get("arrival_mode"))
+				if ("gateIn".equals(transferOrder.getStr("arrival_mode"))
 						|| "deliveryToWarehouse".equals(transferOrder
-								.get("arrival_mode"))) {
+								.getStr("arrival_mode"))) {
 					InventoryItem inventoryItem = null;
 					List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao
 							.find("select * from transfer_order_item where order_id = ?",
-									transferOrder.get("id"));
+									transferOrder.getLong("id"));
 					for (TransferOrderItem transferOrderItem : transferOrderItems) {
 						if (transferOrderItem != null) {
-							if (transferOrderItem.get("product_id") != null) {
+							if (transferOrderItem.getLong("product_id") != null) {
 								// 判断是否有库存
 								String inventoryItemSql = "select * from inventory_item where product_id = "
-										+ transferOrderItem.get("product_id")
+										+ transferOrderItem.getLong("product_id")
 										+ " and warehouse_id = "
-										+ transferOrder.get("warehouse_id");
+										+ transferOrder.getLong("warehouse_id");
 								inventoryItem = InventoryItem.dao
 										.findFirst(inventoryItemSql);
 								// 判断发车单中的运输单是否有单品,
 								String sqlTotal = "select count(1) total from transfer_order_item_detail where depart_id = "
 										+ departId
 										+ " and order_id = "
-										+ transferOrder.get("id")
+										+ transferOrder.getLong("id")
 										+ " and item_id = "
-										+ transferOrderItem.get("id");
+										+ transferOrderItem.getLong("id");
 								Record rec = Db.findFirst(sqlTotal);
 								Long amount = rec.getLong("total");
 								if (amount == 0) {
@@ -2460,13 +2463,13 @@ public class DepartOrderController extends Controller {
 								if (inventoryItem == null) {
 									inventoryItem = new InventoryItem();
 									inventoryItem.set("party_id",
-											transferOrder.get("customer_id"));
+											transferOrder.getLong("customer_id"));
 									inventoryItem.set("warehouse_id",
-											transferOrder.get("warehouse_id"));
+											transferOrder.getLong("warehouse_id"));
 									inventoryItem
 											.set("product_id",
 													transferOrderItem
-															.get("product_id"));
+															.getLong("product_id"));
 									inventoryItem.set("total_quantity", amount);
 									inventoryItem.set("available_quantity",
 											amount);
@@ -2475,19 +2478,19 @@ public class DepartOrderController extends Controller {
 									inventoryItem.set(
 											"total_quantity",
 											Double.parseDouble(inventoryItem
-													.get("total_quantity")
+													.getDouble("total_quantity")
 													.toString())
 													+ amount);
-									if (inventoryItem.get("available_quantity") == null
+									if (inventoryItem.getDouble("available_quantity") == null
 											|| "".equals(inventoryItem
-													.get("total_quantity"))) {
+													.getDouble("total_quantity"))) {
 										inventoryItem.set("available_quantity",
 												amount);
 									} else {
 										inventoryItem
 												.set("available_quantity",
 														Double.parseDouble(inventoryItem
-																.get("available_quantity")
+																.getDouble("available_quantity")
 																.toString())
 																+ amount);
 									}
@@ -2538,11 +2541,11 @@ public class DepartOrderController extends Controller {
 		logger.debug("total records:" + rec.getLong("total"));
 
 		DepartOrder depart = DepartOrder.dao.findById(id);
-		String charge_type = depart.get("charge_type");
+		String charge_type = depart.getStr("charge_type");
 		List<Record> record = Db
 				.find("select tor.cargo_nature from transfer_order tor left join depart_transfer dt on tor.id = dt.order_id where dt.depart_id =?",
 						id);
-		String cargo_nature = record.get(0).get("cargo_nature");
+		String cargo_nature = record.get(0).getStr("cargo_nature");
 		String conditionSql = "";
 		if ("ATM".equals(cargo_nature)) {
 			if ("perUnit".equals(charge_type)) {
@@ -2665,7 +2668,7 @@ public class DepartOrderController extends Controller {
 				.findFirst("select * from fin_item where type = '应付' order by id asc");
 		if (item != null) {
 			DepartOrderFinItem dFinItem = new DepartOrderFinItem();
-			dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+			dFinItem.set("status", "新建").set("fin_item_id", item.getLong("id"))
 					.set("depart_order_id", orderId)
 					.set("create_name", dFinItem.CREATE_NAME_USER).save();
 		}
@@ -2680,7 +2683,7 @@ public class DepartOrderController extends Controller {
 		String finItemId = getPara("finItemId");
 		DepartOrderFinItem dFinItem = DepartOrderFinItem.dao.findById(id);
 
-		FinItem fItem = FinItem.dao.findById(dFinItem.get("fin_item_id"));
+		FinItem fItem = FinItem.dao.findById(dFinItem.getLong("fin_item_id"));
 
 		String amount = getPara("amount");
 
@@ -2699,16 +2702,16 @@ public class DepartOrderController extends Controller {
 		}
 		List<Record> list = Db.find("select * from fin_item");
 		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).get("name") == null) {
-				FinItem.dao.deleteById(list.get(i).get("id"));
+			if (list.get(i).getStr("name") == null) {
+				FinItem.dao.deleteById(list.get(i).getLong("id"));
 				List<Record> list2 = Db
 						.find("select * from depart_order_fin_item where fin_item_id ='"
-								+ list.get(i).get("id") + "'");
+								+ list.get(i).getLong("id") + "'");
 				List<Record> list3 = Db
 						.find("select * from fin_item where id ='"
-								+ list2.get(0).get("fin_item_id") + "'");
+								+ list2.get(0).getLong("fin_item_id") + "'");
 				if (list3.size() == 0) {
-					TransferOrderFinItem.dao.deleteById(list2.get(0).get("id"));
+					TransferOrderFinItem.dao.deleteById(list2.get(0).getLong("id"));
 				}
 			}
 		}
@@ -2781,14 +2784,14 @@ public class DepartOrderController extends Controller {
 	public void getFinNoContractCost(DepartOrder departOrder) {
 		List<TransferOrder> tran = TransferOrder.dao
 				.find("select tor.* from transfer_order tor left join depart_transfer dt on dt.order_id = tor.id  where dt.depart_id = ?",
-						departOrder.get("id"));
+						departOrder.getLong("id"));
 
 		List<TransferOrderFinItem> tofiList;
 		if (tran.size() > 0) {
 			for (TransferOrder transferOrder : tran) {
 				tofiList = TransferOrderFinItem.dao
 						.find("select sum(amount) as total_cost,fin_item_id from transfer_order_fin_item tofi left join fin_item fi on fi.id = tofi.fin_item_id where order_id = ? and fi.type='应付' group by tofi.fin_item_id",
-								transferOrder.get("id"));
+								transferOrder.getLong("id"));
 				String name = (String) currentUser.getPrincipal();
 				UserLogin users = UserLogin.dao
 						.findFirst("select * from user_login where user_name='"
@@ -2800,18 +2803,18 @@ public class DepartOrderController extends Controller {
 					for (TransferOrderFinItem transferOrderFinItem : tofiList) {
 						DepartOrderFinItem departOrderFinItem = new DepartOrderFinItem();
 						departOrderFinItem.set("fin_item_id",
-								transferOrderFinItem.get("fin_item_id"));
+								transferOrderFinItem.getLong("fin_item_id"));
 						departOrderFinItem.set("amount",
-								transferOrderFinItem.get("total_cost"));
+								transferOrderFinItem.getDouble("total_cost"));
 						departOrderFinItem.set("depart_order_id",
 								departOrder.getLong("id"));
 						departOrderFinItem.set("status", "未完成");
-						departOrderFinItem.set("creator", users.get("id"));
+						departOrderFinItem.set("creator", users.getLong("id"));
 						departOrderFinItem.set("create_date", now);
 						departOrderFinItem.set("create_name",
 								departOrderFinItem.CREATE_NAME_SYSTEM);
 						departOrderFinItem.set("transfer_order_id",
-								transferOrder.get("id"));
+								transferOrder.getLong("id"));
 						// departOrderFinItem.set("transfer_order_item_id",
 						// toi.get("id"));
 						departOrderFinItem.set("cost_source", "运输单应付费用");
@@ -2832,27 +2835,27 @@ public class DepartOrderController extends Controller {
 	public void SubtractInventory(DepartTransferOrder departTransferOrder,
 			String departOrderId) {
 		TransferOrder transferOrder = TransferOrder.dao
-				.findById(departTransferOrder.get("order_id"));
+				.findById(departTransferOrder.getLong("order_id"));
 
-		if ("arrangementOrder".equals(transferOrder.get("order_type"))
-				|| ("cargoReturnOrder".equals(transferOrder.get("order_type")) && "deliveryToFachtoryFromWarehouse"
-						.equals(transferOrder.get("arrival_mode")))) {
+		if ("arrangementOrder".equals(transferOrder.getStr("order_type"))
+				|| ("cargoReturnOrder".equals(transferOrder.getStr("order_type")) && "deliveryToFachtoryFromWarehouse"
+						.equals(transferOrder.getStr("arrival_mode")))) {
 			List<TransferOrderItem> list = TransferOrderItem.dao.find(
 					"select * from transfer_order_item where order_id = ? ",
-					transferOrder.get("id"));
+					transferOrder.getLong("id"));
 			for (TransferOrderItem transferOrderItem : list) {
 				if (transferOrderItem.getLong("product_id") != null
 						&& transferOrderItem.getLong("product_id") != 0) {
 					InventoryItem ii = InventoryItem.dao
 							.findFirst(
 									"select * from inventory_item where party_id =? and warehouse_id = ? and product_id = ?",
-									transferOrder.get("customer_id"),
-									transferOrder.get("from_warehouse_id"),
-									transferOrderItem.get("product_id"));
+									transferOrder.getLong("customer_id"),
+									transferOrder.getLong("from_warehouse_id"),
+									transferOrderItem.getLong("product_id"));
 					TransferOrderItemDetail toid = TransferOrderItemDetail.dao
 							.findFirst(
 									"select count(*) as amount from transfer_order_item_detail where item_id = ? and depart_id = ? and pickup_id is null ",
-									transferOrderItem.get("id"), departOrderId);
+									transferOrderItem.getLong("id"), departOrderId);
 					Double total_quantity = ii.getDouble("total_quantity");
 					if (total_quantity - toid.getLong("amount") >= 0) {
 						ii.set("total_quantity",
@@ -2888,7 +2891,7 @@ public class DepartOrderController extends Controller {
         departOrderMilestone.save();
         
         for(DepartTransferOrder departTransferOrder : departTransferOrders){
-        	Long transferId = departTransferOrder.get("order_id");
+        	Long transferId = departTransferOrder.getLong("order_id");
         	TransferOrder transfer = TransferOrder.dao.findById(transferId);
         	String cargo_nature = transfer.getStr("cargo_nature");
 
@@ -2941,7 +2944,7 @@ public class DepartOrderController extends Controller {
 	        transferOrderMilestone.save();
 	        
 
-	        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = " + departTransferOrder.get("order_id") + " and depart_id = " + departOrderId);
+	        List<TransferOrderItemDetail> transferOrderItemDetails = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where order_id = " + departTransferOrder.getLong("order_id") + " and depart_id = " + departOrderId);
 	        for(TransferOrderItemDetail detail : transferOrderItemDetails){
 	        	detail.set("status", "已发车");
 	        	detail.update();

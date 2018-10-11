@@ -79,13 +79,13 @@ public class ChargeInvoiceOrderController extends Controller {
     			setAttr("totalAmount", df.format(totalAmount));
     			
     			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArray[0]);
-    			Long customerId = arapChargeOrder.get("payee_id");
-    			Long spId = arapChargeOrder.get("sp_id");
+    			Long customerId = arapChargeOrder.getLong("payee_id");
+    			Long spId = arapChargeOrder.getLong("sp_id");
     			setAttr("spId", spId);
     	        if(!"".equals(customerId) && customerId != null){
     		        Party party = Party.dao.findById(customerId);
     		        setAttr("party", party);	        
-    		        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+    		        Contact contact = Contact.dao.findById(party.getLong("contact_id"));
     		        setAttr("customer", contact);
     		        setAttr("type", "CUSTOMER");
     		    	setAttr("classify", "");
@@ -105,13 +105,13 @@ public class ChargeInvoiceOrderController extends Controller {
     			setAttr("totalAmount", totalAmount);
     			
     	        ArapChargeInvoiceApplication arapChargeInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(idArray[0]);
-    			Long customerId = arapChargeInvoiceApplication.get("payee_id");
-    			Long spId = arapChargeInvoiceApplication.get("sp_id");
+    			Long customerId = arapChargeInvoiceApplication.getLong("payee_id");
+    			Long spId = arapChargeInvoiceApplication.getLong("sp_id");
     			setAttr("spId", spId);
     	        if(!"".equals(customerId) && customerId != null){
     		        Party party = Party.dao.findById(customerId);
     		        setAttr("party", party);	        
-    		        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+    		        Contact contact = Contact.dao.findById(party.getLong("contact_id"));
     		        setAttr("customer", contact);
     		        setAttr("type", "CUSTOMER");
     		    	setAttr("classify", "");
@@ -123,9 +123,9 @@ public class ChargeInvoiceOrderController extends Controller {
         setAttr("saveOK", false);
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        setAttr("create_by", users.get(0).get("id"));
+        setAttr("create_by", users.get(0).getLong("id"));
 
-        UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+        UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
         setAttr("userLogin", userLogin);
 
         setAttr("status", "新建");
@@ -338,7 +338,7 @@ public class ChargeInvoiceOrderController extends Controller {
     	    		for(int i=0;i<idArr.length;i++){
     	    			ArapChargeInvoiceApplication application = ArapChargeInvoiceApplication.dao.findById(idArr[i]);
     	    			application.set("status", "开票中");
-    	    			application.set("invoice_order_id", arapAuditInvoice.get("id"));
+    	    			application.set("invoice_order_id", arapAuditInvoice.getLong("id"));
     	    			application.update();
     	    			
     	    			if(refOrderOfficeId == null){
@@ -388,7 +388,7 @@ public class ChargeInvoiceOrderController extends Controller {
     	    		for(int i=0;i<idArr.length;i++){
     	    			ArapChargeOrder arapChargeOrder = ArapChargeOrder.dao.findById(idArr[i]);
     	    			arapChargeOrder.set("status", "开票中");
-    	    			arapChargeOrder.set("invoice_order_id", arapAuditInvoice.get("id"));
+    	    			arapChargeOrder.set("invoice_order_id", arapAuditInvoice.getLong("id"));
     	    			arapChargeOrder.update();
     	    			
     	    			if(refOrderOfficeId == null){
@@ -408,15 +408,15 @@ public class ChargeInvoiceOrderController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CIO_UPDATE})
     public void edit() throws ParseException{
     	ArapChargeInvoice arapAuditInvoice = ArapChargeInvoice.dao.findById(getPara("id"));  	
-    	UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoice.get("create_by"));
+    	UserLogin userLogin = UserLogin.dao.findById(arapAuditInvoice.getLong("create_by"));
     	setAttr("userLogin", userLogin);
     	setAttr("arapAuditInvoice", arapAuditInvoice); 
     	
-    	Long customerId = arapAuditInvoice.get("payee_id");
+    	Long customerId = arapAuditInvoice.getLong("payee_id");
     	if(customerId != null && !"".equals(customerId)){
     		Party party = Party.dao.findById(customerId);
 	        setAttr("party", party);	        
-	        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+	        Contact contact = Contact.dao.findById(party.getLong("contact_id"));
 	        setAttr("customer", contact);
 	        setAttr("type", "CUSTOMER");
 	    	setAttr("classify", "");
@@ -425,14 +425,14 @@ public class ChargeInvoiceOrderController extends Controller {
     	List<ArapChargeInvoiceApplication> arapChargeInvoiceApplications = ArapChargeInvoiceApplication.dao.find("select * from arap_charge_invoice_application_order where invoice_order_id = ?", getPara("id"));
     	if(arapChargeInvoiceApplications.size()>0){
     		for(ArapChargeInvoiceApplication arapChargeInvoiceApplication : arapChargeInvoiceApplications){
-        		chargePreInvoiceOrderIds += arapChargeInvoiceApplication.get("id") + ",";
+        		chargePreInvoiceOrderIds += arapChargeInvoiceApplication.getLong("id") + ",";
         	}
         	chargePreInvoiceOrderIds = chargePreInvoiceOrderIds.substring(0, chargePreInvoiceOrderIds.length() - 1);
         	setAttr("order_type", "申请单");
     	}else{
     		List<ArapChargeOrder> arapChargeOrderLsst = ArapChargeOrder.dao.find("select * from arap_charge_order where invoice_order_id = ?", getPara("id"));
     		for(ArapChargeOrder arapChargeOrder : arapChargeOrderLsst){
-        		chargePreInvoiceOrderIds += arapChargeOrder.get("id") + ",";
+        		chargePreInvoiceOrderIds += arapChargeOrder.getLong("id") + ",";
         	}
         	chargePreInvoiceOrderIds = chargePreInvoiceOrderIds.substring(0, chargePreInvoiceOrderIds.length() - 1);
         	setAttr("order_type", "对账单");

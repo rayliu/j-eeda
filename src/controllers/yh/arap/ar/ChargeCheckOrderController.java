@@ -96,15 +96,14 @@ public class ChargeCheckOrderController extends Controller {
 			Record record = Db
 					.findFirst(
 							"select ifnull(round(sum(amount),2),0) as total_amount from return_order_fin_item where return_order_id = ?",
-							rOrder.get("id"));
+							rOrder.getLong("id"));
 			totalAmount = totalAmount + record.getDouble("total_amount");
 
 			customerId = rOrder.getLong("customer_id");
 			if (!"".equals(customerId) && customerId != null) {
 				Party party = Party.dao.findById(customerId);
 				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get("contact_id")
-						.toString());
+				Contact contact = Contact.dao.findById(party.getLong("contact_id"));
 				setAttr("customer", contact);
 				setAttr("type", "CUSTOMER");
 				setAttr("classify", "");
@@ -122,7 +121,7 @@ public class ChargeCheckOrderController extends Controller {
 			Record record = Db
 					.findFirst(
 							"select round(sum(total_amount),2) as total_amount from arap_misc_charge_order where id = ?",
-							arapMiscChargeOrder.get("id"));
+							arapMiscChargeOrder.getLong("id"));
 			totalAmount = totalAmount + record.getDouble("total_amount");
 
 			spId = arapMiscChargeOrder.getLong("sp_id");
@@ -132,8 +131,8 @@ public class ChargeCheckOrderController extends Controller {
 				if (!"".equals(customerId) && customerId != null) {
 					Party party = Party.dao.findById(customerId);
 					setAttr("party", party);
-					Contact contact = Contact.dao.findById(party.get(
-							"contact_id").toString());
+					Contact contact = Contact.dao.findById(party.getLong(
+							"contact_id"));
 					setAttr("customer", contact);
 					setAttr("type", "CUSTOMER");
 					setAttr("classify", "");
@@ -148,7 +147,7 @@ public class ChargeCheckOrderController extends Controller {
 				.find("select * from user_login where user_name='" + name + "'");
 		setAttr("create_by", users.get(0).get("id"));
 
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+		UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
 		setAttr("userLogin", userLogin);
 
 		setAttr("status", "new");
@@ -786,21 +785,20 @@ public class ChargeCheckOrderController extends Controller {
 	public void edit() throws ParseException {
 		String id = getPara("id");
 		ArapChargeOrder arapAuditOrder = ArapChargeOrder.dao.findById(id);
-		Long customerId = arapAuditOrder.get("payee_id");
+		Long customerId = arapAuditOrder.getLong("payee_id");
 		if (!"".equals(customerId) && customerId != null && customerId != 0) {
 			Party party = Party.dao.findById(customerId);
 			setAttr("party", party);
-			Contact contact = Contact.dao.findById(party.get("contact_id")
-					.toString());
+			Contact contact = Contact.dao.findById(party.getLong("contact_id"));
 			setAttr("customer", contact);
 		}
 		UserLogin userLogin = UserLogin.dao.findById(arapAuditOrder
-				.get("create_by"));
+				.getLong("create_by"));
 		setAttr("userLogin", userLogin);
 		setAttr("arapAuditOrder", arapAuditOrder);
 
-		Date beginTimeDate = arapAuditOrder.get("begin_time");
-		Date endTimeDate = arapAuditOrder.get("end_time");
+		Date beginTimeDate = arapAuditOrder.getDate("begin_time");
+		Date endTimeDate = arapAuditOrder.getDate("end_time");
 		String beginTime = "";
 		String endTime = "";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -814,12 +812,12 @@ public class ChargeCheckOrderController extends Controller {
 		String miscOrderIds = "";
 		List<ArapChargeItem> arapAuditItems = ArapChargeItem.dao.find(
 				"select * from arap_charge_item where charge_order_id = ?",
-				arapAuditOrder.get("id"));
+				arapAuditOrder.getLong("id"));
 		for (ArapChargeItem arapAuditItem : arapAuditItems) {
-			if ("回单".equals(arapAuditItem.get("ref_order_type"))) {
-				returnOrderIds += arapAuditItem.get("ref_order_id") + ",";
+			if ("回单".equals(arapAuditItem.getStr("ref_order_type"))) {
+				returnOrderIds += arapAuditItem.getLong("ref_order_id") + ",";
 			} else {
-				miscOrderIds += arapAuditItem.get("ref_order_id") + ",";
+				miscOrderIds += arapAuditItem.getLong("ref_order_id") + ",";
 			}
 		}
 		// 去掉最后一个逗号
@@ -866,10 +864,10 @@ public class ChargeCheckOrderController extends Controller {
 				"select * from arap_charge_item where charge_order_id = ?",
 				chargeCheckOrderId);
 		for (ArapChargeItem arapAuditItem : arapAuditItems) {
-			if ("回单".equals(arapAuditItem.get("ref_order_type"))) {
-				returnOrderIds += arapAuditItem.get("ref_order_id") + ",";
+			if ("回单".equals(arapAuditItem.getStr("ref_order_type"))) {
+				returnOrderIds += arapAuditItem.getLong("ref_order_id") + ",";
 			} else {
-				miscOrderIds += arapAuditItem.get("ref_order_id") + ",";
+				miscOrderIds += arapAuditItem.getLong("ref_order_id") + ",";
 			}
 		}
 		// 去掉最后一个逗号
@@ -978,19 +976,19 @@ public class ChargeCheckOrderController extends Controller {
 			arapAuditOrder.update();
 			List<ArapChargeItem> list = ArapChargeItem.dao
 					.find("select * from arap_charge_item where charge_order_id = ?",
-							arapAuditOrder.get("id"));
+							arapAuditOrder.getLong("id"));
 			if (list.size() > 0) {
 				for (ArapChargeItem arapChargeItem : list) {
-					if("回单".equals(arapChargeItem.get("ref_order_type"))){
-						ReturnOrder returnOrder = ReturnOrder.dao.findById(arapChargeItem.get("ref_order_id"));
+					if("回单".equals(arapChargeItem.getStr("ref_order_type"))){
+						ReturnOrder returnOrder = ReturnOrder.dao.findById(arapChargeItem.getLong("ref_order_id"));
 						returnOrder.set("transaction_status", "对账已确认"); 
 						returnOrder.update();
-					}else if("保险".equals(arapChargeItem.get("ref_order_type"))){
-						InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(arapChargeItem.get("ref_order_id"));
+					}else if("保险".equals(arapChargeItem.getStr("ref_order_type"))){
+						InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(arapChargeItem.getLong("ref_order_id"));
 						insuranceOrder.set("transaction_status", "对账已确认"); 
 						insuranceOrder.update();
 					}else{
-						ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(arapChargeItem.get("ref_order_id"));
+						ArapMiscChargeOrder arapMiscChargeOrder = ArapMiscChargeOrder.dao.findById(arapChargeItem.getLong("ref_order_id"));
 						arapMiscChargeOrder.set("status", "对账已确认"); 
 						arapMiscChargeOrder.update();
 					}

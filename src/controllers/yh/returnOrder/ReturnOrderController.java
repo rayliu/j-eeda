@@ -458,8 +458,8 @@ public class ReturnOrderController extends Controller {
 	public void edit() {
 		ReturnOrder returnOrder = ReturnOrder.dao.findById(getPara("id"));
 		TransferOrder transferOrder = null;
-		Long deliveryId = returnOrder.get("delivery_order_id");
-		Long transferOrderId = returnOrder.get("transfer_order_id");
+		Long deliveryId = returnOrder.getLong("delivery_order_id");
+		Long transferOrderId = returnOrder.getLong("transfer_order_id");
 		Long notify_party_id = null;
 		String code = "";
 		String routeTo = "";
@@ -469,7 +469,7 @@ public class ReturnOrderController extends Controller {
 			transferOrder = TransferOrder.dao.findById(transferOrderId);
 			if(transferOrder != null){
 				setAttr("transferOrder", transferOrder);
-				routeTo = transferOrder.get("route_to");
+				routeTo = transferOrder.getStr("route_to");
 			}
 			setAttr("isRefused", "NO");
 		} else {
@@ -481,7 +481,7 @@ public class ReturnOrderController extends Controller {
 				setAttr("itemList", itemList);
 			}
 			
-			notify_party_id = deliveryOrder.get("notify_party_id");
+			notify_party_id = deliveryOrder.getLong("notify_party_id");
 			TransferOrderItemDetail detail =TransferOrderItemDetail.dao.findFirst("SELECT * from transfer_order_item_detail where delivery_refused_id=?",deliveryId);
 			// TODO 一张配送单对应多张运输单时回单怎样取出信息
 			if(detail!=null){
@@ -491,7 +491,7 @@ public class ReturnOrderController extends Controller {
 				setAttr("isRefused", "NO");
 			}
 			if(deliveryOrder != null){
-				routeTo = deliveryOrder.get("route_to");
+				routeTo = deliveryOrder.getStr("route_to");
 				List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao
 						.find("select * from delivery_order_item where delivery_id = ?", deliveryId);
 				//for (DeliveryOrderItem deliveryOrderItem : deliveryOrderItems) {
@@ -504,16 +504,16 @@ public class ReturnOrderController extends Controller {
 		}
 
 		if(transferOrder != null){
-			Long customer_id = transferOrder.get("customer_id");
+			Long customer_id = transferOrder.getLong("customer_id");
 			if (customer_id != null) {
 				Party customer = Party.dao.findById(customer_id);
 				Contact customerContact = Contact.dao.findById(customer
-						.get("contact_id"));
+						.getLong("contact_id"));
 				setAttr("customerContact", customerContact);
 			}
 			if (notify_party_id != null) {
 				Party notify = Party.dao.findById(notify_party_id);
-				Contact contact = Contact.dao.findById(notify.get("contact_id"));
+				Contact contact = Contact.dao.findById(notify.getLong("contact_id"));
 				if(contact!=null){
 					setAttr("contact", contact);
 				}
@@ -524,27 +524,27 @@ public class ReturnOrderController extends Controller {
 					setAttr("receiving_phone", transferOrder.get("receiving_phone"));
 				}
 				Contact locationCode = Contact.dao.findById(notify
-						.get("contact_id"));
-				code = locationCode.get("location");
+						.getLong("contact_id"));
+				code = locationCode.getStr("location");
 			}
 		}else{
 			if (returnOrder.get("customer_id") != null) {
-				Party customer = Party.dao.findById(returnOrder.get("customer_id"));
+				Party customer = Party.dao.findById(returnOrder.getLong("customer_id"));
 				Contact customerContact = Contact.dao.findById(customer
-						.get("contact_id"));
+						.getLong("contact_id"));
 				setAttr("customerContact", customerContact);
 			}
 			
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
 			if (deliveryOrder.get("notify_party_id") != null) {
-				Party notify = Party.dao.findById(deliveryOrder.get("notify_party_id"));
-				Contact contact = Contact.dao.findById(notify.get("contact_id"));
+				Party notify = Party.dao.findById(deliveryOrder.getLong("notify_party_id"));
+				Contact contact = Contact.dao.findById(notify.getLong("contact_id"));
 				if(contact!=null){
 					setAttr("contact", contact);
 				}
 				Contact locationCode = Contact.dao.findById(notify
-						.get("contact_id"));
-				code = locationCode.get("location");
+						.getLong("contact_id"));
+				code = locationCode.getStr("location");
 			}
 		}
 
@@ -566,7 +566,7 @@ public class ReturnOrderController extends Controller {
 		setAttr("location", location);
 
 		if(transferOrder != null){
-			String routeFrom = transferOrder.get("route_from");
+			String routeFrom = transferOrder.getStr("route_from");
 			Location locationFrom = null;
 			if (routeFrom != null || !"".equals(routeFrom)) {
 				List<Location> provinces = Location.dao
@@ -587,7 +587,7 @@ public class ReturnOrderController extends Controller {
 			}
 		}else{
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(deliveryId);
-			String routeFrom = deliveryOrder.get("route_from");
+			String routeFrom = deliveryOrder.getStr("route_from");
 			Location locationFrom = null;
 			if (routeFrom != null || !"".equals(routeFrom)) {
 				List<Location> provinces = Location.dao
@@ -620,10 +620,10 @@ public class ReturnOrderController extends Controller {
 		setAttr("OrderAttachmentFileList2", OrderAttachmentFileList2);
 		setAttr("returnOrder", returnOrder);
 		UserLogin userLogin = UserLogin.dao
-				.findById(returnOrder.get("creator"));
+				.findById(returnOrder.getLong("creator"));
 		setAttr("userLogin", userLogin);
 		if(transferOrder != null){
-			UserLogin userLoginTo = UserLogin.dao.findById(transferOrder.get("create_by"));
+			UserLogin userLoginTo = UserLogin.dao.findById(transferOrder.getLong("create_by"));
 			setAttr("userLoginTo", userLoginTo);
 		}
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
@@ -635,20 +635,22 @@ public class ReturnOrderController extends Controller {
 		setAttr("customizeField", customizeField);
 		setAttr("isNull_flag", isNull_flag);
 		render("/yh/returnOrder/returnOrder.html");
+		
 	}
+	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_RO_UPDATE})
 	public void save() {
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		ReturnOrder returnOrder = ReturnOrder.dao.findById(getPara("id"));
-		Long deliveryId = returnOrder.get("delivery_order_id");
+		Long deliveryId = returnOrder.getLong("delivery_order_id");
 		String routeTo = getPara("route_to");
 		boolean isLocationChanged = getParaToBoolean("locationChanged");
 		Long notifyPartyId;
 		if (deliveryId == null) {
 			// 直送
 			TransferOrder transferOrder = TransferOrder.dao
-					.findById(returnOrder.get("transfer_order_id"));
+					.findById(returnOrder.getLong("transfer_order_id"));
 			if (!"".equals(routeTo) && routeTo != null) {
 				transferOrder.set("route_to", routeTo);
 			}
@@ -672,7 +674,7 @@ public class ReturnOrderController extends Controller {
 				deliveryOrder.set("route_to", routeTo);
 			}
 			if(!"".equals(getPara("customer_delivery_no")) && getPara("customer_delivery_no") != null){
-				if(!getPara("customer_delivery_no").equals(deliveryOrder.get("customer_delivery_no"))){
+				if(!getPara("customer_delivery_no").equals(deliveryOrder.getStr("customer_delivery_no"))){
 					deliveryOrder.set("customer_delivery_no", getPara("customer_delivery_no"));
 				}
 			}
@@ -686,7 +688,7 @@ public class ReturnOrderController extends Controller {
 				deleteContractFinItem(deliveryOrder, returnOrder.getLong("id"));
 				// 计算配送单的触发的应收
 				List<Record> transferOrderItemDetailList = Db.
-						find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryOrder.get("id"));
+						find("select toid.* from transfer_order_item_detail toid left join delivery_order_item doi on toid.id = doi.transfer_item_detail_id where doi.delivery_id = ?", deliveryOrder.getLong("id"));
 		        calculateCharge(users.get(0).getLong("id"), deliveryOrder, returnOrder.getLong("id"), transferOrderItemDetailList);
 			}
 		}
@@ -745,7 +747,7 @@ public class ReturnOrderController extends Controller {
 			ReturnOrder returnOrder = ReturnOrder.dao.findById(array[i]);		
 			returnOrder.set("transaction_status", "已签收").set("receipt_date", sqlDate).update();
 			
-			Long deliveryId = returnOrder.get("delivery_order_id");
+			Long deliveryId = returnOrder.getLong("delivery_order_id");
 			if (deliveryId != null && !"".equals(deliveryId)) {
 				DeliveryOrderMilestone doMilestone = new DeliveryOrderMilestone();
 				doMilestone.set("status", "已签收");
@@ -754,7 +756,7 @@ public class ReturnOrderController extends Controller {
 				List<UserLogin> users = UserLogin.dao
 						.find("select * from user_login where user_name='" + name
 								+ "'");
-				doMilestone.set("create_by", users.get(0).get("id"));
+				doMilestone.set("create_by", users.get(0).getLong("id"));
 				doMilestone.set("location", "");
 				utilDate = new java.util.Date();
 				sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -785,9 +787,9 @@ public class ReturnOrderController extends Controller {
 	public void calculateCharge(Long userId, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemDetailList) {
 		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
 		//String chargeType = "perUnit";
-		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
-		TransferOrder transferOrder = TransferOrder.dao.findById(deliveryOrderItems.get(0).get("transfer_order_id"));
-		String chargeType = transferOrder.get("charge_type");
+		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.getLong("id"));
+		TransferOrder transferOrder = TransferOrder.dao.findById(deliveryOrderItems.get(0).getLong("transfer_order_id"));
+		String chargeType = transferOrder.getStr("charge_type");
 		//将保险单的应收费用显示在回单应收里面
 		InsertinsuranceFin(deliveryOrder);
 		Long deliveryOrderId = deliveryOrder.getLong("id");
@@ -815,9 +817,9 @@ public class ReturnOrderController extends Controller {
 	public void calculateChargeGeneral(Long userId, DeliveryOrder deliveryOrder, Long returnOrderId, List<Record> transferOrderItemList) {
 		// TODO 运输单的计费类型,当一张配送单对应多张运输单时chargeType如何处理?
 		//String chargeType = "perUnit";
-		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.get("id"));
-		TransferOrder transferOrder = TransferOrder.dao.findById(deliveryOrderItems.get(0).get("transfer_order_id"));
-		String chargeType = transferOrder.get("charge_type");
+		List<DeliveryOrderItem> deliveryOrderItems = DeliveryOrderItem.dao.find("select * from delivery_order_item where delivery_id = ?", deliveryOrder.getLong("id"));
+		TransferOrder transferOrder = TransferOrder.dao.findById(deliveryOrderItems.get(0).getLong("transfer_order_id"));
+		String chargeType = transferOrder.getStr("charge_type");
 
 		Long deliveryOrderId = deliveryOrder.getLong("id");
 		// 找到该回单对应的配送单中的ATM
@@ -845,10 +847,10 @@ public class ReturnOrderController extends Controller {
     
         Record contractFinItem = Db
                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        +" and carType = '" + transferOrder.get("car_type") +"' "
-                        +" and carlength = " + deliverOrder.get("car_size")
-                        +" and from_id = '"+ transferOrder.get("route_from")
-                        +"' and to_id = '"+ deliverOrder.get("route_to")
+                        +" and carType = '" + transferOrder.getStr("car_type") +"' "
+                        +" and carlength = " + deliverOrder.getStr("car_size")
+                        +" and from_id = '"+ transferOrder.getStr("route_from")
+                        +"' and to_id = '"+ deliverOrder.getStr("route_to")
                         + "' and priceType='"+chargeType+"'");
         
         if (contractFinItem != null) {
@@ -856,9 +858,9 @@ public class ReturnOrderController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and cartype = '" + transferOrder.get("car_type") +"' "
-                            +" and from_id = '"+ transferOrder.get("route_from")
-                            +"' and to_id = '"+ deliverOrder.get("route_to")
+                            +" and cartype = '" + transferOrder.getStr("car_type") +"' "
+                            +" and from_id = '"+ transferOrder.getStr("route_from")
+                            +"' and to_id = '"+ deliverOrder.getStr("route_to")
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
@@ -866,8 +868,8 @@ public class ReturnOrderController extends Controller {
             }else{
 			    contractFinItem = Db
 			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-			                    +" and carType = '" + deliverOrder.get("car_type")//对应发车单的 car_type
-			                    +"' and to_id = '" + deliverOrder.get("route_to")
+			                    +" and carType = '" + deliverOrder.getStr("car_type")//对应发车单的 car_type
+			                    +"' and to_id = '" + deliverOrder.getStr("route_to")
 			                    + "' and priceType='"+chargeType+"'");
 			    if (contractFinItem != null) {
 			        genFinItem(deliverOrderId, null, contractFinItem, chargeType, returnOrderId, spContract);
@@ -879,7 +881,7 @@ public class ReturnOrderController extends Controller {
     private void genFinPerUnit(Contract spContract, String chargeType, DeliveryOrder deliveryOrder, TransferOrder transferOrder, Long returnOrderId) {
     	String sql = "";
     	long  deliverOrderId = deliveryOrder.getLong("id");
-        if("ATM".equals(deliveryOrder.get("cargo_nature"))){
+        if("ATM".equals(deliveryOrder.getStr("cargo_nature"))){
         	 sql = "SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to FROM "+
 			    "delivery_order_item doi LEFT JOIN transfer_order_item_detail toid ON doi.transfer_item_detail_id = toid.id "+
 			        "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "+
@@ -895,9 +897,9 @@ public class ReturnOrderController extends Controller {
         for (Record dOrderItemRecord : deliveryOrderItemList) {
             Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            + " and product_id ="+dOrderItemRecord.get("product_id")
-                            +" and from_id = '"+ transferOrder.get("route_from")
-                            +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                            + " and product_id ="+dOrderItemRecord.getLong("product_id")
+                            +" and from_id = '"+ transferOrder.getStr("route_from")
+                            +"' and to_id = '"+ dOrderItemRecord.getStr("route_to")
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
@@ -905,8 +907,8 @@ public class ReturnOrderController extends Controller {
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                + " and product_id ="+dOrderItemRecord.get("product_id")
-                                +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                + " and product_id ="+dOrderItemRecord.getLong("product_id")
+                                +" and to_id = '"+ dOrderItemRecord.getStr("route_to")
                                 + "' and priceType='"+chargeType+"'");
                 
                 if (contractFinItem != null) {
@@ -914,8 +916,8 @@ public class ReturnOrderController extends Controller {
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and from_id = '"+ transferOrder.get("route_from")
-                                    +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                                    +" and from_id = '"+ transferOrder.getStr("route_from")
+                                    +"' and to_id = '"+ dOrderItemRecord.getStr("route_to")
                                     + "' and priceType='"+chargeType+"'");
                     
                     if (contractFinItem != null) {
@@ -923,7 +925,7 @@ public class ReturnOrderController extends Controller {
                     }else{
                         contractFinItem = Db
                                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                        +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                        +" and to_id = '"+ dOrderItemRecord.getStr("route_to")
                                         +"' and priceType='"+chargeType+"'");
                         
                         if (contractFinItem != null) {
@@ -944,7 +946,7 @@ public class ReturnOrderController extends Controller {
 			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount"));        		
     	}else{
     		if(tOrderItemRecord != null){
-    			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
+    			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.getStr("amount")));
     		}
     	}
 		returnOrderFinItem.set("delivery_order_id", deliveryOrderId);
@@ -963,10 +965,10 @@ public class ReturnOrderController extends Controller {
 	private void calcRevenuePerCar(Contract spContract, String chargeType, TransferOrder transferOrder, Long returnOrderId) {
         Record contractFinItem = Db
                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        +" and carType = '" + transferOrder.get("car_type") +"' "
-                        +" and carlength = " + transferOrder.get("car_size")
-                        +" and from_id = '"+ transferOrder.get("route_from")
-                        +"' and to_id = '"+ transferOrder.get("route_to")
+                        +" and carType = '" + transferOrder.getStr("car_type") +"' "
+                        +" and carlength = " + transferOrder.getStr("car_size")
+                        +" and from_id = '"+ transferOrder.getStr("route_from")
+                        +"' and to_id = '"+ transferOrder.getStr("route_to")
                         + "' and priceType='"+chargeType+"'");
         
         if (contractFinItem != null) {
@@ -974,9 +976,9 @@ public class ReturnOrderController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and carType = '" + transferOrder.get("car_type") +"' "
-                            +" and from_id = '"+ transferOrder.get("route_from")
-                            +"' and to_id = '"+ transferOrder.get("route_to")
+                            +" and carType = '" + transferOrder.getStr("car_type") +"' "
+                            +" and from_id = '"+ transferOrder.getStr("route_from")
+                            +"' and to_id = '"+ transferOrder.getStr("route_to")
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
@@ -984,8 +986,8 @@ public class ReturnOrderController extends Controller {
             }else{
 			    contractFinItem = Db
 			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-			                    +" and carType = '" + transferOrder.get("car_type")//对应发车单的 car_type
-			                    +"' and to_id = '" + transferOrder.get("route_to")
+			                    +" and carType = '" + transferOrder.getStr("car_type")//对应发车单的 car_type
+			                    +"' and to_id = '" + transferOrder.getStr("route_to")
 			                    + "' and priceType='"+chargeType+"'");
 			    if (contractFinItem != null) {
 			        genFinItem2(transferOrder.getLong("id"), null, contractFinItem, chargeType, returnOrderId, spContract);
@@ -995,7 +997,7 @@ public class ReturnOrderController extends Controller {
     } 
 	
 	public void calculateChargeByCustomer(TransferOrder transferOrder, Long returnOrderId, List<UserLogin> users) {
-		String chargeType = transferOrder.get("charge_type");
+		String chargeType = transferOrder.getStr("charge_type");
 		
 		Long transferOrderId = transferOrder.getLong("id");
 		// 找到该回单对应的配送单中的ATM
@@ -1017,7 +1019,7 @@ public class ReturnOrderController extends Controller {
 		}else if ("perCar".equals(chargeType)){//整车
 			//calcRevenuePerCar(customerContract, chargeType, transferOrder, returnOrderId);
 		}else if("perCargo".equals(chargeType)){//零担
-			List<Record> transferOrderItemList = Db.find("select toi.* from transfer_order_item toi left join transfer_order tor on tor.id = toi.order_id where tor.id = ?", transferOrder.get("id"));
+			List<Record> transferOrderItemList = Db.find("select toi.* from transfer_order_item toi left join transfer_order tor on tor.id = toi.order_id where tor.id = ?", transferOrder.getLong("id"));
 			//每次都新生成一个helper来处理计算，防止并发问题。
            // ReturnOrderPaymentHelperForDirect.getInstance().genFinPerCargo(users, transferOrder, transferOrderItemList, customerContract, chargeType, returnOrderId);
 		}
@@ -1035,11 +1037,11 @@ public class ReturnOrderController extends Controller {
 					.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 							+ customerContract.getLong("id")
 							+ " and product_id ="
-							+ dOrderItemRecord.get("product_id")
+							+ dOrderItemRecord.getLong("product_id")
 							+ " and from_id = '"
-							+ dOrderItemRecord.get("route_from")
+							+ dOrderItemRecord.getStr("route_from")
 							+ "' and to_id = '"
-							+ dOrderItemRecord.get("route_to")
+							+ dOrderItemRecord.getStr("route_to")
 							+ "' and priceType='" + chargeType + "'");
 			
 			if (contractFinItem != null) {
@@ -1049,9 +1051,9 @@ public class ReturnOrderController extends Controller {
 						.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 								+ customerContract.getLong("id")
 								+ " and product_id ="
-								+ dOrderItemRecord.get("product_id")
+								+ dOrderItemRecord.getLong("product_id")
 								+ " and to_id = '"
-								+ dOrderItemRecord.get("route_to")
+								+ dOrderItemRecord.getStr("route_to")
 								+ "' and priceType='" + chargeType + "'");
 				
 				if (contractFinItem != null) {
@@ -1061,9 +1063,9 @@ public class ReturnOrderController extends Controller {
 							.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 									+ customerContract.getLong("id")
 									+ " and from_id = '"
-									+ dOrderItemRecord.get("route_from")
+									+ dOrderItemRecord.getStr("route_from")
 									+ "' and to_id = '"
-									+ dOrderItemRecord.get("route_to")
+									+ dOrderItemRecord.getStr("route_to")
 									+ "' and priceType='" + chargeType + "'");
 					
 					if (contractFinItem != null) {
@@ -1073,7 +1075,7 @@ public class ReturnOrderController extends Controller {
 								.findFirst("select amount, fin_item_id, contract_id from contract_item where contract_id ="
 										+ customerContract.getLong("id")
 										+ " and to_id = '"
-										+ dOrderItemRecord.get("route_to")
+										+ dOrderItemRecord.getStr("route_to")
 										+ "' and priceType='"
 										+ chargeType
 										+ "'");
@@ -1096,7 +1098,7 @@ public class ReturnOrderController extends Controller {
 			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount"));        		
     	}else{
     		if(tOrderItemRecord.get("amount") != null){
-    			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
+    			returnOrderFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.getStr("amount")));
     		}
     	}
 		returnOrderFinItem.set("transfer_order_id", transferOrderId);
@@ -1239,9 +1241,9 @@ public class ReturnOrderController extends Controller {
 		Record transferOrder = Db
 				.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id =?", transferOrderId);
 		Record  transferDetail= Db
-				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",returnorder.get("delivery_order_id"));
+				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",returnorder.getLong("delivery_order_id"));
 		//判断是否为ATM机
-		if (transferOrder.get("cargo_nature").equals("ATM")) {
+		if (transferOrder.getStr("cargo_nature").equals("ATM")) {
 			if(transferDetail!=null){
 				sqlTotal = "select distinct count(1) total "
 						+ "from transfer_order_item_detail toid "//TODO 这里性能有问题，用了大表关联小表
@@ -1301,7 +1303,7 @@ public class ReturnOrderController extends Controller {
 					+ " left join return_order r on r.transfer_order_id = toi.order_id "
 					+ " left join product p on toi.product_id = p.id "
 					+ " where r.id = '" + returnOrderId + "'";
-			if (transferOrder.get("cargo_nature_detail").equals("cargoNatureDetailYes")) {
+			if (transferOrder.getStr("cargo_nature_detail").equals("cargoNatureDetailYes")) {
 				sqlTotal = "select distinct count(1) total "
 						+ "from transfer_order_item_detail toid " //TODO: 这里性能有问题，用了大表关联小表
 						+ "left join transfer_order_item toi on toid.item_id = toi.id "
@@ -1466,7 +1468,7 @@ public class ReturnOrderController extends Controller {
     		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + ggname + "'");
     		String createDate =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 			if ("amount".equals(name)) {
-				returnOrderFinItem.set("remark",users.get(0).get("c_name")+">"+createDate+">金额"+returnOrderFinItem.get("amount")+"改为"+value+"");
+				returnOrderFinItem.set("remark",users.get(0).getStr("c_name")+">"+createDate+">金额"+returnOrderFinItem.getStr("amount")+"改为"+value+"");
 			}
 			returnOrderFinItem.set(name, value);
 			returnOrderFinItem.update();
@@ -1585,8 +1587,8 @@ public class ReturnOrderController extends Controller {
      */
     public void InsertinsuranceFin(DeliveryOrder deliveryOrder){
     	java.util.Date utilDate = new java.util.Date();
-		java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
-		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select id from return_order where delivery_order_id = ?",deliveryOrder.get("id"));
+    	java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
+		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select id from return_order where delivery_order_id = ?",deliveryOrder.getLong("id"));
 		FinItem fi =  FinItem.dao.findFirst("select * from fin_item where name = '保险费' and type = '应收'");
 		/*Record record = Db.findFirst("select sum(amount * income_rate) as total_amount,(select sum(amount) from delivery_order_item where delivery_id = dor.id) delivery_number from delivery_order dor "
 				+ " left join transfer_order_item_detail toid on  dor.id = toid.delivery_id "
@@ -1595,9 +1597,9 @@ public class ReturnOrderController extends Controller {
 		//计算总保险费，根据配送单中的货品型号与保险单中的货品型号相匹配，一次性算出单种货品型号的总保险费，再把配送单中所有货品型号的总保险费进行叠加得出此次配送的保险费
 		//注意，这里的要求是：一张运输单只能做一次保险，否则默认取第一次做得保险信息
 		double sum_insurance = 0;
-		List<Record> detailList = Db.find("select count(0) delivery_number,item_id from transfer_order_item_detail where delivery_id = ? group by item_id;",deliveryOrder.get("id"));
+		List<Record> detailList = Db.find("select count(0) delivery_number,item_id from transfer_order_item_detail where delivery_id = ? group by item_id;",deliveryOrder.getLong("id"));
 		for (int i = 0; i < detailList.size(); i++) {
-			Record insuranceItem = Db.findFirst("select amount * income_rate detail_insurance from insurance_fin_item where transfer_order_item_id = ?",detailList.get(i).get("item_id"));
+			Record insuranceItem = Db.findFirst("select amount * income_rate detail_insurance from insurance_fin_item where transfer_order_item_id = ?",detailList.get(i).getLong("item_id"));
 			if(insuranceItem != null && insuranceItem.getDouble("detail_insurance") !=null ){				
 				sum_insurance += detailList.get(i).getLong("delivery_number") * insuranceItem.getDouble("detail_insurance");
 			}
@@ -1626,13 +1628,13 @@ public class ReturnOrderController extends Controller {
      * 用循环出现的问题是：运输单货品信息多少个条目，回单里面就有多少个保险费用
      */
     public void addInsuranceFin(TransferOrder transferOrder,ReturnOrder returnOrder){
-    	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id,amount from transfer_order_item where order_id = " + transferOrder.get("id"));
+    	List<TransferOrderItem> transferOrderItemList = TransferOrderItem.dao.find("select id,amount from transfer_order_item where order_id = " + transferOrder.getLong("id"));
     	//查询应收条目中的保险费
     	FinItem finItem = FinItem.dao.findFirst("select id from fin_item where type = '应收' and `name` = '保险费';");
     	for (int i = 0; i < transferOrderItemList.size(); i++) {
-    		List<InsuranceFinItem> InsuranceFinItemList = InsuranceFinItem.dao.find("select * from insurance_fin_item where transfer_order_item_id = " + transferOrderItemList.get(i).get("id"));
+    		List<InsuranceFinItem> InsuranceFinItemList = InsuranceFinItem.dao.find("select * from insurance_fin_item where transfer_order_item_id = " + transferOrderItemList.get(i).getLong("id"));
     		for (int j = 0; j < InsuranceFinItemList.size(); j++) {
-    			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).get("insurance_order_id"));
+    			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(InsuranceFinItemList.get(j).getLong("insurance_order_id"));
     			ReturnOrderFinItem returnOrderFinItem = new ReturnOrderFinItem();
     			double amount1 =  InsuranceFinItemList.get(j).getDouble("amount")==null?0.0:InsuranceFinItemList.get(j).getDouble("amount");
     			double amount2 =  InsuranceFinItemList.get(j).getDouble("income_rate")==null?0.0:InsuranceFinItemList.get(j).getDouble("income_rate");
@@ -1781,18 +1783,18 @@ public class ReturnOrderController extends Controller {
 	   	ReturnOrder returnOrder = ReturnOrder.dao.findById(id);
 	   	java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
-		Long deliveryId = returnOrder.get("delivery_order_id");
+		Long deliveryId = returnOrder.getLong("delivery_order_id");
 		DeliveryOrder delivery=DeliveryOrder.dao.findById(deliveryId);
 		DeliveryOrder deliveryOrder = null;
 		Date createDate = Calendar.getInstance().getTime();
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 		deliveryOrder = new DeliveryOrder();
-		deliveryOrder.set("order_no", delivery.get("order_no")+"-1")
+		deliveryOrder.set("order_no", delivery.getStr("order_no")+"-1")
 		.set("customer_id", delivery.get("customer_id"))
 		.set("sp_id", delivery.get("sp_id"))
 		.set("notify_party_id", delivery.get("notify_party_id"))
-		.set("create_stamp", createDate).set("create_by", users.get(0).get("id")).set("status", "新建")
+		.set("create_stamp", createDate).set("create_by", users.get(0).getLong("id")).set("status", "新建")
 		.set("route_to",delivery.get("route_to"))
 		.set("route_from", delivery.get("route_from"))
 		.set("pricetype", delivery.get("pricetype"))
@@ -1814,10 +1816,12 @@ public class ReturnOrderController extends Controller {
 			.set("transfer_item_detail_id",deliveryItem.get(i).get("transfer_item_detail_id"))
 			.set("amount", deliveryItem.get(i).get("amount"));
 			deliveryOrderItem.save();
-			TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
-					.findById(deliveryItem.get(i).get("transfer_item_detail_id"));
-			transferOrderItemDetail.set("delivery_refused_id",deliveryOrder.get("id"));
-			transferOrderItemDetail.update();
+			if(deliveryItem.get(i).get("transfer_item_detail_id")!=null){
+				TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
+						.findById(deliveryItem.get(i).getLong("transfer_item_detail_id"));
+				transferOrderItemDetail.set("delivery_refused_id",deliveryOrder.get("id"));
+				transferOrderItemDetail.update();
+			}
 		}
 		 renderJson("{\"success\":true}");
    }

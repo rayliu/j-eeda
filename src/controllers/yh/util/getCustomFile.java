@@ -25,7 +25,7 @@ public class getCustomFile {
 	public Map<String, String> getCustomizeFile(Controller controller) {
 		Long id = LoginUserController.getLoginUser(controller).getLong("office_id");
 		Office office = Office.dao.findById(id);
-		Long parentID = office.get("belong_office");
+		Long parentID = office.getLong("belong_office");
 		if(parentID == null || "".equals(parentID)){
 			parentID = office.getLong("id");
 		}

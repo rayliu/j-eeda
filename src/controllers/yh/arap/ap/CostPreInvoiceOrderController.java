@@ -72,7 +72,7 @@ public class CostPreInvoiceOrderController extends Controller {
 		String customerId = getPara("customerId");
 		Party party = Party.dao.findById(customerId);
 
-		Contact contact = Contact.dao.findFirst("select c.company_name from contact c left join party p on c.id = p.contact_id where p.id =?",party.get("contact_id")
+		Contact contact = Contact.dao.findFirst("select c.company_name from contact c left join party p on c.id = p.contact_id where p.id =?",party.getLong("contact_id")
 				.toString());
 		setAttr("customer", contact);
 		setAttr("type", "CUSTOMER");
@@ -216,7 +216,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			if (!"".equals(spId) && spId != null) {
 				Party party = Party.dao.findById(spId);
 				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get("contact_id")
+				Contact contact = Contact.dao.findById(party.getLong("contact_id")
 						.toString());
 				setAttr("customer", contact);
 			}
@@ -247,7 +247,7 @@ public class CostPreInvoiceOrderController extends Controller {
 			if (!"".equals(spId) && spId != null) {
 				Party party = Party.dao.findById(spId);
 				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get("contact_id")
+				Contact contact = Contact.dao.findById(party.getLong("contact_id")
 						.toString());
 				setAttr("customer", contact);
 			}
@@ -445,7 +445,7 @@ public class CostPreInvoiceOrderController extends Controller {
 	private void updateDzOrder(
 			ArapCostInvoiceApplication arapAuditInvoiceApplication, String id) {
 		ArapCostOrder arapAuditOrder = ArapCostOrder.dao.findById(id);
-		arapAuditOrder.set("application_order_id", arapAuditInvoiceApplication.get("id"));
+		arapAuditOrder.set("application_order_id", arapAuditInvoiceApplication.getLong("id"));
 		//判断是否已全部付款
 		String sql5 = "select ifnull(sum(caor.pay_amount),0) total_pay from arap_cost_order aco  "
 				+ "LEFT JOIN cost_application_order_rel caor on caor.cost_order_id = aco.id and caor.order_type='对账单'"
@@ -471,12 +471,12 @@ public class CostPreInvoiceOrderController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			arapAuditOrder.set("audit_by", users.get(0).get("id"));
+			arapAuditOrder.set("audit_by", users.get(0).getLong("id"));
 			arapAuditOrder.set("audit_stamp", new Date());
 			arapAuditOrder.update();
 		}
 		Map BillingOrderListMap = new HashMap();
-		UserLogin ul = UserLogin.dao.findById(arapAuditOrder.get("audit_by"));
+		UserLogin ul = UserLogin.dao.findById(arapAuditOrder.getLong("audit_by"));
 		BillingOrderListMap.put("arapAuditOrder", arapAuditOrder);
 		BillingOrderListMap.put("ul", ul);
 		renderJson(BillingOrderListMap);
@@ -495,13 +495,13 @@ public class CostPreInvoiceOrderController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			arapAuditOrder.set("approver_by", users.get(0).get("id"));
+			arapAuditOrder.set("approver_by", users.get(0).getLong("id"));
 			arapAuditOrder.set("approval_stamp", new Date());
 			arapAuditOrder.update();
 		}
 		Map BillingOrderListMap = new HashMap();
 		UserLogin ul = UserLogin.dao
-				.findById(arapAuditOrder.get("approver_by"));
+				.findById(arapAuditOrder.getLong("approver_by"));
 		BillingOrderListMap.put("arapAuditOrder", arapAuditOrder);
 		BillingOrderListMap.put("ul", ul);
 		renderJson(BillingOrderListMap);
@@ -517,9 +517,9 @@ public class CostPreInvoiceOrderController extends Controller {
 			arapCostInvoiceItemInvoiceNo.set("invoice_id",
 					costPreInvoiceOrderId);
 			if (application.get("payee_id") != null
-					&& !"".equals(application.get("payee_id"))) {
+					&& !"".equals(application.getLong("payee_id"))) {
 				arapCostInvoiceItemInvoiceNo.set("payee_id",
-						application.get("payee_id"));
+						application.getLong("payee_id"));
 			}
 			arapCostInvoiceItemInvoiceNo.save();
 		}
@@ -1486,20 +1486,20 @@ public class CostPreInvoiceOrderController extends Controller {
 			ArapCostInvoiceApplication arapAuditInvoiceApplication = ArapCostInvoiceApplication.dao.findById(id);
 			setAttr("invoiceApplication", arapAuditInvoiceApplication);
 			
-			Contact con  = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id =?",arapAuditInvoiceApplication.get("payee_id"));
+			Contact con  = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id =?",arapAuditInvoiceApplication.getLong("payee_id"));
 			if(con != null){
-				String payee_filter = con.get("company_name");
+				String payee_filter = con.getStr("company_name");
 				setAttr("payee_filter", payee_filter);
 			}
 			UserLogin userLogin = null;
-			userLogin = UserLogin.dao .findById(arapAuditInvoiceApplication.get("create_by"));
-			String submit_name = userLogin.get("c_name");
+			userLogin = UserLogin.dao .findById(arapAuditInvoiceApplication.getLong("create_by"));
+			String submit_name = userLogin.getStr("c_name");
 			setAttr("submit_name", submit_name);
 			
 			Long check_by = arapAuditInvoiceApplication.getLong("check_by");
 			if( check_by != null){
 				userLogin = UserLogin.dao .findById(check_by);
-				String check_name = userLogin.get("c_name");
+				String check_name = userLogin.getStr("c_name");
 				setAttr("check_name", check_name);
 			}
 			

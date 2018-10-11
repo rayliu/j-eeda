@@ -566,7 +566,7 @@ public class DeliveryController extends Controller {
 				.find("select * from delivery_order_item where delivery_id ="
 						+ id);
 
-		if("cargo".equals(tOrder.get("cargo_nature"))){
+		if("cargo".equals(tOrder.getStr("cargo_nature"))){
 			Record rec = Db.findFirst("select transfer_no ,concat(group_concat(cast(product_id as char) separator ',')) productIds,"
 					+ " concat(group_concat(cast(product_number as char) separator ',')) productNumbers,"
 					+ " concat(group_concat(cast(transfer_item_id as char) separator ',')) transferItemIds"
@@ -581,7 +581,7 @@ public class DeliveryController extends Controller {
 			if (serIdList.size() > 0) {
 				if (serIdList.get(0).get("transfer_item_detail_id") == null) {
 					TransferOrder transferOrder = TransferOrder.dao
-							.findById(serIdList.get(0).get("transfer_order_id"));
+							.findById(serIdList.get(0).getLong("transfer_order_id"));
 					setAttr("transferOrder", transferOrder);
 				}
 			}
@@ -589,7 +589,7 @@ public class DeliveryController extends Controller {
 				// 序列号id
 				String idStr = "";
 				for (Record record : serIdList) {
-					idStr += record.get("transfer_item_detail_id") + ",";
+					idStr += record.getLong("transfer_item_detail_id") + ",";
 				}// 4,5,6
 				idStr = idStr.substring(0, idStr.length() - 1);
 				setAttr("localArr2", idStr);
@@ -599,7 +599,7 @@ public class DeliveryController extends Controller {
 								+ id);
 				String idStr2 = "";
 				for (Record record : transferIdList) {
-					idStr2 += record.get("transfer_order_id") + ",";
+					idStr2 += record.getLong("transfer_order_id") + ",";
 				}// 4,5,6
 				idStr2 = idStr2.substring(0, idStr2.length() - 1);
 				setAttr("localArr", idStr2);
@@ -615,7 +615,7 @@ public class DeliveryController extends Controller {
 				// String transferId2 =
 				// transferId.get(0).get("transfer_order_id").toString();
 				if (deliveryOrderItem != null) {
-					setAttr("transferId", deliveryOrderItem.get("id"));
+					setAttr("transferId", deliveryOrderItem.getLong("id"));
 				} else {
 					setAttr("transferId", null);
 				}
@@ -623,18 +623,18 @@ public class DeliveryController extends Controller {
 			}
 			
 		}
-		String sql = "select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile,c.abbr from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.get("customer_id");
+		String sql = "select p.id as cid,c.contact_person,c.company_name,c.address,c.mobile,c.abbr from party p left join contact c on c.id = p.contact_id where p.id = "+tOrder.getLong("customer_id");
 		//Record customerContact = Db.findFirst(sql);
 		Party customerContact = Party.dao.findFirst(sql);
 
 		// 供应商信息
 		Party spContact = Party.dao
 				.findFirst("select *,p.id as spid from party p,contact c where p.id ='"
-						+ tOrder.get("sp_id") + "'and p.contact_id = c.id");
+						+ tOrder.getLong("sp_id") + "'and p.contact_id = c.id");
 		// 司机信息
 		Carinfo carContact = Carinfo.dao
 						.findFirst("SELECT * FROM carinfo c WHERE c.id='"
-						+ tOrder.get("car_id") + "'");
+						+ tOrder.getLong("car_id") + "'");
 		// 调拨供应商
 		if(tOrder.get("delivery_id")!=null){
 			//DeliveryOrder deliveryOrder= DeliveryOrder.dao.findById(tOrder.get("delivery_id"));
@@ -651,7 +651,7 @@ public class DeliveryController extends Controller {
 							"select c.abbr as company,c.phone,c.contact_person,"
 							+ "c.address,c.mobile,c.company_name, "
 							+ "p.id as pid,c.id as contactId from party p, contact c where p.contact_id=c.id and p.id =?",
-							tOrder.get("notify_party_id"));
+							tOrder.getLong("notify_party_id"));
 			setAttr("notifyParty", notifyPartyContact);
 		}
 		else{
@@ -665,11 +665,11 @@ public class DeliveryController extends Controller {
 
 		if(from_warehouse_id!=null){
 			warehouse = Warehouse.dao
-					.findById(tOrder.get("from_warehouse_id"));
+					.findById(tOrder.getLong("from_warehouse_id"));
 			setAttr("warehouse", warehouse);
 		}
 		
-		Long office_id = tOrder.get("office_id");
+		Long office_id = tOrder.getLong("office_id");
 		if(office_id!=null){
 			Office office = Office.dao.findById(office_id);
 			setAttr("office", office);
@@ -678,9 +678,9 @@ public class DeliveryController extends Controller {
 		setAttr("warehouse", warehouse);
 		
 		//RDC
-		Warehouse changeWarehouse = Warehouse.dao.findById(tOrder.get("change_warehouse_id"));
+		Warehouse changeWarehouse = Warehouse.dao.findById(tOrder.getLong("change_warehouse_id"));
 		if(changeWarehouse!=null){
-			Office changeOffice =  Office.dao.findById(changeWarehouse.get("office_id"));
+			Office changeOffice =  Office.dao.findById(changeWarehouse.getLong("office_id"));
 			setAttr("changeOffice", changeOffice);
 		}
 		setAttr("changeWarehouse", changeWarehouse);
@@ -688,7 +688,7 @@ public class DeliveryController extends Controller {
 		setAttr("customer", customerContact);
 		setAttr("spContact", spContact);
 		setAttr("carContact", carContact);
-		String routeFrom = tOrder.get("route_from");
+		String routeFrom = tOrder.getStr("route_from");
 		Location locationFrom = null;
 		if (routeFrom != null || !"".equals(routeFrom)) {
 			List<Location> provinces = Location.dao
@@ -709,7 +709,7 @@ public class DeliveryController extends Controller {
 		}
 		
 		
-		String routeTo = tOrder.get("route_to");
+		String routeTo = tOrder.getStr("route_to");
 		Location locationTo = null;
 		if (routeTo != null || !"".equals(routeTo)) {
 			List<Location> provinces = Location.dao
@@ -779,11 +779,11 @@ public class DeliveryController extends Controller {
 		Warehouse warehouse = Warehouse.dao.findById(order.getLong("warehouse_id"));
 		//rdc
 		if(warehouse != null){
-			Office office =  Office.dao.findById(warehouse.get("office_id"));
+			Office office =  Office.dao.findById(warehouse.getLong("office_id"));
 			setAttr("office", office);
 			
 			//初始地
-			String routeFrom = warehouse.get("location");
+			String routeFrom = warehouse.getStr("location");
 			Location locationFrom = null;
 			if (routeFrom != null || !"".equals(routeFrom)) {
 				List<Location> provinces = Location.dao
@@ -871,10 +871,10 @@ public class DeliveryController extends Controller {
 						+ list + ")");
 		
 		Warehouse warehouse = Warehouse.dao
-				.findById(tOrder.get("warehouse_id"));
+				.findById(tOrder.getLong("warehouse_id"));
 		String routeFrom = null;
 		if(warehouse==null){
-			routeFrom = office.get("location");
+			routeFrom = office.getStr("location");
 		}
 		
 		Location locationFrom = null;
@@ -1201,13 +1201,13 @@ public class DeliveryController extends Controller {
 				+ sLimit;
 		departOrderitem = Db.find(sql);
 		for (int i = 0; i < departOrderitem.size(); i++) {
-			String itemname = departOrderitem.get(i).get("item_name");
+			String itemname = departOrderitem.get(i).getStr("item_name");
 			if ("ATM".equals(itemname)) {
-				Long itemid = departOrderitem.get(i).get("id");
+				Long itemid = departOrderitem.get(i).getLong("id");
 				String sql2 = "select serial_no from transfer_order_item_detail  where item_id ="
 						+ itemid;
 				List<Record> itemserial_no = Db.find(sql2);
-				String itemno = itemserial_no.get(0).get("SERIAL_NO");
+				String itemno = itemserial_no.get(0).getStr("SERIAL_NO");
 				departOrderitem.get(i).set("serial_no", itemno);
 			} else {
 				departOrderitem.get(i).set("serial_no", "无");
@@ -1341,10 +1341,10 @@ public class DeliveryController extends Controller {
 					.set("phone", getPara("notify_phone"))
 					.set("mobile", getPara("notify_mobile"));
 			contact.save();
-			party.set("contact_id", contact.get("id")) 
+			party.set("contact_id", contact.getLong("id")) 
 					.set("party_type", "NOTIFY_PARTY")
 					.set("create_date", createDate)
-					.set("creator", users.get(0).get("id"));
+					.set("creator", users.get(0).getLong("id"));
 			party.save();
 		} else {
 			contact.set("id", getPara("contact_id"))
@@ -1369,7 +1369,7 @@ public class DeliveryController extends Controller {
 					.set("car_id", carId)
 					.set("remark", remark)
 					.set("deliveryMode", deliveryMode)
-					.set("notify_party_id", party.get("id"))
+					.set("notify_party_id", party.getLong("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
@@ -1400,7 +1400,7 @@ public class DeliveryController extends Controller {
 				if(StringUtils.isNotEmpty(warehouseId)){
 					Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
 					if(warehouse!=null)
-						deliveryChangeOrder.set("office_id", warehouse.get("office_id"));
+						deliveryChangeOrder.set("office_id", warehouse.getLong("office_id"));
 				}
 				if(!warehouseId.equals("")&& warehouseId!=null){
 					deliveryChangeOrder.set("from_warehouse_id", warehouseId);
@@ -1411,7 +1411,7 @@ public class DeliveryController extends Controller {
 				deliveryChangeOrder.set("order_no", orderNo)//生成调拨的配送单
 				.set("sp_id", spId)
 				.set("remark", remark)
-				.set("notify_party_id", party.get("id"))
+				.set("notify_party_id", party.getLong("id"))
 				.set("create_stamp", new Date())
 				.set("route_to", getPara("route_to"))
 				.set("route_from", getPara("route_from"))
@@ -1425,7 +1425,7 @@ public class DeliveryController extends Controller {
 				.set("ltl_price_type", ltlPriceType).set("car_type", car_type)
 				.set("customer_delivery_no",getPara("customerDelveryNo"));
 				if (notifyId == null || notifyId.equals("")) {
-					deliveryChangeOrder.set("notify_party_id", party.get("id"));
+					deliveryChangeOrder.set("notify_party_id", party.getLong("id"));
 				} else {
 					deliveryChangeOrder.set("notify_party_id", notifyId);
 				}
@@ -1450,20 +1450,20 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("sp_id", changeSpId);
 				
 				//更新单品明细表（把调拨后的ID赋给明细表的配送单ID，方便回单的生成 ）
-				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.get("id")+"'");
+				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.getLong("id")+"'");
 				if(toid != null){
 					toid.set("delivery_id", deliveryChangeOrder.getLong("id")).update();
 				}
 			}
 			if (notifyId == null || notifyId.equals("")) {
-				deliveryOrder.set("notify_party_id", party.get("id"));
+				deliveryOrder.set("notify_party_id", party.getLong("id"));
 			} else {
 				deliveryOrder.set("notify_party_id", notifyId);
 			}
 			if(StringUtils.isNotEmpty(warehouseId)){
 				Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",warehouseId); 
 				if(warehouse!=null)
-					deliveryOrder.set("office_id", warehouse.get("office_id"));
+					deliveryOrder.set("office_id", warehouse.getLong("office_id"));
 			}
 			if(!"".equals(clientOrderStamp) && clientOrderStamp != null)
 				deliveryOrder.set("client_order_stamp", clientOrderStamp);
@@ -1481,7 +1481,7 @@ public class DeliveryController extends Controller {
 			if("cargo".equals(cargoNature)){
 				deliveryOrder.set("delivery_plan_type", "untreated");
 			}
-			deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
+			deliveryOrder.set("delivery_id", deliveryChangeOrder.getLong("id"));
 			
 			deliveryOrder.save();
 			
@@ -1495,7 +1495,7 @@ public class DeliveryController extends Controller {
 					for (int i = 0; i < transferItemId.length; i++) {
 						//更新transferOrderIten表
 						TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(transferItemId[i]);
-						TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where id = '"+ transferOrderItem.get("order_id") + "';");
+						TransferOrder order = TransferOrder.dao.findFirst("select * from transfer_order where id = '"+ transferOrderItem.getLong("order_id") + "';");
 						Double total_amount = transferOrderItem.getDouble("amount");
 						Double Tcomplete_amount = transferOrderItem.getDouble("complete_amount");
 						if(Tcomplete_amount == null){
@@ -1506,10 +1506,10 @@ public class DeliveryController extends Controller {
 						Double this_amount = Double.valueOf(num);
 						//新增配送单从表
 						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-						deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"))
+						deliveryOrderItem.set("delivery_id", deliveryOrder.getLong("id"))
 						.set("transfer_item_id", transferItemId[i])
 						.set("transfer_no", order.getStr("order_no"))
-						.set("transfer_order_id",order.get("id"))
+						.set("transfer_order_id",order.getLong("id"))
 						.set("amount", this_amount)
 						.save();	
 						
@@ -1527,7 +1527,7 @@ public class DeliveryController extends Controller {
 					if (!idlist3.equals("")) {
 						for (int i = 0; i < idlist.length; i++) {
 							DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-							deliveryOrderItem.set("delivery_id",deliveryOrder.get("id"))
+							deliveryOrderItem.set("delivery_id",deliveryOrder.getLong("id"))
 							.set("transfer_order_id",idlist[i]);
 							deliveryOrderItem.set("transfer_item_detail_id", idlist2[i]);
 							deliveryOrderItem.set("transfer_no", idlist4[i]);
@@ -1536,7 +1536,7 @@ public class DeliveryController extends Controller {
 						}
 					} else {
 						DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-						deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"))
+						deliveryOrderItem.set("delivery_id", deliveryOrder.getLong("id"))
 								.set("transfer_order_id", getPara("tranferid"))
 								.set("transfer_no", idlist5);
 						deliveryOrderItem.save();
@@ -1549,7 +1549,7 @@ public class DeliveryController extends Controller {
 						TransferOrderItemDetail transferOrderItemDetail = TransferOrderItemDetail.dao
 								.findById(detailIdArr[i]);
 						transferOrderItemDetail.set("delivery_id",
-								deliveryOrder.get("id"));
+								deliveryOrder.getLong("id"));
 						transferOrderItemDetail.set("is_delivered", true);
 						transferOrderItemDetail.update();
 					}
@@ -1574,11 +1574,11 @@ public class DeliveryController extends Controller {
 				         .set("item_name", item_name)
 				         .set("amount", amount)
 				         .set("unit", unit)
-				         .set("delivery_id", deliveryOrder.get("id"))
+				         .set("delivery_id", deliveryOrder.getLong("id"))
 				         .set("item_desc", item_desc).save();
 				         
 				         DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-						 deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"));
+						 deliveryOrderItem.set("delivery_id", deliveryOrder.getLong("id"));
 						 deliveryOrderItem.set("transfer_item_id",transferOrderItem.getLong("id"));
 						 deliveryOrderItem.set("amount", amount).save();
 			         }
@@ -1625,11 +1625,11 @@ public class DeliveryController extends Controller {
 					         .set("item_name", item_name)
 					         .set("amount", amount)
 					         .set("unit", unit)
-					         .set("delivery_id", deliveryOrder.get("id"))
+					         .set("delivery_id", deliveryOrder.getLong("id"))
 					         .set("item_desc", item_desc).save();
 					         
 					         DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
-							 deliveryOrderItem.set("delivery_id", deliveryOrder.get("id"));
+							 deliveryOrderItem.set("delivery_id", deliveryOrder.getLong("id"));
 							 deliveryOrderItem.set("transfer_item_id",transferOrderItem.getLong("id"));
 							 deliveryOrderItem.set("amount", amount).save();
 				         }
@@ -1677,7 +1677,7 @@ public class DeliveryController extends Controller {
 					.set("ref_no", sign_document_no);
 			if(!"".equals(businessStamp) && businessStamp != null){
 				deliveryOrder.set("business_stamp", businessStamp);
-				if("新建".equals(deliveryOrder.get("status"))){
+				if("新建".equals(deliveryOrder.getStr("status"))){
 					deliveryOrder.set("status", "计划中");
 				}
 			}
@@ -1689,7 +1689,7 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("change_warehouse_id", null);
 			}
 			if("".equals(getPara("notify_id")) || getPara("notify_id") == null)
-				deliveryOrder.set("notify_party_id", party.get("id"));
+				deliveryOrder.set("notify_party_id", party.getLong("id"));
             else{
             	deliveryOrder.set("notify_party_id", getPara("notify_id"));
 			}
@@ -1711,9 +1711,9 @@ public class DeliveryController extends Controller {
 					if(!customerId.equals("")&& customerId!=null){
 						deliveryChangeOrder.set("customer_id", customerId);
 					}
-					deliveryChangeOrder.set("order_no",deliveryOrder.get("order_no"))//生成调拨的配送单
+					deliveryChangeOrder.set("order_no",deliveryOrder.getStr("order_no"))//生成调拨的配送单
 					.set("sp_id", spId)
-					.set("notify_party_id", party.get("id"))
+					.set("notify_party_id", party.getLong("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
 					.set("remark", remark)
@@ -1732,11 +1732,11 @@ public class DeliveryController extends Controller {
 					if(StringUtils.isNotEmpty(warehouseId)){
 						Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",gateInSelect); 
 						if(warehouse!=null)
-							deliveryChangeOrder.set("office_id", warehouse.get("office_id"));
+							deliveryChangeOrder.set("office_id", warehouse.getLong("office_id"));
 					}
 					
 					if (notifyId == null || notifyId.equals("")) {
-						deliveryChangeOrder.set("notify_party_id", party.get("id"));
+						deliveryChangeOrder.set("notify_party_id", party.getLong("id"));
 					} else {
 						deliveryChangeOrder.set("notify_party_id", notifyId);
 					}
@@ -1757,11 +1757,11 @@ public class DeliveryController extends Controller {
 					}
 					//deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
 					deliveryChangeOrder.save();
-					List<DeliveryOrderItem> deliveryOrderItem=DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryOrder.get("id"));
+					List<DeliveryOrderItem> deliveryOrderItem=DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryOrder.getLong("id"));
 					for(DeliveryOrderItem deliveryOrder1:deliveryOrderItem){
 						DeliveryOrderItem deliveryItem =new DeliveryOrderItem();
-						deliveryItem.set("transfer_no",deliveryOrder1.get("transfer_no"))
-						.set("delivery_id", deliveryChangeOrder.get("id"))
+						deliveryItem.set("transfer_no",deliveryOrder1.getStr("transfer_no"))
+						.set("delivery_id", deliveryChangeOrder.getLong("id"))
 						.set("transfer_order_id", deliveryOrder1.get("transfer_order_id"))
 						.set("transfer_item_id",deliveryOrder1.get("transfer_item_id"))
 						.set("amount", deliveryOrder1.get("amount"))
@@ -1771,12 +1771,12 @@ public class DeliveryController extends Controller {
 						deliveryItem.save();
 					}
 				} else{        
-					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
+					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.getLong("delivery_id"));
 					if(!customerId.equals("")&& customerId!=null){
 						deliveryChangeOrder.set("customer_id", customerId);
 					}
 					deliveryChangeOrder.set("sp_id", spId)
-					.set("notify_party_id", party.get("id"))
+					.set("notify_party_id", party.getLong("id"))
 					.set("create_stamp", createDate)
 					.set("route_to", getPara("route_to"))
 					.set("route_from", getPara("route_from"))
@@ -1793,10 +1793,10 @@ public class DeliveryController extends Controller {
 					if(StringUtils.isNotEmpty(warehouseId)){
 						Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",gateInSelect); 
 						if(warehouse!=null)
-							deliveryChangeOrder.set("office_id", warehouse.get("office_id"));
+							deliveryChangeOrder.set("office_id", warehouse.getLong("office_id"));
 					}
 					if (notifyId == null || notifyId.equals("")) {
-						deliveryChangeOrder.set("notify_party_id", party.get("id"));
+						deliveryChangeOrder.set("notify_party_id", party.getLong("id"));
 					} else {
 						deliveryChangeOrder.set("notify_party_id", notifyId);
 					}
@@ -1820,17 +1820,17 @@ public class DeliveryController extends Controller {
 				}
 				//更新原来配送单单号
 				deliveryOrder.set("order_no", deliveryOrder.getStr("order_no")+"-DB");
-				deliveryOrder.set("delivery_id", deliveryChangeOrder.get("id"));
+				deliveryOrder.set("delivery_id", deliveryChangeOrder.getLong("id"));
 				
 				//更新单品明细表（把调拨后的ID赋给明细表的配送单ID，方便回单的生成 ）
-				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.get("id")+"'");
+				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.getLong("id")+"'");
 				if(toid != null){
 					toid.set("delivery_id", deliveryChangeOrder.getLong("id")).update();
 				}
 			} else{             //----------------非调拨
 				if(deliveryOrder.get("delivery_id")!=null){
-					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));
-					DeliveryOrderFinItem deliveryOrderFinItem= DeliveryOrderFinItem.dao.findFirst("SELECT * from delivery_order_fin_item where order_id=?",deliveryChangeOrder.get("id"));
+					deliveryChangeOrder = DeliveryOrder.dao.findById(deliveryOrder.getLong("delivery_id"));
+					DeliveryOrderFinItem deliveryOrderFinItem= DeliveryOrderFinItem.dao.findFirst("SELECT * from delivery_order_fin_item where order_id=?",deliveryChangeOrder.getLong("id"));
 					if(deliveryOrderFinItem!=null){
 						deliveryOrderFinItem.delete();
 					}if(deliveryChangeOrder!=null){
@@ -1905,7 +1905,7 @@ public class DeliveryController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		deliveryOrderMilestone.set("create_by", users.get(0).get("id"));
+		deliveryOrderMilestone.set("create_by", users.get(0).getLong("id"));
 		deliveryOrderMilestone.set("location", "");
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -1914,8 +1914,8 @@ public class DeliveryController extends Controller {
 		deliveryOrderMilestone.save();
 		map.put("transferOrderMilestone", deliveryOrderMilestone);
 		UserLogin userLogin = UserLogin.dao.findById(deliveryOrderMilestone
-				.get("create_by"));
-		String username = userLogin.get("user_name");
+				.getLong("create_by"));
+		String username = userLogin.getStr("user_name");
 		map.put("username", username);
 		renderJson(map);
 
@@ -1935,10 +1935,10 @@ public class DeliveryController extends Controller {
 							+ departOrderId);
 			for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
 				UserLogin userLogin = UserLogin.dao
-						.findById(transferOrderMilestone.get("create_by"));
-				String username = userLogin.get("c_name");
+						.findById(transferOrderMilestone.getLong("create_by"));
+				String username = userLogin.getStr("c_name");
 				if(username==null||"".equals(username)){
-	            	username=userLogin.get("user_name");
+	            	username=userLogin.getStr("user_name");
 	            }
 				usernames.add(username);
 			}
@@ -2011,7 +2011,7 @@ public class DeliveryController extends Controller {
 					.find("select * from user_login where user_name='" + name
 							+ "'");
 
-			deliveryOrderMilestone.set("create_by", users.get(0).get("id"));
+			deliveryOrderMilestone.set("create_by", users.get(0).getLong("id"));
 
 			java.util.Date utilDate = new java.util.Date();
 			java.sql.Timestamp sqlDate = new java.sql.Timestamp(
@@ -2022,10 +2022,10 @@ public class DeliveryController extends Controller {
 
 			map.put("transferOrderMilestone", deliveryOrderMilestone);
 			UserLogin userLogin = UserLogin.dao.findById(deliveryOrderMilestone
-					.get("create_by"));
-			String username = userLogin.get("c_name");
+					.getLong("create_by"));
+			String username = userLogin.getStr("c_name");
 			if(username==null||"".equals(username)){
-            	username=userLogin.get("user_name");
+            	username=userLogin.getStr("user_name");
             }
 			map.put("username", username);
 		}
@@ -2039,8 +2039,7 @@ public class DeliveryController extends Controller {
 				.find("select * from depart_transfer  where depart_id in("
 						+ depart_id + ")");
 		for (int i = 0; i < dep.size(); i++) {
-			int order_id = Integer.parseInt(dep.get(i).get("order_id")
-					.toString());
+			int order_id = Integer.parseInt(dep.get(i).getStr("order_id"));
 			TransferOrder tr = TransferOrder.dao.findById(order_id);
 			TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 			if (!status.isEmpty()) {
@@ -2055,7 +2054,7 @@ public class DeliveryController extends Controller {
 			List<UserLogin> users = UserLogin.dao
 					.find("select * from user_login where user_name='" + name
 							+ "'");
-			transferOrderMilestone.set("create_by", users.get(0).get("id"));
+			transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 			if (location == null || location.isEmpty()) {
 				transferOrderMilestone.set("location", "");
 			} else {
@@ -2240,7 +2239,7 @@ public class DeliveryController extends Controller {
     	String d_amount = null;
     	if(StringUtils.isNotBlank(order_id)){
     		Record re = Db.findFirst("select * from delivery_order_item where delivery_id = ?",order_id);
-    		String amount = re.get("amount").toString();
+    		String amount = re.getStr("amount");
     		d_amount = amount;
     	}
     	
@@ -2638,7 +2637,7 @@ public class DeliveryController extends Controller {
     	
     	DeliveryOrder deliveryOrder = null;
     	String orderNo = OrderNoGenerator.getNextOrderNo("PS");
-		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transfer.get("warehouse_id")); 
+		Warehouse warehouse = Warehouse.dao.findFirst("SELECT * from warehouse where id=?",transfer.getLong("warehouse_id")); 
 		deliveryOrder = new DeliveryOrder();
 		deliveryOrder.set("order_no", orderNo)
 		.set("customer_id", transfer.get("customer_id"))

@@ -63,7 +63,7 @@ public class InsuranceOrderController extends Controller {
         String customerId = getPara("customerId");
         Party party = Party.dao.findById(customerId);
 
-        Contact contact = Contact.dao.findById(party.get("contact_id").toString());
+        Contact contact = Contact.dao.findById(party.getLong("contact_id").toString());
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
@@ -276,10 +276,10 @@ public class InsuranceOrderController extends Controller {
 
         TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
         setAttr("transferOrderAttr", transferOrderAttr);
-        Long customerId = transferOrderAttr.get("customer_id");
+        Long customerId = transferOrderAttr.getLong("customer_id");
         if (customerId != null && !"".equals(customerId)) {
             Party costomerParty = Party.dao.findById(customerId);
-            Contact customerContact = Contact.dao.findById(costomerParty.get("contact_id"));
+            Contact customerContact = Contact.dao.findById(costomerParty.getLong("contact_id"));
             setAttr("customerContact", customerContact);
             setAttr("hid_customer_id", customerId);
         }
@@ -296,11 +296,11 @@ public class InsuranceOrderController extends Controller {
         TransferOrder transferOrder = new TransferOrder();
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        setAttr("create_by", users.get(0).get("id"));
+        setAttr("create_by", users.get(0).getLong("id"));
 
         setAttr("order_no", OrderNoGenerator.getNextOrderNo("BX"));
 
-        UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+        UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
         setAttr("userLogin", userLogin);
 
         setAttr("status", "新建");
@@ -428,7 +428,7 @@ public class InsuranceOrderController extends Controller {
     		FinItem finItem = FinItem.dao.findFirst("select id from fin_item where type = ? and name = ?", "应付", "保险费");
     		for(int i = 0; i < orderIds.length; i++){
     			TransferOrder transferOrder = TransferOrder.dao.findById(orderIds[i]);
-    			transferOrder.set("insurance_id", insuranceOrder.get("id"));
+    			transferOrder.set("insurance_id", insuranceOrder.getLong("id"));
     			transferOrder.update();
     			
     			//保险公司费率
@@ -440,16 +440,16 @@ public class InsuranceOrderController extends Controller {
     						+ " and current_date > pit.beginTime"
     						+ " and current_date < pit.endTime"
     						+ " and p.party_type = '"+ Party.PARTY_TYPE_INSURANCE_PARTY + "'"
-    						+ " and pit.customer_id = '" + transferOrder.get("customer_id") + "'"
+    						+ " and pit.customer_id = '" + transferOrder.getLong("customer_id") + "'"
     						+ " and p.id = '" + insuranceSelect + "'");
     			}
     			//保险单从表--按单据货品买保险
-    			Party party = Party.dao.findById(transferOrder.get("customer_id"));
+    			Party party = Party.dao.findById(transferOrder.getLong("customer_id"));
     			List<TransferOrderItem> itemList = TransferOrderItem.dao.find("select id,product_id,amount from transfer_order_item where order_id = ?",orderIds[i]);
     			for (TransferOrderItem transferOrderItem : itemList) {
     				InsuranceFinItem insuranceFinItem = new InsuranceFinItem();
     				if(transferOrderItem!= null){
-    					Product product = Product.dao.findById(transferOrderItem.get("product_id"));
+    					Product product = Product.dao.findById(transferOrderItem.getLong("product_id"));
     					if(product ==null){
     					    double prodoctInsuranceAmount = 0;
                             insuranceFinItem.set("amount", prodoctInsuranceAmount);
@@ -480,9 +480,9 @@ public class InsuranceOrderController extends Controller {
                             }
     					}
     				}
-    				insuranceFinItem.set("transfer_order_item_id", transferOrderItem.get("id"))
-        			.set("insurance_order_id", insuranceOrder.get("id"))
-        			.set("fin_item_id", finItem.get("id"))
+    				insuranceFinItem.set("transfer_order_item_id", transferOrderItem.getLong("id"))
+        			.set("insurance_order_id", insuranceOrder.getLong("id"))
+        			.set("fin_item_id", finItem.getLong("id"))
         			.save();
 				}
     		}
@@ -501,11 +501,11 @@ public class InsuranceOrderController extends Controller {
     	}
     	setAttr("insuranceOrder", insuranceOrder);
     	setAttr("paymentItemList", paymentItemList);
-    	UserLogin userLogin = UserLogin.dao.findById(insuranceOrder.get("create_by"));
+    	UserLogin userLogin = UserLogin.dao.findById(insuranceOrder.getLong("create_by"));
         setAttr("userLogin2", userLogin);String orderId = "";
-        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where insurance_id = ?", insuranceOrder.get("id"));
+        List<TransferOrder> transferOrders = TransferOrder.dao.find("select * from transfer_order where insurance_id = ?", insuranceOrder.getLong("id"));
         for (TransferOrder transferOrder : transferOrders) {
-            orderId += transferOrder.get("id") + ",";
+            orderId += transferOrder.getLong("id") + ",";
         }
         orderId = orderId.substring(0, orderId.length() - 1);
         setAttr("localArr", orderId);
@@ -513,10 +513,10 @@ public class InsuranceOrderController extends Controller {
 
         TransferOrder transferOrderAttr = TransferOrder.dao.findById(transferOrderIds[0]);
         setAttr("transferOrderAttr", transferOrderAttr);
-        Long customerId = transferOrderAttr.get("customer_id");
+        Long customerId = transferOrderAttr.getLong("customer_id");
         if (customerId != null && !"".equals(customerId)) {
             Party costomerParty = Party.dao.findById(customerId);
-            Contact customerContact = Contact.dao.findById(costomerParty.get("contact_id"));
+            Contact customerContact = Contact.dao.findById(costomerParty.getLong("contact_id"));
             setAttr("customerContact", customerContact);
             setAttr("hid_customer_id", customerId);
         }
@@ -597,7 +597,7 @@ public class InsuranceOrderController extends Controller {
     	}
 		List<TransferOrderItem> transferOrderItems = TransferOrderItem.dao.find("select * from transfer_order_item toi where toi.order_id =?", orderId);
 		for(TransferOrderItem transferOrderItem : transferOrderItems){
-			InsuranceFinItem insuranceFinItem = InsuranceFinItem.dao.findFirst("select * from insurance_fin_item ifi where ifi.transfer_order_item_id=?", transferOrderItem.get("id"));
+			InsuranceFinItem insuranceFinItem = InsuranceFinItem.dao.findFirst("select * from insurance_fin_item ifi where ifi.transfer_order_item_id=?", transferOrderItem.getLong("id"));
 			insuranceFinItem.set(name, value);
 			insuranceFinItem.update();
 		}    
@@ -632,7 +632,7 @@ public class InsuranceOrderController extends Controller {
 		//保险单从表--按单据货品买保险
 		List<InsuranceFinItem> itemList = InsuranceFinItem.dao.find("select * from insurance_fin_item where insurance_order_id = ?",insuranceOrderId);
 		for (InsuranceFinItem insuranceFinItem : itemList) {
-			TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(insuranceFinItem.get("transfer_order_item_id"));
+			TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(insuranceFinItem.getLong("transfer_order_item_id"));
 			if(transferOrderItem.get("amount") != null && !"".equals(transferOrderItem.get("amount"))){
 		    	if(insurance.get("insurance_rate") != null && !"".equals(insurance.get("insurance_rate"))){
 					if(insuranceFinItem.get("amount") != null && !"".equals(insuranceFinItem.get("amount"))){

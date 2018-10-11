@@ -107,21 +107,21 @@ public class TransferAccountsController extends Controller {
 			String id = getPara("id");
 			TransferAccountsOrder transferaccounts = TransferAccountsOrder.dao.findById(id);
 			setAttr("transferaccounts", transferaccounts);
-			Account in_acc=Account.dao.findById(transferaccounts.get("bank_in"));
-			Account out_acc=Account.dao.findById(transferaccounts.get("bank_out"));
+			Account in_acc=Account.dao.findById(transferaccounts.getLong("bank_in"));
+			Account out_acc=Account.dao.findById(transferaccounts.getLong("bank_out"));
 			setAttr("in_acc",in_acc);
 			setAttr("out_acc",out_acc);
 			//创建人
-			if(!"".equals(transferaccounts.get("create_id")) &&transferaccounts.get("create_id")!=null){
+			if(!"".equals(transferaccounts.getLong("create_id")) &&transferaccounts.getLong("create_id")!=null){
 			UserLogin create1 = UserLogin.dao
-					.findFirst("select * from user_login where id='" + transferaccounts.get("create_id") + "'");
-			setAttr("createName", create1.get("c_name"));
+					.findFirst("select * from user_login where id='" + transferaccounts.getLong("create_id") + "'");
+			setAttr("createName", create1.getStr("c_name"));
 		   }
-			if(!"".equals(transferaccounts.get("confirm_id")) &&transferaccounts.get("confirm_id")!=null){
+			if(!"".equals(transferaccounts.getLong("confirm_id")) &&transferaccounts.getLong("confirm_id")!=null){
 				UserLogin create1 = UserLogin.dao
-						.findFirst("select * from user_login where id='" + transferaccounts.get("confirm_id") + "'");
-				setAttr("confirmName", create1.get("c_name"));
-				setAttr("confirmStamp", transferaccounts.get("confirm_stamp"));
+						.findFirst("select * from user_login where id='" + transferaccounts.getLong("confirm_id") + "'");
+				setAttr("confirmName", create1.getStr("c_name"));
+				setAttr("confirmStamp", transferaccounts.getTimestamp("confirm_stamp"));
 			}
 			
 		render("/yh/arap/TransferAccountsOrder/TransferAccountsOrderEdit.html");
@@ -156,7 +156,7 @@ public class TransferAccountsController extends Controller {
 			if(!"".equals(transferOrderId) && transferOrderId != null){
 			    transferaccounts =TransferAccountsOrder.dao.findById(transferOrderId);
 			    transferaccounts.set("STATUS","已确认");
-				transferaccounts.set("confirm_id",users.get(0).get("id"));
+				transferaccounts.set("confirm_id",users.get(0).getLong("id"));
 				transferaccounts.set("confirm_stamp",new Date());
 				transferaccounts.update();
 			}
@@ -179,7 +179,7 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("payment_method", "transfers");
 				arapaccountauditlog.set("payment_type", "CHARGE");
 				arapaccountauditlog.set("amount", amount);
-				arapaccountauditlog.set("creator",users.get(0).get("id"));
+				arapaccountauditlog.set("creator",users.get(0).getLong("id"));
 				arapaccountauditlog.set("create_date",transfer_time);
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
@@ -205,7 +205,7 @@ public class TransferAccountsController extends Controller {
 				arapaccountauditlog.set("payment_method", "transfers");
 				arapaccountauditlog.set("payment_type", "COST");
 				arapaccountauditlog.set("amount", amount);
-				arapaccountauditlog.set("creator",users.get(0).get("id"));
+				arapaccountauditlog.set("creator",users.get(0).getLong("id"));
 				arapaccountauditlog.set("create_date",transfer_time);
 				arapaccountauditlog.set("remark", remark);
 				arapaccountauditlog.set("source_order", "转账单");
@@ -263,7 +263,7 @@ public class TransferAccountsController extends Controller {
 					.find("select * from user_login where user_name='" + name + "'");
 			if(!"".equals(transferOrderId) && transferOrderId != null){
 			    transferaccounts =TransferAccountsOrder.dao.findById(transferOrderId);
-				transferaccounts.set("create_id",users.get(0).get("id"));
+				transferaccounts.set("create_id",users.get(0).getLong("id"));
 				transferaccounts.set("create_stamp",new Date());
 				transferaccounts.set("transfer_method",method);
 				transferaccounts.set("bank_in",in_filter);
@@ -277,7 +277,7 @@ public class TransferAccountsController extends Controller {
 			    transferaccounts= new TransferAccountsOrder();
 				transferaccounts.set("order_no", OrderNoGenerator.getNextOrderNo("ZZSQ"));
 				transferaccounts.set("STATUS","新建");
-				transferaccounts.set("create_id",users.get(0).get("id"));
+				transferaccounts.set("create_id",users.get(0).getLong("id"));
 				transferaccounts.set("create_stamp",new Date());
 				transferaccounts.set("transfer_method",method);
 				transferaccounts.set("bank_in",in_filter);

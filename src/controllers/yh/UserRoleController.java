@@ -102,9 +102,9 @@ public class UserRoleController extends Controller {
 	public void addOrUpdate(){
 		String id = getPara("id");
 		UserLogin user = UserLogin.dao.findFirst("select * from user_login where id = ?",id);
-		List<UserRole> list = UserRole.dao.find("select * from user_role where user_name = ?",user.get("user_name"));
+		List<UserRole> list = UserRole.dao.find("select * from user_role where user_name = ?",user.getStr("user_name"));
 		if(list.size()>0){
-			setAttr("user_name", user.get("user_name"));		
+			setAttr("user_name", user.getStr("user_name"));		
 			render("/yh/profile/userRole/assigning_roles.html");
 		}else{
 			render("/yh/profile/userRole/addRole.html");
@@ -136,7 +136,7 @@ public class UserRoleController extends Controller {
 			ur.set("user_name", name);
 			/*根据id找到Role*/
 			Role role = Role.dao.findFirst("select * from role where id=?",id);
-			ur.set("role_code", role.get("code"));
+			ur.set("role_code", role.getStr("code"));
 			ur.save();
 		}
 		renderJson();
@@ -153,7 +153,7 @@ public class UserRoleController extends Controller {
         
         List<Object> ids = new ArrayList<Object>();
         for (UserRole ur : list) {
-            ids.add(ur.get("id"));
+            ids.add(ur.getLong("id"));
         }
         
         CompareStrList compare = new CompareStrList();
@@ -175,7 +175,7 @@ public class UserRoleController extends Controller {
                 /*根据id找到Role*/
                 Role role = Role.dao.findFirst("select * from role where id=?",object);
                 if(role != null){
-                	ur.set("role_code", role.get("code"));
+                	ur.set("role_code", role.getStr("code"));
                     ur.save();
                 }
                 
@@ -228,7 +228,7 @@ public class UserRoleController extends Controller {
 		String username = getPara("username");
 		//查询当前用户的父类公司的id
 		Office parentOffice = getCurrentUserOffice();
-		Long parentID = parentOffice.get("belong_office");
+		Long parentID = parentOffice.getLong("belong_office");
 		if(parentID == null || "".equals(parentID)){
 			parentID = parentOffice.getLong("id");
 		}
@@ -240,7 +240,7 @@ public class UserRoleController extends Controller {
 		List<Permission> po = new ArrayList<Permission>();
 		for (int i = 0; i < parentOrders.size(); i++) {
 			if(i!=0){
-				if(!parentOrders.get(i).get("module_name").equals(parentOrders.get(i-1).get("module_name"))){
+				if(!parentOrders.get(i).getStr("module_name").equals(parentOrders.get(i-1).getStr("module_name"))){
 					po.add(parentOrders.get(i));
 				}
 			}else{
@@ -250,7 +250,7 @@ public class UserRoleController extends Controller {
 		}	
 		
 		for (Permission rp : po) {
-			String key = rp.get("module_name");
+			String key = rp.getStr("module_name");
 			/*select p.code, p.name,p.module_name ,r.permission_code from permission p left join  (select * from role_permission rp where rp.role_code =?) r on r.permission_code = p.code where p.module_name=?*/
 			
 			List<RolePermission> childOrders = RolePermission.dao.find("select distinct p.id, p.code, p.name,p.module_name ,r.permission_code from permission p left join (select rp.* from user_role  ur left join role_permission  rp on rp.role_code = ur.role_code where ur.user_name =? and  rp.office_id =  " + parentID + ")r on r.permission_code = p.code where p.module_name=? order by p.id",username,key);
@@ -272,7 +272,7 @@ public class UserRoleController extends Controller {
 	private Office getCurrentUserOffice() {
 		String userName = currentUser.getPrincipal().toString();
 		UserOffice currentoffice = UserOffice.dao.findFirst("select * from user_office where user_name = ? and is_main = ?",userName,true);
-		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.get("office_id"));
+		Office parentOffice = Office.dao.findFirst("select * from office where id = ?",currentoffice.getLong("office_id"));
 		return parentOffice;
 	}
 	

@@ -127,17 +127,17 @@ public class InsuranceController extends Controller{
 			.set("bank_no", bank_no)
         	.set("abbr", abbr).save();
 			party = new Party();
-			party.set("contact_id", contact.get("id"))
+			party.set("contact_id", contact.getLong("id"))
 			.set("party_type", "INSURANCE_PARTY")
 			.set("payment",payment)
 			.set("receipt", receipt)
 			.set("create_date", new Date())
-			.set("creator", users.get(0).get("id"))
-			.set("office_id", currentoffice.get("office_id"))
+			.set("creator", users.get(0).getLong("id"))
+			.set("office_id", currentoffice.getLong("office_id"))
 			.set("remark", remark).save();
         } else {
         	party = Party.dao.findById(insuranceId);
-        	Contact contact = Contact.dao.findById(party.get("contact_id"));
+        	Contact contact = Contact.dao.findById(party.getLong("contact_id"));
         	contact.set("company_name", insuranceName)
 			.set("contact_person", companyName)
 			.set("address", address)
@@ -157,7 +157,7 @@ public class InsuranceController extends Controller{
     public void edit(){
     	String insuranceId = getPara();
     	Party party = Party.dao.findById(insuranceId);
-    	Contact contact = Contact.dao.findById(party.get("contact_id"));
+    	Contact contact = Contact.dao.findById(party.getLong("contact_id"));
     	setAttr("party", party);
     	setAttr("contact", contact);
     	render("/yh/profile/insurance/insuranceEdit.html"); 
@@ -224,8 +224,8 @@ public class InsuranceController extends Controller{
     public void rateEdit(){
     	String rateItemId = getPara();
     	Record partyInsuranceItem = Db.findFirst("select * from party_insurance_item where id = ?",rateItemId);
-    	Party party = Party.dao.findFirst("select c.company_name,c.abbr from party p left join contact c on c.id = p.contact_id where p.id = '"+ partyInsuranceItem.get("customer_id") + "'");
-    	partyInsuranceItem.set("company_name", party.get("company_name"));
+    	Party party = Party.dao.findFirst("select c.company_name,c.abbr from party p left join contact c on c.id = p.contact_id where p.id = '"+ partyInsuranceItem.getLong("customer_id") + "'");
+    	partyInsuranceItem.set("company_name", party.getStr("company_name"));
     	renderJson(partyInsuranceItem); 
     }
     

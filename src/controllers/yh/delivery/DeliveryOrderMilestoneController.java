@@ -58,10 +58,10 @@ public class DeliveryOrderMilestoneController extends Controller {
         List<DeliveryOrderMilestone> transferOrderMilestones = DeliveryOrderMilestone.dao
                 .find("select * from delivery_order_milestone where delivery_id=" + delivery_id);
         for (DeliveryOrderMilestone transferOrderMilestone : transferOrderMilestones) {
-            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-            String username = userLogin.get("c_name");
+            UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
+            String username = userLogin.getStr("c_name");
             if(username==null||"".equals(username)){
-            	username=userLogin.get("user_name");
+            	username=userLogin.getStr("user_name");
             }
             usernames.add(username);
         }
@@ -92,7 +92,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 			deliveryOrder.set("depart_stamp", new Date());
 		}
         deliveryOrder.update();
-        DeliveryOrder deliveryOrder1 = DeliveryOrder.dao.findById(deliveryOrder.get("delivery_id"));//调拨仓库
+        DeliveryOrder deliveryOrder1 = DeliveryOrder.dao.findById(deliveryOrder.getLong("delivery_id"));//调拨仓库
         if(deliveryOrder1!=null){
             deliveryOrder1.set("status", "已发车");
             deliveryOrder1.update();
@@ -200,7 +200,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         if(spContract==null)
             return;
         
-        String chargeType = deliverOrder.get("priceType");
+        String chargeType = deliverOrder.getStr("priceType");
         
         Long deliverOrderId = deliverOrder.getLong("id");
         if (spId != null) {
@@ -222,10 +222,10 @@ public class DeliveryOrderMilestoneController extends Controller {
     
         Record contractFinItem = Db
                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                        +" and carType = '" + deliverOrder.get("car_type") +"' "
-                        +" and carlength = " + deliverOrder.get("car_size")
-                        +" and from_id = '"+ deliverOrder.get("route_from")
-                        +"' and to_id = '"+ deliverOrder.get("route_to")
+                        +" and carType = '" + deliverOrder.getStr("car_type") +"' "
+                        +" and carlength = " + deliverOrder.getStr("car_size")
+                        +" and from_id = '"+ deliverOrder.getStr("route_from")
+                        +"' and to_id = '"+ deliverOrder.getStr("route_to")
                         + "' and priceType='"+chargeType+"'");
         
         if (contractFinItem != null) {
@@ -233,9 +233,9 @@ public class DeliveryOrderMilestoneController extends Controller {
         }else{
             contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            +" and carType = '" + deliverOrder.get("car_type") +"' "
-                            +" and from_id = '"+ deliverOrder.get("route_from")
-                            +"' and to_id = '"+ deliverOrder.get("route_to")
+                            +" and carType = '" + deliverOrder.getStr("car_type") +"' "
+                            +" and from_id = '"+ deliverOrder.getStr("route_from")
+                            +"' and to_id = '"+ deliverOrder.getStr("route_to")
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
@@ -243,8 +243,8 @@ public class DeliveryOrderMilestoneController extends Controller {
             }else{
 			    contractFinItem = Db
 			            .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-			                    +" and carType = '" + deliverOrder.get("car_type")//对应发车单的 car_type
-			                    +"' and to_id = '" + deliverOrder.get("route_to")
+			                    +" and carType = '" + deliverOrder.getStr("car_type")//对应发车单的 car_type
+			                    +"' and to_id = '" + deliverOrder.getStr("route_to")
 			                    + "' and priceType='"+chargeType+"'");
 			    if (contractFinItem != null) {
 			        genFinItem(deliverOrderId, null, contractFinItem, chargeType);
@@ -262,9 +262,9 @@ public class DeliveryOrderMilestoneController extends Controller {
         for (Record dOrderItemRecord : deliveryOrderItemList) {
             Record contractFinItem = Db
                     .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            + " and product_id ="+dOrderItemRecord.get("product_id")
-                            +" and from_id = '"+ dOrderItemRecord.get("route_from")
-                            +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                            + " and product_id ="+dOrderItemRecord.getLong("product_id")
+                            +" and from_id = '"+ dOrderItemRecord.getStr("route_from")
+                            +"' and to_id = '"+ dOrderItemRecord.getStr("route_to")
                             + "' and priceType='"+chargeType+"'");
             
             if (contractFinItem != null) {
@@ -272,8 +272,8 @@ public class DeliveryOrderMilestoneController extends Controller {
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                + " and product_id ="+dOrderItemRecord.get("product_id")
-                                +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                + " and product_id ="+dOrderItemRecord.getLong("product_id")
+                                +" and to_id = '"+ dOrderItemRecord.getStr("route_to")
                                 + "' and priceType='"+chargeType+"'");
                 
                 if (contractFinItem != null) {
@@ -281,8 +281,8 @@ public class DeliveryOrderMilestoneController extends Controller {
                 }else{
                     contractFinItem = Db
                             .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                    +" and from_id = '"+ dOrderItemRecord.get("route_from")
-                                    +"' and to_id = '"+ dOrderItemRecord.get("route_to")
+                                    +" and from_id = '"+ dOrderItemRecord.getStr("route_from")
+                                    +"' and to_id = '"+ dOrderItemRecord.getStr("route_to")
                                     + "' and priceType='"+chargeType+"'");
                     
                     if (contractFinItem != null) {
@@ -290,7 +290,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                     }else{
                         contractFinItem = Db
                                 .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                        +" and to_id = '"+ dOrderItemRecord.get("route_to")
+                                        +" and to_id = '"+ dOrderItemRecord.getStr("route_to")
                                         +"' and priceType='"+chargeType+"'");
                         
                         if (contractFinItem != null) {
@@ -311,7 +311,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         	deliveryFinItem.set("amount", contractFinItem.getDouble("amount"));        		
     	}else{
     		if(tOrderItemRecord != null){
-    			deliveryFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
+    			deliveryFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.getStr("amount")));
     		}
     	}
         deliveryFinItem.set("order_id", departOrderId);
@@ -325,7 +325,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     // 扣库存
     private void gateOutProduct(DeliveryOrder deliveryOrder) {
         Long deliveryOrderId=deliveryOrder.getLong("id");
-        Long warehouseId=deliveryOrder.get("from_warehouse_id");
+        Long warehouseId=deliveryOrder.getLong("from_warehouse_id");
         // 获取配送单的item list TODO 只针对ATM， 普通货品需要再验证
         List<Record> itemList = Db.find("select di.*, ti.product_id, c.name as c_name from delivery_order_item di "
                                         +"left join transfer_order_item_detail toid on di.transfer_item_detail_id = toid.id  "
@@ -339,7 +339,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 continue;
             
             Long productId=dOrderItemRecord.getLong("product_id");
-            if("ATM".equals(dOrderItemRecord.get("c_name"))){
+            if("ATM".equals(dOrderItemRecord.getStr("c_name"))){
                 InventoryItem item = InventoryItem.dao.findFirst("select * from inventory_item where product_id=? and warehouse_id=?", productId, warehouseId);
                 if(item!=null){
                     //TODO 如果库存不够，应该报错提示，并且回滚，不能发车
@@ -394,10 +394,10 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.save();
 
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-        String username = userLogin.get("c_name");
+        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
+        String username = userLogin.getStr("c_name");
         if(username==null||"".equals(username)){
-        	username=userLogin.get("user_name");
+        	username=userLogin.getStr("user_name");
         }
         map.put("username", username);
         renderJson(map);
@@ -429,8 +429,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("delivery_id", getPara("delivery_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-        String username = userLogin.get("user_name");
+        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getStr("create_by"));
+        String username = userLogin.getStr("user_name");
         map.put("username", username);
         
         Record rRec = Db.findFirst("select * from return_order where delivery_order_id = ?",delivery_id);
@@ -443,7 +443,7 @@ public class DeliveryOrderMilestoneController extends Controller {
             Record  transferDetail= Db
     				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",delivery_id);
             //查询配送单中的运输单,如果是普货配送就验证是否以配送完成
-            if(!"ATM".equals(deliveryOrder.get("cargo_nature"))){
+            if(!"ATM".equals(deliveryOrder.getStr("cargo_nature"))){
 //            	Record deliveryTotal = Db.findFirst("SELECT * FROM delivery_order_item doi "
 //            			+ " LEFT JOIN delivery_order dor on dor.id = doi.delivery_id "
 //            			+ " LEFT JOIN transfer_order_item toi on toi.id = doi.transfer_item_id "
@@ -460,15 +460,15 @@ public class DeliveryOrderMilestoneController extends Controller {
             		//当运输单配送完成时生成回单
     				if(transferDetail!=null){
     					Record  returnRefusedOrder= Db
-    							.findFirst("select * from return_order where delivery_order_id =?",transferDetail.get("delivery_id"));
-    					returnOrder.set("order_no", returnRefusedOrder.get("order_no")+"-1");
+    							.findFirst("select * from return_order where delivery_order_id =?",transferDetail.getLong("delivery_id"));
+    					returnOrder.set("order_no", returnRefusedOrder.getStr("order_no")+"-1");
     				}else{
     					returnOrder.set("order_no", orderNo);
     				}
     				
     	            returnOrder.set("delivery_order_id", delivery_id);
-    	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-    	            returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+    	            returnOrder.set("customer_id", deliveryOrder.getLong("customer_id"));
+    	            returnOrder.set("notity_party_id", deliveryOrder.getLong("notity_party_id"));
     	            returnOrder.set("transfer_order_id", transferOrderId);
     	            returnOrder.set("order_type", "应收");
     	            returnOrder.set("transaction_status", "新建");
@@ -478,9 +478,9 @@ public class DeliveryOrderMilestoneController extends Controller {
     	            Record transfer = Db.findFirst("select tor.* from delivery_order_item doi"
     	            		+ " LEFT JOIN transfer_order tor on tor.id = doi.transfer_order_id"
     	            		+ " where doi.delivery_id = ? ",delivery_id);
-    	            returnOrder.set("office_id", transfer.get("office_id"));
+    	            returnOrder.set("office_id", transfer.getLong("office_id"));
     	            returnOrder.set("create_date", createDate);
-    	            returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+    	            returnOrder.set("customer_id", deliveryOrder.getLong("customer_id"));
     	            returnOrder.save();
     	            return_id = returnOrder.getLong("id");
     	            ReturnOrderController roController = new ReturnOrderController(); 
@@ -499,15 +499,15 @@ public class DeliveryOrderMilestoneController extends Controller {
             	//ATM
             	if(transferDetail!=null){
     				Record  returnRefusedOrder= Db
-    						.findFirst("select * from return_order where delivery_order_id =?",transferDetail.get("delivery_id"));
-    				returnOrder.set("order_no", returnRefusedOrder.get("order_no")+"-1");
+    						.findFirst("select * from return_order where delivery_order_id =?",transferDetail.getLong("delivery_id"));
+    				returnOrder.set("order_no", returnRefusedOrder.getStr("order_no")+"-1");
     			}else{
     				returnOrder.set("order_no", orderNo);
     			}
             	//如果是配送单生成回单：一张配送单只生成一张回单
                 returnOrder.set("delivery_order_id", delivery_id);
-                returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
-                returnOrder.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+                returnOrder.set("customer_id", deliveryOrder.getLong("customer_id"));
+                returnOrder.set("notity_party_id", deliveryOrder.getLong("notity_party_id"));
                 returnOrder.set("order_type", "应收");
                 returnOrder.set("transaction_status", "新建");
                 returnOrder.set("creator", userId);
@@ -515,9 +515,9 @@ public class DeliveryOrderMilestoneController extends Controller {
                 Record tor = Db.findFirst("select * from transfer_order_item_detail toid"
 	            		+ " left join transfer_order tor on tor.id = toid.order_id "
 	            		+ " where toid.delivery_id = ?",delivery_id);
-	            returnOrder.set("office_id", tor.get("office_id"));
+	            returnOrder.set("office_id", tor.getLong("office_id"));
                 returnOrder.set("create_date", createDate);
-                returnOrder.set("customer_id", deliveryOrder.get("customer_id"));
+                returnOrder.set("customer_id", deliveryOrder.getLong("customer_id"));
                 returnOrder.save();
                 return_id = returnOrder.getLong("id");
                 // 生成应收
@@ -538,15 +538,15 @@ public class DeliveryOrderMilestoneController extends Controller {
         	order.set("order_no", orderNo);
         	//如果是配送单生成回单：一张配送单只生成一张回单
         	order.set("delivery_order_id", delivery_id);
-        	order.set("customer_id", deliveryOrder.get("customer_id"));
-            order.set("notity_party_id", deliveryOrder.get("notity_party_id"));
+        	order.set("customer_id", deliveryOrder.getLong("customer_id"));
+            order.set("notity_party_id", deliveryOrder.getLong("notity_party_id"));
             order.set("order_type", "应收");
             order.set("transaction_status", "新建");
             order.set("creator", userId);
             
-            order.set("office_id", deliveryOrder.get("office_id"));
+            order.set("office_id", deliveryOrder.getLong("office_id"));
             order.set("create_date", new Date());
-            order.set("customer_id", deliveryOrder.get("customer_id"));
+            order.set("customer_id", deliveryOrder.getLong("customer_id"));
             order.save();
         }
     	}
@@ -575,8 +575,8 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("delivery_id", getPara("delivery_id"));
         transferOrderMilestone.save();
         map.put("transferOrderMilestone", transferOrderMilestone);
-        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.get("create_by"));
-        String username = userLogin.get("user_name");
+        UserLogin userLogin = UserLogin.dao.findById(transferOrderMilestone.getLong("create_by"));
+        String username = userLogin.getStr("user_name");
         map.put("username", username);
         renderJson(map);
     }
@@ -663,7 +663,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).get("name") == null) {
-                FinItem.dao.deleteById(list.get(i).get("id"));
+                FinItem.dao.deleteById(list.get(i).getLong("id"));
             }
         }
         renderText(returnValue);

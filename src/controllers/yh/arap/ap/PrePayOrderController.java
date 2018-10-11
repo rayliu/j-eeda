@@ -111,11 +111,11 @@ public class PrePayOrderController extends Controller {
 			setAttr("costCheckOrderIds", ids);
 			ArapCostOrder arapCostOrder = ArapCostOrder.dao
 					.findById(idArray[0]);
-			Long spId = arapCostOrder.get("payee_id");
+			Long spId = arapCostOrder.getLong("payee_id");
 			if (!"".equals(spId) && spId != null) {
 				Party party = Party.dao.findById(spId);
 				setAttr("party", party);
-				Contact contact = Contact.dao.findById(party.get("contact_id")
+				Contact contact = Contact.dao.findById(party.getLong("contact_id")
 						.toString());
 				setAttr("sp", contact);
 			}
@@ -125,9 +125,9 @@ public class PrePayOrderController extends Controller {
 		String name = (String) currentUser.getPrincipal();
 		List<UserLogin> users = UserLogin.dao
 				.find("select * from user_login where user_name='" + name + "'");
-		setAttr("create_by", users.get(0).get("id"));
+		setAttr("create_by", users.get(0).getLong("id"));
 
-		UserLogin userLogin = UserLogin.dao.findById(users.get(0).get("id"));
+		UserLogin userLogin = UserLogin.dao.findById(users.get(0).getLong("id"));
 		setAttr("userLogin", userLogin);
 
 		List<Record> receivableItemList = Collections.EMPTY_LIST;
@@ -190,11 +190,11 @@ public class PrePayOrderController extends Controller {
 			for (ArapPrePayOrderItem originItem : originItems) {
 				ArapPrePayOrderItem newItem = new ArapPrePayOrderItem();
 				newItem.set("status", "新建");
-				newItem.set("fin_item_id", originItem.get("fin_item_id"));
+				newItem.set("fin_item_id", originItem.getLong("fin_item_id"));
 				if (originItem.getDouble("AMOUNT") != null)
 					newItem.set("amount", 0 - originItem.getDouble("AMOUNT"));
 	
-				newItem.set("item_desc", originItem.get("ITEM_DESC"));
+				newItem.set("item_desc", originItem.getStr("ITEM_DESC"));
 				newItem.set("order_id", destOrder.getLong("id"));
 				newItem.save();
 			}
@@ -224,11 +224,11 @@ public class PrePayOrderController extends Controller {
 			for (ArapPrePayOrderItem originItem : originItems) {
 				ArapPrePayOrderItem newItem = new ArapPrePayOrderItem();
 				newItem.set("status", "新建");
-				newItem.set("fin_item_id", originItem.get("fin_item_id"));
+				newItem.set("fin_item_id", originItem.getLong("fin_item_id"));
 				if (originItem.getDouble("AMOUNT") != null)
 					newItem.set("amount", 0 - originItem.getDouble("AMOUNT"));
 	
-				newItem.set("item_desc", originItem.get("ITEM_DESC"));
+				newItem.set("item_desc", originItem.getStr("ITEM_DESC"));
 				newItem.set("order_id", destOrder.getLong("id"));
 				newItem.save();
 			}
@@ -337,7 +337,7 @@ public class PrePayOrderController extends Controller {
 		setAttr("receivableItemList", receivableItemList);
 
 		ArapPrePayOrder arapPrePayOrder = ArapPrePayOrder.dao.findById(id);
-		Long spId = arapPrePayOrder.get("sp_id");
+		Long spId = arapPrePayOrder.getLong("sp_id");
 		if (!"".equals(spId) && spId != null) {
 			Record rec = Db.findFirst(
 					"select c.company_name from party p, contact c where"
@@ -347,7 +347,7 @@ public class PrePayOrderController extends Controller {
 		}
 
 		UserLogin userLogin = UserLogin.dao.findById(arapPrePayOrder
-				.get("creator"));
+				.getLong("creator"));
 		setAttr("creator_name", userLogin.getStr("c_name"));
 
 		setAttr("arapPrePayOrder", arapPrePayOrder);
@@ -381,7 +381,7 @@ public class PrePayOrderController extends Controller {
 		Long ref_id = order.getLong("ref_order_id");
 		ArapPrePayOrder reforder = ArapPrePayOrder.dao.findById(ref_id);
 		
-		if("新建".equals(order.get("status")) && "新建".equals(reforder.get("status"))){
+		if("新建".equals(order.getStr("status")) && "新建".equals(reforder.getStr("status"))){
 			order.set("status", "取消");
 			reforder.set("status", "取消");
 			

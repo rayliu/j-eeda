@@ -118,8 +118,8 @@ public class WarehouseController extends Controller{
 		//Party party = Party.dao.findById(warehouse.get("notify_party_id"));
 		//if(party != null){
 			//Contact locationCode = Contact.dao.findById(party.get("contact_id"), "location");
-		if(warehouse.get("location") != null && !"".equals(warehouse.get("location"))){
-	        String code = warehouse.get("location");
+		if(warehouse.getStr("location") != null && !"".equals(warehouse.getStr("location"))){
+	        String code = warehouse.getStr("location");
 	
 	        List<Location> provinces = Location.dao.find("select * from location where pcode ='1'");
 	        Location l = Location.dao.findFirst("select * from location where code = (select pcode from location where code = '"+code+"')");
@@ -137,7 +137,7 @@ public class WarehouseController extends Controller{
 		}
 		//Contact contact = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("notify_party_id")+")");
 		//setAttr("contact", contact);
-		Contact sp = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.get("sp_id")+")");
+		Contact sp = Contact.dao.findFirst("select * from contact where id = (select contact_id from party where id="+warehouse.getLong("sp_id")+")");
 		setAttr("sp", sp);
 		render("/yh/profile/warehouse/warehouseEdit.html");
 	}
@@ -148,7 +148,7 @@ public class WarehouseController extends Controller{
 		Warehouse warehouse = Warehouse.dao.findById(id);
 		/*warehouse.set("office_id", null);
 		warehouse.set("sp_id", null);*/
-		if(!"inactive".equals(warehouse.get("status"))){
+		if(!"inactive".equals(warehouse.getStr("status"))){
 			warehouse.set("status", "inactive");
 		}else{
 			warehouse.set("status", "active");
@@ -255,8 +255,8 @@ public class WarehouseController extends Controller{
 		String officeId = getPara("officeId");
 		Office office = Office.dao.findById(officeId);
 		String code = null;
-		if(office.get("location") != null && !"".equals(office.get("location"))){
-			code = office.get("location");
+		if(office.getStr("location") != null && !"".equals(office.getStr("location"))){
+			code = office.getStr("location");
 		}
 		logger.debug("所在地："+code);
         renderJson(code);
