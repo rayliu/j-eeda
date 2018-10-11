@@ -233,7 +233,7 @@ public class TransferOrderItemController extends Controller {
     	String fieldName = getPara("fieldName");
     	String value = getPara("value");
     	TransferOrderItem item = TransferOrderItem.dao.findById(id);
-    	TransferOrder transferOrder = TransferOrder.dao.findById(item.get("order_id"));
+    	TransferOrder transferOrder = TransferOrder.dao.findById(item.getLong("order_id"));
     	Long productId = item.getLong("product_id");
         Product product = null;
     	if (productId == null || "".equals(productId)) {
