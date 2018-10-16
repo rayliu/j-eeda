@@ -217,7 +217,7 @@ public class DeliveryController extends Controller {
 			condition += ""
 					+ " AND !(unix_timestamp(tor.planning_time) < unix_timestamp('2015-07-01') and tor.id is not null AND ifnull(c.abbr, '') = '江苏国光')"
 					+ " AND d.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) "
-					+ " AND d.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
+					+ " AND ifnull(d.office_id,'') IN (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')"
 					+ " GROUP BY d.id  ";
 			String sqlTotal = "SELECT count(1) total from (select count(1) total"
 					+ " FROM delivery_order d"
@@ -411,7 +411,7 @@ public class DeliveryController extends Controller {
 					+ " LEFT JOIN transfer_order tor ON tor.id = dt2.transfer_order_id"
 					+ conditions
 					+ " and d.office_id in (SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
-					+ " and d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"')"
+					+ " and  d.customer_id in (select customer_id from user_customer where user_name='"+currentUser.getPrincipal()+"' )"
 					+ " group by d.id) as delivery_view ";
 		String sql_seach = " select d.id,d.status,d.create_stamp,d.order_no ,"
 					+ " (select name from location where code = d.route_from ) route_from, "

@@ -591,7 +591,7 @@ public class TransferOrderMilestoneController extends Controller {
     				DeliveryOrderItem deliveryOrderItem = new DeliveryOrderItem();
     				deliveryOrderItem.set("delivery_id",deliveryOrder.getLong("id"))
     				.set("transfer_order_id",transferOrder.getLong("id"))
-    				.set("transfer_no",transferOrder.getLong("order_no"))
+    				.set("transfer_no",transferOrder.getStr("order_no"))
     				.set("transfer_item_detail_id",transferdetail.getLong("id"))
     				.set("amount", 1);
     				deliveryOrderItem.save();

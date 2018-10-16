@@ -221,8 +221,8 @@ public class DepartOrderController extends Controller {
         conditions += planBeginTime + planEndTime;
         conditions += "and office_id in (select office_id from user_office where user_name='"
 				+ currentUser.getPrincipal()
-				+ "') and customer_id in (select customer_id from user_customer where user_name='"
-				+ currentUser.getPrincipal() + "')  ";
+				+ "') and exists  (select us.customer_id from user_customer us where us.user_name='"
+				+ currentUser.getPrincipal() + "' and us.customer_id = customer_id)  ";
 
         totalSql = "select deo.id,deo.booking_note_number,deo.depart_no,deo.create_stamp,deo. status as depart_status,"
 				+ " ( SELECT GROUP_CONCAT( DISTINCT tor.office_id SEPARATOR '\r\n' ) "
@@ -446,8 +446,8 @@ public class DepartOrderController extends Controller {
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                 + " )"
-				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
-				+ currentUser.getPrincipal() + "')";
+				+ " and deo.status!='手动删除' and exists (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal() + "' and tr.customer_id = customer_id)";
 
 		sql = "select deo.id,deo.booking_note_number,deo.depart_no ,deo.departure_time,deo.charge_type,deo.create_stamp ,deo.status as depart_status,c2.contact_person driver,c2.phone,"
 				+ " c1.abbr cname,c2.abbr spname,o.office_name office_name, l1.name route_from,l2.name route_to, t.arrival_mode arrival_mode,"
@@ -493,8 +493,8 @@ public class DepartOrderController extends Controller {
                 + " or"
                 + " w.office_id IN (SELECT office_id FROM user_office WHERE user_name = '"+ currentUser.getPrincipal()+"')"
                 + " )"
-				+ " and deo.status!='手动删除' and tr.customer_id in (select customer_id from user_customer where user_name='"
-				+ currentUser.getPrincipal() + "')"
+				+ " and deo.status!='手动删除' and exists (select customer_id from user_customer where user_name='"
+				+ currentUser.getPrincipal() + "' and tr.customer_id = customer_id)"
 				+ " group by deo.id order by deo.id desc "
 				+ sLimit;
 		
