@@ -47,12 +47,12 @@ public class ReportController extends Controller {
 	public void printCheckOrder() {
 		String order_no = getPara("order_no");
 		ArapCostOrder arapcostorder = ArapCostOrder.dao.findFirst("select * from arap_cost_order where order_no = ?",order_no);
-		CostApplicationOrderRel costapplicationorderrel =CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where cost_order_id=? and order_type = '对账单'",arapcostorder.get("id"));
+		CostApplicationOrderRel costapplicationorderrel =CostApplicationOrderRel.dao.findFirst("select * from cost_application_order_rel where cost_order_id=? and order_type = '对账单'",arapcostorder.getLong("id"));
 		String fileName = "report/checkOrder.jasper";
 		String outFileName = "download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		if(costapplicationorderrel!=null){
-			hm.put("application_id", costapplicationorderrel.get("application_order_id"));
+			hm.put("application_id", costapplicationorderrel.getLong("application_order_id"));
 		}
 		hm.put("order_no", order_no);
         fileName = getContextPath() + fileName;
@@ -165,11 +165,11 @@ public class ReportController extends Controller {
 	
 		List<CostApplicationOrderRel> list1 = CostApplicationOrderRel.dao
 				.find("select * from cost_application_order_rel where application_order_id = ?",
-						arapAuditInvoiceApplication.get("id"));
+						arapAuditInvoiceApplication.getLong("id"));
 		for (CostApplicationOrderRel costapplication : list1) {
-			if ("对账单".equals(costapplication.get("order_type"))) {
+			if ("对账单".equals(costapplication.getStr("order_type"))) {
 				ArapCostOrder order = ArapCostOrder.dao
-						.findFirst("select * FROM arap_cost_order where id ="+ costapplication.get("cost_order_id") );
+						.findFirst("select * FROM arap_cost_order where id ="+ costapplication.getLong("cost_order_id") );
 				checkOrderFile = pritCheckOrderByPay(order.getStr("order_no"),arapAuditInvoiceApplication.getLong("id"));
 				buffer.append(checkOrderFile.substring(checkOrderFile.indexOf("download")-1));
 				buffer.append(",");
@@ -207,7 +207,7 @@ public class ReportController extends Controller {
 						order_no);
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
-						to.get("id"));
+						to.getLong("id"));
 		if(!is_one){
 			if(list.size() < 10){
 				if (type.contains("guoguang")) {
@@ -245,7 +245,7 @@ public class ReportController extends Controller {
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < list.size(); i++) {
 				if (is_one) {
-					hm.put("id", list.get(i).get("id"));
+					hm.put("id", list.get(i).getLong("id"));
 					
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
@@ -254,7 +254,7 @@ public class ReportController extends Controller {
 					buffer.append(",");
 					break;
 				} else {
-					hm.put("id", list.get(i).get("id"));
+					hm.put("id", list.get(i).getLong("id"));
 					String file=null;
 					if(list.size() < 10){
 						file = PrintPatterns.getInstance().print(fileName,
@@ -280,10 +280,10 @@ public class ReportController extends Controller {
 
 			renderText(buffer.toString());
 		} else {
-			if ("cargoNatureDetailNo".equals(to.get("cargo_nature_detail"))) {
+			if ("cargoNatureDetailNo".equals(to.getStr("cargo_nature_detail"))) {
 				TransferOrderItem toi = TransferOrderItem.dao
 						.findFirst("select * from transfer_order_item where order_id = "
-								+ to.get("id"));
+								+ to.getLong("id"));
 				// hm.put("amount", toi.get("amount"));
 			}
 			
@@ -318,7 +318,7 @@ public class ReportController extends Controller {
 						order_no);
 		List<TransferOrderItemDetail> list = TransferOrderItemDetail.dao
 				.find("select id,serial_no from transfer_order_item_detail where order_id =?",
-						to.get("id"));
+						to.getLong("id"));
 		if(!is_one){
 			if(list.size() < 10){
 				outFileName += "签收单";	
@@ -332,14 +332,14 @@ public class ReportController extends Controller {
 			StringBuffer buffer = new StringBuffer();
 			for (int i = 0; i < list.size(); i++) {
 				if (is_one) {
-					hm.put("id", list.get(i).get("id"));
+					hm.put("id", list.get(i).getLong("id"));
 					String file = PrintPatterns.getInstance().print(fileName,
 							outFileName, hm);
 					buffer.append(file.substring(file.indexOf("download")-1));
 					buffer.append(",");
 					break;
 				} else {
-					hm.put("id", list.get(i).get("id"));
+					hm.put("id", list.get(i).getLong("id"));
 					String file=null;
 					if(list.size() < 10){
 						file = PrintPatterns.getInstance().print(fileName,
@@ -364,10 +364,10 @@ public class ReportController extends Controller {
 
 			renderText(buffer.toString());
 		} else {
-			if ("cargoNatureDetailNo".equals(to.get("cargo_nature_detail"))) {
+			if ("cargoNatureDetailNo".equals(to.getStr("cargo_nature_detail"))) {
 				TransferOrderItem toi = TransferOrderItem.dao
 						.findFirst("select * from transfer_order_item where order_id = "
-								+ to.get("id"));
+								+ to.getLong("id"));
 				// hm.put("amount", toi.get("amount"));
 			}
 			
