@@ -334,7 +334,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				// 供应商计费方式：默认计件
 				.set("pickup_assign_status", TransferOrder.ASSIGN_STATUS_NEW)
 				.set("depart_assign_status", TransferOrder.ASSIGN_STATUS_NEW)
-				.set("status", "新建").set("create_by", user.get("id"))// 创建人id
+				.set("status", "新建").set("create_by", user.getLong("id"))// 创建人id
 				.set("create_stamp", new Date())// 创建时间
 				.set("planning_time", planningTime)// 计划时间
 				.set("arrival_time", arrivalTime)// 预计到货时间
@@ -365,7 +365,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		if ("入中转仓".equals(content.get("到达方式"))) {
 			// 入中转仓
 			transferOrder.set("arrival_mode", "gateIn").set("warehouse_id",
-					warehouse.get("id"));
+					warehouse.getLong("id"));
 		} else {
 			// 货品直送
 			transferOrder.set("arrival_mode", "delivery");
@@ -384,20 +384,20 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			 */
 		}
 		// 始发城市
-		transferOrder.set("route_from", location1.get("code"));
+		transferOrder.set("route_from", location1.getStr("code"));
 		// 目的地城市
-		transferOrder.set("route_to", location2.get("code"));
+		transferOrder.set("route_to", location2.getStr("code"));
 		// 客户名称
-		transferOrder.set("customer_id", customer.get("pid"));
+		transferOrder.set("customer_id", customer.getLong("pid"));
 		//取货地址
 		transferOrder.set("address", content.get("始发城市"));
 		// 供应商名称
 		if (provider != null) {
-			transferOrder.set("sp_id", provider.get("pid"));
+			transferOrder.set("sp_id", provider.getLong("pid"));
 		}
 		// 网点
 		if (office != null) {
-			transferOrder.set("office_id", office.get("id"));
+			transferOrder.set("office_id", office.getLong("id"));
 		}
 		// 货品属性
 		if (content.get("货品属性").equals("ATM")) {
@@ -441,33 +441,33 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		double sumVolume = 0;
 		double sumWeight = 0;
 		if (product != null) {
-			if (product.get("unit") != null && !"".equals(product.get("unit"))) {
-				unit = product.get("unit");
+			if (product.getStr("unit") != null && !"".equals(product.getStr("unit"))) {
+				unit = product.getStr("unit");
 			} else {
 				unit = (String) content.get("单位");
 			}
-			if (product.get("size") != null && !"".equals(product.get("size"))) {
+			if (product.getDouble("size") != null && !"".equals(product.getDouble("size"))) {
 				size = product.getDouble("size") / 1000;
 			}
-			if (product.get("width") != null
-					&& !"".equals(product.get("width"))) {
+			if (product.getDouble("width") != null
+					&& !"".equals(product.getDouble("width"))) {
 				width = product.getDouble("width") / 1000;
 			}
-			if (product.get("height") != null
-					&& !"".equals(product.get("height"))) {
+			if (product.getDouble("height") != null
+					&& !"".equals(product.getDouble("height"))) {
 				height = product.getDouble("height") / 1000;
 			}
-			if (product.get("weight") != null
-					&& !"".equals(product.get("weight"))) {
+			if (product.getDouble("weight") != null
+					&& !"".equals(product.getDouble("weight"))) {
 				weight = product.getDouble("weight");
 			}
 			if ("cargoNatureDetailYes".equals(tansferOrder
-					.get("cargo_nature_detail"))) {
+					.getStr("cargo_nature_detail"))) {
 				sumVolume = size * width * height;
 				sumWeight = weight;
 			} else {
-				if (product.get("volume") != null
-						&& !"".equals(product.get("volume"))) {
+				if (product.getDouble("volume") != null
+						&& !"".equals(product.getDouble("volume"))) {
 					sumVolume = product.getDouble("volume") * itemNumber;
 				} else {
 					sumVolume = size * width * height * itemNumber;
@@ -482,11 +482,11 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			sumWeight = weightBig.setScale(2, BigDecimal.ROUND_HALF_UP)
 					.doubleValue();
 		}
-		if (!"".equals(transferOrderItem.get("id"))
-				&& transferOrderItem.get("id") != null) {
+		if (!"".equals(transferOrderItem.getLong("id"))
+				&& transferOrderItem.getLong("id") != null) {
 			// 有单品，货品数量叠加计数，重新计算总体积、总重量
 			if ("cargoNatureDetailYes".equals(tansferOrder
-					.get("cargo_nature_detail"))) {
+					.getStr("cargo_nature_detail"))) {
 				transferOrderItem
 						.set("amount",
 								transferOrderItem.getDouble("amount") + 1)
@@ -499,7 +499,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			}
 		} else {
 			if ("cargoNatureDetailYes".equals(tansferOrder
-					.get("cargo_nature_detail"))) {
+					.getStr("cargo_nature_detail"))) {
 				// 有单品时叠加计算货品数量,默认数量为1
 					transferOrderItem.set("amount", 1);
 			} else {
@@ -520,15 +520,15 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 				
 			} else {
 				// 创建保存货品明细
-				transferOrderItem.set("item_no", product.get("item_no"))
-						.set("item_name", product.get("item_name"))
-						.set("size", product.get("size")).set("unit", unit)
-						.set("width", product.get("width"))
-						.set("height", product.get("height"))
-						.set("weight", product.get("weight"))
-						.set("product_id", product.get("id"));
+				transferOrderItem.set("item_no", product.getStr("item_no"))
+						.set("item_name", product.getStr("item_name"))
+						.set("size", product.getDouble("size")).set("unit", unit)
+						.set("width", product.getDouble("width"))
+						.set("height", product.getDouble("height"))
+						.set("weight", product.getDouble("weight"))
+						.set("product_id", product.getLong("id"));
 			}
-			transferOrderItem.set("order_id", tansferOrder.get("id"))
+			transferOrderItem.set("order_id", tansferOrder.getLong("id"))
 					.set("volume", sumVolume).set("sum_weight", sumWeight)			
 					.set("remark", item.get("备注"))
 					.set("charge_amount", item.get("应收费用"))
@@ -548,16 +548,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 			Product product) throws Exception {
 		TransferOrderItemDetail itemDatail = new TransferOrderItemDetail();
 		if (product != null) {
-			itemDatail.set("order_id", tansferOrder.get("id"))
-					.set("item_id", tansferOrderItem.get("id"))
-					.set("item_no", product.get("item_no"))
+			itemDatail.set("order_id", tansferOrder.getLong("id"))
+					.set("item_id", tansferOrderItem.getLong("id"))
+					.set("item_no", product.getStr("item_no"))
 					.set("serial_no", content.get("单品序列号"))
-					.set("item_name", product.get("item_name"))
-					.set("volume", product.get("volume"))
-					.set("weight", product.get("weight"));
+					.set("item_name", product.getStr("item_name"))
+					.set("volume", product.getDouble("volume"))
+					.set("weight", product.getDouble("weight"));
 		} else {
-			itemDatail.set("order_id", tansferOrder.get("id"))
-					.set("item_id", tansferOrderItem.get("id"))
+			itemDatail.set("order_id", tansferOrder.getLong("id"))
+					.set("item_id", tansferOrderItem.getLong("id"))
 					.set("item_no", content.get("货品型号"))
 					.set("serial_no", content.get("单品序列号"));
 		}
@@ -593,14 +593,14 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						+ "'");
 		TransferOrderMilestone transferOrderMilestone = new TransferOrderMilestone();
 		transferOrderMilestone.set("status", "新建");
-		transferOrderMilestone.set("create_by", user.get("id"));
+		transferOrderMilestone.set("create_by", user.getLong("id"));
 		transferOrderMilestone.set("location", "");
 		java.util.Date utilDate = new java.util.Date();
 		java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
 		transferOrderMilestone.set("create_stamp", sqlDate);
 		transferOrderMilestone.set("type",
 				TransferOrderMilestone.TYPE_TRANSFER_ORDER_MILESTONE);
-		transferOrderMilestone.set("order_id", transferOrder.get("id"));
+		transferOrderMilestone.set("order_id", transferOrder.getLong("id"));
 		transferOrderMilestone.save();
 	}
 
@@ -654,7 +654,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							TransferOrderItemDetail detail = TransferOrderItemDetail.dao
 									.findFirst(
 											"SELECT * from transfer_order_item_detail toid LEFT JOIN transfer_order tor on tor.id=toid.order_id where toid.serial_no=? and tor.customer_id=?",
-											serialNo,customerID.get("pid"));
+											serialNo,customerID.getLong("pid"));
 								if(detail!=null){
 									throw new Exception("序列号已存在");
 								}
@@ -739,16 +739,16 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						TransferOrderItem item = null;
 						Product product = Product.dao
 								.findFirst("select p.* from product p left join category c on c.id = p.category_id where c.customer_id = '"
-										+ customer.get("pid")
+										+ customer.getLong("pid")
 										+ "' and item_no =  '"
 										+ orderItem
 										+ "';");
 						if(product!=null){
 							tansferOrderItem = TransferOrderItem.dao
 									.findFirst("select * from transfer_order_item where order_id = '"
-											+ transferOrder.get("id")
+											+ transferOrder.getLong("id")
 											+ "' and item_no = '"
-											+ product.get("item_no") + "';");
+											+ product.getStr("item_no") + "';");
 						}else{
 							//判断客户是否需要库存管理
 							if(customer.getInt("is_inventory_control")>0){
@@ -757,7 +757,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 							}else{
 								tansferOrderItem = TransferOrderItem.dao
 										.findFirst("select * from transfer_order_item where order_id = '"
-												+ transferOrder.get("id")
+												+ transferOrder.getLong("id")
 												+ "' and item_no = '"
 												+ orderItem + "';");
 							}	
@@ -773,7 +773,7 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 									transferOrder,tansferOrderItem, product);
 						}
 						if ("cargoNatureDetailYes".equals(transferOrder
-								.get("cargo_nature_detail"))) {
+								.getStr("cargo_nature_detail"))) {
 							// 创建单品货品明细
 							saveTransferOrderItemDetail(rec, transferOrder,
 									item, product);
