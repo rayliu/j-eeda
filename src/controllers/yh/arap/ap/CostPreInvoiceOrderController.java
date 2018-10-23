@@ -1067,7 +1067,7 @@ public class CostPreInvoiceOrderController extends Controller {
  						payee_name = arapInOutMiscOrder.getStr("charge_person");
  					}else if("货损单".equals(orderType)){
  						String cname = one[2];
- 						Record record = Db.findFirst("select id from contact c where c.abbr = '"+cname+"' ");
+ 						Record record = Db.findFirst("select p.id from party  p left join contact c on p.contact_id = c.id where c.abbr = '"+cname+"' ");
  						if(record != null)
  							payee_id = record.getLong("id").toString();
  					}
