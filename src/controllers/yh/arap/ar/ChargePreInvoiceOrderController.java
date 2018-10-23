@@ -71,7 +71,7 @@ public class ChargePreInvoiceOrderController extends Controller {
         String customerId = getPara("customerId");
         Party party = Party.dao.findById(customerId);
 
-        Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",party.get("contact_id").toString());
+        Contact contact = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",party.getLong("contact_id").toString());
         setAttr("customer", contact);
     	setAttr("type", "CUSTOMER");
     	setAttr("classify", "receivable");
@@ -179,7 +179,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("status", "已审核");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-			arapAuditOrder.set("audit_by", users.get(0).get("id"));
+			arapAuditOrder.set("audit_by", users.get(0).getLong("id"));
 			arapAuditOrder.set("audit_stamp", new Date());
 			arapAuditOrder.update();
 			map.put("arapAuditOrder", arapAuditOrder);
@@ -199,7 +199,7 @@ public class ChargePreInvoiceOrderController extends Controller {
 			arapAuditOrder.set("status", "已审批");
             String name = (String) currentUser.getPrincipal();
 			List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-			arapAuditOrder.set("approver_by", users.get(0).get("id"));
+			arapAuditOrder.set("approver_by", users.get(0).getLong("id"));
 			arapAuditOrder.set("approval_stamp", new Date());
 			arapAuditOrder.update();
 			map.put("arapAuditOrder", arapAuditOrder);
@@ -795,20 +795,20 @@ public class ChargePreInvoiceOrderController extends Controller {
 		ArapChargeInvoiceApplication arapAuditInvoiceApplication = ArapChargeInvoiceApplication.dao.findById(id);
 		setAttr("invoiceApplication", arapAuditInvoiceApplication);
 		
-		Contact con  = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",arapAuditInvoiceApplication.get("payee_id"));
+		Contact con  = Contact.dao.findFirst("select * from contact c left join party p on c.id = p.contact_id where p.id = ?",arapAuditInvoiceApplication.getLong("payee_id"));
 		if(con != null){
-			String payee_filter = con.get("company_name");
+			String payee_filter = con.getStr("company_name");
 			setAttr("payee_filter", payee_filter);
 		}
 		UserLogin userLogin = null;
-		userLogin = UserLogin.dao .findById(arapAuditInvoiceApplication.get("create_by"));
-		String submit_name = userLogin.get("c_name");
+		userLogin = UserLogin.dao .findById(arapAuditInvoiceApplication.getLong("create_by"));
+		String submit_name = userLogin.getStr("c_name");
 		setAttr("submit_name", submit_name);
 		
 		Long check_by = arapAuditInvoiceApplication.getLong("check_by");
 		if( check_by != null){
 			userLogin = UserLogin.dao .findById(check_by);
-			String check_name = userLogin.get("c_name");
+			String check_name = userLogin.getStr("c_name");
 			setAttr("check_name", check_name);
 		}
 		
@@ -1203,7 +1203,7 @@ public class ChargePreInvoiceOrderController extends Controller {
         if(0 == Double.parseDouble(pay_amount)){
         	Record re = Db.findFirst("select sum(receive_amount) total_amount from charge_application_order_rel"
         			+ " where application_order_id = ?",application_id);
-        	pay_amount = re.get("total_amount").toString();
+        	pay_amount = re.getDouble("total_amount").toString();
         }
         auditLog.set("amount", pay_amount);
         auditLog.set("creator", LoginUserController.getLoginUserId(this));
