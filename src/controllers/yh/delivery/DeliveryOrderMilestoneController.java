@@ -306,7 +306,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DeliveryOrderFinItem deliveryFinItem = new DeliveryOrderFinItem();
-        deliveryFinItem.set("fin_item_id", contractFinItem.get("fin_item_id"));
+        deliveryFinItem.set("fin_item_id", contractFinItem.getLong("fin_item_id"));
         if("perCar".equals(chargeType)){
         	deliveryFinItem.set("amount", contractFinItem.getDouble("amount"));        		
     	}else{
@@ -335,7 +335,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                                         +"where di.delivery_id ="+ deliveryOrderId);
         for (Record dOrderItemRecord : itemList) {
             //如果没有product_id, 则不用计算库存
-            if(dOrderItemRecord.get("product_id")==null)
+            if(dOrderItemRecord.getLong("product_id")==null)
                 continue;
             
             Long productId=dOrderItemRecord.getLong("product_id");
@@ -385,7 +385,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
 
-        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+        transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
 
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -567,7 +567,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         transferOrderMilestone.set("status", "已入库");
         String name = (String) currentUser.getPrincipal();
         List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + name + "'");
-        transferOrderMilestone.set("create_by", users.get(0).get("id"));
+        transferOrderMilestone.set("create_by", users.get(0).getLong("id"));
         transferOrderMilestone.set("location", "");
         java.util.Date utilDate = new java.util.Date();
         java.sql.Timestamp sqlDate = new java.sql.Timestamp(utilDate.getTime());
@@ -632,7 +632,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         FinItem item = FinItem.dao.findFirst("select * from fin_item where type = '应付' order by id asc");
         if(item != null){
         	DeliveryOrderFinItem dFinItem = new DeliveryOrderFinItem();
-	        dFinItem.set("status", "新建").set("fin_item_id", item.get("id"))
+	        dFinItem.set("status", "新建").set("fin_item_id", item.getLong("id"))
 	        .set("order_id", orderId).set("create_name", dFinItem.CREATE_NAME_USER)
 	        .save();
         }
@@ -662,7 +662,7 @@ public class DeliveryOrderMilestoneController extends Controller {
         }
         List<Record> list = Db.find("select * from fin_item");
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).get("name") == null) {
+            if (list.get(i).getStr("name") == null) {
                 FinItem.dao.deleteById(list.get(i).getLong("id"));
             }
         }
