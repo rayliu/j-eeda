@@ -1064,8 +1064,8 @@ public class CostCheckOrderController extends Controller {
 				+ " left join office oe on oe.id = w.office_id "
 				+ " where dor.audit_status='已确认' "
 				+ (StrKit.isBlank(sp_id2)?"":" and dor.sp_id ="+sp_id2)
-				+ " and dor.customer_id in(select customer_id from user_customer where user_name='"+user_name+"')"
-				+ " and dor.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
+				+ " and exists (select customer_id from user_customer where user_name='"+user_name+"' and  dor.customer_id = customer_id)"
+				+ " and exists ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"' and dor.office_id = office_id)"
 		       // + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 		        //+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " group by dor.id "
@@ -1106,8 +1106,8 @@ public class CostCheckOrderController extends Controller {
 				+ " left join location lo on lo.code = dpr.route_from "
 				+ " left join location lo2 on lo2.code = dpr.route_to "
 				+ " left join office oe on oe.id = tor.office_id where  (ifnull(dtr.depart_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'DEPART' "
-				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
-				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
+				+ " and exists (select customer_id from user_customer where user_name='"+user_name+"' and tor.customer_id  = customer_id)"
+				+ " and exists ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"' and dpr.office_id = office_id)"
 				//+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				//+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
@@ -1162,8 +1162,8 @@ public class CostCheckOrderController extends Controller {
 				+ " left join office oe on oe.id = pgio.office_id"
 				+ "  where"
 				+ "  pgio.audit_status='已确认' AND dpr.combine_type = 'DEPART' "
-				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
-				+ " and pgio.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
+				+ " and exists (select customer_id from user_customer where user_name='"+user_name+"' and  tor.customer_id = customer_id)"
+				+ " and exists ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"' and  pgio.office_id = office_id)"
 				//+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
 				//+ " or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
 				+ " and '"+is_delivery+"' = 'N'"
@@ -1211,8 +1211,8 @@ public class CostCheckOrderController extends Controller {
 				+ " left join location lo2 on lo2.code = dpr.route_to "
 				+ " left join office oe on oe.id = tor.office_id "
 				+ " where (ifnull(dtr.pickup_id, 0) > 0) and dpr.audit_status='已确认' AND dpr.combine_type = 'PICKUP' "
-				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
-				+ " and dpr.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"')"
+				+ " and exists (select customer_id from user_customer where user_name='"+user_name+"' and  tor.customer_id = customer_id)"
+				+ " and exists ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"' and  dpr.office_id = office_id)"
                 //+ " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
                 //+ "      or tor.arrival_mode in ('delivery','deliveryToWarehouse','deliveryToFactory','deliveryToFachtoryFromWarehouse'))"
                 + " and '"+is_delivery+"' = 'N'"
@@ -1250,8 +1250,8 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN party p1 ON p1.id = ior.insurance_id "
 				+ " LEFT JOIN contact con ON con.id = p1.contact_id "
 				+ " where ior.audit_status='已确认' "
-				+ " and tor.customer_id in (select customer_id from user_customer where user_name='"+user_name+"')"
-                + " and ior.office_id in (select office_id from user_office where user_name='"+user_name+"')"
+				+ " and exists (select customer_id from user_customer where user_name='"+user_name+"' and tor.customer_id = customer_id)"
+                + " and exists (select office_id from user_office where user_name='"+user_name+"' and ior.office_id = office_id)"
 			    + " and '"+is_delivery+"' = 'N' "
                 + (StrKit.isBlank(sp_id2)?"":(sp_id2.equals("7151")?" and ior.insurance_id = '2432'":" and ior.insurance_id ='"+sp_id2+"'"))
                 + " group by ior.id"
@@ -1283,7 +1283,7 @@ public class CostCheckOrderController extends Controller {
 				+ " LEFT JOIN location l1 ON amco.route_to = l1. CODE"
 				+ " WHERE amco.audit_status = '已确认'"
 				+ (StrKit.isBlank(sp_id2)?"":" and amco.sp_id ="+sp_id2)
-				+ " and amco.office_id in (select office_id from user_office where user_name='"+user_name+"')"
+				+ " and exists (select office_id from user_office where user_name='"+user_name+"' and amco.office_id = office_id)"
 				+ " GROUP BY amco.id) as A ";
 		String condition = "";
 		if (orderNo != null || sp_id2 != null || serial_no != null
