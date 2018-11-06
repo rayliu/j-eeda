@@ -1757,7 +1757,7 @@ public class DeliveryController extends Controller {
 					}
 					//deliveryChangeOrder.set("delivery_id", deliveryOrder.get("id"));
 					deliveryChangeOrder.save();
-					List<DeliveryOrderItem> deliveryOrderItem=DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryOrder.getLong("id"));
+					List<DeliveryOrderItem> deliveryOrderItem=DeliveryOrderItem.dao.find("SELECT * from delivery_order_item where delivery_id=?",deliveryOrder.getStr("id"));
 					for(DeliveryOrderItem deliveryOrder1:deliveryOrderItem){
 						DeliveryOrderItem deliveryItem =new DeliveryOrderItem();
 						deliveryItem.set("transfer_no",deliveryOrder1.getStr("transfer_no"))
@@ -1823,7 +1823,7 @@ public class DeliveryController extends Controller {
 				deliveryOrder.set("delivery_id", deliveryChangeOrder.getLong("id"));
 				
 				//更新单品明细表（把调拨后的ID赋给明细表的配送单ID，方便回单的生成 ）
-				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.getLong("id")+"'");
+				TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where delivery_id = '"+deliveryOrder.getStr("id")+"'");
 				if(toid != null){
 					toid.set("delivery_id", deliveryChangeOrder.getLong("id")).update();
 				}
