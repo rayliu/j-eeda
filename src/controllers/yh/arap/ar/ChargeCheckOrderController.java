@@ -438,7 +438,7 @@ public class ChargeCheckOrderController extends Controller {
 		Record rec;
 		List<Record> orders;
 		// TODO 收入状态条件过滤未做
-		sql = "select distinct ror.*, "
+		sql = "select distinct ror.*,o.office_name, "
 				+ " usl.user_name as creator_name, "
 				+ " ifnull(tor.order_no,(select group_concat(distinct tor.order_no separator '\r\n') from delivery_order dvr left join delivery_order_item doi on doi.delivery_id = dvr.id left join transfer_order tor on tor.id = doi.transfer_order_id where dvr.id = ror.delivery_order_id)) transfer_order_no, "
 				+ " dvr.order_no as delivery_order_no, '回单' as tporder,"
@@ -479,11 +479,12 @@ public class ChargeCheckOrderController extends Controller {
 				+ " left join contact c2 on c2.id = p2.contact_id "
 				+ " left join transfer_order_fin_item tofi on tor.id = tofi.order_id left join depart_order dor on dor.id = dt.pickup_id left join pickup_order_fin_item dofi on dofi.pickup_order_id = dor.id left join fin_item fi on fi.id = dofi.fin_item_id and fi.type='应收' and fi.name='提货费'"
 				+ " left join transfer_order_fin_item tofi2 on tor.id = tofi2.order_id left join user_login usl on usl.id=ror.creator "
+				+ " left join office o ON o.id=ror.office_id "
 				+ " where ror.transaction_status = '已确认' and ror.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"') "
 				+ " AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
 		sql2 = " group by ror.id,tor2.id"
 				+ " UNION"
-				+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
+				+ " (SELECT amco.id id,o.office_name,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
 				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
@@ -501,7 +502,8 @@ public class ChargeCheckOrderController extends Controller {
 				+"    LEFT JOIN contact c ON c.id = p.contact_id"
 				+"    LEFT JOIN party p1 ON p1.id = amco.sp_id"
 				+"    LEFT JOIN contact c1 ON c1.id = p1.contact_id"
-				+ " LEFT JOIN user_login ul ON ul.id = amco.confirm_by"
+				+ " LEFT JOIN user_login ul ON ul.id = amco.confirm_by "
+				+ " left join office o ON o.id=amco.office_id"
 				+ " WHERE amco. STATUS = '已确认' "
 				+ " and amco.office_id IN ( SELECT office_id FROM user_office WHERE user_name = '"+currentUser.getPrincipal()+"')";
 		sql3 = " ) order by planning_time desc ";

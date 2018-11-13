@@ -61,6 +61,7 @@ $(document).ready(function() {
 	                    return "未收款";
 	          }},
 	          {"mDataProp":"CHARGE_TOTAL_AMOUNT", "sWidth":"150px"},
+	          {"mDataProp":"OFFICE_NAME", "sWidth":"150px"},
 	          {"mDataProp":"CNAME","sClass": "cname", "sWidth":"200px"},
 	          {"mDataProp":"SERIAL_NO","sClass": "cname", "sWidth":"100px"},
 	          {"mDataProp":"SP","sClass": "sp", "sWidth":"200px"},
@@ -159,9 +160,28 @@ $(document).ready(function() {
     });
 	//
     $("input[name='allCheck']").click(function(){
+    	var office_ids=[];
     	$("#uncheckedChargeCheckList input[name='order_check_box']").each(function () {
     		var now=$(this);
-    		
+			office_ids.push(now.data("office_id"));
+			var end = false;
+			for(var i=0;i<office_ids.length;i++){
+				if(i!=0){
+					if(office_ids[i]!=office_ids[i-1]){
+						alert("请选择相同 的网点的单据!!!");
+						end=true;
+						$("input:checkbox[name=order_check_box]:checked").each(function (){
+							this.checked = false;
+						});
+						$("input[name=allCheck]").attr("checked",false);
+						return false;
+					}
+				}
+			}
+			if(end){
+				end=false;
+				return;
+			}
     		var cname = $(this).parent().siblings('.cname')[0].textContent;
     			if(cName.length != 0){
 						if(cName[0]!=$(this).parent().siblings('.cname')[0].innerHTML){
@@ -212,6 +232,7 @@ $(document).ready(function() {
 			}
 		}
          });
+
 	 });
     // 未选中列表
     var end=false;
