@@ -655,8 +655,9 @@
                     <button id="ConfirmationBtn" type="button" disabled="disabled" class="btn  btn-primary " data-toggle="tooltip" title="" data-original-title="Default tooltip">配送发车</button>
                     <%}%>
                     <!-- <button id="receiptBtn" type="button" disabled="true"  class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">签收完成</button> -->
-                    <a class="btn  btn-primary" href="/delivery">返回</a>
-                    <button id="deleteBtn" type="button" style="display:none" class="btn  btn-danger" >撤销</button>
+                    <a class="btn  btn-primary" href="/delivery">返回</a>        
+                    <button id="deleteBtn" type="button" style="display:none" >撤销</button>
+                    <button id="cancelBtn" type="button" <% if(deliveryId.id!''==""){%> style="display:none" <%}%> class="btn  btn-danger" >撤销</button>
                 </div>
 	        </div>
         </div>

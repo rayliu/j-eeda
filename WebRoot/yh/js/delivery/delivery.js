@@ -626,12 +626,14 @@ $(document).ready(function() {
             	$("#deliveryOrder_status").text(data.STATUS);
             	if(data.STATUS=='新建'|| data.STATUS=='计划中' ){
         			$("#ConfirmationBtn").attr("disabled", false);
+                    $("#cancelBtn").show();
         		}
             	contactUrl("edit?id",data.ID);
             	$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
             	if(data.STATUS=='已完成'){
             		$("#saveBtn").attr("disabled", true);
             		$("#ConfirmationBtn").attr("disabled", true);
+                    $("#cancelBtn").attr("disabled",true);
             	}else{
                     $("#saveBtn").attr("disabled", false);
             	}
@@ -1602,6 +1604,26 @@ $(document).ready(function() {
 	    	});
 		}
 	});
+
+    //撤销订单（简易版）
+    $("#cancelBtn").on("click",function(){
+        var order_id = $("#delivery_id").val();
+        if(!confirm("是否确认撤销此订单？"))
+            return;
+        $.post("/delivery/cancel_Order",{order_id:order_id},function(data){
+            debugger
+            if(data.RESULT){
+                $.scojs_message(data.MESSAGE,$.scojs_message.TYPE_OK);
+                setTimeout(function(){
+                        location.href="/delivery";
+                    }, 3000);
+            }else{
+                $.scojs_message(data.MESSAGE,$.scojs_message.TYPE_ERROR);
+            }
+        }).fail(function(){
+            $.scojs_message("程序执行时发生错误，请稍后再试",$.scojs_message.TYPE_ERROR);
+        });
+    });
 	
 	$('[name=modeDelvery]').on('change',function(){
 		if(this.value=='own'){

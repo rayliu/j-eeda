@@ -46,6 +46,7 @@ import org.apache.shiro.subject.Subject;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PathKit;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -2236,10 +2237,10 @@ public class DeliveryController extends Controller {
     	String transferItemIds = getPara("transferItemIds");
     	String pageIndex = getPara("sEcho");
     	
-    	String d_amount = null;
+    	Double d_amount = null;
     	if(StringUtils.isNotBlank(order_id)){
     		Record re = Db.findFirst("select * from delivery_order_item where delivery_id = ?",order_id);
-    		String amount = re.getStr("amount");
+    		Double amount = re.getDouble("amount");
     		d_amount = amount;
     	}
     	
@@ -2785,5 +2786,54 @@ public class DeliveryController extends Controller {
     	renderJson(order);
     }
     
+    public void cancel_Order() throws Exception{
+    	String delivery_id = getPara("order_id");
+    	Record delivery_order = Db.findById("delivery_order", delivery_id);
+    	String Message = "";
+    	Boolean results = false;
+    	if("新建".equals(delivery_order.getStr("STATUS"))||"计划中".equals(delivery_order.getStr("STATUS"))){
+    		if("新建".equals(delivery_order.getStr("audit_status"))&&"cargo".equals(delivery_order.getStr("cargo_nature"))){
+    			List<Record> delivery_order_milestone = Db.find("select * from delivery_order_milestone where delivery_id = ?",delivery_id);
+    			for (Record record : delivery_order_milestone) {
+					Db.delete("delivery_order_milestone", record);
+				}
+    			List<Record> delivery_order_item = Db.find("select * from delivery_order_item where delivery_id = ?",delivery_id);
+    			int count = delivery_order_item.size();
+    			int result_del = 0;
+    			for (Record record : delivery_order_item) {
+					Long transfer_item_id= record.getLong("transfer_item_id");
+					if(transfer_item_id!=null){
+						Record transfer_order_item = Db.findById("transfer_order_item", transfer_item_id);
+						if(record.getDouble("amount")!=null){
+							transfer_order_item.set("complete_amount", (transfer_order_item.getDouble("complete_amount")-record.getDouble("amount")));
+						}else{
+							transfer_order_item.set("complete_amount", 0);
+						}
+						Boolean result =Db.update("transfer_order_item", transfer_order_item);
+						if(result){
+							Db.delete("delivery_order_item", record);
+							result_del ++;
+						}
+					}
+				}
+    			if(count ==result_del){
+    				Db.delete("delivery_order", delivery_order);
+    				Message = "撤销成功!,3秒后自动返回。。。";
+    				results =true;
+    			}else{
+    				throw new Exception("撤销失败");
+    			}
+        	}else if("!新建".equals(delivery_order.getStr("audit_status"))){
+        		Message = "已存在财务单据，无法撤销";
+        	}else if("AMT".equals(delivery_order.getStr("cargo_nature"))){
+        		Message = "货品属性为'ATM'的单据暂不支持撤销";
+        	}
+    	}else{
+    		Message = "单据是新建或计划中状态才可以撤销";
+    	}
+    	delivery_order.set("result",results);
+    	delivery_order.set("Message", Message);
+    	renderJson(delivery_order);
+    }
 	
 }

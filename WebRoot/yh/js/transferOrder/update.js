@@ -600,6 +600,7 @@ $(document).ready(function() {
         }
         $("#saveTransferOrderBtn").attr("disabled", true);
 		//异步向后台提交数据
+		$("input[name=customerOrderNo]").val($.trim($("input[name=customerOrderNo]").val()));
         if($("#order_id").val() == ""){
         	//console.log($("#transferOrderUpdateForm").serialize());
 	    	$.post('/transferOrder/saveTransferOrder', $("#transferOrderUpdateForm").serialize(), function(transferOrder){
@@ -911,7 +912,7 @@ $(document).ready(function() {
             	"sClass": "amount",
             	"fnRender": function(obj) {
             		if(obj.aData.AMOUNT==null || obj.aData.AMOUNT==0)
-            			obj.aData.AMOUNT='';
+            			obj.aData.AMOUNT=1;
             		
             		var disabled = '';
             		if(status!='新建'){
@@ -1146,7 +1147,13 @@ $(document).ready(function() {
 		if(fieldName == 'charge_amount'){
 			return;
 		}
-		
+		if(fieldName=="amount"){
+			if(value==""||value==0){
+				value=1;
+				$.scojs_message('货品数量不能为空或为0', $.scojs_message.TYPE_ERROR);
+				return
+			}
+		}
 		if(value != ''){
 			$.ajax({  
 	            type : "post",  
@@ -1160,10 +1167,10 @@ $(document).ready(function() {
 	            }  
 	        });
 		}
-		
 		var amount = $(this).parent().parent().children('.amount').children().val();
 		if(amount == ""){
-			amount = 0;
+			amount = 1;
+			$(this).parent().parent().children('.amount').children().val("1")
 		}
 		$(this).parent().parent().children('.sumWeight').children().val(weight);
 		$(this).parent().parent().children('.volume').children().val(volume);
@@ -2508,6 +2515,7 @@ $(document).ready(function() {
 			 }},
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
+			     	debugger
 			         if(obj.aData.CREATE_NAME == 'system'){
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
 				             return obj.aData.AMOUNT;
@@ -2597,6 +2605,7 @@ $(document).ready(function() {
 			 }},
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
+			     	debugger
 			         if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
 			             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
 			         }else{
