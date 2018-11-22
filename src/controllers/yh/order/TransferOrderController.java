@@ -20,6 +20,7 @@ import models.Location;
 import models.Office;
 import models.ParentOfficeModel;
 import models.Party;
+import models.Product;
 import models.TransferOrder;
 import models.TransferOrderFinItem;
 import models.TransferOrderItem;
@@ -29,6 +30,7 @@ import models.UserLogin;
 import models.UserOffice;
 import models.Warehouse;
 import models.yh.profile.Contact;
+import models.yh.profile.CustomizeField;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -561,6 +563,77 @@ public class TransferOrderController extends Controller {
 
 		TransferOrder transferOrder = null;
 		String cargoNature = getPara("cargoNature");
+		List<Record> transfer_order_item_detail_list = Db.find("SELECT * FROM transfer_order_item_detail WHERE order_id = ?",order_id);
+		if("cargo".equals(cargoNature)&&"cargoNatureDetailNo".equals(getPara("cargoNatureDetail"))){
+			for (Record record : transfer_order_item_detail_list) {
+				Db.delete("transfer_order_item_detail",record);
+			}
+		}else if("ATM".equals(cargoNature)||"cargoNatureDetailYes".equals(getPara("cargoNatureDetail"))){
+			
+			if(transfer_order_item_detail_list.size()==0){
+				List<Record> transfer_order_item_list = Db.find("SELECT * FROM transfer_order_item WHERE order_id =?",order_id);
+				TransferOrderItemDetail transferOrderItemDetail = null;
+				CustomizeField re = CustomizeField.dao.findFirst("select * from customize_field where order_type = 'lastSerialNo'");
+		        int last = Integer.parseInt(re.getStr("field_code"));
+		        
+				for (Record record : transfer_order_item_list) {
+					List<Record> check =Db.find("SELECT * FROM transfer_order_item_detail WHERE order_id=? and item_id =?",order_id,record.getLong("id"));
+					if(check.size()==0){
+						int count = (int)((double)record.getDouble("amount"));
+						 Long productId = record.getLong("product_id");
+						if(count>0){
+							 if (productId == null || "".equals(productId)) {
+								 for (int i = 0; i <count; i++) {
+						            	String serial = "CC"+(last+i+1);
+						            	Record toid = Db.findFirst("select * from transfer_order_item_detail where serial_no = ?",serial);
+						            	if(toid != null){
+						            		serial = serial+"A";
+						            	}
+						                transferOrderItemDetail = new TransferOrderItemDetail();
+						                transferOrderItemDetail.set("item_name", record.getStr("item_name"));
+						                transferOrderItemDetail.set("serial_no", serial);
+						                transferOrderItemDetail.set("item_no",record.getStr("item_no"));
+						                transferOrderItemDetail.set("volume", record.getDouble("volume"));
+						                transferOrderItemDetail.set("weight", record.getDouble("weight"));
+						                transferOrderItemDetail.set("pieces", "1");
+						                transferOrderItemDetail.set("item_id", record.getLong("id"));
+						                transferOrderItemDetail.set("order_id", record.getLong("order_id"));
+						                transferOrderItemDetail.save();
+						            }
+						            re.set("field_code", last+(count)).update();
+							 }else{
+								 Product product = Product.dao.findById(productId);
+						            for (int i = 0; i < count; i++) {
+						            	String serial = "CC"+(last+i+1);
+						            	Record toid = Db.findFirst("select * from transfer_order_item_detail where serial_no = ?",serial);
+						            	if(toid != null){
+						            		serial = serial+"A";
+						            	}
+						                transferOrderItemDetail = new TransferOrderItemDetail();
+						                transferOrderItemDetail.set("serial_no", serial);
+						                transferOrderItemDetail.set("item_name", product.getStr("item_name"));
+						                transferOrderItemDetail.set("item_no", product.getStr("item_no"));
+						                transferOrderItemDetail.set("volume", product.getDouble("volume"));
+						                transferOrderItemDetail.set("weight", product.getDouble("weight"));
+						                transferOrderItemDetail.set("pieces", "1");
+						                transferOrderItemDetail.set("item_id", record.getLong("id"));
+						                transferOrderItemDetail.set("order_id", record.getLong("order_id"));
+						                transferOrderItemDetail.save();
+						            }
+							 }
+						}else{
+							count = Math.abs(count);
+				        	List<TransferOrderItemDetail> details = TransferOrderItemDetail.dao.find("select id from transfer_order_item_detail where order_id = ? and item_id = ? order by id desc", record.getLong("order_id"), record.getLong("id"));
+				        	for (int i = 0; i < count; i++) {
+				        		TransferOrderItemDetail.dao.deleteById(details.get(i).get("id"));
+							}
+						}
+					}
+					
+				}
+				
+			}
+		}
 		if (order_id == null || "".equals(order_id)) {
 			transferOrder = new TransferOrder();
 			if (!"".equals(spId) && spId != null) {

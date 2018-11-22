@@ -619,6 +619,7 @@ $(document).ready(function() {
         $.post('/delivery/deliverySave',$("#deliveryForm").serialize(), function(data){
             console.log(data);
             if(data.ID>0){
+                $("#update_deliveryModes").removeClass("hide");
             	$("#delivery_id").val(data.ID);
             	$("#change_delivery_id").val(data.DELIVERY_ID);
             	// $("#style").show();
@@ -1611,7 +1612,6 @@ $(document).ready(function() {
         if(!confirm("是否确认撤销此订单？"))
             return;
         $.post("/delivery/cancel_Order",{order_id:order_id},function(data){
-            debugger
             if(data.RESULT){
                 $.scojs_message(data.MESSAGE,$.scojs_message.TYPE_OK);
                 setTimeout(function(){
@@ -1643,6 +1643,32 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+    $("#update_deliveryModes").on("click",function(){
+           var self = this;
+           self.disabled = true;
+           var modeDelvery = $("input[name='modeDelvery']:checked").val();
+           var customerDelveryNo = $("input[name='customerDelveryNo']").val();
+           var SignNo = $("input[name='SignNo']").val();
+           var sp_id = $("input[name='sp_id']").val();
+           var order_delivery_stamp = $("input[name='order_delivery_stamp']").val();
+           var client_order_stamp =$("input[name='client_order_stamp']").val();
+           var business_stamp = $("input[name='business_stamp']").val();
+           var depart_date = $("input[name='depart_date']").val();
+           var order_id = $("#delivery_id").val();
+           var car_id = $("input[name='car_id']").val();
+           $.post("/delivery/update_deliveryModes",{order_id:order_id,car_id:car_id,modeDelvery:modeDelvery,customerDelveryNo:customerDelveryNo,SignNo:SignNo,sp_id:sp_id,order_delivery_stamp:order_delivery_stamp,client_order_stamp:client_order_stamp,business_stamp:business_stamp,depart_date:depart_date},function(data){
+               self.disabled = false;
+               if(data.RESULT){
+                    $.scojs_message(data.MESSAGE,$.scojs_message.TYPE_OK);
+               }else{
+                    $.scojs_message(data.MESSAGE,$.scojs_message.TYPE_ERROR);
+               }
+           }).fail(function(){
+                self.disabled = false;
+                $.scojs_message("程序执行时发生错误，请稍后再试",$.scojs_message.TYPE_ERROR);
+           }); 
+    });
 	
 });
 

@@ -912,7 +912,7 @@ $(document).ready(function() {
             	"sClass": "amount",
             	"fnRender": function(obj) {
             		if(obj.aData.AMOUNT==null || obj.aData.AMOUNT==0)
-            			obj.aData.AMOUNT=1;
+            			obj.aData.AMOUNT='';
             		
             		var disabled = '';
             		if(status!='新建'){
@@ -1169,8 +1169,7 @@ $(document).ready(function() {
 		}
 		var amount = $(this).parent().parent().children('.amount').children().val();
 		if(amount == ""){
-			amount = 1;
-			$(this).parent().parent().children('.amount').children().val("1")
+			amount = 0;
 		}
 		$(this).parent().parent().children('.sumWeight').children().val(weight);
 		$(this).parent().parent().children('.volume').children().val(volume);

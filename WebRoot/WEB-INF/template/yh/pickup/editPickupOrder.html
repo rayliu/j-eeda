@@ -48,7 +48,7 @@
                                    <form id="pickupOrderForm" method="post" action="">
                                         <input id="sp_id" type="hidden" name="sp_id" value="${spParty.id!''}${pickupOrder.sp_id!''}"/>
                     			   		<input type="hidden" id="pickupId" name="pickupId" value="${pickupOrder.id!''}">
-                                        <input id="driver_id" type="hidden" name="driver_id" value="${pickupOrder.driver_id!''}"/>                                   	  
+                                        <input id="driver_id" type="hidden" name="driver_id" value="${pickupOrder.driver_id!''}"/>                               
                                        	<input type="hidden" name="order_no" value="${order_no!''}${pickupOrder.depart_no!''}"/>
                                        	<input type="hidden" name="status" value="${status!''}${pickupOrder.status!''}"/>
                                        	<input type="hidden" name="create_by" value="${create_by!''}${pickupOrder.create_by!''}"/>
@@ -124,11 +124,16 @@
 	                                	    <%
 										    	if(flag!='derect'){
 											%>
+
 	                                	    <div class="form-group">
 		                                        <select id="address_type" class="form-control pay_type" name="address_type">
 			                                       	<option value="yard">货场</option> 
 			                                       	<option value="warehouse">仓库</option>
-			                                        <option value="twice_pickup">二次提货</option>                                            
+			                                       	<%
+                        								if(twice_pickup_type!''!="twice_pickup"){
+                        							%>
+			                                        <option value="twice_pickup">二次提货</option>
+			                                         <%}%>                                           
 		                                        </select>
 	                                        </div>
 	                                        <div id="addressDiv" class="form-group" style="display: true;">

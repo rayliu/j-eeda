@@ -1494,28 +1494,40 @@
     		return false;
     	}
     	
-    	if(address_type=='twice_pickup'){
-    		$.scojs_message('对不起，目前二次提货类型单据不支持撤销', $.scojs_message.TYPE_ERROR);
-    		return false;
-    	}
+    	
     	
     	if(!confirm("是否确认撤销此单据？")){
     		$("#cancelBtn").attr('disabled',false);
     		return false;
     	}
+    	if(address_type=='twice_pickup'){
+    		$.post("/pickupOrder/cancelTwicePickupOrder",{pickupId:pickup_id},function(data){
+    			if(data.RESULT){
+    				$.scojs_message(data.MESSAGE,$.scojs_message.TYPE_OK);
+    				setTimeout(function(){
+						location.href="/pickupOrder";
+					}, 1000);
+    			}else{
+    				$.scojs_message(data.MESSAGE,$.scojs_message.TYPE_ERROR);
+    			}
+    		}).fail(function(){
+    			$.scojs_message("程序执行时发生错误，请稍后再试",$.scojs_message.TYPE_ERROR);
+    		});
+    	}else{
+    		$.post('/pickupOrder/cancelPickupOder', {pickupId:pickup_id}, function(data){ 
+	    		if(!data.success){
+	    			$.scojs_message('对不起，当前单据(已入货场/已入库)或有下级单据(发车单/回单)，不能撤销', $.scojs_message.TYPE_ERROR);
+	    		}else{
+	    			$("#finishBtn").attr('disabled', true);
+	    			$("#saveTransferOrderBtn").attr('disabled', true);
+	    			$.scojs_message('撤销成功!,1秒后自动返回调车单列表。。。', $.scojs_message.TYPE_OK);
+	    			setTimeout(function(){
+						location.href="/pickupOrder";
+					}, 1000);
+	    		}
+    		});	
+    	}
     	
-    	$.post('/pickupOrder/cancelPickupOder', {pickupId:pickup_id}, function(data){ 
-    		if(!data.success){
-    			$.scojs_message('对不起，当前单据(已入货场/已入库)或有下级单据(发车单/回单)，不能撤销', $.scojs_message.TYPE_ERROR);
-    		}else{
-    			$("#finishBtn").attr('disabled', true);
-    			$("#saveTransferOrderBtn").attr('disabled', true);
-    			$.scojs_message('撤销成功!,1秒后自动返回调车单列表。。。', $.scojs_message.TYPE_OK);
-    			setTimeout(function(){
-					location.href="/pickupOrder";
-				}, 1000);
-    		}
-    	});
     	
     });
     

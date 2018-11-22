@@ -114,10 +114,14 @@ $(document).ready(function() {
 							 break;
 						 }
 					 }
+                     var twice_pickup = false;
+                     if(obj.aData.ORDER_NO.indexOf("一次提货")){
+                        twice_pickup = true;
+                     }
 					 if(result){
 						 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'" checked="checked">';
 					 }else{
-						 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'">';
+						 return '<input type="checkbox" name="order_check_box" class="checkedOrUnchecked" value="'+obj.aData.ID+'"  >';
 					 }
 				 }
             },
@@ -422,8 +426,6 @@ $(document).ready(function() {
     	var ids=[];
         var array = [];
         $("#ckeckedTransferOrderList tr").each(function (){
-
-        	debugger;
         	var obj={};
     		obj.id = $(this).attr("value");
     		obj.order_type = $(this).find("td").eq(7).text();
@@ -444,6 +446,7 @@ $(document).ready(function() {
     	console.log(str_JSON);
     	$("#detailJson").val(str_JSON);
     	$("#ids").val(ids);
+        $("#twice_pickup_type").val(pickup_type);
     	
         $('#createForm').submit();
     });
@@ -551,7 +554,7 @@ $(document).ready(function() {
 		var value = $(this).val();
 		
 		pickup_type = '';
-    	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次提货")>0){
+    	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("一次提货")>0){
     		pickup_type ='twice_pickup';
     	};
 		
@@ -711,7 +714,7 @@ $(document).ready(function() {
     	var cargo_nature = $(this).attr("cargoNature");
     	pickup_type = '';
     	var orderNo = $(this).parent().text();
-    	if(orderNo.indexOf("二次提货")>0){
+    	if(orderNo.indexOf("一次提货")>0){
     		pickup_type ='twice_pickup';
     	};
     	//判断为修改运输单单品的时候，取出原有的单品id集合、单品序列号
@@ -791,7 +794,7 @@ $(document).ready(function() {
 		}
     	$("input[type='checkbox'][class='checkedOrUnchecked']").each(function(){
     		var this_pickup_type = '';
-        	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("二次提货")>0){
+        	if($(this).parent().siblings('.order_no')[0].textContent.indexOf("一次提货")>0){
         		this_pickup_type ='twice_pickup';
         	};
     		//当运输单没有选中时，已选列表不存在此数据
@@ -898,7 +901,7 @@ $(document).ready(function() {
                 		
                     	//修改后需新增的数据
                     	for ( var i = 0; i < detailIdsTest.length; i++) {
-                    		if(detailIdsTestOld.indexOf(detailIdsTest[i]) == -1){
+                    		if(check_detailIds.indexOf(detailIdsTest[i]) == -1){
                     			//直接添加
                     			detailIds.push(detailIdsTest[i]);
                     		}

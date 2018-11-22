@@ -2835,5 +2835,61 @@ public class DeliveryController extends Controller {
     	delivery_order.set("Message", Message);
     	renderJson(delivery_order);
     }
+    
+    public void update_deliveryModes(){
+    	String order_id = getPara("order_id");
+    	String modeDelvery = getPara("modeDelvery");
+    	String customerDelveryNo = getPara("customerDelveryNo");
+    	String SignNo = getPara("SignNo");
+    	String sp_id = getPara("sp_id");
+    	String order_delivery_stamp = getPara("order_delivery_stamp");
+    	String client_order_stamp = getPara("client_order_stamp");
+    	String business_stamp = getPara("business_stamp");
+    	String depart_date = getPara("depart_date");
+    	String car_id = getPara("car_id");
+    	String Message = "";
+    	Boolean result = false;
+    	Record order = new Record();
+    	if(StrKit.notBlank(order_id)){
+    		order= Db.findById("delivery_order", order_id);
+    		if("out_source".equals(modeDelvery)){//外包
+    			if("对账已确认".equals(order.getStr("audit_status"))){
+    				order.set("deliveryMode", modeDelvery);
+    				order.set("customer_delivery_no", customerDelveryNo);
+    				order.set("ref_no", SignNo);
+    				order.set("sp_id", sp_id);
+    				order.set("order_delivery_stamp", order_delivery_stamp);
+    				order.set("client_order_stamp", client_order_stamp);
+    				order.set("business_stamp", business_stamp);
+    				order.set("depart_stamp", depart_date);
+    				result = Db.update("delivery_order", order);
+    				Message="更新成功";
+    			}else{
+    				Message="该单据已做财务，无法更新信息";
+    			}
+    		}else if("own".equals(modeDelvery)){//自营
+    			Record check = Db.findFirst("SELECT * FROM car_summary_detail WHERE car_summary_id =?",car_id);
+    			if(check==null){
+    				order.set("deliveryMode", modeDelvery);
+    				order.set("customer_delivery_no", customerDelveryNo);
+    				order.set("ref_no", SignNo);
+    				order.set("car_id", car_id);
+    				order.set("order_delivery_stamp", order_delivery_stamp);
+    				order.set("client_order_stamp", client_order_stamp);
+    				order.set("business_stamp", business_stamp);
+    				order.set("depart_stamp", depart_date);
+    				result = Db.update("delivery_order", order);
+    				Message="更新成功";
+    			}else{
+    				Message ="更新失败，该司机已被指派";
+    			}
+    		}
+    	}else {
+    		Message = "单据不存在，请刷新页面或者重试";
+    	}
+    	order.set("result", result);
+    	order.set("Message", Message);
+    	renderJson(order);
+    }
 	
 }
