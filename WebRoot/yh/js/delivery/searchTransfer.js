@@ -823,18 +823,15 @@ $(document).ready(function() {
         var inputStrrdc=$("#rdc").val();
         
        //如果客户和仓库都有值，触发查询
-        if(inputStrrdc!=null&&inputStr!=null&&inputStrrdc!=""&&inputStr!=""){
-        	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc+"&rdc="+rdc;
-    		dab.fnDraw();
+       debugger
+        if((rdc!=null&&rdc!="")||(inputStr!=null&&inputStr!="")||(warehouseName!=null&&warehouseName!="")||(customer_order_number!=null&&customer_order_number!="")||(code!=null&&code!="")||(deliveryOrderNo!=null&&deliveryOrderNo!="")||(singleid!=null&&singleid!="")||(inputStrrdc!=null&&inputStrrdc!="")){
+	    	dab.fnSettings().oFeatures.bServerSide = true;
+			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc+"&rdc="+rdc;
+			dab.fnDraw();
         }else{
-        	$.scojs_message('客户丶RDC选项为必填', $.scojs_message.TYPE_FALSE);
-       	 	return false;
-        	dab.fnSettings().oFeatures.bServerSide = true;
-        	dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?"+"code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&rdc="+rdc;
-    		dab.fnDraw();
+        	$.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
         }
-		           
+    			           
     });
   	
   	
@@ -848,10 +845,8 @@ $(document).ready(function() {
       	var address = $("#address").val();
       	var customerNo = $("#customerNo").val();
       	
-    
-      	
-      	if(customerName1!=null&&warehouse1!=null&&customerName1!=""&&warehouse1!=""){
-      		dab2.fnSettings().oFeatures.bServerSide = true;
+    	if((customerName1!=null&&customerName1!="")||(cargo_customer_id!=null&&cargo_customer_id!="")||(cargo_warehouse_id!=null&&cargo_warehouse_id!="")||(warehouse1!=null&&warehouse1!="")||(transferOrderNo!=null&&transferOrderNo!="")||(address!=null&&address!="")||(customerNo!=null&&customerNo!="")){
+    		dab2.fnSettings().oFeatures.bServerSide = true;
       		dab2.fnSettings().sAjaxSource = "/delivery/findTransferOrderItems?customerName1="+customerName1
       		+"&warehouse1="+warehouse1
       		+"&customer_id="+cargo_customer_id
@@ -860,9 +855,9 @@ $(document).ready(function() {
       		+"&customerOrderNo="+customerNo
       		+"&transferOrderNo="+transferOrderNo;
 	      	dab2.fnDraw();
-      	}else{
-      		$.scojs_message('客户丶仓库选项为必填', $.scojs_message.TYPE_FALSE);
-      	}
+    	}else{
+    		$.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
+    	}
       	
   	})
   		

@@ -156,10 +156,10 @@ $(document).ready(function() {
 	        }
     	
     	
-    	if(customer_id == ''){
+    	/*if(customer_id == ''){
     		$.scojs_message('请选择客户', $.scojs_message.TYPE_ERROR);
     		return false;
-    	}
+    	}*/
     	
 		statusTable.fnSettings().oFeatures.bServerSide = true;
 		statusTable.fnSettings()._iDisplayStart = 0;
