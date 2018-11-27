@@ -393,7 +393,7 @@
 	    	}else{
 	    		handlePickkupOrderDetail();
 	    	}
-	 		$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+	 		//$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
 	        $("#finishBtn").attr('disabled', false);
 	        $("#address_type").attr("disabled","disabled");
 	        //$("#cancelBtn").attr('disabled', false);
@@ -1515,8 +1515,8 @@
     		});
     	}else{
     		$.post('/pickupOrder/cancelPickupOder', {pickupId:pickup_id}, function(data){ 
-	    		if(!data.success){
-	    			$.scojs_message('对不起，当前单据(已入货场/已入库)或有下级单据(发车单/回单)，不能撤销', $.scojs_message.TYPE_ERROR);
+	    		if(!data.SUCCESS){
+	    			$.scojs_message(data.MSG, $.scojs_message.TYPE_ERROR);
 	    		}else{
 	    			$("#finishBtn").attr('disabled', true);
 	    			$("#saveTransferOrderBtn").attr('disabled', true);

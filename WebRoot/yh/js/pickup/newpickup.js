@@ -432,7 +432,9 @@ $(document).ready(function() {
     		var number = $($(this).find('td').get(2)).text();
     		var	number2 = $(this).attr("amount");
     		if(number!=number2){
-    			number = number2;
+    			if(number2 > 0){
+    				number = number2;
+    			}
     		}
     		obj.number = number;       //货品数量
     		obj.cargoItemId = $(this).attr("itemids");      //普货item表ID

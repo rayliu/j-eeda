@@ -689,10 +689,15 @@ public class PickupOrderController extends Controller {
                     if(!detail_ids.equals("") && detail_ids != null){
         	            for (int i = 0; i < detailIds.length; i++) {
         					TransferOrderItemDetail detail = TransferOrderItemDetail.dao.findById(detailIds[i]);
+        					
         					if("twice_pickup".equals(address_type)){
-        						detail.set("twice_pickup_id",pickupOrder.getLong("id")).update();
+        						if(detail.getLong("twice_pickup_id") == null){
+        							detail.set("twice_pickup_id",pickupOrder.getLong("id")).update();
+        						}
                         	}else{
-                        		detail.set("pickup_id",pickupOrder.getLong("id")).update();
+                        		if(detail.getLong("pickup_id") == null){
+                        			detail.set("pickup_id",pickupOrder.getLong("id")).update();
+                        		}
                         	}
         	            }
                     }
@@ -731,6 +736,9 @@ public class PickupOrderController extends Controller {
 		            departTransferOrder.set("order_id", orderId);
 		            departTransferOrder.set("amount", numbers);
 		            departTransferOrder.set("transfer_order_no", transferOrderATM.getStr("order_no"));
+		            if("twice_pickup".equals(address_type)){
+		            	departTransferOrder.set("twice_pickup_flag", "Y");
+		            }
 		            departTransferOrder.save();
                 }
                 
@@ -747,7 +755,7 @@ public class PickupOrderController extends Controller {
 	            	String[] ItemId = cargoItemId.split(",");
 					for (int j = 0; j < number.length ; j++) {
 						TransferOrderItem transferOrderItem = TransferOrderItem.dao.findById(ItemId[j]);
-						if(!"".equals(number[j].trim()) && Double.parseDouble(number[j]) != 0){
+						if(!"".equals(number[j].trim())){
 							//更新字表调车数量
 							double pickupAmount = 0;
 							
@@ -761,6 +769,8 @@ public class PickupOrderController extends Controller {
 								if(transferOrderItem.getDouble("pickup_number") != null && !"".equals(transferOrderItem.getDouble("pickup_number"))){
 									pickupAmount = transferOrderItem.getDouble("pickup_number");
 								}
+								
+								//作用？ 为了创建列表算正常非一次提货后的数量all - pickup_num - have_twice_pickup
 								transferOrderItem.set("pickup_number",pickupAmount + Double.parseDouble(number[j])).update();
 								if(transferOrderItem.getDouble("have_twice_pickup")>0){
 									transferOrderItem.set("have_twice_pickup",transferOrderItem.getDouble("have_twice_pickup")-Double.parseDouble(number[j])).update();
@@ -911,32 +921,40 @@ public class PickupOrderController extends Controller {
     @Before(Tx.class)
  	public void cancelPickupOder() {
  		String pickupId = getPara("pickupId");
- 		
+ 		Record return_rec = new Record();
+ 		return_rec.set("success", false);
  		//不存在单号，返回
  		if(pickupId==null || ("").equals(pickupId)){
- 			renderJson("{\"success\":false}");
+ 			return_rec.set("msg", "单号为空");
+ 			renderJson(return_rec);
  			return ;
  		}
  		
- 		
- 			
  		//校验是否存在下级单据	
  		//1.判断此单据是否为直送单据
  		DepartOrder departOrder = DepartOrder.dao.findById(pickupId);
  		//检查调车单是否存在下级财务单据（应付）
  		String audit_status = departOrder.getStr("audit_status");
  		if(!"新建".equals(audit_status) && !"已确认".equals(audit_status)){
- 			renderJson("{\"success\":false}");
+ 			return_rec.set("msg", "此单据已做应付财务单据");
+ 			renderJson(return_rec);
  			return ;
  		}
  		
+ 		String car_summary_type = departOrder.getStr("car_summary_type");
+		if("processed".equals(car_summary_type)){
+			return_rec.set("msg", "此单据已做行车单，无法更改了哦");
+ 			renderJson(return_rec);
+ 			return ;
+		}
  		
  		boolean is_direct_deliver = departOrder.getBoolean("is_direct_deliver");
  		//若为直送
  		if(is_direct_deliver){
  			//删除相对应回单
  			if(!deleteReturnOrder(pickupId)){
- 				renderJson("{\"success\":false}");
+ 				return_rec.set("msg", "此单据的回单已做应收财务单据");
+ 	 			renderJson(return_rec);
  	 			return ;
  			}
  		}
@@ -949,9 +967,11 @@ public class PickupOrderController extends Controller {
  			
  			//删除主单据
  			departOrder.delete();
- 			renderJson("{\"success\":true}");
+ 			
+ 			return_rec.set("success", true);
+ 			renderJson(return_rec);
  		}else{
- 			renderJson("{\"success\":false}");
+ 			renderJson(return_rec);
  		}
  		
  	}
@@ -963,29 +983,85 @@ public class PickupOrderController extends Controller {
     	Record order = new Record();
     	String Message = "";
     	Boolean result = false;
+    	
+    	
+    	
     	if(StrKit.notBlank(order_id)){
     		order = Db.findById("depart_order", order_id);
     		if("untreated".equals(order.getStr("car_summary_type"))){
     			
-    			List<Record> depart_transfer_list = Db.find("SELECT dt.* FROM depart_transfer dt  LEFT JOIN depart_order deo ON deo.id = dt.pickup_id WHERE deo.id =? GROUP BY dt.order_id ",order_id);
+    			List<Record> depart_transfer_list = Db.find("SELECT dt.* FROM depart_transfer dt"
+    					+ " LEFT JOIN depart_order deo ON deo.id = dt.pickup_id"
+    					+ " WHERE deo.id =? GROUP BY dt.order_id ",order_id);
     			if(depart_transfer_list.size()>0){
+    				boolean return_flag = false;
+    				for (Record record : depart_transfer_list) {
+    					Long trans_id = record.getLong("order_id");
+    					Record trans_rec = Db.findById("transfer_order", trans_id);
+    					String cargo_nature = trans_rec.getStr("cargo_nature");
+    					String cargo_nature_detail = trans_rec.getStr("cargo_nature_detail");
+    					if(trans_id != null){
+    						if("ATM".equals(cargo_nature)){
+    							//当前提货单所勾选的明细
+    							List<Record> pickup_detail = Db.find("SELECT * FROM transfer_order_item_detail "
+        								+ " WHERE order_id = ? AND twice_pickup_id = ? and ifnull(pickup_id, '') != ''", trans_id, order_id);
+    							//判断当前明细是否做了下级单据
+    							if(pickup_detail.size() > 0){
+    								result = false;
+    								Message = "此单据已做下级单据，无法撤销";
+    								return_flag = true;
+    								
+    							}
+    						} else {
+    							Double this_amount = record.getDouble("amount");
+    							Long toi_id = record.getLong("order_item_id");
+    							Record toi_rec = Db.findById("transfer_order_item", toi_id);
+    							Double have_twice_pickup = toi_rec.getDouble("have_twice_pickup");
+    							if(this_amount > have_twice_pickup){
+    								result = false;
+    								Message = "此单据已做下级单据，无法撤销";
+    								return_flag = true;
+    							}
+    						}
+    					}
+    				}
+    				if(return_flag){
+    					order.set("result", result);
+				    	order.set("Message", Message);
+				    	renderJson(order);
+						return;
+    				}
+    				
+    				
+    				
     				for (Record record : depart_transfer_list) {
 						Long transfer_order_id = record.getLong("order_id");
 						if(transfer_order_id!=null){
 							Record transfer_order = Db.findById("transfer_order", transfer_order_id);
 							if("ATM".equals(transfer_order.getStr("cargo_nature")) || "cargoNatureDetailYes".equals(transfer_order.getStr("cargo_nature_detail"))){
-								List<Record> item_detail_pickup = Db.find("SELECT toid.* FROM transfer_order_item_detail toid LEFT JOIN depart_order dor ON dor.id = toid.twice_pickup_id WHERE dor.`id` = ? AND order_id = ?",order.getLong("id"),transfer_order_id);
-	    						List<Record> item_detail_list = Db.find("SELECT * FROM transfer_order_item_detail WHERE order_id = ? AND twice_pickup_id != ?",transfer_order_id,order_id);
-    							for (Record res : item_detail_pickup) {
-    								res.set("twice_pickup_id", null);
-									Db.update("transfer_order_item_detail",res);
+								//当前提货单所勾选的明细
+								List<Record> pickup_detail = Db.find("SELECT * FROM transfer_order_item_detail "
+	    								+ " WHERE order_id = ? AND twice_pickup_id = ?", transfer_order_id, order_id);
+								
+								//撤回该提货单在明细的记录
+								for(Record item : pickup_detail){
+									item.set("twice_pickup_id", null);
+									Db.update("transfer_order_item_detail",item);
 								}
-    							if(item_detail_list.size()>0){
-    								transfer_order.set("pickup_assign_status", "PARTIAL");
+								
+								//该运输单的货品总明细
+								List<Record> pickup_total_detail = Db.find("SELECT * FROM transfer_order_item_detail "
+	    								+ " WHERE order_id = ? and (ifnull(pickup_id,'') != '' || ifnull(twice_pickup_id,'') != '')", transfer_order_id);
+								
+    							if(pickup_total_detail.size()>0){
+//    								transfer_order.set("pickup_assign_status", "PARTIAL");
+    								transfer_order.set("STATUS", "处理中");
     							}else{
     								transfer_order.set("pickup_assign_status", "NEW");
     								transfer_order.set("STATUS", "新建");
     							}
+    							
+    							
     							if("cargo".equals(transfer_order.getStr("cargo_nature"))&&"cargoNatureDetailYes".equals(transfer_order.getStr("cargo_nature_detail"))){
     								List<Record> transfer_order_item = Db.find("SELECT toi.*,dt.amount depart_amount FROM depart_transfer dt"
     										+ " LEFT JOIN transfer_order_item toi ON toi.`id` = dt.`order_item_id` WHERE dt.`order_id` = ? AND dt.`pickup_id` = ? ",transfer_order_id,order_id);
@@ -1069,7 +1145,7 @@ public class PickupOrderController extends Controller {
     		
     		//校验是否有下级财务单据（应收）
     		String transaction_status = returnOrder.getStr("transaction_status");
-    		if(!"新建".equals(transaction_status) && !"已签收".equals(transaction_status) && !"已确认".equals(transaction_status)){
+    		if(!"新建".equals(transaction_status) && !"已签收".equals(transaction_status)){
     			return false;
     		}
     		
@@ -1095,8 +1171,7 @@ public class PickupOrderController extends Controller {
     	//更新单品信息表信息
     	List<TransferOrderItemDetail> toids = TransferOrderItemDetail.dao.find("select * from transfer_order_item_detail where pickup_id = ? or twice_pickup_id = ?",pickupId,pickupId);
     	for(TransferOrderItemDetail toid : toids){
-    		toid.set("pickup_id", null);
-    		toid.set("twice_pickup_id", null).update();
+    		toid.set("pickup_id", null).update();
     	}
     	
     	//清除中间表数据
@@ -1107,13 +1182,23 @@ public class PickupOrderController extends Controller {
     		//更新对应运输单信息
     		TransferOrder tor = TransferOrder.dao.findById(transfer_id);
     		String order_type = tor.getStr("cargo_nature");
-    		TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where pickup_id is not null and order_id= ? ",transfer_id);
+    		TransferOrderItemDetail toid = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail where (ifnull(pickup_id,'') != '' or ifnull(twice_pickup_id,'') != '') and order_id= ? ",transfer_id);
     		if(toid==null){
-    			tor.set("pickup_assign_status", "NEW");
-    			tor.set("pickup_seq", null);
-    			tor.set("status", "新建");
+    			if("ATM".equals(order_type) || ("cargo".equals(order_type) && "cargoNatureDetailYes".equals(tor.getStr("cargo_nature_detail")))){
+    				tor.set("pickup_assign_status", "NEW");
+        			tor.set("pickup_seq", null);
+        			tor.set("status", "新建");
+    			}
     		}else{
-    			tor.set("pickup_assign_status", "PARTIAL");
+    			TransferOrderItemDetail t = TransferOrderItemDetail.dao.findFirst("select * from transfer_order_item_detail "
+    					+ "where ifnull(pickup_id,'') != '' and order_id= ? ",transfer_id);
+    			if (t == null) {
+    				tor.set("pickup_assign_status", "NEW");
+    			} else {
+    				tor.set("pickup_assign_status", "PARTIAL");
+    			}
+    			
+    			tor.set("status", "处理中");
     		}
     		
     		
@@ -1124,8 +1209,14 @@ public class PickupOrderController extends Controller {
         		List<TransferOrderItem> tois = TransferOrderItem.dao.find("select * from transfer_order_item where id = ?",item_id);
         		for(TransferOrderItem toi: tois){
         			Double now = toi.getDouble("pickup_number");
-        			toi.set("pickup_number", now-amount).update();
-        			toi.set("have_twice_pickup", now).update();
+        			Double now_twice = toi.getDouble("have_twice_pickup");
+        			Double twice_pickup_number = toi.getDouble("twice_pickup_number");
+        			toi.set("pickup_number", now-amount);
+        			
+        			if(twice_pickup_number >= (now_twice + amount)){
+        				toi.set("have_twice_pickup", now_twice + amount);
+        			}
+        			toi.update();
         		}
         		
         		//计算普货提货的数量，从而来更新运输单的pickup_assign_status状态
@@ -1133,7 +1224,24 @@ public class PickupOrderController extends Controller {
         		Double pickup_number = record.getDouble("pickup_number");
         		if(pickup_number>0){
         			tor.set("pickup_assign_status", "PARTIAL");
+        			tor.set("status", "处理中");
+        		} else {
+        			
+        			//二次提货数量判断
+        			Record r = Db.findFirst("select ifnull(sum(twice_pickup_number),0) twice_pickup_number from transfer_order_item where order_id = ? ",transfer_id);
+        			Double twice_pickup_number = r.getDouble("twice_pickup_number");
+        			if(twice_pickup_number > 0){
+            			tor.set("status", "处理中");
+        			}else{
+        				tor.set("status", "新建");
+        			}
+        			
+        			tor.set("pickup_assign_status", "NEW");
+        			
         		}
+        		
+        		
+        		
         	}
         	
         	tor.update();
