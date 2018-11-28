@@ -24,8 +24,10 @@ import models.yh.carmanage.CarSummaryOrder;
 import models.yh.delivery.DeliveryOrder;
 import models.yh.pickup.PickupDriverAssistant;
 import models.yh.profile.DriverAssistant;
+import net.sf.jxls.reader.ReaderConfig;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.protocol.RequestExpectContinue;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -1379,6 +1381,50 @@ public class CarSummaryController extends Controller {
     		re.set("msg", "此单据"+status+",无法撤回");
     	}
     	renderJson(re);
+    }
+    
+    public void cancelOrder(){
+    	String order_id = getPara("order_id");
+    	Record order  = Db.findById("car_summary_order", order_id);
+    	String Message = "";
+    	Boolean result = false;
+    	if(order!=null){
+    		String status = order.getStr("STATUS");
+    		if("新建".equals(status)||"已审核".equals(status)){//状态效验
+    				List<Record> datail_list = Db.find("SELECT * FROM car_summary_detail WHERE car_summary_id = ?",order_id);
+    				for (Record record : datail_list) {
+    					String pickup_type = record.getStr("pickup_type");
+    					String order_type = "";
+    					Long pickup_order_id = record.getLong("pickup_order_id");
+    					Record  pickup_order = new Record();
+						if("提货".equals(pickup_type)){
+							order_type = "depart_order";
+							pickup_order = Db.findById(order_type, pickup_order_id);
+						}else if("配送".equals(pickup_type)){
+							order_type = "delivery_order";
+							pickup_order = Db.findById(order_type, pickup_order_id);
+						}
+						pickup_order.set("car_summary_type", "untreated");
+						Db.update(order_type,pickup_order);
+						Db.delete("car_summary_detail", record);
+					}
+    				
+    				Db.update("DELETE FROM car_summary_detail_salary WHERE 	car_summary_id = ?",order_id);
+    				Db.update("DELETE FROM car_summary_detail_route_fee WHERE car_summary_id = ?",order_id);
+    				Db.update("DELETE  FROM car_summary_detail_other_fee WHERE car_summary_id = ?",order_id);
+    				Db.update("DELETE  FROM car_summary_detail_oil_fee WHERE car_summary_id = ?",order_id);
+    				Db.delete("car_summary_order", order);
+    				Message = "撤销成功，1秒后自动返回行车单列表。。。";
+    				result = true;
+    		}else{
+    			Message = "状态为"+status+"的不能撤销";
+    		}
+    	}else{
+    		Message = "数据异常，请重试";
+    	}
+    	order.set("RESULT", result);
+    	order.set("MESSAGE", Message);
+    	renderJson(order);
     }
     
     

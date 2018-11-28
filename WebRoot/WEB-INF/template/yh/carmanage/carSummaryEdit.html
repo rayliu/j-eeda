@@ -398,7 +398,7 @@
 		               		<button id="saveCarSummaryBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">保存</button>
 		               		<button id="auditBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">审批</button>
 		               		<button id="goBackBtn" type="button" class="btn  btn-primary" data-toggle="tooltip" title="" data-original-title="Default tooltip">返回</button>
-		               		<button id="returnBtn" disabled type="button" class="btn  btn-danger" data-toggle="tooltip" title="" data-original-title="Default tooltip">退回</button>
+		               		<button id="cancelBtn"   type="button" class="btn  btn-danger" data-toggle="tooltip" title="" data-original-title="Default tooltip" <% if(carSummaryOrder.id!''==""){%> style="display:none" <%}%> >撤销</button>
                         </div>                       
                     </div>
                     <!-- /.panel -->

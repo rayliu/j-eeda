@@ -164,6 +164,7 @@ $(document).ready(function() {
  			if(data != null){
  				$("#car_summary_id").val(data.ID);
  				$("#car_summary_no").val(data.ORDER_NO);
+ 				$("#cancelBtn").show();
  				contactUrl("edit?carSummaryId",data.ID);
  				$.scojs_message('保存成功', $.scojs_message.TYPE_OK);
  				$("#auditBtn").prop("disabled",false);
@@ -1401,6 +1402,28 @@ $(document).ready(function() {
 		}
 	});
 	
+	$("#cancelBtn").click(function(){
+		var self = this;
+		self.disabled = true;
+		if(!confirm("是否确认撤销？"))
+		return;
+		var order_id = $("#car_summary_id").val();
+		$.post("/carsummary/cancelOrder",{order_id:order_id},function(data){
+			self.disabled = false;
+			if(data.RESULT){
+				$.scojs_message(data.MESSAGE, $.scojs_message.TYPE_OK);
+				setTimeout(function(){
+					location.href="/carsummary";
+				},1000);
+			}else{
+				$.scojs_message(data.MESSAGE, $.scojs_message.TYPE_ERROR);
+			}
+		}).fail(function(){
+			self.disabled = false;
+			$.scojs_message('后台错误,请联系管理员处理', $.scojs_message.TYPE_ERROR);
+		});
+	});
+
 	var status = $('#status').val();
 	if(status=='已审批'){
 		$("#returnBtn").attr('disabled',false);
