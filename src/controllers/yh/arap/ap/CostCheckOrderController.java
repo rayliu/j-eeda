@@ -1012,15 +1012,15 @@ public class CostCheckOrderController extends Controller {
 		
 		String user_name = currentUser.getPrincipal().toString();
         List<Record> uo = Db.find("select * from user_office where user_name =?",user_name);
-        String is_delivery = "Y";
-        for(Record record :uo){
-        	long office_id = record.getLong("office_id");
-        	Office office = Office.dao.findById(office_id);
-        	String office_type = office.getStr("type");
-        	if(!"配送中心RDC".equals(office_type)){
-        		is_delivery = "N";
-        	}
-        }
+        String is_delivery = "N";
+//        for(Record record :uo){
+//        	long office_id = record.getLong("office_id");
+//        	Office office = Office.dao.findById(office_id);
+//        	String office_type = office.getStr("type");
+//        	if(!"配送中心RDC".equals(office_type)){
+//        		is_delivery = "N";
+//        	}
+//        }
 		
 		String sqlTotal = "";
 		String sql = " select * from (select distinct dor.id,dofi.id did,IFNULL(c2.address,IFNULL(toid.notify_party_company,'')) receivingunit, dpr.route_from ,lo.name from_name ,dpr.route_to ,lo2.name to_name, tor.planning_time ,dor.order_no order_no,dor.status,"
