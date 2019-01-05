@@ -484,11 +484,11 @@ public class ChargeCheckOrderController extends Controller {
 				+ " AND ror.customer_id IN ( SELECT customer_id FROM user_customer WHERE user_name = '"+currentUser.getPrincipal()+"' ) ";
 		sql2 = " group by ror.id,tor2.id"
 				+ " UNION"
-				+ " (SELECT amco.id id,o.office_name,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
+				+ " (SELECT amco.id id,amco.order_no order_no,NULL status_code,amco.create_stamp create_date,"
 				+ " NULL receipt_date,amco. STATUS transaction_status,NULL order_type,amco.create_by creator,"
 				+ " amco.remark remark,NULL import_ref_num,NULL _id,NULL delivery_order_id,NULL transfer_order_id,"
 				+ " NULL notity_party_id,amco.customer_id customer_id,amco.total_amount total_amount,NULL path,"
-				+ " ul.c_name confirm_by, amco.confirm_stamp,amco.office_id,"
+				+ " ul.c_name confirm_by, amco.confirm_stamp,amco.office_id,o.office_name,"
 				+ " NULL creator_name,NULL transfer_order_no,NULL delivery_order_no,'收入单' as tporder,c.abbr cname,"
 				+ " null address,null planning_time,"
 				+ " (select GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '\r\n') "

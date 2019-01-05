@@ -1774,7 +1774,7 @@ public class PickupOrderController extends Controller {
           //校验是否有存在回单
         	Record rRec = Db.findFirst("select * from return_order ror where transfer_order_id = ?",order_id);
         	if(rRec != null){
-        		return;
+        		continue;
         	}
  
             //直接生成回单，在把合同等费用带到回单中
