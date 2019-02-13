@@ -15,6 +15,7 @@ import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.ext.plugin.shiro.ShiroInterceptor;
 import com.jfinal.ext.plugin.shiro.ShiroPlugin;
+import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.SqlReporter;
@@ -172,7 +173,7 @@ public class EedaConfig extends JFinalConfig {
         //加载配置文件    	
         loadPropertyFile("app_config.txt");
         
-        me.setDevMode(true);
+        me.setDevMode(PropKit.getBoolean("devMode", false));
         
     	// ApiConfigKit 设为开发模式可以在开发阶段输出请求交互的 xml 与 json 数据
     	ApiConfigKit.setDevMode(me.getDevMode());
@@ -369,8 +370,8 @@ public class EedaConfig extends JFinalConfig {
         me.add(cp);
 
         arp = new ActiveRecordPlugin(cp);
-        arp.setShowSql(true);// 控制台打印Sql
-        SqlReporter.setLogger(true);// log4j 打印Sql
+        //arp.setShowSql(true);// 控制台打印Sql
+        //SqlReporter.setLogger(true);// log4j 打印Sql
         me.add(arp);
 
         arp.setDialect(new MysqlDialect());
