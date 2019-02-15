@@ -195,8 +195,10 @@ public class DeliveryOrderMilestoneController extends Controller {
             return;
         
         //先获取有效期内的配送sp合同, 如有多个，默认取第一个
-        Contract spContract= Contract.dao.findFirst("select * from contract where type='DELIVERY_SERVICE_PROVIDER' " +
-                "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
+//        Contract spContract= Contract.dao.findFirst("select * from contract where type='DELIVERY_SERVICE_PROVIDER' " +
+//                "and (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
+        Contract spContract= Contract.dao.findFirst("select * from contract where  " +
+                " (CURRENT_TIMESTAMP() between period_from and period_to) and party_id="+spId);
         if(spContract==null)
             return;
         
@@ -252,17 +254,20 @@ public class DeliveryOrderMilestoneController extends Controller {
 			}
         }        
     }
+    
     public void genFinPerUnit(Contract spContract, String chargeType, Long deliverOrderId) {
         List<Record> deliveryOrderItemList = Db
-                .find("SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to FROM "+
+                .find("SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to, toi.sum_weight FROM "+
 					    "delivery_order_item doi LEFT JOIN transfer_order_item_detail toid ON doi.transfer_item_detail_id = toid.id "+
 					        "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "+
 					        "LEFT JOIN delivery_order d_o ON doi.delivery_id = d_o.id "+
                 		"WHERE  doi.delivery_id = "+ deliverOrderId+" group by toi.product_id, d_o.route_from, d_o.route_to" );
+        
+        
         for (Record dOrderItemRecord : deliveryOrderItemList) {
             Record contractFinItem = Db
-                    .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                            + " and product_id ="+dOrderItemRecord.getLong("product_id")
+                    .findFirst("select amount, amount1, amount2, amount3, amount4, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
+//                            + " and product_id ="+dOrderItemRecord.getLong("product_id")
                             +" and from_id = '"+ dOrderItemRecord.getStr("route_from")
                             +"' and to_id = '"+ dOrderItemRecord.getStr("route_to")
                             + "' and priceType='"+chargeType+"'");
@@ -272,7 +277,7 @@ public class DeliveryOrderMilestoneController extends Controller {
             }else{
                 contractFinItem = Db
                         .findFirst("select amount, fin_item_id from contract_item where contract_id ="+spContract.getLong("id")
-                                + " and product_id ="+dOrderItemRecord.getLong("product_id")
+//                                + " and product_id ="+dOrderItemRecord.getLong("product_id")
                                 +" and to_id = '"+ dOrderItemRecord.getStr("route_to")
                                 + "' and priceType='"+chargeType+"'");
                 
@@ -307,11 +312,45 @@ public class DeliveryOrderMilestoneController extends Controller {
         java.sql.Timestamp now = new java.sql.Timestamp(utilDate.getTime());
         DeliveryOrderFinItem deliveryFinItem = new DeliveryOrderFinItem();
         deliveryFinItem.set("fin_item_id", contractFinItem.getLong("fin_item_id"));
+        
+        double t_weight_one = tOrderItemRecord.getDouble("sum_weight") ;
+        double t_weight_all = tOrderItemRecord.getDouble("sum_weight") ;
+        
+        double amount = contractFinItem.getDouble("amount");  //0-100kg
+        double amount1 = contractFinItem.getDouble("amount1");  //100-200kg
+        double amount2 = contractFinItem.getDouble("amount2"); //201-300kg
+        double amount3 = contractFinItem.getDouble("amount3"); //301-400kg
+        double amount4 = contractFinItem.getDouble("amount4"); //401kg~
+        //配送单合同
         if("perCar".equals(chargeType)){
-        	deliveryFinItem.set("amount", contractFinItem.getDouble("amount"));        		
+        	if (t_weight_all < 100){
+        		deliveryFinItem.set("amount", amount);     
+        	} else if(100 <= t_weight_all && t_weight_all <= 200){
+        		deliveryFinItem.set("amount", amount1);  
+        	} else if(200 < t_weight_all && t_weight_all <= 300){
+        		deliveryFinItem.set("amount", amount2); 
+        	} else if(300 < t_weight_all && t_weight_all <= 400){
+        		deliveryFinItem.set("amount", amount3);     
+        	} else if(400 < t_weight_all){
+        		deliveryFinItem.set("amount", amount4);     
+        	} else {
+        		deliveryFinItem.set("amount", amount);     
+        	}      		
     	}else{
     		if(tOrderItemRecord != null){
-    			deliveryFinItem.set("amount", contractFinItem.getDouble("amount") * Double.parseDouble(tOrderItemRecord.get("amount").toString()));
+	    		if (t_weight_one < 100){
+	        		deliveryFinItem.set("amount", amount);     
+	        	} else if(100 <= t_weight_one && t_weight_one <= 200){
+	        		deliveryFinItem.set("amount", amount1);  
+	        	} else if(200 < t_weight_one && t_weight_one <= 300){
+	        		deliveryFinItem.set("amount", amount2); 
+	        	} else if(300 < t_weight_one && t_weight_one <= 400){
+	        		deliveryFinItem.set("amount", amount3);     
+	        	} else if(400 < t_weight_one){
+	        		deliveryFinItem.set("amount", amount4);     
+	        	} else {
+	        		deliveryFinItem.set("amount", amount);     
+	        	}   
     		}
     	}
         deliveryFinItem.set("order_id", departOrderId);

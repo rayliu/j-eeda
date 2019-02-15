@@ -305,7 +305,7 @@ public class ContractController extends Controller {
 
             // 获取当前页的数据
             List<Record> orders = Db
-                    .find("select *,c.id as cid,c.is_stop as c_is_stop from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentID + ")"
+                    .find("select *,c.id as cid,c.is_stop as c_is_stop from contract c,party p,contact c1,office o where c.party_id= p.id and p.contact_id = c1.id and c.type='SERVICE_PROVIDER' and o.id = p.office_id and (o.id = " + currentId + " or o.belong_office = " + parentID + ") order by c.id desc "
                             + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
@@ -344,7 +344,7 @@ public class ContractController extends Controller {
                             + phone_filter
                             + "%' and c.period_from like '%"
                             + periodFrom_filter
-                            + "%' and c.period_to like '%" + periodTo_filter + "%'" + sLimit);
+                            + "%' and c.period_to like '%" + periodTo_filter + "%' order by c.id desc" + sLimit);
             orderMap.put("sEcho", pageIndex);
             orderMap.put("iTotalRecords", rec.getLong("total"));
             orderMap.put("iTotalDisplayRecords", rec.getLong("total"));
@@ -407,7 +407,7 @@ public class ContractController extends Controller {
     }
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_CC_UPDAET,PermissionConstant.PERMSSION_CP_UPDATE,PermissionConstant.PERMSSION_CD_UPDATE},logical=Logical.OR)
     public void edit() {
-        String id = getPara();
+        String id = getPara("id");
         if (id != null) {
             Contract contract = Contract.dao.findById(id);
             Contact contact = Contact.dao.findFirst("select * from party p left join contact c on p.contact_id =c.id where p.id ='"
@@ -647,7 +647,7 @@ public class ContractController extends Controller {
         // 获取当前页的数据
         List<Record> orders = null;
         if (contractId != null && contractId.length() > 0) {
-            orders = Db.find("select c.*, fi.name as fin_item_name , p.item_name,"                            
+            orders = Db.find("select c.*, fi.name as fin_item_name , p.item_no item_name,"                            
             		+ " location_from,"
                     + " location_to "
             		+ " from  contract_item c left join product p on c.product_id = p.id left join fin_item fi on c.fin_item_id = fi.id where c.contract_id = "
@@ -848,7 +848,11 @@ public class ContractController extends Controller {
         // 判断合同干线是否存在
         item.set("contract_id", contractId).set("fin_item_id", getPara("fin_item")).set("pricetype", getPara("priceType"))
                 .set("from_id", getPara("route_from")).set("to_id", getPara("route_to")).set("location_from", locationFrom).set("location_to", locationTo)
-                .set("amount", getPara("price")).set("dayfrom", getPara("day"))
+                .set("amount", getPara("price"))
+                .set("amount2", getPara("price2"))
+                .set("amount3", getPara("price3"))
+                .set("amount4", getPara("price4"))
+                .set("dayfrom", getPara("day"))
                 .set("dayto", getPara("day2"));
         
         if (getPara("productId").equals("")) {
@@ -952,11 +956,9 @@ public class ContractController extends Controller {
         String customerId = getPara("customerId");
         List<Record> locationList = Collections.EMPTY_LIST;
         if (input.trim().length() > 0) {
-            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
-                    + ") and item_name like '%" + input + "%' limit 0,10");
+            locationList = Db.find("select * from product where item_no like '%" + input + "%' limit 0,10");
         } else {
-            locationList = Db.find("select * from product where category_id in (select id from category where customer_id = " + customerId
-                    + ")");
+            locationList = Db.find("select * from product where 1 = 1");
         }
         renderJson(locationList);
     }
