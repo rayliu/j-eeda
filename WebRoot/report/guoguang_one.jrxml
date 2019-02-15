@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ralls" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0ad70e3f-e9f0-4944-b70f-531a1df6ff02">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.y" value="192"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -117,14 +117,14 @@ where tor.order_no = $P{order_no}]]>
 				<text><![CDATA[设备型号]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="115" y="363" width="43" height="40" uuid="599698b9-58d6-4aa9-8b66-3f8b64a694dd"/>
+				<reportElement style="table_TD" x="115" y="363" width="47" height="40" uuid="599698b9-58d6-4aa9-8b66-3f8b64a694dd"/>
 				<textElement>
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[类型]]></text>
+				<text><![CDATA[设备类型]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="158" y="363" width="61" height="40" uuid="274dcc8d-9972-4e25-8391-0aa7aeb56abf"/>
+				<reportElement style="table_TD" x="162" y="363" width="57" height="40" uuid="274dcc8d-9972-4e25-8391-0aa7aeb56abf"/>
 				<textElement>
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -180,7 +180,7 @@ where tor.order_no = $P{order_no}]]>
 				<text><![CDATA[1]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" x="158" y="403" width="61" height="47" uuid="b5e47dae-fae5-454c-8e7b-651b13a90c3c"/>
+				<reportElement style="table_TD" x="162" y="403" width="57" height="47" uuid="b5e47dae-fae5-454c-8e7b-651b13a90c3c"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -216,27 +216,27 @@ where tor.order_no = $P{order_no}]]>
 				</textElement>
 			</textField>
 			<frame>
-				<reportElement style="table_TD" x="115" y="403" width="43" height="47" uuid="3ca40206-2114-4643-861a-f04b1e819fd2"/>
-				<staticText>
-					<reportElement x="18" y="10" width="25" height="12" uuid="e3e3c8c8-b48b-49f9-9309-83eac1bae898"/>
-					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[穿墙]]></text>
-				</staticText>
+				<reportElement style="table_TD" x="115" y="403" width="47" height="47" uuid="3ca40206-2114-4643-861a-f04b1e819fd2"/>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="27" width="8" height="8" uuid="fb9918d3-698d-47dc-b62a-f9f53b5b6232"/>
+					<reportElement style="table_TD" x="4" y="29" width="8" height="8" uuid="fb9918d3-698d-47dc-b62a-f9f53b5b6232"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="18" y="25" width="25" height="13" uuid="a1634542-2646-4645-a634-2e29b216aa29"/>
+					<reportElement x="17" y="27" width="28" height="13" uuid="a1634542-2646-4645-a634-2e29b216aa29"/>
 					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<text><![CDATA[大堂]]></text>
+					<text><![CDATA[大堂机]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="12" width="8" height="8" uuid="a5f5b273-4f5f-4ada-9607-9b9f8136bcbb"/>
+					<reportElement style="table_TD" x="4" y="9" width="8" height="8" uuid="a5f5b273-4f5f-4ada-9607-9b9f8136bcbb"/>
 				</rectangle>
+				<staticText>
+					<reportElement x="16" y="8" width="28" height="13" uuid="03547f95-245d-4173-b62f-f8d526444ba4"/>
+					<textElement>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[穿墙机]]></text>
+				</staticText>
 			</frame>
 			<textField isBlankWhenNull="true">
 				<reportElement style="table_TD" x="219" y="403" width="34" height="47" uuid="e0ce557b-9d4d-49ff-8f23-7004d3966146"/>
@@ -277,7 +277,7 @@ where tor.order_no = $P{order_no}]]>
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" x="158" y="450" width="61" height="47" uuid="8970e92f-7b16-4e37-9f2b-09b847c19c9d"/>
+				<reportElement style="table_TD" x="162" y="450" width="57" height="47" uuid="8970e92f-7b16-4e37-9f2b-09b847c19c9d"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -332,7 +332,7 @@ where tor.order_no = $P{order_no}]]>
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" x="158" y="497" width="61" height="47" uuid="bf421c86-7bd2-4682-958d-ecb434521d3f"/>
+				<reportElement style="table_TD" x="162" y="497" width="57" height="47" uuid="bf421c86-7bd2-4682-958d-ecb434521d3f"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -387,7 +387,7 @@ where tor.order_no = $P{order_no}]]>
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" x="158" y="544" width="61" height="47" uuid="b0993cb5-d040-4d81-a663-10d2dda17bb2"/>
+				<reportElement style="table_TD" x="162" y="544" width="57" height="47" uuid="b0993cb5-d040-4d81-a663-10d2dda17bb2"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -665,73 +665,73 @@ where tor.order_no = $P{order_no}]]>
 				<text><![CDATA[其中：木箱]]></text>
 			</staticText>
 			<frame>
-				<reportElement style="table_TD" x="115" y="450" width="43" height="47" uuid="7effad08-fdee-4f4d-b948-cf6199ec6c1e"/>
-				<staticText>
-					<reportElement x="18" y="10" width="25" height="12" uuid="494d22cc-a25d-42ae-bd3b-0469c6f6b0c1"/>
-					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[穿墙]]></text>
-				</staticText>
+				<reportElement style="table_TD" x="115" y="450" width="47" height="47" uuid="7effad08-fdee-4f4d-b948-cf6199ec6c1e"/>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="27" width="8" height="8" uuid="25ae3010-ad7c-4803-aceb-fadef4795f90"/>
+					<reportElement style="table_TD" x="5" y="30" width="8" height="8" uuid="25ae3010-ad7c-4803-aceb-fadef4795f90"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="18" y="25" width="25" height="13" uuid="e508d722-90d6-481f-9794-9a881744fcf5"/>
+					<reportElement x="17" y="28" width="28" height="13" uuid="e508d722-90d6-481f-9794-9a881744fcf5"/>
 					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<text><![CDATA[大堂]]></text>
+					<text><![CDATA[大堂机]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="12" width="8" height="8" uuid="3d87a8b2-00b8-4e14-acbf-7963674d3064"/>
+					<reportElement style="table_TD" x="5" y="10" width="8" height="8" uuid="3d87a8b2-00b8-4e14-acbf-7963674d3064"/>
 				</rectangle>
+				<staticText>
+					<reportElement x="17" y="8" width="28" height="13" uuid="fe2f1b5e-d16b-4267-bedb-98e8f8f85cb4"/>
+					<textElement>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[穿墙机]]></text>
+				</staticText>
 			</frame>
 			<frame>
-				<reportElement style="table_TD" x="115" y="497" width="43" height="47" uuid="18487c7f-3035-4ef9-b7ce-3559bcff63dc"/>
-				<staticText>
-					<reportElement x="18" y="10" width="25" height="12" uuid="49a2625d-6deb-4ea9-ad04-e290f84f97ee"/>
-					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[穿墙]]></text>
-				</staticText>
+				<reportElement style="table_TD" x="115" y="497" width="47" height="47" uuid="18487c7f-3035-4ef9-b7ce-3559bcff63dc"/>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="27" width="8" height="8" uuid="2158ab83-1ffc-45f8-a969-7b2e496284c6"/>
+					<reportElement style="table_TD" x="5" y="29" width="8" height="8" uuid="2158ab83-1ffc-45f8-a969-7b2e496284c6"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="18" y="25" width="25" height="13" uuid="5e4dea9d-7a05-4fe2-8ae0-e8eb6756048d"/>
+					<reportElement x="17" y="27" width="30" height="13" uuid="5e4dea9d-7a05-4fe2-8ae0-e8eb6756048d"/>
 					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<text><![CDATA[大堂]]></text>
+					<text><![CDATA[大堂机]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="12" width="8" height="8" uuid="de1d174e-cb9f-4a04-a0bc-ac14e5fe1704"/>
+					<reportElement style="table_TD" x="5" y="10" width="8" height="8" uuid="de1d174e-cb9f-4a04-a0bc-ac14e5fe1704"/>
 				</rectangle>
+				<staticText>
+					<reportElement x="18" y="8" width="28" height="13" uuid="8a5ae64c-6a16-4c16-8370-805a2f3b7119"/>
+					<textElement>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[穿墙机]]></text>
+				</staticText>
 			</frame>
 			<frame>
-				<reportElement style="table_TD" x="115" y="544" width="43" height="47" uuid="1c54d4c5-774d-4b70-9d1d-4a44a8394168"/>
-				<staticText>
-					<reportElement x="18" y="10" width="25" height="12" uuid="9cd7fdbd-3fa9-491e-b142-a2bfad55000a"/>
-					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-					</textElement>
-					<text><![CDATA[穿墙]]></text>
-				</staticText>
+				<reportElement style="table_TD" x="115" y="544" width="47" height="47" uuid="1c54d4c5-774d-4b70-9d1d-4a44a8394168"/>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="27" width="8" height="8" uuid="6ac9c387-bf34-478d-b30a-3f3e21a6afe0"/>
+					<reportElement style="table_TD" x="5" y="28" width="8" height="8" uuid="6ac9c387-bf34-478d-b30a-3f3e21a6afe0"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="18" y="25" width="25" height="13" uuid="e8a4db71-cf6b-4cb0-a7db-ad1b5c4ee86d"/>
+					<reportElement x="17" y="27" width="30" height="13" uuid="e8a4db71-cf6b-4cb0-a7db-ad1b5c4ee86d"/>
 					<textElement>
-						<font fontName="宋体" size="8" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
-					<text><![CDATA[大堂]]></text>
+					<text><![CDATA[大堂机]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="table_TD" x="8" y="12" width="8" height="8" uuid="efbbd47f-5bbf-43a0-8e03-6210354c3830"/>
+					<reportElement style="table_TD" x="5" y="10" width="8" height="8" uuid="efbbd47f-5bbf-43a0-8e03-6210354c3830"/>
 				</rectangle>
+				<staticText>
+					<reportElement x="17" y="7" width="30" height="13" uuid="ffbd11b2-b011-4e1c-80e8-02befc140264"/>
+					<textElement>
+						<font fontName="宋体" size="8" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[穿墙机]]></text>
+				</staticText>
 			</frame>
 			<textField>
 				<reportElement x="446" y="65" width="40" height="20" uuid="4d8e3496-4390-4191-a485-e3d41099a9ea"/>
@@ -748,7 +748,7 @@ where tor.order_no = $P{order_no}]]>
 				<text><![CDATA[NO:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="159" y="418" width="59" height="20" uuid="a369cbb1-bfee-4123-9c38-c237e1697fb7"/>
+				<reportElement x="162" y="418" width="56" height="20" uuid="a369cbb1-bfee-4123-9c38-c237e1697fb7"/>
 				<textFieldExpression><![CDATA[$F{serial_no}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">

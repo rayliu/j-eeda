@@ -300,7 +300,7 @@ where tor.order_no = $P{order_no}
 				<textElement>
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[类型]]></text>
+				<text><![CDATA[设备类型]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="table_TD" x="147" y="210" width="52" height="29" uuid="274dcc8d-9972-4e25-8391-0aa7aeb56abf"/>
@@ -391,14 +391,14 @@ where tor.order_no = $P{order_no}
 				<reportElement style="table_TD" x="95" y="239" width="52" height="56" uuid="3ca40206-2114-4643-861a-f04b1e819fd2"/>
 			</frame>
 			<staticText>
-				<reportElement x="113" y="252" width="25" height="20" uuid="e3e3c8c8-b48b-49f9-9309-83eac1bae898"/>
+				<reportElement x="113" y="249" width="25" height="20" uuid="e3e3c8c8-b48b-49f9-9309-83eac1bae898"/>
 				<textElement>
 					<font fontName="宋体" size="12" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[穿墙]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement style="table_TD" x="105" y="277" width="8" height="8" uuid="fb9918d3-698d-47dc-b62a-f9f53b5b6232"/>
+				<reportElement style="table_TD" x="101" y="277" width="8" height="8" uuid="fb9918d3-698d-47dc-b62a-f9f53b5b6232"/>
 			</rectangle>
 			<staticText>
 				<reportElement x="113" y="274" width="25" height="20" uuid="a1634542-2646-4645-a634-2e29b216aa29"/>
@@ -408,7 +408,7 @@ where tor.order_no = $P{order_no}
 				<text><![CDATA[大堂]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement style="table_TD" x="105" y="255" width="8" height="8" uuid="a5f5b273-4f5f-4ada-9607-9b9f8136bcbb"/>
+				<reportElement style="table_TD" x="101" y="255" width="8" height="8" uuid="a5f5b273-4f5f-4ada-9607-9b9f8136bcbb"/>
 			</rectangle>
 			<textField isBlankWhenNull="true">
 				<reportElement style="table_TD" x="199" y="239" width="34" height="56" uuid="e0ce557b-9d4d-49ff-8f23-7004d3966146"/>

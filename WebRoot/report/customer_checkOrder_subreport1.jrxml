@@ -102,6 +102,7 @@ LEFT JOIN contact c4 ON c4.id = p4.contact_id
 left join user_login ul on ul.id = aco.create_by
 where aci.charge_order_id=$P{order_id}
 and aci.ref_order_type='回单'
+group by aci.id
 UNION
 SELECT
 amco.order_no  order_no,
@@ -123,7 +124,8 @@ LEFT JOIN arap_charge_order aco on aco.id =aci.charge_order_id
 LEFT JOIN arap_misc_charge_order amco ON amco.id = aci.ref_order_id
 left join user_login ul on ul.id = aco.create_by
 where aci.charge_order_id=$P{order_id}
-and aci.ref_order_type='收入单']]>
+and aci.ref_order_type='收入单'
+group by aci.id]]>
 	</queryString>
 	<field name="order_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
