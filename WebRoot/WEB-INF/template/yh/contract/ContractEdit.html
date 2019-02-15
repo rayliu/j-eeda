@@ -191,7 +191,10 @@
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用名称</th>
-                                                <th>金额</th>
+                                                <th>金额(100-200kg默认)</th>
+                                                <th>金额(201-300kg)</th>
+                                                <th>金额(301-400kg)</th>
+                                                <th>金额(400kg以上)</th>
 	                                            <th>路程(KM)</th>
 	                                            <th>天数</th>	                                            
 	                                            <th></th>
@@ -219,7 +222,10 @@
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用名称</th>
-                                                <th>金额</th>
+                                                <th>金额(100-200kg默认)</th>
+                                                <th>金额(201-300kg)</th>
+                                                <th>金额(301-400kg)</th>
+                                                <th>金额(400kg以上)</th>
 	                                            <th>天数</th>
 	                                            <th>产品</th>
 	                                            <th></th>
@@ -246,7 +252,10 @@
 	                                            <th>始发地</th>
 	                                            <th>目的地</th>
 	                                            <th>费用名称</th>
-                                                <th>金额</th>
+                                                <th>金额(100-200kg默认)</th>
+                                                <th>金额(201-300kg)</th>
+                                                <th>金额(301-400kg)</th>
+                                                <th>金额(400kg以上)</th>
 	                                            <th>天数</th>
 	                                            <th>产品</th>
 	                                            <th></th>
@@ -276,6 +285,14 @@
 			                             	 		<input id="routeItemId" name="routeItemId" type="hidden" value ="">
 			                                        <!-- 根据 始发地 和 目的地 找到 干线id-->
 			                                        <div class="modal-body">
+			                                        	<div class="form-group ">
+                                                        	<input id="productId" type="hidden" name="productId" />
+															<label class="control-label" for="inputSuccess">货品名称</label>
+															<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
+			                                                <ul id='itemNameList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
+			    											</ul>
+			    											<p id="tishi1" style="font-weight:bold;color:#ff0000;"></p>
+														</div>
                                                         <div class="form-group">
                                                             <label>计费方式:</label>
                                                             <input type="hidden" name="priceType" id="priceTypeHidden" value="" >
@@ -418,6 +435,7 @@
 					                                           <select  id="cmbAreaTo" name="cmbAreaTo" value=""></select>
 					                                       </div>
 			                                           </div>
+			
 			                                           
                                                         <div class="form-group" id="ltlUnitType">
                                                             <label>零担计费方式</label>
@@ -447,24 +465,31 @@
                                                                 <%}%>
                                                              </select>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <lable>金额</lable>
-                                                            <input class="form-control" id="price" name="price" type="text">
-                                                            <p id="tishi" style="font-weight:bold;color:#ff0000;"></p>
-                                                        </div>
+                                                        <br>
+                                                        	<div class="form-group">
+                                                        		<lable>金额(100-200kg)</lable>
+                                                            	<input class="form-control" id="price" name="price" type="text">
+                                                            	<p id="tishi" style="font-weight:bold;color:#ff0000;"></p>
+                                                        	</div>
+                                                        	<div class="form-group">
+                                                        		<lable>金额(201-300kg)</lable>
+                                                            	<input class="form-control" id="price2" name="price2" type="text">
+                                                        	</div>
+                                                        	<div class="form-group">
+                                                        		<lable>金额(301-400kg)</lable>
+                                                            	<input class="form-control" id="price3" name="price3" type="text">
+                                                        	</div>
+                                                        	<div class="form-group">
+                                                        		<lable>金额(401kg以上)</lable>
+                                                            	<input class="form-control" id="price4" name="price4" type="text">
+                                                        	</div>
+                                                        <br>
                                                          <div class="form-group">
                                                             <lable>天数</lable>
                                                             <input class="form-control search-control" id="day" name="day" type="text" style="width:20%"> ~ 
                                                             <input class="form-control search-control" id="day2" name="day2" type="text" style="width:20%">
                                                         </div>
-                                                        <div class="form-group ">
-                                                        	<input id="productId" type="hidden" name="productId" />
-															<label class="control-label" for="inputSuccess">货品名称</label>
-															<input id="itemNameMessage" class="form-control dropdown-toggle" placeholder="请输入货品名称" type="text" name="item_name" data-toggle="dropdown">
-			                                                <ul id='itemNameList' class="pull-right dropdown-menu default dropdown-scroll" tabindex="-1" style="top: 17%; left: 2%;" role="menu">
-			    											</ul>
-			    											<p id="tishi1" style="font-weight:bold;color:#ff0000;"></p>
-														</div>
+                                                        
 													</div>
 			    		             				<input id="reset" name="" type="reset"/>
 			                             	 	</form>	
@@ -511,7 +536,7 @@
 <!-- 引入校验的js 文件及其 中文 文件-->
 <script src="/yh/js/jquery.validate.min.js"></script>
 <script src="/yh/js/jvalidate.messages_cn.js"></script>
-<script src="/yh/js/contract/contract.js"></script>
+<script src="/yh/js/contract/contract.js?V=3"></script>
 <script>
 	if('${ul.name!''}'){
 		document.title = '${ul.name!''}'+' | '+document.title;

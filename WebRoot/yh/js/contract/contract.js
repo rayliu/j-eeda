@@ -42,6 +42,9 @@ $(document).ready(function() {
 	            {"mDataProp":"LOCATION_TO"},
 	            {"mDataProp":"FIN_ITEM_NAME"},
 	            {"mDataProp":"AMOUNT"},
+	            {"mDataProp":"AMOUNT2"},
+	            {"mDataProp":"AMOUNT3"},
+	            {"mDataProp":"AMOUNT4"},
 	            {"mDataProp":"KILOMETER"},
 	            {"mDataProp":null,
 	            	"fnRender": function(obj) {
@@ -97,6 +100,9 @@ $(document).ready(function() {
 		            {"mDataProp":"LOCATION_TO"},
 		            {"mDataProp":"FIN_ITEM_NAME"},
 		            {"mDataProp":"AMOUNT"},
+		            {"mDataProp":"AMOUNT2"},
+		            {"mDataProp":"AMOUNT3"},
+		            {"mDataProp":"AMOUNT4"},
 		            {"mDataProp":null,
 		            	"fnRender": function(obj) {  
 		            		if(obj.aData.TO_ID != "" && obj.aData.TO_ID != null){
@@ -184,6 +190,9 @@ $(document).ready(function() {
 		            {"mDataProp":"LOCATION_TO"},
 		            {"mDataProp":"FIN_ITEM_NAME"},
 		            {"mDataProp":"AMOUNT"},
+		            {"mDataProp":"AMOUNT2"},
+		            {"mDataProp":"AMOUNT3"},
+		            {"mDataProp":"AMOUNT4"},
 		            {"mDataProp":null,
 		            	"fnRender": function(obj) {                    
 		                    return buildRange(obj.aData.DAYFROM, obj.aData.DAYTO);
@@ -241,6 +250,9 @@ $(document).ready(function() {
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $("#fin_item_list").val(data[0].FIN_ITEM_ID);
                 	 $('#price').val(data[0].AMOUNT);
+                	 $('#price2').val(data[0].AMOUNT2);
+                	 $('#price3').val(data[0].AMOUNT3);
+                	 $('#price4').val(data[0].AMOUNT4);
                 	 $('#routeItemId').val(data[0].ID);
                 	 $('#day').val(data[0].DAYFROM);
                 	 $('#day2').val(data[0].DAYTO);
@@ -282,6 +294,9 @@ $(document).ready(function() {
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $("#fin_item_list").val(data[0].FIN_ITEM_ID);
                 	 $('#price').val(data[0].AMOUNT);
+                	 $('#price2').val(data[0].AMOUNT2);
+                	 $('#price3').val(data[0].AMOUNT3);
+                	 $('#price4').val(data[0].AMOUNT4);
                 	 $('#routeItemId').val(data[0].ID);
                 	 $('#day').val(data[0].DAYFROM);
                 	 $('#day2').val(data[0].DAYTO);
@@ -325,6 +340,9 @@ $(document).ready(function() {
                 	 $('#to_id').val(data[0].TO_ID);
                 	 $("#fin_item_list").val(data[0].FIN_ITEM_ID);
                 	 $('#price').val(data[0].AMOUNT);
+                	 $('#price2').val(data[0].AMOUNT2);
+                	 $('#price3').val(data[0].AMOUNT3);
+                	 $('#price4').val(data[0].AMOUNT4);
                 	 $('#routeItemId').val(data[0].ID);
                 	 $('#day').val(data[0].DAYFROM);
                 	 $('#day2').val(data[0].DAYTO);
@@ -472,6 +490,15 @@ $(document).ready(function() {
 	          price:{
 	          	number:true
 	          },
+	          price2:{
+	          	number:true
+	          },
+	          price3:{
+		          number:true
+	          },
+	          price4:{
+	          	number:true
+	          },
 	          day: {
 	            number:true
 	          },
@@ -494,6 +521,9 @@ $(document).ready(function() {
 	     	$("#cmbAreaFrom").empty();
 	     	$("#cmbAreaTo").empty();
 	     	$("#price").val("");
+	     	$("#price2").val("");
+	     	$("#price3").val("");
+	     	$("#price4").val("");
 	     	$("#day").val("");
 	     	$("#day2").val("");
 	     	$("#itemNameMessage").val("");
@@ -584,6 +614,9 @@ $(document).ready(function() {
         	//新增时初始地id
         	var saveid1 = [];
 		    var price = $("#price").val();
+		    var price2 = $("#price2").val();
+		    var price3 = $("#price3").val();
+		    var price4 = $("#price4").val();
 		    var carType2 = $("#carType2").val();
 			$("#tishi").text("");
 			$("#tishi2").text("");
@@ -602,6 +635,12 @@ $(document).ready(function() {
 			}
 			if(isNaN(price)){
 				$("#tishi").text("请输入数字");
+				$("#saveRouteBtn").prop("disabled",false);
+				return false;
+			}
+			
+			if(isNaN(price2) || isNaN(price3) || isNaN(price4)){
+				$.scojs_message('金额请输入数字', $.scojs_message.TYPE_ERROR);
 				$("#saveRouteBtn").prop("disabled",false);
 				return false;
 			}
@@ -1010,7 +1049,7 @@ $(document).ready(function() {
 					if(item_name == null){
 						item_name = '';
 					}
-					itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' item_desc='"+data[i].ITEM_DESC+"' item_no='"+data[i].ITEM_NO+"' expire_date='"+data[i].EXPIRE_DATE+"' lot_no='"+data[i].LOT_NO+"' total_quantity='"+data[i].TOTAL_QUANTITY+"' unit_price='"+data[i].UNIT_PRICE+"' unit_cost='"+data[i].UNIT_COST+"' uom='"+data[i].UOM+"', caton_no='"+data[i].CATON_NO+"', >"+data[i].ITEM_NAME+"</a></li>");
+					itemNameList.append("<li><a tabindex='-1' class='fromLocationItem' id='"+data[i].ID+"' item_desc='"+data[i].ITEM_DESC+"' item_no='"+data[i].ITEM_NO+"' expire_date='"+data[i].EXPIRE_DATE+"' lot_no='"+data[i].LOT_NO+"' total_quantity='"+data[i].TOTAL_QUANTITY+"' unit_price='"+data[i].UNIT_PRICE+"' unit_cost='"+data[i].UNIT_COST+"' uom='"+data[i].UOM+"', caton_no='"+data[i].CATON_NO+"', >"+data[i].ITEM_NO+"</a></li>");
 				}
 			},'json');		
 			$("#itemNameList").css({ 

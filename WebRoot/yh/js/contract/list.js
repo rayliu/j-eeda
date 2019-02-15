@@ -49,7 +49,7 @@ $(document).ready(function() {
             {"mDataProp":"NAME",
               "fnRender": function(obj) { 
             	if(isUpdate){
-            		 return "<a title='编辑' href='"+urlSource2+""+obj.aData.CID+"'target='_blank'>"+obj.aData.NAME+
+            		 return "<a title='编辑' href='/spContract/edit?id="+obj.aData.CID+"'target='_blank'>"+obj.aData.NAME+
                      "</a>";
             	}else{
             		return obj.aData.NAME;
@@ -81,7 +81,7 @@ $(document).ready(function() {
                 	var str ="<nobr>";
                 	
                 	if(isUpdate){
-                		str +=  "<a class='btn   btn-primary btn-sm' title='编辑' href='"+urlSource2+""+obj.aData.CID+"'>"+
+                		str +=  "<a class='btn   btn-primary btn-sm' title='编辑' href='/spContract/edit?id="+obj.aData.CID+"'>"+
 		                            "<i class='fa fa-edit fa-fw'></i>编辑"+
 		                        "</a> ";
                 	}
@@ -212,10 +212,7 @@ $(document).ready(function() {
     		 return;
     	 } 
     });
-    if(!flag){
-    	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
-    	 return false;
-    }
+
     tab2.fnSettings().oFeatures.bServerSide = true;
     if(type=='CUSTOMER'){
         tab2.fnSettings().sAjaxSource = "/customerContract/customerList?contractName_filter="+contractName_filter+"&contactPerson_filter="+contactPerson_filter+"&periodFrom_filter="+periodFrom_filter+"&companyName_filter="+companyName_filter+"&phone_filter="+phone_filter+"&periodTo_filter="+periodTo_filter;
