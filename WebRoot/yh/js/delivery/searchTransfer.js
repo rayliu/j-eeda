@@ -80,6 +80,7 @@ $(document).ready(function() {
     	var order_no = null;
     	var shippingNumbers = [];
     	var result = true;
+    	var customerId = null;
     	$("#eeda-table2 tr:not(:first)").each(function(){
         	$("input:checked",this).each(function(){
         		if($(this).parent().parent().find("td>input[name='amount']").val() == ""){
@@ -101,6 +102,7 @@ $(document).ready(function() {
         		shippingNumbers.push(itemId+':'+itemNum);
         		transferItemIds.push(itemId);
         		order_no = $(this).parent().parent().attr("order_no");
+        		customerId = $(this).attr("code3");
         	});
     	}); 
     	if(result){
@@ -110,6 +112,7 @@ $(document).ready(function() {
         	$("#transferItemIds").val(transferItemIds);
         	/*$("#transferOrderNo").val()*/
         	$("#transferOrderNo1").val();
+        	$("#customerId").val(customerId);
             $('#createCargoForm').submit();
     	}
 	});
