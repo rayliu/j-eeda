@@ -50,6 +50,7 @@ import org.apache.tools.zip.ZipOutputStream;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -1238,8 +1239,13 @@ public class ReturnOrderController extends Controller {
 		String sqlTotal = "";
 		String sql = "";
 		ReturnOrder returnorder=ReturnOrder.dao.findById(returnOrderId);
-		Record transferOrder = Db
-				.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id =?", transferOrderId);
+		Record transferOrder = new Record();
+		if(returnorder.getLong("transfer_order_id")!=null){
+			transferOrder =  Db.findFirst("select cargo_nature,cargo_nature_detail from transfer_order where id =?",returnorder.getLong("transfer_order_id"));
+		}else if(returnorder.getLong("delivery_order_id")!=null){
+			transferOrder = Db.findFirst("SELECT tro.cargo_nature,tro.cargo_nature_detail FROM transfer_order tro "
+							+ " LEFT JOIN delivery_order_item doi ON doi.transfer_order_id = tro.id  WHERE doi.delivery_id = ?",returnorder.getLong("delivery_order_id"));
+		}
 		Record  transferDetail= Db
 				.findFirst("select * from transfer_order_item_detail where delivery_refused_id =?",returnorder.getLong("delivery_order_id"));
 		//判断是否为ATM机
