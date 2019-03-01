@@ -41,6 +41,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.eeda.util.LogUtil;
 import controllers.yh.profile.CarinfoController;
 import controllers.yh.util.OrderNoGenerator;
 import controllers.yh.util.ParentOffice;
@@ -1424,6 +1425,7 @@ public class CarSummaryController extends Controller {
     	}
     	order.set("RESULT", result);
     	order.set("MESSAGE", Message);
+    	LogUtil.log_Record(order_id);
     	renderJson(order);
     }
     

@@ -55,6 +55,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.eeda.util.LogUtil;
 import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
 import controllers.yh.returnOrder.ReturnOrderController;
@@ -969,6 +970,7 @@ public class PickupOrderController extends Controller {
  			departOrder.delete();
  			
  			return_rec.set("success", true);
+ 			LogUtil.log_Record(pickupId);
  			renderJson(return_rec);
  		}else{
  			renderJson(return_rec);
@@ -983,8 +985,6 @@ public class PickupOrderController extends Controller {
     	Record order = new Record();
     	String Message = "";
     	Boolean result = false;
-    	
-    	
     	
     	if(StrKit.notBlank(order_id)){
     		order = Db.findById("depart_order", order_id);
@@ -1031,8 +1031,6 @@ public class PickupOrderController extends Controller {
 				    	renderJson(order);
 						return;
     				}
-    				
-    				
     				
     				for (Record record : depart_transfer_list) {
 						Long transfer_order_id = record.getLong("order_id");
@@ -1126,6 +1124,7 @@ public class PickupOrderController extends Controller {
     	}
     	order.set("result", result);
     	order.set("Message", Message);
+    	LogUtil.log_Record(order_id);
     	renderJson(order);
     }
     

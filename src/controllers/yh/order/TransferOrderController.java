@@ -49,6 +49,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
+import controllers.eeda.util.LogUtil;
 import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
@@ -1040,6 +1041,7 @@ public class TransferOrderController extends Controller {
 			//4.删除主表
 			TransferOrder order = TransferOrder.dao.findById(id);
 			order.delete();
+			LogUtil.log_Record(id);//撤销操作记录
 			renderJson("{\"success\":true}");
 		} else {
 			renderJson("{\"success\":false}");

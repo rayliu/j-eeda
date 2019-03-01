@@ -49,6 +49,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.eeda.util.LogUtil;
 import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
 import controllers.yh.util.LocationUtil;
@@ -3078,7 +3079,7 @@ public class DepartOrderController extends Controller {
     			
     			to.update();
 			}
-    		
+    		LogUtil.log_Record(id);
     		renderJson("{\"success\":true}");
     	}
     }
@@ -3164,7 +3165,7 @@ public class DepartOrderController extends Controller {
   		//更新发车单状态
         departOrder.set("status", "运输在途");
         departOrder.set("audit_status", "新建").update();	
-		
+		LogUtil.log_Record(depart_id);
   		renderJson("{\"success\":true}");	
   	}
   	

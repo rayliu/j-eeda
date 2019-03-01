@@ -893,6 +893,7 @@ $(document).ready(function() {
 			$("#saveBtn").attr("disabled",false);
 		}else{
 			$("#ConfirmationBtn").attr("disabled", true);
+            $("#saveBtn").attr("disabled",true);
 		}
 	}) ;
 	
@@ -1657,6 +1658,19 @@ $(document).ready(function() {
            var depart_date = $("input[name='depart_date']").val();
            var order_id = $("#delivery_id").val();
            var car_id = $("input[name='car_id']").val();
+           if(modeDelvery=="out_source"){
+                if(!sp_id){
+                    $.scojs_message("供应商信息不能为空",$.scojs_message.TYPE_ERROR);
+                    self.disabled = false;
+                    return false;
+                }
+           }else if(modeDelvery == "own"){
+                if(!car_id){
+                    $.scojs_message("司机信息不能为空",$.scojs_message.TYPE_ERROR);
+                    self.disabled = false;
+                    return false;
+                }
+           }
            $.post("/delivery/update_deliveryModes",{order_id:order_id,car_id:car_id,modeDelvery:modeDelvery,customerDelveryNo:customerDelveryNo,SignNo:SignNo,sp_id:sp_id,order_delivery_stamp:order_delivery_stamp,client_order_stamp:client_order_stamp,business_stamp:business_stamp,depart_date:depart_date},function(data){
                self.disabled = false;
                if(data.RESULT){

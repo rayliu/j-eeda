@@ -53,6 +53,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 
+import controllers.eeda.util.LogUtil;
 import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
 import controllers.yh.returnOrder.ReturnOrderController;
@@ -2791,48 +2792,56 @@ public class DeliveryController extends Controller {
     	Record delivery_order = Db.findById("delivery_order", delivery_id);
     	String Message = "";
     	Boolean results = false;
-    	if("新建".equals(delivery_order.getStr("STATUS"))||"计划中".equals(delivery_order.getStr("STATUS"))){
-    		if("新建".equals(delivery_order.getStr("audit_status"))&&"cargo".equals(delivery_order.getStr("cargo_nature"))){
-    			List<Record> delivery_order_milestone = Db.find("select * from delivery_order_milestone where delivery_id = ?",delivery_id);
-    			for (Record record : delivery_order_milestone) {
-					Db.delete("delivery_order_milestone", record);
-				}
-    			List<Record> delivery_order_item = Db.find("select * from delivery_order_item where delivery_id = ?",delivery_id);
-    			int count = delivery_order_item.size();
-    			int result_del = 0;
-    			for (Record record : delivery_order_item) {
-					Long transfer_item_id= record.getLong("transfer_item_id");
-					if(transfer_item_id!=null){
-						Record transfer_order_item = Db.findById("transfer_order_item", transfer_item_id);
+    	if(!"新建".equals(delivery_order.getStr("STATUS"))&&!"计划中".equals(delivery_order.getStr("STATUS"))){
+    		Message = "单据是新建或计划中状态才可以撤销";
+    	}else if(!"新建".equals(delivery_order.getStr("audit_status"))){
+    		Message = "当前财务单据状态为 '"+delivery_order.getStr("audit_status")+"'，无法撤销";
+    	}else{
+    		List<Record> delivery_order_item = Db.find("select * from delivery_order_item where delivery_id = ?",delivery_id);
+			int count = delivery_order_item.size();
+			int result_del = 0;
+			for (Record record : delivery_order_item) {
+				Long transfer_order_id  = record.getLong("transfer_order_id");
+				Boolean result = false;
+				if(transfer_order_id!=null){
+					Record transfer_order = Db.findById("transfer_order", transfer_order_id);
+					if("cargoNatureDetailNo".equals(transfer_order.getStr("cargo_nature_detail"))){//不是单品管理
 						if(record.getDouble("amount")!=null){
-							transfer_order_item.set("complete_amount", (transfer_order_item.getDouble("complete_amount")-record.getDouble("amount")));
-						}else{
-							transfer_order_item.set("complete_amount", 0);
+							Long transfer_item_id= record.getLong("transfer_item_id");
+							Record transfer_order_item = Db.findById("transfer_order_item", transfer_item_id);
+							Double complete_amount = transfer_order_item.getDouble("complete_amount")-record.getDouble("amount");
+							if(complete_amount<0){
+								transfer_order_item.set("complete_amount", 0);
+							}else{
+								transfer_order_item.set("complete_amount", complete_amount);
+							}
+							result =Db.update("transfer_order_item", transfer_order_item);
 						}
-						Boolean result =Db.update("transfer_order_item", transfer_order_item);
-						if(result){
-							Db.delete("delivery_order_item", record);
-							result_del ++;
-						}
+					}else if("cargoNatureDetailYes".equals(transfer_order.getStr("cargo_nature_detail"))){
+						Long transfer_item_detail_id = record.getLong("transfer_item_detail_id");
+						Record transfer_order_item_detail = Db.findById("transfer_order_item_detail", transfer_item_detail_id);
+						transfer_order_item_detail.set("delivery_id", null);
+						result= Db.update("transfer_order_item_detail",transfer_order_item_detail);
+					}
+					if(result){
+						Db.delete("delivery_order_item", record);
+						result_del ++;
 					}
 				}
-    			if(count ==result_del){
-    				Db.delete("delivery_order", delivery_order);
-    				Message = "撤销成功!,3秒后自动返回。。。";
-    				results =true;
-    			}else{
-    				throw new Exception("撤销失败");
-    			}
-        	}else if("!新建".equals(delivery_order.getStr("audit_status"))){
-        		Message = "已存在财务单据，无法撤销";
-        	}else if("AMT".equals(delivery_order.getStr("cargo_nature"))){
-        		Message = "货品属性为'ATM'的单据暂不支持撤销";
-        	}
-    	}else{
-    		Message = "单据是新建或计划中状态才可以撤销";
+			}
+			if(count ==result_del){
+				Db.update("DELETE FROM delivery_order_milestone WHERE delivery_id = ?",delivery_id);//里程记录删除
+				Db.update("DELETE FROM delivery_order_fin_item WHERE order_id = ?",delivery_id);//费用明细删除
+				Db.delete("delivery_order", delivery_order);
+				Message = "撤销成功!,3秒后自动返回。。。";
+				results =true;
+			}else{
+				throw new Exception("撤销失败");
+			}
     	}
     	delivery_order.set("result",results);
     	delivery_order.set("Message", Message);
+    	LogUtil.log_Record(delivery_id);
     	renderJson(delivery_order);
     }
     
@@ -2852,43 +2861,75 @@ public class DeliveryController extends Controller {
     	Record order = new Record();
     	if(StrKit.notBlank(order_id)){
     		order= Db.findById("delivery_order", order_id);
-    		if("out_source".equals(modeDelvery)){//外包
-    			if("对账已确认".equals(order.getStr("audit_status"))){
-    				order.set("deliveryMode", modeDelvery);
-    				order.set("customer_delivery_no", customerDelveryNo);
-    				order.set("ref_no", SignNo);
-    				order.set("sp_id", sp_id);
-    				order.set("order_delivery_stamp", order_delivery_stamp);
-    				order.set("client_order_stamp", client_order_stamp);
-    				order.set("business_stamp", business_stamp);
-    				order.set("depart_stamp", depart_date);
-    				result = Db.update("delivery_order", order);
-    				Message="更新成功";
-    			}else{
-    				Message="该单据已做财务，无法更新信息";
-    			}
-    		}else if("own".equals(modeDelvery)){//自营
-    			Record check = Db.findFirst("SELECT * FROM car_summary_detail WHERE car_summary_id =?",car_id);
-    			if(check==null){
-    				order.set("deliveryMode", modeDelvery);
-    				order.set("customer_delivery_no", customerDelveryNo);
-    				order.set("ref_no", SignNo);
-    				order.set("car_id", car_id);
-    				order.set("order_delivery_stamp", order_delivery_stamp);
-    				order.set("client_order_stamp", client_order_stamp);
-    				order.set("business_stamp", business_stamp);
-    				order.set("depart_stamp", depart_date);
-    				result = Db.update("delivery_order", order);
-    				Message="更新成功";
-    			}else{
-    				Message ="更新失败，该司机已被指派";
-    			}
+    		if(order!=null){
+    			if("已确认".equals(order.getStr("audit_status"))||"对账已确认".equals(order.getStr("audit_status"))){
+        			Message="该单据已做财务，无法更新信息";
+        		}else{
+        			if("out_source".equals(modeDelvery)){//外包
+        				order.set("deliveryMode", modeDelvery);
+        				order.set("customer_delivery_no", customerDelveryNo);
+        				order.set("ref_no", SignNo);
+        				order.set("sp_id", sp_id);
+        				if(StrKit.notBlank(order_delivery_stamp)){
+	    					order.set("order_delivery_stamp", order_delivery_stamp);
+	    				}else{
+	    					order.set("order_delivery_stamp", null);
+	    				}
+	    				if(StrKit.notBlank(client_order_stamp)){
+	    					order.set("client_order_stamp", client_order_stamp);
+	    				}else{
+	    					order.set("client_order_stamp", null);
+	    				}
+	    				if(StrKit.notBlank(business_stamp)){
+	    					order.set("business_stamp", business_stamp);
+	    				}else{
+	    					order.set("business_stamp", null);
+	    				}
+	    				if(StrKit.notBlank(depart_date)){
+	    					order.set("depart_stamp", depart_date);
+	    				}
+        				result = Db.update("delivery_order", order);
+        				Message="更新成功";
+        			}else if("own".equals(modeDelvery)){//自营
+        				if("processed".equals(order.getStr("car_summary_type"))){
+        					Message = "该单据已有行车单，无法变更信息";
+        				}else{
+        	    				order.set("deliveryMode", modeDelvery);
+        	    				order.set("customer_delivery_no", customerDelveryNo);
+        	    				order.set("ref_no", SignNo);
+        	    				order.set("car_id", car_id);
+        	    				if(StrKit.notBlank(order_delivery_stamp)){
+        	    					order.set("order_delivery_stamp", order_delivery_stamp);
+        	    				}else{
+        	    					order.set("order_delivery_stamp", null);
+        	    				}
+        	    				if(StrKit.notBlank(client_order_stamp)){
+        	    					order.set("client_order_stamp", client_order_stamp);
+        	    				}else{
+        	    					order.set("client_order_stamp", null);
+        	    				}
+        	    				if(StrKit.notBlank(business_stamp)){
+        	    					order.set("business_stamp", business_stamp);
+        	    				}else{
+        	    					order.set("business_stamp", null);
+        	    				}
+        	    				if(StrKit.notBlank(depart_date)){
+        	    					order.set("depart_stamp", depart_date);
+        	    				}
+        	    				result = Db.update("delivery_order", order);
+        	    				Message="更新成功";
+        				}
+        			}
+        		}
+    		}else{
+    			Message = "单据不存在，请刷新页面或者重试";
     		}
     	}else {
     		Message = "单据不存在，请刷新页面或者重试";
     	}
     	order.set("result", result);
     	order.set("Message", Message);
+    	LogUtil.log_Record(order_id);
     	renderJson(order);
     }
 	
