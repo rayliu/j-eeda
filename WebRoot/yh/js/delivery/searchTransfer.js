@@ -826,7 +826,6 @@ $(document).ready(function() {
         var inputStrrdc=$("#rdc").val();
         
        //如果客户和仓库都有值，触发查询
-       debugger
         if((rdc!=null&&rdc!="")||(inputStr!=null&&inputStr!="")||(warehouseName!=null&&warehouseName!="")||(customer_order_number!=null&&customer_order_number!="")||(code!=null&&code!="")||(deliveryOrderNo!=null&&deliveryOrderNo!="")||(singleid!=null&&singleid!="")||(inputStrrdc!=null&&inputStrrdc!="")){
 	    	dab.fnSettings().oFeatures.bServerSide = true;
 			dab.fnSettings().sAjaxSource ="/delivery/searchTransferByATM?customerName="+inputStr+"&warehouse="+warehouseName+"&code="+code+"&deliveryOrderNo="+deliveryOrderNo+"&customer_order_number="+customer_order_number+"&singleid="+singleid+"&inputStrrdc="+inputStrrdc+"&rdc="+rdc;

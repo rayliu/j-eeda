@@ -2524,7 +2524,7 @@ public class DeliveryController extends Controller {
 			//4.删除主表
 			DeliveryOrder dor = DeliveryOrder.dao.findById(id);
 			dor.delete();
-			
+			LogUtil.log_Record(id, dor.getStr("order_no"), null);
 			renderJson("{\"success\":true}");
 		} else {
 			renderJson("{\"success\":false}");
@@ -2821,6 +2821,7 @@ public class DeliveryController extends Controller {
 						Long transfer_item_detail_id = record.getLong("transfer_item_detail_id");
 						Record transfer_order_item_detail = Db.findById("transfer_order_item_detail", transfer_item_detail_id);
 						transfer_order_item_detail.set("delivery_id", null);
+						transfer_order_item_detail.set("is_delivered", 0);
 						result= Db.update("transfer_order_item_detail",transfer_order_item_detail);
 					}
 					if(result){
@@ -2841,7 +2842,7 @@ public class DeliveryController extends Controller {
     	}
     	delivery_order.set("result",results);
     	delivery_order.set("Message", Message);
-    	LogUtil.log_Record(delivery_id);
+    	LogUtil.log_Record(delivery_id,delivery_order.getStr("order_no"),null);
     	renderJson(delivery_order);
     }
     
@@ -2929,7 +2930,10 @@ public class DeliveryController extends Controller {
     	}
     	order.set("result", result);
     	order.set("Message", Message);
-    	LogUtil.log_Record(order_id);
+    	String json = "{order_id:"+order_id+",modeDelvery:"+modeDelvery+",customerDelveryNo:"+customerDelveryNo+","
+    			+ "SignNo:"+SignNo+",sp_id:"+sp_id+",order_delivery_stamp:"+order_delivery_stamp+",client_order_stamp:"+client_order_stamp+",business_stamp:"+business_stamp+","
+    			+ "depart_date:"+depart_date+",car_id:"+car_id+"}";
+    	LogUtil.log_Record(order_id,order.getStr("order_no"),json);
     	renderJson(order);
     }
 	

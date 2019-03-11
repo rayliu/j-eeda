@@ -3079,7 +3079,7 @@ public class DepartOrderController extends Controller {
     			
     			to.update();
 			}
-    		LogUtil.log_Record(id);
+    		LogUtil.log_Record(id,dep.getStr("depart_no"),null);
     		renderJson("{\"success\":true}");
     	}
     }
@@ -3165,7 +3165,7 @@ public class DepartOrderController extends Controller {
   		//更新发车单状态
         departOrder.set("status", "运输在途");
         departOrder.set("audit_status", "新建").update();	
-		LogUtil.log_Record(depart_id);
+		LogUtil.log_Record(depart_id,departOrder.getStr("depart_no"),null);
   		renderJson("{\"success\":true}");	
   	}
   	
@@ -3288,7 +3288,7 @@ public class DepartOrderController extends Controller {
         for(TransferOrderItemDetail toid:toids){
         	toid.set("status", "已发车").update();
         }
-        
+        LogUtil.log_Record(order_id, departOrder.getStr("depart_no"), null);
         renderJson("{\"success\":true}");
     }
     

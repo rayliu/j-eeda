@@ -970,7 +970,7 @@ public class PickupOrderController extends Controller {
  			departOrder.delete();
  			
  			return_rec.set("success", true);
- 			LogUtil.log_Record(pickupId);
+ 			LogUtil.log_Record(pickupId,departOrder.getStr("DEPART_NO"),null);
  			renderJson(return_rec);
  		}else{
  			renderJson(return_rec);
@@ -1124,7 +1124,7 @@ public class PickupOrderController extends Controller {
     	}
     	order.set("result", result);
     	order.set("Message", Message);
-    	LogUtil.log_Record(order_id);
+    	LogUtil.log_Record(order_id,order.getStr("order_no"),null);
     	renderJson(order);
     }
     
@@ -2881,6 +2881,9 @@ public class PickupOrderController extends Controller {
     	Record order = new Record();
     	order.set("result", result);
     	order.set("error_msg", error_msg);
+    	String json ="{pickupId:"+pickupId+",pickupMode:"+pickupMode+",sp_id:"+sp_id+",driver_id:"+driver_id+","
+    			+ "car_no:"+car_no+",driver:"+driver+",phone:"+phone+"}";
+    	LogUtil.log_Record(pickupId, dp.getStr("order_no"), json);
     	renderJson(order);
     }
     

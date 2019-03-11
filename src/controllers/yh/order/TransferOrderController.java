@@ -1041,7 +1041,7 @@ public class TransferOrderController extends Controller {
 			//4.删除主表
 			TransferOrder order = TransferOrder.dao.findById(id);
 			order.delete();
-			LogUtil.log_Record(id);//撤销操作记录
+			LogUtil.log_Record(id,order.getStr("order_no"),null);//撤销操作记录
 			renderJson("{\"success\":true}");
 		} else {
 			renderJson("{\"success\":false}");

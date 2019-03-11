@@ -888,10 +888,12 @@ $(document).ready(function() {
 		if(order_status == ''){
 			$("#saveBtn").attr("disabled",false);
 		}
-		if(order_status =='新建'|| order_status=='计划中' ){
+		if(order_status =='新建'|| order_status=='计划中'){
 			$("#ConfirmationBtn").attr("disabled", false);
 			$("#saveBtn").attr("disabled",false);
-		}else{
+		}else if(order_status==''){
+            $("#saveBtn").attr("disabled",false);
+        }else{
 			$("#ConfirmationBtn").attr("disabled", true);
             $("#saveBtn").attr("disabled",true);
 		}

@@ -1425,7 +1425,7 @@ public class CarSummaryController extends Controller {
     	}
     	order.set("RESULT", result);
     	order.set("MESSAGE", Message);
-    	LogUtil.log_Record(order_id);
+    	LogUtil.log_Record(order_id,order.getStr("order_no"),null);
     	renderJson(order);
     }
     
