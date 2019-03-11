@@ -210,13 +210,13 @@ public class ServiceProviderController extends Controller {
             contact.update();
         } else {
             //判断供应商简称
-            contact1 = Contact.dao.findFirst("select * from contact where abbr=?",getPara("abbr"));
+            contact1 = Contact.dao.findFirst("select ct.* from contact ct left join party pa on pa.contact_id =ct.id where pa.party_type = 'SERVICE_PROVIDER' and  ct.abbr=?",getPara("abbr"));
             if(contact1!=null){
             	renderText("abbrError");
             	return ;
             }
           //判断供应商全称
-            contact2 = Contact.dao.findFirst("select * from contact where company_name=?",getPara("company_name")); 
+            contact2 = Contact.dao.findFirst("select ct.* from contact ct left join party pa on pa.contact_id =ct.id where pa.party_type = 'SERVICE_PROVIDER' and ct.company_name=?",getPara("company_name")); 
             if(contact2!=null){
             	renderText("companyError");
             	return ;

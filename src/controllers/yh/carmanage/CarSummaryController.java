@@ -1391,7 +1391,7 @@ public class CarSummaryController extends Controller {
     	Boolean result = false;
     	if(order!=null){
     		String status = order.getStr("STATUS");
-    		if("新建".equals(status)||"已审核".equals(status)){//状态效验
+    		if("新建".equals(status)||"已审核".equals(status)||"已审批".equals(status)){//状态效验
     				List<Record> datail_list = Db.find("SELECT * FROM car_summary_detail WHERE car_summary_id = ?",order_id);
     				for (Record record : datail_list) {
     					String pickup_type = record.getStr("pickup_type");

@@ -197,6 +197,7 @@
 			                                        <tr>
                                                         <th></th>
                                                         <th></th>
+                                                        <th></th>
 			                                            <th>回单号/收入单号</th>
 			                                            <th>收入状态</th>
                                                         <th>合计收入</th>
@@ -239,6 +240,7 @@
                                                         <tr class="odd" id="${item.ID!''}" order_type="${item.TPORDER!''}">
                                                             <td class="">${item.ID!''}</td>
                                                             <td class="">${item.TPORDER!''}</td>
+                                                            <td class="">${item.CREATOR!''}</td>
                                                             <td class="">${item.ORDER_NO!''}</td>
                                                             <td class=""></td>
                                                             <td class="">${item.CHARGE_TOTAL_AMOUNT!''}</td>
@@ -270,7 +272,7 @@
                                                             <td class="">${item.WAREHOUSE_AMOUNT!''}</td> 
                                                             <td class=""></td>
                                                             <td class=""></td>
-                                                            <td class=""><a class='btn btn-danger finItemdel' code='"+${item.ID!''}+"' change_amount='"+${item.CHANGE_AMOUNT!''}+"' order_type='"+${item.tporder!''}+"'><i class='fa fa-trash-o fa-fw'> </i>删除</a></td>
+                                                            <td class=""><a class='btn btn-danger finItemdel' code='"+${item.ID!''}+"' change_amount='"+${item.CHANGE_AMOUNT!''}+"' order_type='"+${item.tporder!''}+"' ><i class='fa fa-trash-o fa-fw'> </i>删除</a></td>
                                                         </tr>
                                                     <% }%>
 			                                    </tbody>

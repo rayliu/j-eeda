@@ -251,6 +251,7 @@ $(document).ready(function() {
         "aoColumns": [  
             {"mDataProp":"ID", "bVisible":false},
             {"mDataProp":"TPORDER", "bVisible":false},
+            {"mDataProp":"CREATOR", "bVisible":false},
             {"mDataProp":"ORDER_NO", "sWidth":"100px",
             	"fnRender": function(obj) {
             		if(Return.isUpdate || Return.isComplete){
@@ -342,7 +343,7 @@ $(document).ready(function() {
             {"mDataProp": null, 
                 "sWidth": "20px",                
                 "fnRender": function(obj) {
-                    return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' order_type='"+obj.aData.TPORDER+"' change_amount='"+$(obj.aData.CHANGE_AMOUNT).attr('value')+"' <i class='fa fa-trash-o fa-fw'> </i>删除</a>";
+                    return "<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' c_id='"+obj.aData.CREATOR+"' order_type='"+obj.aData.TPORDER+"' change_amount='"+$(obj.aData.CHANGE_AMOUNT).attr('value')+"'> <i class='fa fa-trash-o fa-fw'> </i>删除</a>";
                 }
             } 
         ]      

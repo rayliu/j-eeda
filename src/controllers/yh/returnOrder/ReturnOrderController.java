@@ -1474,7 +1474,7 @@ public class ReturnOrderController extends Controller {
     		List<UserLogin> users = UserLogin.dao.find("select * from user_login where user_name='" + ggname + "'");
     		String createDate =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 			if ("amount".equals(name)) {
-				returnOrderFinItem.set("remark",users.get(0).getStr("c_name")+">"+createDate+">金额"+returnOrderFinItem.getStr("amount")+"改为"+value+"");
+				returnOrderFinItem.set("remark",users.get(0).getStr("c_name")+">"+createDate+">金额"+returnOrderFinItem.getDouble("amount")+"改为"+value+"");
 			}
 			returnOrderFinItem.set(name, value);
 			returnOrderFinItem.update();
