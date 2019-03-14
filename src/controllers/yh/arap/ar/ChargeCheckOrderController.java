@@ -43,6 +43,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.eeda.util.LogUtil;
 import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
@@ -1330,15 +1331,18 @@ public class ChargeCheckOrderController extends Controller {
     		
     		if ("回单".equals(order_type)) {
 				ReturnOrder ror = ReturnOrder.dao.findById(id);
-				ror.set("transaction_status", "新建");
+				ror.set("transaction_status", "已签收");
 				ror.update();
+				LogUtil.log_Record(id,ror.getStr("order_no"),null);
 			} else if ("收入单".equals(order_type)) {
 				ArapMiscChargeOrder amco = ArapMiscChargeOrder.dao
 						.findById(id);
 				amco.set("status", "新建");
 				amco.update();
-			} 
+				LogUtil.log_Record(id,amco.getStr("order_no"),null);
+			}
         }
+        
 		renderJson("{\"success\":true}");
 	}
 	
