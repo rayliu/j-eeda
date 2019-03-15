@@ -195,7 +195,7 @@ public class ChargeCheckOrderController extends Controller {
 			arapmiscchargeorder.set("status", "已确认");
 			arapmiscchargeorder.update();
 		}
-
+		LogUtil.log_Record("order_id",arapchargeorder.getStr("order_no"),item.toString());
 		renderText("ok");
 	}
 
