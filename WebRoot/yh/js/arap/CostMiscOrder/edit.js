@@ -120,7 +120,7 @@ $(document).ready(function() {
         		CUSTOMER_ORDER_NO: $(row.children[0]).find('input').val(), 
 			 	ITEM_DESC: $(row.children[1]).find('input').val(),
 			 	NAME: $(row.children[2]).find('select').val(),
-			 	AMOUNT: $(row.children[3]).find('input').val(),
+			 	AMOUNT: $.trim($(row.children[3]).find('input').val()),
 			 	STATUS: '新建',
 			 	ID: id,
 			 	ACTION: 'create'
