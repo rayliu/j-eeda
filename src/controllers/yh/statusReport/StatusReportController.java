@@ -2992,7 +2992,7 @@ public class StatusReportController extends Controller{
     @Before(Tx.class)
 	public void deleteReport(){
 		String file_name = getPara("file_name");
-		String url = getRequest( ).getServletContext().getRealPath("/") +file_name;
+		String url = getRequest( ).getServletContext().getRealPath("/") + File.separator + "download/" +file_name;
 		File file = new File(url);
 		String Message="";
 		if (!file.exists()) {

@@ -182,11 +182,18 @@ $(document).ready(function() {
             $(self).html("导出");
             if(data){
                 window.open(data);
+                setTimeout(deleteFile(data),10000);
             }
         }).fail(function(){
             self.disabled = false;
         });
     });
+
+    function deleteFile(file_name){
+        $.post("/statusReport/deleteReport",{file_name:file_name},function(data){
+            console.log(data);
+        });
+    }
     
     $("#queryBtn").on('click', function () {
     	var beginTime = $.trim($("#start_date").val());
