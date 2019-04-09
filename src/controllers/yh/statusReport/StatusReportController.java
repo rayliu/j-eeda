@@ -2,10 +2,13 @@ package controllers.yh.statusReport;
 
 import interceptor.SetAttrLoginUserInterceptor;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,15 +19,22 @@ import models.UserLogin;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 
+import com.google.gson.Gson;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 
 import controllers.yh.order.TransferOrderController;
 import controllers.yh.util.PermissionConstant;
@@ -2681,6 +2691,320 @@ public class StatusReportController extends Controller{
             renderJson(BillingOrderListMap);
          
     }
+    
+    public void export() {
+    	String jsonStr=getPara("params");
+        Gson gson = new Gson();
+        Map<String, ?> dto= gson.fromJson(jsonStr, HashMap.class);
+        List<Map> data = (List<Map>)dto.get("field_list");
+        String[] fields = new String[data.size()];
+   	 	String[] headers = new String[data.size()] ;
+   	 	
+		String orderNo = (String)dto.get("order_no");
+		String customerId = (String)dto.get("customer_id");
+		String beginTime = (String)dto.get("beginTime");
+		String endTime = (String)dto.get("endTime");
+		String route_to = (String)dto.get("route_to");
+		String serial_no = (String)dto.get("serial_no");
+		String receive = (String)dto.get("receive");
+		String noreceive = (String)dto.get("noreceive");
+		String inventory = (String)dto.get("inventory");
+		String order_type = (String)dto.get("order_type");
+		String trans_type = (String)dto.get("trans_type");
+		String compl_begin_time = (String)dto.get("complete_time_begin_time");
+		String compl_end_time = (String)dto.get("complete_time_end_time");
+		String sLimit = "";
+		String condition = "";   //直接从内部开始过滤数据
+		String conditions = "";
+		
+		for (int i = 0; i < data.size(); i++) {
+			Map data_map = data.get(i);
+			if(StrKit.notBlank((String) data_map.get("title"))&&StrKit.notBlank((String) data_map.get("value"))){
+				headers[i] = (String) data_map.get("title");
+				fields[i] = (String) data_map.get("value");
+			}
+		}
+		
+		if(orderNo != null || customerId != null || beginTime != null|| endTime != null ){
+			String time ="";
+			if ((beginTime == null || "".equals(beginTime))&&(endTime == null || "".equals(endTime))) {
+				time = "1970-01-01";
+			}
+    		if (beginTime == null || "".equals(beginTime)) {
+				beginTime = "1970-01-01";
+			}
+    		
+			if (endTime == null || "".equals(endTime)) {
+				endTime = "2037-12-31";
+			}
+			conditions =" where 1=1";
+			if(StringUtils.isNotBlank(trans_type)){
+				condition +=" and tor.order_type ='"+ trans_type + "' ";
+			}
+			if(StrKit.notBlank(customerId)){
+				condition +=" and tor.customer_id ="+ customerId + " ";
+			}
+			if(StrKit.notBlank(orderNo)){
+				conditions +=" and ifnull(transferno,'') like '%" + orderNo + "%' ";
+			}
+			if(StrKit.notBlank(route_to)){
+				conditions +=" and ifnull(province,'') like '%" + route_to + "%' ";
+			}
+			if(StrKit.notBlank(serial_no)){
+				conditions +=" and ifnull(serial_no,'') like '%" + serial_no + "%' ";
+			}
+			if ((beginTime != null && !"".equals(beginTime))||(endTime != null && !"".equals(endTime))) {
+        		if (beginTime == null || "".equals(beginTime)) {
+    				beginTime = "1970-01-01";
+    			}
+        		
+    			if (endTime == null || "".equals(endTime)) {
+    				endTime = "2037-12-31";
+    			}
+    			conditions += " and ifnull(planning_time,'1970-01-01') between '" + beginTime + "' and '" + endTime + " 23:59:59' ";
+			}
+		}
+		
+		Map orderMap = new HashMap();
+						
+	    //营运报表
+		String yy_sql = "SELECT *,round((yf_pickup+yf_depart+yf_insurance+delivery),2) yf_sum,round((ys_insurance+return_amount),2) ys_sum,round(((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery)),2)yz_amount,round(ifnull((((ys_insurance+return_amount)-(yf_pickup+yf_depart+yf_insurance+delivery))/(ys_insurance+return_amount)),0),2) maolilv,"
+				+ " ("
+				+ " case when finance_status = '对账已确认'"
+				+ " then '已对账'"
+				+ " when finance_status = '已确认'"
+				+ " then '已签收确认'"
+				+ " when finance_status = '已签收'"
+				+ " then '已签收'"
+				+ " when finance_status = '新建'"
+				+ " then '已回单未签收'"
+				+ " when finance_status is null"
+				+ " then '未回单'"
+				+ " end"
+				+ " ) f_status"
+				+ " from "
+				+ " (SELECT "
+				+ " ("
+				+ " select GROUP_CONCAT(DISTINCT ror.transaction_status) from return_order ror"
+				+ " where ror.delivery_order_id = toid.delivery_id"
+				+ " ) finance_status,"
+				+ " tor.customer_id cid,"
+				+ " if(tor.arrival_mode='gateIn',(select w.warehouse_name from warehouse w where w.id = tor.warehouse_id),'无') transit_place,"
+				+"		(case   when (select l.id from location l  "
+                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
+                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
+                +" 		then"
+                +" 		(select l.name from location l "
+                +" 		LEFT JOIN location l2 on l2.pcode = l.code"
+                +" 		LEFT JOIN location l3 on l3.pcode = l2.code"
+                +" 		where l3.code = tor.route_to)"
+                +" 		when "
+                +" 		(select l.id from location l "
+                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
+                +" 		where l.code = tor.route_to  and l2.pcode = 1) is not null"
+                +" 		then"
+                +" 		 (select l.name from location l "
+                +" 		LEFT JOIN location l2 on l2.pcode = l.code"
+                +" 		where l2.code = tor.route_to)"
+                +" 		end"
+                +" 		) province, "
+				+ " c.abbr,concat((SELECT dor.order_no FROM delivery_order dor WHERE dor.id = toid.delivery_id ),'<br/>',ifnull((SELECT dor.order_no FROM delivery_order dor WHERE dor.id = toid.delivery_refused_id),'')) deliveryno,tor.order_no transferno,"
+				+ " 		tor.customer_order_no customer_order_no,"
+				+ " tor.STATUS,'' ORDER_TYPE ,toid.serial_no,tor.planning_time,	l1. NAME route_from,	l2. NAME route_to,toid.pieces,round(toid.weight, 2) weight,round(toid.volume, 2) volume,"
+				+ " round(ifnull((SELECT IFNULL(sum(pofi.amount),0) FROM pickup_order_fin_item pofi"
+				+ " LEFT JOIN depart_order d_o ON d_o.id = pofi.pickup_order_id "
+				+ " LEFT JOIN fin_item fi ON fi.id = pofi.fin_item_id"
+				+ " WHERE  fi.type = '应付'"
+				+ " and pofi.pickup_order_id = toid.pickup_id "
+				+ " AND pofi.fin_item_id != 7 "
+				+ " and d_o.audit_status='对账已确认' "
+				+ " AND d_o.combine_type = 'PICKUP') / (SELECT count(0)	FROM transfer_order_item_detail"
+				+ " WHERE	pickup_id = toid.pickup_id),0),2) yf_pickup,"
+				+ " round(ifnull((SELECT IFNULL(sum(dofi.amount),0)	FROM depart_order_fin_item dofi	"
+				+ " LEFT JOIN depart_order d_o ON d_o.id = dofi.depart_order_id"
+				+ "	LEFT JOIN fin_item fi ON fi.id = dofi.fin_item_id"
+				+ "	WHERE fi.type = '应付'"
+				+ " and dofi.depart_order_id = toid.depart_id "
+				+ " and d_o.audit_status='对账已确认'"
+				+ " AND d_o.combine_type = 'DEPART')/(SELECT count(0) FROM	transfer_order_item_detail WHERE depart_id = toid.depart_id),0),2) yf_depart,"
+				+ " round(ifnull((SELECT(sum(IFNULL(ifi.insurance_amount,0)) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
+				+ " WHERE	i_o.id = tor.insurance_id and i_o.audit_status='对账已确认' AND fi.type = '应付'),0),2) yf_insurance,"
+				+ " round(ifnull((SELECT(sum(IFNULL(ifi.insurance_amount,0)) / sum(toi.amount))	FROM insurance_fin_item ifi	LEFT JOIN transfer_order_item toi ON toi.id = ifi.transfer_order_item_id LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id"
+				+ " WHERE	i_o.id = tor.insurance_id	AND fi.type = '应收'),0),2) ys_insurance,"
+				+ " round(ifnull(((SELECT IFNULL(sum(dofi1.amount), 0) FROM delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE d_o.id = toid.delivery_id AND d_o.audit_status = '对账已确认' AND fi.type = '应付') / (SELECT count(0) FROM transfer_order_item_detail WHERE delivery_id = toid.delivery_id))+ "
+				+ " ifnull((SELECT IFNULL(sum(dofi1.amount), 0) FROM delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE d_o.id = toid.delivery_refused_id AND d_o.audit_status = '对账已确认' AND fi.type = '应付') / (SELECT count(0) FROM transfer_order_item_detail WHERE delivery_refused_id = toid.delivery_refused_id),0),0),2) delivery,"
+				+ " ifnull((SELECT sum(rof.amount) FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id WHERE dor.id = toid.delivery_id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),"
+				+ " (SELECT ifnull(sum(rof1.amount), 0) FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE	ror.transfer_order_id = toid.order_id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount ,"
+				+ " ifnull( "
+				+ " ( SELECT GROUP_CONCAT(ror.transaction_status) FROM  return_order ror "
+				+ " LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id"
+				+ " WHERE ror.transaction_status ),"
+				+ " ( SELECT GROUP_CONCAT(ror.transaction_status)"
+				+ " FROM return_order ror "
+				+ " WHERE ror.transfer_order_id = toid.order_id ) ) return_status,"
+				+ " ( SELECT dep.status FROM depart_order dep"
+				+ " WHERE dep.id = toid.depart_id) depart_status,"
+				+ " ( SELECT dor.status FROM delivery_order dor"
+				+ " WHERE dor.id = toid.delivery_id) delivery_status"
+				+ " ,toid.item_no,ifnull(toid.notify_party_company,tor.receiving_address) full_address"
+				+ " FROM transfer_order_item_detail toid"
+				+ " LEFT JOIN transfer_order tor ON tor.id = toid.order_id"
+				+ " LEFT JOIN party p ON p.id = tor.customer_id"
+				+ " LEFT JOIN contact c ON c.id = p.contact_id"
+				+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+				+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+				+ " WHERE tor.cargo_nature = 'ATM'"
+				+ condition
+				+ " UNION all"
+				+ " SELECT "
+				+ " ("
+				+ " select "
+				+ " GROUP_CONCAT(DISTINCT ror.transaction_status) from return_order ror "
+				+ " where ror.transfer_order_id = tor.id"
+				+ " ) finance_status,"
+				+ " tor.customer_id cid,if(tor.arrival_mode='gateIn',(select w.warehouse_name from warehouse w where w.id = tor.warehouse_id),'无') transit_place,"
+				+"		(case   when (select l.id from location l  "
+                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
+                +" 		where l.code = tor.route_to and l2.pcode = 1) is null"
+                +" 		then"
+                +" 		(select l.name from location l "
+                +" 		LEFT JOIN location l2 on l2.pcode = l.code"
+                +" 		LEFT JOIN location l3 on l3.pcode = l2.code"
+                +" 		where l3.code = tor.route_to)"
+                +" 		when "
+                +" 		(select l.id from location l "
+                +" 		LEFT JOIN location l2 on l2.code = l.pcode "
+                +" 		where l.code = tor.route_to  and l2.pcode = 1) is not null"
+                +" 		then"
+                +" 		 (select l.name from location l "
+                +" 		LEFT JOIN location l2 on l2.pcode = l.code"
+                +" 		where l2.code = tor.route_to)"
+                +" 		end"
+                +" 		) province, "
+				+ " c.abbr,(SELECT	GROUP_CONCAT(DISTINCT d_o.order_no SEPARATOR '<br/>') FROM	delivery_order d_o LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id WHERE doi.transfer_order_id = tor.id) deliveryno,tor.order_no transferno,"
+				+ " 		tor.customer_order_no customer_order_no,"
+				+ " tor.STATUS,'' ORDER_TYPE,'' serial_no,tor.planning_time,l1. NAME route_from,l2. NAME route_to,"
+				+ " (SELECT ifnull(sum(amount), 0)	FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) pieces,(SELECT	IFNULL(sum(weight), 0)FROM transfer_order_item toi WHERE toi.order_id = tor.id) weight,(SELECT ifnull(sum(volume), 0)FROM	transfer_order_item toi	WHERE	toi.order_id = tor.id) volume,"
+				+ " ROUND(IFNULL(sum((SELECT IFNULL(sum(amount),0)/(SELECT count(*)	FROM depart_transfer dof WHERE dof.pickup_id = dor1.id)	FROM	pickup_order_fin_item pof	LEFT JOIN depart_order dor1 ON dor1.id = pof.pickup_order_id WHERE dor1.id = dtr.pickup_id and dor1.audit_status='对账已确认' AND pof.fin_item_id != 7)),	0),2) yf_pickup,"
+				+ " ROUND(ifnull(sum((SELECT IFNULL(sum(amount),0)/(SELECT	count(*) FROM depart_transfer dof	WHERE	dof.depart_id = dor1.id) FROM	depart_order_fin_item dof	LEFT JOIN depart_order dor1 ON dor1.id = dof.depart_order_id WHERE dor1.id = dtr.depart_id and dor1.audit_status='对账已确认' AND dof.fin_item_id != 7)),0),2) yf_depart,"
+				+ " round(ifnull((SELECT IFNULL(sum(ifi.insurance_amount),0) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id and i_o.audit_status='对账已确认' AND fi.type = '应付')/(SELECT	COUNT(*) FROM	insurance_order i"
+				+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) yf_insurance,"
+				+ " round(ifnull((SELECT IFNULL(sum(ifi.insurance_amount),0) FROM	insurance_fin_item ifi LEFT JOIN insurance_order i_o ON i_o.id = ifi.insurance_order_id	LEFT JOIN fin_item fi ON fi.id = ifi.fin_item_id WHERE i_o.id = tor.insurance_id	AND fi.type = '应收')/(SELECT	COUNT(*) FROM	insurance_order i"
+				+ " LEFT JOIN transfer_order t ON t.insurance_id = i.id	WHERE	i.id = (SELECT id	FROM insurance_order WHERE id = tor.insurance_id)),0),2) ys_insurance,"
+				+ " round(ifnull((SELECT	IFNULL(sum(dofi1.amount),0) FROM	delivery_order d_o LEFT JOIN delivery_order_fin_item dofi1 ON dofi1.order_id = d_o.id LEFT JOIN delivery_order_item doi ON doi.delivery_id = d_o.id LEFT JOIN fin_item fi ON fi.id = dofi1.fin_item_id WHERE doi.transfer_order_id = tor.id and d_o.audit_status='对账已确认' AND  fi.type = '应付'),0),2) delivery,"
+				+ " ifnull((SELECT sum(rof.amount)	FROM return_order_fin_item rof LEFT JOIN return_order ror ON ror.id = rof.return_order_id	LEFT JOIN delivery_order dor ON dor.id = ror.delivery_order_id LEFT JOIN delivery_order_item doi ON doi.delivery_id = dor.id"
+				+ " WHERE doi.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除')),(SELECT	ifnull(sum(rof1.amount), 0)FROM	return_order_fin_item rof1 LEFT JOIN return_order ror ON ror.id = rof1.return_order_id WHERE ror.transfer_order_id = tor.id and (ror.transaction_status!='新建' and ror.transaction_status!='对账中' and ror.transaction_status!='已确认' and ror.transaction_status!='已签收'and ror.transaction_status!='手动删除'))) return_amount,"
+				+ " ( SELECT GROUP_CONCAT(ror.transaction_status)"
+				+ " FROM return_order ror "
+				+ " WHERE ror.transfer_order_id = tor.id) return_status,"
+				+ " (select GROUP_CONCAT(dep.status) from depart_order dep"
+				+ " left join depart_transfer dt on dt.depart_id = dep.id"
+				+ " where dt.order_id = tor.id) depart_status,"
+				+ " (select GROUP_CONCAT(DISTINCT dor.status SEPARATOR '<br/>') from delivery_order dor"
+				+ " left join delivery_order_item doi on doi.delivery_id = dor.id"
+				+ " where doi.transfer_order_id = tor.id) delivery_status,"
+				+ " (select group_concat(item_no) from transfer_order_item toi where order_id = tor.id) item_no,tor.receiving_address full_address"
+				+ " FROM transfer_order tor"
+				+ " LEFT JOIN depart_transfer dtr ON dtr.order_id = tor.id"
+				+ " LEFT JOIN party p ON p.id = tor.customer_id"
+				+ " LEFT JOIN contact c ON c.id = p.contact_id"
+				+ " LEFT JOIN location l1 ON tor.route_from = l1. CODE"
+				+ " LEFT JOIN location l2 ON tor.route_to = l2. CODE"
+				+ " WHERE tor.cargo_nature = 'cargo' "
+				+ condition
+				+ " GROUP BY	tor.id) a";
+						
+		// 获取当前页的数据
+		if("true".equals(receive)){
+			conditions +=" and round((ys_insurance + return_amount), 2 ) > 0";
+		}
+		
+		if("true".equals(noreceive)){
+			conditions +=" and return_status!='新建' and return_status is not null and  round((ys_insurance + return_amount), 2 ) = 0";
+		}
+		
+		if("true".equals(inventory)){
+			conditions +=" and status = '已入库' or status = '部分已入库' or (status = '处理中' and delivery_status is null and depart_status ='已入库')";
+		}
+		
+		String exportSql = yy_sql+ conditions +" order by planning_time desc" + sLimit;
+		String fileName = generateExcel(headers, fields, exportSql);
+		renderText(fileName);
+	}
 	
+    @SuppressWarnings("deprecation")
+    public String generateExcel(String[] headers, String[] fields, String sql){
+	    String fileName="";
+	    try {
+	        System.out.println("generateExcel begin...");
+	        String filePath = getRequest( ).getServletContext().getRealPath("/") + File.separator + "download";
+	        File file = new File(filePath);
+	        if(!file.exists()){ 
+	            file.mkdir();
+	        }
+	        Date date = new Date();
+	        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+	        String outFileName = "源鸿控股有限公司运营报表"+formatDate.format(date) + ".xls";
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("FirstSheet");  
+
+            HSSFRow rowhead = sheet.createRow((short)0);
+            for (int i = 0; i < headers.length; i++) {
+                rowhead.createCell((short)i).setCellValue(headers[i]);
+            }
+            
+            List<Record> recs = Db.find(sql);
+            System.out.println("sql finish!");
+            HSSFRow row = null;
+            HSSFCell cell = null;
+            if(recs!=null){
+                for (int j = 1; j <= recs.size(); j++) {
+                	//HSSFDataFormat format = workbook.createDataFormat();
+                	row = sheet.createRow((short)j);
+                    Record rec = recs.get(j-1);
+                    for (int k = 0; k < fields.length;k++){
+                        Object obj = rec.get(fields[k]);
+                        String strValue = "";
+                        if(obj != null){
+                            strValue =obj.toString();
+                        }
+                        cell = row.createCell((short) k);
+                        //cell.setCellStyle(cellStyle);
+                        //sheet.autoSizeColumn((short)k);
+                        cell.setCellValue(strValue);
+                    }
+                }
+            }
+
+            fileName = filePath + File.separator + outFileName;
+            System.out.println("fileName: "+fileName);
+            FileOutputStream fileOut = new FileOutputStream(fileName);
+            workbook.write(fileOut);
+            fileOut.close();
+            System.out.println("Your excel file has been generated!");
+            fileName = File.separator + "download"+ File.separator + outFileName;
+        } catch ( Exception ex ) {
+            ex.printStackTrace();
+        }
+	    return fileName;
+	}
+    
+    @Before(Tx.class)
+	public void deleteReport(){
+		String file_name = getPara("file_name");
+		String url = getRequest( ).getServletContext().getRealPath("/") +file_name;
+		File file = new File(url);
+		String Message="";
+		if (!file.exists()) {
+			Message="删除文件失败:" + file_name + "不存在！";
+			logger.info("删除文件失败:" + file_name + "不存在！");
+        } else {
+            if (file.isFile())
+               file.delete();
+            Message = "OK";
+            logger.info("文件删除成功");
+        }
+		renderJson(Message);
+	}
 	
 }

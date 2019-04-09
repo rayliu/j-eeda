@@ -17,37 +17,37 @@ $(document).ready(function() {
     		"sUrl": "/eeda/dataTables.ch.txt"
     	},
         "aoColumns": [   
-            {"mDataProp":"ABBR", "sWidth":"60px", "bVisible":true},
-            {"mDataProp":"TRANSFERNO", "sWidth":"60px"},
-            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"60px"},
+            {"mDataProp":"ABBR", "sWidth":"60px", "bVisible":true,"sClass":'abbr'},
+            {"mDataProp":"TRANSFERNO", "sWidth":"60px","sClass":'transferno'},
+            {"mDataProp":"CUSTOMER_ORDER_NO", "sWidth":"60px","sClass":'customer_order_no'},
             {"mDataProp":"DELIVERYNO", "sWidth":"100px","sClass": "delivery_no"},
             {"mDataProp":"SERIAL_NO", "sWidth":"40px","sClass": "serial_no"},
-            {"mDataProp":"STATUS", "sWidth":"50px"},       	
-            {"mDataProp":"PLANNING_TIME", "sWidth":"80px"},
-            {"mDataProp":"ORDER_TYPE", "sWidth":"100px"},
-            {"mDataProp":"ROUTE_FROM", "sWidth":"60px"},
-            {"mDataProp":"TRANSIT_PLACE", "sWidth":"100px"},
-            {"mDataProp":"ROUTE_TO", "sWidth":"60px"},//10
-            {"mDataProp":"FULL_ADDRESS", "sWidth":"180px"},
-            {"mDataProp":"ITEM_NO", "sWidth":"60px"},
+            {"mDataProp":"STATUS", "sWidth":"50px","sClass":'status'},       	
+            {"mDataProp":"PLANNING_TIME", "sWidth":"80px","sClass":'planning_time'},
+            {"mDataProp":"ORDER_TYPE", "sWidth":"100px","sClass":'order_type'},
+            {"mDataProp":"ROUTE_FROM", "sWidth":"60px","sClass":'route_from'},
+            {"mDataProp":"TRANSIT_PLACE", "sWidth":"100px","sClass":'transit_place'},
+            {"mDataProp":"ROUTE_TO", "sWidth":"60px","sClass":'route_to'},//10
+            {"mDataProp":"FULL_ADDRESS", "sWidth":"180px","sClass":'full_address'},
+            {"mDataProp":"ITEM_NO", "sWidth":"60px","sClass":'item_no'},
             {"mDataProp":"PIECES", "sWidth":"20px","sClass": "pieces"},
-            {"mDataProp":"WEIGHT", "sWidth":"40px",
+            {"mDataProp":"WEIGHT", "sWidth":"40px","sClass":"weight",
         		"fnRender": function(obj) {
         			return "<p align='right'>"+parseFloat(obj.aData.WEIGHT).toFixed(2)+"</p>";
         		}
             },
-            {"mDataProp":"VOLUME", "sWidth":"40px",
+            {"mDataProp":"VOLUME", "sWidth":"40px","sClass":'volume',
         		"fnRender": function(obj) {
         			return "<p align='right'>"+parseFloat(obj.aData.VOLUME).toFixed(2)+"</p>";
         		}
         	},//15
-        	{"mDataProp":"F_STATUS", "sWidth":"60px"},
-            {"mDataProp":"YZ_AMOUNT", "sWidth":"40px",
+        	{"mDataProp":"F_STATUS", "sWidth":"60px","sClass":'f_status'},
+            {"mDataProp":"YZ_AMOUNT", "sWidth":"40px","sClass":'yz_amount',
             		"fnRender": function(obj) {
             			return "<p align='right'>"+parseFloat(obj.aData.YZ_AMOUNT).toFixed(2)+"</p>";
             	}
             },
-            {"mDataProp":"MAOLILV", "sWidth":"40px",
+            {"mDataProp":"MAOLILV", "sWidth":"40px","sClass":'maolilv',
         		"fnRender": function(obj) {
         			return "<p align='right'>"+parseFloat(obj.aData.MAOLILV*100).toFixed(2)+"%"+"</p>";
         		}
@@ -73,7 +73,7 @@ $(document).ready(function() {
             	}
             },
             {"mDataProp":null, "sWidth":"70px", "bVisible":false},
-            {"mDataProp":"YF_SUM", "sWidth":"60px",
+            {"mDataProp":"YF_SUM", "sWidth":"60px","sClass":'yf_sum',
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.YF_SUM).toFixed(2)+"</p>";
             	}
@@ -89,7 +89,7 @@ $(document).ready(function() {
             	}
             },
             {"mDataProp":null, "sWidth":"70px", "bVisible":false},//25
-            {"mDataProp":"YS_SUM", "sWidth":"60px",
+            {"mDataProp":"YS_SUM", "sWidth":"60px","sClass":'ys_sum',
             	"fnRender": function(obj) {
             		return "<p align='right'>"+parseFloat(obj.aData.YS_SUM).toFixed(2)+"</p>";
             	}
@@ -144,6 +144,49 @@ $(document).ready(function() {
     	}
     });
     
+    $("#exportBtn").on('click', function () {
+        if($("#eeda-table").find(".dataTables_empty").length>0){
+            $.scojs_message('导出内容不能为空', $.scojs_message.TYPE_FALSE);
+            return false;
+        }
+        var self = this;
+        self.disabled = true;
+        $(self).html("导出中....");
+        var data = {}
+        data["beginTime"] = $.trim($("#start_date").val());
+        data["endTime"] = $.trim($("#end_date").val());
+        data["complete_time_begin_time"] = $.trim($("#complete_time_begin_time").val());
+        data["complete_time_end_time"] = $.trim($("#complete_time_end_time").val());
+        data["order_no"] = $.trim($("#order_no").val());
+        data["customer_id"] = $.trim($("#customer_id").val());
+        data["routeTo"] = $.trim($("#routeTo").val());
+        data["serialNo"] = $.trim($("#serialNo").val());
+        data["trans_type"] = $.trim($("#trans_type").val());
+        data["receive"] = $.trim($("[name=receive]").prop('checked'));
+        data["noreceive"] = $.trim($("[name=noreceive]").prop('checked'));
+        data["inventory"] = $.trim($("[name=inventory]").prop('checked'));
+
+        var field_list = [];
+        $("#eeda-table th[role=columnheader]").each(function(){
+            var value_={};
+            var title = $(this).text();
+            var value = $(this).attr("class").replace("sorting_disabled ","");
+            value_["title"] = title;
+            value_["value"] = value;
+            field_list.push(value_);
+
+        });
+        data["field_list"] = field_list;
+        $.post("/statusReport/export",{params:JSON.stringify(data)},function(data){
+            self.disabled = false;
+            $(self).html("导出");
+            if(data){
+                window.open(data);
+            }
+        }).fail(function(){
+            self.disabled = false;
+        });
+    });
     
     $("#queryBtn").on('click', function () {
     	var beginTime = $.trim($("#start_date").val());
