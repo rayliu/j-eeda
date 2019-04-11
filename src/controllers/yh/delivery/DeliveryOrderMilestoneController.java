@@ -74,7 +74,6 @@ public class DeliveryOrderMilestoneController extends Controller {
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_COMPLETED})
     @Before(Tx.class)
     public void departureConfirmation() {
-    	
     	String warehouseId = getPara("warehouseId");
 		String customerId = getPara("customerId");
 		String cargoNature = getPara("cargoNature");
@@ -257,7 +256,7 @@ public class DeliveryOrderMilestoneController extends Controller {
     
     public void genFinPerUnit(Contract spContract, String chargeType, Long deliverOrderId) {
         List<Record> deliveryOrderItemList = Db
-                .find("SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to, toi.sum_weight FROM "+
+                .find("SELECT count(1) amount, toi.product_id, d_o.route_from, d_o.route_to, IFNULL(toi.sum_weight,0) sum_weight FROM "+
 					    "delivery_order_item doi LEFT JOIN transfer_order_item_detail toid ON doi.transfer_item_detail_id = toid.id "+
 					        "LEFT JOIN transfer_order_item toi ON toid.item_id = toi.id "+
 					        "LEFT JOIN delivery_order d_o ON doi.delivery_id = d_o.id "+
