@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment_subreport_item" language="groovy" pageWidth="507" pageHeight="802" columnWidth="507" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="controllers.yh.report.ReportScriptlet" uuid="4333ae3c-7c8d-4a24-b135-8faaa7087493">
-	<property name="ireport.zoom" value="1.5"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment_subreport_item" language="groovy" pageWidth="802" pageHeight="507" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="controllers.yh.report.ReportScriptlet" uuid="4333ae3c-7c8d-4a24-b135-8faaa7087493">
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
@@ -419,27 +419,27 @@ and caor.cost_order_id = appo.id
 	<columnFooter>
 		<band height="142" splitType="Stretch">
 			<staticText>
-				<reportElement style="table_TD" mode="Opaque" x="0" y="1" width="56" height="30" uuid="91a01ade-4188-47ab-a90e-475ba86c189e"/>
+				<reportElement style="table_TD" mode="Opaque" x="0" y="0" width="56" height="30" uuid="91a01ade-4188-47ab-a90e-475ba86c189e"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[大写金额：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="449" y="1" width="58" height="30" uuid="c86c4e57-a6ca-412b-82d6-c315fc501f7e"/>
+				<reportElement style="table_TD" mode="Opaque" x="449" y="0" width="58" height="30" uuid="c86c4e57-a6ca-412b-82d6-c315fc501f7e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 			</textField>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="384" y="1" width="65" height="30" uuid="5e3082ae-6bfb-4fd4-9592-1e5b97f3e53f"/>
+				<reportElement style="table_TD" mode="Opaque" x="384" y="0" width="65" height="30" uuid="5e3082ae-6bfb-4fd4-9592-1e5b97f3e53f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{sum_money}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" mode="Opaque" x="56" y="1" width="328" height="30" uuid="58b4e92f-201b-4b61-8135-a0d6a61bca5d"/>
+				<reportElement style="table_TD" mode="Opaque" x="56" y="0" width="328" height="30" uuid="58b4e92f-201b-4b61-8135-a0d6a61bca5d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -459,7 +459,7 @@ and caor.cost_order_id = appo.id
 				<text><![CDATA[领款人/日期:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="44" y="58" width="50" height="21" uuid="117242fd-3f44-4fbf-8257-3a5455529557"/>
+				<reportElement x="44" y="58" width="50" height="20" uuid="117242fd-3f44-4fbf-8257-3a5455529557"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -525,14 +525,14 @@ and caor.cost_order_id = appo.id
 				<text><![CDATA[审批:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="69" y="0" width="296" height="33" uuid="d4bee3d1-2c51-4ddb-9334-06f722b0228d"/>
+				<reportElement x="56" y="0" width="313" height="31" uuid="d4bee3d1-2c51-4ddb-9334-06f722b0228d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="14" isBold="true" isItalic="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[((controllers.yh.report.ReportScriptlet)$P{REPORT_SCRIPTLET}).convertNumToChinese($V{sum_money})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="table_TD" x="369" y="1" width="15" height="30" uuid="360de8b7-48c9-4f66-a709-8b83560dfd76"/>
+				<reportElement style="table_TD" x="369" y="0" width="15" height="30" uuid="360de8b7-48c9-4f66-a709-8b83560dfd76"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
