@@ -61,43 +61,43 @@ WHERE
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="2" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="22" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement style="table_TD" x="288" y="0" width="113" height="22" uuid="a9dd9139-9e26-4fe0-961c-5f9ed3068b7a"/>
+				<reportElement style="table_TD" x="288" y="0" width="113" height="20" uuid="a9dd9139-9e26-4fe0-961c-5f9ed3068b7a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[报销金额]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="401" y="0" width="135" height="22" uuid="aa09aa73-cbc8-4c65-a08f-4b896bc235bb"/>
+				<reportElement style="table_TD" x="401" y="0" width="135" height="20" uuid="aa09aa73-cbc8-4c65-a08f-4b896bc235bb"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[备注]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="188" y="0" width="100" height="22" uuid="e566f2bf-9434-4cbb-8270-3c3a3ecc114e"/>
+				<reportElement style="table_TD" x="188" y="0" width="100" height="20" uuid="e566f2bf-9434-4cbb-8270-3c3a3ecc114e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[条目名称]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="0" y="0" width="88" height="22" uuid="2fb1a309-58a2-493c-8a7e-c0eebea15430"/>
+				<reportElement style="table_TD" x="0" y="0" width="88" height="20" uuid="2fb1a309-58a2-493c-8a7e-c0eebea15430"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[序号]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="88" y="0" width="100" height="22" uuid="edabb0c0-1348-4464-92b4-7f16eb4bc277"/>
+				<reportElement style="table_TD" x="88" y="0" width="100" height="20" uuid="edabb0c0-1348-4464-92b4-7f16eb4bc277"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -106,37 +106,37 @@ WHERE
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="22" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement style="table_TD" x="88" y="0" width="100" height="22" uuid="a8ba1f72-9ac2-4421-85b7-fe94dccf3c37"/>
+				<reportElement style="table_TD" x="88" y="0" width="100" height="20" uuid="a8ba1f72-9ac2-4421-85b7-fe94dccf3c37"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{parentItem}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" x="401" y="0" width="135" height="22" uuid="e5708e2e-215f-40a3-a26b-919e7b8dbea6"/>
+				<reportElement style="table_TD" x="401" y="0" width="135" height="20" uuid="e5708e2e-215f-40a3-a26b-919e7b8dbea6"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement style="table_TD" x="288" y="0" width="113" height="22" uuid="62535832-771a-4665-b308-82e6b73e3c38"/>
+				<reportElement style="table_TD" x="288" y="0" width="113" height="20" uuid="62535832-771a-4665-b308-82e6b73e3c38"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{revocation_amount}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" x="188" y="0" width="100" height="22" uuid="e8bda9ee-2610-49ba-ac81-0ee5355a3d74"/>
+				<reportElement style="table_TD" x="188" y="0" width="100" height="20" uuid="e8bda9ee-2610-49ba-ac81-0ee5355a3d74"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" x="0" y="0" width="88" height="22" uuid="4e7c236e-ddcc-46e4-859b-a15dd5342e4d"/>
+				<reportElement style="table_TD" x="0" y="0" width="88" height="20" uuid="4e7c236e-ddcc-46e4-859b-a15dd5342e4d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{count}]]></textFieldExpression>
 			</textField>
@@ -145,41 +145,41 @@ WHERE
 	<columnFooter>
 		<band height="81" splitType="Stretch">
 			<textField>
-				<reportElement x="415" y="0" width="100" height="27" uuid="4c2b76ed-926d-45aa-b4d6-02c6294565dc"/>
+				<reportElement x="401" y="0" width="135" height="20" uuid="4c2b76ed-926d-45aa-b4d6-02c6294565dc"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{sum_amount}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" x="401" y="0" width="135" height="27" uuid="076c4a47-78c9-47ad-94b6-b33598e2e223"/>
+				<reportElement style="table_TD" x="400" y="0" width="135" height="20" uuid="076c4a47-78c9-47ad-94b6-b33598e2e223"/>
 			</textField>
 			<staticText>
-				<reportElement style="table_TD" x="378" y="0" width="23" height="27" uuid="8523ebc3-7357-43cc-ab01-c9fd44bdef22"/>
+				<reportElement style="table_TD" x="378" y="0" width="23" height="20" uuid="8523ebc3-7357-43cc-ab01-c9fd44bdef22"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[￥]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_TD" x="0" y="0" width="88" height="27" uuid="beb7f1d3-8ce7-4aea-adb9-0c674fda26da"/>
+				<reportElement style="table_TD" x="0" y="0" width="88" height="20" uuid="beb7f1d3-8ce7-4aea-adb9-0c674fda26da"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<text><![CDATA[大写金额]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement style="table_TD" x="88" y="0" width="290" height="27" uuid="f3164880-8686-40f9-9e70-0de775991189"/>
+				<reportElement style="table_TD" x="88" y="0" width="290" height="20" uuid="f3164880-8686-40f9-9e70-0de775991189"/>
 			</textField>
 			<textField>
-				<reportElement x="88" y="0" width="290" height="27" uuid="68ed87ff-5edd-44f0-b534-b90e10bb642b"/>
+				<reportElement x="88" y="0" width="290" height="20" uuid="68ed87ff-5edd-44f0-b534-b90e10bb642b"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="14" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[((controllers.yh.report.ReportScriptlet)$P{REPORT_SCRIPTLET}).convertNumToChinese($V{sum_amount})]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement x="401" y="0" width="136" height="27" uuid="c23f73d8-7471-4ecf-84e0-3751ca8bcc68"/>
+				<reportElement x="400" y="0" width="136" height="20" uuid="c23f73d8-7471-4ecf-84e0-3751ca8bcc68"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
