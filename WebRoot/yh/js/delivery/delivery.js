@@ -716,7 +716,6 @@ $(document).ready(function() {
 	// 发车确认
 	$("#ConfirmationBtn").click(function(){
 		// 浏览器启动时,停到当前位置
-		// debugger;
 		$("#receiptBtn").attr("disabled", false); 
 		var code = $("#warehouseCode").val();
 		var locationTo = $("#locationTo").val();
@@ -944,7 +943,8 @@ $(document).ready(function() {
 			 }},
 			{"mDataProp":"AMOUNT",
 			     "fnRender": function(obj) {
-			    	 if(obj.aData.CREATE_NAME == 'system'){
+                    var cost_status = $("#cost_status").val();
+			    	 if(obj.aData.CREATE_NAME == 'system'||cost_status!='新建'){
 			    		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
 				             return obj.aData.AMOUNT;
 				         }else{
@@ -983,7 +983,12 @@ $(document).ready(function() {
                 "sWidth": "60px",  
             	"sClass": "remark",              
                 "fnRender": function(obj) {
-                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+
+                    var cost_status = $("#cost_status").val();
+                    var disabled = "";
+                    if(cost_status!='新建'){
+                        disabled = "disabled"
+                    }
+                    return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"' "+disabled+">"+
               		"<i class='fa fa-trash-o fa-fw'> </i> "+
               		"删除"+
               		"</a>";

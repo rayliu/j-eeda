@@ -1096,11 +1096,20 @@
 					{"mDataProp":"PRICE"},
 					{"mDataProp":"AMOUNT",
 					     "fnRender": function(obj) {
-				        		 if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
-						             return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
-						         }else{
-						         	 return "<input type='text' name='amount'>";
-						         }
+                                var cost_status = $("#cost_status").val();
+                                if(cost_status!='新建'){
+                                    if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+                                        return obj.aData.AMOUNT;
+                                     }else{
+                                         return "";
+                                     }
+                                }else{
+                                    if(obj.aData.AMOUNT!='' && obj.aData.AMOUNT != null){
+                                        return "<input type='text' name='amount' value='"+obj.aData.AMOUNT+"'>";
+                                     }else{
+                                         return "<input type='text' name='amount'>";
+                                     }
+                                }
 				        	 
 					 }},
 					 {"mDataProp":null,
@@ -1143,7 +1152,8 @@
 		                "sWidth": "60px",  
 		            	"sClass": "remark",              
 		                "fnRender": function(obj) {
-		                	if(obj.aData.CREATE_NAME == 'system'){
+                            var cost_status = $("#cost_status").val();
+		                	if(obj.aData.CREATE_NAME == 'system'||cost_status!='新建'){
 				        		return "";
 				        	}else{
 				        		return	"<a class='btn btn-danger finItemdel' code='"+obj.aData.ID+"'>"+

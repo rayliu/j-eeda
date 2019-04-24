@@ -647,6 +647,19 @@ public class DepartOrderController extends Controller {
 		setAttr("paymentItemList", paymentItemList);
 		
 		createToken("eedaToken");
+		
+		if(departOrder!=null) {
+			Record cost_order = Db.findFirst("SELECT IFNULL(aco.`status`,'新建')  cost_status FROM arap_cost_order aco"
+					+ " LEFT JOIN arap_cost_item aci ON aci.`cost_order_id` = aco.`id`"
+					+ " WHERE aci.`ref_order_no` = '零担'"
+					+ " AND aci.`ref_order_id` = ?",departOrder.getLong("id"));
+			if(cost_order!=null) {
+				setAttr("cost_status", cost_order.getStr("cost_status"));
+			}else {
+				setAttr("cost_status", "新建");
+			}
+		}
+		
 		render("/yh/departOrder/editDepartOrder.html");
 	}
 
@@ -2759,6 +2772,7 @@ public class DepartOrderController extends Controller {
 	}
 	// 修改应付
 	public void updateDepartOrderFinItem() {
+		boolean update_check = false;
 		String paymentId = getPara("paymentId");
 		String name = getPara("name");
 		String value = getPara("value");
@@ -2768,18 +2782,53 @@ public class DepartOrderController extends Controller {
 		if (paymentId != null && !"".equals(paymentId)) {
 			DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao
 					.findById(paymentId);
-			departOrderFinItem.set(name, value);
-
-			departOrderFinItem.update();
+			
+			if(departOrderFinItem!=null) {
+				Record cost_order = Db.findFirst("SELECT IFNULL(aco.`status`,'新建')  cost_status FROM arap_cost_order aco"
+						+ " LEFT JOIN arap_cost_item aci ON aci.`cost_order_id` = aco.`id`"
+						+ " WHERE aci.`ref_order_no` = '零担'"
+						+ " AND aci.`ref_order_id` = ?",departOrderFinItem.getLong("depart_order_id"));
+				if(cost_order!=null) {
+					if("新建".equals(cost_order.getStr("cost_status"))) {
+						update_check = true;
+					}
+				}else {
+					update_check = true;
+				}
+			}
+			if(update_check) {
+				departOrderFinItem.set(name, value);
+				departOrderFinItem.update();
+			}
+			
 		}
-		renderJson("{\"success\":true}");
+		renderJson("{\"success\":"+update_check+"}");
 	}
 	// 删除应付
 	@Before(Tx.class)
 	public void finItemdel() {
 		String id = getPara();
-		DepartOrderFinItem.dao.deleteById(id);
-		renderJson("{\"success\":true}");
+		boolean delete_check = false;
+		DepartOrderFinItem departOrderFinItem = DepartOrderFinItem.dao
+				.findById(id);
+		
+		if(departOrderFinItem!=null) {
+			Record cost_order = Db.findFirst("SELECT IFNULL(aco.`status`,'新建')  cost_status FROM arap_cost_order aco"
+					+ " LEFT JOIN arap_cost_item aci ON aci.`cost_order_id` = aco.`id`"
+					+ " WHERE aci.`ref_order_no` = '零担'"
+					+ " AND aci.`ref_order_id` = ?",departOrderFinItem.getLong("depart_order_id"));
+			if(cost_order!=null) {
+				if("新建".equals(cost_order.getStr("cost_status"))) {
+					delete_check = true;
+				}
+			}else {
+				delete_check = true;
+			}
+		}
+		if(delete_check) {
+			DepartOrderFinItem.dao.deleteById(id);
+		}
+		renderJson("{\"success\":"+delete_check+"}");
 	}
 	// TODO：运输单带过来的费用
 	public void getFinNoContractCost(DepartOrder departOrder) {

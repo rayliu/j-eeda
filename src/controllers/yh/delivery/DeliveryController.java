@@ -743,6 +743,17 @@ public class DeliveryController extends Controller {
 		
 		setAttr("customizeField", customizeField);
 		setAttr("customizeField", customizeField);
+		if(StrKit.notBlank(id)) {
+			Record cost_order = Db.findFirst("SELECT IFNULL(aco.`status`,'新建')  cost_status FROM arap_cost_order aco"
+					+ " LEFT JOIN arap_cost_item aci ON aci.`cost_order_id` = aco.`id`"
+					+ " WHERE aci.`ref_order_no` = '配送'"
+					+ " AND aci.`ref_order_id` = ?",id);
+			if(cost_order!=null) {
+				setAttr("cost_status", cost_order.getStr("cost_status"));
+			}else {
+				setAttr("cost_status", "新建");
+			}
+		}
 		render("/yh/delivery/deliveryOrderEdit.html");
 
 	}

@@ -33,6 +33,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -732,6 +733,7 @@ public class DeliveryOrderMilestoneController extends Controller {
 
     @RequiresPermissions(value = {PermissionConstant.PERMSSION_DYO_ADD_COST})
     public void updateDeliveryOrderFinItem(){
+    	boolean update_check = false;
     	String paymentId = getPara("paymentId");
     	String name = getPara("name");
     	String value = getPara("value");
@@ -740,16 +742,47 @@ public class DeliveryOrderMilestoneController extends Controller {
     	}
     	if(paymentId != null && !"".equals(paymentId)){
     		DeliveryOrderFinItem deliveryOrderFinItem = DeliveryOrderFinItem.dao.findById(paymentId);
-    		deliveryOrderFinItem.set(name, value);
-    		deliveryOrderFinItem.update();
+    		if(deliveryOrderFinItem!=null) {
+    				Record cost_order = Db.findFirst("SELECT IFNULL(aco.`status`,'新建')  cost_status FROM arap_cost_order aco"
+    						+ " LEFT JOIN arap_cost_item aci ON aci.`cost_order_id` = aco.`id` WHERE aci.`ref_order_no` = '配送'"
+    						+ " AND aci.`ref_order_id` = ?",deliveryOrderFinItem.getLong("order_id"));
+    				if(cost_order!=null) {
+    					if("新建".equals(cost_order.getStr("cost_status"))) {
+    						update_check = true;
+    					}
+    				}else {
+    					update_check = true;
+    				}
+    		}
+    		if(update_check) {
+    			deliveryOrderFinItem.set(name, value);
+        		deliveryOrderFinItem.update();
+    		}
     	}
-        renderJson("{\"success\":true}");
+        renderJson("{\"success\":"+update_check+"}");
     }
     // 删除应付 
     public void finItemdel() {
         String id = getPara();
-        DeliveryOrderFinItem.dao.deleteById(id);
-        renderJson("{\"success\":true}");
+        boolean delete_check = false;
+        DeliveryOrderFinItem deliveryOrderFinItem = DeliveryOrderFinItem.dao.findById(id);
+		if(deliveryOrderFinItem!=null) {
+				Record cost_order = Db.findFirst("SELECT IFNULL(aco.`status`,'新建')  cost_status FROM arap_cost_order aco"
+						+ " LEFT JOIN arap_cost_item aci ON aci.`cost_order_id` = aco.`id`"
+						+ " WHERE aci.`ref_order_no` = '配送'"
+						+ " AND aci.`ref_order_id` = ?",deliveryOrderFinItem.getLong("order_id"));
+				if(cost_order!=null) {
+					if("新建".equals(cost_order.getStr("cost_status"))) {
+						delete_check = true;
+					}
+				}else {
+					delete_check = true;
+				}
+		}
+		if(delete_check) {
+			DeliveryOrderFinItem.dao.deleteById(id);
+		}
+        renderJson("{\"success\":"+delete_check+"}");
     }
     
     /*// 配送排车应付list
