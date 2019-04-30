@@ -725,7 +725,7 @@ $(document).ready(function() {
         var confirmEndTime = $.trim($("#confirmEnd_date").val());
         var insurance = $.trim($("#insurance").val());
 
-        var flag = false;
+        /*var flag = false;
         $('#searchForm2 input,#searchForm2 select').each(function(){
         	 var textValue = $.trim(this.value);
         	 if(textValue != '' && textValue != null){
@@ -736,7 +736,7 @@ $(document).ready(function() {
         if(!flag){
         	 $.scojs_message('请输入至少一个查询条件', $.scojs_message.TYPE_FALSE);
         	 return false;
-        }
+        }*/
         
         applicationTab.fnSettings().oFeatures.bServerSide = true;
         applicationTab.fnSettings().sAjaxSource = "/costAcceptOrder/applicationList?status="+status
