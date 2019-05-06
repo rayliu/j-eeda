@@ -1081,6 +1081,7 @@ public class DepartOrderController extends Controller {
 		setAttr("audit_status", "新建");
 		setAttr("status", "新建");
 		setAttr("saveOK", false);
+		setAttr("cost_status", "新建");
 		render("/yh/departOrder/editDepartOrder.html");
 	}
 

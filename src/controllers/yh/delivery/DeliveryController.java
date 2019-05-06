@@ -834,7 +834,7 @@ public class DeliveryController extends Controller {
 		setAttr("paymentItemList", paymentItemList);
 		setAttr("audit_status", "新建");
 		setAttr("isNullOrder", "N");
-		
+		setAttr("cost_status", "新建");
 		render("/yh/delivery/deliveryOrderEdit.html");
 	}
 	
@@ -917,6 +917,7 @@ public class DeliveryController extends Controller {
 		paymentItemList = Db.find("select * from fin_item where type='应付'");
 		setAttr("paymentItemList", paymentItemList);
 		setAttr("isNullOrder", "N");
+		setAttr("cost_status", "新建");
 		render("/yh/delivery/deliveryOrderEdit.html");
 	}
 
