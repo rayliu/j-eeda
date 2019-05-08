@@ -316,6 +316,7 @@ public class CostAcceptOrderController extends Controller {
         String confirmBeginTime = getPara("confirmBeginTime")!=null?getPara("confirmBeginTime").trim():"";
         String confirmEndTime = getPara("confirmEndTime")!=null?getPara("confirmEndTime").trim():"";
         String insurance = getPara("insurance")!=null?getPara("insurance").trim():"";
+        String billing_unit = getPara("billing_unit")!=null?getPara("billing_unit").trim():"";
 		
 		String sortColIndex = getPara("iSortCol_0");
 		String sortBy = getPara("sSortDir_0");
@@ -347,6 +348,9 @@ public class CostAcceptOrderController extends Controller {
         }
         if (StringUtils.isNotEmpty(insurance)){
         	conditions+=" and ifnull(payee_id,'') = '" + insurance + "' ";
+        }
+        if(StringUtils.isNotEmpty(billing_unit)) {
+        	conditions +=" AND billing_unit LIKE '%"+billing_unit+"%' ";
         }
         if (StringUtils.isNotEmpty(beginTime)){
         	beginTime = " and create_time between'"+beginTime+"'";
@@ -390,7 +394,7 @@ public class CostAcceptOrderController extends Controller {
         	conditions+=" and ifnull(order_no,'') like '%" + orderNo + "%' ";
         }
         
-        String sql = "select * from(select aci.id, aci.order_no application_order_no,'申请单' as order_type,aci.payee_id,"
+        String sql = "select * from(select aci.id, aci.order_no application_order_no,'申请单' as order_type,aci.payee_id,aci.billing_unit,"
         		+ " aci.payment_method, aci.payee_name, aci.account_id, aci.status, aci.create_stamp create_time,aci.check_stamp check_time,aci.confirm_stamp confirm_time,aci.pay_type,aci.remark,"
                 + " ( select sum(cao.pay_amount) from cost_application_order_rel cao where cao.application_order_id = aci.id ) application_amount,"
                 + " GROUP_CONCAT( "

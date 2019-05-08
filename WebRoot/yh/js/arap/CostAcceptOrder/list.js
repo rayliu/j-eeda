@@ -142,7 +142,9 @@ $(document).ready(function() {
             },
             {"mDataProp":"CNAME",  "sWidth":"150px",
             	"sClass": "cname"
-            },  
+            },
+            {"mDataProp":"BILLING_UNIT", "sWidth":"150px",
+                "sClass": "billing_unit"},  
             {"mDataProp":"PAYEE_NAME", "sWidth":"100px",
             	"sClass": "payee_name"},
             	
@@ -696,7 +698,8 @@ $(document).ready(function() {
             check_end_date : $("#check_end_date").val(),
             confirmBeginTime : $("#confirmBegin_date").val(),
             confirmEndTime : $("#confirmEnd_date").val(),
-            insurance : $("#insurance").val()
+            insurance : $("#insurance").val(),
+            billing_unit:$("#billing_unit_input").val()
         };
         if(!!window.localStorage){//查询条件处理
             localStorage.setItem("query_costAcceptOrder2", JSON.stringify(conditions));
@@ -724,6 +727,7 @@ $(document).ready(function() {
         var confirmBeginTime = $.trim($("#confirmBegin_date").val());
         var confirmEndTime = $.trim($("#confirmEnd_date").val());
         var insurance = $.trim($("#insurance").val());
+        var billing_unit = $("#billing_unit_input").val();
 
         /*var flag = false;
         $('#searchForm2 input,#searchForm2 select').each(function(){
@@ -744,7 +748,7 @@ $(document).ready(function() {
             +"&check_begin_date="+check_begin_date+"&check_end_date="+check_end_date
             +"&confirmBeginTime="+confirmBeginTime+"&confirmEndTime="+confirmEndTime
             +"&applicationOrderNo="+applicationOrderNo+"&orderNo="+orderNo
-            +"&sp="+sp+"&insurance="+insurance;
+            +"&sp="+sp+"&insurance="+insurance+"&billing_unit="+billing_unit;
 
         applicationTab.fnDraw(); 
     };
