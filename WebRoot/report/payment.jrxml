@@ -41,8 +41,8 @@
      ifnull(aciao.num_name,'') as bank_person,
      IF(aciao.payment_method="transfers",'转账',IF(aciao.payment_method="cash",'现金','')) AS payment_method,
      ifnull(aciao.payee_name, '') AS payee_name,
-    ifnull(aciao.payee_unit,'') as company_name
-
+    ifnull(aciao.payee_unit,'') as company_name,
+    ifnull(aciao.billing_unit,'')as billing_unit
 FROM
      arap_cost_invoice_application_order aciao
      left join user_login cr on cr.id = aciao.create_by
@@ -86,6 +86,9 @@ WHERE aciao.order_no = $P{order_no}]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="company_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="billing_unit" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -164,9 +167,9 @@ WHERE aciao.order_no = $P{order_no}]]>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="93" splitType="Stretch">
+		<band height="111" splitType="Stretch">
 			<frame>
-				<reportElement x="18" y="0" width="537" height="93" uuid="00e761f7-6582-44ac-a566-48de2310dd81"/>
+				<reportElement x="8" y="10" width="537" height="101" uuid="00e761f7-6582-44ac-a566-48de2310dd81"/>
 				<staticText>
 					<reportElement stretchType="RelativeToBandHeight" x="245" y="0" width="73" height="20" uuid="1f0a2680-7085-4ed5-8afb-26f2e5a51c82"/>
 					<textElement verticalAlignment="Middle">
@@ -175,14 +178,14 @@ WHERE aciao.order_no = $P{order_no}]]>
 					<text><![CDATA[ 收款单位:]]></text>
 				</staticText>
 				<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="82" y="0" width="163" height="20" isPrintWhenDetailOverflows="true" uuid="5dc570a4-904e-4cdb-8f82-67a57589deee"/>
+					<reportElement stretchType="RelativeToBandHeight" x="81" y="0" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="5dc570a4-904e-4cdb-8f82-67a57589deee"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{create_stamp}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement stretchType="RelativeToBandHeight" x="245" y="20" width="73" height="20" uuid="2ab07400-74fb-43ed-9ae1-d211586d5f31"/>
+					<reportElement stretchType="RelativeToBandHeight" x="0" y="80" width="82" height="20" uuid="2ab07400-74fb-43ed-9ae1-d211586d5f31"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
@@ -203,14 +206,14 @@ WHERE aciao.order_no = $P{order_no}]]>
 					<text><![CDATA[ 付款网点:]]></text>
 				</staticText>
 				<textField>
-					<reportElement stretchType="RelativeToBandHeight" x="82" y="20" width="163" height="20" isPrintWhenDetailOverflows="true" uuid="c800687e-3f7e-49d6-9cc8-ed31a5946c21"/>
+					<reportElement stretchType="RelativeToBandHeight" x="81" y="20" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="c800687e-3f7e-49d6-9cc8-ed31a5946c21"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{office_name}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" x="318" y="20" width="188" height="20" isPrintWhenDetailOverflows="true" uuid="2e29fc78-1cce-4da0-be21-4a4f2eaa1e39">
+					<reportElement stretchType="RelativeToBandHeight" x="81" y="80" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="2e29fc78-1cce-4da0-be21-4a4f2eaa1e39">
 						<printWhenExpression><![CDATA[new Boolean($F{payment_method}=="转账")]]></printWhenExpression>
 					</reportElement>
 					<box bottomPadding="5"/>
@@ -257,14 +260,14 @@ WHERE aciao.order_no = $P{order_no}]]>
 					<text><![CDATA[ 开户行:]]></text>
 				</staticText>
 				<textField>
-					<reportElement stretchType="RelativeToBandHeight" x="82" y="40" width="163" height="20" isPrintWhenDetailOverflows="true" uuid="ed3dc8d9-8017-4d0b-896b-0eba3689ee78"/>
+					<reportElement stretchType="RelativeToBandHeight" x="81" y="40" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="ed3dc8d9-8017-4d0b-896b-0eba3689ee78"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{payment_method}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="318" y="40" width="188" height="20" uuid="c23d70e3-50c4-44d2-a65c-ab308cf481f4">
+					<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="317" y="40" width="189" height="20" uuid="c23d70e3-50c4-44d2-a65c-ab308cf481f4">
 						<printWhenExpression><![CDATA[new Boolean($F{payment_method}=="转账")]]></printWhenExpression>
 					</reportElement>
 					<box bottomPadding="5"/>
@@ -274,16 +277,30 @@ WHERE aciao.order_no = $P{order_no}]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{bank_name}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement stretchType="RelativeToBandHeight" x="245" y="20" width="73" height="20" uuid="6392ad85-f5a9-4361-8589-10777d21d310"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[ 开票单位:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToBandHeight" x="317" y="20" width="189" height="20" isPrintWhenDetailOverflows="true" uuid="4684c4d1-9e37-4f9c-a25e-ab2d6594338c"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{billing_unit}]]></textFieldExpression>
+				</textField>
 			</frame>
 			<staticText>
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="18" y="60" width="82" height="20" uuid="c8892969-7863-40d1-8774-0730d1b84c94"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="8" y="70" width="82" height="20" uuid="c8892969-7863-40d1-8774-0730d1b84c94"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[ 收款人:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="18" y="40" width="82" height="20" uuid="c11589ad-8f7b-480b-a445-96b5d43138b1"/>
+				<reportElement stretchType="RelativeToBandHeight" x="8" y="50" width="82" height="20" uuid="c11589ad-8f7b-480b-a445-96b5d43138b1"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="12" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -294,7 +311,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 	<detail>
 		<band height="162">
 			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="18" y="0" width="506" height="162" uuid="9eaf7fea-ed53-46f6-8b84-8521776237de"/>
+				<reportElement stretchType="RelativeToBandHeight" x="8" y="0" width="537" height="162" uuid="9eaf7fea-ed53-46f6-8b84-8521776237de"/>
 				<subreportParameter name="approval_name">
 					<subreportParameterExpression><![CDATA[$F{approval_name}]]></subreportParameterExpression>
 				</subreportParameter>
