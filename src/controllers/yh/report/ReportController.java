@@ -12,6 +12,7 @@ import java.util.List;
 
 
 
+
 import models.ArapCostInvoiceApplication;
 import models.ArapCostOrder;
 import models.CostApplicationOrderRel;
@@ -25,6 +26,7 @@ import org.apache.tools.zip.ZipOutputStream;
 
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 
 import controllers.yh.util.PrintPatterns;
 
@@ -177,8 +179,20 @@ public class ReportController extends Controller {
 			//TODO 预付单
 		}
 		
+		List<Record> InvoiceItemList = Db.find("SELECT order_type FROM cost_application_order_rel WHERE application_order_id=?",arapAuditInvoiceApplication.getLong("id"));
+		
+		boolean is_carsummary= false;
+		for (Record record : InvoiceItemList) {
+			if("行车单".equals(record.getStr("order_type"))){
+				is_carsummary = true;
+				break;
+			}
+		}
 		
 		String fileName = "report/payment.jasper";
+		if(is_carsummary){
+			fileName = "report/carsummary_payment.jasper";
+		}
 		String outFileName ="download/付款申请单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
