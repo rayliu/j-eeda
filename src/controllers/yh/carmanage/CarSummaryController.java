@@ -239,6 +239,9 @@ public class CarSummaryController extends Controller {
 		String order_no = getPara("order_no");
 		String start_data = getPara("start_data");
 		String office_id = getPara("office_id");
+		String beginTime = getPara("beginTime").trim();
+		String endTime = getPara("endTime").trim();
+		
 		 
 		String sLimit = "";
         String pageIndex = getPara("sEcho");
@@ -251,7 +254,7 @@ public class CarSummaryController extends Controller {
         String sql = "";
         String condition = " where 1=1 ";
         sqlTotal = "select count(1) total from (select distinct cso.id,cso.office_id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
-				+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
+				+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,cso.create_data,"
 				+ "	round((cso.next_start_car_amount + cso.month_refuel_amount),2) AS total_cost,"
 				+ " round((cso.finish_car_mileage - cso.start_car_mileage),2) AS carsummarymileage,"
 				+ " (select group_concat(pickup_order_no separator '<br>' ) "
@@ -279,7 +282,7 @@ public class CarSummaryController extends Controller {
 				+ " from car_summary_order cso "
 				+ " order by cso.create_data desc ) a " ;
 		sql = " select * from (select distinct cso.id,cso.office_id,cso.order_no ,cso.status ,cso.car_no,cso.main_driver_name ,"
-				+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,"
+				+ "cso.month_refuel_amount,cso.deduct_apportion_amount,cso.actual_payment_amount,cso.create_data,"
 				+ "	round((cso.next_start_car_amount + cso.month_refuel_amount),2) AS total_cost,"
 				+ " round((cso.finish_car_mileage - cso.start_car_mileage),2) AS carsummarymileage,"
 				+ " (select group_concat(pickup_order_no separator '<br>' ) from car_summary_detail where car_summary_id = cso.id) as pickup_no,"
@@ -326,6 +329,17 @@ public class CarSummaryController extends Controller {
 		if (StringUtils.isNotEmpty(office_id)) {
 			condition +=" AND office_id = '"+office_id+"'";
 		}
+		
+		if (beginTime == null || "".equals(beginTime)) {
+			beginTime = "1-1-1";
+		}
+		if (endTime == null || "".equals(endTime)) {
+			endTime = "9999-12-31";
+		}else{
+			endTime = endTime+" 23:59:59";
+		}
+		condition +=" and create_data between '"+beginTime+ "' and '"+ endTime+ "' ";
+		
 		Record rec = Db.findFirst(sqlTotal+condition);
         logger.debug("total records:" + rec.getLong("total"));
         List<Record> orders = Db.find(sql+condition+sLimit);

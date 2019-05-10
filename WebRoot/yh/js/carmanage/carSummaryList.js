@@ -167,7 +167,8 @@ $(document).ready(function() {
 			  {"mDataProp":"OTHER_CHARGES", "sWidth":"70px"},                        
 			  {"mDataProp":"TOTAL_COST", "sWidth":"100px"},           
 			  {"mDataProp":"DEDUCT_APPORTION_AMOUNT", "sWidth":"100px"},  
-			  {"mDataProp":"ACTUAL_PAYMENT_AMOUNT", "sWidth":"100px"}
+			  {"mDataProp":"ACTUAL_PAYMENT_AMOUNT", "sWidth":"100px"},
+			  {"mDataProp":"CREATE_DATA", "sWidth":"100px"},
 		]          
     });
     
@@ -395,6 +396,8 @@ $(document).ready(function() {
 		var order_no = $.trim($("#carSummary_pickup_order").val());
 		var start_data = $.trim($("#carSummary_start_data").val());
 		var office_id=$.trim($("#carSummary_office").val());
+		var beginTime = $.trim($("#create_time_begin_time").val());
+        var endTime = $.trim($("#create_time_end_time").val());
 		
 		 var flag = false;
 	        $('#searchForm1 input,#searchForm1 select').each(function(){
@@ -412,7 +415,8 @@ $(document).ready(function() {
 		num2 = 1;
 		travellingCraneReceipts_table.fnSettings().sAjaxSource = "/carsummary/carSummaryOrderList?" +
 				"status="+status+"&driver="+driver+"&car_no="+car_no+"&transferOrderNo="+transferOrderNo
-				+"&order_no="+order_no+"&start_data="+start_data+"&office_id="+office_id;
+				+"&order_no="+order_no+"&start_data="+start_data+"&office_id="+office_id
+				+"&beginTime="+beginTime+"&endTime="+endTime;
 		travellingCraneReceipts_table.fnDraw();
 		saveConditions1();
 	};
