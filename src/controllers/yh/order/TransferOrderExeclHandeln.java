@@ -27,6 +27,7 @@ import models.Warehouse;
 import models.yh.profile.Contact;
 
 import com.jfinal.aop.Before;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.DbKit;
 import com.jfinal.plugin.activerecord.Model;
@@ -528,11 +529,14 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 						.set("weight", product.getDouble("weight"))
 						.set("product_id", product.getLong("id"));
 			}
-			transferOrderItem.set("order_id", tansferOrder.getLong("id"))
-					.set("volume", sumVolume).set("sum_weight", sumWeight)			
-					.set("remark", item.get("备注"))
-					.set("charge_amount", item.get("应收费用"))
-					.save();
+			transferOrderItem.set("order_id", tansferOrder.getLong("id"));
+			transferOrderItem.set("volume", sumVolume);
+			transferOrderItem.set("sum_weight", sumWeight);
+			transferOrderItem.set("remark", item.get("备注"));
+			if(item.get("应收费用")!=null&&item.get("应收费用")!="") {
+				transferOrderItem.set("charge_amount", item.get("应收费用"));
+			}
+			transferOrderItem.save();
 		}
 		return transferOrderItem;
 	}
