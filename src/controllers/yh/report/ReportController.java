@@ -190,7 +190,7 @@ public class ReportController extends Controller {
 		}
 		
 		String fileName = "report/payment.jasper";
-		if(is_carsummary){
+		if(is_carsummary||arapAuditInvoiceApplication.getLong("payee_id")==92647){
 			fileName = "report/carsummary_payment.jasper";
 		}
 		String outFileName ="download/付款申请单";
