@@ -47,6 +47,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
+import controllers.eeda.util.LogUtil;
 import controllers.yh.LoginUserController;
 import controllers.yh.OfficeController;
 import controllers.yh.util.OrderNoGenerator;
@@ -1932,33 +1933,40 @@ public class CostCheckOrderController extends Controller {
 		if (item != null) {
 			item.delete();
 		}
+		String order_no = "";
 		if ("提货".equals(order_type)) {
 			DepartOrder pickupOrder = DepartOrder.dao.findById(id);
 			pickupOrder.set("audit_status", "已确认");
 			pickupOrder.update();
+			order_no = pickupOrder.getStr("depart_no");
 		} else if ("零担".equals(order_type) || "整车".equals(order_type)) {
 			DepartOrder departOrder = DepartOrder.dao.findById(id);
 			departOrder.set("audit_status", "已确认");
 			departOrder.update();
+			order_no = departOrder.getStr("depart_no");
 		} else if ("干线提货".equals(order_type)) {
 			PickupGateInOrder pgi = PickupGateInOrder.dao.findById(id);
 			pgi.set("audit_status", "已确认");
 			pgi.update();
+			order_no = pgi.getStr("order_no");
 		} else if ("配送".equals(order_type)) {
 			DeliveryOrder deliveryOrder = DeliveryOrder.dao.findById(id);
 			deliveryOrder.set("audit_status", "已确认");
 			deliveryOrder.update();
+			order_no = deliveryOrder.getStr("order_no");
 		} else if ("成本单".equals(order_type)) {
 			ArapMiscCostOrder arapmisccostOrder = ArapMiscCostOrder.dao
 					.findById(id);
 			arapmisccostOrder.set("audit_status", "已确认");
 			arapmisccostOrder.update();
+			order_no = arapmisccostOrder.getStr("order_no");
 		} else {
 			InsuranceOrder insuranceOrder = InsuranceOrder.dao.findById(id);
 			insuranceOrder.set("audit_status", "已确认");
 			insuranceOrder.update();
+			order_no = insuranceOrder.getStr("order_no");
 		}
-
+		LogUtil.log_Record(id,order_no,null);//撤销操作记录
 		renderJson("{\"success\":true}");
 	}
 	
