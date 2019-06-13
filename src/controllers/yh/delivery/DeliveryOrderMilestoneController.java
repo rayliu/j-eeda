@@ -316,11 +316,26 @@ public class DeliveryOrderMilestoneController extends Controller {
         double t_weight_one = tOrderItemRecord.getDouble("sum_weight") ;
         double t_weight_all = tOrderItemRecord.getDouble("sum_weight") ;
         
-        double amount = contractFinItem.getDouble("amount");  //0-100kg
-        double amount1 = contractFinItem.getDouble("amount1");  //100-200kg
-        double amount2 = contractFinItem.getDouble("amount2"); //201-300kg
-        double amount3 = contractFinItem.getDouble("amount3"); //301-400kg
-        double amount4 = contractFinItem.getDouble("amount4"); //401kg~
+        double amount =0.0;
+        if(contractFinItem.getDouble("amount")!=null) {
+        	amount = contractFinItem.getDouble("amount");
+        };  //0-100kg
+        double amount1 = 0.0;  //100-200kg
+        if(contractFinItem.getDouble("amount1")!=null) {
+        	amount1 = contractFinItem.getDouble("amount1");
+        };  //0-100kg
+        double amount2 = 0.0; //201-300kg
+        if(contractFinItem.getDouble("amount2")!=null) {
+        	amount2 = contractFinItem.getDouble("amount2");
+        };  //0-100kg
+        double amount3 = 0.0; //301-400kg
+        if(contractFinItem.getDouble("amount3")!=null) {
+        	amount3 = contractFinItem.getDouble("amount3");
+        };  //0-100kg
+        double amount4 = 0.0; //401kg~
+        if(contractFinItem.getDouble("amount4")!=null) {
+        	amount4 = contractFinItem.getDouble("amount4");
+        };  //0-100kg
         //配送单合同
         if("perCar".equals(chargeType)){
         	if (t_weight_all < 100){
