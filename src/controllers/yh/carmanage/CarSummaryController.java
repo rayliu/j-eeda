@@ -64,7 +64,7 @@ public class CarSummaryController extends Controller {
     }
 	
 	//未处理调车单
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_CREATE})
+	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_CREATE})
 	public void untreatedCarManageList(){
 		
 		Map orderMap = null;
@@ -228,7 +228,7 @@ public class CarSummaryController extends Controller {
 	}
 	
 	//行车单查询
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_LIST})
+	//@RequiresPermissions(value = {PermissionConstant.PERMSSION_CS_LIST})
 	public void carSummaryOrderList(){
 		
 		Map orderMap = null;
