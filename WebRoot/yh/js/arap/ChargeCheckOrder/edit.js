@@ -84,7 +84,7 @@ $(document).ready(function() {
         for(var i=0; i<itemsArray.length; i++){
             total_amount += Number(itemsArray[i].AMOUNT);
             change_amount += Number(itemsArray[i].CHANGE_AMOUNT);
-            $('#chargeAmount').html(total_amount);
+            $('#chargeAmount').html(total_amount.toFixed(2));
         }
         
 
@@ -891,8 +891,8 @@ $(document).ready(function() {
             for(var i=0; i<itemsArray.length; i++){
                 total_amount += Number(itemsArray[i].AMOUNT);
                 change_amount += Number(itemsArray[i].CHANGE_AMOUNT);
-                $('#chargeAmount').html(total_amount);
-                $("#chargeAmount")[0].innerHTML = total_amount;
+                $('#chargeAmount').html(total_amount.toFixed(2));
+                $("#chargeAmount")[0].innerHTML = total_amount.toFixed(2);
     			$("#total_amount").text(total_amount);
             }
             

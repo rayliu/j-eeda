@@ -126,8 +126,8 @@ public class ReportController extends Controller {
 	}
 	
 	public String pritCheckOrderByPay(String order_no,long application_id) {
-		String fileName = "report/checkOrder.jasper";
-		String outFileName = "download/供应商对账单";
+		String fileName = "/report/checkOrder.jasper";
+		String outFileName = "/download/供应商对账单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
 		hm.put("application_id", application_id);
@@ -189,13 +189,13 @@ public class ReportController extends Controller {
 			}
 		}
 		
-		String fileName = "report/payment.jasper";
+		String fileName = "/report/payment.jasper";
 		if(arapAuditInvoiceApplication.getLong("PAYEE_ID")!=null) {
 			if(is_carsummary||arapAuditInvoiceApplication.getLong("payee_id")==92647){
-				fileName = "report/carsummary_payment.jasper";
+				fileName = "/report/carsummary_payment.jasper";
 			}
 		}
-		String outFileName ="download/付款申请单";
+		String outFileName ="/download/付款申请单";
 		HashMap<String, Object> hm = new HashMap<String, Object>();
 		hm.put("order_no", order_no);
         fileName = getContextPath() + fileName;
