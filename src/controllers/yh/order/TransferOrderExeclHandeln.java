@@ -684,9 +684,9 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 					Party customer = Party.dao
 							.findFirst("select p.id as pid,p.is_inventory_control is_inventory_control from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 									+ Party.PARTY_TYPE_CUSTOMER
-									+ "' and c.abbr ='"
+									+ "' and (c.company_name='"+order.get("客户名称")+"' or c.abbr ='"
 									+ order.get("客户名称")
-									+ "';");
+									+ "');");
 					// 仓库
 					Warehouse warehouse = Warehouse.dao
 							.findFirst("select id from warehouse where warehouse_name = '"
@@ -873,8 +873,8 @@ public class TransferOrderExeclHandeln extends TransferOrderController {
 		Party customer = Party.dao
 				.findFirst("select p.id as pid from party p left join contact c on c.id = p.contact_id where p.party_type ='"
 						+ Party.PARTY_TYPE_CUSTOMER
-						+ "' and c.abbr ='"
-						+ order.get("客户名称") + "';");
+						+ "' and (c.company_name= '"+order.get("客户名称")+"' or c.abbr ='"
+						+ order.get("客户名称") + "');");
 		if(customer==null){
 			throw new Exception("客户名称有误");
 		}
