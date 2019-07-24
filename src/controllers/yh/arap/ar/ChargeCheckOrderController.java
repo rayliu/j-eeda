@@ -381,9 +381,9 @@ public class ChargeCheckOrderController extends Controller {
 		String sortBy = getPara("sSortDir_0");
 		String colName = getPara("mDataProp_" + sortColIndex);
 
-		String orderByStr = " order by A.planning_time desc ";
+		String orderByStr = "GROUP BY A.order_no order by A.planning_time desc ";
 		if (colName.length() > 0) {
-			orderByStr = " order by A." + colName + " " + sortBy;
+			orderByStr = "GROUP BY A.order_no order by A." + colName + " " + sortBy;
 		}
 
 		// 获取数据
@@ -574,11 +574,10 @@ public class ChargeCheckOrderController extends Controller {
 					+ "%' and (SELECT GROUP_CONCAT(DISTINCT amcoi.customer_order_no SEPARATOR '') FROM arap_misc_charge_order_item amcoi WHERE amcoi.misc_order_id = amco.id) like '%"
 					+ customerNo + "%'";
 		}
-		sqlTotal = "select count(1) total from (" + sql + condition + sql2
-				+ condition2 + sql3 + ") as A";
+		sqlTotal = "select count(*) total from (select * from (" + sql + condition + sql2+ condition2 + sql3 + fieldsWhere+")A "+ orderByStr+")B";
 		
 		if(!"new".equals(flag)){
-			rec = Db.findFirst(sqlTotal + fieldsWhere);
+			rec = Db.findFirst(sqlTotal);
 			orders = Db.find("select * from (" + sql + condition + sql2
 					+ condition2 + sql3 + fieldsWhere + ") A " + orderByStr
 					+ sLimit);
