@@ -140,7 +140,7 @@ WHERE
 			<textField isBlankWhenNull="true">
 				<reportElement style="table_TD" x="0" y="0" width="127" height="29" uuid="43a6c75d-c8fb-45c9-811a-5927f63f27e1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体"/>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fin_item}]]></textFieldExpression>
 			</textField>
@@ -154,7 +154,7 @@ WHERE
 			<textField isBlankWhenNull="true">
 				<reportElement style="table_TD" x="608" y="0" width="194" height="29" uuid="92adf912-cbf1-4161-afc2-70247a96a0fc"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="宋体"/>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
 			</textField>
