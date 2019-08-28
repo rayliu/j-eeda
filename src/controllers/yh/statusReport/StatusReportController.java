@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
@@ -49,7 +50,7 @@ public class StatusReportController extends Controller{
 		render("/yh/statusReport/productStatusReport.html");
 	}
 	
-	@RequiresPermissions(value = {PermissionConstant.PERMSSION_ORDERINDEX_LIST})
+	@RequiresPermissions(value = {PermissionConstant.PERMSSION_ORDERINDEX_LIST,PermissionConstant.PERMSSION_ORDER_FLOW_LIST},logical=Logical.OR)
 	public void orderFlow() {
 		render("/yh/statusReport/orderFlowList.html");
 	}
