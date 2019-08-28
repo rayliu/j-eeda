@@ -52,6 +52,12 @@ public class StatusReportController extends Controller{
 	
 	@RequiresPermissions(value = {PermissionConstant.PERMSSION_ORDERINDEX_LIST,PermissionConstant.PERMSSION_ORDER_FLOW_LIST},logical=Logical.OR)
 	public void orderFlow() {
+		List<Record> UserRole = Db.find(" SELECT * FROM user_role ur, role r WHERE ur.role_code=r.code AND ur.user_name= '"+currentUser.getPrincipal()+"'");
+        for(Record role : UserRole) {
+	       	 if("客户查询".equals(role.getStr("name"))) {
+	       		 setAttr("customer_query", "Y");
+	       	 }
+        }
 		render("/yh/statusReport/orderFlowList.html");
 	}
 	
@@ -183,7 +189,6 @@ public class StatusReportController extends Controller{
          logger.debug("total records:" + rec.getLong("total"));
         
          List<Record> BillingOrders = Db.find(sql+ conditions + sLimit);
-
          
          Map BillingOrderListMap = new HashMap();
          BillingOrderListMap.put("draw", pageIndex);//显示第几页
