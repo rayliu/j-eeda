@@ -567,7 +567,7 @@ public class DeliveryOrderMilestoneController extends Controller {
                 returnOrder.set("creator", userId);
                 
                 Record tor = new Record();
-                if(deliveryOrder.getStr("order_no").indexOf("-1")!=-1){
+                if(deliveryOrder.getStr("order_no").endsWith("-1")){
                 	tor = Db.findFirst("select * from transfer_order_item_detail toid"
     	            		+ " left join transfer_order tor on tor.id = toid.order_id "
     	            		+ " where toid.delivery_refused_id = ?",delivery_id);
