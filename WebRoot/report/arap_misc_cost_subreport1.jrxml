@@ -94,7 +94,7 @@ where amcoi.misc_order_id=$P{order_id}]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="35" splitType="Stretch">
+		<band height="34" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement style="table_TD" stretchType="RelativeToBandHeight" x="200" y="0" width="200" height="34" uuid="7dbe3927-3f59-4e60-86b9-3203c8652b82"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">

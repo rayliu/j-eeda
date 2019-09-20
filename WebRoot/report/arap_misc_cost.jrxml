@@ -120,7 +120,7 @@ where amco.order_no =$P{order_no}]]>
 				<text><![CDATA[广州源鸿物流有限公司]]></text>
 			</staticText>
 			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
-				<reportElement x="669" y="34" width="111" height="17" uuid="6102e53c-094a-4247-a1fc-061212ba4baf"/>
+				<reportElement x="691" y="33" width="111" height="17" uuid="6102e53c-094a-4247-a1fc-061212ba4baf"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -134,34 +134,34 @@ where amco.order_no =$P{order_no}]]>
 				<text><![CDATA[手工成本单]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="599" y="17" width="70" height="17" uuid="24090338-89f5-4f4d-bc92-ea1e1ed98745"/>
+				<reportElement x="621" y="16" width="58" height="17" uuid="24090338-89f5-4f4d-bc92-ea1e1ed98745"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="11" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[No：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="599" y="34" width="70" height="17" uuid="754af059-f656-4421-81c3-37fbcffad461"/>
+				<reportElement x="621" y="33" width="70" height="17" uuid="754af059-f656-4421-81c3-37fbcffad461"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[打印日期：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="669" y="50" width="111" height="17" uuid="a6da644d-4886-4fa7-bbc1-5a3a0238bb5a"/>
+				<reportElement x="691" y="50" width="111" height="17" uuid="a6da644d-4886-4fa7-bbc1-5a3a0238bb5a"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement x="599" y="50" width="70" height="17" uuid="a76920b8-2be0-4850-8416-ec57e9c2413c"/>
+				<reportElement x="621" y="50" width="70" height="17" uuid="a76920b8-2be0-4850-8416-ec57e9c2413c"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[页  次：]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="669" y="17" width="133" height="17" uuid="94361f45-daf8-4ba1-b732-34df7b3b6678"/>
+				<reportElement x="679" y="16" width="121" height="17" uuid="94361f45-daf8-4ba1-b732-34df7b3b6678"/>
 				<textElement>
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>

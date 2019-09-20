@@ -120,7 +120,7 @@ where aao.order_no=$P{order_no}]]>
 				<textFieldExpression><![CDATA[null]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="631" y="21" width="70" height="17" uuid="d27dbd78-f47f-43e6-ad19-a1964decf160"/>
+				<reportElement x="631" y="21" width="44" height="17" uuid="d27dbd78-f47f-43e6-ad19-a1964decf160"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="11" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -141,7 +141,7 @@ where aao.order_no=$P{order_no}]]>
 				<text><![CDATA[客户对账明细]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="701" y="21" width="111" height="17" uuid="b6c7cc71-5a7b-4424-9fb9-89942a04aa29"/>
+				<reportElement x="675" y="21" width="137" height="17" uuid="b6c7cc71-5a7b-4424-9fb9-89942a04aa29"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>

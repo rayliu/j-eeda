@@ -57,7 +57,7 @@ where ro.order_no like 'YFBX%' and ro.order_no=$P{order_no}]]>
 	<pageHeader>
 		<band height="58" splitType="Stretch">
 			<staticText>
-				<reportElement x="364" y="2" width="67" height="17" uuid="ebb3b2b6-a196-433f-a5bf-c5d7e1c5e35c"/>
+				<reportElement x="364" y="2" width="37" height="17" uuid="ebb3b2b6-a196-433f-a5bf-c5d7e1c5e35c"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -109,7 +109,7 @@ where ro.order_no like 'YFBX%' and ro.order_no=$P{order_no}]]>
 				<reportElement x="18" y="54" width="527" height="1" uuid="26587acd-a956-4ffe-a384-37ab309754e0"/>
 			</line>
 			<textField>
-				<reportElement x="431" y="2" width="124" height="17" uuid="20205b04-367b-4db9-9e19-f0b3d53e4ef4"/>
+				<reportElement x="401" y="2" width="154" height="17" uuid="20205b04-367b-4db9-9e19-f0b3d53e4ef4"/>
 				<textElement>
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>

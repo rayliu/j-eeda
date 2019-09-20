@@ -106,7 +106,7 @@ where dor.order_no=$P{order_no}]]>
 				<textFieldExpression><![CDATA["广州源鸿物流有限公司"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="661" y="11" width="140" height="17" uuid="dd83dd4d-bb27-49cc-a506-1ba223785c78"/>
+				<reportElement x="643" y="11" width="158" height="17" uuid="dd83dd4d-bb27-49cc-a506-1ba223785c78"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -134,7 +134,7 @@ where dor.order_no=$P{order_no}]]>
 				<text><![CDATA[打印次数：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="594" y="11" width="67" height="17" uuid="dcbef272-18e7-4ee7-a97b-7e0ff2ce6dd4"/>
+				<reportElement x="594" y="11" width="49" height="17" uuid="dcbef272-18e7-4ee7-a97b-7e0ff2ce6dd4"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>

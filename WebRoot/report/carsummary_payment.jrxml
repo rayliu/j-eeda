@@ -117,7 +117,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 				<text><![CDATA[打印次数：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="415" y="0" width="140" height="17" uuid="99a7d58e-6db8-4568-92ef-cdc4fcf2d802"/>
+				<reportElement x="384" y="0" width="171" height="17" uuid="99a7d58e-6db8-4568-92ef-cdc4fcf2d802"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -152,7 +152,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 				<textFieldExpression><![CDATA["广州源鸿控股有限公司"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="348" y="0" width="67" height="17" uuid="bd0f76e8-ee73-4afe-ba09-bf8a072d13ed"/>
+				<reportElement x="348" y="0" width="36" height="17" uuid="bd0f76e8-ee73-4afe-ba09-bf8a072d13ed"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="10" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>

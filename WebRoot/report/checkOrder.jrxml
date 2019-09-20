@@ -93,7 +93,7 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 					<text><![CDATA[供应商对账明细]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="621" y="12" width="70" height="17" uuid="d4ac615b-5224-4b59-9583-52cbd0b1f639"/>
+					<reportElement x="621" y="12" width="52" height="17" uuid="d4ac615b-5224-4b59-9583-52cbd0b1f639"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font fontName="宋体" size="11" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
@@ -114,7 +114,7 @@ LEFT JOIN contact c ON   c.id = p.contact_id where aco.order_no =$P{order_no} an
 					<text><![CDATA[页  次：]]></text>
 				</staticText>
 				<textField isBlankWhenNull="true">
-					<reportElement x="691" y="12" width="111" height="17" uuid="faed253a-a012-4826-a87b-0427839e00c0"/>
+					<reportElement x="673" y="12" width="129" height="17" uuid="faed253a-a012-4826-a87b-0427839e00c0"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>

@@ -134,7 +134,7 @@ where amco.order_no =$P{order_no}]]>
 				<text><![CDATA[手工收入单]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="599" y="17" width="70" height="17" uuid="24090338-89f5-4f4d-bc92-ea1e1ed98745"/>
+				<reportElement x="599" y="17" width="42" height="17" uuid="24090338-89f5-4f4d-bc92-ea1e1ed98745"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="宋体" size="11" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
@@ -161,7 +161,7 @@ where amco.order_no =$P{order_no}]]>
 				<text><![CDATA[页  次：]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="669" y="17" width="133" height="17" uuid="94361f45-daf8-4ba1-b732-34df7b3b6678"/>
+				<reportElement x="641" y="17" width="161" height="17" uuid="94361f45-daf8-4ba1-b732-34df7b3b6678"/>
 				<textElement>
 					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
