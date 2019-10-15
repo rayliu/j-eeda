@@ -2818,22 +2818,21 @@ public class DeliveryController extends Controller {
 				if(transfer_order_id!=null){
 					Record transfer_order = Db.findById("transfer_order", transfer_order_id);
 					if(record.getDouble("amount")!=null){
-						Long transfer_item_id= record.getLong("transfer_item_id");
-						Record transfer_order_item = Db.findById("transfer_order_item", transfer_item_id);
-						Double complete_amount = transfer_order_item.getDouble("complete_amount")-record.getDouble("amount");
-						if(complete_amount<0){
-							transfer_order_item.set("complete_amount", 0);
-						}else{
-							transfer_order_item.set("complete_amount", complete_amount);
-						}
 						if("cargoNatureDetailYes".equals(transfer_order.getStr("cargo_nature_detail"))){//是单品管理
-							Long transfer_item_detail_id = record.getLong("transfer_item_detail_id");
-							Record transfer_order_item_detail = Db.findById("transfer_order_item_detail", transfer_item_detail_id);
+							Record transfer_order_item_detail = Db.findFirst(" SELECT *FROM `transfer_order_item_detail` WHERE order_id = "+transfer_order_id);
 							transfer_order_item_detail.set("delivery_id", null);
 							transfer_order_item_detail.set("is_delivered", 0);
 							result= Db.update("transfer_order_item_detail",transfer_order_item_detail);
+						}else {
+							Record transfer_order_item = Db.findFirst("SELECT *FROM `transfer_order_item_detail` WHERE order_id ="+ transfer_order_id);
+							Double complete_amount = transfer_order_item.getDouble("complete_amount")-record.getDouble("amount");
+							if(complete_amount<0){
+								transfer_order_item.set("complete_amount", 0);
+							}else{
+								transfer_order_item.set("complete_amount", complete_amount);
+							}
+							result =Db.update("transfer_order_item", transfer_order_item);
 						}
-						result =Db.update("transfer_order_item", transfer_order_item);
 					}
 					if(result){
 						Db.delete("delivery_order_item", record);
