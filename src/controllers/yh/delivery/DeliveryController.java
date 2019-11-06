@@ -2819,7 +2819,7 @@ public class DeliveryController extends Controller {
 					Record transfer_order = Db.findById("transfer_order", transfer_order_id);
 					if(record.getDouble("amount")!=null){
 						if("cargoNatureDetailYes".equals(transfer_order.getStr("cargo_nature_detail"))){//是单品管理
-							Record transfer_order_item_detail = Db.findFirst(" SELECT *FROM `transfer_order_item_detail` WHERE order_id = "+transfer_order_id);
+							Record transfer_order_item_detail = Db.findFirst(" SELECT *FROM `transfer_order_item_detail` WHERE delivery_id = "+delivery_id);
 							transfer_order_item_detail.set("delivery_id", null);
 							transfer_order_item_detail.set("is_delivered", 0);
 							result= Db.update("transfer_order_item_detail",transfer_order_item_detail);
