@@ -1065,6 +1065,8 @@ public class CostCheckOrderController extends Controller {
 				+ " left join office oe on oe.id = w.office_id "
 				+ " where dor.audit_status='已确认' "
 				+ (StrKit.isBlank(sp_id2)?"":" and dor.sp_id ="+sp_id2)
+				+ " and tor.order_no LIKE '%"+orderNo+"%'"
+				+ " and dor.order_no LIKE '%"+no+"%'"
 				+ " and exists (select customer_id from user_customer where user_name='"+user_name+"' and  dor.customer_id = customer_id)"
 				+ " and exists ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"' and dor.office_id = office_id)"
 		       // + " and (w.id in (select w.id from user_office uo, warehouse w where uo.office_id = w.office_id and uo.user_name='"+user_name+"')"
