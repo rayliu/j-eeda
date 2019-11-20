@@ -2824,7 +2824,7 @@ public class DeliveryController extends Controller {
 							transfer_order_item_detail.set("is_delivered", 0);
 							result= Db.update("transfer_order_item_detail",transfer_order_item_detail);
 						}else {
-							Record transfer_order_item = Db.findFirst("SELECT *FROM `transfer_order_item_detail` WHERE order_id ="+ transfer_order_id);
+							Record transfer_order_item = Db.findFirst("SELECT *FROM `transfer_order_item` WHERE order_id ="+ transfer_order_id);
 							Double complete_amount = transfer_order_item.getDouble("complete_amount")-record.getDouble("amount");
 							if(complete_amount<0){
 								transfer_order_item.set("complete_amount", 0);
