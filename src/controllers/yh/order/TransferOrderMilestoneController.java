@@ -29,6 +29,7 @@ import org.apache.shiro.subject.Subject;
 
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
@@ -373,7 +374,9 @@ public class TransferOrderMilestoneController extends Controller {
     						+ " LEFT JOIN depart_order dor on dor.id = dp.depart_id"
     						+ " LEFT JOIN depart_transfer dt on dt.pickup_id = dp.pickup_id"
     						+ " where dor.STATUS = '已收货' and dt.order_id = ? and dt.twice_pickup_flag = 'N' group by dt.id ) A",transerOrderId);
-    				pickupAmount = re.getDouble("yishou");   //运输单已收货的总数量	
+    				if(StrKit.notBlank(re.getStr("yishou"))){
+    					pickupAmount = re.getDouble("yishou");   //运输单已收货的总数量	
+    				}
     			}else{
     				pickupAmount = totalAmount; //外包（因无法多次发车，所以数量和总数量相同）
     			}

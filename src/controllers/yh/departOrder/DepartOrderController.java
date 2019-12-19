@@ -3295,10 +3295,12 @@ public class DepartOrderController extends Controller {
         	} else {
         		ReturnOrder returnOrder = ReturnOrder.dao.findFirst("select * from return_order where transfer_order_id =?",transfer_id);
         		//校验是否有下级财务单据（应收）
-        		String transaction_status = returnOrder.getStr("transaction_status");
-        		if(!"新建".equals(transaction_status) && !"已签收".equals(transaction_status) && !"已确认".equals(transaction_status)){
-        			renderJson("{\"success\":false}");
-     	 			return ;
+        		if(returnOrder!=null && StrKit.notBlank(returnOrder.getStr("transaction_status"))) {
+	        		String transaction_status = returnOrder.getStr("transaction_status");
+	        		if(!"新建".equals(transaction_status) && !"已签收".equals(transaction_status) && !"已确认".equals(transaction_status)){
+	        			renderJson("{\"success\":false}");
+	     	 			return ;
+	        		}
         		}
         	}
         }
