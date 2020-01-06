@@ -1064,6 +1064,7 @@ public class CostCheckOrderController extends Controller {
 				+ " left join location lo2 on lo2.code = dor.route_to "
 				+ " left join office oe on oe.id = w.office_id "
 				+ " where dor.audit_status='已确认' "
+				+ (StrKit.isBlank(orderNo)?"":" and tor.order_no LIKE '%"+orderNo+"%' ")//20200107 added
 				+ (StrKit.isBlank(sp_id2)?"":" and dor.sp_id ="+sp_id2)
 				+ " and exists (select customer_id from user_customer where user_name='"+user_name+"' and  dor.customer_id = customer_id)"
 				+ " and exists ( SELECT office_id FROM user_office WHERE user_name = '"+user_name+"' and dor.office_id = office_id)"
@@ -1347,8 +1348,9 @@ public class CostCheckOrderController extends Controller {
 			orderByStr = " order by A." + colName + " " + sortBy;
 		}
 
-		List<Record> BillingOrders = Db.find(sql + condition + orderByStr
-				+ sLimit);
+		String sqlStr = sql + condition + orderByStr + sLimit;
+		logger.info(sqlStr);
+		List<Record> BillingOrders = Db.find(sqlStr);
 
 		Map BillingOrderListMap = new HashMap();
 		BillingOrderListMap.put("sEcho", pageIndex);
