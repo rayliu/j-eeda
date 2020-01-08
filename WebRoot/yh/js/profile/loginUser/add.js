@@ -95,7 +95,7 @@ var officeList = function(){
 			                    +' <td><a class="btn removeOffice" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 					}
 					$("select[name='officeSelect']:last").append("<option value='"+data.userOffice[i].OFFICE_ID+"'>"+data.userOffice[i].OFFICE_NAME+"</option>");
-					queryOffice();
+					//queryOffice();
 				}
 				
 			}
@@ -116,7 +116,7 @@ var customerList = function(){
 		                +' <td><a class="btn removeCustomer" title="删除"><i class="fa fa-trash-o fa-fw"></i></a></td></tr>');
 					
 					$("select[name='customerSelect']:last").append("<option value='"+data.customerlist[i].CUSTOMER_ID+"'>"+data.customerlist[i].COMPANY_NAME+"</option>");
-					queryCustomer();
+					//queryCustomer();
 				}
 				
 			}
