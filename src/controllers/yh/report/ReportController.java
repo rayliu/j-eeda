@@ -20,6 +20,7 @@ import models.TransferOrder;
 import models.TransferOrderItem;
 import models.TransferOrderItemDetail;
 
+import org.apache.commons.logging.impl.LogKitLogger;
 import org.apache.log4j.Logger;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipOutputStream;
@@ -204,7 +205,8 @@ public class ReportController extends Controller {
 				outFileName, hm);
 		buffer.append(file.substring(file.indexOf("download")-1));
 		buffer.append(",");
-		renderText(buffer.toString());
+		logger.error(buffer.toString());
+		renderText("文件下载地址：   "+buffer.toString());
 	}
 	public void printSign() {
 		String type = getPara("sign");
