@@ -205,8 +205,8 @@ public class ReportController extends Controller {
 				outFileName, hm);
 		buffer.append(file.substring(file.indexOf("download")-1));
 		buffer.append(",");
-		logger.error(buffer.toString());
-		renderText("文件下载地址：   "+buffer.toString());
+		logger.error("文件下载地址：   "+buffer.toString());
+		renderText(buffer.toString());
 	}
 	public void printSign() {
 		String type = getPara("sign");
