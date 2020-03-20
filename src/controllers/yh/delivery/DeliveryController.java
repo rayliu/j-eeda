@@ -2011,8 +2011,8 @@ public class DeliveryController extends Controller {
 				deliveryOrderMilestone.set("status", status);
 				deliveryOrder.set("status", status);
 			} else {
-				deliveryOrderMilestone.set("status", "在途");
-				deliveryOrder.set("status", "在途");
+				deliveryOrderMilestone.set("status", "配送在途");
+				deliveryOrder.set("status", "配送在途");
 			}
 			deliveryOrder.update();
 			if (!location.isEmpty()) {
