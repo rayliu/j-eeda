@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment" language="groovy" printOrder="Horizontal" pageWidth="595" pageHeight="421" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3a229599-7a9a-404d-9301-b0c480fc4146">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="payment" language="groovy" pageWidth="595" pageHeight="421" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3a229599-7a9a-404d-9301-b0c480fc4146">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="101"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -321,26 +321,24 @@ WHERE aciao.order_no = $P{order_no}]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="212">
-			<elementGroup>
-				<subreport>
-					<reportElement stretchType="RelativeToBandHeight" x="18" y="0" width="506" height="212" uuid="9eaf7fea-ed53-46f6-8b84-8521776237de"/>
-					<subreportParameter name="approval_name">
-						<subreportParameterExpression><![CDATA[$F{approval_name}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="create_name">
-						<subreportParameterExpression><![CDATA[$F{create_name}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="order_id">
-						<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportParameter name="confirm_name">
-						<subreportParameterExpression><![CDATA[$F{confirm_name}]]></subreportParameterExpression>
-					</subreportParameter>
-					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "payment_subreport_item.jasper"]]></subreportExpression>
-				</subreport>
-			</elementGroup>
+		<band height="212" splitType="Stretch">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="16" y="5" width="506" height="200" isPrintWhenDetailOverflows="true" uuid="9eaf7fea-ed53-46f6-8b84-8521776237de"/>
+				<subreportParameter name="approval_name">
+					<subreportParameterExpression><![CDATA[$F{approval_name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="create_name">
+					<subreportParameterExpression><![CDATA[$F{create_name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="order_id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="confirm_name">
+					<subreportParameterExpression><![CDATA[$F{confirm_name}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "payment_subreport_item.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<pageFooter>
