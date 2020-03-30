@@ -21,6 +21,7 @@ import com.jfinal.plugin.activerecord.CaseInsensitiveContainerFactory;
 import com.jfinal.plugin.activerecord.SqlReporter;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.c3p0.C3p0Plugin;
+import com.jfinal.plugin.druid.DruidPlugin;
 import com.jfinal.weixin.eeda.WeixinApiController;
 import com.jfinal.weixin.eeda.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
@@ -165,7 +166,8 @@ public class EedaConfig extends JFinalConfig {
      */
     Routes routes;
 
-    C3p0Plugin cp;
+    //C3p0Plugin cp;
+    DruidPlugin cp;
     ActiveRecordPlugin arp;
 
     @Override
@@ -534,7 +536,9 @@ public class EedaConfig extends JFinalConfig {
             connectH2();
         } else {
         	logger.info("DB url: " + url);
-            cp = new C3p0Plugin(url, username, pwd);
+        	cp = new DruidPlugin(url,
+        	        username, pwd);
+            //cp = new C3p0Plugin(url, username, pwd);
             //DataInitUtil.initH2Tables(cp);
 
         }
@@ -549,10 +553,10 @@ public class EedaConfig extends JFinalConfig {
             e.printStackTrace();
         }
 
-        cp = new C3p0Plugin("jdbc:h2:mem:eeda;", "sa", "");
+       // cp = new C3p0Plugin("jdbc:h2:mem:eeda;", "sa", "");
         // cp = new C3p0Plugin("jdbc:h2:data/sample;IFEXISTS=TRUE;", "sa", "");
         cp.setDriverClass("org.h2.Driver");
-        DataInitUtil.initH2Tables(cp);
+        //DataInitUtil.initH2Tables(cp);
     }
 
     @Override
@@ -568,7 +572,7 @@ public class EedaConfig extends JFinalConfig {
     @Override
 	public void configHandler(Handlers me) {
         if (H2.equals(getProperty("dbType"))) {
-            DataInitUtil.initData(cp);
+            //DataInitUtil.initData(cp);
         }
         //DataInitUtil.initData(cp);
         
