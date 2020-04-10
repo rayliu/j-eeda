@@ -185,14 +185,14 @@ WHERE aciao.order_no = $P{order_no}]]>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="90" y="42" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="c800687e-3f7e-49d6-9cc8-ed31a5946c21"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{office_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="90" y="22" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="ed3dc8d9-8017-4d0b-896b-0eba3689ee78"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+					<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{payment_method}]]></textFieldExpression>
 			</textField>
@@ -296,7 +296,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 				<textField isStretchWithOverflow="true">
 					<reportElement stretchType="RelativeToBandHeight" x="82" y="0" width="165" height="21" isPrintWhenDetailOverflows="true" uuid="292954d0-28e6-4db5-859b-98230c5a9a03"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+						<font fontName="宋体" size="10" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{payee_name}]]></textFieldExpression>
 				</textField>
@@ -313,7 +313,7 @@ WHERE aciao.order_no = $P{order_no}]]>
 					</reportElement>
 					<box bottomPadding="5"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="false"/>
+						<font fontName="宋体" size="10" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{account_no}]]></textFieldExpression>
 				</textField>
